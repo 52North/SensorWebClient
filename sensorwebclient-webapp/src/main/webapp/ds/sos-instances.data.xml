@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TODO create a client login for admins (RESTful?) to configure file via 
+	web interface -->
+<!-- Some of these properties are not implemented yet! -->
+<instances>
+	<instance>
+		<itemName>PEGELONLINE</itemName>
+		<url>http://pegelonline.wsv.de/webservices/gis/gdi-sos</url>
+		<version>1.0.0</version>
+		<waterML>true</waterML>
+		<connector>org.n52.server.oxf.util.parser.DefaultSosConnector
+		</connector>
+		<adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension
+		</adapter>
+		<requestChunk>300</requestChunk>
+		<autoZoom>false</autoZoom>
+		<llEasting>5</llEasting>
+		<llNorthing>46.00</llNorthing>
+		<urEasting>16</urEasting>
+		<defaultZoom>13</defaultZoom>
+	</instance>
+	<instance>
+		<itemName>EEA-SOS</itemName>
+		<url>http://ags.dev.52north.org:6080/arcgis/rest/services/ObservationDB/MapServer/exts/SOSExtension/
+		</url>
+		<version>2.0.0</version>
+		<connector>org.n52.server.oxf.util.connector.eea.EEASOSConnector
+		</connector>
+		<adapter>org.n52.server.oxf.util.connector.eea.SOSAdapterByGET
+		</adapter>
+		<waterML>false</waterML>
+		<autoZoom>false</autoZoom>
+		<llEasting>-16</llEasting>
+		<llNorthing>25</llNorthing>
+		<urEasting>35</urEasting>
+		<urNorthing>60.0</urNorthing>
+		<defaultZoom>9</defaultZoom>
+		<requestChunk>500</requestChunk>
+	</instance>
+	<instance>
+		<itemName>Air Quality Belgium</itemName>
+		<url>http://sos.irceline.be/sos</url>
+		<version>1.0.0</version>
+		<waterML>false</waterML>
+		<connector>org.n52.server.oxf.util.parser.DefaultSosConnector
+		</connector>
+		<adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension
+		</adapter>
+		<requestChunk>300</requestChunk>
+		<autoZoom>false</autoZoom>
+		<llEasting>3.8</llEasting>
+		<llNorthing>50.00</llNorthing>
+		<urEasting>5.2</urEasting>
+		<urNorthing>51.35</urNorthing>
+		<defaultZoom>11</defaultZoom>
+	</instance>
+	<instance>
+		<itemName>Wupperverband</itemName>
+		<url>http://fluggs.wupperverband.de/sos/sos</url>
+		<version>1.0.0</version>
+		<connector>org.n52.server.oxf.util.parser.DefaultSosConnector
+		</connector>
+		<adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension
+		</adapter>
+		<waterML>false</waterML>
+		<llEasting>6.61</llEasting>
+		<llNorthing>51.246</llNorthing>
+		<urEasting>7.81</urEasting>
+		<urNorthing>51.793</urNorthing>
+		<defaultZoom>15</defaultZoom>
+		<requestChunk>200</requestChunk>
+		<autoZoom>true</autoZoom>
+	</instance>
+</instances>

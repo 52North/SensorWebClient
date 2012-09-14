@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app>
+	<display-name>${project.artifactId} (SVN r${svn.info.revision}, built
+		on ${timestamp})</display-name>
+
+	<!-- listen for spring related configuration files -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener
+		</listener-class>
+	</listener>
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/classes/spring-*-config.xml</param-value>
+	</context-param>
+
+	<!-- define WEB MVC communication servlet for plain old xml -->
+	<servlet>
+		<servlet-name>xml</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet
+		</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/classes/dispatcher-control.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>xml</servlet-name>
+		<url-pattern>/rest/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<!-- sensorwebclient-api module -->
+		<servlet-name>ConfigurationContext</servlet-name>
+		<servlet-class>
+			org.n52.server.oxf.util.ConfigurationContext
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet>
+		<servlet-name>TimerTask</servlet-name>
+		<servlet-class>
+			org.n52.server.TimerTaskServlet
+		</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+
+
+	<servlet>
+		<servlet-name>jFreeChartDisplayChart</servlet-name>
+		<servlet-class>org.jfree.chart.servlet.DisplayChart</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>jFreeChartDisplayChart</servlet-name>
+		<url-pattern>/client/jfreechart/image</url-pattern>
+	</servlet-mapping>
+
+	<context-param>
+		<param-name>STATION_POSITION_REFRESHRATE</param-name>
+		<param-value>180</param-value>
+	</context-param>
+	<context-param>
+		<param-name>GENERATE_URL</param-name>
+		<param-value>generated</param-value>
+	</context-param>
+	<context-param>
+		<!-- The prefix which shall be set for all zip exports. ISO8601 timestamp 
+			will be used as postfix, e.g. 2011-03-29_dataexport -->
+		<param-name>ZIP_POSTFIX</param-name>
+		<param-value>_dataexport</param-value>
+	</context-param>
+	<context-param>
+		<param-name>IMAGE_SERVICE</param-name>
+		<param-value>client/jfreechart/image?filename=</param-value>
+	</context-param>
+	<context-param>
+		<param-name>DEV_MODE</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	<context-param>
+		<param-name>THREAD_POOL_SIZE</param-name>
+		<param-value>5</param-value>
+	</context-param>
+	<context-param>
+		<param-name>FACADE_COMPRESSION</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	<context-param>
+		<param-name>SERVER_TIMEOUT</param-name>
+		<param-value>30000</param-value>  <!-- ms -->
+	</context-param>
+	<context-param>
+		<param-name>STATISTICS_INTERVAL</param-name>
+		<param-value>100</param-value>  <!-- min -->
+	</context-param>
+	<context-param>
+		<!-- optional parameter -->
+		<param-name>STARTUP_DELAY</param-name>
+		<param-value>3000</param-value> <!-- ms -->
+	</context-param>
+	<context-param>
+		<param-name>COPYRIGHT</param-name>
+		<param-value></param-value>
+	</context-param>
+	<context-param>
+		<param-name>TOOLTIP_MIN_COUNT</param-name>
+		<param-value>50</param-value>
+	</context-param>
+	<context-param>
+		<param-name>NO_DATA_VALUES</param-name>
+		<param-value>-999999999.0</param-value>
+	</context-param>
+	<!-- Configurations for the WNS-Mail -->
+	<context-param>
+		<param-name>MAIL_USERNAME</param-name>
+		<param-value>${mail.username}</param-value>
+	</context-param>
+	<context-param>
+		<param-name>MAIL_PASSWORD</param-name>
+		<param-value>${mail.password}</param-value>
+	</context-param>
+	<context-param>
+		<param-name>MAIL_SENDER_ADDRESS</param-name>
+		<param-value>${mail.sender.address}</param-value>
+	</context-param>
+	<context-param>
+		<param-name>MAIL_SMTP_HOST</param-name>
+		<param-value>${mail.smtp.host}</param-value>
+	</context-param>
+	<context-param>
+		<param-name>MAIL_STARTTLS_ENABLE</param-name>
+		<param-value>${mail.starttls.enable}</param-value>
+	</context-param>
+	<context-param>
+		<param-name>MAIL_PORT</param-name>
+		<param-value>${mail.port}</param-value>
+	</context-param>
+	<context-param>
+		<param-name>MAIL_AUTH</param-name>
+		<param-value>${mail.authenticate}</param-value>
+	</context-param>
+	<context-param>
+		<param-name>MAIL_SSL_ENABLE</param-name>
+		<param-value>${mail.ssl.enable}</param-value>
+	</context-param>
+
+	<welcome-file-list>
+		<welcome-file>Client.jsp</welcome-file>
+	</welcome-file-list>
+</web-app>

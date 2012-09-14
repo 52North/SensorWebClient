@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EML xsi:schemaLocation="http://www.opengis.net/eml/0.0.1 3111_XSD\eml\0.0.1\OGC-EML-0_0_1-eml.xsd" xmlns="http://www.opengis.net/eml/0.0.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fes="http://www.opengis.net/fes/2.0" xmlns:swe="http://www.opengis.net/swe/1.0.1">
+   <SimplePatterns>
+      <SimplePattern inputName="input" patternID="first_events_stream">
+         <SelectFunctions>
+            <SelectFunction newEventName="first_event" createCausality="false">
+               <UserDefinedSelectFunction name="SelectFirst">
+                  <FunctionParameters>
+                     <FunctionParameter>
+                        <UserParameterName>propertyName</UserParameterName>
+                        <UserParameterValue>input/doubleValue</UserParameterValue>
+                     </FunctionParameter>
+                  </FunctionParameters>
+               </UserDefinedSelectFunction>
+            </SelectFunction>
+         </SelectFunctions>
+         <View>
+            <LengthView isBatch="true">
+               <EventCount>2</EventCount>
+            </LengthView>
+         </View>
+         <PropertyRestrictions>
+            <PropertyRestriction>
+               <name>observedProperty</name>
+               <value>urn:ogc:def:phenomenon:OGC::WaterLevel</value>
+            </PropertyRestriction>
+            <PropertyRestriction>
+               <name>sensorID</name>
+               <value>SENSOR_1</value>
+            </PropertyRestriction>
+         </PropertyRestrictions>
+      </SimplePattern>
+      <SimplePattern inputName="input" patternID="last_events_stream">
+         <SelectFunctions>
+            <SelectFunction newEventName="last_event" createCausality="false">
+               <SelectProperty propertyName="input/doubleValue"/>
+            </SelectFunction>
+         </SelectFunctions>
+         <View>
+            <UserDefinedView name="SelectLast">
+               <ViewParameters>
+                  <ViewParameter>
+                     <UserParameterName>type</UserParameterName>
+                     <UserParameterValue>length</UserParameterValue>
+                  </ViewParameter>
+                  <ViewParameter>
+                     <UserParameterName>isBatch</UserParameterName>
+                     <UserParameterValue>true</UserParameterValue>
+                  </ViewParameter>
+                  <ViewParameter>
+                     <UserParameterName>Duration</UserParameterName>
+                     <UserParameterValue>2</UserParameterValue>
+                  </ViewParameter>
+               </ViewParameters>
+            </UserDefinedView>
+         </View>
+         <PropertyRestrictions>
+            <PropertyRestriction>
+               <name>observedProperty</name>
+               <value>urn:ogc:def:phenomenon:OGC::WaterLevel</value>
+            </PropertyRestriction>
+            <PropertyRestriction>
+               <name>sensorID</name>
+               <value>SENSOR_1</value>
+            </PropertyRestriction>
+         </PropertyRestrictions>
+      </SimplePattern>
+   </SimplePatterns>
+   <ComplexPatterns>
+      <ComplexPattern patternID="simple_trend_stream">
+         <SelectFunctions>
+            <SelectFunction newEventName="simple_trend" createCausality="true">
+               <UserDefinedSelectFunction name="SelectDifference">
+                  <FunctionParameters>
+                     <FunctionParameter>
+                        <UserParameterName>firstReference</UserParameterName>
+                        <UserParameterValue>last_event/doubleValue</UserParameterValue>
+                     </FunctionParameter>
+                     <FunctionParameter>
+                        <UserParameterName>secondReference</UserParameterName>
+                        <UserParameterValue>first_event/doubleValue</UserParameterValue>
+                     </FunctionParameter>
+                  </FunctionParameters>
+               </UserDefinedSelectFunction>
+            </SelectFunction>
+         </SelectFunctions>
+         <Logicaloperator>
+            <AND/>
+         </Logicaloperator>
+         <FirstPattern>
+            <PatternReference>first_events_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </FirstPattern>
+         <SecondPattern>
+            <PatternReference>last_events_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </SecondPattern>
+      </ComplexPattern>
+      <ComplexPattern patternID="trend_overshoot_stream">
+         <SelectFunctions>
+            <SelectFunction newEventName="trend_overshoot" createCausality="true">
+               <SelectEvent eventName="simple_trend"/>
+            </SelectFunction>
+         </SelectFunctions>
+         <Guard>
+            <fes:Filter xmlns:fes="http://www.opengis.net/fes/2.0">
+            </fes:Filter>
+         </Guard>
+         <Logicaloperator>
+            <AND/>
+         </Logicaloperator>
+         <FirstPattern>
+            <PatternReference>simple_trend_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </FirstPattern>
+         <SecondPattern>
+            <PatternReference>simple_trend_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </SecondPattern>
+      </ComplexPattern>
+      <ComplexPattern patternID="trend_undershoot_stream">
+         <SelectFunctions>
+            <SelectFunction newEventName="trend_undershoot" createCausality="true">
+               <SelectEvent eventName="simple_trend"/>
+            </SelectFunction>
+         </SelectFunctions>
+         <Guard>
+            <fes:Filter xmlns:fes="http://www.opengis.net/fes/2.0">
+            </fes:Filter>
+         </Guard>
+         <Logicaloperator>
+            <AND/>
+         </Logicaloperator>
+         <FirstPattern>
+            <PatternReference>simple_trend_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </FirstPattern>
+         <SecondPattern>
+            <PatternReference>simple_trend_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </SecondPattern>
+      </ComplexPattern>
+      <ComplexPattern patternID="overshoot_notification_stream">
+         <SelectFunctions>
+            <SelectFunction newEventName="overshoot_notification" createCausality="true" outputName="overshoot_output">
+               <NotifyOnSelect>
+                  <Message>Einstiegsklausel</Message>
+               </NotifyOnSelect>
+            </SelectFunction>
+         </SelectFunctions>
+         <StructuralOperator>
+            <BEFORE></BEFORE>
+         </StructuralOperator>
+         <FirstPattern>
+            <PatternReference>trend_undershoot_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </FirstPattern>
+         <SecondPattern>
+            <PatternReference>trend_overshoot_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </SecondPattern>
+      </ComplexPattern>
+      <ComplexPattern patternID="undershoot_notification_stream">
+         <SelectFunctions>
+            <SelectFunction newEventName="undershoot_notification" createCausality="true" outputName="undershoot_output">
+               <NotifyOnSelect>
+                  <Message>Ausstiegsklausel</Message>
+               </NotifyOnSelect>
+            </SelectFunction>
+         </SelectFunctions>
+         <StructuralOperator>
+            <BEFORE></BEFORE>
+         </StructuralOperator>
+         <FirstPattern>
+            <PatternReference>trend_overshoot_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </FirstPattern>
+         <SecondPattern>
+            <PatternReference>trend_undershoot_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </SecondPattern>
+      </ComplexPattern>
+   </ComplexPatterns>
+   <TimerPatterns/>
+   <RepetitivePatterns/>
+</EML>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TODO create a client login for admins (RESTful?) to configure file via 
+	web interface -->
+<!-- Some of these properties are not implemented yet! -->
+<instances>
+	<instance>
+		<itemName>EO2HEAVEN</itemName>
+		<url>http://141.30.100.135/eo2heavenSOS_V2/sos</url>
+		<version>1.0.0</version>
+		<waterML>false</waterML>
+		<connector>org.n52.server.oxf.util.parser.DefaultSOSConnector</connector>
+		<adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension</adapter>
+		<cached>true</cached>
+	    <requestChunk>150</requestChunk>
+	    <autoZoom>false</autoZoom>
+		<!-- coordinates in EPSG:4326 -->
+		<llEasting>6.65</llEasting>
+		<llNorthing>50.00</llNorthing>
+	    <urEasting>7.66</urEasting>
+	    <urNorthing>51.35</urNorthing>
+	    <defaultZoom>13</defaultZoom>
+	</instance>
+</instances>

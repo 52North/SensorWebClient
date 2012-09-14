@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app>
+	<display-name>${project.artifactId} (SVN r${svn.info.revision}, built on ${timestamp})</display-name>
+
+	<filter>
+		<filter-name>gwtCacheControlFilter</filter-name>
+		<filter-class>
+			org.n52.server.filter.GWTCacheControlFilter
+		</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>gwtCacheControlFilter</filter-name>
+		<url-pattern>/client/*</url-pattern>
+	</filter-mapping>
+
+	<servlet>
+		<servlet-name>ConfigurationContext</servlet-name>
+		<servlet-class>
+			org.n52.server.oxf.util.ConfigurationContext
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>TimeSeriesDataService</servlet-name>
+		<servlet-class>
+			org.n52.server.service.rpc.RpcTimeSeriesDataServlet
+		</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>TimeSeriesDataService</servlet-name>
+		<url-pattern>/client/TimeSeriesDataService</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>EESDataService</servlet-name>
+		<servlet-class>
+			org.n52.server.service.rpc.RpcEESDataServlet
+		</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>EESDataService</servlet-name>
+		<url-pattern>/client/EESDataService</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>FileDataService</servlet-name>
+		<servlet-class>
+			org.n52.server.service.rpc.RpcFileDataServlet
+		</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FileDataService</servlet-name>
+		<url-pattern>/client/FileDataService</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>SensorMetadataService</servlet-name>
+		<servlet-class>
+			org.n52.server.service.rpc.RpcSensorMetadataServlet
+		</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SensorMetadataService</servlet-name>
+		<url-pattern>/client/SensorMetadataService</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>ServiceMetadataService</servlet-name>
+		<servlet-class>
+			org.n52.server.service.rpc.RpcServiceMetadataServlet
+		</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ServiceMetadataService</servlet-name>
+		<url-pattern>/client/ServiceMetadataService</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>StationPositionsService</servlet-name>
+		<servlet-class>
+			org.n52.server.service.rpc.RpcStationPositionsServlet
+		</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>StationPositionsService</servlet-name>
+		<url-pattern>/client/StationPositionsService</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>TimerTask</servlet-name>
+		<servlet-class>
+			org.n52.server.TimerTaskServlet
+		</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>jFreeChartDisplayChart</servlet-name>
+		<servlet-class>org.jfree.chart.servlet.DisplayChart</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<!-- TODO holding img as resources may make service unneccessary! -->
+		<servlet-name>jFreeChartDisplayChart</servlet-name>
+		<url-pattern>/client/jfreechart/image</url-pattern>
+	</servlet-mapping>
+
+	<context-param>
+		<param-name>STATION_POSITION_REFRESHRATE</param-name>
+		<param-value>180</param-value>
+	</context-param>
+	<context-param>
+		<param-name>GENERATE_URL</param-name>
+		<param-value>generated</param-value>
+	</context-param>
+	<context-param>
+		<!-- The prefix which shall be set for all zip exports. ISO8601 timestamp 
+			will be used as postfix, e.g. 2011-03-29_dataexport -->
+		<param-name>ZIP_POSTFIX</param-name>
+		<param-value>_dataexport</param-value>
+	</context-param>
+	<context-param>
+		<param-name>IMAGE_SERVICE</param-name>
+		<param-value>client/jfreechart/image?filename=</param-value>
+	</context-param>
+	<context-param>
+		<param-name>DEV_MODE</param-name>
+		<param-value>${dev.mode}</param-value>
+	</context-param>
+	<context-param>
+		<param-name>THREAD_POOL_SIZE</param-name>
+		<param-value>5</param-value>
+	</context-param>
+	<context-param>
+		<param-name>FACADE_COMPRESSION</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	<context-param>
+		<param-name>SERVER_TIMEOUT</param-name>
+		<param-value>320000</param-value>  <!-- ms -->
+	</context-param>
+	<context-param>
+		<param-name>STATISTICS_INTERVAL</param-name>
+		<param-value>100</param-value>  <!-- min -->
+	</context-param>
+	<context-param>
+		<!-- optional parameter -->
+		<param-name>STARTUP_DELAY</param-name>
+		<param-value>3000</param-value> <!-- ms -->
+	</context-param>
+	<context-param>
+		<param-name>COPYRIGHT</param-name>
+		<param-value></param-value>
+	</context-param>
+	<context-param>
+		<param-name>TOOLTIP_MIN_COUNT</param-name>
+		<param-value>50</param-value>
+	</context-param>
+	<context-param>
+		<param-name>NO_DATA_VALUES</param-name>
+		<param-value>-999999999.0</param-value>
+	</context-param>
+	<!-- Configurations for the WNS-Mail -->
+	<context-param>
+		<param-name>MAIL_USERNAME</param-name>
+		<param-value>${mail.username}</param-value>
+	</context-param>
+	<context-param>
+		<param-name>MAIL_PASSWORD</param-name>
+		<param-value>${mail.password}</param-value>
+	</context-param>
+	<context-param>
+		<param-name>MAIL_SENDER_ADDRESS</param-name>
+		<param-value>${mail.sender.address}</param-value>
+	</context-param>
+	<context-param>
+		<param-name>MAIL_SMTP_HOST</param-name>
+		<param-value>${mail.smtp.host}</param-value>
+	</context-param>
+	<context-param>
+		<param-name>MAIL_STARTTLS_ENABLE</param-name>
+		<param-value>${mail.starttls.enable}</param-value>
+	</context-param>
+	<context-param>
+		<param-name>MAIL_PORT</param-name>
+		<param-value>${mail.port}</param-value>
+	</context-param>
+	<context-param>
+		<param-name>MAIL_AUTH</param-name>
+		<param-value>${mail.authenticate}</param-value>
+	</context-param>
+	<context-param>
+		<param-name>MAIL_SSL_ENABLE</param-name>
+		<param-value>${mail.ssl.enable}</param-value>
+	</context-param>
+
+	<welcome-file-list>
+		<welcome-file>Client.jsp</welcome-file>
+	</welcome-file-list>
+
+
+	<!-- SES specific Servlets. Comment them out if SES is not needed in the 
+		client.
+
+	<servlet>
+		<servlet-name>SESInitializationServlet</servlet-name>
+		<servlet-class>
+			org.n52.server.ses.SESInitializationServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>SensorTimerTaskServlet</servlet-name>
+		<servlet-class>
+			org.n52.server.ses.SensorTimerTaskServlet
+		</servlet-class>
+		<load-on-startup>5</load-on-startup>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>DataSourceService</servlet-name>
+		<servlet-class>
+			org.n52.server.service.rpc.RpcDataSourceServlet
+		</servlet-class>
+		<load-on-startup>6</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DataSourceService</servlet-name>
+		<url-pattern>/client/DataSourceService</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>SesRuleService</servlet-name>
+		<servlet-class>
+			org.n52.server.service.rpc.RpcSesRuleServlet
+		</servlet-class>
+		<load-on-startup>3</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SesRuleService</servlet-name>
+		<url-pattern>/client/SesRuleService</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>SesSensorService</servlet-name>
+		<servlet-class>
+			org.n52.server.service.rpc.RpcSesSensorServlet
+		</servlet-class>
+		<load-on-startup>4</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SesSensorService</servlet-name>
+		<url-pattern>/client/SesSensorService</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>SesUserService</servlet-name>
+		<servlet-class>
+			org.n52.server.service.rpc.RpcSesUserServlet
+		</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SesUserService</servlet-name>
+		<url-pattern>/client/SesUserService</url-pattern>
+	</servlet-mapping>
+	 -->
+</web-app>

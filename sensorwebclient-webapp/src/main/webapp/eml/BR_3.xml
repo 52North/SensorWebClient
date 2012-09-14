@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EML xsi:schemaLocation="http://www.opengis.net/eml/0.0.1 3111_XSD\eml\0.0.1\OGC-EML-0_0_1-eml.xsd" xmlns="http://www.opengis.net/eml/0.0.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fes="http://www.opengis.net/fes/2.0" xmlns:swe="http://www.opengis.net/swe/1.0.1">
+   <SimplePatterns>
+      <SimplePattern inputName="input" patternID="sum_over_time_stream">
+         <SelectFunctions>
+            <SelectFunction newEventName="sum_over_time" createCausality="false">
+               <SelectSum propertyName="input/doubleValue"/>
+            </SelectFunction>
+         </SelectFunctions>
+         <View>
+         <LengthView isBatch="true">
+            <EventCount>24</EventCount>
+         </LengthView>
+         </View>
+         <PropertyRestrictions>
+            <PropertyRestriction>
+               <name>observedProperty</name>
+               <value>urn:ogc:def:phenomenon:OGC::WaterLevel</value>
+            </PropertyRestriction>
+            <PropertyRestriction>
+               <name>sensorID</name>
+               <value>SENSOR_1</value>
+            </PropertyRestriction>
+         </PropertyRestrictions>
+      </SimplePattern>
+   </SimplePatterns>
+   <ComplexPatterns>
+      <ComplexPattern patternID="sum_overshoot_stream">
+         <SelectFunctions>
+            <SelectFunction newEventName="sum_overshoot" createCausality="false">
+               <SelectEvent eventName="sum_over_time"/>
+            </SelectFunction>
+         </SelectFunctions>
+         <Guard>
+            <fes:Filter xmlns:fes="http://www.opengis.net/fes/2.0">
+            </fes:Filter>
+         </Guard>
+         <Logicaloperator>
+            <AND/>
+         </Logicaloperator>
+         <FirstPattern>
+            <PatternReference>sum_over_time_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </FirstPattern>
+         <SecondPattern>
+            <PatternReference>sum_over_time_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </SecondPattern>
+      </ComplexPattern>
+      <ComplexPattern patternID="sum_undershoot_stream">
+         <SelectFunctions>
+            <SelectFunction newEventName="sum_undershoot" createCausality="false">
+               <SelectEvent eventName="sum_over_time"/>
+            </SelectFunction>
+         </SelectFunctions>
+         <Guard>
+            <fes:Filter xmlns:fes="http://www.opengis.net/fes/2.0">
+            </fes:Filter>
+         </Guard>
+         <Logicaloperator>
+            <AND/>
+         </Logicaloperator>
+         <FirstPattern>
+            <PatternReference>sum_over_time_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </FirstPattern>
+         <SecondPattern>
+            <PatternReference>sum_over_time_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </SecondPattern>
+      </ComplexPattern>
+      <ComplexPattern patternID="overshoot_notification_stream">
+         <SelectFunctions>
+            <SelectFunction newEventName="overshoot_notification" createCausality="true" outputName="overshoot_output">
+               <NotifyOnSelect>
+                  <Message>Einstiegsklausel</Message>
+               </NotifyOnSelect>
+            </SelectFunction>
+         </SelectFunctions>
+         <StructuralOperator>
+            <BEFORE/>
+         </StructuralOperator>
+         <FirstPattern>
+            <PatternReference>sum_undershoot_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </FirstPattern>
+         <SecondPattern>
+            <PatternReference>sum_overshoot_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </SecondPattern>
+      </ComplexPattern>
+      <ComplexPattern patternID="undershoot_notification_stream">
+         <SelectFunctions>
+            <SelectFunction newEventName="undershoot_notification" createCausality="true" outputName="undershoot_output">
+               <NotifyOnSelect>
+                  <Message>Ausstiegsklausel</Message>
+               </NotifyOnSelect>
+            </SelectFunction>
+         </SelectFunctions>
+         <StructuralOperator>
+            <BEFORE/>
+         </StructuralOperator>
+         <FirstPattern>
+            <PatternReference>sum_overshoot_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </FirstPattern>
+         <SecondPattern>
+            <PatternReference>sum_undershoot_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </SecondPattern>
+      </ComplexPattern>
+   </ComplexPatterns>
+   <TimerPatterns/>
+   <RepetitivePatterns/>
+</EML>

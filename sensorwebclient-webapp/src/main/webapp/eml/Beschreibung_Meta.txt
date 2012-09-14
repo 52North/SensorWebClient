@@ -1,0 +1,30 @@
+WICHTIG!
+In den Texten duerfen keine Sonderzeichen vorkommen!
+SMS-Mitteilungen (shortMessages) duerfen insgesamt maximal 160 Zeichen lang sein.
+META-Muster-Tag <Message> muss folgende Elemente enthalten:
+
+Format: Text
+
+_T_userID=
+_T_shortMessageEinstieg=
+_T_shortMessageAusstieg=
+_T_MessageAusstieg=
+_T_MessageEinstieg=
+_ruleName_=
+
+bei XML:
+folgende Tags muessen vorhanden sein:
+ 
+<format>XML</format>
+<userID>
+<shortMessageEnter>		--> SMS-Mitteilung Einstiegsklausel
+<shortMessageExit>		--> SMS-Mitteilung Ausstiegsklausel
+<longMessageEnter>		--> E-Mail-Mitteilung Einstiegsklausel
+<longMessageExit>		--> E-Mail-Mitteilung Ausstiegsklausel
+
+bei EML:
+Der SES-Output wird direkt weitergeleitet. Der Nutzer erhaelt die ganze Notification
+folgende Tags muessen vorhanden sein:
+ 
+<format>SES_OUTPUT</format>
+<userID>

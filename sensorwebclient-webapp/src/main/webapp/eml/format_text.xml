@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SimplePattern inputName="BAW_META" patternID="BAW_META">
+  <SelectFunctions>
+    <SelectFunction newEventName="BAW_META">
+      <NotifyOnSelect>
+        <Message>_T_userID=wnsID_T_shortMessageEinstieg=Regel _ruleName_ hat einen Alarm ausgeloest um _R__T_MessageEinstieg=Regel _ruleName_ hat einen Alarm ausgeloest um _R_ _T_shortMessageAusstieg=Regel _ruleName_ Alarmzustand beendet um _R__T_MessageAusstieg=Alarmzustand fuer Regel _ruleName_ beendet um _R_ _T_</Message>
+      </NotifyOnSelect>
+    </SelectFunction>
+  </SelectFunctions>
+  <PropertyRestrictions>
+    <PropertyRestriction>
+      <name>observedProperty</name>
+      <value>THIS_OBS_PROP_DOES_NOT_EXIST</value>
+    </PropertyRestriction>
+  </PropertyRestrictions>
+</SimplePattern>

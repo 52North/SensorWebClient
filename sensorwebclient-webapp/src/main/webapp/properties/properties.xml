@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<props>
+	<tabs>
+		<tab>DiagramTab</tab>
+		<!-- 
+		If SES is not available or required comment out the 'SesTab'. Then the SES Tab 
+		will not be rendered in the client NOTE: Do not forget to comment out the SES 
+		related Servlet declared in the web.xml also.
+		<tab>SesTab</tab>
+		  -->
+	</tabs>
+	
+	<imprint>properties/imprint.html</imprint> 
+	<helpfile>properties/help.html</helpfile>
+	<defaultInterval>1</defaultInterval>
+	<defaultOverviewInterval>5</defaultOverviewInterval>
+	<toasterFadeout>5000</toasterFadeout>
+	<showStationPickerAtStartup>true</showStationPickerAtStartup>
+	
+	<!-- Default styles for the line and sumline 
+	Possible values: 1=line, 2=area, 3=dots, 4=dashed-->
+	<defaultHydrographStyle>1</defaultHydrographStyle>
+	<defaultSumLineStyle>2</defaultSumLineStyle>
+	
+	<!-- Default styles values: 1=line, 2=area, 3=dots, 4=dashed
+	secondly for line=1 or sumline=2
+    and thirdly the color for this phenomenon in this format for eg. red #FF0000-->
+	<defaultPhenomenonMappings>
+		<phenomenon>urn:ogc:def:property:OGC::Temperature,3,1,#FF0000</phenomenon>
+		<phenomenon>urn:ogc:def:property:OGC::Precipitation1Hour,2,2,#0000FF</phenomenon>
+	</defaultPhenomenonMappings>
+  
+    <!-- Minimum zoom in the timeframe in the diagram in minutes -->
+    <minTimeFrameZoom>1</minTimeFrameZoom>
+	
+    <mapSrs>EPSG:4326</mapSrs>
+    <mapUrl>OSM</mapUrl>
+	<!-- 
+	<mapUrl>http://wsvmapserv.wsv.bund.de/wmsdbwk1000</mapUrl> 
+    <wmsLayerName>WmsDBWK1000</wmsLayerName>
+    <wmsStyles>default</wmsStyles>
+    <wmsFormat>image/png</wmsFormat>
+    <wmsIsTransparent>true</wmsIsTransparent>
+    <wmsBGColor>0xffffff</wmsBGColor>
+     -->
+     
+    <!-- Extent where Stationspicker is active -->
+    <!-- Fallback is lon/lat BBOX [(-90.0,-45.0);(90.0,45.0) srs: EPSG:4326] -->
+    <!-- 
+    <defaultExtent>
+	    <lleftX>5.8667</lleftX>
+	    <lleftY>45.2703</lleftY>
+	    <urightX>15.0419</urightX>
+	    <urightY>55.0556</urightY>
+    </defaultExtent>
+     -->
+     
+    <!-- Default zoom level for the popup of a timeseries entry and for the map tab, when one station is under consideration -->
+    <!-- Choose a level between 0 and 18, all others are the extend of the whole world -->
+    <defaultZoomLevel>13</defaultZoomLevel>
+    <!-- Indicates how many procedure positions are requested at once (stationpicker) -->
+    <devModeRequestChunk>100</devModeRequestChunk>
+</props>

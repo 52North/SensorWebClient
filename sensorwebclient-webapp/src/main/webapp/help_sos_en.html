@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<TITLE>SOS Client Help</TITLE>
+<style type="text/css">
+body,table {
+	font-family: arial, sans-serif;
+	font-size: 12px;
+}
+
+th {
+	background: #336699;
+	color: #FFFFFF;
+	text-align: center;
+}
+
+a {
+	text-decoration: none;
+}
+
+img {
+	align: left;
+}
+</style>
+</HEAD>
+<BODY>
+	<h1>
+		<a name="help">SOS Client Help</a>
+	</h1>
+
+	<h2>
+		<a name="overview">Overview</a>
+	</h2>
+
+	<a href="#introduction">1. Introduction</a>
+	<br>
+	<a href="#views">2. Views</a>
+	<br>
+
+	<!-- INTRODUCTION -->
+	<h3>
+		<a name="introduction">1. Introduction</a>
+	</h3>
+
+	<p>
+		This client allows the visualisation of time series data provided by
+		OGC Sensor Observation Services.<br> The development of this
+		client has been performed using the Google Web Toolkit. Thus, this
+		client consists mainly of JavaScript code.<br> The user behaviour
+		is not analysed by this client. Furthermore, no data are sent to
+		Google.<br>
+	</p>
+
+	<!-- VIEWS -->
+	<h3>
+		<a name="views">2. Views</a>
+	</h3>
+
+	<a href="#view_legende">Legend</a>
+	<br>
+	<a href="#view_diagram">Diagram</a>
+	<br>
+	<a href="#view_chooseTS">Choose Time Series</a>
+	<br>
+
+	<hr>
+	<h3 class="view_legende">Legend</h3>
+
+	<img src="./img/help/en/legendButtons.png" align="left" vspace="0"
+		hspace="20" alt="GeneralTabs">
+	<p>
+		The Legend is divided in a button area, underneath legend entries and
+		an overview map. <br> With the button <b>Add Time Series</b> you
+		can add a time series to the diagram view. The Button <b>Event</b>
+		leads to the event service and the <b>Export</b> button deliver the
+		chosen time series as PDF or CSV file.
+	</p>
+	<br clear="all">
+
+	<img src="./img/help/en/legendEntry.png" align="left" vspace="0"
+		hspace="20" alt="GeneralTabs">
+	<p>A legend entry header consists of label and three buttons with
+		the following function:
+	<ul>
+		<li>Changing the diagram style of the time series</li>
+		<li>Extra informations about the sensor</li>
+		<li>Remove the time series out of the diagram view</li>
+	</ul>
+	<p>
+	Under the header are some extra informations and the possibility to
+	jump to the first and latest value of the time series. Besides there
+	are reference values to the chosen time series.
+	</p>
+	<br clear="all">
+
+	<img src="./img/help/en/overviewMap.png" align="left" vspace="0"
+		hspace="20" alt="GeneralTabs">
+	<p>The overview enables a spatially classification of the time
+		series.</p>
+	<br clear="all">
+
+	<div align="right">
+		<a href="#overview"><font size="1">Back to the overview</font></a><br>
+	</div>
+	<hr>
+	<h4>
+		<b><a name="view_diagram">Diagram</a></b>
+	</h4>
+	<img src="./img/help/en/diagram.png" align="left" vspace="0"
+		hspace="20" alt="GeneralFunctions">
+	<p>Within the diagram view the selected time series are displayed
+		as diagrams. Below the main diagram an overview diagram is displayed.
+		By moving and adjusting the grey area, the time period that is
+		displayed in the diagram can be adjusted.</p>
+	<br clear="all">
+
+	<div align="right">
+		<a href="#overview"><font size="1">Back to the overview</font></a><br>
+	</div>
+	<hr>
+
+	<h4>
+		<b><a name="view_chooseTS">Choose Time Series</a></b>
+	</h4>
+	<img src="./img/help/en/stationpicker.png" align="left" vspace="0"
+		hspace="20" alt="Stationpicker">
+	<p>This menu allows adding a new time series based on a map view.
+		First, it is necessary to select an according time series service.
+		After this the sensor locations are automatically displayed on the
+		map. After selecting a sensor location on the map, the left window
+		show some informations about the sensor location and the user
+		is able to submit the request for loading the time series.</p>
+	<br clear="all">
+
+	<div align="right">
+		<a href="#overview"><font size="1">Back to the overview</font></a><br>
+	</div>
+
+
+</BODY>
+</HTML>

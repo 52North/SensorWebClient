@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sams:SF_SpatialSamplingFeature gml:id="BETR701"
+	xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd 
+	http://www.opengis.net/samplingSpatial/2.0 http://schemas.opengis.net/samplingSpatial/2.0/spatialSamplingFeature.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml/3.2"
+	xmlns:sam="http://www.opengis.net/sampling/2.0" xmlns:sams="http://www.opengis.net/samplingSpatial/2.0"
+	xmlns:xlink="http://www.w3.org/1999/xlink">
+	<gml:description>GENT, BELGIUM, http://www.irceline.be</gml:description>
+	<gml:identifier codeSpace="">@feature-href@</gml:identifier>
+	<gml:name>44R701 - GENT</gml:name>
+	<sam:type
+		xlink:href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint" />
+	<sam:sampledFeature xsi:nil="true" />
+	<sams:shape>
+		<gml:Point gml:id="BETR701-point-location">
+			<gml:pos srsName="http://www.opengis.net/def/crs/EPSG/0/4326">3.729 51.058
+			</gml:pos>
+		</gml:Point>
+	</sams:shape>
+</sams:SF_SpatialSamplingFeature>
