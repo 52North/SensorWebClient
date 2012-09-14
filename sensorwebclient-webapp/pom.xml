@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.n52.sensorweb</groupId>
+		<artifactId>sensorwebclient</artifactId>
+		<version>3.0.0</version>
+	</parent>
+	<artifactId>sensorwebclient-webapp</artifactId>
+	<packaging>war</packaging>
+	<name>Sensor Web Client Web Application</name>
+	<url>http://52north.org/communities/sensorweb/</url>
+
+	<properties>
+		<webappDirectory>${project.build.directory}/${project.artifactId}</webappDirectory>
+	</properties>
+
+	<dependencies>
+		<!-- ### 52n DEPENDENCIES ### -->
+		<dependency>
+			<groupId>org.n52.sensorweb</groupId>
+			<artifactId>sensorwebclient-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.n52.sensorweb</groupId>
+			<artifactId>sensorwebclient-ui</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.n52.sensorweb</groupId>
+			<artifactId>sensorwebclient-sos-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.n52.sensorweb</groupId>
+			<artifactId>sensorwebclient-ses-server</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory>
+		<finalName>${project.artifactId}</finalName>
+		<resources>
+			<resource>
+				<!-- copy and filter -->
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>logback.xml</include>
+					<include>hibernate.cfg.xml</include>
+				</includes>
+				<filtering>true</filtering>
+			</resource>
+			<resource>
+				<!-- copy all other resources without filtering -->
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>logback.xml</exclude>
+					<exclude>hibernate.cfg.xml</exclude>
+				</excludes>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>gwt-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<webappDirectory>${webappDirectory}</webappDirectory>
+					<webResources>
+						<resource>
+							<directory>src/main/webapp</directory>
+							<filtering>true</filtering>
+						</resource>
+					</webResources>
+					<warName>${sensorwebclient.webapp.name}</warName>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.mycila.maven-license-plugin</groupId>
+				<artifactId>maven-license-plugin</artifactId>
+				<configuration>
+					<header>../misc/52N_license.txt</header>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.google.code.maven-svn-revision-number-plugin</groupId>
+				<artifactId>svn-revision-number-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>connector-eea</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.n52.sensorweb</groupId>
+					<artifactId>sensorwebclient-eea</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>connector-grdc</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.n52.sensorweb</groupId>
+					<artifactId>sensorwebclient-grdc</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
+
+</project>
+

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd" >
+<log4j:configuration>
+	 <appender name="LOGFILE" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="${config.log4j.fileappender.filepath}/${pom.artifactId}.log"/>
+        <param name="Threshold" value="${config.log4j.fileappender.level}"/>
+        <param name="MaxFileSize" value="5000KB"/>
+        <param name="MaxBackupIndex" value="3"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%-5p] %d{ISO8601} [%t] %c - %m%n"/>
+        </layout>
+    </appender>
+    <appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
+        <param name="Threshold" value="${config.log4j.consoleappender.level}"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%-5p] %d{ISO8601} [%t] %c - %m%n"/>
+        </layout>
+    </appender>
+	<!--
+	FILTER
+	Level: OFF, ERROR, WARN, INFO, DEBUG, TRACE
+	 -->
+	<logger name="org.n52">
+		<level value="${config.log4j.logger.level}" />
+	</logger>
+	<logger name="org.n52.oxf">
+		<level value="${config.log4j.logger.level.oxf}" />
+	</logger>
+	<logger name="org.n52.client">
+		<level value="${config.log4j.logger.level.client}" />
+	</logger>
+	<logger name="org.n52.server">
+		<level value="${config.log4j.logger.level.server}" />
+	</logger>
+	<!-- 
+	EXTERNAL - LIBS
+	 -->
+	<logger name="org.apache.commons.httpclient">
+		<level value="WARN" />
+	</logger>
+	<logger name="com.sun.xml">
+		<level value="ERROR" />
+	</logger>
+	<logger name="org.geotools">
+		<level value="WARN" />
+	</logger>
+	<root>
+		<priority value="INFO" />
+		<appender-ref ref="STDOUT" /> 
+		<appender-ref ref="LOGFILE" />
+	</root>
+</log4j:configuration>

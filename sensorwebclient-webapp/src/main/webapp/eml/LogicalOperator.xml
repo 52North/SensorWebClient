@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EML xsi:schemaLocation="http://www.opengis.net/eml/0.0.1 3111_XSD\eml\0.0.1\OGC-EML-0_0_1-eml.xsd" xmlns="http://www.opengis.net/eml/0.0.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fes="http://www.opengis.net/fes/2.0" xmlns:swe="http://www.opengis.net/swe/1.0.1">
+   <SimplePatterns>
+   </SimplePatterns>
+   <ComplexPatterns>
+      <ComplexPattern patternID="simple_trend_stream">
+         <SelectFunctions>
+            <SelectFunction newEventName="simple_trend" createCausality="true">
+               <NotifyOnSelect>
+                  <Message>EMPTY</Message>
+               </NotifyOnSelect>
+            </SelectFunction>
+         </SelectFunctions>
+         <Logicaloperator>
+         </Logicaloperator>
+         <FirstPattern>
+            <PatternReference>first_events_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </FirstPattern>
+         <SecondPattern>
+            <PatternReference>last_events_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </SecondPattern>
+      </ComplexPattern>
+   </ComplexPatterns>
+   <TimerPatterns/>
+   <RepetitivePatterns/>
+</EML>

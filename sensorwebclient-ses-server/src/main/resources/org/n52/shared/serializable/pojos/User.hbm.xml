@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--
+		/****************************************************************************
+		* Copyright (C) 2010 * by 52 North Initiative for Geospatial Open
+		Source Software GmbH * * Contact: Andreas Wytzisk * 52 North
+		Initiative for Geospatial Open Source Software GmbH *
+		Martin-Luther-King-Weg 24 * 48155 Muenster, Germany * info@52north.org
+		* * This program is free software; you can redistribute and/or modify
+		it under * the terms of the GNU General Public License version 2 as
+		published by the * Free Software Foundation. * * This program is
+		distributed WITHOUT ANY WARRANTY; even without the implied * WARRANTY
+		OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU *
+		General Public License for more details. * * You should have received
+		a copy of the GNU General Public License along with * this program
+		(see gnu-gpl v2.txt). If not, write to the Free Software * Foundation,
+		Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or *
+		visit the Free Software Foundation web page, http://www.fsf.org. * *
+		Author: Jan Schulte * Created: 20.07.2010
+		*****************************************************************************/
+	-->
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping package="org.n52.shared.serializable.pojos">
+	<class name="User" table="Tuser">
+		<id name="id" column="id">
+			<generator class="sequence">
+				<param name="sequence">user_id_seq</param>
+			</generator>
+		</id>
+		<property name="userName" type="string" />
+		<property name="name" type="string" />
+		<property name="password" type="string" />
+		<property name="eMail" type="string" />
+		<property name="handyNr" type="string" />
+		<property name="registerID" type="string"/>
+		<property name="wnsSmsId" type="string"/>
+		<property name="wnsEmailId" type="string"/>
+		<property name="role" lazy="false">
+			<type name="org.n52.server.ses.hibernate.EnumType">
+				<param name="enumClassName">
+					org.n52.shared.serializable.pojos.UserRole
+				</param>
+			</type>
+		</property>
+		<property name="date" type="timestamp"/>
+		<property name="falseLoginDate" type="timestamp"/>
+		<property name="falseLoginCount" type="integer"/>
+		<property name="active" type="boolean"/>
+		<property name="activated" type="boolean" />
+		<property name="emailVerified" type="boolean" />
+		<property name="passwordChanged" type="boolean" />
+	</class>
+</hibernate-mapping>

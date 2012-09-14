@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<TITLE>SOS-Client-Hilfe</TITLE>
+<style type="text/css">
+body,table {
+	font-family: arial, sans-serif;
+	font-size: 12px;
+}
+
+th {
+	background: #336699;
+	color: #FFFFFF;
+	text-align: center;
+}
+
+a {
+	text-decoration: none;
+}
+
+img {
+	align: left;
+}
+</style>
+</HEAD>
+<BODY>
+	<h1>
+		<a name="help">SOS-Client-Hilfe</a>
+	</h1>
+
+	<h2>
+		<a name="overview">Gliederung</a>
+	</h2>
+
+	<a href="#introduction">1. Einleitung</a>
+	<br>
+	<a href="#views">2. Sichten</a>
+	<br>
+
+	<!-- INTRODUCTION -->
+	<h3>
+		<a name="introduction">1. Einleitung</a>
+	</h3>
+
+	<p>
+		Dieser Client erlaubt die Darstellung von Zeitreihen unter Nutzung
+		eines OGC Sensor Observation Service.<br> Die Entwicklung dieses
+		Clients erfolgte unter Nutzung des Google Web Tookits. Daher besteht
+		der Client im Wesentlichen aus JavaScript-Code.<br> Eine
+		Auswertung des Nutzerverhaltens erfolgt nicht. Ebenso werden keine
+		Daten an Google weitergeleitet.<br>
+	</p>
+
+	<!-- VIEWS -->
+	<h3>
+		<a name="views">2. Sichten</a>
+	</h3>
+
+	<a href="#view_legende">Legende</a>
+	<br>
+	<a href="#view_diagram">Diagramm</a>
+	<br>
+	<a href="#view_chooseTS">Zeitreihenwahl</a>
+	<br>
+
+	<hr>
+	<h3 class="view_legende">Legende</h3>
+
+	<img src="./img/help/de/legendButtons.png" align="left" vspace="0"
+		hspace="20" alt="GeneralTabs">
+	<p>
+		Die Legende unterteilt sich in den Schaltfl&auml;chenbereich, die darunter
+		befindlichen Legendeneintr&auml;ge und eine &Uuml;bersichtskarte. <br> &Uuml;ber
+		die Schaltfl&auml;che <b>Zeitreihe hinzuf&uuml;gen</b> werden Zeitreihen zur
+		Diagrammdarstellung ausgew&auml;hlt. Die Schaltfl&auml;che <b>Ereignis</b> f&uuml;hrt
+		zum Eventservice. &Uuml;ber die Schaltfl&auml;che <b>Export</b> werden
+		die ausgew&auml;hlten Zeitreihen als PDF oder CSV Datei zur Verf&uuml;gung
+		gestellt.
+	</p>
+	<br clear="all">
+
+	<img src="./img/help/de/legendEntry.png" align="left" vspace="0"
+		hspace="20" alt="GeneralTabs">
+	<p>Ein Legendeneintrag besitzt im Header neben der Beschreibung
+		drei Schaltfl&auml;chen die folgende Aufgaben &uuml;bernehmen:
+	<ul>
+		<li>&Auml;nderung der Diagrammdarstellung</li>
+		<li>Extrainformationen &uuml;ber den Sensor</li>
+		<li>Entfernen aus der Diagrammansicht</li>
+	</ul>
+	<p>
+	Unter dem Header befinden Informationen und der der erste und letzte
+	Wert zur Zeitreihe. Ausserdem sind hier m&ouml;gliche Referenzwerte zur
+	Darstellung w&auml;hlbar.
+	</p>
+	<br clear="all">
+
+	<img src="./img/help/de/overviewMap.png" align="left" vspace="0"
+		hspace="20" alt="GeneralTabs">
+	<p>Die &Uuml;bersichtskarte liefert einen r&auml;umlichen &Uuml;berblick &uuml;ber alle
+		in der Diagrammbetrachtung befindlichen Zeitreihen.</p>
+	<br clear="all">
+
+	<div align="right">
+		<a href="#overview"><font size="1">Zur&uuml;ck zur
+				&Uuml;bersicht</font></a><br>
+	</div>
+	<hr>
+	<h4>
+		<b><a name="view_diagram">Diagram</a></b>
+	</h4>
+	<img src="./img/help/de/diagram.png" align="left" vspace="0"
+		hspace="20" alt="GeneralFunctions">
+	<p>
+		In der Diagramm-Ansicht werden die selektierten Zeitreihen als
+		Diagramm visualisiert. Unterhalb des eigentlichen Diagramms ist eine
+		&Uuml;bersichtszeitreihe eingeblendet. Durch Verschieben und anpassen des
+		grau dargestellten Auswahlbereichs, ist der Nutzer in der Lage, den
+		dargestellten Zeitraum seinen Anforderungen anzupassen. <br> &Uuml;ber
+		das Steuerelement in der linken oberen Ecke k&ouml;nnen Einstellungen zur
+		Zeitachse, sowie zur Diagrammdarstellung gemacht werden.
+	</p>
+	<br clear="all">
+
+	<div align="right">
+		<a href="#overview"><font size="1">Zur&uuml;ck zur
+				&Uuml;bersicht</font></a><br>
+	</div>
+	<hr>
+
+	<h4>
+		<b><a name="view_chooseTS">Zeitreihenwahl</a></b>
+	</h4>
+	<img src="./img/help/de/stationpicker.png" align="left" vspace="0"
+		hspace="20" alt="Stationpicker">
+	<p>Nach Auswahl eines Ph&auml;nomens auf der rechten Seite werden alle
+		Stationen auf der Karte dargestellt, die das gew&auml;hlte Ph&auml;nomen
+		beobachten. Durch die Selektion einer Station in der Karte &ouml;ffnet sich
+		auf der linke Seite ein Infofenster zu der Station mit der M&ouml;glichkeit
+		die Zeitreihe der selektierten Station in die Diagramm-Ansicht
+		einzuf&uuml;gen.</p>
+	<br clear="all">
+
+	<div align="right">
+		<a href="#overview"><font size="1">Zur&uuml;ck zur
+				&Uuml;bersicht</font></a><br>
+	</div>
+
+
+</BODY>
+</HTML>

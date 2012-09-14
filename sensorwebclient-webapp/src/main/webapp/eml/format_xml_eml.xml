@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SimplePattern inputName="BAW_META" patternID="BAW_META">
+  <SelectFunctions>
+    <SelectFunction newEventName="BAW_META">
+      <NotifyOnSelect>
+        <Message>
+        	<format>SES_OUTPUT</format>
+        	<userID></userID>
+		</Message>
+      </NotifyOnSelect>
+    </SelectFunction>
+  </SelectFunctions>
+  <PropertyRestrictions>
+    <PropertyRestriction>
+      <name>observedProperty</name>
+      <value>THIS_OBS_PROP_DOES_NOT_EXIST</value>
+    </PropertyRestriction>
+  </PropertyRestrictions>
+</SimplePattern>
