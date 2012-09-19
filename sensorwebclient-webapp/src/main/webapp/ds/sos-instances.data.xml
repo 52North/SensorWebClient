@@ -17,6 +17,7 @@
 		<llEasting>5</llEasting>
 		<llNorthing>46.00</llNorthing>
 		<urEasting>16</urEasting>
+		<urNorthing>56.0</urNorthing>
 		<defaultZoom>13</defaultZoom>
 	</instance>
 	<instance>
@@ -48,10 +49,10 @@
 		</adapter>
 		<requestChunk>300</requestChunk>
 		<autoZoom>false</autoZoom>
-		<llEasting>3.8</llEasting>
-		<llNorthing>50.00</llNorthing>
-		<urEasting>5.2</urEasting>
-		<urNorthing>51.35</urNorthing>
+		<llEasting>2.4</llEasting>
+		<llNorthing>49.3</llNorthing>
+		<urEasting>6.5</urEasting>
+		<urNorthing>51.6</urNorthing>
 		<defaultZoom>11</defaultZoom>
 	</instance>
 	<instance>
