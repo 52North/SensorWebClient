@@ -26,7 +26,6 @@ package org.n52.server.ses.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.n52.client.service.SesUserService;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.service.SesUserServiceImpl;
 import org.n52.shared.responses.SesClientResponse;

@@ -35,7 +35,6 @@ import net.opengis.ows.x11.ExceptionType;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;

@@ -73,8 +73,6 @@ import org.n52.oxf.xmlbeans.parser.XMLBeansParser;
 import org.n52.oxf.xmlbeans.parser.XMLHandlingException;
 import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.crs.AReferencingFacade;
-import org.n52.server.oxf.util.crs.ReferencingFacade;
-import org.n52.server.oxf.util.crs.ReferencingMockupFacade;
 import org.n52.server.oxf.util.parser.utils.ParsedPoint;
 import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.slf4j.Logger;

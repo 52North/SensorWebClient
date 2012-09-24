@@ -23,14 +23,7 @@
  */
 package org.n52.server.ses.hibernate;
 
-import java.util.Iterator;
-
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.n52.server.ses.service.SesRulesServiceImpl;
-import org.n52.shared.serializable.pojos.Sensor;
-import org.n52.shared.serializable.pojos.Subscription;
-import org.n52.shared.serializable.pojos.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,16 +68,16 @@ public class HibernateTest {
      * Gets the users.
      * 
      */
-    private static void getUsers() {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        session.beginTransaction();
-        Query query = session.createQuery(" from User user"); //$NON-NLS-1$
-        for (Iterator<?> iterator = query.iterate(); iterator.hasNext();) {
-            User user = (User) iterator.next();
-            LOGGER.info(user.getName() + user.getBasicRules() + user.getComplexRules());
-        }
-        session.getTransaction().commit();
-    }
+//    private static void getUsers() {
+//        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+//        session.beginTransaction();
+//        Query query = session.createQuery(" from User user"); //$NON-NLS-1$
+//        for (Iterator<?> iterator = query.iterate(); iterator.hasNext();) {
+//            User user = (User) iterator.next();
+//            LOGGER.info(user.getName() + user.getBasicRules() + user.getComplexRules());
+//        }
+//        session.getTransaction().commit();
+//    }
 
     /**
      * Adds the complex rule.
@@ -122,12 +115,12 @@ public class HibernateTest {
      * @param subscription
      *            the subscription
      */
-    private static void addSubscription(Subscription subscription) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        session.beginTransaction();
-        session.saveOrUpdate(subscription);
-        session.getTransaction().commit();
-    }
+//    private static void addSubscription(Subscription subscription) {
+//        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+//        session.beginTransaction();
+//        session.saveOrUpdate(subscription);
+//        session.getTransaction().commit();
+//    }
 
     /**
      * Adds the sensor.
@@ -135,12 +128,12 @@ public class HibernateTest {
      * @param sensor
      *            the sensor
      */
-    private static void addSensor(Sensor sensor) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        session.beginTransaction();
-        session.saveOrUpdate(sensor);
-        session.getTransaction().commit();
-    }
+//    private static void addSensor(Sensor sensor) {
+//        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+//        session.beginTransaction();
+//        session.saveOrUpdate(sensor);
+//        session.getTransaction().commit();
+//    }
 
     /**
      * Adds the user.
@@ -148,11 +141,11 @@ public class HibernateTest {
      * @param user
      *            the user
      */
-    private static void addUser(User user) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        session.beginTransaction();
-        session.saveOrUpdate(user);
-        session.getTransaction().commit();
-    }
+//    private static void addUser(User user) {
+//        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+//        session.beginTransaction();
+//        session.saveOrUpdate(user);
+//        session.getTransaction().commit();
+//    }
 
 }

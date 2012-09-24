@@ -25,7 +25,6 @@ package org.n52.shared.serializable.pojos;
 
 import java.io.Serializable;
 
-import com.google.gwt.user.client.ui.ListBox;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
 
 /**

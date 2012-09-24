@@ -30,12 +30,10 @@ import java.util.Iterator;
 import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.n52.client.control.I18N;
 import org.n52.client.control.PropertiesManager;
-import org.n52.client.control.service.SesController;
 import org.n52.client.eventBus.events.dataEvents.sos.ExportEvent.ExportType;
 import org.n52.client.view.View;
 import org.n52.client.view.gui.Impressum;
 import org.n52.client.view.gui.elements.interfaces.LegendElement;
-import org.n52.client.view.gui.widgets.Toaster;
 import org.n52.client.view.gui.widgets.buttons.ImageButton;
 import org.n52.client.view.gui.widgets.stationPicker.StationPicker;
 
@@ -69,8 +67,6 @@ public class Legend extends VLayout {
     private String elemID;
 
     private HLayout topButtons;
-
-    private String url;
 
     private Label exportButton;
     
