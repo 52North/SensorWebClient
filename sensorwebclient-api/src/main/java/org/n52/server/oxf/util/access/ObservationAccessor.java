@@ -33,6 +33,7 @@ import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_RESPONS
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_RESULT_MODEL_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_SERVICE_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_VERSION_PARAMETER;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_TEMPORAL_FILTER_PARAMETER;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -58,6 +59,7 @@ import org.n52.oxf.valueDomains.time.TemporalValueDomain;
 import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.access.oxfExtensions.SOSRequestBuilderFactory_OXFExtension;
 import org.n52.server.oxf.util.generator.RequestConfig;
+import org.n52.shared.Constants;
 import org.n52.shared.exceptions.TimeoutException;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
@@ -159,12 +161,24 @@ public class ObservationAccessor {
             // Parameter.COMMON_NAME_TIME);
         }
         else {
-            Parameter timeParam = new Parameter(GET_OBSERVATION_EVENT_TIME_PARAMETER,
-                                                true,
-                                                new TemporalValueDomain(request.getTime()),
-                                                Parameter.COMMON_NAME_TIME);
-            ParameterShell timeParamShell = new ParameterShell(timeParam, request.getTime());
-            params.addParameterShell(timeParamShell);
+			if (sosVersion.equals(Constants.SOS_VERSION_100)) {
+				Parameter timeParam = new Parameter(
+						GET_OBSERVATION_EVENT_TIME_PARAMETER, true,
+						new TemporalValueDomain(request.getTime()),
+						Parameter.COMMON_NAME_TIME);
+				ParameterShell timeParamShell = new ParameterShell(timeParam,
+						request.getTime());
+				params.addParameterShell(timeParamShell);
+			}
+			else if (sosVersion.equals(Constants.SOS_VERSION_200)) {
+				Parameter timeParam = new Parameter(
+						GET_OBSERVATION_TEMPORAL_FILTER_PARAMETER, true,
+						new TemporalValueDomain(request.getTime()),
+						Parameter.COMMON_NAME_TIME);
+				ParameterShell timeParamShell = new ParameterShell(timeParam,
+						request.getTime());
+				params.addParameterShell(timeParamShell);
+			}
         }
 
         if (waterML) {
