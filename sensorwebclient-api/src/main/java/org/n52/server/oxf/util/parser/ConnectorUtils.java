@@ -113,6 +113,7 @@ public class ConnectorUtils {
             Log.error("Cannot cast SOSMetadata", e);
         }
         if (metadata != null) {
+        	metadata.setTitle(title);
             metadata.setSensorMLVersion(smlVersion);
             metadata.setSosVersion(sosVersion);
             metadata.setOmVersion(omFormat);

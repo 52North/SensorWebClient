@@ -289,6 +289,10 @@ public class SOSMetadata extends ServiceMetadata {
         return this.title;
     }
     
+    public void setTitle(String title) {
+		this.title = title;
+	}
+    
     public String getConfiguredItemName() {
         return configuredItemName;
     }

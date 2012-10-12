@@ -77,6 +77,9 @@ public class SOSAdapterByGET extends SOSAdapter {
         InputStream inputStream = null;
         try {
             String requestString = buildRequest(operation, parameters);
+            if (requestString == null) {
+				throw new OXFException("No supported request!");
+			}
             String serviceUrl = getFirstDcpOnlineResourceForGET(operation).getHref();
             serviceUrl = fixServiceUrl(operation, serviceUrl);
             LOGGER.debug("Built GET request string: {}", requestString);
@@ -84,7 +87,6 @@ public class SOSAdapterByGET extends SOSAdapter {
             method.setQueryString(requestString);
             responseStream = IOHelper.execute(method).getResponseBodyAsStream();
             String responseString = inputStreamToString(responseStream);
-
             XmlObject response = parseToXmlObject(responseString);
             OperationResult result = new OperationResult(response.newInputStream(), parameters, requestString);
             checkForExceptionReport(result, response);

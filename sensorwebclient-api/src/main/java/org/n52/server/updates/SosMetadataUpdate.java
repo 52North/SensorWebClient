@@ -98,7 +98,7 @@ public class SosMetadataUpdate {
         if (url.startsWith("http://")) {
             url = url.substring("http://".length());
         }
-        return url.replaceAll("/", "_");
+        return url.replaceAll("/", "_").replaceAll("\\?", "_");
     }
 
     private static boolean isCacheAvailable(File file) {
