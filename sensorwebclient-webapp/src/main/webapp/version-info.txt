@@ -2,6 +2,7 @@ General Infos:
 ==============
 project = 52North Sensor Web Client (${artifactId})
 version = ${project.version}
+oxf-version = ${oxf.version}
 builddate = ${timestamp}
 
 Subversion Infos:
