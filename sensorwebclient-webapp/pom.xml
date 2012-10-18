@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.n52.sensorweb</groupId>
 		<artifactId>sensorwebclient</artifactId>
-		<version>3.1.0-SNAPSHOT</version>
+		<version>3.1.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>sensorwebclient-webapp</artifactId>
 	<packaging>war</packaging>
@@ -111,6 +111,15 @@
 				<dependency>
 					<groupId>org.n52.sensorweb</groupId>
 					<artifactId>sensorwebclient-grdc</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>connector-hydro</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.n52.sensorweb</groupId>
+					<artifactId>sensorwebclient-hydro</artifactId>
 				</dependency>
 			</dependencies>
 		</profile>

@@ -8,7 +8,7 @@
 	</parent>
 	<groupId>org.n52.sensorweb</groupId>
 	<artifactId>sensorwebclient</artifactId>
-	<version>3.1.0-SNAPSHOT</version>
+	<version>3.1.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>52North Sensor Web Client</name>
 	<url>http://52north.org/communities/sensorweb/</url>
@@ -27,6 +27,7 @@
 		<module>xml-pdf-format</module>
 		<module>restful-timeseries-webapp</module>
 		<module>sensorwebclient-webapp</module>
+		<module>sensorwebclient-hydro</module>
 	</modules>
 
 	<dependencyManagement>
@@ -509,6 +510,22 @@
 			</dependencyManagement>
 		</profile>
 		<profile>
+			<id>connector-hydro</id>
+			<modules>
+				<module>sensorwebclient-hydro</module>
+			</modules>
+			<dependencyManagement>
+				<dependencies>
+					<dependency>
+						<groupId>org.n52.sensorweb</groupId>
+						<artifactId>sensorwebclient-hydro</artifactId>
+						<version>${project.version}</version>
+						<scope>runtime</scope>
+					</dependency>
+				</dependencies>
+			</dependencyManagement>
+		</profile>
+		<profile>
 			<id>release</id>
 			<!-- a profile wich shall be activated if a release is performed -->
 			<build>
@@ -646,6 +663,12 @@
 						<version>${project.version}</version>
 						<scope>provided</scope>
 					</dependency>
+					<dependency>
+						<groupId>org.n52.sensorweb</groupId>
+						<artifactId>sensorwebclient-hydro</artifactId>
+						<version>${project.version}</version>
+						<scope>provided</scope>
+					</dependency>
 				</dependencies>
 			</dependencyManagement>
 		</profile>
@@ -654,7 +677,7 @@
 	<properties>
 		<dev.mode>false</dev.mode>
 		<gwt.version>2.4.0</gwt.version>
-		<oxf.version>1.12</oxf.version>
+		<oxf.version>2.0.0-SNAPSHOT</oxf.version>
 		<smartgwt.version>3.0</smartgwt.version>
 		<geotools.version>2.7.3</geotools.version>
 		<hibernate.version>3.5.0-Final</hibernate.version>
