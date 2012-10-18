@@ -27,7 +27,7 @@
 			org.n52.server.service.rpc.RpcTimeSeriesDataServlet
 		</servlet-class>
 		<load-on-startup>2</load-on-startup>
-	</servlet>
+	</servlet> 
 	<servlet-mapping>
 		<servlet-name>TimeSeriesDataService</servlet-name>
 		<url-pattern>/client/TimeSeriesDataService</url-pattern>
