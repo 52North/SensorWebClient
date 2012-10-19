@@ -64,11 +64,13 @@ import net.opengis.swes.x20.DescribeSensorResponseType;
 import net.opengis.swes.x20.DescribeSensorResponseType.Description;
 import net.opengis.swes.x20.SensorDescriptionType.Data;
 
+import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.util.IOHelper;
 import org.n52.oxf.util.JavaHelper;
+import org.n52.oxf.xml.XMLTools;
 import org.n52.oxf.xmlbeans.parser.XMLBeansParser;
 import org.n52.oxf.xmlbeans.parser.XMLHandlingException;
 import org.n52.server.oxf.util.ConfigurationContext;
@@ -624,10 +626,41 @@ public class DescribeSensorParser {
                     smlDoc = SensorMLDocument.Factory.newInstance();
                     Member member = smlDoc.addNewSensorML().addNewMember();
                     Data dataDescription = description.getSensorDescription().getData();
+
+                    String namespace = "declare namespace gml='http://www.opengis.net/gml'; ";
+                    for (XmlObject xml : dataDescription.selectPath(namespace + "$this//*/@gml:id")) {
+                        XmlCursor cursor = xml.newCursor();
+                        String gmlId = cursor.getTextValue();
+                        if (!XMLTools.isNCName(gmlId)) {
+                            cursor.setTextValue(normalizeGmlId(gmlId));
+                        }
+                    }
+                    
                     member.set(XMLBeansParser.parse(dataDescription.newInputStream()));
                     break;
                 }
             }
 		}
+    }
+
+    private String normalizeGmlId(String invalidGmlId) {
+        StringBuilder sb = new StringBuilder();
+        
+        // Check first character
+        char c = invalidGmlId.charAt(0);
+        if (! (c == '_' && XMLTools.isLetter(c))) {
+            sb.append('_');
+        }
+        // Check the rest of the characters
+        for (int i = 1; i < invalidGmlId.length(); i++) {
+            char currentChar = invalidGmlId.charAt(i);
+            if (XMLTools.isNCNameChar(currentChar)) {
+                sb.append(currentChar);
+            } else {
+                sb.append('_');
+            }
+        }
+
+        return sb.toString();
     }
 }

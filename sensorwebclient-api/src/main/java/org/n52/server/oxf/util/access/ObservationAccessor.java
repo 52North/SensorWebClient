@@ -36,6 +36,7 @@ import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_VERSION
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_TEMPORAL_FILTER_PARAMETER;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,26 +79,20 @@ public class ObservationAccessor {
             InterruptedException,
             OXFRuntimeException,
             TimeoutException,
-            ExecutionException,
-            Exception {
+            ExecutionException
+            {
 
         Map<String, OXFFeatureCollection> entireCollMap = new HashMap<String, OXFFeatureCollection>();
 
         for (RequestConfig request : requests) {
-            SOSMetadata metadata = ConfigurationContext.getSOSMetadata(request.getSosURL());
+            String sosUrl = request.getSosURL();
+            SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosUrl);
             String sosVersion = metadata.getSosVersion();
             boolean waterML = metadata.isWaterML();
 
-            ParameterContainer paramCon = createParameterContainer(request, sosVersion, waterML);
-            Operation operation = new Operation(SOSAdapter.GET_OBSERVATION,
-                                                request.getSosURL() + "?",
-                                                request.getSosURL());
-            ISOSRequestBuilder requestBuilder = SOSRequestBuilderFactory_OXFExtension.generateRequestBuilder(sosVersion);
-            Class<SOSAdapter> adapterClass = (Class<SOSAdapter>) Class.forName(metadata.getAdapter());
-            Constructor<SOSAdapter> constructor = adapterClass.getConstructor(new Class[]{String.class, ISOSRequestBuilder.class});
-            SOSAdapter adapter = constructor.newInstance(sosVersion, requestBuilder);
-
-            OperationAccessor callable = new OperationAccessor(adapter, operation, paramCon);
+            ParameterContainer paramters = createParameterContainer(request, sosVersion, waterML);
+            Operation operation = new Operation(SOSAdapter.GET_OBSERVATION, sosUrl + "?", sosUrl);
+            OperationAccessor callable = new OperationAccessor(createSosAdapter(metadata), operation, paramters);
             FutureTask<OperationResult> task = new FutureTask<OperationResult>(callable);
             AccessorThreadPool.execute(task);
 
@@ -107,7 +102,7 @@ public class ObservationAccessor {
                 SOSObservationStore featureStore = new SOSObservationStore(opResult);
                 featureColl = featureStore.unmarshalFeatures();
                 // put the received observations into the observationCollMap:
-                String key = request.getOfferingID() + "@" + request.getSosURL();
+                String key = request.getOfferingID() + "@" + sosUrl;
                 if (featureColl != null) {
                     LOGGER.debug("Received " + featureColl.size() + " observations for " + key + " (WaterML format: "
                             + waterML + ")");
@@ -123,11 +118,32 @@ public class ObservationAccessor {
             catch (java.util.concurrent.TimeoutException e) {
                 throw new TimeoutException("Service did not respond in time", e);
             }
-            catch (Exception e) {
-                LOGGER.error("Received unexpected result: ", e);
-            }
         }
         return entireCollMap;
+    }
+
+    private SOSAdapter createSosAdapter(SOSMetadata metadata) {
+        try {
+            ISOSRequestBuilder requestBuilder = SOSRequestBuilderFactory_OXFExtension.generateRequestBuilder(metadata.getSosVersion());
+            Class<SOSAdapter> adapterClass = (Class<SOSAdapter>) Class.forName(metadata.getAdapter());
+            Constructor<SOSAdapter> constructor = adapterClass.getConstructor(new Class[]{String.class, ISOSRequestBuilder.class});
+            SOSAdapter adapter = constructor.newInstance(metadata.getSosVersion(), requestBuilder);
+            return adapter;
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Could not find Adapter class.", e);
+        }
+        catch (NoSuchMethodException e) {
+            throw new RuntimeException("Invalid Adapter constructor. ", e);
+        }
+        catch (InstantiationException e) {
+            throw new RuntimeException("Could not create Adapter.", e);
+        }
+        catch (IllegalAccessException e) {
+            throw new RuntimeException("Not allowed to create Adapter.", e);
+        }
+        catch (InvocationTargetException e) {
+            throw new RuntimeException("Instantiation of Adapter failed.", e);
+        }
     }
 
     /**

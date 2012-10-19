@@ -33,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -188,7 +189,7 @@ public abstract class Generator {
 
     private Map<String, OXFFeatureCollection> sendRequest(DesignOptions options, ITime time) throws OXFException {
         List<RequestConfig> requests = createRequestList(options, time);
-        Map<String, OXFFeatureCollection> result = null;
+        Map<String, OXFFeatureCollection> result = new HashMap<String, OXFFeatureCollection>();
         try {
             result = new ObservationAccessor().sendRequests(requests);
         } catch (OXFRuntimeException e) {

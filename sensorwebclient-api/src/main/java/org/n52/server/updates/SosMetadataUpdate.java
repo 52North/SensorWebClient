@@ -70,7 +70,12 @@ public class SosMetadataUpdate {
         if (ConfigurationContext.USE_DEVEL_CACHING) {
             File cache = getCacheTarget(serviceUrl);
             if (isCacheAvailable(cache)) {
-                loadMetadataFromCache(cache);
+                try {
+                    loadMetadataFromCache(cache);
+                } catch (IOException e) {
+                    cache.delete();
+                    cacheMetadata(cache, serviceUrl);
+                }
             }
             else {
                 prepareCacheTargetDirectory();

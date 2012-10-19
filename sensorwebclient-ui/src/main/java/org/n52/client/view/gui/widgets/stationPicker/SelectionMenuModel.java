@@ -31,7 +31,6 @@ import org.n52.shared.data.SOSDataSource;
 import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
@@ -60,12 +59,14 @@ public class SelectionMenuModel {
 			protected Canvas getExpansionComponent(ListGridRecord record) {
 				String serviceURL = getServiceURLFromRecord(record);
 				if (expansionComponents.containsKey(serviceURL)) {
-					return expansionComponents.get(serviceURL);
+					DynamicForm dynamicForm = expansionComponents.get(serviceURL);
+					dynamicForm.setWidth100();
+                    return dynamicForm;
 				}
 				DynamicForm form = new DynamicForm();
 				expansionComponents.put(serviceURL, form);
-				FormItem radio = parent.getPhenomenonsSelectionGroup(serviceURL);
-				form.setItems(radio);
+				form.setItems(parent.createFilterCategorySelectionGroup(serviceURL));
+				form.setWidth100();
 				return form;
 			}
 			

@@ -23,8 +23,8 @@
  */
 package org.n52.client.control;
 
-import org.n52.client.constants.SOSClientI18N;
-import org.n52.client.constants.SESClientI18N;
+import org.n52.client.i18n.SESClientI18N;
+import org.n52.client.i18n.SOSClientI18N;
 
 import com.google.gwt.core.client.GWT;
 

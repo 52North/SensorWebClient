@@ -72,16 +72,16 @@ public class StationPickerController implements MapController {
 
     private StationPicker stationPicker;
 
-    private String selectedServiceURL;
+    private String selectedServiceUrl;
 
-    private Map<String, String> selectedPhenomenonByServiceURL;
+    private Map<String, String> selectedStationFilterByServiceUrl;
 
     private Station selectedStation;
 
     public StationPickerController() {
         map = new StationPickerMap(this);
         new StationPickerControllerEventBroker(this);
-        this.selectedPhenomenonByServiceURL = new HashMap<String, String>();
+        this.selectedStationFilterByServiceUrl = new HashMap<String, String>();
     }
 
     void setStationPicker(StationPicker stationPicker) {
@@ -93,23 +93,25 @@ public class StationPickerController implements MapController {
     }
 
     public void updateMapContent() {
-        if (selectedServiceURL != null) {
+        if (selectedServiceUrl != null) {
             GWT.log("update procedures in map");
             map.updateStations(getCurrentMetadata());
         }
     }
 
-    void updatePhenomenonSelector() {
-        if (selectedServiceURL != null) {
+    void updateStationFilter() {
+        if (selectedServiceUrl != null) {
             GWT.log("update phenomenon selector");
-            stationPicker.updatePhenomenonSelector(getCurrentMetadata());
-            stationPicker.setSelectedPhenomenon(selectedServiceURL, selectedPhenomenonByServiceURL.get(selectedServiceURL));
+            stationPicker.updateStationFilters(getCurrentMetadata());
+            String filter = selectedStationFilterByServiceUrl.get(selectedServiceUrl);
+            stationPicker.setSelectedFilter(selectedServiceUrl, filter);
         }
     }
 
-    void updateContentUponPhenomenonSelection() {
-        if (this.selectedServiceURL != null && this.selectedPhenomenonByServiceURL.get(selectedServiceURL) != null) {
-            map.applyPhenomenonFilterToProceduresOnMap(this.selectedPhenomenonByServiceURL.get(selectedServiceURL));
+    void updateContentUponStationFilter() {
+        String filter = selectedStationFilterByServiceUrl.get(selectedServiceUrl);
+        if (selectedServiceUrl != null && filter != null) {
+            map.applyFilterToStationsOnMap(filter);
         }
     }
 
@@ -146,22 +148,22 @@ public class StationPickerController implements MapController {
     }
 
     public void handleInfoMarkerClicked(InfoMarker infoMarker) {
-        if (selectedServiceURL == null || this.selectedPhenomenonByServiceURL.get(selectedServiceURL) == null) {
+        if (isSelectionRequired()) {
             // TODO inform user to first select a phenomenon from radio buttons
             return;
         }
 
         selectedStation = infoMarker.getStation();
 
-        GetProcedureEvent getProcEvent = new GetProcedureEvent(selectedServiceURL, selectedStation.getProcedure());
+        GetProcedureEvent getProcEvent = new GetProcedureEvent(selectedServiceUrl, selectedStation.getProcedure());
         EventBus.getMainEventBus().fireEvent(getProcEvent);
-        GetOfferingEvent getOffEvent = new GetOfferingEvent(selectedServiceURL, selectedStation.getOffering());
+        GetOfferingEvent getOffEvent = new GetOfferingEvent(selectedServiceUrl, selectedStation.getOffering());
         EventBus.getMainEventBus().fireEvent(getOffEvent);
-        GetFeatureEvent getFoiEvent = new GetFeatureEvent(selectedServiceURL, selectedStation.getFeature());
+        GetFeatureEvent getFoiEvent = new GetFeatureEvent(selectedServiceUrl, selectedStation.getFeature());
         EventBus.getMainEventBus().fireEvent(getFoiEvent);
 
         // Get procedure details
-        GetProcedureDetailsUrlEvent getProcDetailsEvent = new GetProcedureDetailsUrlEvent(selectedServiceURL,
+        GetProcedureDetailsUrlEvent getProcDetailsEvent = new GetProcedureDetailsUrlEvent(selectedServiceUrl,
                                                                                           selectedStation.getProcedure());
         EventBus.getMainEventBus().fireEvent(getProcDetailsEvent);
 
@@ -171,26 +173,30 @@ public class StationPickerController implements MapController {
         stationPicker.showInfoWindow(infoMarker);
     }
 
+    private boolean isSelectionRequired() {
+        return selectedServiceUrl == null || selectedStationFilterByServiceUrl.get(selectedServiceUrl) == null;
+    }
+
     void clearMarkerSelection() {
         map.unmarkAllMarkers();
     }
 
     public void setSelectedServiceURL(String serviceURL) {
-        this.selectedServiceURL = serviceURL;
+        this.selectedServiceUrl = serviceURL;
     }
 
-    public void setSelectedPhenomenon(String phenomenonId) {
-        if (this.selectedServiceURL != null) {
-            this.selectedPhenomenonByServiceURL.put(this.selectedServiceURL, phenomenonId);
+    public void setStationFilter(String stationFilter) {
+        if (selectedServiceUrl != null) {
+            selectedStationFilterByServiceUrl.put(selectedServiceUrl, stationFilter);
         }
     }
 
     public String getSelectedServiceURL() {
-        return selectedServiceURL;
+        return selectedServiceUrl;
     }
 
-    public String getSelectedPhenomenonId() {
-        return selectedPhenomenonByServiceURL.get(selectedServiceURL);
+    public String getSelectedStationFilter() {
+        return selectedStationFilterByServiceUrl.get(selectedServiceUrl);
     }
 
     public String getSelectedProcedureId() {
@@ -210,7 +216,7 @@ public class StationPickerController implements MapController {
     }
 
     public Phenomenon getSelectedPhenomenon() {
-        return getCurrentMetadata().getPhenomenon(getSelectedPhenomenonId());
+        return getCurrentMetadata().getPhenomenon(getSelectedStationFilter());
     }
 
     public FeatureOfInterest getSelectedFeature() {
@@ -222,7 +228,7 @@ public class StationPickerController implements MapController {
     }
 
     public SOSMetadata getCurrentMetadata() {
-        return DataManagerSosImpl.getInst().getServiceMetadata(selectedServiceURL);
+        return DataManagerSosImpl.getInst().getServiceMetadata(selectedServiceUrl);
     }
 
     private class StationPickerControllerEventBroker implements
@@ -255,7 +261,6 @@ public class StationPickerController implements MapController {
                 Collection<Phenomenon> phenomenons = metadata.getPhenomenons();
                 GWT.log("#" + phenomenons.size() + " new Phenomenons");
             }
-            controller.updatePhenomenonSelector();
         }
 
         @Override
@@ -268,6 +273,7 @@ public class StationPickerController implements MapController {
             }
             controller.updateMapContent();
             controller.zoomToConfiguredExtent();
+            controller.updateStationFilter();
         }
 
         @Override
@@ -287,14 +293,14 @@ public class StationPickerController implements MapController {
 
         @Override
         public void onAddMarker(AddMarkerEvent evt) {
-            if (selectedPhenomenonByServiceURL.get(selectedServiceURL) == null) {
-                String mostCommonPhenomenon = getMostCommonPhenomenon(evt.getStations());
-                if (mostCommonPhenomenon != null) {
-                    controller.setSelectedPhenomenon(mostCommonPhenomenon);
-                    stationPicker.setSelectedPhenomenon(selectedServiceURL, mostCommonPhenomenon);
+            if (selectedStationFilterByServiceUrl.get(selectedServiceUrl) == null) {
+                String filterCategory = getMostCommonStationCategory(evt.getStations());
+                if (filterCategory != null) {
+                    controller.setStationFilter(filterCategory);
+                    stationPicker.setSelectedFilter(selectedServiceUrl, filterCategory);
                 }
             }
-            controller.updateContentUponPhenomenonSelection();
+            controller.updateContentUponStationFilter();
         }
 
         @Override
@@ -309,36 +315,33 @@ public class StationPickerController implements MapController {
     }
 
     /**
-     * The most common used phenomenon in the Service.
-     * 
-     * @param procedures
-     * 
-     * @return
+     * @param stations the stations determine most common category
+     * @return The category most commonly used by all stations.
      */
-    public String getMostCommonPhenomenon(List<Station> stations) {
-        Map<String, Integer> phenomenonsCounter = new HashMap<String, Integer>();
-        String mostCommonPhenomenon = null;
-        int mostCommonCounter = 0;
+    public String getMostCommonStationCategory(List<Station> stations) {
+        Map<String, Integer> countResults = new HashMap<String, Integer>();
         for (Station station : stations) {
-            countPhenomenonUp(phenomenonsCounter, station.getPhenomenon());
+            increaseAmountOf(station.getStationCategory(), countResults);
         }
-        for (Entry<String, Integer> phenomsCounterEntry : phenomenonsCounter.entrySet()) {
-            Integer count = phenomsCounterEntry.getValue();
-            if (count >= mostCommonCounter) {
-                mostCommonPhenomenon = phenomsCounterEntry.getKey();
-                mostCommonCounter = count;
+        int maxCount = 0;
+        String mostCommonCategory = null;
+        for (Entry<String, Integer> currentValue : countResults.entrySet()) {
+            Integer count = currentValue.getValue();
+            if (count > maxCount) {
+                mostCommonCategory = currentValue.getKey();
+                maxCount = count;
             }
         }
-        return mostCommonPhenomenon;
+        return mostCommonCategory;
     }
 
-    private void countPhenomenonUp(Map<String, Integer> phenomenonsCounter, String phenomenon) {
-        if (phenomenonsCounter.containsKey(phenomenon)) {
-            Integer counter = phenomenonsCounter.get(phenomenon);
-            phenomenonsCounter.put(phenomenon, ++counter);
+    private void increaseAmountOf(String category, Map<String, Integer> countResults) {
+        if (countResults.containsKey(category)) {
+            Integer counter = countResults.get(category);
+            countResults.put(category, ++counter);
         }
         else {
-            phenomenonsCounter.put(phenomenon, 1);
+            countResults.put(category, 1);
         }
     }
 

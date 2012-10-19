@@ -84,7 +84,7 @@ public class StationPicker extends Window {
     
 	private Layout guiContent;
 
-	private Map<String, RadioGroupItem> phenomenonsSelectors;
+	private Map<String, RadioGroupItem> stationFilterGroups;
 	
 	private Label phenomenonInfoLabel;
 	
@@ -115,7 +115,7 @@ public class StationPicker extends Window {
     }
 
     private StationPicker(StationPickerController controller) {
-    	phenomenonsSelectors = new HashMap<String, RadioGroupItem>();
+    	stationFilterGroups = new HashMap<String, RadioGroupItem>();
     	controller.setStationPicker(this);
         initializeWindow();
         initializeContent();
@@ -176,7 +176,7 @@ public class StationPicker extends Window {
 	}
 
 	private Canvas createSelectionMenuButton() {
-    	showSelectionMenuButton = new Label(I18N.sosClient.choosePhenomenon());
+    	showSelectionMenuButton = new Label(I18N.sosClient.chooseDataSource());
     	showSelectionMenuButton.setStyleName("sensorweb_client_legendbuttonPrimary");
     	showSelectionMenuButton.setZIndex(1000000);
     	showSelectionMenuButton.setAutoHeight();
@@ -254,12 +254,12 @@ public class StationPicker extends Window {
     	return controller.createMap();
     }
     
-    FormItem getPhenomenonsSelectionGroup(String serviceURL) {
-		if (phenomenonsSelectors.containsKey(serviceURL)) {
-			RadioGroupItem selector = phenomenonsSelectors.get(serviceURL);
+    FormItem createFilterCategorySelectionGroup(String serviceUrl) {
+		if (stationFilterGroups.containsKey(serviceUrl)) {
+			RadioGroupItem selector = stationFilterGroups.get(serviceUrl);
 			return selector;
 		}
-		RadioGroupItem radioGroup = new RadioGroupItem(serviceURL);
+		RadioGroupItem radioGroup = new RadioGroupItem(serviceUrl);
 		radioGroup.setShowTitle(false);
 		radioGroup.addChangedHandler(new ChangedHandler() {
 			@Override
@@ -267,13 +267,13 @@ public class StationPicker extends Window {
 				Object value = event.getValue();
 				if (value != null) {
 					hideInfoWindow();
-					controller.setSelectedPhenomenon(value.toString());
-					controller.updateContentUponPhenomenonSelection();
+					controller.setStationFilter(value.toString());
+					controller.updateContentUponStationFilter();
 				}
 			}
 		});
 
-		phenomenonsSelectors.put(serviceURL, radioGroup);
+		stationFilterGroups.put(serviceUrl, radioGroup);
 		return radioGroup;
 	}
 
@@ -328,18 +328,20 @@ public class StationPicker extends Window {
 
 	private void loadTimeSeries() {
 		final SOSMetadata metadata = controller.getCurrentMetadata();
-		final String offeringId = controller.getSelectedOfferingId();
-		final String featureId = controller.getSelectedFeatureId();
-		final String procedureId = controller.getSelectedProcedureId();
-		final String phenomenonId = controller.getSelectedPhenomenonId();
-		final String selectedServiceURL = controller.getSelectedServiceURL();
+        final String selectedServiceURL = controller.getSelectedServiceURL();
+		final Station station = controller.getSelectedStation();
+		
+		final String offeringId = station.getOffering();
+		final String featureId = station.getFeature();
+		final String procedureId = station.getProcedure();
+		final String phenomenonId = station.getPhenomenon();
 		
 		Offering offering = metadata.getOffering(offeringId);
 		FeatureOfInterest feature = metadata.getFeature(featureId);
 		Phenomenon phenomenon = metadata.getPhenomenon(phenomenonId);
 		Procedure procedure = metadata.getProcedure(procedureId);
-		Station station = controller.getSelectedStation();
 		
+		// TODO delegate just Station
 		NewTimeSeriesEvent event = new NewTimeSeriesEvent.Builder(selectedServiceURL)
 				.addStation(station)
 				.addOffering(offering)
@@ -366,25 +368,27 @@ public class StationPicker extends Window {
 		procedureDetailsHTMLPane.hide();
 	}
 	
-	public void updatePhenomenonSelector(final SOSMetadata currentMetadata) {
+	public void updateStationFilters(final SOSMetadata currentMetadata) {
 		hideInfoWindow();
-		Map<String, String> sortedPhenomenons = getAlphabeticallySortedMap();
-		for (Phenomenon phenomenon : currentMetadata.getPhenomenons()) {
-			sortedPhenomenons.put(phenomenon.getId(), phenomenon.getLabel());
+		Map<String, String> sortedCategories = getAlphabeticallySortedMap();
+		for (Station station : currentMetadata.getStations()) {
+//		    Phenomenon phenomenon = currentMetadata.getPhenomenon(station.getPhenomenon());
+//          sortedPhenomenons.put(phenonmenon.getId(), phenomenon.getLabel());
+			sortedCategories.put(station.getStationCategory(), station.getStationCategory());
 		}
-		String serviceURL = currentMetadata.getId();
-		RadioGroupItem selector = phenomenonsSelectors.get(serviceURL);
-		LinkedHashMap<String, String> phenomenons = new LinkedHashMap<String, String>(sortedPhenomenons);
-		selector.setValueMap(phenomenons);
+		String serviceUrl = currentMetadata.getId();
+		RadioGroupItem selector = stationFilterGroups.get(serviceUrl);
+		LinkedHashMap<String, String> categories = new LinkedHashMap<String, String>(sortedCategories);
+		selector.setValueMap(categories);
 	}
 	
-	public void setSelectedPhenomenon(String serviceURL, String phenomenonName) {
-		RadioGroupItem selector = phenomenonsSelectors.get(serviceURL);
+	public void setSelectedFilter(String serviceURL, String filter) {
+		RadioGroupItem selector = stationFilterGroups.get(serviceURL);
 		if (selector == null) {
 			// debug message .. should not happen anyway
 			Toaster.getInstance().addErrorMessage("Missing expansion component for " + serviceURL);
 		} else {
-			selector.setValue(phenomenonName);
+			selector.setValue(filter);
 		}
 	}
 	

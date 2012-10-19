@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.constants;
+package org.n52.client.i18n;
 
 import com.google.gwt.i18n.client.Constants;
 
@@ -363,7 +363,7 @@ public interface SOSClientI18N extends Constants {
 
 	String expandSelectionStationTickerTooltip();
 
-	String choosePhenomenon();
+	String chooseDataSource();
 
 	String showSettings();
 

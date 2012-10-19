@@ -24,6 +24,9 @@
 
 package org.n52.server.oxf.util.connector.hydro;
 
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_CAPABILITIES_ACCEPT_VERSIONS_PARAMETER;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_CAPABILITIES_SERVICE_PARAMETER;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -38,6 +41,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
+import org.n52.oxf.adapter.ParameterShell;
 import org.n52.oxf.ows.ExceptionReport;
 import org.n52.oxf.ows.OWSException;
 import org.n52.oxf.ows.ServiceDescriptor;
@@ -56,7 +60,7 @@ public class SOSwithSoapAdapter extends SOSAdapter_OXFExtension {
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSwithSoapAdapter.class);
 
     /**
-     * Creates a SOS adapter to connect to ArcGIS Server SOS SOE extension points by GET. <br>
+     * Creates an adapter to connect SOS with SOAP binding. <br>
      * <br>
      * We use the overloaded constructor {@link SOSAdapter#SOSAdapter(String, ISOSRequestBuilder)} just to
      * satisfy reflection loading. Actually, there is <b>no parameter needed</b> for
@@ -77,9 +81,9 @@ public class SOSwithSoapAdapter extends SOSAdapter_OXFExtension {
     @Override
     public ServiceDescriptor initService(String url) throws ExceptionReport, OXFException {
         ParameterContainer paramCon = new ParameterContainer();
-        paramCon.addParameterShell("version", serviceVersion);
-        paramCon.addParameterShell("service", "SOS");
-        Operation operation = new Operation("GetCapabilities", url.toString(), url.toString());
+        paramCon.addParameterShell(GET_CAPABILITIES_SERVICE_PARAMETER, "SOS");
+        paramCon.addParameterShell(GET_CAPABILITIES_ACCEPT_VERSIONS_PARAMETER, serviceVersion);
+        Operation operation = new Operation(SOSAdapter.GET_CAPABILITIES, url, url);
         OperationResult opResult = doOperation(operation, paramCon);
         return initService(opResult);
     }

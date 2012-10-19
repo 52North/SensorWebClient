@@ -32,6 +32,8 @@ import org.n52.server.oxf.util.access.oxfExtensions.SOSRequestBuilder_200_OXFExt
 import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
 
 public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtension {
+    
+    // TODO extract to a common request wrapper
 	
 	/** Soap header actions for the sos requests */
 	private static final String GET_CAPABILITIES_SOAP_HEADER_ACTION = "http://www.opengis.net/def/serviceOperation/sos/core/2.0/GetCapabilities";

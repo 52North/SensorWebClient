@@ -49,6 +49,8 @@ public class ConnectorUtils {
     public static ServiceDescriptor getServiceDescriptor(final String sosUrl, final SOSAdapter adapter) {
         ServiceDescriptor serviceDesc = null;
         try {
+            /* TODO SOSWrapper is not capable of intercepting custom IRequestBuilders yet! */
+//            ServiceDescriptor descriptor = SOSWrapper.doGetCapabilities(sosUrl, adapter.getServiceVersion());
             Callable<ServiceDescriptor> callable = new Callable<ServiceDescriptor>() {
                 @Override
                 public ServiceDescriptor call() throws Exception {
@@ -121,6 +123,10 @@ public class ConnectorUtils {
         } else {
             ConfigurationContext.initializeMetadata(new SOSMetadata(sosUrl, sosVersion, smlVersion, omFormat, title));
         }
+    }
+    
+    public static IBoundingBox createBbox(ObservationOffering offering) {
+        return createBbox(null, offering);
     }
 
     public static IBoundingBox createBbox(IBoundingBox sosBbox, ObservationOffering offering) {

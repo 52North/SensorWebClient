@@ -23,6 +23,10 @@
  */
 package org.n52.server.oxf.util.connector.hydro;
 
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER;
+import static org.n52.oxf.sos.adapter.SOSAdapter.GET_FEATURE_OF_INTEREST;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,7 +57,6 @@ import org.n52.oxf.ows.ServiceDescriptor;
 import org.n52.oxf.ows.capabilities.Contents;
 import org.n52.oxf.ows.capabilities.IBoundingBox;
 import org.n52.oxf.ows.capabilities.Operation;
-import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.sos.adapter.SOSAdapter;
 import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.server.oxf.util.ConfigurationContext;
@@ -87,14 +90,11 @@ public class HydroSOSConnector implements SOSConnector {
     
     private AReferencingFacade referenceFacade = AReferencingFacade.createReferenceFacade();
     
-    private ISOSRequestBuilder requestBuilder = new SoapSOSRequestBuilder_200();
-    
     private SOSAdapter adapter;
 	
 	@Override
 	public SOSMetadataResponse buildUpServiceMetadata(String sosUrl, String sosVersion) throws Exception {
-	    this.requestBuilder = new SoapSOSRequestBuilder_200();
-		this.adapter = new SOSwithSoapAdapter(sosVersion, this.requestBuilder);
+		this.adapter = new SOSwithSoapAdapter(sosVersion, new SoapSOSRequestBuilder_200());
 		ServiceDescriptor serviceDesc = ConnectorUtils.getServiceDescriptor(sosUrl, this.adapter);
 		
 		String sosTitle = ConnectorUtils.getServiceTitle(serviceDesc);
@@ -104,44 +104,46 @@ public class HydroSOSConnector implements SOSConnector {
 		String smlVersion = "http://www.opengis.net/sensorML/1.0.1";
 		ConnectorUtils.setVersionNumbersToMetadata(sosUrl, sosTitle, sosVersion, omFormat, smlVersion);
 		
-		SOSMetadata meta = (SOSMetadata) ConfigurationContext.getServiceMetadata(sosUrl);
+		SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosUrl);
+
+        Map<Station, FutureTask<OperationResult>> futureTasks = new HashMap<Station, FutureTask<OperationResult>>();
 		
-		IBoundingBox sosBbox = null;
-		Map<Station, FutureTask<OperationResult>> futureTasks = new HashMap<Station, FutureTask<OperationResult>>();
 		Contents contents = serviceDesc.getContents();
 		for (String dataIdent : contents.getDataIdentificationIDArray()) {
 			ObservationOffering observationOffering = (ObservationOffering) contents.getDataIdentification(dataIdent);
 			String offeringID = observationOffering.getIdentifier();
 			
-			sosBbox = ConnectorUtils.createBbox(sosBbox, observationOffering);
+			if (metadata.getSrs() == null) {
+                IBoundingBox bbox = ConnectorUtils.createBbox(observationOffering);
+                metadata.setSrs(getSpatialReferenceSystem(bbox));
+            }
             
-			String[] phenArray = observationOffering.getObservedProperties();
-			String[] procArray = observationOffering.getProcedures();
+			String[] phenomenons = observationOffering.getObservedProperties();
+			String[] procedures = observationOffering.getProcedures();
 
 			// add offering
 			Offering offering = new Offering(offeringID);
 			offering.setLabel(observationOffering.getTitle());
-            meta.addOffering(offering);
+            metadata.addOffering(offering);
 			
 			// add phenomenons
-			for (String phenomenonId : phenArray) {
-				for (String procedure : procArray) {
-//					String id = phenomenonId + procedure; 
+			for (String phenomenonId : phenomenons) {
+				for (String procedure : procedures) {
 					String id = phenomenonId;
 					Phenomenon phenomenon = new Phenomenon(id);
-					String label = phenomenonId.substring(phenomenonId.lastIndexOf("/") + 1) + " by " + procedure.substring(procedure.lastIndexOf("/") +1); 
+					String label = getLastPartOf(phenomenonId) + " by " + getLastPartOf(procedure); 
 					phenomenon.setLabel(label);
-	                meta.addPhenomenon(phenomenon);
+	                metadata.addPhenomenon(phenomenon);
 				}
 			}
 			
 			// add procedures
-			for (String procedure : procArray) {
-				meta.addProcedure(new Procedure(procedure));
+			for (String procedure : procedures) {
+				metadata.addProcedure(new Procedure(procedure));
 			}
-			
+
+            // remove related features
 			ArrayList<String> fois = new ArrayList<String>();
-			// remove related features
 			for (String foi : observationOffering.getFeatureOfInterest()) {
 				if (!foi.contains("related")) {
 					fois.add(foi);
@@ -153,16 +155,17 @@ public class HydroSOSConnector implements SOSConnector {
 			}
 			
 			// add station
-			for (String procedure : procArray) {
-				for (String phenomenon : phenArray) {
+			for (String procedure : procedures) {
+				for (String phenomenon : phenomenons) {
 					for (String foi : fois) {
 						Station station = new Station();
-//						station.setPhenomenon(phenomenon + procedure);
 						station.setPhenomenon(phenomenon);
 						station.setProcedure(procedure);
 						station.setOffering(offeringID);
 						station.setFeature(foi);
-						meta.addStation(station);
+                        String filter = getLastPartOf(phenomenon) + " (" + getLastPartOf(procedure) + ")";
+                        station.setStationCategory(filter);
+						metadata.addStation(station);
 						if (fois.contains(FOI_WILDCARD)) {
 							futureTasks.put(station, new FutureTask<OperationResult>(createGetFoiAccess(sosUrl, sosVersion, station)));
 						}
@@ -170,18 +173,6 @@ public class HydroSOSConnector implements SOSConnector {
 				}
 			}
 		}
-		
-		// add srs
-        try {
-            if (!sosBbox.getCRS().startsWith("EPSG")) {
-                String tmp = "EPSG:" + sosBbox.getCRS().split(":")[sosBbox.getCRS().split(":").length - 1];
-                meta.setSrs(tmp);
-            } else {
-                meta.setSrs(sosBbox.getCRS());
-            }
-        } catch (Exception e) {
-            LOGGER.error("Could not insert spatial metadata", e);
-        }
         
 		// execute the GetFeatureOfInterest requests
         int counter = futureTasks.size();
@@ -192,7 +183,7 @@ public class HydroSOSConnector implements SOSConnector {
 			try {
 				FutureTask<OperationResult> futureTask = futureTasks.get(station);
 				OperationResult opRes = futureTask.get(ConfigurationContext.SERVER_TIMEOUT, TimeUnit.MILLISECONDS);
-				meta.removeStation(station);
+				metadata.removeStation(station);
 				if (opRes == null) {
 					LOGGER.error("Get no result for GetFeatureOfInterest " + station + "!");
 				}
@@ -213,14 +204,14 @@ public class HydroSOSConnector implements SOSConnector {
 					} else {
 						FeatureOfInterest feature = new FeatureOfInterest(id);
 						feature.setLabel(label);
-	                    meta.addFeature(feature);
+	                    metadata.addFeature(feature);
 						Station clone = station.clone();
 						double lat = Double.parseDouble(point.getLat());
 	                    double lng = Double.parseDouble(point.getLon());
 	                    EastingNorthing coords = new EastingNorthing(lng, lat);
 						clone.setLocation(coords, point.getSrs());
 	                    clone.setFeature(id);
-						meta.addStation(clone);
+						metadata.addStation(clone);
 					}
 				}
 			} catch (TimeoutException e) {
@@ -229,9 +220,26 @@ public class HydroSOSConnector implements SOSConnector {
 
 		}
 		
-		meta.setHasDonePositionRequest(true);
-		return new SOSMetadataResponse(meta);
+		metadata.setHasDonePositionRequest(true);
+		return new SOSMetadataResponse(metadata);
 	}
+
+    private String getSpatialReferenceSystem(IBoundingBox bbox) {
+        try {
+            if (!bbox.getCRS().startsWith("EPSG")) {
+                return "EPSG:" + bbox.getCRS().split(":")[bbox.getCRS().split(":").length - 1];
+            } else {
+                return bbox.getCRS();
+            }
+        } catch (Exception e) {
+            LOGGER.error("Could not insert spatial metadata", e);
+            return "NA";
+        }
+    }
+
+    private String getLastPartOf(String phenomenonId) {
+        return phenomenonId.substring(phenomenonId.lastIndexOf("/") + 1);
+    }
 
 	private ParsedPoint getPointOfSamplingFeatureType(SFSamplingFeatureType sfSamplingFeature) throws XmlException {
 		ParsedPoint point = new ParsedPoint();
@@ -281,13 +289,13 @@ public class HydroSOSConnector implements SOSConnector {
 	}
 
 	private Callable<OperationResult> createGetFoiAccess(String sosUrl, String sosVersion, Station station) throws OXFException {
-		Operation operation = new Operation(SOSAdapter.GET_FEATURE_OF_INTEREST, sosUrl, sosUrl);
 		ParameterContainer container = new ParameterContainer();
-		container.addParameterShell(ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER, "SOS");
-        container.addParameterShell(ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER, sosVersion);
+		container.addParameterShell(GET_FOI_SERVICE_PARAMETER, "SOS");
+        container.addParameterShell(GET_FOI_VERSION_PARAMETER, sosVersion);
         container.addParameterShell("phenomenon", station.getPhenomenon());
         container.addParameterShell("procedure", station.getProcedure());
-		return new OperationAccessor(this.adapter, operation, container);
+        Operation operation = new Operation(GET_FEATURE_OF_INTEREST, sosUrl, sosUrl);
+		return new OperationAccessor(adapter, operation, container);
 	}
 
 }

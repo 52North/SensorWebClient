@@ -201,10 +201,10 @@ public class StationPickerMap extends OpenLayersMapWrapper {
         }
     }
 
-    public void applyPhenomenonFilterToProceduresOnMap(String selectedPhenomenon) {
+    public void applyFilterToStationsOnMap(String filterCategory) {
         clearMarkerLayer();
         for (InfoMarker marker : markersOnMap) {
-            if (marker.getStation().getPhenomenon().equals(selectedPhenomenon)) {
+            if (marker.getStation().getStationCategory().equals(filterCategory)) {
                 markerLayer.addMarker(marker);
             }
         }
