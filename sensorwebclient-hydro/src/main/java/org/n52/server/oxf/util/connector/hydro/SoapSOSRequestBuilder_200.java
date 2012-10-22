@@ -27,8 +27,10 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.ParameterContainer;
+import org.n52.oxf.adapter.ParameterShell;
 import org.n52.oxf.xmlbeans.tools.XMLBeansTools;
 import org.n52.server.oxf.util.access.oxfExtensions.SOSRequestBuilder_200_OXFExtension;
+import org.n52.server.oxf.util.access.oxfExtensions.TimePosition_OXFExtension;
 import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
 
 public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtension {
@@ -67,6 +69,13 @@ public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtensio
 		String request = super.buildGetObservationRequest(parameters);
 		EnvelopeDocument envelope = addSoapEnvelope(request, GET_OBS_SOAP_HEADER_ACTION);
 		return envelope.xmlText(XMLBeansTools.PRETTYPRINT);
+	}
+	
+	public String buildGetDataAvailabilityRequest(ParameterContainer parameters) throws OXFException {
+	    // TODO create GetDataAvailability request
+	    ParameterShell shell = parameters.getParameterShellWithServiceSidedName("temporalFilter");
+	    String time = ((TimePosition_OXFExtension)shell.getSpecifiedValue()).toISO8601Format();
+	    return null;
 	}
 
 	private EnvelopeDocument addSoapEnvelope(String request, String action) {
