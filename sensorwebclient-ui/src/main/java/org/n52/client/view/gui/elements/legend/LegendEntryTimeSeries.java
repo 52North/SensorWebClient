@@ -618,9 +618,17 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		// if (phenomenon.contains("/")) {
 		// phenomenon = phenomenon.substring(phenomenon.lastIndexOf("/") + 1);
 		// }
-		this.phenonmenonLabel.setContents("<span>"
-				+ I18N.sosClient.phenomenonLabel() + ":</span> " + phenomenon
-				+ " [" + uom + "]");
+		StringBuilder phenomenonHtmlContent = new StringBuilder();
+		phenomenonHtmlContent.append("<span>");
+		phenomenonHtmlContent.append(I18N.sosClient.phenomenonLabel());
+		phenomenonHtmlContent.append(":</span> ");
+		phenomenonHtmlContent.append(phenomenon);
+		if (uom != null && !uom.isEmpty()) {
+		    phenomenonHtmlContent.append(" [");
+		    phenomenonHtmlContent.append(uom);
+		    phenomenonHtmlContent.append("]");
+        }
+        this.phenonmenonLabel.setContents(phenomenonHtmlContent.toString());
 		setFirstValueInterval();
 		setLastValueInterval();
 
