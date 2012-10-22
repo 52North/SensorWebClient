@@ -430,8 +430,13 @@ public class DiagramRenderer {
                         plot.getRangeAxisForDataset(datasetIndex).setLabelPaint(LABEL_COLOR);
                         plot.getRangeAxisForDataset(datasetIndex).setTickLabelFont(tickLabelDomain);
                         plot.getRangeAxisForDataset(datasetIndex).setTickLabelPaint(LABEL_COLOR);
-                        plot.getRangeAxisForDataset(datasetIndex).setLabel(
-                                dd.getObservedPropertyDesc() + " (" + dd.getUomLabel() + ")");
+                        StringBuilder unitOfMeasure = new StringBuilder();
+                        unitOfMeasure.append(dd.getObservedPropertyDesc());
+                        String uomLabel = dd.getUomLabel();
+                        if (uomLabel != null && !uomLabel.isEmpty()) {
+                            unitOfMeasure.append(" (").append(uomLabel).append(")");
+                        }
+                        plot.getRangeAxisForDataset(datasetIndex).setLabel(unitOfMeasure.toString());
 					}
 				}
 			}
