@@ -20,25 +20,7 @@
 		<requestChunk>200</requestChunk>
 		<autoZoom>true</autoZoom>
 	</instance>
-<!-- 
 
-	<instance>
-		<itemName>AQE 2.0</itemName>
-		<url>http://giv-uw.uni-muenster.de:8080/AQE/sos</url>
-		<version>2.0.0</version>
-		<connector>org.n52.server.oxf.util.parser.DefaultSosConnector
-		</connector>
-		<adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension</adapter>
-		<waterML>false</waterML>
-		<llEasting>6.00</llEasting>
-		<llNorthing>55.00</llNorthing>
-		<urEasting>15.00</urEasting>
-		<urNorthing>47.00</urNorthing>
-		<defaultZoom>15</defaultZoom>
-		<requestChunk>200</requestChunk>
-		<autoZoom>true</autoZoom>
-	</instance>
-	
 	<instance>
 		<itemName>PEGELONLINE</itemName>
 		<url>http://pegelonline.wsv.de/webservices/gis/gdi-sos</url>
@@ -108,5 +90,23 @@
 		<requestChunk>200</requestChunk>
 		<autoZoom>true</autoZoom>
 	</instance>
+<!-- 
+	<instance>
+		<itemName>AQE 2.0</itemName>
+		<url>http://giv-uw.uni-muenster.de:8080/AQE/sos</url>
+		<version>2.0.0</version>
+		<connector>org.n52.server.oxf.util.parser.DefaultSosConnector
+		</connector>
+		<adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension</adapter>
+		<waterML>false</waterML>
+		<llEasting>6.00</llEasting>
+		<llNorthing>55.00</llNorthing>
+		<urEasting>15.00</urEasting>
+		<urNorthing>47.00</urNorthing>
+		<defaultZoom>15</defaultZoom>
+		<requestChunk>200</requestChunk>
+		<autoZoom>true</autoZoom>
+	</instance>
+	
 	-->
 </instances>
