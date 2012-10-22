@@ -25,6 +25,10 @@ package org.n52.server.oxf.util.generator;
 
 
 
+import static org.n52.oxf.feature.OXFAbstractObservationType.FEATURE_OF_INTEREST;
+import static org.n52.oxf.feature.OXFAbstractObservationType.OBSERVED_PROPERTY;
+import static org.n52.oxf.feature.OXFAbstractObservationType.PROCEDURE;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -67,8 +71,7 @@ public class TimeSeriesDataGenerator extends Generator {
                 List<String> foiList = new ArrayList<String>();
 
                 // List of phenomenon
-                List<OXFPhenomenonPropertyType> phenomenonList =
-                        new ArrayList<OXFPhenomenonPropertyType>();
+                List<OXFPhenomenonPropertyType> phenomenonList = new ArrayList<OXFPhenomenonPropertyType>();
 
                 // Map-association: foi --> list of procedures
                 HashMap<String, List<String>> procMap = new HashMap<String, List<String>>();
@@ -76,18 +79,13 @@ public class TimeSeriesDataGenerator extends Generator {
                 for (OXFFeature observation : coll) {
 
                     // get FOI name
-                    String foi =
-                            ((OXFFeature) observation
-                                    .getAttribute(OXFAbstractObservationType.FEATURE_OF_INTEREST))
-                                    .toString();
+                    String foi = ((OXFFeature) observation.getAttribute(FEATURE_OF_INTEREST)).toString();
                     if (!foiList.contains(foi)) {
                         foiList.add(foi);
                     }
 
                     // get PROCEDURE name
-                    String proc =
-                            (String) observation
-                                    .getAttribute(OXFAbstractObservationType.PROCEDURE);
+                    String proc = (String) observation.getAttribute(PROCEDURE);
                     if (procMap.containsKey(foi) == false) {
                         procMap.put(foi, new ArrayList<String>());
                     }
@@ -96,9 +94,7 @@ public class TimeSeriesDataGenerator extends Generator {
                     }
 
                     // get PHENOMENON name
-                    OXFPhenomenonPropertyType obsProp =
-                            (OXFPhenomenonPropertyType) observation
-                                    .getAttribute(OXFAbstractObservationType.OBSERVED_PROPERTY);
+                    OXFPhenomenonPropertyType obsProp = (OXFPhenomenonPropertyType) observation.getAttribute(OBSERVED_PROPERTY);
                     if (!phenomenonList.contains(obsProp)) {
                         phenomenonList.add(obsProp);
 
