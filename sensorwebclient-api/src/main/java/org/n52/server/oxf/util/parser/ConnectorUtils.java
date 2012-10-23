@@ -63,26 +63,22 @@ public class ConnectorUtils {
             return t.get(ConfigurationContext.SERVER_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             LOGGER.warn("Requesting capabilities of '{}' was interrupted.", sosUrl, e);
-            throw new IllegalStateException(String.format("Service descriptor unaccessable: %s ", sosUrl));
+//            throw new IllegalStateException(String.format("Service descriptor unaccessable: %s ", sosUrl));
         }
         catch (ExecutionException e) {
-            LOGGER.warn("Error executing request.", sosUrl, e.getCause());
-            throw new IllegalStateException(String.format("Service descriptor unaccessable: %s ", sosUrl));
+            StringBuilder sb = new StringBuilder();
+            sb.append("Error executing capabilities request.");
+            sb.append("SOS URL: '").append(sosUrl).append("'");
+            sb.append("SOSAdapter: ").append(adapter.getClass().getName());
+            LOGGER.warn(sb.toString(), e.getCause());
+//            throw new IllegalStateException(String.format("Service descriptor unaccessable: %s ", sosUrl));
         }
         catch (TimeoutException e) {
             LOGGER.warn("Server '{}' did not repond.", sosUrl, e);
-            throw new IllegalStateException(String.format("Service descriptor unaccessable: %s ", sosUrl));
+//            throw new IllegalStateException(String.format("Service descriptor unaccessable: %s ", sosUrl));
         }
-    }
-
-    public static String getServiceTitle(ServiceDescriptor serviceDesc) {
-        String title = "NA";
-        try {
-            title = serviceDesc.getServiceIdentification().getTitle();
-        } catch (Exception e) {
-            LOGGER.error("Could not parse title.", e);
-        }
-        return title;
+        // TODO do not return null (causes many other exceptions) => handle parsing exception appropriatly
+        return null; 
     }
 
     public static String getOMFormat(ServiceDescriptor serviceDesc) {
@@ -139,31 +135,26 @@ public class ConnectorUtils {
     }
 
     public static IBoundingBox createBbox(IBoundingBox sosBbox, ObservationOffering offering) {
-        try {
-            if (sosBbox == null) {
-                sosBbox = offering.getBoundingBoxes()[0];
-            } else {
-                if (!sosBbox.containsValue(offering.getBoundingBoxes()[0])) {
-                    IBoundingBox newBbox = offering.getBoundingBoxes()[0];
-                    // lower left
-                    if (sosBbox.getLowerCorner()[0] > newBbox.getLowerCorner()[0]) {
-                        sosBbox.getLowerCorner()[0] = newBbox.getLowerCorner()[0];
-                    }
-                    if (sosBbox.getLowerCorner()[1] > newBbox.getLowerCorner()[1]) {
-                        sosBbox.getLowerCorner()[1] = newBbox.getLowerCorner()[1];
-                    }
-                    // upper right
-                    if (sosBbox.getUpperCorner()[0] < newBbox.getUpperCorner()[0]) {
-                        sosBbox.getUpperCorner()[0] = newBbox.getUpperCorner()[0];
-                    }
-                    if (sosBbox.getUpperCorner()[1] < newBbox.getUpperCorner()[1]) {
-                        sosBbox.getUpperCorner()[1] = newBbox.getUpperCorner()[1];
-                    }
+        if (sosBbox == null) {
+            sosBbox = offering.getBoundingBoxes()[0];
+        } else {
+            if (!sosBbox.containsValue(offering.getBoundingBoxes()[0])) {
+                IBoundingBox newBbox = offering.getBoundingBoxes()[0];
+                // lower left
+                if (sosBbox.getLowerCorner()[0] > newBbox.getLowerCorner()[0]) {
+                    sosBbox.getLowerCorner()[0] = newBbox.getLowerCorner()[0];
+                }
+                if (sosBbox.getLowerCorner()[1] > newBbox.getLowerCorner()[1]) {
+                    sosBbox.getLowerCorner()[1] = newBbox.getLowerCorner()[1];
+                }
+                // upper right
+                if (sosBbox.getUpperCorner()[0] < newBbox.getUpperCorner()[0]) {
+                    sosBbox.getUpperCorner()[0] = newBbox.getUpperCorner()[0];
+                }
+                if (sosBbox.getUpperCorner()[1] < newBbox.getUpperCorner()[1]) {
+                    sosBbox.getUpperCorner()[1] = newBbox.getUpperCorner()[1];
                 }
             }
-        } catch (Exception e) {
-            LOGGER.info(String.format("Could not parse BBox for offering '%s'.", offering), e);
-            return sosBbox; // ignore this offering
         }
         return sosBbox;
     }
