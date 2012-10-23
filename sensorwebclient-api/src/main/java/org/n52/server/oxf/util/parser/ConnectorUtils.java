@@ -24,8 +24,10 @@
 package org.n52.server.oxf.util.parser;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.jfree.util.Log;
 import org.n52.oxf.ows.ServiceDescriptor;
@@ -47,7 +49,6 @@ public class ConnectorUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectorUtils.class);
     
     public static ServiceDescriptor getServiceDescriptor(final String sosUrl, final SOSAdapter adapter) {
-        ServiceDescriptor serviceDesc = null;
         try {
             /* TODO SOSWrapper is not capable of intercepting custom IRequestBuilders yet! */
 //            ServiceDescriptor descriptor = SOSWrapper.doGetCapabilities(sosUrl, adapter.getServiceVersion());
@@ -59,19 +60,27 @@ public class ConnectorUtils {
             };
             FutureTask<ServiceDescriptor> t = new FutureTask<ServiceDescriptor>(callable);
             AccessorThreadPool.execute(t);
-            serviceDesc = t.get(ConfigurationContext.SERVER_TIMEOUT, TimeUnit.MILLISECONDS);
-        } catch (Exception e) {
-            LOGGER.info("Could not get SOS Capabilities.", e);
+            return t.get(ConfigurationContext.SERVER_TIMEOUT, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            LOGGER.warn("Requesting capabilities of '{}' was interrupted.", sosUrl, e);
+            throw new IllegalStateException(String.format("Service descriptor unaccessable: %s ", sosUrl));
         }
-        return serviceDesc;
+        catch (ExecutionException e) {
+            LOGGER.warn("Error executing request.", sosUrl, e.getCause());
+            throw new IllegalStateException(String.format("Service descriptor unaccessable: %s ", sosUrl));
+        }
+        catch (TimeoutException e) {
+            LOGGER.warn("Server '{}' did not repond.", sosUrl, e);
+            throw new IllegalStateException(String.format("Service descriptor unaccessable: %s ", sosUrl));
+        }
     }
 
     public static String getServiceTitle(ServiceDescriptor serviceDesc) {
-        String title = "";
+        String title = "NA";
         try {
             title = serviceDesc.getServiceIdentification().getTitle();
         } catch (Exception e) {
-            LOGGER.error("Could not get a SOS title from capabilities.", e);
+            LOGGER.error("Could not parse title.", e);
         }
         return title;
     }
