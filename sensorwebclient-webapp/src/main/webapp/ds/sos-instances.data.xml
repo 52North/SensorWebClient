@@ -8,8 +8,7 @@
 		<itemName>Kisters GRDC</itemName>
 		<url>http://kiwis.kisters.de/KiWIS/KiWIS?datasource=3</url>
 		<version>2.0.0</version>
-		<connector>org.n52.server.oxf.util.connector.hydro.HydroSOSConnector
-		</connector>
+		<connector>org.n52.server.oxf.util.connector.hydro.HydroSOSConnector</connector>
 		<adapter>org.n52.server.oxf.util.connector.hydro.SOSwithSoapAdapter</adapter>
 		<waterML>true</waterML>
 		<llEasting>-180</llEasting>
@@ -26,10 +25,8 @@
 		<url>http://pegelonline.wsv.de/webservices/gis/gdi-sos</url>
 		<version>1.0.0</version>
 		<waterML>false</waterML>
-		<connector>org.n52.server.oxf.util.parser.DefaultSosConnector
-		</connector>
-		<adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension
-		</adapter>
+		<connector>org.n52.server.oxf.util.parser.DefaultSosConnector</connector>
+		<adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension</adapter>
 		<requestChunk>300</requestChunk>
 		<autoZoom>false</autoZoom>
 		<llEasting>5</llEasting>
@@ -38,15 +35,13 @@
 		<urNorthing>56.0</urNorthing>
 		<defaultZoom>13</defaultZoom>
 	</instance>
+	
 	<instance>
 		<itemName>EEA-SOS</itemName>
-		<url>http://ags.dev.52north.org:6080/arcgis/rest/services/ObservationDB/MapServer/exts/SOSExtension/
-		</url>
+		<url>http://ags.dev.52north.org:6080/arcgis/rest/services/ObservationDB/MapServer/exts/SOSExtension/</url>
 		<version>2.0.0</version>
-		<connector>org.n52.server.oxf.util.connector.eea.EEASOSConnector
-		</connector>
-		<adapter>org.n52.server.oxf.util.connector.eea.SOSAdapterByGET
-		</adapter>
+		<connector>org.n52.server.oxf.util.connector.eea.EEASOSConnector</connector>
+		<adapter>org.n52.server.oxf.util.connector.eea.SOSAdapterByGET</adapter>
 		<waterML>false</waterML>
 		<autoZoom>false</autoZoom>
 		<llEasting>-16</llEasting>
@@ -56,15 +51,14 @@
 		<defaultZoom>9</defaultZoom>
 		<requestChunk>500</requestChunk>
 	</instance>
+	
 	<instance>
 		<itemName>Air Quality Belgium</itemName>
 		<url>http://sos.irceline.be/sos</url>
 		<version>1.0.0</version>
 		<waterML>false</waterML>
-		<connector>org.n52.server.oxf.util.parser.DefaultSosConnector
-		</connector>
-		<adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension
-		</adapter>
+		<connector>org.n52.server.oxf.util.parser.DefaultSosConnector</connector>
+		<adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension</adapter>
 		<requestChunk>300</requestChunk>
 		<autoZoom>false</autoZoom>
 		<llEasting>2.4</llEasting>
@@ -77,10 +71,8 @@
 		<itemName>Wupperverband</itemName>
 		<url>http://fluggs.wupperverband.de/sos/sos</url>
 		<version>1.0.0</version>
-		<connector>org.n52.server.oxf.util.parser.DefaultSosConnector
-		</connector>
-		<adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension
-		</adapter>
+		<connector>org.n52.server.oxf.util.parser.DefaultSosConnector</connector>
+		<adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension</adapter>
 		<waterML>false</waterML>
 		<llEasting>6.61</llEasting>
 		<llNorthing>51.246</llNorthing>
