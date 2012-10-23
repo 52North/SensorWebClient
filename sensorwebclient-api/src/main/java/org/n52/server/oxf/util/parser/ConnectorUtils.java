@@ -48,6 +48,13 @@ public class ConnectorUtils {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectorUtils.class);
     
+    
+    /**
+     * @param sosUrl the service endpoint
+     * @param adapter the adapter to use
+     * @return the service's {@link ServiceDescriptor} representing its capabilities
+     * @throws IllegalStateException if service's {@link ServiceDescriptor} cannot be loaded from service endpoint.
+     */
     public static ServiceDescriptor getServiceDescriptor(final String sosUrl, final SOSAdapter adapter) {
         try {
             /* TODO SOSWrapper is not capable of intercepting custom IRequestBuilders yet! */
@@ -77,7 +84,12 @@ public class ConnectorUtils {
             LOGGER.warn("Server '{}' did not repond.", sosUrl, e);
 //            throw new IllegalStateException(String.format("Service descriptor unaccessable: %s ", sosUrl));
         }
-        // TODO do not return null (causes many other exceptions) => handle parsing exception appropriatly
+        /* TODO do not return null (causes many other exceptions) => handle parsing exception appropriatly
+         * 
+         * make possible to remove not parsable services. Now, runtime exceptions are masked by signatures which
+         * catch just Exception => have to make sure that not valid services are not accessed by the client
+         * over and over again ...
+         */
         return null; 
     }
 
