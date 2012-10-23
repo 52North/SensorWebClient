@@ -155,7 +155,7 @@ public class ConfigurationContext extends HttpServlet {
         String p = getServletContext().getInitParameter(initParameter);
         if (p == null) {
             String msg = String.format("Parameter '%s' was invalid!", initParameter);
-            throw new IllegalStateException(msg);
+            throw new NullPointerException(msg);
         }
         if (p.isEmpty()) {
 			LOGGER.warn(String.format("Parameter '%s' is empty!", initParameter));
