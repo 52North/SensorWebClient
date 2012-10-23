@@ -65,27 +65,27 @@ public class SOSMetadataBuilder {
     }
 
     public SOSMetadataBuilder addServiceURL(String serviceURL) {
-        this.serviceURL = serviceURL;
+        this.serviceURL = serviceURL.trim();
         return this;
     }
 
     public SOSMetadataBuilder addServiceVersion(String serviceVersion) {
-        this.serviceVersion = serviceVersion;
+        this.serviceVersion = serviceVersion.trim();
         return this;
     }
 
     public SOSMetadataBuilder addServiceName(String serviceName) {
-        this.serviceName = serviceName;
+        this.serviceName = serviceName.trim();
         return this;
     }
 
     public SOSMetadataBuilder addConnector(String connector) {
-        this.connector = connector;
+        this.connector = connector.trim();
         return this;
     }
 
     public SOSMetadataBuilder addAdapter(String adapter) {
-        this.adapter = adapter;
+        this.adapter = adapter.trim();
         return this;
     }
 
