@@ -92,11 +92,9 @@ public class SOSAdapterByGET extends SOSAdapter {
             checkForExceptionReport(result, response);
             return result;
         } catch (IOException e) {
-            LOGGER.trace("Error while reading operation result", e);
-            throw new OXFException("Received an invalid reponse.", e);
+            throw new OXFException("Error while reading operation result.", e);
         } catch (XmlException e) {
-            LOGGER.error("Could not parse response to XML.", e);
-            throw new OXFException("Received an invalid reponse.", e);
+            throw new OXFException("Could not parse response to XML.", e);
         } finally {
             try {
                 if (inputStream != null) {

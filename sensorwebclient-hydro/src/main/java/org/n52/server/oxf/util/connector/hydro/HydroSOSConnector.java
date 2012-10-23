@@ -96,8 +96,8 @@ public class HydroSOSConnector implements SOSConnector {
 	public SOSMetadataResponse buildUpServiceMetadata(String sosUrl, String sosVersion) throws Exception {
 		this.adapter = new SOSwithSoapAdapter(sosVersion, new SoapSOSRequestBuilder_200());
 		ServiceDescriptor serviceDesc = ConnectorUtils.getServiceDescriptor(sosUrl, this.adapter);
-		
-		String sosTitle = ConnectorUtils.getServiceTitle(serviceDesc);
+
+        String sosTitle = serviceDesc.getServiceIdentification().getTitle();
 //		String omFormat = ConnectorUtils.getOMFormat(serviceDesc);
 		String omFormat = "http://www.opengis.net/om/2.0";
 //		String smlVersion = ConnectorUtils.getSMLVersion(serviceDesc, sosVersion);

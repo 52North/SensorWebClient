@@ -85,8 +85,8 @@ public class GrdcSOSConnector implements SOSConnector {
 	    ISOSRequestBuilder requestBuilder = SOSRequestBuilderFactory_OXFExtension.generateRequestBuilder(sosVersion);
 		SOSAdapter adapter = new SOSAdapter_OXFExtension(sosVersion, requestBuilder);
 		ServiceDescriptor serviceDesc = ConnectorUtils.getServiceDescriptor(sosUrl, adapter);
-		
-		String sosTitle = ConnectorUtils.getServiceTitle(serviceDesc);
+
+        String sosTitle = serviceDesc.getServiceIdentification().getTitle();
 		String omFormat = ConnectorUtils.getOMFormat(serviceDesc);
 		String smlVersion = ConnectorUtils.getSMLVersion(serviceDesc, sosVersion);
 		ConnectorUtils.setVersionNumbersToMetadata(sosUrl, sosTitle, sosVersion, omFormat, smlVersion);

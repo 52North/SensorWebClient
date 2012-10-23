@@ -64,6 +64,7 @@ import net.opengis.swes.x20.DescribeSensorResponseType;
 import net.opengis.swes.x20.DescribeSensorResponseType.Description;
 import net.opengis.swes.x20.SensorDescriptionType.Data;
 
+import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -487,7 +488,8 @@ public class DescribeSensorParser {
             if (member.getProcess() instanceof SystemType) {
 				return ((SystemType) member.getProcess()).getCapabilitiesArray();
 			} else {
-                LOGGER.error("SensorML does not contain a process substitution.");
+			    SchemaType type = member.getProcess() != null ? member.getProcess().schemaType() : null;
+                LOGGER.warn("SensorML does not contain a process substitution: {}", type);
                 return new Capabilities[0];
             }
         }
@@ -524,7 +526,7 @@ public class DescribeSensorParser {
             Member member = sml.getMemberArray(0);
             SystemType system = member.isSetProcess() ? (SystemType) member.getProcess() : null;
             if (system == null) {
-                LOGGER.error("SensorML does not contain a process substitution.");
+                LOGGER.warn("SensorML does not contain a process substitution.");
                 return new Characteristics[0];
             }
             return system.getCharacteristicsArray();
@@ -547,7 +549,7 @@ public class DescribeSensorParser {
             Member member = sml.getMemberArray(0);
             SystemType system = member.isSetProcess() ? (SystemType) member.getProcess() : null;
             if (system == null) {
-                LOGGER.error("SensorML does not contain a process substitution.");
+                LOGGER.warn("SensorML does not contain a process substitution.");
                 return new Classification[0];
             }
             return system.getClassificationArray();

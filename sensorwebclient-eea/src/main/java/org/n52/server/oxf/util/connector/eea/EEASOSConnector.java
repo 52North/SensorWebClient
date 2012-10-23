@@ -92,8 +92,7 @@ public class EEASOSConnector implements SOSConnector {
 	public SOSMetadataResponse buildUpServiceMetadata(String sosUrl, String sosVersion) throws Exception {
         SOSAdapter adapter = new SOSAdapterByGET(sosVersion, null);
         ServiceDescriptor serviceDesc = ConnectorUtils.getServiceDescriptor(sosUrl, adapter);
-
-        String sosTitle = ConnectorUtils.getServiceTitle(serviceDesc);
+        String sosTitle = serviceDesc.getServiceIdentification().getTitle();
         
         // TODO test with OperationsMetadata (missing in the Capabilities of the EEA-SOS
 		// String omFormat = ConnectorUtils.getOMFormat(serviceDesc);

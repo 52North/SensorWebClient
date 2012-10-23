@@ -21,6 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
+
 package org.n52.server.oxf.util.parser;
 
 import java.io.ByteArrayInputStream;
@@ -71,7 +72,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DefaultSosConnector implements SOSConnector {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSosConnector.class);
 
     public DefaultSosConnector() {
@@ -83,11 +84,11 @@ public class DefaultSosConnector implements SOSConnector {
         SOSAdapter adapter = new SOSAdapter_OXFExtension(sosVersion, requestBuilder);
         ServiceDescriptor serviceDesc = ConnectorUtils.getServiceDescriptor(sosUrl, adapter);
 
-        String sosTitle = ConnectorUtils.getServiceTitle(serviceDesc);
+        String sosTitle = serviceDesc.getServiceIdentification().getTitle();
         String omFormat = ConnectorUtils.getOMFormat(serviceDesc);
         String smlVersion = ConnectorUtils.getSMLVersion(serviceDesc, sosVersion);
         ConnectorUtils.setVersionNumbersToMetadata(sosUrl, sosTitle, sosVersion, omFormat, smlVersion);
-        
+
         Map<String, ServiceMetadata> sosMetadatas = ConfigurationContext.getServiceMetadatas();
 
         //
@@ -110,7 +111,7 @@ public class DefaultSosConnector implements SOSConnector {
             ObservationOffering offering = (ObservationOffering) contents.getDataIdentification(i);
 
             sosBbox = ConnectorUtils.createBbox(sosBbox, offering);
-            
+
             String offeringID = offering.getIdentifier();
 
             // associate:
@@ -134,20 +135,22 @@ public class DefaultSosConnector implements SOSConnector {
         LOGGER.debug("There are " + featureIds.size() + " FOIs registered in the SOS");
 
         SOSMetadata meta = (SOSMetadata) sosMetadatas.get(sosUrl);
-        
+
         // add fois
         for (String featureId : featureIds) {
             meta.addFeature(new FeatureOfInterest(featureId));
         }
-        
+
         try {
-            if (!sosBbox.getCRS().startsWith("EPSG")) {
+            if ( !sosBbox.getCRS().startsWith("EPSG")) {
                 String tmp = "EPSG:" + sosBbox.getCRS().split(":")[sosBbox.getCRS().split(":").length - 1];
                 meta.setSrs(tmp);
-            } else {
+            }
+            else {
                 meta.setSrs(sosBbox.getCRS());
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Could not insert spatial metadata", e);
         }
 
@@ -156,13 +159,13 @@ public class DefaultSosConnector implements SOSConnector {
             for (String procedure : offeringProcMap.get(offeringId)) {
                 if (procedure.contains("urn:ogc:generalizationMethod:")) {
                     meta.setCanGeneralize(true);
-                } else {
+                }
+                else {
                     for (String phenomenon : offeringPhenMap.get(offeringId)) {
                         /*
-                         * add a station for a procedure expecting that there is only 
-                         * one for each right now. Further stations may be added later
-                         * when additional information is parsed from getFeatureOfInterest
-                         * of describeSensor operations.
+                         * add a station for a procedure expecting that there is only one for each right now.
+                         * Further stations may be added later when additional information is parsed from
+                         * getFeatureOfInterest of describeSensor operations.
                          */
                         Station station = new Station();
                         station.setPhenomenon(phenomenon);
@@ -181,14 +184,15 @@ public class DefaultSosConnector implements SOSConnector {
             Offering offering = new Offering(offeringId);
             meta.addOffering(offering);
         }
-        
+
         meta.setInitialized(true);
 
         // XXX hack to get conjunctions between procedures and fois
-        if (!meta.hasDonePositionRequest()) {
+        if ( !meta.hasDonePositionRequest()) {
             try {
                 performMetadataInterlinking(sosUrl);
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 LOGGER.warn("Could not retrieve relations between procedures and fois", e);
             }
         }
@@ -196,7 +200,7 @@ public class DefaultSosConnector implements SOSConnector {
         LOGGER.debug("Got metadata for SOS " + meta.getId());
         return new SOSMetadataResponse(meta);
     }
-    
+
     /**
      * Performs a DescribeSensor request for every offered procedure of an SOS. This is intended to obtain the
      * concrete references between each offering, procedure, featureOfInterest and observedProperty (aka
@@ -318,7 +322,7 @@ public class DefaultSosConnector implements SOSConnector {
                 illegalProcedures.add(procedureId);
             }
             catch (ExecutionException e) {
-                LOGGER.warn("Could NOT get OperationResult from SOS for '{}'.", procedureId, e);
+                LOGGER.warn("Could NOT get OperationResult from SOS for '{}'.", procedureId, e.getCause());
                 illegalProcedures.add(procedureId);
             }
             catch (XmlException e) {

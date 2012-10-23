@@ -199,7 +199,7 @@ public abstract class Generator {
         } catch (InterruptedException e) {
             LOGGER.error("Thread got interrupted during GetObservation request.", e);
         } catch (ExecutionException e) {
-            LOGGER.error("Could not execute GetObservation request.", e);
+            LOGGER.error("Could not execute GetObservation request.", e.getCause());
         } catch (Exception e) {
 			LOGGER.error("Error sending observation requests.", e);
 		}
