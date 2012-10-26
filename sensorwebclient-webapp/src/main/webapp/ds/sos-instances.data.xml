@@ -5,22 +5,6 @@
 <instances>
 	
 	<instance>
-		<itemName>Kisters GRDC</itemName>
-		<url>http://kiwis.kisters.de/KiWIS/KiWIS?datasource=3</url>
-		<version>2.0.0</version>
-		<connector>org.n52.server.oxf.util.connector.hydro.HydroSOSConnector</connector>
-		<adapter>org.n52.server.oxf.util.connector.hydro.SOSwithSoapAdapter</adapter>
-		<waterML>true</waterML>
-		<llEasting>-180</llEasting>
-		<llNorthing>-80</llNorthing>
-		<urEasting>180</urEasting>
-		<urNorthing>90</urNorthing>
-		<defaultZoom>15</defaultZoom>
-		<requestChunk>200</requestChunk>
-		<autoZoom>true</autoZoom>
-	</instance>
-
-	<instance>
 		<itemName>PEGELONLINE</itemName>
 		<url>http://pegelonline.wsv.de/webservices/gis/gdi-sos</url>
 		<version>1.0.0</version>
@@ -36,6 +20,22 @@
 		<defaultZoom>13</defaultZoom>
 	</instance>
 	
+	<instance>
+		<itemName>Kisters GRDC</itemName>
+		<url>http://kiwis.kisters.de/KiWIS/KiWIS?datasource=3</url>
+		<version>2.0.0</version>
+		<connector>org.n52.server.oxf.util.connector.hydro.HydroSOSConnector</connector>
+		<adapter>org.n52.server.oxf.util.connector.hydro.SOSwithSoapAdapter</adapter>
+		<waterML>true</waterML>
+		<llEasting>-180</llEasting>
+		<llNorthing>-80</llNorthing>
+		<urEasting>180</urEasting>
+		<urNorthing>90</urNorthing>
+		<defaultZoom>15</defaultZoom>
+		<requestChunk>200</requestChunk>
+		<autoZoom>true</autoZoom>
+	</instance>
+
 	<instance>
 		<itemName>EEA-SOS</itemName>
 		<url>http://ags.dev.52north.org:6080/arcgis/rest/services/ObservationDB/MapServer/exts/SOSExtension/</url>
