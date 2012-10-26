@@ -380,7 +380,7 @@
 							<artifact>org.n52.sensorweb:sensorwebclient-ses-shared</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-ui</artifact>
 						</compileSourcesArtifacts>
-						<style>DETAILED</style>
+						<style>OBF</style>
 					</configuration>
 					<executions>
 						<execution>
