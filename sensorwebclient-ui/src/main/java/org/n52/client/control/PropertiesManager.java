@@ -63,7 +63,7 @@ public class PropertiesManager {
     private void init() {
         try {
         	setCurrentLanguage();
-            RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, "properties/properties.xml");
+            RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, "properties/client-properties.xml");
             RequestCallback callback = new RequestCallback() {
 
                 public void onError(Request request, Throwable exception) {
