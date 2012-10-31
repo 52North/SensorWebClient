@@ -3,7 +3,6 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=9" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<meta http-equiv="expires" content="Sat, 01 Dec 2000 00:00:00 GMT">
 <meta name="keywords" lang="en" content="Sensor Web, SWE, OGC, SOS, SES, Time Series, Data">
 <meta name="gwt:property" content="locale=<%= request.getLocale()%>">
 <meta name="author" content="52&deg;North - http://52north.org/">
