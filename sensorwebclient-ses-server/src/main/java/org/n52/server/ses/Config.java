@@ -48,8 +48,6 @@ public class Config {
 
     public static String feeder;
 
-    public static boolean debug;
-    
     public static boolean warnUserLongNotification;
     
     public static int minimumPasswordLength;
@@ -156,7 +154,7 @@ public class Config {
      */
     public synchronized static void init(String realPath){
         LOGGER.debug("init");
-        Config.propertiesLocation = realPath + "properties/sesClientProperties.properties";
+        Config.propertiesLocation = realPath + "properties/ses-client.properties";
         if (!initialized) {
             try {
                 LOGGER.info("## Loading properties ##");
@@ -172,7 +170,6 @@ public class Config {
                 wns = properties.getProperty("wns");
                 consumerReference = properties.getProperty("consumerReference");
                 feeder = properties.getProperty("feeder");
-                debug = Boolean.valueOf(properties.getProperty("debug"));
                 warnUserLongNotification  = Boolean.valueOf(properties.getProperty("warnUserLongNotification"));
                 minimumPasswordLength = Integer.valueOf(properties.getProperty("minimumPasswordLength"));
                 

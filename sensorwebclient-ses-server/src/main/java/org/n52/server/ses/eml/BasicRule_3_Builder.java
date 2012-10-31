@@ -81,7 +81,7 @@ public class BasicRule_3_Builder {
      * Sum over Time
      * 
      * This method builds the rule type "Sum over Time" by loading and filling a template file.
-     * The location of this file is defined in /properties/sesClientProperties.properties 
+     * The location of this file is defined in /properties/ses-client.properties 
      * in the variable "resLocation". File name must be BR_3.xml.
      * 
      * @param rule

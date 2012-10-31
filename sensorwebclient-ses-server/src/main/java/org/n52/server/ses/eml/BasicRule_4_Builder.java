@@ -125,7 +125,7 @@ public class BasicRule_4_Builder {
      * Overshoot and Undershoot
      * 
      * This method builds the rule type "Overshoot and Undershoot" by loading and filling a template file.
-     * The location of this file is defined in /properties/sesClientProperties.properties 
+     * The location of this file is defined in /properties/ses-client.properties 
      * in the variable "resLocation". File name must be BR_4.xml.
      * 
      * @param rule

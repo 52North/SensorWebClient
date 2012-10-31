@@ -95,7 +95,7 @@ public class BasicRule_2_Builder {
      * Trend over Time
      * 
      * This method builds the rule type "Trend over Time" by loading and filling a template file.
-     * The location of this file is defined in /properties/sesClientProperties.properties 
+     * The location of this file is defined in /properties/ses-client.properties 
      * in the variable "resLocation". File name must be BR_2.xml.
      * 
      * @param rule

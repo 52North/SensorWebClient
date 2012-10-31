@@ -386,7 +386,7 @@ public class SesUserServiceImpl implements SesUserService {
 
             // unsubscribe in WNS
             try {
-                if ( !Config.debug) {
+                if (!LOG.isDebugEnabled()) {
                     WnsUtil.sendToWNSUnregister(user.getWnsEmailId());
 
                     if (user.getWnsSmsId() != null && !user.getWnsSmsId().equals("")) {
@@ -465,7 +465,7 @@ public class SesUserServiceImpl implements SesUserService {
                 mailChanged = true;
 
                 // update email address in WNS
-                if ( !Config.debug) {
+                if (!LOG.isDebugEnabled()) {
                     WnsUtil.updateToWNSMail(oldUser.getWnsEmailId(), newUser.geteMail(), oldUser.geteMail());
                     LOG.info("Update eMail of user " + oldUser.getName() + " in WNS");
                 }

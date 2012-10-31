@@ -63,7 +63,7 @@ public class BasicRule_1_Builder {
      * Trend over Count
      * 
      * This method builds the rule type "Trend over Count" by loading and filling a template file.
-     * The location of this file is defined in /properties/sesClientProperties.properties 
+     * The location of this file is defined in /properties/ses-client.properties 
      * in the variable "resLocation". File name must be BR_1.xml.
      * 
      * @param rule

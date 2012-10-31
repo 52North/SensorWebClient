@@ -31,6 +31,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.swing.JOptionPane;
 
+import org.jfree.util.Log;
 import org.n52.server.ses.eml.Meta_Builder;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.service.SesSensorServiceImpl;
@@ -225,7 +226,7 @@ public class SESInitializationServlet extends HttpServlet {
                     }
 
                     // in debug-mode. check if default user already exists
-                    if (Config.debug) {
+                    if (Log.isDebugEnabled()) {
                         UserDTO user =
                             SesUserServiceImpl.createUserDTO(new User("user", "User", createMD5("user"),
                                     "52n.development@googlemail.com", "+456", UserRole.USER, true));
