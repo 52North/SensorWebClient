@@ -697,7 +697,7 @@
 		<gwt.version>2.4.0</gwt.version>
 		<oxf.version>2.0.0-SNAPSHOT</oxf.version>
 		<smartgwt.version>3.0</smartgwt.version>
-		<geotools.version>2.7.3</geotools.version>
+		<geotools.version>8.2</geotools.version>
 		<hibernate.version>3.5.0-Final</hibernate.version>
 		<maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
 		<timestamp>${maven.build.timestamp}</timestamp>
