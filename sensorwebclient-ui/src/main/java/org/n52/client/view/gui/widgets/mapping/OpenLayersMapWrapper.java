@@ -50,7 +50,7 @@ import com.google.gwt.core.client.GWT;
 
 public abstract class OpenLayersMapWrapper {
     
-    protected static int DEFAULT_ZOOM_LEVEL;
+    protected static int DEFAULT_ZOOM_LEVEL = 13; // default
 
     protected MapOptions defaultMapOptions = new MapOptions();
 
@@ -69,8 +69,6 @@ public abstract class OpenLayersMapWrapper {
     protected OSM osm;
 
     public OpenLayersMapWrapper() {
-        PropertiesManager properties = PropertiesManager.getInstance();
-        DEFAULT_ZOOM_LEVEL = properties.getParamaterAsInt("defaultZoomLevel", 13);
         initializeMapWidget();
         initializeBackgroundMapLayer();
         map.zoomTo(DEFAULT_ZOOM_LEVEL);
