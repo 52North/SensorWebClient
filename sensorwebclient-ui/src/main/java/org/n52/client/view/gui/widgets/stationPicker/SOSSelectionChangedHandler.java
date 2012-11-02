@@ -23,7 +23,6 @@
  */
 package org.n52.client.view.gui.widgets.stationPicker;
 
-import org.n52.client.control.PropertiesManager;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.eventBus.events.dataEvents.sos.GetPhenomenonsEvent;
 import org.n52.client.eventBus.events.dataEvents.sos.GetStationsEvent;
@@ -66,25 +65,26 @@ final class SOSSelectionChangedHandler implements SelectionChangedHandler {
 
 	private void parseAndSetServiceConfiguration(SOSMetadataBuilder builder, Record record) {
 		try {
-		    builder.addServiceName(record.getAttribute("itemName"))
-                   .addServiceURL(record.getAttribute("url"))
-		           .addServiceVersion(record.getAttribute("version"))
-                   .setWaterML(record.getAttributeAsBoolean("waterML"))
-                   .setAutoZoom(Boolean.parseBoolean(record.getAttribute("autoZoom")))
-                   //.addDefaultZoom(record.getAttributeAsInt("defaultZoom"))
-                   .addLowerLeftEasting(record.getAttributeAsDouble("llEasting"))
-                   .addLowerLeftNorthing(record.getAttributeAsDouble("llNorthing"))
-                   .addUpperRightEasting(record.getAttributeAsDouble("urEasting"))
-                   .addUpperRightNorthing(record.getAttributeAsDouble("urNorthing"));
-		    if (GWT.isProdMode()) {
-                builder.setRequestChunk(record.getAttributeAsInt("requestChunk"));
-            } else {
-                PropertiesManager properties = PropertiesManager.getInstance();
-                builder.setRequestChunk(properties.getParamaterAsInt("devModeRequestChunk", 50));
-            }
+		    builder.addServiceURL(getValueFor(record, "url"))
+		           .addServiceName(getValueFor(record, "itemName"))
+                   .addServiceVersion(getValueFor(record, "version"))
+                   .setWaterML(Boolean.parseBoolean(getValueFor(record, "waterML")))
+                   .setForceXYAxisOrder(Boolean.parseBoolean(getValueFor(record, "forceXYAxisOrder")))
+                   .setAutoZoom(Boolean.parseBoolean(getValueFor(record, "autoZoom")))
+                   .setRequestChunk(Integer.parseInt(getValueFor(record, "requestChunk")))
+                   //.addDefaultZoom(Integer.parseInt(getValueFor(record, "defaultZoom")))
+                   .addLowerLeftEasting(Double.parseDouble(getValueFor(record, "llEasting")))
+                   .addLowerLeftNorthing(Double.parseDouble(getValueFor(record, "llNorthing")))
+                   .addUpperRightEasting(Double.parseDouble(getValueFor(record, "urEasting")))
+                   .addUpperRightNorthing(Double.parseDouble(getValueFor(record, "urNorthing")));
 		} catch (Exception e) {
-			GWT.log("Could not parse initial extent for SOS " + builder.getServiceURL());
+			GWT.log("Could not parse SOS configuration for: " + builder.getServiceURL(), e);
 		}
+	}
+	
+	private String getValueFor(Record record, String parameter) {
+	    String value = record.getAttribute(parameter);
+        return value == null || value.isEmpty() ? null: value;
 	}
 
 	private void performSOSDataRequests(String serviceURL) {

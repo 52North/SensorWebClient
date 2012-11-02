@@ -315,7 +315,8 @@ public class StationPickerController implements MapController {
     }
 
     /**
-     * @param stations the stations determine most common category
+     * @param stations
+     *        the stations determine most common category
      * @return The category most commonly used by all stations.
      */
     public String getMostCommonStationCategory(List<Station> stations) {
