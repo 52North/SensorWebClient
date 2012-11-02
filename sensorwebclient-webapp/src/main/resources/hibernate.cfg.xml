@@ -7,27 +7,29 @@
 		<property name="connection.url">${ses.database.connection}</property>
 		<property name="connection.username">${ses.database.user}</property>
 		<property name="connection.password">${ses.database.password}</property>
+		<property name="hibernate.hbm2ddl.auto">${ses.database.hibernate.hbm2ddl.auto}</property>
+		
+		
 		<property name="connection.driver_class">
 			org.postgresql.Driver
-      </property>
-      <!-- <property name="connection.pool_size">10</property> -->
+		</property>
+		<!-- <property name="connection.pool_size">10</property> -->
 		<property name="dialect">
 			org.hibernate.dialect.PostgreSQLDialect
-      </property>
+		</property>
 		<property name="cache.provider_class">
 			net.sf.ehcache.hibernate.SingletonEhCacheProvider
-      </property>
+		</property>
 		<property name="current_session_context_class">thread
-      </property>
+		</property>
 		<property name="hibernate.transaction.factory_class">
 			org.hibernate.transaction.JDBCTransactionFactory
-      </property>
-      <property name="hibernate.bytecode.provider">
-      	cglib
-      </property>
-      <property name="hibernate.temp.use_jdbc_metadata_defaults">false</property>
-      	<!-- <property name="hibernate.cache.use_second_level_cache">true</property> -->
-		<!-- <property name="hibernate.hbm2ddl.auto">create</property> -->
+		</property>
+		<property name="hibernate.bytecode.provider">
+			cglib
+		</property>
+		<property name="hibernate.temp.use_jdbc_metadata_defaults">false</property>
+		<!-- <property name="hibernate.cache.use_second_level_cache">true</property> -->
 		<mapping resource="org/n52/shared/serializable/pojos/User.hbm.xml" />
 		<mapping resource="org/n52/shared/serializable/pojos/Subscription.hbm.xml" />
 		<mapping resource="org/n52/shared/serializable/pojos/Sensor.hbm.xml" />
