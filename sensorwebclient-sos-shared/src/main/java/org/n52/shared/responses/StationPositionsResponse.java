@@ -65,8 +65,7 @@ public class StationPositionsResponse implements Serializable {
      * @param endIdx
      *            the end idx
      */
-    public StationPositionsResponse(String sosURL, List<Station> stations, String srs,
-            boolean finished, int startIdx, int endIdx) {
+    public StationPositionsResponse(String sosURL, List<Station> stations, String srs, boolean finished, int startIdx, int endIdx) {
         this.sosURL = sosURL;
         this.stations = stations;
         this.srs = srs;

@@ -17,6 +17,7 @@
 		<urEasting>7.66</urEasting>
 		<urNorthing>51.35</urNorthing>
 		<defaultZoom>13</defaultZoom>
+		<forceXYAxisOrdering>false</forceXYAxisOrdering>
 	</instance>
 	<instance>
 		<itemName>EEA-SOS</itemName>
@@ -31,6 +32,7 @@
 		<urNorthing>55.0556</urNorthing>
 		<defaultZoom>10</defaultZoom>
 		<requestChunk>200</requestChunk>
+		<forceXYAxisOrdering>true</forceXYAxisOrdering>
 	</instance>
 	<instance>
 		<itemName>Air Quality Belgium</itemName>

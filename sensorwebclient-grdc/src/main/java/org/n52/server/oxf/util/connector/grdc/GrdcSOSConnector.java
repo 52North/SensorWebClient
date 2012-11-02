@@ -53,8 +53,8 @@ import org.n52.server.oxf.util.access.AccessorThreadPool;
 import org.n52.server.oxf.util.access.OperationAccessor;
 import org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension;
 import org.n52.server.oxf.util.access.oxfExtensions.SOSRequestBuilderFactory_OXFExtension;
-import org.n52.server.oxf.util.connector.SOSConnector;
-import org.n52.server.oxf.util.crs.AReferencingFacade;
+import org.n52.server.oxf.util.connector.SosMetadataHandler;
+import org.n52.server.oxf.util.crs.AReferencingHelper;
 import org.n52.server.oxf.util.parser.ConnectorUtils;
 import org.n52.server.oxf.util.parser.utils.ParsedPoint;
 import org.n52.shared.responses.SOSMetadataResponse;
@@ -76,7 +76,7 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 import de.bafg.grdc.sampling.x10.GrdcSamplingPointDocument;
 import de.bafg.grdc.sampling.x10.GrdcSamplingPointType;
 
-public class GrdcSOSConnector implements SOSConnector {
+public class GrdcSOSConnector extends SosMetadataHandler {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(GrdcSOSConnector.class);
 	
@@ -91,7 +91,7 @@ public class GrdcSOSConnector implements SOSConnector {
 		String smlVersion = ConnectorUtils.getSMLVersion(serviceDesc, sosVersion);
 		ConnectorUtils.setVersionNumbersToMetadata(sosUrl, sosTitle, sosVersion, omFormat, smlVersion);
 		
-		SOSMetadata meta = (SOSMetadata) ConfigurationContext.getServiceMetadata(sosUrl);
+		SOSMetadata metadata = (SOSMetadata) ConfigurationContext.getServiceMetadata(sosUrl);
 		
 		IBoundingBox sosBbox = null;
 		Map<String, FutureTask<OperationResult>> futureTasks = new HashMap<String, FutureTask<OperationResult>>();
@@ -108,18 +108,18 @@ public class GrdcSOSConnector implements SOSConnector {
 			// add offering
 			Offering offering = new Offering(offeringID);
 			offering.setLabel(observationOffering.getTitle());
-            meta.addOffering(offering);
+            metadata.addOffering(offering);
 			
 			// add phenomenons
 			for (String phenomenonId : phenArray) {
 				Phenomenon phenomenon = new Phenomenon(phenomenonId);
 				phenomenon.setLabel(phenomenonId.substring(phenomenonId.lastIndexOf(":") + 1));
-                meta.addPhenomenon(phenomenon);
+                metadata.addPhenomenon(phenomenon);
 			}
 			
 			// add procedures
 			for (String procedure : procArray) {
-				meta.addProcedure(new Procedure(procedure));
+				metadata.addProcedure(new Procedure(procedure));
 			}
 
 			ArrayList<String> fois = new ArrayList<String>();
@@ -139,7 +139,7 @@ public class GrdcSOSConnector implements SOSConnector {
 						station.setProcedure(procedure);
 						station.setOffering(offeringID);
 						station.setFeature(foi);
-						meta.addStation(station);	
+						metadata.addStation(station);	
 					}
 				}
 			}
@@ -161,13 +161,15 @@ public class GrdcSOSConnector implements SOSConnector {
         try {
             if (!sosBbox.getCRS().startsWith("EPSG")) {
                 String tmp = "EPSG:" + sosBbox.getCRS().split(":")[sosBbox.getCRS().split(":").length - 1];
-                meta.setSrs(tmp);
+                metadata.setSrs(tmp);
             } else {
-                meta.setSrs(sosBbox.getCRS());
+                metadata.setSrs(sosBbox.getCRS());
             }
         } catch (Exception e) {
             LOGGER.error("Could not insert spatial metadata", e);
         }
+
+        AReferencingHelper referenceHelper = createReferencingHelper(metadata);
         
         while (!futureTasks.isEmpty()) {
         	Set<String> keys = new HashSet<String>();
@@ -176,8 +178,8 @@ public class GrdcSOSConnector implements SOSConnector {
 				try {
 					FutureTask<OperationResult> futureTask = futureTasks.get(foi);
 					OperationResult opRes = futureTask.get(ConfigurationContext.SERVER_TIMEOUT, TimeUnit.MILLISECONDS);
-					Set<Station> stations = meta.getStationsByFeatureID(foi);
-					meta.removeStations(stations);
+					Set<Station> stations = metadata.getStationsByFeatureID(foi);
+					metadata.removeStations(stations);
 					if (opRes == null) {
 						LOGGER.error("Get no result for GetFeatureOfInterest " + foi + "!");
 					}
@@ -198,17 +200,17 @@ public class GrdcSOSConnector implements SOSConnector {
 							// add feature
 							FeatureOfInterest feature = new FeatureOfInterest(featureId);
 							feature.setLabel(label);
-							meta.addFeature(feature);
+							metadata.addFeature(feature);
 							// add position and foiID to a new station
 							for (Station station : stations) {
 								Station clone = station.clone();
 								clone.setFeature(featureId);
-								ParsedPoint point = getPositionOfGRDCSamplingPoint(grdcSamplingPoint);
+								ParsedPoint point = getPositionOfGRDCSamplingPoint(grdcSamplingPoint, referenceHelper);
 	                            double lat = Double.parseDouble(point.getLat());
 	                            double lng = Double.parseDouble(point.getLon());
 	                            EastingNorthing coords = new EastingNorthing(lng, lat);
 	                            clone.setLocation(coords, point.getSrs());
-								meta.addStation(clone);
+								metadata.addStation(clone);
 							}
 						}
 					}
@@ -220,11 +222,11 @@ public class GrdcSOSConnector implements SOSConnector {
 			} 
 		}
 		
-		meta.setHasDonePositionRequest(true);
-		return new SOSMetadataResponse(meta);
+		metadata.setHasDonePositionRequest(true);
+		return new SOSMetadataResponse(metadata);
 	}
 
-	private ParsedPoint getPositionOfGRDCSamplingPoint(GrdcSamplingPointType grdcSamplingPoint) {
+	private ParsedPoint getPositionOfGRDCSamplingPoint(GrdcSamplingPointType grdcSamplingPoint, AReferencingHelper referenceHelper) {
 		DirectPositionType pos = grdcSamplingPoint.getPosition().getPoint().getPos();
 		String[] coords = pos.getStringValue().split(" ");
 		
@@ -235,24 +237,23 @@ public class GrdcSOSConnector implements SOSConnector {
 			h = Double.parseDouble(coords[2]);
 		}
 		
-        AReferencingFacade ref = AReferencingFacade.createReferenceFacade();
-        String srs = ref.extractSRSCode(pos.getSrsName());
+        String srs = referenceHelper.extractSRSCode(pos.getSrsName());
         String wgs84 = "EPSG:4326";
         if (!srs.equals(wgs84)) {
             try {
-                int srsId = ref.getSrsIdFromEPSG(srs);
+                int srsId = referenceHelper.getSrsIdFromEPSG(srs);
                 PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING);
                 GeometryFactory geometryFactory = new GeometryFactory(pm, srsId);
-                Coordinate coordinate = ref.createCoordinate(srs, lon, lat, h);
+                Coordinate coordinate = referenceHelper.createCoordinate(srs, lon, lat, h);
                 Point point = geometryFactory.createPoint(coordinate);
-                point = ref.transform(point, srs, wgs84);
+                point = referenceHelper.transformToWgs84(point, srs);
                 srs = wgs84;
                 lat = point.getX();
                 lon = point.getY();
-                LOGGER.trace(lon + "," + lat + " (" + srs + ")");
+                LOGGER.trace(lon + "," + lat + " (" + wgs84 + ")");
             }
             catch (Exception e) {
-                LOGGER.debug("Could not transform! Keeping old SRS: " + srs, e);
+                LOGGER.debug("Could not transform! Keeping old SRS: " + wgs84, e);
             }
         }
 		

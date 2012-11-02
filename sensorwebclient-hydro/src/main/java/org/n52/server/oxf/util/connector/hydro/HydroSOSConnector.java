@@ -62,8 +62,8 @@ import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.access.AccessorThreadPool;
 import org.n52.server.oxf.util.access.OperationAccessor;
-import org.n52.server.oxf.util.connector.SOSConnector;
-import org.n52.server.oxf.util.crs.AReferencingFacade;
+import org.n52.server.oxf.util.connector.SosMetadataHandler;
+import org.n52.server.oxf.util.crs.AReferencingHelper;
 import org.n52.server.oxf.util.parser.ConnectorUtils;
 import org.n52.server.oxf.util.parser.utils.ParsedPoint;
 import org.n52.shared.responses.SOSMetadataResponse;
@@ -82,13 +82,11 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
-public class HydroSOSConnector implements SOSConnector {
+public class HydroSOSConnector extends SosMetadataHandler {
 	
 	private static final String FOI_WILDCARD = "FOI_WILDCARD";
     
     private static final Logger LOGGER = LoggerFactory.getLogger(HydroSOSConnector.class);
-    
-    private AReferencingFacade referenceFacade = AReferencingFacade.createReferenceFacade();
     
     private SOSAdapter adapter;
 	
@@ -176,6 +174,7 @@ public class HydroSOSConnector implements SOSConnector {
         
 		// execute the GetFeatureOfInterest requests
         int counter = futureTasks.size();
+        AReferencingHelper referenceHelper = createReferencingHelper(metadata);
 		LOGGER.info("Sending " + counter + " GetFeatureOfInterest requests");
 		for (Station station: futureTasks.keySet()) {
 			LOGGER.info("Sending #{} GetFeatureOfInterest request for Offering " + station.getOffering(), counter--);
@@ -198,7 +197,7 @@ public class HydroSOSConnector implements SOSConnector {
 					} else {
 						label = id;
 					}
-					ParsedPoint point = getPointOfSamplingFeatureType(sfSamplingFeature);
+					ParsedPoint point = getPointOfSamplingFeatureType(sfSamplingFeature, referenceHelper);
 					if (point == null) {
 						LOGGER.warn("The foi with ID {} has no valid point", id);
 					} else {
@@ -241,7 +240,7 @@ public class HydroSOSConnector implements SOSConnector {
         return phenomenonId.substring(phenomenonId.lastIndexOf("/") + 1);
     }
 
-	private ParsedPoint getPointOfSamplingFeatureType(SFSamplingFeatureType sfSamplingFeature) throws XmlException {
+	private ParsedPoint getPointOfSamplingFeatureType(SFSamplingFeatureType sfSamplingFeature, AReferencingHelper referenceHelper) throws XmlException {
 		ParsedPoint point = new ParsedPoint();
 		XmlCursor cursor = sfSamplingFeature.newCursor();
 		if (cursor.toChild(new QName("http://www.opengis.net/samplingSpatial/2.0", "shape"))) {
@@ -262,13 +261,13 @@ public class HydroSOSConnector implements SOSConnector {
                 point.setLat(lonLat[1]);
                 point.setSrs(wgs84);
 		        try {
-					String srs = this.referenceFacade.extractSRSCode(srsName); 
-					int srsID = this.referenceFacade.getSrsIdFromEPSG(srs);
+					String srs = referenceHelper.extractSRSCode(srsName); 
+					int srsID = referenceHelper.getSrsIdFromEPSG(srs);
 					PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING);
 					GeometryFactory geometryFactory = new GeometryFactory(pm, srsID);
-					Coordinate coord = this.referenceFacade.createCoordinate(srs, lon, lat, null);
+					Coordinate coord = referenceHelper.createCoordinate(srs, lon, lat, null);
 					Point createdPoint = geometryFactory.createPoint(coord);
-					createdPoint = this.referenceFacade.transform(createdPoint, srs, wgs84);
+					createdPoint = referenceHelper.transform(createdPoint, srs, wgs84);
 					point = new ParsedPoint(createdPoint.getY() + "", createdPoint.getX() + "", wgs84); 
 				} catch (Exception e) {
 					LOGGER.debug("Could not transform! Keeping old SRS: " + wgs84, e);

@@ -53,8 +53,6 @@ public class EastingNorthing implements Serializable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        // TODO wait for fix: http://code.google.com/p/google-web-toolkit/issues/detail?id=3404
-//        sb.append(getClass().getSimpleName()).append(" [ ");
         sb.append(getClass().getName()).append(" [ ");
         sb.append("Easting: ").append(easting).append(", ");
         sb.append("Northing: ").append(northing).append(" ]");

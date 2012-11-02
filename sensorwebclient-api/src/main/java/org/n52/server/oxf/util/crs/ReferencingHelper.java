@@ -29,11 +29,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.geotools.referencing.CRS;
 import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.operation.TransformException;
@@ -43,14 +43,14 @@ import org.slf4j.LoggerFactory;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.PrecisionModel;
 
-public class ReferencingFacade extends AReferencingFacade {
+public class ReferencingHelper extends AReferencingHelper {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReferencingFacade.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReferencingHelper.class);
     
-    protected ReferencingFacade() {
-        // use static AReferencingFacade.createAReferencingFacade factory method
+    protected ReferencingHelper(CRSAuthorityFactory crsFactory) {
+        super(crsFactory);
+        // use factory methods
     }
 
     @Override
@@ -69,10 +69,11 @@ public class ReferencingFacade extends AReferencingFacade {
         String sourceSrs = station.getSrs();
         String targetSrs = bbox.getSrs();
         if (sourceSrs != null) {
-            CoordinateReferenceSystem sourceCrs = CRS.decode(sourceSrs);
-            CoordinateReferenceSystem targetCrs = CRS.decode(targetSrs);
-            PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING);
-            GeometryFactory geometryFactory = new GeometryFactory(pm, getSrsIdFromEPSG(sourceSrs));
+            CoordinateReferenceSystem sourceCrs = crsFactory.createCoordinateReferenceSystem(sourceSrs);
+            CoordinateReferenceSystem targetCrs = crsFactory.createCoordinateReferenceSystem(targetSrs);
+//            CoordinateReferenceSystem sourceCrs = CRS.decode(sourceSrs);
+//            CoordinateReferenceSystem targetCrs = CRS.decode(targetSrs);
+            GeometryFactory geometryFactory = createGeometryFactory(sourceSrs);
             Coordinate coordinate = createCoordinate(sourceCrs, station.getLon(), station.getLat(), null);
             Point point = geometryFactory.createPoint(coordinate);
             point = transform(point, sourceCrs, targetCrs);

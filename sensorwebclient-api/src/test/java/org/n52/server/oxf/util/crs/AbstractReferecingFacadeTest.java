@@ -35,11 +35,11 @@ import org.n52.shared.serializable.pojos.sos.Station;
 
 public class AbstractReferecingFacadeTest {
     
-    private AReferencingFacade referenceFacade;
+    private AReferencingHelper referenceHelper;
 
     @Before
     public void setUp() throws Exception {
-        referenceFacade = new MyReferencingFacadeSeam();
+        referenceHelper = new NonCrsReferencingHelperSeam();
     }
 
     @Test
@@ -53,7 +53,7 @@ public class AbstractReferecingFacadeTest {
     }
     
     private void assertValidCodeFromEpsg(int expected, String code) {
-        assertEquals("Unexpected EPSG code!", expected, referenceFacade.getSrsIdFromEPSG(code));
+        assertEquals("Unexpected EPSG code!", expected, referenceHelper.getSrsIdFromEPSG(code));
     }
     
     @Test
@@ -71,16 +71,20 @@ public class AbstractReferecingFacadeTest {
     }
 
     private void assertValidEpsgShortCut(String expected, String epsgCode) {
-        assertEquals("Unexpected EPSG string!", expected, referenceFacade.extractSRSCode(epsgCode));
+        assertEquals("Unexpected EPSG string!", expected, referenceHelper.extractSRSCode(epsgCode));
     }
     
     // TODO add tests for creating coordinates
     // TODO add tests for transform coordinates
 
     /**
-     * Provides testing harness for {@link AReferencingFacade} to test all high level implementations.
+     * Provides testing harness for {@link AReferencingHelper} to test all high level implementations.
      */
-    private class MyReferencingFacadeSeam extends AReferencingFacade {
+    private class NonCrsReferencingHelperSeam extends AReferencingHelper {
+        protected NonCrsReferencingHelperSeam() {
+            super(null); // XXX change when testing coordinate handling
+        }
+
         @Override
         public List<Station> getContainingStations(BoundingBox bbox, Collection<Station> stations) {
             throw new UnsupportedOperationException("no test");

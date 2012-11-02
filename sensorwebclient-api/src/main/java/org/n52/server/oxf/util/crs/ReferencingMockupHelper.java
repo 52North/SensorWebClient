@@ -29,15 +29,17 @@ import java.util.List;
 
 import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.sos.Station;
+import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ReferencingMockupFacade extends AReferencingFacade {
+public class ReferencingMockupHelper extends AReferencingHelper {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReferencingMockupFacade.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReferencingMockupHelper.class);
     
-    protected ReferencingMockupFacade() {
-        // use static AReferencingFacade.createAReferencingFacade factory method
+    protected ReferencingMockupHelper(CRSAuthorityFactory crsFactory) {
+        super(crsFactory);
+        // use factory methods
     }
 
     public List<Station> getContainingStations(BoundingBox bbox, Collection<Station> stations) {
@@ -47,7 +49,7 @@ public class ReferencingMockupFacade extends AReferencingFacade {
 
     @Override
     public boolean isStationContainedByBBox(BoundingBox bbox, Station station) {
-        LOGGER.warn("Reference mockup assistance active! No spatial filter is aplied.");
+        LOGGER.warn("Reference mockup assistance active! No spatial filter is applied.");
         return true;
     }
 }

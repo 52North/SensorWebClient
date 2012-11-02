@@ -40,51 +40,68 @@ public class SOSMetadataBuilder {
 
     private String adapter;
 
-    private boolean waterML;
+    private boolean waterML = false;
 
-    private boolean autoZoom;
+    private boolean autoZoom = true;
+    
+    private boolean forceXYAxisOrder = false;
 
-    private int requestChunk;
+    private int requestChunk = 100;
+    
+    private double llEasting = Double.NaN;
 
-    private double llEasting;
+    private double llNorthing = Double.NaN;
 
-    private double llNorthing;
+    private double urEasting = Double.NaN;
 
-    private double urEasting;
-
-    private double urNorthing;
+    private double urNorthing = Double.NaN;
 
     private boolean sosSpecificBboxConfigured;
 
     public SOSMetadataBuilder() {
         // default
     }
-
+    
     public SOSMetadata build() {
         return new SOSMetadata(this);
     }
 
     public SOSMetadataBuilder addServiceURL(String serviceURL) {
+        if (serviceURL == null || serviceURL.isEmpty()) {
+            throw new NullPointerException("serviceURL parameter must not be null or empty.");
+        }
         this.serviceURL = serviceURL.trim();
         return this;
     }
 
     public SOSMetadataBuilder addServiceVersion(String serviceVersion) {
+        if (serviceVersion == null || serviceVersion.isEmpty()) {
+            throw new NullPointerException("serviceVersion parameter must not be null or empty.");
+        }
         this.serviceVersion = serviceVersion.trim();
         return this;
     }
 
     public SOSMetadataBuilder addServiceName(String serviceName) {
+        if (serviceName == null || serviceName.isEmpty()) {
+            throw new NullPointerException("serviceName parameter must not be null or empty.");
+        }
         this.serviceName = serviceName.trim();
         return this;
     }
 
     public SOSMetadataBuilder addConnector(String connector) {
+        if (connector == null || connector.isEmpty()) {
+            throw new NullPointerException("connector parameter must not be null or empty.");
+        }
         this.connector = connector.trim();
         return this;
     }
 
     public SOSMetadataBuilder addAdapter(String adapter) {
+        if (adapter == null || adapter.isEmpty()) {
+            throw new NullPointerException("adapter parameter must not be null or empty.");
+        }
         this.adapter = adapter.trim();
         return this;
     }
@@ -98,35 +115,70 @@ public class SOSMetadataBuilder {
         this.autoZoom = autoZoom;
         return this;
     }
+
+    public SOSMetadataBuilder setForceXYAxisOrder(boolean forceXYAxisOrder) {
+        this.forceXYAxisOrder = forceXYAxisOrder;
+        return this;
+    }
     
     public SOSMetadataBuilder setRequestChunk(int requestChunk) {
-        this.requestChunk = requestChunk;
+        if (requestChunk > 0) {
+            this.requestChunk = requestChunk;
+        }
         return this;
     }
 
     public SOSMetadataBuilder addLowerLeftEasting(Double llEasting) {
-        this.sosSpecificBboxConfigured = llEasting != null;
+        if (llEasting == null) {
+            throw new NullPointerException("llEasting parameter must not be null or NaN.");
+        }
+        if (llEasting.isNaN()) {
+            throw new IllegalArgumentException("llEasting parameter must be valid Double: " + llEasting);
+        }
+        this.sosSpecificBboxConfigured = true;
         this.llEasting = llEasting;
         return this;
     }
 
     public SOSMetadataBuilder addLowerLeftNorthing(Double llNorthing) {
-        this.sosSpecificBboxConfigured = llNorthing != null;
+        if (llNorthing == null) {
+            throw new NullPointerException("llNorthing parameter must not be null or NaN.");
+        }
+        if (llNorthing.isNaN()) {
+            throw new IllegalArgumentException("llNorthing parameter must be valid Double: " + llNorthing);
+        }
+        this.sosSpecificBboxConfigured = true;
         this.llNorthing = llNorthing;
         return this;
     }
 
     public SOSMetadataBuilder addUpperRightEasting(Double urEasting) {
-        this.sosSpecificBboxConfigured = urEasting != null;
+        if (urEasting == null) {
+            throw new NullPointerException("urEasting parameter must not be null or NaN.");
+        }
+        if (urEasting.isNaN()) {
+            throw new IllegalArgumentException("urEasting parameter must be valid Double: " + urEasting);
+        }
+        this.sosSpecificBboxConfigured = true;
         this.urEasting = urEasting;
         return this;
     }
 
     public SOSMetadataBuilder addUpperRightNorthing(Double urNorthing) {
-        this.sosSpecificBboxConfigured = urNorthing != null;
+        if (urNorthing == null) {
+            throw new NullPointerException("urNorthing parameter must not be null or NaN.");
+        }
+        if (urNorthing.isNaN()) {
+            throw new IllegalArgumentException("urNorthing parameter must be valid Double: " + urNorthing);
+        }
+        this.sosSpecificBboxConfigured = true;
         this.urNorthing = urNorthing;
         return this;
     }
+    
+    /* --------------------------
+     *  Builder's Getter methods
+     */
 
     public String getServiceURL() {
         return this.serviceURL;
@@ -155,11 +207,15 @@ public class SOSMetadataBuilder {
     public boolean isAutoZoom() {
         return this.autoZoom;
     }
+    
+    public boolean isForceXYAxisOrder() {
+        return this.forceXYAxisOrder;
+    }
 
     public int getRequestChunk() {
         return this.requestChunk;
     }
-
+    
     /**
      * @return the configured SOS specific extent or {@link Constants#FALLBACK_EXTENT} if no one was configured.
      */
@@ -171,4 +227,5 @@ public class SOSMetadataBuilder {
         EastingNorthing ur = new EastingNorthing(urEasting, urNorthing);
         return new BoundingBox(ll, ur, "EPSG:4326");
     }
+    
 }

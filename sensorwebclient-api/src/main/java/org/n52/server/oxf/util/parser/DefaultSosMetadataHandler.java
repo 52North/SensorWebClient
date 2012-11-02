@@ -24,8 +24,11 @@
 
 package org.n52.server.oxf.util.parser;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -42,6 +45,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.ows.ServiceDescriptor;
@@ -52,16 +56,16 @@ import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.sos.adapter.SOSAdapter;
 import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.oxf.sos.util.SosUtil;
+import org.n52.oxf.xmlbeans.parser.XMLHandlingException;
 import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.access.AccessorThreadPool;
 import org.n52.server.oxf.util.access.OperationAccessor;
 import org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension;
 import org.n52.server.oxf.util.access.oxfExtensions.SOSRequestBuilderFactory_OXFExtension;
-import org.n52.server.oxf.util.connector.SOSConnector;
+import org.n52.server.oxf.util.connector.SosMetadataHandler;
 import org.n52.server.oxf.util.parser.utils.ParsedPoint;
 import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.serializable.pojos.EastingNorthing;
-import org.n52.shared.serializable.pojos.ServiceMetadata;
 import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
@@ -71,15 +75,11 @@ import org.n52.shared.serializable.pojos.sos.Station;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultSosConnector implements SOSConnector {
+public class DefaultSosMetadataHandler extends SosMetadataHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSosConnector.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSosMetadataHandler.class);
 
-    public DefaultSosConnector() {
-        // do nothin
-    }
-
-    public SOSMetadataResponse buildUpServiceMetadata(String sosUrl, String sosVersion) throws Exception {
+    public SOSMetadataResponse buildUpServiceMetadata(String sosUrl, String sosVersion) throws OXFException, InterruptedException, XMLHandlingException {
         ISOSRequestBuilder requestBuilder = SOSRequestBuilderFactory_OXFExtension.generateRequestBuilder(sosVersion);
         SOSAdapter adapter = new SOSAdapter_OXFExtension(sosVersion, requestBuilder);
         ServiceDescriptor serviceDesc = ConnectorUtils.getServiceDescriptor(sosUrl, adapter);
@@ -89,7 +89,7 @@ public class DefaultSosConnector implements SOSConnector {
         String smlVersion = ConnectorUtils.getSMLVersion(serviceDesc, sosVersion);
         ConnectorUtils.setVersionNumbersToMetadata(sosUrl, sosTitle, sosVersion, omFormat, smlVersion);
 
-        Map<String, ServiceMetadata> sosMetadatas = ConfigurationContext.getServiceMetadatas();
+        Map<String, SOSMetadata> sosMetadatas = ConfigurationContext.getServiceMetadatas();
 
         //
         // build up associations:
@@ -107,10 +107,26 @@ public class DefaultSosConnector implements SOSConnector {
         IBoundingBox sosBbox = null;
         HashSet<String> featureIds = new HashSet<String>();
         Contents contents = serviceDesc.getContents();
+        SOSMetadata meta = (SOSMetadata) sosMetadatas.get(sosUrl);
+
         for (int i = 0; i < contents.getDataIdentificationCount(); i++) {
             ObservationOffering offering = (ObservationOffering) contents.getDataIdentification(i);
 
             sosBbox = ConnectorUtils.createBbox(sosBbox, offering);
+
+            try {
+                if ( sosBbox != null && !sosBbox.getCRS().startsWith("EPSG")) {
+                    String tmp = "EPSG:" + sosBbox.getCRS().split(":")[sosBbox.getCRS().split(":").length - 1];
+                    meta.setSrs(tmp);
+                }
+                else {
+                    meta.setSrs(sosBbox.getCRS());
+                }
+            }
+            catch (Exception e) {
+                LOGGER.error("Could not insert spatial metadata", e);
+            }
+
 
             String offeringID = offering.getIdentifier();
 
@@ -134,24 +150,9 @@ public class DefaultSosConnector implements SOSConnector {
         }
         LOGGER.debug("There are " + featureIds.size() + " FOIs registered in the SOS");
 
-        SOSMetadata meta = (SOSMetadata) sosMetadatas.get(sosUrl);
-
         // add fois
         for (String featureId : featureIds) {
             meta.addFeature(new FeatureOfInterest(featureId));
-        }
-
-        try {
-            if ( !sosBbox.getCRS().startsWith("EPSG")) {
-                String tmp = "EPSG:" + sosBbox.getCRS().split(":")[sosBbox.getCRS().split(":").length - 1];
-                meta.setSrs(tmp);
-            }
-            else {
-                meta.setSrs(sosBbox.getCRS());
-            }
-        }
-        catch (Exception e) {
-            LOGGER.error("Could not insert spatial metadata", e);
         }
 
         // FOI -> Procedure -> Phenomenon
@@ -211,10 +212,15 @@ public class DefaultSosConnector implements SOSConnector {
      * 
      * @param sosUrl
      *        the SOS service URL.
-     * @throws Exception
+     * @throws OXFException
      *         when request creation fails.
+     * @throws InterruptedException if getting the DescribeSensor result gets interrupted.
+     * @throws XMLHandlingException if parsing the DescribeSensor result fails
+     * @throws IOException if reading the DescribeSensor result fails.
+     * @throws IllegalStateException
+     *         if SOS version is not supported.
      */
-    private void performMetadataInterlinking(String sosUrl) throws Exception {
+    private void performMetadataInterlinking(String sosUrl) throws OXFException, InterruptedException, XMLHandlingException, IOException {
         SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosUrl);
         ArrayList<Procedure> procedures = metadata.getProcedures();
 
@@ -262,6 +268,9 @@ public class DefaultSosConnector implements SOSConnector {
                 else {
                     incomingResultAsStream = opResult.getIncomingResultAsStream();
                     DescribeSensorParser parser = new DescribeSensorParser(incomingResultAsStream, sosVersion);
+
+                    // TODO set Force XY configuration and override AReferencingHelper if necessary
+
                     Procedure procedure = metadata.getProcedure(procedureId);
                     Set<Station> stations = metadata.getStationsByProcedure(procedure.getId());
                     procedure.addAllRefValues(parser.parseCapsDataFields());
@@ -337,7 +346,12 @@ public class DefaultSosConnector implements SOSConnector {
                         illegalProcedures.add(procedureId);
                     }
                     catch (XmlException ex) {
-                        LOGGER.debug("DescribeSensor Response for '{}' is no XML.", procedureId);
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(incomingResultAsStream));
+                        LOGGER.warn("No XML response for procedure '{}'.", procedureId);
+                        LOGGER.debug("First line of response: {}", reader.readLine());
+                    }
+                    catch (IOException ex) {
+                        LOGGER.warn("Could read result", ex);
                     }
                 }
             }

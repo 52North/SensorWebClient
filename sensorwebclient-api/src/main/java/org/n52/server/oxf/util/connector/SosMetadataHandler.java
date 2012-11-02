@@ -21,12 +21,34 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
+
 package org.n52.server.oxf.util.connector;
 
+import org.n52.server.oxf.util.crs.AReferencingHelper;
 import org.n52.shared.responses.SOSMetadataResponse;
+import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 
-public interface SOSConnector {
+public abstract class SosMetadataHandler {
 
-	public SOSMetadataResponse buildUpServiceMetadata(String sosUrl, String sosVersion) throws Exception;
-	
+    // TODO pull up general methods and technics for extending handlers
+
+    public abstract SOSMetadataResponse buildUpServiceMetadata(String sosUrl, String sosVersion) throws Exception;
+
+    // public abstract SOSMetadataResponse completeSosMetadata(SOSMetadata metadata);
+
+    /**
+     * Creates an {@link AReferencingHelper} according to metadata settings (e.g. if XY axis order shall be
+     * enforced during coordinate transformation).
+     * 
+     * @param metadata
+     *        the SOS metadata containing SOS instance configuration.
+     */
+    protected AReferencingHelper createReferencingHelper(SOSMetadata metadata) {
+        if (metadata.isForceXYAxisOrder()) {
+            return AReferencingHelper.createEpsgForcedXYAxisOrder();
+        }
+        else {
+            return AReferencingHelper.createEpsgStrictAxisOrder();
+        }
+    }
 }

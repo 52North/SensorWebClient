@@ -49,6 +49,7 @@
 
 package org.n52.shared.serializable.pojos.sos;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -58,7 +59,6 @@ import java.util.Set;
 
 import org.n52.shared.Constants;
 import org.n52.shared.serializable.pojos.BoundingBox;
-import org.n52.shared.serializable.pojos.ServiceMetadata;
 
 /**
  * A shared metadata representation for an SOS instance. An {@link SOSMetadata} is used from both (!) Client
@@ -68,9 +68,21 @@ import org.n52.shared.serializable.pojos.ServiceMetadata;
  * 
  * TODO this above fact is based on historical reasons and have to refactored!
  */
-public class SOSMetadata extends ServiceMetadata {
+public class SOSMetadata implements Serializable {
     
     private static final long serialVersionUID = -3721927620888635622L;
+    
+    private String id; // mandatory
+
+    private String version; // mandatory
+
+    private String title = "NA";
+    
+    private String connector; 
+    
+    private String adapter;
+
+    private boolean initialized = false;
 
     private String sensorMLVersion;
 
@@ -88,39 +100,51 @@ public class SOSMetadata extends ServiceMetadata {
 
     private boolean hasDonePositionRequest = false;
 
-    private String title;
-    
     private String configuredItemName;
 
     private String srs;
 
-    private boolean canGeneralize = false;
+    private boolean canGeneralize = false; // default
 
-    private boolean waterML = false;
+    private boolean waterML = false; // default
 
-    private boolean autoZoom = true;
+    private boolean autoZoom = true; // default
 
-    private int requestChunk;
+    private int requestChunk = 100; // default
+    
+    private boolean forceXYAxisOrder = false; // default
 
     private BoundingBox configuredExtent;
 
     @SuppressWarnings("unused")
     private SOSMetadata() {
-        // do nothing
+        // for serialization
     }
 
     public SOSMetadata(String url, String sosVersion, String sensorMLVersion, String omVersion, String title) {
-        super(url, sosVersion);
+        this(url);
         this.title = title;
+        this.version = sosVersion;
         this.sensorMLVersion = sensorMLVersion;
         this.omVersion = omVersion;
     }
 
     @Deprecated
     public SOSMetadata(String id, String title) {
-        super(id);
+        this(id);
         this.title = title;
     }
+
+    /**
+     * @deprecated use {@link #SOSMetadata(String, String)}
+     * 
+     * @see {@link #SOSMetadata(String, String)} to explicitly set version 
+     */
+    @Deprecated
+    public SOSMetadata(String id) {
+        this.id = id;
+    }
+
 
     /**
      * Use this constructor only for non-configurated SOS instances! Prefer using
@@ -134,39 +158,68 @@ public class SOSMetadata extends ServiceMetadata {
      *        the supported version
      */
     public SOSMetadata(String url, String title, String version) {
-        super(url, version);
-        this.title = title;
+        this(url, title);
+        this.version = version;
     }
 
     public SOSMetadata(SOSMetadataBuilder builder) {
-        super(builder.getServiceURL(), builder.getServiceVersion().trim());
+        this(builder.getServiceURL(), builder.getServiceName());
+        this.version = builder.getServiceVersion();
         this.configuredItemName = builder.getServiceName();
         this.waterML = builder.isWaterML();
         this.autoZoom = builder.isAutoZoom();
+        this.forceXYAxisOrder = builder.isForceXYAxisOrder();
         this.requestChunk = builder.getRequestChunk();
         this.configuredExtent = builder.getConfiguredServiceExtent();
         this.setConnector(builder.getConnector());
         this.setAdapter(builder.getAdapter());
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setInitialized(boolean initialized) {
+        this.initialized = initialized;
+    }
+    
+    /**
+     * Indicates that the metadata has been filled with data requested from service.
+     */
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getConnector() {
+        return connector;
+    }
+
+    public void setConnector(String connector) {
+        // is null when used on client side
+        this.connector = connector != null ? connector.trim() : null;
+    }
+
+    public String getAdapter() {
+        return adapter;
+    }
+
+    public void setAdapter(String adapter) {
+        // is null when used on client side
+        this.adapter = adapter != null ? adapter.trim() : null;
+    }
+
+    
     public String getServiceUrl() {
         return getId();
     }
-
-    // public SOSMetadata copy() {
-    // SOSMetadata meta = new SOSMetadata(getId(), getSosVersion(), sensorMLVersion, omVersion, title);
-    // meta.features = (HashMap<String, FeatureOfInterest>) this.features.clone();
-    // meta.procedures = (HashMap<String, Procedure>) this.procedures.clone();
-    // meta.phenomenons = (HashMap<String, Phenomenon>) this.phenomenons.clone();
-    // meta.offerings = (HashMap<String, Offering>) this.offerings.clone();
-    // meta.stations = this.stations;
-    // meta.setConnector(this.getConnector());
-    // meta.autoZoom = this.autoZoom;
-    // meta.sosSpecificBboxConfigured = this.sosSpecificBboxConfigured;
-    // meta.configuredExtent = this.configuredExtent;
-    // meta.hasDonePositionRequest = this.hasDonePositionRequest;
-    // return meta;
-    // }
 
     public String getSrs() {
         return this.srs;
@@ -353,17 +406,12 @@ public class SOSMetadata extends ServiceMetadata {
         return waterML;
     }
 
-    /**
-     * Used to set from Client side if a map shall auto zoom to the provided station markers.
-     * 
-     * @param autoZoom
-     */
-    public void setAutoZoom(boolean autoZoom) {
-        this.autoZoom = autoZoom;
-    }
-
     public boolean isAutoZoom() {
         return autoZoom;
+    }
+    
+    public boolean isForceXYAxisOrder() {
+        return forceXYAxisOrder;
     }
     
     public int getRequestChunk() {
@@ -389,8 +437,15 @@ public class SOSMetadata extends ServiceMetadata {
 
     @Override
     public String toString() {
-        return "SOSMetadata [url: '" + getId() + "']";
+        StringBuilder sb = new StringBuilder();
+        sb.append("SOSMetadata [ ");
+        sb.append("parameterId: ").append(id).append(", ");
+        sb.append("initialized: ").append(initialized).append(", ");
+        sb.append("version: ").append(version);
+        sb.append(" ]");
+        return sb.toString();
     }
+
 
     public void addStation(Station station) {
         this.stations.put(station.getId(), station);

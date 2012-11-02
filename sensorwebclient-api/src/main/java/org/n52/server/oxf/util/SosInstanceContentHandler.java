@@ -37,7 +37,7 @@ public class SosInstanceContentHandler extends DefaultHandler {
     private static final Logger LOG = LoggerFactory.getLogger(SosInstanceContentHandler.class);
 
     enum TagNames {
-        INSTANCE, ITEMNAME, URL, VERSION, CONNECTOR, ADAPTER, WATERML, LLEASTING, LLNORTHING, UREASTING, URNORTHING, DEFAULTZOOM, AUTOZOOM, REQUESTCHUNK, NOELEMENT;
+        INSTANCE, ITEMNAME, URL, VERSION, CONNECTOR, ADAPTER, WATERML, LLEASTING, LLNORTHING, UREASTING, URNORTHING, DEFAULTZOOM, AUTOZOOM, REQUESTCHUNK, FORCEXYAXISORDER, NOELEMENT;
     }
 
     private SOSMetadataBuilder currentBuilder = new SOSMetadataBuilder();
@@ -71,6 +71,9 @@ public class SosInstanceContentHandler extends DefaultHandler {
         }
         else if (TagNames.REQUESTCHUNK.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.REQUESTCHUNK;
+        }
+        else if (TagNames.FORCEXYAXISORDER.name().equalsIgnoreCase(qName)) {
+            currentElement = TagNames.FORCEXYAXISORDER;
         }
         else if (TagNames.UREASTING.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.UREASTING;
@@ -106,6 +109,7 @@ public class SosInstanceContentHandler extends DefaultHandler {
 			SOSMetadata metadata = currentBuilder.build();
 			LOG.debug("New SOS metadata: {}", metadata);
 			ConfigurationContext.addNewSOSMetadata(metadata);
+			currentBuilder = new SOSMetadataBuilder();
 		}
 
         String parsedCharacters = currentContent.toString();
@@ -128,6 +132,10 @@ public class SosInstanceContentHandler extends DefaultHandler {
             case REQUESTCHUNK:
                 int requestChunk = Integer.parseInt(parsedCharacters);
                 currentBuilder.setRequestChunk(requestChunk);
+                break;
+            case FORCEXYAXISORDER:
+                boolean forceXYAxisOrder = Boolean.parseBoolean(parsedCharacters);
+                currentBuilder.setForceXYAxisOrder(forceXYAxisOrder);
                 break;
             case LLEASTING:
                 double llEasting = Double.parseDouble(parsedCharacters);

@@ -38,7 +38,6 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
 import org.n52.server.oxf.util.ConfigurationContext;
-import org.n52.shared.serializable.pojos.ServiceMetadata;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -147,7 +146,7 @@ public class SosMetadataUpdate {
         }
     }
 
-    protected static ServiceMetadata getServiceMetadataFor(String serviceUrl) throws Exception {
+    protected static SOSMetadata getServiceMetadataFor(String serviceUrl) throws Exception {
         return ConfigurationContext.getServiceMetadata(serviceUrl);
     }
 

@@ -35,7 +35,6 @@ import javax.xml.parsers.SAXParserFactory;
 import org.junit.Test;
 import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.SosInstanceContentHandler;
-import org.n52.shared.serializable.pojos.ServiceMetadata;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +51,7 @@ public class SosInstanceContentHandlerTest {
     
     private static final String FLUGGS_URL = "http://fluggs.wupperverband.de/sos/sos";
     
-    private static final String DEFAULT_CONNECTOR = "org.n52.server.oxf.util.parser.DefaultSosConnector";
+    private static final String DEFAULT_CONNECTOR = "org.n52.server.oxf.util.parser.DefaultSosMetadataHandler";
     
     private static final String EEA_CONNECTOR = "org.n52.server.oxf.util.connector.eea.EEASOSConnector";
     
@@ -74,7 +73,7 @@ public class SosInstanceContentHandlerTest {
             fail(String.format("Error parsing %s", SOS_INSTANCES_FILE));
         }
         
-        Map<String, ServiceMetadata> serviceMetadatas = ConfigurationContext.getServiceMetadatas();
+        Map<String, SOSMetadata> serviceMetadatas = ConfigurationContext.getServiceMetadatas();
         assertEquals("Unequal amount of SOS instances.", 4, ConfigurationContext.getSOSMetadatas().size());
         assertCorrectPegelOnline(serviceMetadatas.get(PEGELONLINE_URL));
         assertCorrectIrceLine(serviceMetadatas.get(IRCELINE_URL));
@@ -82,20 +81,21 @@ public class SosInstanceContentHandlerTest {
         assertCorrectFluggsSos(serviceMetadatas.get(FLUGGS_URL));
     }
 
-    private void assertCorrectPegelOnline(ServiceMetadata serviceMetadata) {
+    private void assertCorrectPegelOnline(SOSMetadata serviceMetadata) {
         SOSMetadata metadata = (SOSMetadata) serviceMetadata;
         assertEquals(PEGELONLINE_URL, metadata.getId());
         assertEquals("1.0.0", metadata.getVersion());
         assertEquals(true, metadata.isWaterML());
         assertEquals(DEFAULT_CONNECTOR, metadata.getConnector());
         assertEquals(DEFAULT_ADAPTER, metadata.getAdapter());
+        assertEquals(false, metadata.isForceXYAxisOrder());
         assertEquals(150, metadata.getRequestChunk());
         assertEquals(false, metadata.isAutoZoom());
         // TODO check bbox
         // TODO check defaultZoom
     }
 
-    private void assertCorrectIrceLine(ServiceMetadata serviceMetadata) {
+    private void assertCorrectIrceLine(SOSMetadata serviceMetadata) {
         SOSMetadata metadata = (SOSMetadata) serviceMetadata;
         assertEquals(IRCELINE_URL, metadata.getId());
         assertEquals("1.0.0", metadata.getVersion());
@@ -108,12 +108,13 @@ public class SosInstanceContentHandlerTest {
         // TODO check defaultZoom
     }
     
-    private void assertCorrectEeaSos(ServiceMetadata serviceMetadata) {
+    private void assertCorrectEeaSos(SOSMetadata serviceMetadata) {
         SOSMetadata metadata = (SOSMetadata) serviceMetadata;
         assertEquals(EEA_SOE_URL, metadata.getId());
         assertEquals("2.0.0", metadata.getVersion());
         assertEquals(false, metadata.isWaterML());
         assertEquals(EEA_CONNECTOR, metadata.getConnector());
+        assertEquals(true, metadata.isForceXYAxisOrder());
         assertEquals(EEA_ADAPTER, metadata.getAdapter());
         assertEquals(200, metadata.getRequestChunk());
         assertEquals(false, metadata.isAutoZoom());
@@ -121,7 +122,7 @@ public class SosInstanceContentHandlerTest {
         // TODO check defaultZoom
     }
 
-    private void assertCorrectFluggsSos(ServiceMetadata serviceMetadata) {
+    private void assertCorrectFluggsSos(SOSMetadata serviceMetadata) {
         SOSMetadata metadata = (SOSMetadata) serviceMetadata;
         assertEquals(FLUGGS_URL, metadata.getId());
         assertEquals("1.0.0", metadata.getVersion());

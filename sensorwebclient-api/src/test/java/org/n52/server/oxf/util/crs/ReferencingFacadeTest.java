@@ -45,13 +45,13 @@ public class ReferencingFacadeTest {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(ReferencingFacadeTest.class);
 
-    private AReferencingFacade referencingFacade;
+    private AReferencingHelper referencingFacade;
     private BoundingBox bbox;
 
     @Before
     public void setUp() throws Exception {
         ConfigurationContext.IS_DEV_MODE = false;
-        referencingFacade = AReferencingFacade.createReferenceFacade();
+        referencingFacade = AReferencingHelper.createEpsgStrictAxisOrder();
         EastingNorthing ll = new EastingNorthing(6.4, 51.9);
         EastingNorthing ur = new EastingNorthing(8.9, 53.4);
         bbox = new BoundingBox(ll, ur, "EPSG:4326");

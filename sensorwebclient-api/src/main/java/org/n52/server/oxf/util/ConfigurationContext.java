@@ -40,13 +40,12 @@ import javax.servlet.http.HttpServlet;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.n52.server.oxf.util.connector.SOSConnector;
+import org.n52.server.oxf.util.connector.SosMetadataHandler;
 import org.n52.server.oxf.util.logging.Statistics;
-import org.n52.server.oxf.util.parser.DefaultSosConnector;
+import org.n52.server.oxf.util.parser.DefaultSosMetadataHandler;
 import org.n52.server.updates.SosMetadataUpdate;
 import org.n52.shared.Constants;
 import org.n52.shared.responses.SOSMetadataResponse;
-import org.n52.shared.serializable.pojos.ServiceMetadata;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +56,7 @@ public class ConfigurationContext extends HttpServlet {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationContext.class);
 
-    private static Map<String, ServiceMetadata> serviceMetadatas = Collections.synchronizedMap(new HashMap<String, ServiceMetadata>());
+    private static Map<String, SOSMetadata> serviceMetadatas = Collections.synchronizedMap(new HashMap<String, SOSMetadata>());
     
     public static int STARTUP_DELAY;
 
@@ -184,16 +183,14 @@ public class ConfigurationContext extends HttpServlet {
         return values;
     }
 
-    public synchronized static Map<String, ServiceMetadata> getServiceMetadatas() {
+    public synchronized static Map<String, SOSMetadata> getServiceMetadatas() {
         return serviceMetadatas;
     }
     
     public synchronized static Collection<SOSMetadata> getSOSMetadatas() {
     	List<SOSMetadata> sosMetadatas = new ArrayList<SOSMetadata>();
-    	for (ServiceMetadata metadata : serviceMetadatas.values()) {
-			if (metadata instanceof SOSMetadata) {
-				sosMetadatas.add((SOSMetadata)metadata);
-			}
+    	for (SOSMetadata metadata : serviceMetadatas.values()) {
+			sosMetadatas.add(metadata);
 		}
     	return sosMetadatas;
     }
@@ -203,7 +200,7 @@ public class ConfigurationContext extends HttpServlet {
             return (SOSMetadata) getServiceMetadatas().get(url);
         }
         try {
-            DefaultSosConnector parser = new DefaultSosConnector();
+            DefaultSosMetadataHandler parser = new DefaultSosMetadataHandler();
             SOSMetadataResponse resp = parser.buildUpServiceMetadata(url, Constants.DEFAULT_SOS_VERSION);
             return resp.getServiceMetadata();
         }
@@ -214,7 +211,7 @@ public class ConfigurationContext extends HttpServlet {
         }
     }
 
-    public synchronized static ServiceMetadata getServiceMetadata(String url) throws Exception {
+    public synchronized static SOSMetadata getServiceMetadata(String url) throws Exception {
         url = url.trim();
         if (!containsServiceMetadata(url)) {
             new URL(url);
@@ -229,18 +226,15 @@ public class ConfigurationContext extends HttpServlet {
                 LOGGER.error("No connector configured for SOS '{}'", url);
         	    throw new IllegalStateException("No connector found for SOS.");
 			}
-			Class<SOSConnector> connectorClass = (Class<SOSConnector>) Class.forName(connectorClassString);
-        	Constructor<SOSConnector> constructor = connectorClass.getConstructor();
-        	SOSConnector connector = constructor.newInstance();
+			Class<SosMetadataHandler> connectorClass = (Class<SosMetadataHandler>) Class.forName(connectorClassString);
+        	Constructor<SosMetadataHandler> constructor = connectorClass.getConstructor();
+        	SosMetadataHandler connector = constructor.newInstance();
         	connector.buildUpServiceMetadata(url, getVersion(url));
-            ServiceMetadata sm = ConfigurationContext.getServiceMetadatas().get(url);
-            if (sm instanceof SOSMetadata) {
-                SOSMetadata meta = (SOSMetadata) sm;
-                if (!meta.hasDonePositionRequest()) {
-                    SosMetadataUpdate.updateService(url);
-                }
+            SOSMetadata meta = ConfigurationContext.getServiceMetadatas().get(url);
+            if (!meta.hasDonePositionRequest()) {
+                SosMetadataUpdate.updateService(url);
             }
-            return sm;
+            return meta;
         }
     }
 
@@ -266,7 +260,7 @@ public class ConfigurationContext extends HttpServlet {
     }
     
     private static String getVersion(String sosURL) throws TimeoutException, Exception {
-        ServiceMetadata serviceMetadata = serviceMetadatas.get(sosURL);
+        SOSMetadata serviceMetadata = serviceMetadatas.get(sosURL);
         if (serviceMetadata != null) {
             return serviceMetadata.getVersion();
         } else {
@@ -274,9 +268,9 @@ public class ConfigurationContext extends HttpServlet {
         }
     }
 
-    public static void initializeMetadata(ServiceMetadata metadata) {
-        ServiceMetadata old = serviceMetadatas.put(metadata.getId(), metadata);
-        LOGGER.debug("Replace old serviceMetadata: " + old);
+    public static void initializeMetadata(SOSMetadata metadata) {
+        SOSMetadata old = serviceMetadatas.put(metadata.getId(), metadata);
+        LOGGER.debug("Replace old metadata for: " + old);
         metadata.setInitialized(true);
     }
 

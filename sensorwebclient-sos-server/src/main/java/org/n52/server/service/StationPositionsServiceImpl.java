@@ -27,12 +27,11 @@ import java.util.ArrayList;
 
 import org.n52.client.service.StationPositionsService;
 import org.n52.server.oxf.util.ConfigurationContext;
-import org.n52.server.oxf.util.crs.AReferencingFacade;
+import org.n52.server.oxf.util.crs.AReferencingHelper;
 import org.n52.server.updates.SosMetadataUpdate;
 import org.n52.shared.exceptions.ServiceOccupiedException;
 import org.n52.shared.responses.StationPositionsResponse;
 import org.n52.shared.serializable.pojos.BoundingBox;
-import org.n52.shared.serializable.pojos.ServiceMetadata;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.slf4j.Logger;
@@ -41,8 +40,6 @@ import org.slf4j.LoggerFactory;
 public class StationPositionsServiceImpl implements StationPositionsService {
     
     private static final Logger LOG = LoggerFactory.getLogger(StationPositionsServiceImpl.class);
-    
-    private AReferencingFacade referencing = AReferencingFacade.createReferenceFacade();
 
     @Override
     public StationPositionsResponse getStationPositions(String sosURL, int start, int interval, BoundingBox boundingBox) throws Exception {
@@ -54,12 +51,14 @@ public class StationPositionsServiceImpl implements StationPositionsService {
                 throw new ServiceOccupiedException(reason);
             }
         
-            SOSMetadata meta = getCachedMetadata(sosURL);
+            SOSMetadata metadata = getCachedMetadata(sosURL);
+            boolean shallForceXYAxisOrder = metadata.isForceXYAxisOrder();
+            AReferencingHelper referencing = createReferenceHelper(shallForceXYAxisOrder);
             
             int endTmp = 0;
             ArrayList<Station> finalStations = new ArrayList<Station>();
             ArrayList<Station> stations = new ArrayList<Station>();
-            stations.addAll(meta.getStations());
+            stations.addAll(metadata.getStations());
             for (int i = start; i < stations.size() && finalStations.size() < interval; i++) {
                 Station station = stations.get(i);
                 if (referencing.isStationContainedByBBox(boundingBox, station)) {
@@ -67,9 +66,10 @@ public class StationPositionsServiceImpl implements StationPositionsService {
                 }
                 endTmp = i + 1;
             }
+            String sosUrl = metadata.getId();
             LOG.debug("Extracted " + finalStations.size() + " (" + start + "-" + endTmp + ") stations from " + stations.size());
             boolean finished = isFinished(endTmp, stations);
-            return new StationPositionsResponse(meta.getId(), finalStations, meta.getSrs(), finished, start, endTmp);
+            return new StationPositionsResponse(sosUrl, finalStations, metadata.getSrs(), finished, start, endTmp);
         } catch (Exception e) {
             LOG.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
@@ -78,19 +78,18 @@ public class StationPositionsServiceImpl implements StationPositionsService {
     }
 
     private SOSMetadata getCachedMetadata(String url) throws Exception {
-        SOSMetadata meta = getSosMetadata(url);
-        if (!meta.hasDonePositionRequest()) {
+        SOSMetadata metadata = ConfigurationContext.getServiceMetadata(url);
+        if (!metadata.hasDonePositionRequest()) {
             SosMetadataUpdate.updateService(url);
         }
-        return meta;
+        return metadata;
     }
 
-    private SOSMetadata getSosMetadata(String url) throws Exception {
-        ServiceMetadata metadata = ConfigurationContext.getServiceMetadata(url);
-        if (metadata instanceof SOSMetadata) {
-            return (SOSMetadata) metadata;
+    private AReferencingHelper createReferenceHelper(boolean forceXYAxisOrder) {
+        if (forceXYAxisOrder) {
+            return AReferencingHelper.createEpsgForcedXYAxisOrder();
         } else {
-            throw new IllegalStateException("Illegal service: " + url);
+            return AReferencingHelper.createEpsgStrictAxisOrder();
         }
     }
 

@@ -28,12 +28,14 @@ import static org.junit.Assert.assertEquals;
 import java.io.InputStream;
 
 import net.opengis.sampling.x20.SFSamplingFeatureDocument;
+import net.opengis.sampling.x20.SFSamplingFeatureType;
 
 import org.apache.xmlbeans.XmlException;
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.oxf.ows.capabilities.IBoundingBox;
 import org.n52.oxf.valueDomains.spatial.BoundingBox;
+import org.n52.server.oxf.util.crs.AReferencingHelper;
 import org.n52.server.oxf.util.parser.utils.ParsedPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +45,8 @@ public class EeaSosConnectorTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(EeaSosConnectorTest.class);
     
     private static final String SF_SPATIAL_FEATURE = "/files/sf_spatial_feature.xml";
+    
+    private static final AReferencingHelper referenceHelper = AReferencingHelper.createEpsgForcedXYAxisOrder();
     
     private SFSamplingFeatureDocument sfSamplingFeature;
 
@@ -57,7 +61,8 @@ public class EeaSosConnectorTest {
 
     @Test
     public void testGetPointOfSamplingFeatureType() throws XmlException {
-        ParsedPoint parsedPoint = sosConnector.getPointOfSamplingFeatureType(sfSamplingFeature.getSFSamplingFeature());
+        SFSamplingFeatureType feature = sfSamplingFeature.getSFSamplingFeature();
+        ParsedPoint parsedPoint = sosConnector.getPointOfSamplingFeatureType(feature, referenceHelper);
         // <gml:Point gml:id="BETR701-point-location">
         //  <gml:pos srsName="http://www.opengis.net/def/crs/EPSG/0/4326">3.729 51.058</gml:pos>
         // </gml:Point>
@@ -72,11 +77,11 @@ public class EeaSosConnectorTest {
         double[] lowerLeft = new double[] { -176.0,-70.5 };
         double[] upperRight = new double[] { 179.0,88.7 };
         IBoundingBox bbox = new BoundingBox("EPSG:4325", lowerLeft, upperRight);
-        String bboxString = sosConnector.createBboxString(bbox);
+        String bboxString = sosConnector.createBboxString(bbox, referenceHelper);
         assertEquals("om:featureOfInterest/*/sams:shape,-176.0,-70.5,179.0,88.7,urn:ogc:def:crs:EPSG::4325", bboxString);
         
         bbox = new BoundingBox("4325", lowerLeft, upperRight);
-        bboxString = sosConnector.createBboxString(bbox);
+        bboxString = sosConnector.createBboxString(bbox, referenceHelper);
         assertEquals("om:featureOfInterest/*/sams:shape,-176.0,-70.5,179.0,88.7,urn:ogc:def:crs:EPSG::4325", bboxString);
     }
 

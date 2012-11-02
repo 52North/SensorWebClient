@@ -52,7 +52,7 @@ public class GeneralizationConfiguration {
     private static boolean loadProperties() {
         try {
             properties = new Properties();
-        	URL classFolder = GeneralizationConfiguration.class.getResource("/configuration.properties");
+        	URL classFolder = GeneralizationConfiguration.class.getResource("/generalizer.properties");
         	File configFile = new File(classFolder.toURI());
             properties.load(new FileInputStream(configFile));
             return true;
