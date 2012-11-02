@@ -41,7 +41,6 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
-import org.n52.oxf.adapter.ParameterShell;
 import org.n52.oxf.ows.ExceptionReport;
 import org.n52.oxf.ows.OWSException;
 import org.n52.oxf.ows.ServiceDescriptor;
@@ -62,20 +61,34 @@ public class SOSwithSoapAdapter extends SOSAdapter_OXFExtension {
     /**
      * Creates an adapter to connect SOS with SOAP binding. <br>
      * <br>
+     * Per default the Adapter uses {@link SoapSOSRequestBuilder_200} to build its request. Override via
+     * {@link #setRequestBuilder(ISOSRequestBuilder)}.
+     * 
+     * @param sosVersion
+     *        the SOS version
+     */
+    public SOSwithSoapAdapter(String sosVersion) {
+        super(sosVersion);
+        setRequestBuilder(new SoapSOSRequestBuilder_200());
+    }
+
+    /**
+     * Creates an adapter to connect SOS with SOAP binding. <br>
+     * <br>
      * We use the overloaded constructor {@link SOSAdapter#SOSAdapter(String, ISOSRequestBuilder)} just to
      * satisfy reflection loading. Actually, there is <b>no parameter needed</b> for
      * <code>requestBuilder</code> and is not looked at at all (so it can be <code>null</code>). The
      * constructor creates its own {@link SOSRequestBuilderGET_200} instance internally by itself. <br>
-     * <br>
-     * TODO This however can for sure be part of a next refactoring ...
      * 
+     * @deprecated use {@link #SOSwithSoapAdapter(String)} instead
      * @param sosVersion
      *        the SOS version
      * @param requestBuilder
      *        only for satisfying reflection loading and can be <code>null</code>.
      */
     public SOSwithSoapAdapter(String sosVersion, ISOSRequestBuilder requestBuilder) {
-    	super(sosVersion, new SoapSOSRequestBuilder_200());
+        super(sosVersion, new SoapSOSRequestBuilder_200());
+        LOGGER.warn("This is a deprecated constructor and will be removed soon w/o notice.");
     }
 
     @Override
@@ -87,21 +100,22 @@ public class SOSwithSoapAdapter extends SOSAdapter_OXFExtension {
         OperationResult opResult = doOperation(operation, paramCon);
         return initService(opResult);
     }
-    
+
     @Override
     public ServiceDescriptor initService(OperationResult getCapabilitiesResult) throws ExceptionReport, OXFException {
         try {
-        	XmlObject capsDoc = XmlObject.Factory.parse(getCapabilitiesResult.getIncomingResultAsStream());
-        	if (SosUtil.isVersion100(serviceVersion)) {
-        		if (capsDoc instanceof net.opengis.sos.x10.CapabilitiesDocument) {
-					return initService((net.opengis.sos.x10.CapabilitiesDocument)capsDoc);
-				}
-            } else if (SosUtil.isVersion200(serviceVersion)) {
-            	if (capsDoc instanceof net.opengis.sos.x20.CapabilitiesDocument) {
-					return initService((net.opengis.sos.x20.CapabilitiesDocument)capsDoc);
-				}
-            } 
-        	throw new OXFException("Version is not supported: " + serviceVersion);
+            XmlObject capsDoc = XmlObject.Factory.parse(getCapabilitiesResult.getIncomingResultAsStream());
+            if (SosUtil.isVersion100(serviceVersion)) {
+                if (capsDoc instanceof net.opengis.sos.x10.CapabilitiesDocument) {
+                    return initService((net.opengis.sos.x10.CapabilitiesDocument) capsDoc);
+                }
+            }
+            else if (SosUtil.isVersion200(serviceVersion)) {
+                if (capsDoc instanceof net.opengis.sos.x20.CapabilitiesDocument) {
+                    return initService((net.opengis.sos.x20.CapabilitiesDocument) capsDoc);
+                }
+            }
+            throw new OXFException("Version is not supported: " + serviceVersion);
         }
         catch (XmlException e) {
             throw new OXFException(e);
@@ -110,30 +124,34 @@ public class SOSwithSoapAdapter extends SOSAdapter_OXFExtension {
             throw new OXFException(e);
         }
     }
-    
+
     @Override
-    public OperationResult doOperation(Operation operation,
-    		ParameterContainer parameters) throws ExceptionReport, OXFException {
-    	OperationResult result = super.doOperation(operation, parameters);
-    	try {
-			XmlObject result_xb = XmlObject.Factory.parse(result.getIncomingResultAsStream());
-			XmlObject document = null;
-			if (result_xb instanceof EnvelopeDocument) {
-				EnvelopeDocument envelopeDoc = (EnvelopeDocument) result_xb;
-				document = SoapUtil.readBodyNodeFrom(envelopeDoc, null);
-				// TODO change, its very dirty!!!
-				return new OperationResult(new ByteArrayInputStream(document.xmlText().getBytes()), result.getUsedParameters(), result.getSendedRequest());
-			}
-		} catch (XmlException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	return result;
+    public OperationResult doOperation(Operation operation, ParameterContainer parameters) throws ExceptionReport,
+            OXFException {
+        OperationResult result = super.doOperation(operation, parameters);
+        try {
+            XmlObject result_xb = XmlObject.Factory.parse(result.getIncomingResultAsStream());
+            XmlObject document = null;
+            if (result_xb instanceof EnvelopeDocument) {
+                EnvelopeDocument envelopeDoc = (EnvelopeDocument) result_xb;
+                document = SoapUtil.readBodyNodeFrom(envelopeDoc, null);
+                // TODO change, its very dirty!!!
+                return new OperationResult(new ByteArrayInputStream(document.xmlText().getBytes()),
+                                           result.getUsedParameters(),
+                                           result.getSendedRequest());
+            }
+        }
+        catch (XmlException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return result;
     }
-    
+
     private String inputStreamToString(InputStream reponseStream) throws IOException {
         try {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(reponseStream));
@@ -146,13 +164,14 @@ public class SOSwithSoapAdapter extends SOSAdapter_OXFExtension {
             bufferedReader.close();
             String response = stringBuilder.toString();
             response = response.replace("&", "&amp;");
-            
+
             response = replaceArtifact(response, "</output>\"", "</output>");
             response = replaceArtifact(response, "output-\"0", "output-0");
-            
+
             return response;
-//            return new String(response.getBytes(), "UTF-8");
-        } finally {
+            // return new String(response.getBytes(), "UTF-8");
+        }
+        finally {
             if (reponseStream != null) {
                 reponseStream.close();
             }
@@ -168,15 +187,17 @@ public class SOSwithSoapAdapter extends SOSAdapter_OXFExtension {
     }
 
     private XmlObject parseToXmlObject(String responseString) throws XmlException {
-       try {
-           return XmlObject.Factory.parse(responseString);
-       } catch (XmlException e) {
-           LOGGER.warn("Server returned non XML data: {}", responseString);
-           throw e;
-       }
+        try {
+            return XmlObject.Factory.parse(responseString);
+        }
+        catch (XmlException e) {
+            LOGGER.warn("Server returned non XML data: {}", responseString);
+            throw e;
+        }
     }
 
-    private void checkForExceptionReport(OperationResult result, XmlObject response) throws XmlException, ExceptionReport {
+    private void checkForExceptionReport(OperationResult result, XmlObject response) throws XmlException,
+            ExceptionReport {
         if (isExceptionReportV11(response)) {
             ExceptionReport execRep = parseExceptionReport_100(result);
             OWSException ex = execRep.getExceptionsIterator().next();
@@ -205,7 +226,7 @@ public class SOSwithSoapAdapter extends SOSAdapter_OXFExtension {
             String[] exceptionMessages = exceptionType.getExceptionTextArray();
             String locator = exceptionType.getLocator();
             String sentRequest = result.getSendedRequest();
-            
+
             OWSException owsException = new OWSException(exceptionMessages, exceptionCode, sentRequest, locator);
             exceptionReport.addException(owsException);
         }
