@@ -55,9 +55,4 @@
     </defaultExtent>
      -->
      
-    <!-- Default zoom level for the popup of a timeseries entry and for the map tab, when one station is under consideration -->
-    <!-- Choose a level between 0 and 18, all others are the extend of the whole world -->
-    <defaultZoomLevel>13</defaultZoomLevel>
-    <!-- Indicates how many procedure positions are requested at once (stationpicker) -->
-    <devModeRequestChunk>100</devModeRequestChunk>
 </props>
