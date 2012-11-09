@@ -62,7 +62,7 @@ import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.access.AccessorThreadPool;
 import org.n52.server.oxf.util.access.OperationAccessor;
-import org.n52.server.oxf.util.connector.SosMetadataHandler;
+import org.n52.server.oxf.util.connector.MetadataHandler;
 import org.n52.server.oxf.util.crs.AReferencingHelper;
 import org.n52.server.oxf.util.parser.ConnectorUtils;
 import org.n52.server.oxf.util.parser.utils.ParsedPoint;
@@ -82,16 +82,16 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
-public class HydroSOSConnector extends SosMetadataHandler {
+public class HydroMetadataHandler extends MetadataHandler {
 	
 	private static final String FOI_WILDCARD = "FOI_WILDCARD";
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(HydroSOSConnector.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HydroMetadataHandler.class);
     
     private SOSAdapter adapter;
 	
 	@Override
-	public SOSMetadataResponse buildUpServiceMetadata(String sosUrl, String sosVersion) throws Exception {
+	public SOSMetadataResponse performMetadataCompletion(String sosUrl, String sosVersion) throws Exception {
 		this.adapter = new SOSwithSoapAdapter(sosVersion, new SoapSOSRequestBuilder_200());
 		ServiceDescriptor serviceDesc = ConnectorUtils.getServiceDescriptor(sosUrl, this.adapter);
 

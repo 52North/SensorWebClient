@@ -29,6 +29,8 @@ import org.apache.xmlbeans.XmlObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.server.oxf.util.parser.DescribeSensorParser;
+import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SOSMetadataBuilder;
 
 public class XQueryTest {
     
@@ -48,7 +50,8 @@ public class XQueryTest {
     
     @Test
     public void testSetDataStreamToParse() throws Exception {
-        DescribeSensorParser parser = new DescribeSensorParser(xml.newInputStream(), "2.0.0");
+        SOSMetadata metadata = new SOSMetadata(new SOSMetadataBuilder().addServiceVersion("2.0.0"));
+        DescribeSensorParser parser = new DescribeSensorParser(xml.newInputStream(), metadata);
         // just to see if invalid GmlId is replaced accordingly
     }
 

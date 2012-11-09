@@ -200,7 +200,6 @@ public class EnumType implements EnhancedUserType, ParameterizedType {
      * org.hibernate.usertype.ParameterizedType#setParameterValues(java.util
      * .Properties)
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void setParameterValues(Properties parameters) {
         String enumClassName = parameters.getProperty("enumClassName");
         try {

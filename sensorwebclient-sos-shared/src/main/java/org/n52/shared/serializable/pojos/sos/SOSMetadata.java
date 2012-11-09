@@ -59,6 +59,7 @@ import java.util.Set;
 
 import org.n52.shared.Constants;
 import org.n52.shared.serializable.pojos.BoundingBox;
+import org.n52.shared.serializable.pojos.EastingNorthing;
 
 /**
  * A shared metadata representation for an SOS instance. An {@link SOSMetadata} is used from both (!) Client
@@ -69,17 +70,17 @@ import org.n52.shared.serializable.pojos.BoundingBox;
  * TODO this above fact is based on historical reasons and have to refactored!
  */
 public class SOSMetadata implements Serializable {
-    
+
     private static final long serialVersionUID = -3721927620888635622L;
-    
+
     private String id; // mandatory
 
     private String version; // mandatory
 
     private String title = "NA";
-    
-    private String connector; 
-    
+
+    private String sosMetadataHandler;
+
     private String adapter;
 
     private boolean initialized = false;
@@ -96,6 +97,8 @@ public class SOSMetadata implements Serializable {
 
     private HashMap<String, Offering> offerings = new HashMap<String, Offering>();
 
+    private HashMap<EastingNorthing, Station> availableStations = new HashMap<EastingNorthing, Station>();
+    
     private HashMap<String, Station> stations = new HashMap<String, Station>();
 
     private boolean hasDonePositionRequest = false;
@@ -111,7 +114,7 @@ public class SOSMetadata implements Serializable {
     private boolean autoZoom = true; // default
 
     private int requestChunk = 100; // default
-    
+
     private boolean forceXYAxisOrder = false; // default
 
     private BoundingBox configuredExtent;
@@ -138,13 +141,12 @@ public class SOSMetadata implements Serializable {
     /**
      * @deprecated use {@link #SOSMetadata(String, String)}
      * 
-     * @see {@link #SOSMetadata(String, String)} to explicitly set version 
+     * @see {@link #SOSMetadata(String, String)} to explicitly set version
      */
     @Deprecated
     public SOSMetadata(String id) {
         this.id = id;
     }
-
 
     /**
      * Use this constructor only for non-configurated SOS instances! Prefer using
@@ -171,7 +173,7 @@ public class SOSMetadata implements Serializable {
         this.forceXYAxisOrder = builder.isForceXYAxisOrder();
         this.requestChunk = builder.getRequestChunk();
         this.configuredExtent = builder.getConfiguredServiceExtent();
-        this.setConnector(builder.getConnector());
+        this.setSosMetadataHandler(builder.getSosMetadataHandler());
         this.setAdapter(builder.getAdapter());
     }
 
@@ -182,7 +184,7 @@ public class SOSMetadata implements Serializable {
     public void setInitialized(boolean initialized) {
         this.initialized = initialized;
     }
-    
+
     /**
      * Indicates that the metadata has been filled with data requested from service.
      */
@@ -198,13 +200,13 @@ public class SOSMetadata implements Serializable {
         this.version = version;
     }
 
-    public String getConnector() {
-        return connector;
+    public String getSosMetadataHandler() {
+        return sosMetadataHandler;
     }
 
-    public void setConnector(String connector) {
+    public void setSosMetadataHandler(String handler) {
         // is null when used on client side
-        this.connector = connector != null ? connector.trim() : null;
+        this.sosMetadataHandler = handler != null ? handler.trim() : null;
     }
 
     public String getAdapter() {
@@ -216,7 +218,6 @@ public class SOSMetadata implements Serializable {
         this.adapter = adapter != null ? adapter.trim() : null;
     }
 
-    
     public String getServiceUrl() {
         return getId();
     }
@@ -341,11 +342,11 @@ public class SOSMetadata implements Serializable {
     public String getTitle() {
         return this.title;
     }
-    
+
     public void setTitle(String title) {
-		this.title = title;
-	}
-    
+        this.title = title;
+    }
+
     public String getConfiguredItemName() {
         return configuredItemName;
     }
@@ -409,11 +410,11 @@ public class SOSMetadata implements Serializable {
     public boolean isAutoZoom() {
         return autoZoom;
     }
-    
+
     public boolean isForceXYAxisOrder() {
         return forceXYAxisOrder;
     }
-    
+
     public int getRequestChunk() {
         return requestChunk;
     }
@@ -446,16 +447,36 @@ public class SOSMetadata implements Serializable {
         return sb.toString();
     }
 
-
     public void addStation(Station station) {
-        this.stations.put(station.getId(), station);
+        stations.put(station.getId(), station);
     }
 
     public Collection<Station> getStations() {
         return new ArrayList<Station>(this.stations.values());
     }
 
+    public void addAvailableStation(Station station) {
+        availableStations.put(station.getLocation(), station);
+    }
+    
+    public boolean containsStationByLocation(EastingNorthing eastingNorthing) {
+        return availableStations.containsKey(eastingNorthing);
+    }
+
+    /**
+     * Returns the {@link Station} available at given location.<br>
+     * 
+     * @param eastingNorthing
+     *        the location where the station shall should be.
+     * @return the station at given {@link EastingNorthing} location, or <code>null</code> if no station is
+     *         available.
+     */
+    public Station getStationByLocation(EastingNorthing eastingNorthing) {
+        return availableStations.get(eastingNorthing);
+    }
+
     public Set<Station> getStationsByProcedure(String procedureID) {
+        // XXX remove when station refactoring is complete
         Set<Station> result = new HashSet<Station>();
         for (Station station : stations.values()) {
             if (station.isProcedureEqual(procedureID)) {

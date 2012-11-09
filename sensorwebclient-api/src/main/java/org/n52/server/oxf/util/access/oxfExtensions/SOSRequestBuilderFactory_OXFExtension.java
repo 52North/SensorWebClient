@@ -29,7 +29,7 @@ import org.n52.oxf.sos.util.SosUtil;
 
 public class SOSRequestBuilderFactory_OXFExtension extends SOSRequestBuilderFactory {
 
-    public static ISOSRequestBuilder generateRequestBuilder(String serviceVersion) {
+    public static ISOSRequestBuilder createRequestBuilder(String serviceVersion) {
         if (SosUtil.isVersion100(serviceVersion)) {
             return new SOSRequestBuilder_100_OXFExtension();
         } else if (SosUtil.isVersion200(serviceVersion)) {

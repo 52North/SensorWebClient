@@ -12,9 +12,13 @@
 	
 	<imprint>properties/imprint.html</imprint> 
 	<helpfile>properties/help.html</helpfile>
+	<!-- default time frame for loading timeseries data in days -->
 	<defaultInterval>1</defaultInterval>
+	<!-- default time frame for loading timeseries data for overview diagram in days -->
 	<defaultOverviewInterval>5</defaultOverviewInterval>
-	<toasterFadeout>5000</toasterFadeout>
+	<!-- default delay before hiding message toaster in seconds -->
+	<toasterFadeout>5</toasterFadeout>
+	<!-- if map selection modal window shall show up at client start -->
 	<showStationPickerAtStartup>true</showStationPickerAtStartup>
 	
 	<!-- Default styles for the line and sumline 
@@ -33,7 +37,9 @@
     <!-- Minimum zoom in the timeframe in the diagram in minutes -->
     <minTimeFrameZoom>1</minTimeFrameZoom>
 	
+	<!-- default map projection used on maps -->
     <mapSrs>EPSG:4326</mapSrs>
+    <!-- a WMS URL or just OSM -->
     <mapUrl>OSM</mapUrl>
 	<!-- 
 	<mapUrl>http://wsvmapserv.wsv.bund.de/wmsdbwk1000</mapUrl> 

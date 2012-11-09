@@ -64,8 +64,8 @@ public class TimeManager {
     private TimeManager() {
         new TimeManagerEventBroker(); // registers handler class on event bus
         PropertiesManager propertiesMgr = PropertiesManager.getInstance();
-        long days = new Long(propertiesMgr.getParameterAsString(Constants.DEFAULT_INTERVAL));
-        this.begin = System.currentTimeMillis() - (days * DAYS_TO_MILLIS_FACTOR);
+        long days = propertiesMgr.getParamaterAsInt(Constants.DEFAULT_INTERVAL, 1);
+        this.begin = System.currentTimeMillis() - daysToMillis(days);
         this.end = System.currentTimeMillis();
         this.undoStack = new Stack<DateAction>();
     }
@@ -77,7 +77,7 @@ public class TimeManager {
         return inst;
     }
 
-    public long daysToMillis(String days) {
+    public long daysToMillis(long days) {
         return new Long(days).longValue() * DAYS_TO_MILLIS_FACTOR;
     }
 

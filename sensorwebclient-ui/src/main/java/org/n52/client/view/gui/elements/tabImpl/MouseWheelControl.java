@@ -228,7 +228,7 @@ public class MouseWheelControl {
                 // WORKAROUND to have a maximum zoom level in the time frame Bug 508
                 long begin = newDomainBounds.getLeft().longValue();
                 long end = newDomainBounds.getRight().longValue();
-                if (ClientUtils.zoomTimeFrameValid(begin, end)) {
+                if (ClientUtils.isValidTimeFrameForZoomIn(begin, end)) {
                     if (this.previewZoomByRescalingTheImage) {
                         Bounds newImageBounds = changeImageBounds(event.getMouseWheelEvent());
 

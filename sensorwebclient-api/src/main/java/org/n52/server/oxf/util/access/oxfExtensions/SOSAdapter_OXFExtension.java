@@ -33,6 +33,7 @@ import org.n52.oxf.ows.ServiceDescriptor;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.sos.adapter.SOSAdapter;
+import org.n52.oxf.sos.adapter.SOSRequestBuilderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +41,22 @@ public class SOSAdapter_OXFExtension extends SOSAdapter {
 
     private static Logger log = LoggerFactory.getLogger(SOSAdapter_OXFExtension.class);
 
+    /**
+     * @param sosVersion the SOS version the adapter shall connect to.
+     */
+    public SOSAdapter_OXFExtension(String sosVersion) {
+        super(sosVersion);
+        setRequestBuilder(SOSRequestBuilderFactory.generateRequestBuilder(sosVersion));
+    }
+
+    /**
+     * @deprecated use {@link #SOSAdapter_OXFExtension(String)} instead
+     * @param sosVersion
+     *        the SOS version.
+     * @param requestBuilder
+     *        the custom request builder
+     */
+    @Deprecated
     public SOSAdapter_OXFExtension(String sosVersion, ISOSRequestBuilder requestBuilder) {
         super(sosVersion, requestBuilder);
     }
@@ -55,7 +72,8 @@ public class SOSAdapter_OXFExtension extends SOSAdapter {
     }
 
     @Override
-    public OperationResult doOperation(Operation operation, ParameterContainer parameters) throws ExceptionReport, OXFException {
+    public OperationResult doOperation(Operation operation, ParameterContainer parameters) throws ExceptionReport,
+            OXFException {
         try {
             return super.doOperation(operation, parameters);
         }

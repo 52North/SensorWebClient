@@ -58,8 +58,10 @@ import org.n52.oxf.sos.feature.SOSObservationStore;
 import org.n52.oxf.util.JavaHelper;
 import org.n52.oxf.valueDomains.time.TemporalValueDomain;
 import org.n52.server.oxf.util.ConfigurationContext;
+import org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension;
 import org.n52.server.oxf.util.access.oxfExtensions.SOSRequestBuilderFactory_OXFExtension;
 import org.n52.server.oxf.util.generator.RequestConfig;
+import org.n52.server.oxf.util.parser.DefaultMetadataHandler;
 import org.n52.shared.Constants;
 import org.n52.shared.exceptions.TimeoutException;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -79,8 +81,7 @@ public class ObservationAccessor {
             InterruptedException,
             OXFRuntimeException,
             TimeoutException,
-            ExecutionException
-            {
+            ExecutionException {
 
         Map<String, OXFFeatureCollection> entireCollMap = new HashMap<String, OXFFeatureCollection>();
 
@@ -124,12 +125,19 @@ public class ObservationAccessor {
 
     private SOSAdapter createSosAdapter(SOSMetadata metadata) {
         try {
-            ISOSRequestBuilder requestBuilder = SOSRequestBuilderFactory_OXFExtension.generateRequestBuilder(metadata.getSosVersion());
-            Class<SOSAdapter> adapterClass = (Class<SOSAdapter>) Class.forName(metadata.getAdapter());
-            Constructor<SOSAdapter> constructor = adapterClass.getConstructor(new Class[]{String.class, ISOSRequestBuilder.class});
-            SOSAdapter adapter = constructor.newInstance(metadata.getSosVersion(), requestBuilder);
-            return adapter;
-        } catch (ClassNotFoundException e) {
+            String adapter = metadata.getAdapter();
+            String sosVersion = metadata.getSosVersion();
+            if (adapter == null) {
+                return new SOSAdapter_OXFExtension(sosVersion);
+            }
+            else {
+                Class<SOSAdapter> clazz = (Class<SOSAdapter>) Class.forName(adapter);
+                Class< ? >[] arguments = new Class< ? >[] {String.class};
+                Constructor<SOSAdapter> constructor = clazz.getConstructor(arguments);
+                return constructor.newInstance(sosVersion);
+            }
+        }
+        catch (ClassNotFoundException e) {
             throw new RuntimeException("Could not find Adapter class.", e);
         }
         catch (NoSuchMethodException e) {
@@ -177,24 +185,22 @@ public class ObservationAccessor {
             // Parameter.COMMON_NAME_TIME);
         }
         else {
-			if (sosVersion.equals(Constants.SOS_VERSION_100)) {
-				Parameter timeParam = new Parameter(
-						GET_OBSERVATION_EVENT_TIME_PARAMETER, true,
-						new TemporalValueDomain(request.getTime()),
-						Parameter.COMMON_NAME_TIME);
-				ParameterShell timeParamShell = new ParameterShell(timeParam,
-						request.getTime());
-				params.addParameterShell(timeParamShell);
-			}
-			else if (sosVersion.equals(Constants.SOS_VERSION_200)) {
-				Parameter timeParam = new Parameter(
-						GET_OBSERVATION_TEMPORAL_FILTER_PARAMETER, true,
-						new TemporalValueDomain(request.getTime()),
-						Parameter.COMMON_NAME_TIME);
-				ParameterShell timeParamShell = new ParameterShell(timeParam,
-						request.getTime());
-				params.addParameterShell(timeParamShell);
-			}
+            if (sosVersion.equals(Constants.SOS_VERSION_100)) {
+                Parameter timeParam = new Parameter(GET_OBSERVATION_EVENT_TIME_PARAMETER,
+                                                    true,
+                                                    new TemporalValueDomain(request.getTime()),
+                                                    Parameter.COMMON_NAME_TIME);
+                ParameterShell timeParamShell = new ParameterShell(timeParam, request.getTime());
+                params.addParameterShell(timeParamShell);
+            }
+            else if (sosVersion.equals(Constants.SOS_VERSION_200)) {
+                Parameter timeParam = new Parameter(GET_OBSERVATION_TEMPORAL_FILTER_PARAMETER,
+                                                    true,
+                                                    new TemporalValueDomain(request.getTime()),
+                                                    Parameter.COMMON_NAME_TIME);
+                ParameterShell timeParamShell = new ParameterShell(timeParam, request.getTime());
+                params.addParameterShell(timeParamShell);
+            }
         }
 
         if (waterML) {

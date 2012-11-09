@@ -117,7 +117,7 @@ public final class Application {
                 } catch (Exception e) {
                     // happens in DEV mode where '?' is always present
                     PropertiesManager properties = PropertiesManager.getInstance();
-                    boolean showStationPickerAtStartup = Boolean.parseBoolean(properties.getParameterAsString("showStationPickerAtStartup"));
+                    boolean showStationPickerAtStartup = properties.getParameterAsBoolean("showStationPickerAtStartup");
                     if (showStationPickerAtStartup) {
                         StationPicker.getInst().show();
                     }
@@ -184,10 +184,10 @@ public final class Application {
         // check for time intervals bigger than the default overview interval
         // (in days)
         PropertiesManager propertiesMgr = PropertiesManager.getInstance();
-        String intervalString = propertiesMgr.getParameterAsString(Constants.DEFAULT_OVERVIEW_INTERVAL);
+        int days = propertiesMgr.getParamaterAsInt(Constants.DEFAULT_OVERVIEW_INTERVAL, 5);
 
         TimeManager timeMgr = TimeManager.getInst();
-        long timeInterval = timeMgr.daysToMillis(intervalString);
+        long timeInterval = timeMgr.daysToMillis(days);
         long currentInterval = timeMgr.getEnd() - timeMgr.getBegin();
 
         if (timeInterval <= currentInterval) {

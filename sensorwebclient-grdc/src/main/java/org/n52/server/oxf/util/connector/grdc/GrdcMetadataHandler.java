@@ -52,8 +52,7 @@ import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.access.AccessorThreadPool;
 import org.n52.server.oxf.util.access.OperationAccessor;
 import org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension;
-import org.n52.server.oxf.util.access.oxfExtensions.SOSRequestBuilderFactory_OXFExtension;
-import org.n52.server.oxf.util.connector.SosMetadataHandler;
+import org.n52.server.oxf.util.connector.MetadataHandler;
 import org.n52.server.oxf.util.crs.AReferencingHelper;
 import org.n52.server.oxf.util.parser.ConnectorUtils;
 import org.n52.server.oxf.util.parser.utils.ParsedPoint;
@@ -76,14 +75,13 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 import de.bafg.grdc.sampling.x10.GrdcSamplingPointDocument;
 import de.bafg.grdc.sampling.x10.GrdcSamplingPointType;
 
-public class GrdcSOSConnector extends SosMetadataHandler {
+public class GrdcMetadataHandler extends MetadataHandler {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(GrdcSOSConnector.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GrdcMetadataHandler.class);
 	
 	@Override
-	public SOSMetadataResponse buildUpServiceMetadata(String sosUrl, String sosVersion) throws Exception {
-	    ISOSRequestBuilder requestBuilder = SOSRequestBuilderFactory_OXFExtension.generateRequestBuilder(sosVersion);
-		SOSAdapter adapter = new SOSAdapter_OXFExtension(sosVersion, requestBuilder);
+	public SOSMetadataResponse performMetadataCompletion(String sosUrl, String sosVersion) throws Exception {
+		SOSAdapter adapter = new SOSAdapter_OXFExtension(sosVersion);
 		ServiceDescriptor serviceDesc = ConnectorUtils.getServiceDescriptor(sosUrl, adapter);
 
         String sosTitle = serviceDesc.getServiceIdentification().getTitle();
@@ -261,8 +259,7 @@ public class GrdcSOSConnector extends SosMetadataHandler {
 	}
 
 	private OperationAccessor createGetFOI(String sosUrl, String sosVersion, String foi) throws OXFException {
-        ISOSRequestBuilder requestBuilder = SOSRequestBuilderFactory_OXFExtension.generateRequestBuilder(sosVersion);
-        SOSAdapter adapter = new SOSAdapter_OXFExtension(sosVersion, requestBuilder);
+        SOSAdapter adapter = new SOSAdapter_OXFExtension(sosVersion);
 		Operation operation = new Operation(SOSAdapter.GET_FEATURE_OF_INTEREST, sosUrl, sosUrl);
 		ParameterContainer paramCon = new ParameterContainer();
 		paramCon.addParameterShell(ISOSRequestBuilder.GET_FOI_ID_PARAMETER, foi);

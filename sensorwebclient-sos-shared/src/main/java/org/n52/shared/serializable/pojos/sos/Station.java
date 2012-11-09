@@ -25,27 +25,34 @@
 package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.n52.shared.serializable.pojos.EastingNorthing;
 
+/**
+ * A {@link Station} represents a location where timeseries data can be retrieved at. The most important
+ * 
+ * (TODO put more infos here)<br>
+ * <br>
+ * A Station belongs to a category (by default to its {@link #phenomenon} field. It can be used to filter a common set 
+ * of stations according to a predefined category.
+ */
 public class Station implements Serializable {
 
-    private static class IdGenerator {
-        private static int id = 0;
+    private static final long serialVersionUID = 5016550440955260625L;
 
-        public static String generate() {
-            return String.valueOf(++id);
-        }
-    }
+    private String id;
 
-    private static final long serialVersionUID = 1L;
+    private String srs; // TODO srs and location into one object!
+    private EastingNorthing location;
+    
 
-    private String id = IdGenerator.generate();
+    private ArrayList<ParameterConstellation> parameterConstellations; 
 
-    private String srs;
 
     private String feature;
-
+    
     private String phenomenon;
 
     private String procedure;
@@ -53,16 +60,24 @@ public class Station implements Serializable {
     private String offering;
 
     private String stationCategory;
-
-    private EastingNorthing location;
+    
+    public Station() {
+        id = IdGenerator.generate();
+        parameterConstellations = new ArrayList<ParameterConstellation>();
+    }
 
     public String getId() {
         return id;
     }
 
     public void setLocation(EastingNorthing location, String srs) {
+        // TODO should be made private as we never should change the equals attributes when having objects in a HashSet
         this.location = location;
         this.srs = srs;
+    }
+    
+    public EastingNorthing getLocation() {
+        return location;
     }
 
     public double getLat() {
@@ -81,7 +96,24 @@ public class Station implements Serializable {
         return srs;
     }
 
+    public void addParameterConstellation(ParameterConstellation parameterConstellation) {
+        parameterConstellations.add(parameterConstellation);
+    }
+    
+    public ArrayList<ParameterConstellation> getParameterConstellations() {
+        return parameterConstellations;
+    }
+    
+    public boolean contains(ParameterConstellation parameterConstellation) {
+        return parameterConstellations.contains(parameterConstellation);
+    }
+    
+    public void setParameterConstellations(ArrayList<ParameterConstellation> parameterConstellations) {
+        this.parameterConstellations = parameterConstellations;
+    }
+    
     public boolean hasAllEntries() {
+        // XXX remove when Station refactoring is complete
         if (this.srs == null || this.feature == null || this.offering == null || this.phenomenon == null
                 || this.procedure == null) {
             return false;
@@ -90,50 +122,62 @@ public class Station implements Serializable {
     }
 
     public boolean isProcedureEqual(String procedure) {
+        // XXX remove when Station refactoring is complete
         return this.procedure.equals(procedure);
     }
 
     public boolean isPhenomenonEqual(String phenomenon) {
+        // XXX remove when Station refactoring is complete
         return this.phenomenon.equals(phenomenon);
     }
 
     public boolean isFeatureEqual(String feature) {
+        // XXX remove when Station refactoring is complete
         return this.feature.equals(feature);
     }
 
     public boolean isOfferingEqual(String offering) {
+        // XXX remove when Station refactoring is complete
         return this.offering.equals(offering);
     }
 
     public String getFeature() {
+        // XXX remove when Station refactoring is complete
         return this.feature;
     }
 
     public void setFeature(String feature) {
+        // XXX remove when Station refactoring is complete
         this.feature = feature;
     }
 
     public String getPhenomenon() {
+        // XXX remove when Station refactoring is complete
         return this.phenomenon;
     }
 
     public void setPhenomenon(String phenomenon) {
+        // XXX remove when Station refactoring is complete
         this.phenomenon = phenomenon;
     }
 
     public String getProcedure() {
+        // XXX remove when Station refactoring is complete
         return this.procedure;
     }
 
     public void setProcedure(String procedure) {
+        // XXX remove when Station refactoring is complete
         this.procedure = procedure;
     }
 
     public String getOffering() {
+        // XXX remove when Station refactoring is complete
         return this.offering;
     }
 
     public void setOffering(String offering) {
+        // XXX remove when Station refactoring is complete
         this.offering = offering;
     }
 
@@ -156,6 +200,7 @@ public class Station implements Serializable {
     }
 
     public Station clone() {
+        // XXX cleanup when Station refactoring is complete
         Station station = new Station();
         station.setLocation(location, srs);
         station.setStationCategory(stationCategory);
@@ -168,6 +213,7 @@ public class Station implements Serializable {
 
     @Override
     public String toString() {
+        // XXX cleanup when Station refactoring is complete
         StringBuffer sb = new StringBuffer();
         // TODO wait for fix: http://code.google.com/p/google-web-toolkit/issues/detail?id=3404
         // sb.append(getClass().getSimpleName()).append(" [ ");
@@ -178,6 +224,14 @@ public class Station implements Serializable {
         sb.append("Procedure: ").append(procedure).append("\n");
         sb.append("Phenomenon: ").append(phenomenon).append(" ]");
         return sb.toString();
+    }
+
+    private static class IdGenerator {
+        private static int id = 0;
+    
+        public static String generate() {
+            return String.valueOf(++id);
+        }
     }
 
 }

@@ -72,13 +72,14 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.util.IOHelper;
 import org.n52.oxf.util.JavaHelper;
-import org.n52.oxf.xml.XMLTools;
+import org.n52.oxf.xml.NcNameResolver;
 import org.n52.oxf.xmlbeans.parser.XMLBeansParser;
 import org.n52.oxf.xmlbeans.parser.XMLHandlingException;
 import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.crs.AReferencingHelper;
 import org.n52.server.oxf.util.parser.utils.ParsedPoint;
 import org.n52.shared.serializable.pojos.ReferenceValue;
+import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,13 +93,26 @@ public class DescribeSensorParser {
 
     private SensorMLDocument smlDoc = null;
     
-    private AReferencingHelper referenceHelper;
+    private AReferencingHelper referenceHelper = AReferencingHelper.createEpsgStrictAxisOrder();
 
-    public DescribeSensorParser(InputStream inputStream, String sosVersion) throws XmlException,
+    /**
+     * Creates a SensorML Parser considering individual service settings contained by the 
+     * {@link SOSMetadata}, e.g. if coordinate axes ordering shall be considered strict or 
+     * classic XY ordering shall be used.
+     * 
+     * @param inputStream the SensorML data stream to parse.
+     * @param metadata the individual settings of the SOS.
+     * @throws XmlException if parsing data stream failed.
+     * @throws IOException if data stream could not be read.
+     * @throws XMLHandlingException if SensorML is not valid.
+     */
+    public DescribeSensorParser(InputStream inputStream, SOSMetadata metadata) throws XmlException,
             IOException,
             XMLHandlingException {
-        setDataStreamToParse(inputStream, sosVersion);
-        referenceHelper = AReferencingHelper.createEpsgStrictAxisOrder();
+        setDataStreamToParse(inputStream, metadata.getVersion());
+        if (metadata.isForceXYAxisOrder()) {
+            referenceHelper = AReferencingHelper.createEpsgForcedXYAxisOrder();
+        }
     }
     
     public String buildUpSensorMetadataStationName() {
@@ -468,9 +482,12 @@ public class DescribeSensorParser {
                             else {
                                 // special case: value + " " + uom(e.g.
                                 // "637.0 cm")
-                                String tmp = val.substring(0, val.indexOf(" "));
-                                if (tmp.matches("([0-9\\,\\.\\+\\-]+)")) {
-                                    d = new Double(tmp);
+                                int spaceIndex = val.indexOf(" ");
+                                if (spaceIndex > 0) {
+                                    String tmp = val.substring(0, spaceIndex);
+                                    if (tmp.matches("([0-9\\,\\.\\+\\-]+)")) {
+                                        d = new Double(tmp);
+                                    }
                                 }
                             }
                             if (d != null) {
@@ -652,7 +669,7 @@ public class DescribeSensorParser {
                     for (XmlObject xml : dataDescription.selectPath(namespace + "$this//*/@gml:id")) {
                         XmlCursor cursor = xml.newCursor();
                         String gmlId = cursor.getTextValue();
-                        if ( !XMLTools.isNCName(gmlId)) {
+                        if ( !NcNameResolver.isNCName(gmlId)) {
                             cursor.setTextValue(normalizeGmlId(gmlId));
                         }
                     }
@@ -672,13 +689,13 @@ public class DescribeSensorParser {
 
         // Check first character
         char c = invalidGmlId.charAt(0);
-        if ( ! (c == '_' && XMLTools.isLetter(c))) {
+        if ( ! (c == '_' && NcNameResolver.isLetter(c))) {
             sb.append('_');
         }
         // Check the rest of the characters
         for (int i = 1; i < invalidGmlId.length(); i++) {
             char currentChar = invalidGmlId.charAt(i);
-            if (XMLTools.isNCNameChar(currentChar)) {
+            if (NcNameResolver.isNCNameChar(currentChar)) {
                 sb.append(currentChar);
             }
             else {

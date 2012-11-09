@@ -7,53 +7,92 @@
 		<itemName>PEGELONLINE</itemName>
 		<url>http://pegelonline.wsv.de/webservices/gis/gdi-sos</url>
 		<version>1.0.0</version>
-		<waterML>true</waterML>
-		<connector>org.n52.server.oxf.util.parser.DefaultSosConnector</connector>
+		<waterML>false</waterML>
+		<metadataHandler>org.n52.server.oxf.util.parser.DefaultMetadataHandler</metadataHandler>
 		<adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension</adapter>
-		<requestChunk>150</requestChunk>
+		<requestChunk>300</requestChunk>
+		<waterML>true</waterML>
 		<autoZoom>false</autoZoom>
-		<llEasting>6.65</llEasting>
-		<llNorthing>50.00</llNorthing>
-		<urEasting>7.66</urEasting>
-		<urNorthing>51.35</urNorthing>
+		<llEasting>5</llEasting>
+		<llNorthing>46.00</llNorthing>
+		<urEasting>16</urEasting>
+		<urNorthing>56.0</urNorthing>
 		<defaultZoom>13</defaultZoom>
-		<forceXYAxisOrdering>false</forceXYAxisOrdering>
 	</instance>
+	
+<!-- 
+	<instance>
+		<itemName>GRDC (Kisters SOS)</itemName>
+		<url>http://kiwis.kisters.de/KiWIS/KiWIS?datasource=3</url>
+		<version>2.0.0</version>
+		<metadataHandler>org.n52.server.oxf.util.connector.hydro.HydroMetadataHandler</metadataHandler>
+		<adapter>org.n52.server.oxf.util.connector.hydro.SOSwithSoapAdapter</adapter>
+		<waterML>true</waterML>
+		<llEasting>-180</llEasting>
+		<llNorthing>-80</llNorthing>
+		<urEasting>180</urEasting>
+		<urNorthing>90</urNorthing>
+		<defaultZoom>15</defaultZoom>
+		<requestChunk>200</requestChunk>
+		<autoZoom>true</autoZoom>
+	</instance>
+-->
+
 	<instance>
 		<itemName>EEA-SOS</itemName>
 		<url>http://ags.dev.52north.org:6080/arcgis/rest/services/ObservationDB/MapServer/exts/SOSExtension/</url>
 		<version>2.0.0</version>
-		<connector>org.n52.server.oxf.util.connector.eea.EEASOSConnector</connector>
-		<adapter>org.n52.server.oxf.util.connector.eea.SOSAdapterByGET</adapter>
+		<metadataHandler>org.n52.server.oxf.util.connector.eea.ArcGISSoeMetadataHandler</metadataHandler>
 		<waterML>false</waterML>
-		<llEasting>5.8667</llEasting>
-		<llNorthing>47.2703</llNorthing>
-		<urEasting>15.0419</urEasting>
-		<urNorthing>55.0556</urNorthing>
-		<defaultZoom>10</defaultZoom>
-		<requestChunk>200</requestChunk>
-		<forceXYAxisOrdering>true</forceXYAxisOrdering>
+		<autoZoom>false</autoZoom>
+		<llEasting>-16</llEasting>
+		<llNorthing>25</llNorthing>
+		<urEasting>35</urEasting>
+		<urNorthing>60.0</urNorthing>
+		<defaultZoom>9</defaultZoom>
+		<requestChunk>500</requestChunk>
+		<forceXYAxisOrder>true</forceXYAxisOrder>
 	</instance>
+	
+<!-- 
+	<instance>
+		<itemName>Tideelbe SOS</itemName>
+		<url>http://192.168.1.117:8080/52nSOS_ZDM_PORTALE/sos</url>
+		<version>2.0.0</version>
+		<waterML>false</waterML>
+		<metadataHandler>org.n52.server.oxf.util.parser.DefaultMetadataHandler</metadataHandler>
+		<adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension</adapter>
+		<requestChunk>100</requestChunk>
+		<autoZoom>false</autoZoom>
+		<llEasting>8.2</llEasting>
+		<llNorthing>53.2</llNorthing>
+		<urEasting>10.5</urEasting>
+		<urNorthing>54.1</urNorthing>
+		<defaultZoom>13</defaultZoom>
+	</instance>
+-->
+
 	<instance>
 		<itemName>Air Quality Belgium</itemName>
 		<url>http://sos.irceline.be/sos</url>
 		<version>1.0.0</version>
 		<waterML>false</waterML>
-		<connector>org.n52.server.oxf.util.parser.DefaultSosConnector</connector>
+		<metadataHandler>org.n52.server.oxf.util.parser.DefaultMetadataHandler</metadataHandler>
 		<adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension</adapter>
-		<requestChunk>150</requestChunk>
-		<autoZoom>true</autoZoom>
-		<llEasting>3.8</llEasting>
-		<llNorthing>50.00</llNorthing>
-		<urEasting>5.2</urEasting>
-		<urNorthing>51.35</urNorthing>
+		<requestChunk>300</requestChunk>
+		<autoZoom>false</autoZoom>
+		<llEasting>2.4</llEasting>
+		<llNorthing>49.3</llNorthing>
+		<urEasting>6.5</urEasting>
+		<urNorthing>51.6</urNorthing>
 		<defaultZoom>11</defaultZoom>
 	</instance>
+	
 	<instance>
 		<itemName>Wupperverband</itemName>
 		<url>http://fluggs.wupperverband.de/sos/sos</url>
 		<version>1.0.0</version>
-		<connector>org.n52.server.oxf.util.parser.DefaultSosConnector</connector>
+		<metadataHandler>org.n52.server.oxf.util.parser.DefaultMetadataHandler</metadataHandler>
 		<adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension</adapter>
 		<waterML>false</waterML>
 		<llEasting>6.61</llEasting>
@@ -61,6 +100,8 @@
 		<urEasting>7.81</urEasting>
 		<urNorthing>51.793</urNorthing>
 		<defaultZoom>15</defaultZoom>
-		<requestChunk>100</requestChunk>
+		<requestChunk>200</requestChunk>
+		<autoZoom>true</autoZoom>
 	</instance>
+	
 </instances>

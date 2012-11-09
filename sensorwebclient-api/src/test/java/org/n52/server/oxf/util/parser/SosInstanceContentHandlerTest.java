@@ -51,14 +51,12 @@ public class SosInstanceContentHandlerTest {
     
     private static final String FLUGGS_URL = "http://fluggs.wupperverband.de/sos/sos";
     
-    private static final String DEFAULT_CONNECTOR = "org.n52.server.oxf.util.parser.DefaultSosMetadataHandler";
+    private static final String DEFAULT_CONNECTOR = "org.n52.server.oxf.util.parser.DefaultMetadataHandler";
     
-    private static final String EEA_CONNECTOR = "org.n52.server.oxf.util.connector.eea.EEASOSConnector";
+    private static final String EEA_CONNECTOR = "org.n52.server.oxf.util.connector.eea.ArcGISSoeMetadataHandler";
     
     private static final String DEFAULT_ADAPTER = "org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension";
     
-    private static final String EEA_ADAPTER = "org.n52.server.oxf.util.connector.eea.SOSAdapterByGET";
-
     private static final String SOS_INSTANCES_FILE = "/files/test-sos-instances.data.xml";
     
     @Test
@@ -86,10 +84,10 @@ public class SosInstanceContentHandlerTest {
         assertEquals(PEGELONLINE_URL, metadata.getId());
         assertEquals("1.0.0", metadata.getVersion());
         assertEquals(true, metadata.isWaterML());
-        assertEquals(DEFAULT_CONNECTOR, metadata.getConnector());
+        assertEquals(DEFAULT_CONNECTOR, metadata.getSosMetadataHandler());
         assertEquals(DEFAULT_ADAPTER, metadata.getAdapter());
         assertEquals(false, metadata.isForceXYAxisOrder());
-        assertEquals(150, metadata.getRequestChunk());
+        assertEquals(300, metadata.getRequestChunk());
         assertEquals(false, metadata.isAutoZoom());
         // TODO check bbox
         // TODO check defaultZoom
@@ -100,10 +98,10 @@ public class SosInstanceContentHandlerTest {
         assertEquals(IRCELINE_URL, metadata.getId());
         assertEquals("1.0.0", metadata.getVersion());
         assertEquals(false, metadata.isWaterML());
-        assertEquals(DEFAULT_CONNECTOR, metadata.getConnector());
+        assertEquals(DEFAULT_CONNECTOR, metadata.getSosMetadataHandler());
         assertEquals(DEFAULT_ADAPTER, metadata.getAdapter());
-        assertEquals(150, metadata.getRequestChunk());
-        assertEquals(true, metadata.isAutoZoom());
+        assertEquals(300, metadata.getRequestChunk());
+        assertEquals(false, metadata.isAutoZoom());
         // TODO check bbox
         // TODO check defaultZoom
     }
@@ -113,10 +111,9 @@ public class SosInstanceContentHandlerTest {
         assertEquals(EEA_SOE_URL, metadata.getId());
         assertEquals("2.0.0", metadata.getVersion());
         assertEquals(false, metadata.isWaterML());
-        assertEquals(EEA_CONNECTOR, metadata.getConnector());
+        assertEquals(EEA_CONNECTOR, metadata.getSosMetadataHandler());
         assertEquals(true, metadata.isForceXYAxisOrder());
-        assertEquals(EEA_ADAPTER, metadata.getAdapter());
-        assertEquals(200, metadata.getRequestChunk());
+        assertEquals(500, metadata.getRequestChunk());
         assertEquals(false, metadata.isAutoZoom());
         // TODO check bbox
         // TODO check defaultZoom
@@ -127,9 +124,9 @@ public class SosInstanceContentHandlerTest {
         assertEquals(FLUGGS_URL, metadata.getId());
         assertEquals("1.0.0", metadata.getVersion());
         assertEquals(false, metadata.isWaterML());
-        assertEquals(DEFAULT_CONNECTOR, metadata.getConnector());
+        assertEquals(DEFAULT_CONNECTOR, metadata.getSosMetadataHandler());
         assertEquals(DEFAULT_ADAPTER, metadata.getAdapter());
-        assertEquals(100, metadata.getRequestChunk());
+        assertEquals(200, metadata.getRequestChunk());
         assertEquals(true, metadata.isAutoZoom());
         // TODO check bbox
         // TODO check defaultZoom

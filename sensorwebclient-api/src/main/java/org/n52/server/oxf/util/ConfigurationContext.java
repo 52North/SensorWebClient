@@ -25,7 +25,7 @@
 package org.n52.server.oxf.util;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,9 +40,9 @@ import javax.servlet.http.HttpServlet;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.n52.server.oxf.util.connector.SosMetadataHandler;
+import org.n52.server.oxf.util.connector.MetadataHandler;
 import org.n52.server.oxf.util.logging.Statistics;
-import org.n52.server.oxf.util.parser.DefaultSosMetadataHandler;
+import org.n52.server.oxf.util.parser.DefaultMetadataHandler;
 import org.n52.server.updates.SosMetadataUpdate;
 import org.n52.shared.Constants;
 import org.n52.shared.responses.SOSMetadataResponse;
@@ -200,8 +200,8 @@ public class ConfigurationContext extends HttpServlet {
             return (SOSMetadata) getServiceMetadatas().get(url);
         }
         try {
-            DefaultSosMetadataHandler parser = new DefaultSosMetadataHandler();
-            SOSMetadataResponse resp = parser.buildUpServiceMetadata(url, Constants.DEFAULT_SOS_VERSION);
+            DefaultMetadataHandler parser = new DefaultMetadataHandler();
+            SOSMetadataResponse resp = parser.performMetadataCompletion(url, Constants.DEFAULT_SOS_VERSION);
             return resp.getServiceMetadata();
         }
         catch (Exception e) {
@@ -221,20 +221,41 @@ public class ConfigurationContext extends HttpServlet {
         if (isMetadataAvailable(url)) {
             return getServiceMetadatas().get(url);
         } else {
-        	String connectorClassString = serviceMetadatas.get(url).getConnector();
-        	if (connectorClassString == null) {
-                LOGGER.error("No connector configured for SOS '{}'", url);
-        	    throw new IllegalStateException("No connector found for SOS.");
-			}
-			Class<SosMetadataHandler> connectorClass = (Class<SosMetadataHandler>) Class.forName(connectorClassString);
-        	Constructor<SosMetadataHandler> constructor = connectorClass.getConstructor();
-        	SosMetadataHandler connector = constructor.newInstance();
-        	connector.buildUpServiceMetadata(url, getVersion(url));
-            SOSMetadata meta = ConfigurationContext.getServiceMetadatas().get(url);
-            if (!meta.hasDonePositionRequest()) {
+        	SOSMetadata metadata = serviceMetadatas.get(url);
+            MetadataHandler handler = createSosMetadataHandler(metadata);
+        	handler.performMetadataCompletion(url, getVersion(url));
+            if (!metadata.hasDonePositionRequest()) {
                 SosMetadataUpdate.updateService(url);
             }
-            return meta;
+            return metadata;
+        }
+    }
+
+    private static MetadataHandler createSosMetadataHandler(SOSMetadata metadata)  {
+        String handler = metadata.getSosMetadataHandler();
+        if (handler == null) {
+            LOGGER.info("Using default SOS metadata handler for '{}'", metadata.getServiceUrl());
+            return new DefaultMetadataHandler();
+        } else {
+            try {
+                Class<MetadataHandler> clazz = (Class<MetadataHandler>) Class.forName(handler);
+                return clazz.getConstructor().newInstance(); // default constructor
+            }
+            catch (ClassNotFoundException e) {
+                throw new RuntimeException("Could not find Adapter class.", e);
+            }
+            catch (NoSuchMethodException e) {
+                throw new RuntimeException("Invalid Adapter constructor. ", e);
+            }
+            catch (InstantiationException e) {
+                throw new RuntimeException("Could not create Adapter.", e);
+            }
+            catch (IllegalAccessException e) {
+                throw new RuntimeException("Not allowed to create Adapter.", e);
+            }
+            catch (InvocationTargetException e) {
+                throw new RuntimeException("Instantiation of Adapter failed.", e);
+            }
         }
     }
 

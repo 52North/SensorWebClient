@@ -213,7 +213,7 @@ public class ZoomBoxPresenter {
                     // WORKAROUND to have a maximum zoom level in the time frame Bug 508
                     long begin = newBounds.getLeft().longValue();
                     long end = newBounds.getRight().longValue();
-                    if (ClientUtils.zoomTimeFrameValid(begin, end)) {
+                    if (ClientUtils.isValidTimeFrameForZoomIn(begin, end)) {
                         this.handlerManager.fireEvent(new SwitchAutoscaleEvent(false));
                         this.handlerManager.fireEvent(new SetDomainBoundsEvent(newBounds));
                         if (this.fireLoadImageDataEvent) {

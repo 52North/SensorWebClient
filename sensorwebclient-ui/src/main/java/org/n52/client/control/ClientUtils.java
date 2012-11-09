@@ -28,6 +28,7 @@ import java.util.Date;
 
 import org.n52.client.view.gui.widgets.Toaster;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Random;
 
 public class ClientUtils {
@@ -79,16 +80,17 @@ public class ClientUtils {
     }
 
     /**
-     * @param end as millis
      * @param begin as millis
+     * @param end as millis
      * @return
      */
-    public static boolean zoomTimeFrameValid(long begin, long end) {
-        long minTime = 0;
+    public static boolean isValidTimeFrameForZoomIn(long begin, long end) {
+        long minTime = 1;
+        String parameter = PropertiesManager.getInstance().getParameterAsString("minTimeFrameZoom");
         try {
-            minTime = Long.parseLong(PropertiesManager.getInstance().getParameterAsString("minTimeFrameZoom"));
+            minTime = Long.parseLong(parameter);
         } catch (Exception e) {
-            Toaster.getInstance().addMessage("Problem while reading property entry minTimeFrameZoom");
+            GWT.log("Could not read property minTimeFrameZoom: " + parameter);
         }
         if ((end - begin) >= (minTime * 1000 * 60)) {
             return true;

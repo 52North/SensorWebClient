@@ -37,7 +37,7 @@ public class SosInstanceContentHandler extends DefaultHandler {
     private static final Logger LOG = LoggerFactory.getLogger(SosInstanceContentHandler.class);
 
     enum TagNames {
-        INSTANCE, ITEMNAME, URL, VERSION, CONNECTOR, ADAPTER, WATERML, LLEASTING, LLNORTHING, UREASTING, URNORTHING, DEFAULTZOOM, AUTOZOOM, REQUESTCHUNK, FORCEXYAXISORDER, NOELEMENT;
+        INSTANCE, ITEMNAME, URL, VERSION, METADATAHANDLER, ADAPTER, WATERML, LLEASTING, LLNORTHING, UREASTING, URNORTHING, DEFAULTZOOM, AUTOZOOM, REQUESTCHUNK, FORCEXYAXISORDER, NOELEMENT;
     }
 
     private SOSMetadataBuilder currentBuilder = new SOSMetadataBuilder();
@@ -90,8 +90,8 @@ public class SosInstanceContentHandler extends DefaultHandler {
         else if (TagNames.WATERML.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.WATERML;
         }
-        else if (TagNames.CONNECTOR.name().equalsIgnoreCase(qName)) {
-            currentElement = TagNames.CONNECTOR;
+        else if (TagNames.METADATAHANDLER.name().equalsIgnoreCase(qName)) {
+            currentElement = TagNames.METADATAHANDLER;
         }
         else if (TagNames.ADAPTER.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.ADAPTER;
@@ -165,9 +165,9 @@ public class SosInstanceContentHandler extends DefaultHandler {
                 boolean waterML = Boolean.parseBoolean(parsedCharacters);
                 currentBuilder.setWaterML(waterML);
                 break;
-            case CONNECTOR:
+            case METADATAHANDLER:
                 String connector = parsedCharacters;
-                currentBuilder.addConnector(connector);
+                currentBuilder.addSosMetadataHandler(connector);
                 break;
             case ADAPTER:
                 String adapter = parsedCharacters;

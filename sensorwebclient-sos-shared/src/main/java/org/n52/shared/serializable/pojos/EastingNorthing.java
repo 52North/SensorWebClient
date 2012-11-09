@@ -49,6 +49,34 @@ public class EastingNorthing implements Serializable {
     public double getNorthing() {
         return northing;
     }
+    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        long temp;
+        temp = Double.doubleToLongBits(easting);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(northing);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if ( ! (obj instanceof EastingNorthing))
+            return false;
+        EastingNorthing other = (EastingNorthing) obj;
+        if (Double.doubleToLongBits(easting) != Double.doubleToLongBits(other.easting))
+            return false;
+        if (Double.doubleToLongBits(northing) != Double.doubleToLongBits(other.northing))
+            return false;
+        return true;
+    }
 
     @Override
     public String toString() {

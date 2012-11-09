@@ -40,7 +40,6 @@ import org.n52.oxf.util.JavaHelper;
 import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.access.AccessorThreadPool;
 import org.n52.server.oxf.util.access.OperationAccessor;
-import org.n52.server.oxf.util.access.oxfExtensions.SOSRequestBuilderFactory_OXFExtension;
 import org.n52.server.oxf.util.parser.DescribeSensorParser;
 import org.n52.shared.responses.GetProcedureDetailsUrlResponse;
 import org.n52.shared.responses.SensorMetadataResponse;
@@ -65,9 +64,8 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
             Procedure procedure = ConfigurationContext.getSOSMetadata(sosUrl).getProcedure(procedureId);
             SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosUrl);
 
-            String sosVersion = metadata.getSosVersion();
             OperationResult result = requestDescribeSensor(sosUrl, procedureId, metadata);
-            DescribeSensorParser parser = new DescribeSensorParser(result.getIncomingResultAsStream(), sosVersion);
+            DescribeSensorParser parser = new DescribeSensorParser(result.getIncomingResultAsStream(), metadata);
             tsProperties.setMetadataUrl(parser.buildUpSensorMetadataHtmlUrl(procedureId, sosUrl));
             tsProperties.setStationName(parser.buildUpSensorMetadataStationName());
             tsProperties.setUOM(parser.buildUpSensorMetadataUom(phenomenonId));
@@ -93,10 +91,9 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
     public GetProcedureDetailsUrlResponse getProcedureDetailsUrl(String serviceURL, String procedure) throws Exception {
         try {
             SOSMetadata metadata = ConfigurationContext.getSOSMetadata(serviceURL);
-            String sosVersion = metadata.getSosVersion();
             OperationResult result = requestDescribeSensor(serviceURL, procedure, metadata);
             ByteArrayInputStream resultInputStream = result.getIncomingResultAsStream();
-            DescribeSensorParser parser = new DescribeSensorParser(resultInputStream, sosVersion);
+            DescribeSensorParser parser = new DescribeSensorParser(resultInputStream, metadata);
             String url = parser.buildUpSensorMetadataHtmlUrl(procedure, serviceURL);
             return new GetProcedureDetailsUrlResponse(url);
         } catch (Exception e) {
@@ -121,10 +118,12 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
         }
    
         Operation describeSensor = new Operation(SOSAdapter.DESCRIBE_SENSOR, sosUrl, sosUrl);
-        ISOSRequestBuilder requestBuilder = SOSRequestBuilderFactory_OXFExtension.generateRequestBuilder(sosVersion);
-        Class<SOSAdapter> adapterClass = (Class<SOSAdapter>) Class.forName(metadata.getAdapter());
-        Constructor<SOSAdapter> constructor = adapterClass.getConstructor(new Class[]{String.class, ISOSRequestBuilder.class});
-        SOSAdapter adapter = constructor.newInstance(sosVersion, requestBuilder);
+//        ISOSRequestBuilder requestBuilder = SOSRequestBuilderFactory_OXFExtension.createRequestBuilder(sosVersion);
+//        Constructor<SOSAdapter> constructor = clazz.getConstructor(new Class[]{String.class, ISOSRequestBuilder.class});
+//        SOSAdapter adapter = constructor.newInstance(sosVersion, requestBuilder);
+        Class<SOSAdapter> clazz = (Class<SOSAdapter>) Class.forName(metadata.getAdapter());
+        Constructor<SOSAdapter> constructor = clazz.getConstructor(new Class[]{String.class});
+        SOSAdapter adapter = constructor.newInstance(sosVersion);
 
         OperationAccessor accessor = new OperationAccessor(adapter, describeSensor, parameters);
         FutureTask<OperationResult> task = new FutureTask<OperationResult>(accessor);

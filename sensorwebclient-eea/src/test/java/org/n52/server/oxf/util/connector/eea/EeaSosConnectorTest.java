@@ -50,13 +50,13 @@ public class EeaSosConnectorTest {
     
     private SFSamplingFeatureDocument sfSamplingFeature;
 
-    private EEASOSConnector sosConnector;
+    private ArcGISSoeMetadataHandler sosConnector;
 
     @Before
     public void setUp() throws Exception {
         InputStream is = getClass().getResourceAsStream(SF_SPATIAL_FEATURE);
         sfSamplingFeature = SFSamplingFeatureDocument.Factory.parse(is);
-        sosConnector = new EEASOSConnector();
+        sosConnector = new ArcGISSoeMetadataHandler();
     }
 
     @Test

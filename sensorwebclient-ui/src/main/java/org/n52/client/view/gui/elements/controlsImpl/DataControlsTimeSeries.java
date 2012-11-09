@@ -492,7 +492,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
                     // WORKAROUND to have a maximum zoom level in the time frame Bug 508
                     begin = createDate(begin, DataControlsTimeSeries.this.getFromTimeItem().getDisplayValue());
                     end = createDate(end, DataControlsTimeSeries.this.getToTimeItem().getDisplayValue());
-                    if (ClientUtils.zoomTimeFrameValid(begin.getTime(), end.getTime())) {
+                    if (ClientUtils.isValidTimeFrameForZoomIn(begin.getTime(), end.getTime())) {
                         EventBus.getMainEventBus().fireEvent(
                                 new OverviewIntervalChangedEvent(DataControlsTimeSeries.this.currentInterval,
                                         DataControlsTimeSeries.this.currentIntervalType));

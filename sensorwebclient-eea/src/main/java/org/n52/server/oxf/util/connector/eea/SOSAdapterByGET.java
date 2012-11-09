@@ -53,15 +53,29 @@ public class SOSAdapterByGET extends SOSAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSAdapterByGET.class);
 
     /**
+     * Creates an adapter to connect SOS with GET binding as specified by 52n ArcGIS SOS SOE. <br>
+     * <br>
+     * Per default the Adapter uses {@link SosRequestBuilderGET_200} to build its request. Override via
+     * {@link #setRequestBuilder(ISOSRequestBuilder)}.
+     * 
+     * @param sosVersion
+     *        the SOS version
+     */
+    public SOSAdapterByGET(String sosVersion) {
+        super(sosVersion);
+        setRequestBuilder(new SOSRequestBuilderGET_200());
+    }
+
+    /**
      * Creates a SOS adapter to connect to ArcGIS Server SOS SOE extension points by GET. <br>
      * <br>
      * We use the overloaded constructor {@link SOSAdapter#SOSAdapter(String, ISOSRequestBuilder)} just to
      * satisfy reflection loading. Actually, there is <b>no parameter needed</b> for
      * <code>requestBuilder</code> and is not looked at at all (so it can be <code>null</code>). The
-     * constructor creates its own {@link SOSRequestBuilderGET_200} instance internally by itself. <br>
-     * <br>
-     * TODO This however can for sure be part of a next refactoring ...
+     * constructor creates its own {@link SosRequestBuilderGET_200} instance internally by itself. <br>
      * 
+     * 
+     * @deprecated use {@link #SOSwithSoapAdapter(String)} instead
      * @param sosVersion
      *        the SOS version
      * @param requestBuilder
@@ -69,17 +83,19 @@ public class SOSAdapterByGET extends SOSAdapter {
      */
     public SOSAdapterByGET(String sosVersion, ISOSRequestBuilder requestBuilder) {
         super(sosVersion, new SOSRequestBuilderGET_200());
+        LOGGER.warn("This is a deprecated constructor and will be removed soon w/o notice.");
     }
 
     @Override
-    public OperationResult doOperation(Operation operation, ParameterContainer parameters) throws ExceptionReport, OXFException {
+    public OperationResult doOperation(Operation operation, ParameterContainer parameters) throws ExceptionReport,
+            OXFException {
         InputStream responseStream = null;
         InputStream inputStream = null;
         try {
             String requestString = buildRequest(operation, parameters);
             if (requestString == null) {
-				throw new OXFException("No supported request!");
-			}
+                throw new OXFException("No supported request!");
+            }
             String serviceUrl = getFirstDcpOnlineResourceForGET(operation).getHref();
             serviceUrl = fixServiceUrl(operation, serviceUrl);
             LOGGER.debug("Built GET request string: {}", requestString);
@@ -91,16 +107,20 @@ public class SOSAdapterByGET extends SOSAdapter {
             OperationResult result = new OperationResult(response.newInputStream(), parameters, requestString);
             checkForExceptionReport(result, response);
             return result;
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new OXFException("Error while reading operation result.", e);
-        } catch (XmlException e) {
+        }
+        catch (XmlException e) {
             throw new OXFException("Could not parse response to XML.", e);
-        } finally {
+        }
+        finally {
             try {
                 if (inputStream != null) {
                     inputStream.close();
                 }
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 throw new OXFException("Could not close response stream.", e);
             }
         }
@@ -118,13 +138,14 @@ public class SOSAdapterByGET extends SOSAdapter {
             bufferedReader.close();
             String response = stringBuilder.toString();
             response = response.replace("&", "&amp;");
-            
+
             response = replaceArtifact(response, "</output>\"", "</output>");
             response = replaceArtifact(response, "output-\"0", "output-0");
-            
+
             return response;
-//            return new String(response.getBytes(), "UTF-8");
-        } finally {
+            // return new String(response.getBytes(), "UTF-8");
+        }
+        finally {
             if (reponseStream != null) {
                 reponseStream.close();
             }
@@ -140,15 +161,17 @@ public class SOSAdapterByGET extends SOSAdapter {
     }
 
     private XmlObject parseToXmlObject(String responseString) throws XmlException {
-       try {
-           return XmlObject.Factory.parse(responseString);
-       } catch (XmlException e) {
-           LOGGER.warn("Server returned non XML data: {}", responseString);
-           throw e;
-       }
+        try {
+            return XmlObject.Factory.parse(responseString);
+        }
+        catch (XmlException e) {
+            LOGGER.warn("Server returned non XML data: {}", responseString);
+            throw e;
+        }
     }
 
-    private void checkForExceptionReport(OperationResult result, XmlObject response) throws XmlException, ExceptionReport {
+    private void checkForExceptionReport(OperationResult result, XmlObject response) throws XmlException,
+            ExceptionReport {
         if (isExceptionReportV11(response)) {
             ExceptionReport execRep = parseExceptionReport_100(result);
             OWSException ex = execRep.getExceptionsIterator().next();
@@ -177,7 +200,7 @@ public class SOSAdapterByGET extends SOSAdapter {
             String[] exceptionMessages = exceptionType.getExceptionTextArray();
             String locator = exceptionType.getLocator();
             String sentRequest = result.getSendedRequest();
-            
+
             OWSException owsException = new OWSException(exceptionMessages, exceptionCode, sentRequest, locator);
             exceptionReport.addException(owsException);
         }

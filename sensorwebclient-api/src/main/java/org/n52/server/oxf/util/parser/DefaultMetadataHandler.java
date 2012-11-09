@@ -28,7 +28,6 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -42,6 +41,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import net.opengis.swe.x10.ConstrainedPhenomenonDocument;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -61,13 +62,13 @@ import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.access.AccessorThreadPool;
 import org.n52.server.oxf.util.access.OperationAccessor;
 import org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension;
-import org.n52.server.oxf.util.access.oxfExtensions.SOSRequestBuilderFactory_OXFExtension;
-import org.n52.server.oxf.util.connector.SosMetadataHandler;
+import org.n52.server.oxf.util.connector.MetadataHandler;
 import org.n52.server.oxf.util.parser.utils.ParsedPoint;
 import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
 import org.n52.shared.serializable.pojos.sos.Offering;
+import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -75,13 +76,12 @@ import org.n52.shared.serializable.pojos.sos.Station;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultSosMetadataHandler extends SosMetadataHandler {
+public class DefaultMetadataHandler extends MetadataHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSosMetadataHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultMetadataHandler.class);
 
-    public SOSMetadataResponse buildUpServiceMetadata(String sosUrl, String sosVersion) throws OXFException, InterruptedException, XMLHandlingException {
-        ISOSRequestBuilder requestBuilder = SOSRequestBuilderFactory_OXFExtension.generateRequestBuilder(sosVersion);
-        SOSAdapter adapter = new SOSAdapter_OXFExtension(sosVersion, requestBuilder);
+    public SOSMetadataResponse performMetadataCompletion(String sosUrl, String sosVersion) throws OXFException, InterruptedException, XMLHandlingException {
+        SOSAdapter adapter = new SOSAdapter_OXFExtension(sosVersion);
         ServiceDescriptor serviceDesc = ConnectorUtils.getServiceDescriptor(sosUrl, adapter);
 
         String sosTitle = serviceDesc.getServiceIdentification().getTitle();
@@ -127,7 +127,6 @@ public class DefaultSosMetadataHandler extends SosMetadataHandler {
                 LOGGER.error("Could not insert spatial metadata", e);
             }
 
-
             String offeringID = offering.getIdentifier();
 
             // associate:
@@ -146,8 +145,8 @@ public class DefaultSosMetadataHandler extends SosMetadataHandler {
             for (int j = 0; j < foiArray.length; j++) {
                 featureIds.add(foiArray[j]);
             }
-
         }
+        
         LOGGER.debug("There are " + featureIds.size() + " FOIs registered in the SOS");
 
         // add fois
@@ -229,8 +228,7 @@ public class DefaultSosMetadataHandler extends SosMetadataHandler {
         String smlVersion = metadata.getSensorMLVersion();
         Map<String, FutureTask<OperationResult>> futureTasks = new ConcurrentHashMap<String, FutureTask<OperationResult>>();
         for (Procedure proc : procedures) {
-            ISOSRequestBuilder requestBuilder = SOSRequestBuilderFactory_OXFExtension.generateRequestBuilder(sosVersion);
-            SOSAdapter_OXFExtension adapter = new SOSAdapter_OXFExtension(sosVersion, requestBuilder);
+            SOSAdapter_OXFExtension adapter = new SOSAdapter_OXFExtension(sosVersion);
             Operation operation = new Operation(SOSAdapter.DESCRIBE_SENSOR, sosUrl, sosUrl);
             ParameterContainer paramCon = new ParameterContainer();
             paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_SERVICE_PARAMETER, "SOS");
@@ -267,20 +265,24 @@ public class DefaultSosMetadataHandler extends SosMetadataHandler {
                 }
                 else {
                     incomingResultAsStream = opResult.getIncomingResultAsStream();
-                    DescribeSensorParser parser = new DescribeSensorParser(incomingResultAsStream, sosVersion);
-
-                    // TODO set Force XY configuration and override AReferencingHelper if necessary
-
+                    DescribeSensorParser parser = new DescribeSensorParser(incomingResultAsStream, metadata);
+                    
                     Procedure procedure = metadata.getProcedure(procedureId);
-                    Set<Station> stations = metadata.getStationsByProcedure(procedure.getId());
                     procedure.addAllRefValues(parser.parseCapsDataFields());
                     List<String> phenomenons = parser.getPhenomenons();
                     List<String> fois = parser.parseFOIReferences();
                     ParsedPoint point = parser.buildUpSensorMetadataPosition();
+                    
                     double lat = Double.parseDouble(point.getLat());
                     double lng = Double.parseDouble(point.getLon());
-                    EastingNorthing coords = new EastingNorthing(lng, lat);
+
+                    
                     String srs = point.getSrs();
+                    EastingNorthing eastingNorthing = new EastingNorthing(lng, lat);
+
+                    // TODO
+//                    Station station = new Station();
+//                    station.setLocation(eastingNorthing, srs);
 
                     if (fois.isEmpty()) {
                         Collection<FeatureOfInterest> features = metadata.getFeatures();
@@ -290,6 +292,8 @@ public class DefaultSosMetadataHandler extends SosMetadataHandler {
                             fois.add(foi.getId());
                         }
                     }
+
+                    Set<Station> stations = metadata.getStationsByProcedure(procedure.getId());
                     if (fois.size() == stations.size()) {
                         /*
                          * Amount of sampling locations already matches amount of stations. A station update
@@ -300,8 +304,15 @@ public class DefaultSosMetadataHandler extends SosMetadataHandler {
                                 for (Station station : stations) {
                                     if (station.isPhenomenonEqual(phenomenon)) {
                                         if (metadata.getFeatureHashMap().containsKey(foi)) {
+                                            // TODO
+//                                            ParameterConstellation constellation = new ParameterConstellation();
+//                                            constellation.setFeatureOfInterest(foi);
+//                                            constellation.setPhenomenon(phenomenon);
+//                                            constellation.setProcedure(procedureId);
+//                                            constellation.setOffering(offering);
+//                                            station.addParameterConstellation(constellation);
                                             station.setFeature(foi);
-                                            station.setLocation(coords, srs);
+                                            station.setLocation(eastingNorthing, srs);
                                         }
                                     }
                                 }
@@ -316,7 +327,7 @@ public class DefaultSosMetadataHandler extends SosMetadataHandler {
                          * from sensorML.
                          */
                         for (Station station : stations) {
-                            station.setLocation(coords, srs);
+                            station.setLocation(eastingNorthing, srs);
                             for (String foi : fois) {
                                 Station stationClone = station.clone();
                                 stationClone.setFeature(foi);

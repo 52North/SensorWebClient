@@ -36,7 +36,7 @@ public class SOSMetadataBuilder {
 
     private String serviceName;
 
-    private String connector;
+    private String sosMetadataHandler;
 
     private String adapter;
 
@@ -90,11 +90,11 @@ public class SOSMetadataBuilder {
         return this;
     }
 
-    public SOSMetadataBuilder addConnector(String connector) {
-        if (connector == null || connector.isEmpty()) {
-            throw new NullPointerException("connector parameter must not be null or empty.");
+    public SOSMetadataBuilder addSosMetadataHandler(String handler) {
+        if (handler == null || handler.isEmpty()) {
+            throw new NullPointerException("sosMetadataHandler parameter must not be null or empty.");
         }
-        this.connector = connector.trim();
+        this.sosMetadataHandler = handler.trim();
         return this;
     }
 
@@ -196,8 +196,8 @@ public class SOSMetadataBuilder {
         return this.waterML;
     }
 
-    public String getConnector() {
-        return this.connector;
+    public String getSosMetadataHandler() {
+        return this.sosMetadataHandler;
     }
 
     public String getAdapter() {

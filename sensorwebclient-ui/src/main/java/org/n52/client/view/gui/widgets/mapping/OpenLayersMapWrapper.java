@@ -42,6 +42,7 @@ import org.gwtopenmaps.openlayers.client.layer.WMS;
 import org.gwtopenmaps.openlayers.client.layer.WMSOptions;
 import org.gwtopenmaps.openlayers.client.layer.WMSParams;
 import org.n52.client.control.PropertiesManager;
+import org.n52.client.view.gui.widgets.Toaster;
 import org.n52.shared.Constants;
 import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.EastingNorthing;
@@ -104,6 +105,7 @@ public abstract class OpenLayersMapWrapper {
         PropertiesManager properties = PropertiesManager.getInstance();
         spatialReference = properties.getParameterAsString("mapSrs");
         String url = properties.getParameterAsString("mapUrl");
+        url = url == null ? "OSM" : url; // if not set in config
         if ("OSM".equalsIgnoreCase(url)) {
             map.addLayer(initializeOSMLayer());
         }
@@ -113,6 +115,8 @@ public abstract class OpenLayersMapWrapper {
             }
             catch (Exception e) {
                 // fallback to default
+                String message = "Could not create WMS layer.";
+                Toaster.getInstance().addErrorMessage(message);
                 map.addLayer(initializeOSMLayer());
             }
         }

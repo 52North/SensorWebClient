@@ -60,7 +60,7 @@ import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.access.AccessorThreadPool;
 import org.n52.server.oxf.util.access.OperationAccessor;
-import org.n52.server.oxf.util.connector.SosMetadataHandler;
+import org.n52.server.oxf.util.connector.MetadataHandler;
 import org.n52.server.oxf.util.crs.AReferencingHelper;
 import org.n52.server.oxf.util.parser.ConnectorUtils;
 import org.n52.server.oxf.util.parser.utils.ParsedPoint;
@@ -79,15 +79,15 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
-public class EEASOSConnector extends SosMetadataHandler {
+public class ArcGISSoeMetadataHandler extends MetadataHandler {
 	
-	private static final String FOI_WILDCARD = "FOI_WILDCARD";
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(EEASOSConnector.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ArcGISSoeMetadataHandler.class);
 
+    private static final String FOI_WILDCARD = "FOI_WILDCARD";
+    
 	@Override
-	public SOSMetadataResponse buildUpServiceMetadata(String sosUrl, String sosVersion) throws Exception {
-        SOSAdapter adapter = new SOSAdapterByGET(sosVersion, null);
+	public SOSMetadataResponse performMetadataCompletion(String sosUrl, String sosVersion) throws Exception {
+        SOSAdapter adapter = new SOSAdapterByGET(sosVersion);
         ServiceDescriptor serviceDesc = ConnectorUtils.getServiceDescriptor(sosUrl, adapter);
         String sosTitle = serviceDesc.getServiceIdentification().getTitle();
         
@@ -240,7 +240,7 @@ public class EEASOSConnector extends SosMetadataHandler {
                 point.setLat(lonLat[1]);
                 point.setSrs(wgs84);
 		        try {
-					String srs = referenceHelper.extractSRSCode(srsName); 
+					String srs = referenceHelper.extractSRSCode(srsName);
 					GeometryFactory geometryFactory = referenceHelper.createGeometryFactory(srs);
 
 	                Double x = Double.parseDouble(lonLat[0]);

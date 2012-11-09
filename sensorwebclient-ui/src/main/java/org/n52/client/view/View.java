@@ -96,8 +96,8 @@ public class View {
         mainPanel.setStyleName("sensorweb_client_mainLayout");
         mainPanel.setOverflow(Overflow.HIDDEN);
         
-        int fadeout = PropertiesManager.getInstance().getParamaterAsInt("toasterFadeout", 2000);
-        Toaster.createInstance("toaster", 400, 200, I18N.sosClient.loggerWindowTitle(), mainPanel, fadeout);
+        int fadeout = PropertiesManager.getInstance().getParamaterAsInt("toasterFadeout", 5);
+        Toaster.createInstance("toaster", 400, 200, I18N.sosClient.loggerWindowTitle(), mainPanel, fadeout * 1000);
         VLayout vLayout = createLayoutStack();
         mainPanel.addMember(vLayout);
 

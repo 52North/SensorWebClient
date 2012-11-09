@@ -189,7 +189,7 @@ public class FileDataServiceImpl implements FileDataService {
                 throw new IllegalStateException("SOS Version (" + sosVersion + ") is not supported!");
             }
     
-            ISOSRequestBuilder requestBuilder = SOSRequestBuilderFactory_OXFExtension.generateRequestBuilder(sosVersion);
+            ISOSRequestBuilder requestBuilder = SOSRequestBuilderFactory_OXFExtension.createRequestBuilder(sosVersion);
             SOSAdapter_OXFExtension adapter = new SOSAdapter_OXFExtension(sosVersion, requestBuilder);
             Operation descSensorOperation = new Operation(SOSAdapter.DESCRIBE_SENSOR, sosUrl, sosUrl);
             OperationAccessor callable = new OperationAccessor(adapter, descSensorOperation, paramCon);

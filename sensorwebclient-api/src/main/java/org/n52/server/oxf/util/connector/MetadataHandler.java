@@ -28,13 +28,11 @@ import org.n52.server.oxf.util.crs.AReferencingHelper;
 import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 
-public abstract class SosMetadataHandler {
+public abstract class MetadataHandler {
 
     // TODO pull up general methods and technics for extending handlers
 
-    public abstract SOSMetadataResponse buildUpServiceMetadata(String sosUrl, String sosVersion) throws Exception;
-
-    // public abstract SOSMetadataResponse completeSosMetadata(SOSMetadata metadata);
+    public abstract SOSMetadataResponse performMetadataCompletion(String sosUrl, String sosVersion) throws Exception;
 
     /**
      * Creates an {@link AReferencingHelper} according to metadata settings (e.g. if XY axis order shall be

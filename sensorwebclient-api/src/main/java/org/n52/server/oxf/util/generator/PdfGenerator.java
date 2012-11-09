@@ -188,9 +188,9 @@ public class PdfGenerator extends Generator {
      */
     private MetadataType buildUpMetadata(String sosURL, String procedureID) throws Exception {
 
-        SOSMetadata meta = ConfigurationContext.getSOSMetadata(sosURL);
-        String sosVersion = meta.getSosVersion();
-        String smlVersion = meta.getSensorMLVersion();
+        SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosURL);
+        String sosVersion = metadata.getSosVersion();
+        String smlVersion = metadata.getSensorMLVersion();
         ParameterContainer paramCon = new ParameterContainer();
         paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_SERVICE_PARAMETER, "SOS");
         paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_VERSION_PARAMETER, sosVersion);
@@ -204,11 +204,19 @@ public class PdfGenerator extends Generator {
         }
 
         Operation descSensorOperation = new Operation(SOSAdapter.DESCRIBE_SENSOR, sosURL, sosURL);
-        @SuppressWarnings("unchecked")
-		Class<SOSAdapter> adapterClass = (Class<SOSAdapter>) Class.forName(meta.getAdapter());
-        Constructor<SOSAdapter> constructor = adapterClass.getConstructor(new Class[]{String.class, ISOSRequestBuilder.class});
-        ISOSRequestBuilder requestBuilder = SOSRequestBuilderFactory_OXFExtension.generateRequestBuilder(sosVersion);
-		SOSAdapter adapter = constructor.newInstance(sosVersion, requestBuilder);
+//		Class<SOSAdapter> adapterClass = (Class<SOSAdapter>) Class.forName(metadata.getAdapter());
+//        Constructor<SOSAdapter> constructor = adapterClass.getConstructor(new Class[]{String.class, ISOSRequestBuilder.class});
+//        ISOSRequestBuilder requestBuilder = SOSRequestBuilderFactory_OXFExtension.createRequestBuilder(sosVersion);
+//		SOSAdapter adapter = constructor.newInstance(sosVersion, requestBuilder);
+
+//      ISOSRequestBuilder requestBuilder = SOSRequestBuilderFactory_OXFExtension.createRequestBuilder(sosVersion);
+//      Constructor<SOSAdapter> constructor = clazz.getConstructor(new Class[]{String.class, ISOSRequestBuilder.class});
+//      SOSAdapter adapter = constructor.newInstance(sosVersion, requestBuilder);
+        Class<SOSAdapter> clazz = (Class<SOSAdapter>) Class.forName(metadata.getAdapter());
+        Constructor<SOSAdapter> constructor = clazz.getConstructor(new Class[]{String.class});
+        SOSAdapter adapter = constructor.newInstance(sosVersion);
+		
+		
         OperationResult opResult = adapter.doOperation(descSensorOperation, paramCon);
 
         // parse resulting SensorML doc and store information in the
@@ -218,7 +226,7 @@ public class PdfGenerator extends Generator {
 
         XmlObject xmlObject =
                 XmlObject.Factory.parse(opResult.getIncomingResultAsStream(), xmlOpts);
-        MetadataType metadata = MetadataType.Factory.newInstance();
+        MetadataType metadataType = MetadataType.Factory.newInstance();
 
         String namespaceDecl = "declare namespace sml='http://www.opengis.net/sensorML/1.0'; "; //$NON-NLS-1$
 
@@ -250,13 +258,13 @@ public class PdfGenerator extends Generator {
             value = cursor.getTextValue();
 
             if (name != null) {
-                GenericMetadataPair genMetaPair = metadata.addNewGenericMetadataPair();
+                GenericMetadataPair genMetaPair = metadataType.addNewGenericMetadataPair();
                 genMetaPair.setName(name);
                 genMetaPair.setValue(value);
             }
         }
 
-        return metadata;
+        return metadataType;
     }
 
     /**
