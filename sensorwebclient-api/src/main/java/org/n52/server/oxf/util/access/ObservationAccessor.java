@@ -32,8 +32,8 @@ import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_PROCEDU
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_RESPONSE_FORMAT_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_RESULT_MODEL_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_SERVICE_PARAMETER;
-import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_VERSION_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_TEMPORAL_FILTER_PARAMETER;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_VERSION_PARAMETER;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -43,27 +43,23 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.n52.oxf.OXFException;
-import org.n52.oxf.OXFRuntimeException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.adapter.ParameterShell;
 import org.n52.oxf.feature.OXFFeatureCollection;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.ows.capabilities.Parameter;
-import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.sos.adapter.SOSAdapter;
 import org.n52.oxf.sos.feature.SOSObservationStore;
 import org.n52.oxf.util.JavaHelper;
 import org.n52.oxf.valueDomains.time.TemporalValueDomain;
 import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension;
-import org.n52.server.oxf.util.access.oxfExtensions.SOSRequestBuilderFactory_OXFExtension;
 import org.n52.server.oxf.util.generator.RequestConfig;
-import org.n52.server.oxf.util.parser.DefaultMetadataHandler;
 import org.n52.shared.Constants;
-import org.n52.shared.exceptions.TimeoutException;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,31 +70,28 @@ public class ObservationAccessor {
 
     /**
      * @param requests
-     *        the requests
+     *        the requests to send
      * @return a List of OXFFeatureCollection objects. Each of those objects is the result of ONE SOS request.
+     * @throws AccessException
+     *         if accessing or processing features failed.
      */
-    public Map<String, OXFFeatureCollection> sendRequests(List<RequestConfig> requests) throws OXFException,
-            InterruptedException,
-            OXFRuntimeException,
-            TimeoutException,
-            ExecutionException {
+    public Map<String, OXFFeatureCollection> sendRequests(List<RequestConfig> requests) throws AccessException {
 
-        Map<String, OXFFeatureCollection> entireCollMap = new HashMap<String, OXFFeatureCollection>();
+        try {
+            Map<String, OXFFeatureCollection> entireCollMap = new HashMap<String, OXFFeatureCollection>();
+            for (RequestConfig request : requests) {
+                String sosUrl = request.getSosURL();
+                SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosUrl);
+                String sosVersion = metadata.getSosVersion();
+                boolean waterML = metadata.isWaterML();
 
-        for (RequestConfig request : requests) {
-            String sosUrl = request.getSosURL();
-            SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosUrl);
-            String sosVersion = metadata.getSosVersion();
-            boolean waterML = metadata.isWaterML();
+                ParameterContainer paramters = createParameterContainer(request, sosVersion, waterML);
+                Operation operation = new Operation(SOSAdapter.GET_OBSERVATION, sosUrl + "?", sosUrl);
+                OperationAccessor callable = new OperationAccessor(createSosAdapter(metadata), operation, paramters);
+                FutureTask<OperationResult> task = new FutureTask<OperationResult>(callable);
+                AccessorThreadPool.execute(task);
 
-            ParameterContainer paramters = createParameterContainer(request, sosVersion, waterML);
-            Operation operation = new Operation(SOSAdapter.GET_OBSERVATION, sosUrl + "?", sosUrl);
-            OperationAccessor callable = new OperationAccessor(createSosAdapter(metadata), operation, paramters);
-            FutureTask<OperationResult> task = new FutureTask<OperationResult>(callable);
-            AccessorThreadPool.execute(task);
-
-            OXFFeatureCollection featureColl = null;
-            try {
+                OXFFeatureCollection featureColl = null;
                 OperationResult opResult = task.get(ConfigurationContext.SERVER_TIMEOUT, TimeUnit.MILLISECONDS);
                 SOSObservationStore featureStore = new SOSObservationStore(opResult);
                 featureColl = featureStore.unmarshalFeatures();
@@ -116,11 +109,20 @@ public class ObservationAccessor {
                     }
                 }
             }
-            catch (java.util.concurrent.TimeoutException e) {
-                throw new TimeoutException("Service did not respond in time", e);
-            }
+            return entireCollMap;
         }
-        return entireCollMap;
+        catch (OXFException e) {
+            throw new AccessException("Could not process observations.", e);
+        }
+        catch (TimeoutException e) {
+            throw new AccessException("GetObservation request timed out.", e);
+        }
+        catch (InterruptedException e) {
+            throw new AccessException("Thread got interrupted during GetObservation request.", e);
+        }
+        catch (ExecutionException e) {
+            throw new AccessException("Could not execute GetObservation request.", e.getCause());
+        }
     }
 
     private SOSAdapter createSosAdapter(SOSMetadata metadata) {
