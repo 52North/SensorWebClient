@@ -29,8 +29,8 @@ public class EastingNorthing implements Serializable {
 
     private static final long serialVersionUID = 4080241800833286545L;
     
-    double easting;
-    double northing;
+    String easting;
+    String northing;
     
     @SuppressWarnings("unused")
     private EastingNorthing() {
@@ -38,27 +38,24 @@ public class EastingNorthing implements Serializable {
     }
 
     public EastingNorthing(double easting, double northing) {
-        this.easting = easting;
-        this.northing = northing;
+        this.easting = Double.toString(easting);
+        this.northing = Double.toString(northing);
     }
 
     public double getEasting() {
-        return easting;
+        return Double.parseDouble(easting);
     }
 
     public double getNorthing() {
-        return northing;
+        return Double.parseDouble(northing);
     }
     
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        long temp;
-        temp = Double.doubleToLongBits(easting);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(northing);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + ( (easting == null) ? 0 : easting.hashCode());
+        result = prime * result + ( (northing == null) ? 0 : northing.hashCode());
         return result;
     }
 
@@ -71,9 +68,17 @@ public class EastingNorthing implements Serializable {
         if ( ! (obj instanceof EastingNorthing))
             return false;
         EastingNorthing other = (EastingNorthing) obj;
-        if (Double.doubleToLongBits(easting) != Double.doubleToLongBits(other.easting))
+        if (easting == null) {
+            if (other.easting != null)
+                return false;
+        }
+        else if ( !easting.equals(other.easting))
             return false;
-        if (Double.doubleToLongBits(northing) != Double.doubleToLongBits(other.northing))
+        if (northing == null) {
+            if (other.northing != null)
+                return false;
+        }
+        else if ( !northing.equals(other.northing))
             return false;
         return true;
     }

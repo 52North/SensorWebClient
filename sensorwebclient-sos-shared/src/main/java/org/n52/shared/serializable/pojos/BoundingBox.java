@@ -78,11 +78,11 @@ public class BoundingBox implements Serializable {
     }
 
 	private boolean isWithinHorizontalRange(double easting) {
-		return ll.easting <= easting && easting <= ur.easting;
+		return ll.getEasting() <= easting && easting <= ur.getEasting();
 	}
 	
 	private boolean isWithinVerticalRange(double northing) {
-		return ll.northing <= northing && northing <= ur.northing;
+		return ll.getNorthing() <= northing && northing <= ur.getNorthing();
 	}
 
     /**
