@@ -47,9 +47,18 @@ import org.n52.oxf.valueDomains.time.ITimePeriod;
 import org.n52.oxf.valueDomains.time.ITimePosition;
 import org.n52.oxf.valueDomains.time.TimeFactory;
 import org.n52.oxf.valueDomains.time.TimePosition;
-import org.n52.oxf.xmlbeans.tools.XMLBeansTools;
+import org.n52.oxf.xmlbeans.tools.XmlUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SOSRequestBuilder_100_OXFExtension extends SOSRequestBuilder_100 {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(SOSRequestBuilder_100_OXFExtension.class);
+
+    public SOSRequestBuilder_100_OXFExtension() {
+        LOGGER.debug("NEW {}", getClass().getSimpleName());
+    }
+    
     @Override
     public String buildGetObservationRequest(ParameterContainer parameters) throws OXFException {
 
@@ -199,7 +208,7 @@ public class SOSRequestBuilder_100_OXFExtension extends SOSRequestBuilder_100 {
             xb_getObs.setResponseMode(responseModeEnum);
         }
 
-        return xb_getObsDoc.xmlText(XMLBeansTools.PRETTYPRINT);
+        return xb_getObsDoc.xmlText(XmlUtil.PRETTYPRINT);
 
     }
 

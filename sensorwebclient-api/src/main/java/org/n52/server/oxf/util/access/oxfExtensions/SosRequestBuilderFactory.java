@@ -27,7 +27,7 @@ import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.sos.adapter.SOSRequestBuilderFactory;
 import org.n52.oxf.sos.util.SosUtil;
 
-public class SOSRequestBuilderFactory_OXFExtension extends SOSRequestBuilderFactory {
+public class SosRequestBuilderFactory {
 
     public static ISOSRequestBuilder createRequestBuilder(String serviceVersion) {
         if (SosUtil.isVersion100(serviceVersion)) {

@@ -23,13 +23,12 @@
  */
 package org.n52.server.oxf.util.access.oxfExtensions;
 
-import net.opengis.fes.x20.BeginsDocument;
 import net.opengis.fes.x20.BinaryTemporalOpType;
 import net.opengis.fes.x20.DuringDocument;
 import net.opengis.fes.x20.TEqualsDocument;
 import net.opengis.gml.x32.TimeInstantDocument;
-import net.opengis.gml.x32.TimePeriodDocument;
 import net.opengis.gml.x32.TimeInstantType;
+import net.opengis.gml.x32.TimePeriodDocument;
 import net.opengis.gml.x32.TimePeriodType;
 import net.opengis.gml.x32.TimePositionDocument;
 import net.opengis.gml.x32.TimePositionType;
@@ -44,16 +43,24 @@ import org.n52.oxf.valueDomains.time.ITimePeriod;
 import org.n52.oxf.valueDomains.time.ITimePosition;
 import org.n52.oxf.valueDomains.time.TimeFactory;
 import org.n52.oxf.valueDomains.time.TimePosition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:f.bache@52north.de">Felix Bache</a>
  * 
  */
 public class SOSRequestBuilder_200_OXFExtension extends SOSRequestBuilder_200 {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(SOSRequestBuilder_200_OXFExtension.class);
 
     public static final String GET_OBSERVATION_TIME_PARAM_FIRST = "getFirst";
 
     public static final String GET_OBSERVATION_TIME_PARAM_LAST = "latest";
+    
+    public SOSRequestBuilder_200_OXFExtension() {
+        LOGGER.debug("NEW {}", getClass().getSimpleName());
+    }
 
     @Override
     protected void processTemporalFilter(GetObservationType xb_getObs, ParameterShell shell) throws OXFException {
@@ -79,7 +86,6 @@ public class SOSRequestBuilder_200_OXFExtension extends SOSRequestBuilder_200 {
                     + ") of the value of the parameter 'eventTime' is not supported.");
         }
 
-        BinaryTemporalOpType xb_binTempOp = null;
         String gmlId = "tp_" + System.currentTimeMillis();
         if (specifiedTime instanceof ITimePeriod) {
             ITimePeriod timePeriod = (ITimePeriod) specifiedTime;
@@ -93,8 +99,7 @@ public class SOSRequestBuilder_200_OXFExtension extends SOSRequestBuilder_200 {
             endPosition.setStringValue(timePeriod.getEnd().toISO8601Format());
 
             DuringDocument duringDoc = DuringDocument.Factory.newInstance();
-            xb_binTempOp = duringDoc.addNewDuring();
-
+            BinaryTemporalOpType xb_binTempOp = duringDoc.addNewDuring();
             xb_binTempOp.set(periodDocument);
             xb_binTempOp.setValueReference("phenomenonTime");
 
@@ -103,29 +108,34 @@ public class SOSRequestBuilder_200_OXFExtension extends SOSRequestBuilder_200 {
         }
         else if (specifiedTime instanceof ITimePosition) {
             ITimePosition timePosition = (ITimePosition) specifiedTime;
-            TimePositionDocument instantDocument = TimePositionDocument.Factory.newInstance();
-            TimePositionType timePositionType = instantDocument.addNewTimePosition();
-            timePositionType.setStringValue(timePosition.toISO8601Format());
-            TEqualsDocument equalsDoc = TEqualsDocument.Factory.newInstance();
-            xb_binTempOp = equalsDoc.addNewTEquals();
-            timePositionType.set(timePositionType);
-            
-            xb_binTempOp.set(timePositionType);
-            xb_binTempOp.setValueReference("phenomenonTime");
+            String timeIso8601Format = timePosition.toISO8601Format();
+            addEqualsTimePositionFilter(xb_getObs, timeIso8601Format);
         } else if (specifiedTime instanceof ITime) {
-            TimePositionType xb_timePosition = TimePositionType.Factory.newInstance();
             ITime timePosition = (ITime) specifiedTime;
-            xb_timePosition.setStringValue(timePosition.toISO8601Format());
-            
-            TimeInstantDocument instantDocument = TimeInstantDocument.Factory.newInstance();
-            TimeInstantType timeInstant = instantDocument.addNewTimeInstant();
-            timeInstant.setTimePosition(xb_timePosition);
-
-            BeginsDocument beginsDoc = BeginsDocument.Factory.newInstance();
-            xb_binTempOp = beginsDoc.addNewBegins(); // TODO check, if correct
-            xb_binTempOp.set(timeInstant);
-            xb_binTempOp.setValueReference("phenomenonTime");
+            String timeIso8601Format = timePosition.toISO8601Format();
+            addEqualsTimePositionFilter(xb_getObs, timeIso8601Format);
         }
+    }
+
+    private void addEqualsTimePositionFilter(GetObservationType xb_getObs, String timeIso8601Format) {
+        TimePositionDocument timePositionDoc = TimePositionDocument.Factory.newInstance();
+        TimePositionType timePositionType = timePositionDoc.addNewTimePosition();
+        timePositionType.setStringValue(timeIso8601Format);
+        timePositionType.set(timePositionType);
+
+        TimeInstantDocument timeInstanceDoc = TimeInstantDocument.Factory.newInstance();
+        TimeInstantType xb_timeInstant = timeInstanceDoc.addNewTimeInstant();
+        xb_timeInstant.setTimePosition(timePositionType);
+        xb_timeInstant.setId("_1");
+
+        TEqualsDocument equalsDoc = TEqualsDocument.Factory.newInstance();
+        BinaryTemporalOpType xb_binTempOp = equalsDoc.addNewTEquals();
+        
+        xb_binTempOp.set(timeInstanceDoc);
+        xb_binTempOp.setValueReference("phenomenonTime");
+
+        TemporalFilter spatialFilter = xb_getObs.addNewTemporalFilter();
+        spatialFilter.set(equalsDoc);
     }
 
 

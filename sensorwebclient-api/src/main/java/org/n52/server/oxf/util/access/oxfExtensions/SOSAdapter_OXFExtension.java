@@ -33,7 +33,6 @@ import org.n52.oxf.ows.ServiceDescriptor;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.sos.adapter.SOSAdapter;
-import org.n52.oxf.sos.adapter.SOSRequestBuilderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +45,7 @@ public class SOSAdapter_OXFExtension extends SOSAdapter {
      */
     public SOSAdapter_OXFExtension(String sosVersion) {
         super(sosVersion);
-        setRequestBuilder(SOSRequestBuilderFactory.generateRequestBuilder(sosVersion));
+        setRequestBuilder(SosRequestBuilderFactory.createRequestBuilder(sosVersion));
     }
 
     /**
