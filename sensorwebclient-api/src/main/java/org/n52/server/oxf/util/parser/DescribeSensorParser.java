@@ -307,7 +307,7 @@ public class DescribeSensorParser {
             }
         }
         String stationName = station != null ? station : uniqueId;
-        LOGGER.debug(String.format("parsed '%s' as station name", uniqueId));
+        LOGGER.debug(String.format("parsed '%s' as station name", stationName));
         return stationName;
     }
 
@@ -670,7 +670,7 @@ public class DescribeSensorParser {
                         XmlCursor cursor = xml.newCursor();
                         String gmlId = cursor.getTextValue();
                         if ( !NcNameResolver.isNCName(gmlId)) {
-                            cursor.setTextValue(normalizeGmlId(gmlId));
+                            cursor.setTextValue(NcNameResolver.fixNcName(gmlId));
                         }
                     }
 
@@ -679,30 +679,6 @@ public class DescribeSensorParser {
                 }
             }
         }
-    }
-
-    private String normalizeGmlId(String invalidGmlId) {
-
-        // TODO extract to OXF XML parsing/validation
-
-        StringBuilder sb = new StringBuilder();
-
-        // Check first character
-        char c = invalidGmlId.charAt(0);
-        if ( ! (c == '_' && NcNameResolver.isLetter(c))) {
-            sb.append('_');
-        }
-        // Check the rest of the characters
-        for (int i = 1; i < invalidGmlId.length(); i++) {
-            char currentChar = invalidGmlId.charAt(i);
-            if (NcNameResolver.isNCNameChar(currentChar)) {
-                sb.append(currentChar);
-            }
-            else {
-                sb.append('_');
-            }
-        }
-        return sb.toString();
     }
 
     public void setReferencingHelper(AReferencingHelper refHelper) {

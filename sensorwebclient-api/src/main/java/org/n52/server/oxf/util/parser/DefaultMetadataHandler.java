@@ -329,9 +329,14 @@ public class DefaultMetadataHandler extends MetadataHandler {
                         for (Station station : stations) {
                             station.setLocation(eastingNorthing, srs);
                             for (String foi : fois) {
-                                Station stationClone = station.clone();
-                                stationClone.setFeature(foi);
-                                metadata.addStation(stationClone);
+                                if (station.getFeature() == null) {
+                                    station.setFeature(foi);
+                                    metadata.addStation(station.clone());
+                                } else {
+                                    Station clone = station.clone();
+                                    clone.setFeature(foi);
+                                    metadata.addStation(clone);
+                                }
                             }
                         }
                     }
@@ -392,7 +397,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
                 metadata.removeProcedure(procedure);
                 sb.append("Removed ==> ");
                 sb.append(procedure);
-                sb.append(" | \n");
+                sb.append("\n");
             }
             LOGGER.warn("#{} procedures are unavailable. {}", illegalProcedures.size(), sb.toString());
         }
