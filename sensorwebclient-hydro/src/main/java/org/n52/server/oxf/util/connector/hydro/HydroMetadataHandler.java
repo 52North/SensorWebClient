@@ -92,7 +92,7 @@ public class HydroMetadataHandler extends MetadataHandler {
 	
 	@Override
 	public SOSMetadataResponse performMetadataCompletion(String sosUrl, String sosVersion) throws Exception {
-		this.adapter = new SOSwithSoapAdapter(sosVersion, new SoapSOSRequestBuilder_200());
+		this.adapter = new SOSwithSoapAdapter(sosVersion);
 		ServiceDescriptor serviceDesc = ConnectorUtils.getServiceDescriptor(sosUrl, this.adapter);
 
         String sosTitle = serviceDesc.getServiceIdentification().getTitle();
