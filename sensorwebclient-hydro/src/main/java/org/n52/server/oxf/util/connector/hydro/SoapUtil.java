@@ -30,7 +30,7 @@ import javax.xml.namespace.QName;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.oxf.xmlbeans.tools.XMLBeansTools;
+import org.n52.oxf.xmlbeans.tools.XmlUtil;
 import org.w3.x2003.x05.soapEnvelope.Body;
 import org.w3.x2003.x05.soapEnvelope.Envelope;
 import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
@@ -102,7 +102,7 @@ public class SoapUtil {
      *         if parsing to XML fails
      */
     public static XmlObject getXmlFromDomNode(XmlObject xml, String nodeName) throws XmlException {
-        Node bodyNode = XMLBeansTools.getDomNode(xml, nodeName);
+        Node bodyNode = XmlUtil.getDomNode(xml, nodeName);
         return bodyNode == null ? null : XmlObject.Factory.parse(bodyNode);
     }
 }
