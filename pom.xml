@@ -346,6 +346,8 @@
 					<configuration>
 						<source>1.6</source>
 						<target>1.6</target>
+						<meminitial>256</meminitial>
+						<maxmem>512</maxmem>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -380,7 +382,10 @@
 							<artifact>org.n52.sensorweb:sensorwebclient-ses-shared</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-ui</artifact>
 						</compileSourcesArtifacts>
-						<style>OBF</style>
+						<!-- 
+						 <style>PRETTY</style>
+						 -->
+						 <style>OBF</style>
 					</configuration>
 					<executions>
 						<execution>
@@ -694,7 +699,7 @@
 
 	<properties>
 		<dev.mode>false</dev.mode>
-		<gwt.version>2.4.0</gwt.version>
+		<gwt.version>2.5.0</gwt.version>
 		<oxf.version>2.0.0-SNAPSHOT</oxf.version>
 		<smartgwt.version>3.0</smartgwt.version>
 		<geotools.version>8.2</geotools.version>
