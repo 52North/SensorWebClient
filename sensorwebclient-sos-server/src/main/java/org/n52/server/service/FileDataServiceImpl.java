@@ -42,12 +42,13 @@ import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.access.AccessorThreadPool;
 import org.n52.server.oxf.util.access.OperationAccessor;
 import org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension;
-import org.n52.server.oxf.util.access.oxfExtensions.SOSRequestBuilderFactory_OXFExtension;
+import org.n52.server.oxf.util.access.oxfExtensions.SosRequestBuilderFactory;
 import org.n52.server.oxf.util.generator.CsvGenerator;
 import org.n52.server.oxf.util.generator.Generator;
 import org.n52.server.oxf.util.generator.PdfGenerator;
 import org.n52.server.oxf.util.generator.XlsGenerator;
 import org.n52.server.oxf.util.generator.ZipGenerator;
+import org.n52.shared.exceptions.ServerException;
 import org.n52.shared.exceptions.TimeoutException;
 import org.n52.shared.requests.TimeSeriesDataRequest;
 import org.n52.shared.responses.RepresentationResponse;
@@ -102,7 +103,7 @@ public class FileDataServiceImpl implements FileDataService {
             PdfGenerator gen = new PdfGenerator(true, folder);
             // generate all timeseries on their own
             return generateZipPresentation(req, gen);
-        } catch (Exception e) {
+        }  catch (Exception e) {
             LOG.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
@@ -136,7 +137,7 @@ public class FileDataServiceImpl implements FileDataService {
         }
     }
 
-    private RepresentationResponse generateZipPresentation(TimeSeriesDataRequest req, Generator gen) throws Exception {
+    private RepresentationResponse generateZipPresentation(TimeSeriesDataRequest req, Generator gen) throws ServerException {
         try {
             for (TimeSeriesProperties prop : req.getOptions().getProperties()) {
                 generateSensorMLFile(sendDescSens(prop), prop, gen.getFolderPostfix());
@@ -149,24 +150,24 @@ public class FileDataServiceImpl implements FileDataService {
             ZipGenerator zipgen = new ZipGenerator(gen.getFolderPostfix());
             return zipgen.producePresentation(req.getOptions());
         } catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
-            throw e; // last chance to log on server side
+            // wrap generic exception
+            throw new ServerException("Could not generate ZIP file.", e);
         }
     }
     
 
-    private void generateSensorMLFile(OperationResult sendDescSens, TimeSeriesProperties prop, String folderPostfix) throws Exception {
+    private void generateSensorMLFile(OperationResult sendDescSens, TimeSeriesProperties prop, String folderPostfix) throws ServerException {
         try {
             File f = JavaHelper.genFile(ConfigurationContext.GEN_DIR+"/"+folderPostfix, 
                     "SensorML_" + prop.getProcedure().getId().replaceAll("/", "_"), "xml");
             IOHelper.saveFile(f, sendDescSens.getIncomingResultAsStream());
         } catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
-            throw e; // last chance to log on server side
+            // wrap generic exception
+            throw new ServerException("Could not save file.", e);
         }
     }
 
-    private OperationResult sendDescSens(TimeSeriesProperties prop) throws Exception {
+    private OperationResult sendDescSens(TimeSeriesProperties prop) throws ServerException {
         try {
             String sosUrl = prop.getSosUrl();
             SOSMetadata meta = (SOSMetadata)ConfigurationContext.getServiceMetadata(sosUrl);
@@ -189,7 +190,7 @@ public class FileDataServiceImpl implements FileDataService {
                 throw new IllegalStateException("SOS Version (" + sosVersion + ") is not supported!");
             }
     
-            ISOSRequestBuilder requestBuilder = SOSRequestBuilderFactory_OXFExtension.createRequestBuilder(sosVersion);
+            ISOSRequestBuilder requestBuilder = SosRequestBuilderFactory.createRequestBuilder(sosVersion);
             SOSAdapter_OXFExtension adapter = new SOSAdapter_OXFExtension(sosVersion, requestBuilder);
             Operation descSensorOperation = new Operation(SOSAdapter.DESCRIBE_SENSOR, sosUrl, sosUrl);
             OperationAccessor callable = new OperationAccessor(adapter, descSensorOperation, paramCon);
@@ -202,8 +203,8 @@ public class FileDataServiceImpl implements FileDataService {
             }
             return opResult;
         } catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
-            throw e; // last chance to log on server side
+            // wrap generic exception
+            throw new ServerException("Could not get sensor descrioption.", e);
         }
     }
 

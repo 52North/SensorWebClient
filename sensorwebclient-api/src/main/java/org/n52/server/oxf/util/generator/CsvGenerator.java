@@ -38,8 +38,6 @@ import org.n52.oxf.feature.sos.ObservedValueTuple;
 import org.n52.oxf.util.JavaHelper;
 import org.n52.oxf.valueDomains.time.ITimePosition;
 import org.n52.server.oxf.util.ConfigurationContext;
-import org.n52.shared.exceptions.ServerException;
-import org.n52.shared.exceptions.TimeoutException;
 import org.n52.shared.responses.FileResponse;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
@@ -80,8 +78,7 @@ public class CsvGenerator extends Generator {
      * .shared.serializable.pojos.RepresentationDesignOptions)
      */
     @Override
-    public RepresentationResponse producePresentation(DesignOptions options)
-            throws TimeoutException, ServerException {
+    public RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException {
 
         Collection<OXFFeatureCollection> observationCollList = getFeatureCollectionFor(options, false).values();
 
@@ -155,7 +152,7 @@ public class CsvGenerator extends Generator {
 			}
             out.write(csvString.getBytes());
         } catch (Exception e) {
-            throw new ServerException(e.getMessage(), e);
+            throw new GeneratorException(e.getMessage(), e);
         } finally {
             try {
                 out.flush();

@@ -43,8 +43,6 @@ import org.n52.oxf.OXFException;
 import org.n52.oxf.feature.OXFFeatureCollection;
 import org.n52.server.oxf.render.sos.DiagramRenderer;
 import org.n52.server.oxf.util.ConfigurationContext;
-import org.n52.shared.exceptions.ServerException;
-import org.n52.shared.exceptions.TimeoutException;
 import org.n52.shared.responses.EESDataResponse;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.Axis;
@@ -72,8 +70,7 @@ public class EESGenerator extends Generator {
     }
 
     @Override
-    public RepresentationResponse producePresentation(DesignOptions options) throws TimeoutException, ServerException {
-
+    public RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException {
         ChartRenderingInfo renderingInfo = new ChartRenderingInfo(new StandardEntityCollection());
         String chartUrl = createChart(options, renderingInfo);
         
@@ -95,24 +92,16 @@ public class EESGenerator extends Generator {
         return new EESDataResponse(chartUrl, options, chartArea, entities, renderer.getAxisMapping());
     }
 
-    public String createChart(DesignOptions options, ChartRenderingInfo renderingInfo) throws ServerException {
+    public String createChart(DesignOptions options, ChartRenderingInfo renderingInfo) throws GeneratorException {
         try {
             Map<String, OXFFeatureCollection> entireCollMap = getFeatureCollectionFor(options, true);
             JFreeChart chart = producePresentation(entireCollMap, options);
             chart.removeLegend();
             
-            String chartFileName = saveChartAsImage(options, chart, renderingInfo);
+            String chartFileName = createAndSaveImage(options, chart, renderingInfo);
             return ConfigurationContext.IMAGE_SERVICE + chartFileName; 
         } catch (Exception e) {
-            throw new ServerException(e.getMessage(), e);
-        }
-    }
-
-    public String saveChartAsImage(DesignOptions options, JFreeChart chart, ChartRenderingInfo renderingInfo) throws ServerException {
-        try {
-            return createAndSaveImage(options, chart, renderingInfo);
-        } catch (OXFException e) {
-            throw new ServerException(e.getMessage(), e);
+            throw new GeneratorException(e.getMessage(), e);
         }
     }
 

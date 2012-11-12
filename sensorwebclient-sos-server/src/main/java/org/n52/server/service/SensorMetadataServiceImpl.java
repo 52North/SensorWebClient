@@ -26,6 +26,7 @@ package org.n52.server.service;
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
@@ -81,6 +82,9 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
     
             JavaHelper.cleanUpDir(ConfigurationContext.XSL_DIR, ConfigurationContext.FILE_KEEPING_TIME, "xml");
             return response;
+        } catch (ExecutionException e) {
+            LOG.error("Exception occured on server side.", e.getCause());
+            throw e; // last chance to log on server side
         } catch (Exception e) {
             LOG.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
@@ -96,6 +100,9 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
             DescribeSensorParser parser = new DescribeSensorParser(resultInputStream, metadata);
             String url = parser.buildUpSensorMetadataHtmlUrl(procedure, serviceURL);
             return new GetProcedureDetailsUrlResponse(url);
+        } catch (ExecutionException e) {
+            LOG.error("Exception occured on server side.", e.getCause());
+            throw e; // last chance to log on server side
         } catch (Exception e) {
             LOG.error("Exception occured on server side.", e);
             throw e;
@@ -118,7 +125,7 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
         }
    
         Operation describeSensor = new Operation(SOSAdapter.DESCRIBE_SENSOR, sosUrl, sosUrl);
-//        ISOSRequestBuilder requestBuilder = SOSRequestBuilderFactory_OXFExtension.createRequestBuilder(sosVersion);
+//        ISOSRequestBuilder requestBuilder = SosRequestBuilderFactory.createRequestBuilder(sosVersion);
 //        Constructor<SOSAdapter> constructor = clazz.getConstructor(new Class[]{String.class, ISOSRequestBuilder.class});
 //        SOSAdapter adapter = constructor.newInstance(sosVersion, requestBuilder);
         Class<SOSAdapter> clazz = (Class<SOSAdapter>) Class.forName(metadata.getAdapter());

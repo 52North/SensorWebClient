@@ -68,9 +68,7 @@ import org.n52.oxf.sos.util.SosUtil;
 import org.n52.oxf.util.JavaHelper;
 import org.n52.oxf.valueDomains.time.ITimePosition;
 import org.n52.server.oxf.util.ConfigurationContext;
-import org.n52.server.oxf.util.access.oxfExtensions.SOSRequestBuilderFactory_OXFExtension;
 import org.n52.shared.exceptions.ServerException;
-import org.n52.shared.exceptions.TimeoutException;
 import org.n52.shared.responses.FileResponse;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
@@ -206,10 +204,10 @@ public class PdfGenerator extends Generator {
         Operation descSensorOperation = new Operation(SOSAdapter.DESCRIBE_SENSOR, sosURL, sosURL);
 //		Class<SOSAdapter> adapterClass = (Class<SOSAdapter>) Class.forName(metadata.getAdapter());
 //        Constructor<SOSAdapter> constructor = adapterClass.getConstructor(new Class[]{String.class, ISOSRequestBuilder.class});
-//        ISOSRequestBuilder requestBuilder = SOSRequestBuilderFactory_OXFExtension.createRequestBuilder(sosVersion);
+//        ISOSRequestBuilder requestBuilder = SosRequestBuilderFactory.createRequestBuilder(sosVersion);
 //		SOSAdapter adapter = constructor.newInstance(sosVersion, requestBuilder);
 
-//      ISOSRequestBuilder requestBuilder = SOSRequestBuilderFactory_OXFExtension.createRequestBuilder(sosVersion);
+//      ISOSRequestBuilder requestBuilder = SosRequestBuilderFactory.createRequestBuilder(sosVersion);
 //      Constructor<SOSAdapter> constructor = clazz.getConstructor(new Class[]{String.class, ISOSRequestBuilder.class});
 //      SOSAdapter adapter = constructor.newInstance(sosVersion, requestBuilder);
         Class<SOSAdapter> clazz = (Class<SOSAdapter>) Class.forName(metadata.getAdapter());
@@ -371,8 +369,7 @@ public class PdfGenerator extends Generator {
      * (org.n52.shared.pojos.RepresentationDesignOptions)
      */
     @Override
-    public RepresentationResponse producePresentation(DesignOptions options)
-            throws TimeoutException, ServerException {
+    public RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException {
         Map<String, OXFFeatureCollection> observationCollMap = getFeatureCollectionFor(options, false);
 
         try {
@@ -495,7 +492,7 @@ public class PdfGenerator extends Generator {
                 JavaHelper.cleanUpDir(ConfigurationContext.GEN_DIR, ConfigurationContext.FILE_KEEPING_TIME);
             }
         } catch (Exception e) {
-            throw new ServerException("Error creating PDF", e);
+            throw new GeneratorException("Error creating PDF", e);
         }
         return new FileResponse(this.pdfURL);
     }

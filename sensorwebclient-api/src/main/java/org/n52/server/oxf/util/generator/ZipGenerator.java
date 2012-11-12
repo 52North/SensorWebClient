@@ -37,7 +37,6 @@ import java.util.zip.ZipOutputStream;
 
 import org.n52.oxf.util.JavaHelper;
 import org.n52.server.oxf.util.ConfigurationContext;
-import org.n52.shared.exceptions.TimeoutException;
 import org.n52.shared.responses.FileResponse;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
@@ -122,8 +121,7 @@ public class ZipGenerator extends Generator {
      * .shared.serializable.pojos.RepresentationDesignOptions)
      */
     @Override
-    public RepresentationResponse producePresentation(DesignOptions options)
-            throws TimeoutException {
+    public RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException {
         ZipOutputStream zipOutputStream = null;
         File file = new File(ConfigurationContext.GEN_DIR+"/"+folder);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");

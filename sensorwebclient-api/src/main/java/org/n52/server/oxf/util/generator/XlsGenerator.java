@@ -44,8 +44,6 @@ import org.n52.oxf.feature.sos.ObservedValueTuple;
 import org.n52.oxf.util.JavaHelper;
 import org.n52.oxf.valueDomains.time.ITimePosition;
 import org.n52.server.oxf.util.ConfigurationContext;
-import org.n52.shared.exceptions.ServerException;
-import org.n52.shared.exceptions.TimeoutException;
 import org.n52.shared.responses.FileResponse;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
@@ -80,8 +78,7 @@ public class XlsGenerator extends Generator {
      * .shared.serializable.pojos.RepresentationDesignOptions)
      */
     @Override
-    public RepresentationResponse producePresentation(DesignOptions options)
-            throws TimeoutException, ServerException {
+    public RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException {
         Collection<OXFFeatureCollection> observationCollList = getFeatureCollectionFor(options, false).values();
 
         if (observationCollList.size() != 1) {
@@ -197,7 +194,7 @@ public class XlsGenerator extends Generator {
             workbook.write();
             workbook.close();
         } catch (Exception e) {
-            throw new ServerException("Error creating XLS", e);
+            throw new GeneratorException("Error creating XLS", e);
         }
         LOGGER.debug("Produced XLS file url '{}'.", ConfigurationContext.GEN_URL + "/" + xls.getName());
         JavaHelper.cleanUpDir(ConfigurationContext.GEN_DIR, ConfigurationContext.FILE_KEEPING_TIME);

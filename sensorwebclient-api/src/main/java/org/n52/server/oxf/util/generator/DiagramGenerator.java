@@ -41,8 +41,6 @@ import org.n52.oxf.util.JavaHelper;
 import org.n52.server.oxf.render.sos.DesignDescriptionList;
 import org.n52.server.oxf.render.sos.DesignDescriptionList.DesignDescription;
 import org.n52.server.oxf.render.sos.DiagramRenderer;
-import org.n52.shared.exceptions.ServerException;
-import org.n52.shared.exceptions.TimeoutException;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeSeriesProperties;
@@ -242,10 +240,9 @@ public class DiagramGenerator extends Generator {
      * .shared.serializable.pojos.RepresentationDesignOptions)
      */
     @Override
-    public RepresentationResponse producePresentation(DesignOptions options)
-            throws TimeoutException, ServerException {
+    public RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException {
         // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException();
     }
 
 }

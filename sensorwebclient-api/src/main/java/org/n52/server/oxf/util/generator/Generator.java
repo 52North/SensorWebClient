@@ -36,25 +36,22 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import javax.xml.bind.PropertyException;
 
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.servlet.ServletUtilities;
-import org.n52.oxf.OXFException;
 import org.n52.oxf.OXFRuntimeException;
 import org.n52.oxf.feature.OXFFeatureCollection;
 import org.n52.oxf.feature.sos.ObservationSeriesCollection;
 import org.n52.oxf.ows.capabilities.ITime;
 import org.n52.oxf.valueDomains.time.TimeFactory;
 import org.n52.server.oxf.util.ConfigurationContext;
+import org.n52.server.oxf.util.access.AccessException;
 import org.n52.server.oxf.util.access.ObservationAccessor;
 import org.n52.server.oxf.util.access.oxfExtensions.TimePosition_OXFExtension;
 import org.n52.server.oxf.util.properties.GeneralizationConfiguration;
-import org.n52.shared.exceptions.ServerException;
-import org.n52.shared.exceptions.TimeoutException;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeSeriesProperties;
@@ -84,11 +81,9 @@ public abstract class Generator {
      * @param options
      *            the options
      * @return RepresentationResponse
-     * @throws TimeoutException
-     *             the timeout exception
-     * @throws ServerException
+     * @throws GeneratorException
      */
-    public abstract RepresentationResponse producePresentation(DesignOptions options) throws TimeoutException, ServerException;
+    public abstract RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException;
 
     /**
      * returns an object of type Map<String, OXFFeatureCollection>. The key is a
@@ -99,45 +94,33 @@ public abstract class Generator {
      * @param options the options
      * @param onlyActiveTimeseries the only active timeseries
      * @return the map
-     * @throws ServerException the server exception
-     * @throws TimeoutException the timeout exception
      */
-    protected Map<String, OXFFeatureCollection> getFeatureCollectionFor(DesignOptions options, boolean generalize) throws ServerException {
-        try {
-            ITime time = null;
-            if (options.getTimeParam() == null) {
-                time = readOutTime(options);
-            } else {
-                time = new TimePosition_OXFExtension(options.getTimeParam());
-            }
-            
-            for (TimeSeriesProperties con : options.getProperties()) {
-                SOSMetadata meta = ConfigurationContext.getSOSMetadata(con.getSosUrl());
-                if (meta.canGeneralize() && generalize) {
-                    String phenomenonURN = con.getPhenomenon().getId();
-                    try {
-                        String gen = GeneralizationConfiguration.getProperty(phenomenonURN);
-                        if (gen != null) {
-                            LOGGER.debug("Generalizer found for: " + phenomenonURN);
-                            con.getProcedure().setId(con.getProcedure().getId()+","+gen);
-                        }
-                    } catch (PropertyException e) {
-                        LOGGER.error("Error loading generalizer property for '{}'.", phenomenonURN, e);
+    protected Map<String, OXFFeatureCollection> getFeatureCollectionFor(DesignOptions options, boolean generalize) {
+        ITime time = null;
+        if (options.getTimeParam() == null) {
+            time = readOutTime(options);
+        } else {
+            time = new TimePosition_OXFExtension(options.getTimeParam());
+        }
+        
+        for (TimeSeriesProperties con : options.getProperties()) {
+            SOSMetadata meta = ConfigurationContext.getSOSMetadata(con.getSosUrl());
+            if (meta.canGeneralize() && generalize) {
+                String phenomenonURN = con.getPhenomenon().getId();
+                try {
+                    String gen = GeneralizationConfiguration.getProperty(phenomenonURN);
+                    if (gen != null) {
+                        LOGGER.debug("Generalizer found for: " + phenomenonURN);
+                        con.getProcedure().setId(con.getProcedure().getId()+","+gen);
                     }
+                } catch (PropertyException e) {
+                    LOGGER.error("Error loading generalizer property for '{}'.", phenomenonURN, e);
                 }
             }
-            Map<String, OXFFeatureCollection> collectionResult = sendRequest(options, time);
-            updateTimeSeriesPropertiesForHavingData(options, collectionResult);
-            return collectionResult;
-        } catch (OXFException e) {
-            if (options.getTimeParam().equals("getFirst") || options.getTimeParam().equals("latest")) {
-                throw new ServerException("SOS does not provide getFirst/getLast time extension.", e);
-            } else {
-                throw new ServerException("Unable to parse incoming data.", e);
-            }
-        } catch (Exception e) {
-            throw new ServerException("Processing Observations failed.", e);
         }
+        Map<String, OXFFeatureCollection> collectionResult = sendRequest(options, time);
+        updateTimeSeriesPropertiesForHavingData(options, collectionResult);
+        return collectionResult;
     }
 
     private void updateTimeSeriesPropertiesForHavingData(DesignOptions options, Map<String, OXFFeatureCollection> entireCollMap) {
@@ -171,7 +154,7 @@ public abstract class Generator {
         return this.folderPostfix;
     }
     
-    protected String createAndSaveImage(DesignOptions options, JFreeChart chart, ChartRenderingInfo renderingInfo) throws OXFException {
+    protected String createAndSaveImage(DesignOptions options, JFreeChart chart, ChartRenderingInfo renderingInfo) throws GeneratorException {
         int width = options.getWidth();
         int height = options.getHeight();
         BufferedImage image = chart.createBufferedImage(width, height, renderingInfo);
@@ -183,25 +166,19 @@ public abstract class Generator {
         try {
             return ServletUtilities.saveChartAsPNG(chart, width, height, renderingInfo, null);
         } catch (IOException e) {
-            throw new OXFException("Could not save PNG", e);
+            throw new GeneratorException("Could not save PNG", e);
         }
     }
 
-    private Map<String, OXFFeatureCollection> sendRequest(DesignOptions options, ITime time) throws OXFException {
+    private Map<String, OXFFeatureCollection> sendRequest(DesignOptions options, ITime time) {
         List<RequestConfig> requests = createRequestList(options, time);
         Map<String, OXFFeatureCollection> result = new HashMap<String, OXFFeatureCollection>();
         try {
             result = new ObservationAccessor().sendRequests(requests);
         } catch (OXFRuntimeException e) {
             LOGGER.error("Failure when requesting GetObservation.", e);
-        } catch (TimeoutException e) {
-            LOGGER.error("GetObservation request timed out.", e);
-        } catch (InterruptedException e) {
-            LOGGER.error("Thread got interrupted during GetObservation request.", e);
-        } catch (ExecutionException e) {
-            LOGGER.error("Could not execute GetObservation request.", e.getCause());
-        } catch (Exception e) {
-			LOGGER.error("Error sending observation requests.", e);
+        } catch (AccessException e) {
+			LOGGER.error("Could not access features.", e);
 		}
         return result;
     }
