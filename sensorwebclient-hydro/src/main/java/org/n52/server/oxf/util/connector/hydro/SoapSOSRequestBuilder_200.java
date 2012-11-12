@@ -28,7 +28,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.adapter.ParameterShell;
-import org.n52.oxf.xmlbeans.tools.XMLBeansTools;
+import org.n52.oxf.xmlbeans.tools.XmlUtil;
 import org.n52.server.oxf.util.access.oxfExtensions.SOSRequestBuilder_200_OXFExtension;
 import org.n52.server.oxf.util.access.oxfExtensions.TimePosition_OXFExtension;
 import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
@@ -47,28 +47,28 @@ public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtensio
 	public String buildGetCapabilitiesRequest(ParameterContainer parameters) {
 		String request = super.buildGetCapabilitiesRequest(parameters);
 		EnvelopeDocument envelope = addSoapEnvelope(request, GET_CAPABILITIES_SOAP_HEADER_ACTION);
-		return envelope.xmlText(XMLBeansTools.PRETTYPRINT);
+		return envelope.xmlText(XmlUtil.PRETTYPRINT);
 	}
 
 	@Override
 	public String buildGetFeatureOfInterestRequest(ParameterContainer parameters) {
 		String request = super.buildGetFeatureOfInterestRequest(parameters);
 		EnvelopeDocument envelope = addSoapEnvelope(request, GET_FOI_SOAP_HEADER_ACTION);
-		return envelope.xmlText(XMLBeansTools.PRETTYPRINT);  
+		return envelope.xmlText(XmlUtil.PRETTYPRINT);  
 	}
 
 	@Override
 	public String buildDescribeSensorRequest(ParameterContainer parameters) {
 		String request = super.buildDescribeSensorRequest(parameters);
 		EnvelopeDocument envelope = addSoapEnvelope(request, DESCRIBE_SENSOR_SOAP_HEADER_ACTION);
-		return envelope.xmlText(XMLBeansTools.PRETTYPRINT);
+		return envelope.xmlText(XmlUtil.PRETTYPRINT);
 	}
 	
 	@Override
 	public String buildGetObservationRequest(ParameterContainer parameters) throws OXFException {
 		String request = super.buildGetObservationRequest(parameters);
 		EnvelopeDocument envelope = addSoapEnvelope(request, GET_OBS_SOAP_HEADER_ACTION);
-		return envelope.xmlText(XMLBeansTools.PRETTYPRINT);
+		return envelope.xmlText(XmlUtil.PRETTYPRINT);
 	}
 	
 	public String buildGetDataAvailabilityRequest(ParameterContainer parameters) throws OXFException {
