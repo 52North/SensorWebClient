@@ -52,16 +52,10 @@ import org.slf4j.LoggerFactory;
  */
 public class SOSRequestBuilder_200_OXFExtension extends SOSRequestBuilder_200 {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(SOSRequestBuilder_200_OXFExtension.class);
-
     public static final String GET_OBSERVATION_TIME_PARAM_FIRST = "getFirst";
 
     public static final String GET_OBSERVATION_TIME_PARAM_LAST = "latest";
     
-    public SOSRequestBuilder_200_OXFExtension() {
-        LOGGER.debug("NEW {}", getClass().getSimpleName());
-    }
-
     @Override
     protected void processTemporalFilter(GetObservationType xb_getObs, ParameterShell shell) throws OXFException {
         if (shell == null) {
