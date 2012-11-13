@@ -121,8 +121,8 @@
 		<param-value>generated</param-value>
 	</context-param>
 	<context-param>
-		<!-- The prefix which shall be set for all zip exports. ISO8601 timestamp 
-			will be used as postfix, e.g. 2011-03-29_dataexport -->
+		<!-- The postfix which shall be set for all zip exports. ISO8601 timestamp 
+			will be used as prefix, e.g. 2011-03-29_dataexport -->
 		<param-name>ZIP_POSTFIX</param-name>
 		<param-value>_dataexport</param-value>
 	</context-param>
