@@ -46,6 +46,9 @@
 					<include>logback.xml</include>
 					<include>hibernate.cfg.xml</include>
 				</includes>
+				<excludes>
+				    <exclude>logback-test.xml</exclude>
+				</excludes>
 				<filtering>true</filtering>
 			</resource>
 			<resource>
@@ -53,6 +56,7 @@
 				<directory>src/main/resources</directory>
 				<excludes>
 					<exclude>logback.xml</exclude>
+                    <exclude>logback-test.xml</exclude>
 					<exclude>hibernate.cfg.xml</exclude>
 				</excludes>
 			</resource>
