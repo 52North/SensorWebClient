@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.ext.access.client;
+package org.n52.ext.link.sos;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -35,8 +35,8 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.ext.access.client.QueryParser;
-import org.n52.ext.access.client.TimeRange;
+import org.n52.ext.link.sos.QueryParser;
+import org.n52.ext.link.sos.TimeRange;
 
 public class PermalinkParserTest {
     
@@ -62,7 +62,7 @@ public class PermalinkParserTest {
         assertTrue(permalinkParser.parsePhenomenons().isEmpty());
         assertTrue(permalinkParser.parseProcedures().isEmpty());
         assertTrue(permalinkParser.parseServices().isEmpty());
-        assertTrue(permalinkParser.parseStations().isEmpty());
+        assertTrue(permalinkParser.parseFeatures().isEmpty());
     }
     
     @Test
@@ -119,7 +119,7 @@ public class PermalinkParserTest {
     @Test
     public void testParseServiceKvp() {
         StringBuilder validQuery = new StringBuilder();
-        validQuery.append("sos=").append(ENCODED_SOS_URL);
+        validQuery.append("services=").append(ENCODED_SOS_URL);
         QueryParser permalinkParser = new QueryParser(validQuery.toString(), false);
         Collection<String> parsedServices = permalinkParser.parseServices();
         assertTrue("Invalid size: " + parsedServices.size(), parsedServices.size() == 1);
@@ -149,9 +149,9 @@ public class PermalinkParserTest {
     @Test
     public void testParseStationKvp() {
         StringBuilder validQuery = new StringBuilder();
-        validQuery.append("stations=").append("Heldra_41700105");
+        validQuery.append("features=").append("Heldra_41700105");
         QueryParser permalinkParser = new QueryParser(validQuery.toString(), false);
-        Collection<String> parsedStations = permalinkParser.parseStations();
+        Collection<String> parsedStations = permalinkParser.parseFeatures();
         assertTrue("Invalid size: " + parsedStations.size(), parsedStations.size() == 1);
         assertTrue("Stations could not be parsed.", parsedStations.contains("Heldra_41700105"));
     }

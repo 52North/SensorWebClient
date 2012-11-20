@@ -22,16 +22,16 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.ext.access.client;
+package org.n52.ext.link.sos;
 
-import static org.n52.ext.access.client.PermalinkGeneratorTestUtil.BASE_URL;
+import static org.n52.ext.link.sos.PermalinkGeneratorTestUtil.BASE_URL;
 import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.ext.ExternalToolsException;
-import org.n52.ext.access.AccessLinkCompressor;
-import org.n52.ext.access.AccessLinkFactory;
+import org.n52.ext.link.AccessLinkCompressor;
+import org.n52.ext.link.AccessLinkFactory;
 
 public class TimeSeriesPermalinkGeneratorTest {
 

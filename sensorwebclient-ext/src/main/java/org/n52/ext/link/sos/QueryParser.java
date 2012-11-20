@@ -22,16 +22,16 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.ext.access.client;
+package org.n52.ext.link.sos;
 
-import static org.n52.ext.access.client.PermalinkParameter.BEGIN;
-import static org.n52.ext.access.client.PermalinkParameter.END;
-import static org.n52.ext.access.client.PermalinkParameter.OFFERINGS;
-import static org.n52.ext.access.client.PermalinkParameter.PHENOMENONS;
-import static org.n52.ext.access.client.PermalinkParameter.PROCEDURES;
-import static org.n52.ext.access.client.PermalinkParameter.SOS;
-import static org.n52.ext.access.client.PermalinkParameter.STATIONS;
-import static org.n52.ext.access.client.PermalinkParameter.VERSIONS;
+import static org.n52.ext.link.sos.PermalinkParameter.BEGIN;
+import static org.n52.ext.link.sos.PermalinkParameter.END;
+import static org.n52.ext.link.sos.PermalinkParameter.FEATURES;
+import static org.n52.ext.link.sos.PermalinkParameter.OFFERINGS;
+import static org.n52.ext.link.sos.PermalinkParameter.PHENOMENONS;
+import static org.n52.ext.link.sos.PermalinkParameter.PROCEDURES;
+import static org.n52.ext.link.sos.PermalinkParameter.SERVICES;
+import static org.n52.ext.link.sos.PermalinkParameter.VERSIONS;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -115,8 +115,8 @@ public class QueryParser {
     }
 
     public Collection<String> parseServices() {
-        String sosValues = kvps.get(SOS.name());
-        return parseCommaSeparatedValues(sosValues);
+        String serviceValues = kvps.get(SERVICES.name());
+        return parseCommaSeparatedValues(serviceValues);
     }
 
     public Collection<String> parseVersions() {
@@ -124,9 +124,9 @@ public class QueryParser {
         return parseCommaSeparatedValues(versionValues);
     }
 
-    public Collection<String> parseStations() {
-        String stationValues = kvps.get(STATIONS.name());
-        return parseCommaSeparatedValues(stationValues);
+    public Collection<String> parseFeatures() {
+        String featureValues = kvps.get(FEATURES.name());
+        return parseCommaSeparatedValues(featureValues);
     }
 
     public Collection<String> parseOfferings() {

@@ -105,7 +105,7 @@ public class DataManagerSosImpl implements DataManager<SOSMetadata> {
 
 			SOSMetadata metadata = getServiceMetadata(evt.getSosURL());
 			if (metadata == null) {
-				String reason = "An unknown SOS instance was requested.";
+				String reason = "An unknown SERVICES instance was requested.";
 				ExceptionHandler.handleUnexpectedException(new CapabilitiesException(reason));
 				return;
 			}

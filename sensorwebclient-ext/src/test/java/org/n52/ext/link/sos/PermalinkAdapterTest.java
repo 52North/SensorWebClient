@@ -21,17 +21,19 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.ext.access.client;
+package org.n52.ext.link.sos;
 
 import static junit.framework.Assert.*;
-import static org.n52.ext.access.client.PermalinkGeneratorTestUtil.BASE_URL;
+import static org.n52.ext.link.sos.PermalinkGeneratorTestUtil.BASE_URL;
 
 import java.util.Collection;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.ext.access.AccessLinkFactory;
+import org.n52.ext.link.AccessLinkFactory;
+import org.n52.ext.link.sos.PermalinkAdapter;
+import org.n52.ext.link.sos.TimeSeriesParameters;
 
 public class PermalinkAdapterTest {
 
@@ -58,11 +60,11 @@ public class PermalinkAdapterTest {
 	}
 	
 	@Test
-	public void testGetServiceURLs() {
-		Collection<String> parsedServiceURLs = permalinkAdapter.getServiceURLs();
+	public void testGetServices() {
+		Collection<String> parsedServices = permalinkAdapter.getServices();
 		for (TimeSeriesParameters timeSeries : addedTimeSeries) {
-			String serviceURL = timeSeries.getServiceURL();
-			assertTrue("Service not found: " + serviceURL, parsedServiceURLs.contains(serviceURL));
+			String service = timeSeries.getService();
+			assertTrue("Service not found: " + service, parsedServices.contains(service));
 		}
 	}
 	
@@ -102,11 +104,11 @@ public class PermalinkAdapterTest {
 	}
 
 	@Test
-	public void testGetStations() {
-		Collection<String> parsedStations = permalinkAdapter.getStations();
+	public void testGetFeatures() {
+		Collection<String> parsedFeatures = permalinkAdapter.getFeatures();
 		for (TimeSeriesParameters timeSeries : addedTimeSeries) {
-			String station = timeSeries.getStation();
-			assertTrue("Station not found: " + station, parsedStations.contains(station));
+			String feature = timeSeries.getFeature();
+			assertTrue("Station not found: " + feature, parsedFeatures.contains(feature));
 		}
 	}
 

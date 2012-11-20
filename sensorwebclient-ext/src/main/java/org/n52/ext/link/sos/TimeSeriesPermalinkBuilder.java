@@ -22,13 +22,13 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.ext.access.client;
+package org.n52.ext.link.sos;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.n52.ext.access.AccessBuilder;
-import org.n52.ext.access.AccessLinkFactory;
+import org.n52.ext.link.AccessBuilder;
+import org.n52.ext.link.AccessLinkFactory;
 
 public class TimeSeriesPermalinkBuilder implements AccessBuilder<AccessLinkFactory> {
 
@@ -47,42 +47,42 @@ public class TimeSeriesPermalinkBuilder implements AccessBuilder<AccessLinkFacto
     private TimeRange timeRange = null; // optional
 
     public TimeSeriesPermalinkBuilder addParameters(TimeSeriesParameters parameters) {
-        this.services.add(parameters.getServiceURL());
+        this.services.add(parameters.getService());
         this.versions.add(parameters.getVersion());
         this.offerings.add(parameters.getOffering());
         this.procedures.add(parameters.getProcedure());
         this.phenomenons.add(parameters.getPhenomenon());
-        this.features.add(parameters.getStation());
+        this.features.add(parameters.getFeature());
         this.timeRange = parameters.getTimeRange();
         return this;
     }
 
     public Iterable<String> getServices() {
-        return this.services;
+        return services;
     }
 
     public Iterable<String> getVersions() {
-        return this.versions;
+        return versions;
     }
 
     public Iterable<String> getOfferings() {
-        return this.offerings;
+        return offerings;
     }
 
     public Iterable<String> getProcedures() {
-        return this.procedures;
+        return procedures;
     }
 
     public Iterable<String> getPhenomenons() {
-        return this.phenomenons;
+        return phenomenons;
     }
 
     public Iterable<String> getFeatures() {
-        return this.features;
+        return features;
     }
 
     public TimeRange getTimeRange() {
-        return this.timeRange;
+        return timeRange;
     }
 
     @Override

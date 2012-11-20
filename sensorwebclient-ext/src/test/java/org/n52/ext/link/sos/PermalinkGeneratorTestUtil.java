@@ -21,16 +21,16 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.ext.access.client;
+package org.n52.ext.link.sos;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.n52.ext.access.AccessLinkCompressor;
-import org.n52.ext.access.AccessLinkFactory;
-import org.n52.ext.access.client.PermalinkCompressor;
-import org.n52.ext.access.client.TimeSeriesParameters;
-import org.n52.ext.access.client.TimeSeriesPermalinkBuilder;
+import org.n52.ext.link.AccessLinkCompressor;
+import org.n52.ext.link.AccessLinkFactory;
+import org.n52.ext.link.sos.PermalinkCompressor;
+import org.n52.ext.link.sos.TimeSeriesParameters;
+import org.n52.ext.link.sos.TimeSeriesPermalinkBuilder;
 
 public final class PermalinkGeneratorTestUtil {
     

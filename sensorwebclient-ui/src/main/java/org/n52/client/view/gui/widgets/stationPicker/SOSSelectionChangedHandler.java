@@ -78,7 +78,7 @@ final class SOSSelectionChangedHandler implements SelectionChangedHandler {
                    .addUpperRightEasting(Double.parseDouble(getValueFor(record, "urEasting")))
                    .addUpperRightNorthing(Double.parseDouble(getValueFor(record, "urNorthing")));
 		} catch (Exception e) {
-			GWT.log("Could not parse SOS configuration for: " + builder.getServiceURL(), e);
+			GWT.log("Could not parse SERVICES configuration for: " + builder.getServiceURL(), e);
 		}
 	}
 	

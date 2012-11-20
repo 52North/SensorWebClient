@@ -21,11 +21,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.ext.access;
+
+package org.n52.ext.link;
 
 import org.n52.ext.ExternalToolsException;
 
-public interface AccessLinkCompressor {
+public interface AccessLinkFactory {
+
+    public String createAccessURL(String baseURL) throws ExternalToolsException;
     
-    public String createCompressedAccessURL(String baseURL) throws ExternalToolsException;
 }

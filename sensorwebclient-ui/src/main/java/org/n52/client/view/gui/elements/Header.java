@@ -35,10 +35,10 @@ import org.n52.client.model.data.dataManagers.TimeManager;
 import org.n52.client.model.data.representations.TimeSeries;
 import org.n52.client.view.gui.widgets.Toaster;
 import org.n52.ext.ExternalToolsException;
-import org.n52.ext.access.AccessLinkFactory;
-import org.n52.ext.access.client.TimeRange;
-import org.n52.ext.access.client.TimeSeriesParameters;
-import org.n52.ext.access.client.TimeSeriesPermalinkBuilder;
+import org.n52.ext.link.AccessLinkFactory;
+import org.n52.ext.link.sos.TimeRange;
+import org.n52.ext.link.sos.TimeSeriesParameters;
+import org.n52.ext.link.sos.TimeSeriesPermalinkBuilder;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 
 import com.google.gwt.core.client.GWT;
@@ -240,7 +240,7 @@ public class Header extends HLayout {
 
 //        String permalink = "";
 //        if (ts.length > 0) {
-//            // get SOS
+//            // get SERVICES
 //            permalink += "&sos=";
 //            for (int i = 0; i < ts.length; i++) {
 //                permalink += ts[i].getSosUrl();

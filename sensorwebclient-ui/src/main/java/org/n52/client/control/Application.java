@@ -23,14 +23,14 @@
  */
 package org.n52.client.control;
 
-import static org.n52.ext.access.client.PermalinkParameter.BEGIN;
-import static org.n52.ext.access.client.PermalinkParameter.END;
-import static org.n52.ext.access.client.PermalinkParameter.OFFERINGS;
-import static org.n52.ext.access.client.PermalinkParameter.PHENOMENONS;
-import static org.n52.ext.access.client.PermalinkParameter.PROCEDURES;
-import static org.n52.ext.access.client.PermalinkParameter.SOS;
-import static org.n52.ext.access.client.PermalinkParameter.STATIONS;
-import static org.n52.ext.access.client.PermalinkParameter.VERSIONS;
+import static org.n52.ext.link.sos.PermalinkParameter.BEGIN;
+import static org.n52.ext.link.sos.PermalinkParameter.END;
+import static org.n52.ext.link.sos.PermalinkParameter.FEATURES;
+import static org.n52.ext.link.sos.PermalinkParameter.OFFERINGS;
+import static org.n52.ext.link.sos.PermalinkParameter.PHENOMENONS;
+import static org.n52.ext.link.sos.PermalinkParameter.PROCEDURES;
+import static org.n52.ext.link.sos.PermalinkParameter.SERVICES;
+import static org.n52.ext.link.sos.PermalinkParameter.VERSIONS;
 
 import org.eesgmbh.gimv.client.event.StateChangeEvent;
 import org.n52.client.control.service.SOSController;
@@ -55,8 +55,8 @@ import org.n52.client.model.data.dataManagers.TimeManager;
 import org.n52.client.view.View;
 import org.n52.client.view.gui.widgets.Toaster;
 import org.n52.client.view.gui.widgets.stationPicker.StationPicker;
-import org.n52.ext.access.client.PermalinkParameter;
-import org.n52.ext.access.client.TimeRange;
+import org.n52.ext.link.sos.PermalinkParameter;
+import org.n52.ext.link.sos.TimeRange;
 import org.n52.shared.Constants;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SOSMetadataBuilder;
@@ -108,9 +108,9 @@ public final class Application {
         try {
             String currentUrl = URL.decode(Window.Location.getHref());
             if (hasQueryString(currentUrl)) {
-                String[] services = getDecodedParameters(SOS);
+                String[] services = getDecodedParameters(SERVICES);
                 String[] versions = getDecodedParameters(VERSIONS);
-                String[] features = getDecodedParameters(STATIONS);
+                String[] features = getDecodedParameters(FEATURES);
                 String[] offerings = getDecodedParameters(OFFERINGS);
                 String[] procedures = getDecodedParameters(PROCEDURES);
                 String[] phenomenons = getDecodedParameters(PHENOMENONS);

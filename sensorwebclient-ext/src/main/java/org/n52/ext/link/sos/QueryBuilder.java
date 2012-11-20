@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.ext.access.client;
+package org.n52.ext.link.sos;
 
 import java.util.ArrayList;
 import java.util.HashMap;

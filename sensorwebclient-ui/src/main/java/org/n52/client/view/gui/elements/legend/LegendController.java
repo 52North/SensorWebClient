@@ -152,7 +152,7 @@ public class LegendController {
 
 	/*
 	 *  FIXME check permalink links to same results. if timeseries are loaded from 
-	 *  different SOS instances, eg offerings may not be correctly referenced to the right SOS.
+	 *  different SERVICES instances, eg offerings may not be correctly referenced to the right SERVICES.
 	 */
 	String createPermaLink() {
 		

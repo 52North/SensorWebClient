@@ -121,7 +121,7 @@ public class StationPickerController implements MapController {
 
     /**
      * Zooms to the extent of all markers on the map if 'autoZoom' is configured to <code>true</code>.
-     * Otherwise controller zooms to configured extent (either SOS instance specific or global). If nothing
+     * Otherwise controller zooms to configured extent (either SERVICES instance specific or global). If nothing
      * was configured the {@link Constants#FALLBACK_EXTENT} is zoomed.
      */
     public void zoomToConfiguredExtent() {
@@ -133,7 +133,7 @@ public class StationPickerController implements MapController {
         else {
             BoundingBox boundingBox = metadata.getConfiguredExtent();
             if (isSosSpecificExtentConfigured(boundingBox)) {
-                GWT.log("Zoom to SOS preconfigured bounding box: " + boundingBox);
+                GWT.log("Zoom to SERVICES preconfigured bounding box: " + boundingBox);
                 map.zoomToExtent(boundingBox);
             }
             else {

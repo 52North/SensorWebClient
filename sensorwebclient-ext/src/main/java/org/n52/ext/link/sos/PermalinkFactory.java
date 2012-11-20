@@ -22,9 +22,16 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.ext.access.client;
+package org.n52.ext.link.sos;
 
-import org.n52.ext.access.AccessLinkFactory;
+import static org.n52.ext.link.sos.PermalinkParameter.FEATURES;
+import static org.n52.ext.link.sos.PermalinkParameter.OFFERINGS;
+import static org.n52.ext.link.sos.PermalinkParameter.PHENOMENONS;
+import static org.n52.ext.link.sos.PermalinkParameter.PROCEDURES;
+import static org.n52.ext.link.sos.PermalinkParameter.SERVICES;
+import static org.n52.ext.link.sos.PermalinkParameter.VERSIONS;
+
+import org.n52.ext.link.AccessLinkFactory;
 
 public class PermalinkFactory implements AccessLinkFactory {
 
@@ -34,11 +41,11 @@ public class PermalinkFactory implements AccessLinkFactory {
     protected Iterable<String> offerings;
     protected Iterable<String> phenomenons;
     protected Iterable<String> procedures;
-    protected QueryBuilder permalinkBuilder;
+    protected QueryBuilder queryBuilder;
     protected TimeRange timeRange;
 
     PermalinkFactory(TimeSeriesPermalinkBuilder builder) {
-        this.permalinkBuilder = new QueryBuilder();
+        this.queryBuilder = new QueryBuilder();
         this.services = builder.getServices();
         this.versions = builder.getVersions();
         this.offerings = builder.getOfferings();
@@ -50,23 +57,21 @@ public class PermalinkFactory implements AccessLinkFactory {
 
     @Override
     public String createAccessURL(String baseURL) {
-        permalinkBuilder.initialize(baseURL);
-        permalinkBuilder.appendParameters("sos", this.services);
-        permalinkBuilder.append("&");
-        permalinkBuilder.appendParameters("versions", this.versions);
-        permalinkBuilder.append("&");
-        permalinkBuilder.appendParameters("stations", this.features);
-        permalinkBuilder.append("&");
-        permalinkBuilder.appendParameters("offerings", this.offerings);
-        permalinkBuilder.append("&");
-        permalinkBuilder.appendParameters("procedures", this.procedures);
-        permalinkBuilder.append("&");
-        permalinkBuilder.appendParameters("phenomenons", this.phenomenons);
-
-        permalinkBuilder.appendTimeRangeParameters(this.timeRange);
-
-         // return new URL(accessURL.getHost() + this.queryBuilder.toString());
-        return permalinkBuilder.toString();
+        queryBuilder.initialize(baseURL);
+        queryBuilder.appendParameters(buildParameter("", SERVICES), services);
+        queryBuilder.appendParameters(buildParameter("&", VERSIONS), versions);
+        queryBuilder.appendParameters(buildParameter("&", FEATURES), features);
+        queryBuilder.appendParameters(buildParameter("&", OFFERINGS), offerings);
+        queryBuilder.appendParameters(buildParameter("&", PROCEDURES), procedures);
+        queryBuilder.appendParameters(buildParameter("&", PHENOMENONS), phenomenons);
+        queryBuilder.appendTimeRangeParameters(timeRange);
+        return queryBuilder.toString();
     }
+    
+
+    String buildParameter(String prefix, PermalinkParameter parameter) {
+        return prefix.concat(parameter.nameLowerCase());
+    }
+
     
 }
