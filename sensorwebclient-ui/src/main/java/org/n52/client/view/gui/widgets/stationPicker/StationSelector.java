@@ -70,7 +70,7 @@ import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
-public class StationPicker extends Window {
+public class StationSelector extends Window {
 	
     private static final String COMPONENT_ID = "stationPicker";
     
@@ -78,9 +78,9 @@ public class StationPicker extends Window {
     
     private static int HEIGHT = 550;
 
-    private static StationPicker instance;
+    private static StationSelector instance;
 
-    private static StationPickerController controller;
+    private static StationSelectorController controller;
     
 	private Layout guiContent;
 
@@ -106,15 +106,15 @@ public class StationPicker extends Window {
 	
 	private Canvas informationFieldSpinner;
 	
-    public static StationPicker getInst() {
+    public static StationSelector getInst() {
         if (instance == null) {
-        	controller = new StationPickerController();
-            instance = new StationPicker(controller);
+        	controller = new StationSelectorController();
+            instance = new StationSelector(controller);
         }
         return instance;
     }
 
-    private StationPicker(StationPickerController controller) {
+    private StationSelector(StationSelectorController controller) {
     	stationFilterGroups = new HashMap<String, RadioGroupItem>();
     	controller.setStationPicker(this);
         initializeWindow();
@@ -140,8 +140,8 @@ public class StationPicker extends Window {
         addResizedHandler(new ResizedHandler() {
 			@Override
 			public void onResized(ResizedEvent event) {
-				WIDTH = StationPicker.this.getWidth();
-				HEIGHT = StationPicker.this.getHeight();
+				WIDTH = StationSelector.this.getWidth();
+				HEIGHT = StationSelector.this.getHeight();
 				setSelectionMenuButtonPosition();
 				setSelectionMenuWindowPosition();
 				setStationLoadingSpinnerPosition();
@@ -297,7 +297,7 @@ public class StationPicker extends Window {
         confirmSelectionButton = new SmallButton(img, normalTooltip, extendedTooltip);
         confirmSelectionButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent evt) {
-                StationPicker.this.loadTimeSeries();
+                StationSelector.this.loadTimeSeries();
                 closeStationpicker();
             }
         });
@@ -355,7 +355,7 @@ public class StationPicker extends Window {
 	protected void closeStationpicker() {
 		hide();
 	    hideInfoWindow();
-	    StationPicker.controller.clearMarkerSelection();
+	    StationSelector.controller.clearMarkerSelection();
 	}
 
 	public void updateProcedureDetailsURL(String url) {

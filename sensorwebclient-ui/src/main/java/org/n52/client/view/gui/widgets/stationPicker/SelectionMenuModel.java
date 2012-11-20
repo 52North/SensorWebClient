@@ -43,15 +43,15 @@ public class SelectionMenuModel {
 
 	private final ListGrid listGrid;
 	
-	private final StationPicker parent;
+	private final StationSelector parent;
 	
 	private final Map<String, DynamicForm> expansionComponents;
 	
-	static ListGrid createListGrid(final StationPicker stationPicker) {
+	static ListGrid createListGrid(final StationSelector stationPicker) {
 		return new SelectionMenuModel(stationPicker).getListGrid();
 	}
 
-	private SelectionMenuModel(final StationPicker parent) {
+	private SelectionMenuModel(final StationSelector parent) {
 		this.expansionComponents = new HashMap<String, DynamicForm>();
 		this.parent = parent;
 		listGrid = new ListGrid() {

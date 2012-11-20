@@ -38,9 +38,9 @@ import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 
 final class SOSSelectionChangedHandler implements SelectionChangedHandler {
 
-	private final StationPickerController controller;
+	private final StationSelectorController controller;
 
-	public SOSSelectionChangedHandler(StationPickerController controller) {
+	public SOSSelectionChangedHandler(StationSelectorController controller) {
 		this.controller = controller;
 	}
 

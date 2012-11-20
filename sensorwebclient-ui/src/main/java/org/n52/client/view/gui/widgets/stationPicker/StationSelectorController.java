@@ -66,11 +66,11 @@ import org.n52.shared.serializable.pojos.sos.Station;
 
 import com.google.gwt.core.client.GWT;
 
-public class StationPickerController implements MapController {
+public class StationSelectorController implements MapController {
 
     private StationPickerMap map;
 
-    private StationPicker stationPicker;
+    private StationSelector stationSelector;
 
     private String selectedServiceUrl;
 
@@ -78,14 +78,14 @@ public class StationPickerController implements MapController {
 
     private Station selectedStation;
 
-    public StationPickerController() {
+    public StationSelectorController() {
         map = new StationPickerMap(this);
         new StationPickerControllerEventBroker(this);
         this.selectedStationFilterByServiceUrl = new HashMap<String, String>();
     }
 
-    void setStationPicker(StationPicker stationPicker) {
-        this.stationPicker = stationPicker;
+    void setStationPicker(StationSelector stationSelector) {
+        this.stationSelector = stationSelector;
     }
 
     public MapWidget createMap() {
@@ -102,9 +102,9 @@ public class StationPickerController implements MapController {
     void updateStationFilter() {
         if (selectedServiceUrl != null) {
             GWT.log("update phenomenon selector");
-            stationPicker.updateStationFilters(getCurrentMetadata());
+            stationSelector.updateStationFilters(getCurrentMetadata());
             String filter = selectedStationFilterByServiceUrl.get(selectedServiceUrl);
-            stationPicker.setSelectedFilter(selectedServiceUrl, filter);
+            stationSelector.setSelectedFilter(selectedServiceUrl, filter);
         }
     }
 
@@ -170,7 +170,7 @@ public class StationPickerController implements MapController {
         map.selectMarker(infoMarker);
 
         // open info window for the marker
-        stationPicker.showInfoWindow(infoMarker);
+        stationSelector.showInfoWindow(infoMarker);
     }
 
     private boolean isSelectionRequired() {
@@ -240,9 +240,9 @@ public class StationPickerController implements MapController {
             AddMarkerEventHandler,
             GetProcedurePositionsFinishedEventHandler {
 
-        private StationPickerController controller;
+        private StationSelectorController controller;
 
-        public StationPickerControllerEventBroker(StationPickerController controller) {
+        public StationPickerControllerEventBroker(StationSelectorController controller) {
             this.controller = controller;
             EventBus bus = EventBus.getMainEventBus();
             bus.addHandler(NewPhenomenonsEvent.TYPE, this);
@@ -288,7 +288,7 @@ public class StationPickerController implements MapController {
 
         @Override
         public void onStore(StoreProcedureDetailsUrlEvent evt) {
-            stationPicker.updateProcedureDetailsURL(evt.getUrl());
+            stationSelector.updateProcedureDetailsURL(evt.getUrl());
         }
 
         @Override
@@ -297,7 +297,7 @@ public class StationPickerController implements MapController {
                 String filterCategory = getMostCommonStationCategory(evt.getStations());
                 if (filterCategory != null) {
                     controller.setStationFilter(filterCategory);
-                    stationPicker.setSelectedFilter(selectedServiceUrl, filterCategory);
+                    stationSelector.setSelectedFilter(selectedServiceUrl, filterCategory);
                 }
             }
             controller.updateContentUponStationFilter();
@@ -310,7 +310,7 @@ public class StationPickerController implements MapController {
 
         @Override
         public void onStore(StoreFeatureEvent evt) {
-            stationPicker.updateInfoLabels();
+            stationSelector.updateInfoLabels();
         }
     }
 
@@ -348,10 +348,10 @@ public class StationPickerController implements MapController {
 
     public void loadingStations(boolean activ) {
         if (activ) {
-            stationPicker.showStationLoadingSpinner(true);
+            stationSelector.showStationLoadingSpinner(true);
         }
         else {
-            stationPicker.showStationLoadingSpinner(false);
+            stationSelector.showStationLoadingSpinner(false);
         }
     }
 

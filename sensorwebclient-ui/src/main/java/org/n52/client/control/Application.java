@@ -54,7 +54,7 @@ import org.n52.client.model.data.dataManagers.DataManagerSosImpl;
 import org.n52.client.model.data.dataManagers.TimeManager;
 import org.n52.client.view.View;
 import org.n52.client.view.gui.widgets.Toaster;
-import org.n52.client.view.gui.widgets.stationPicker.StationPicker;
+import org.n52.client.view.gui.widgets.stationPicker.StationSelector;
 import org.n52.ext.link.sos.PermalinkParameter;
 import org.n52.ext.link.sos.TimeRange;
 import org.n52.shared.Constants;
@@ -200,9 +200,9 @@ public final class Application {
 
     private static void showStationSelectorWhenConfigured() {
         PropertiesManager properties = PropertiesManager.getInstance();
-        boolean showAtStartup = properties.getParameterAsBoolean("showStationPickerAtStartup");
+        boolean showAtStartup = properties.getParameterAsBoolean("showStationSelectorAtStartup");
         if (showAtStartup) {
-            StationPicker.getInst().show();
+            StationSelector.getInst().show();
         }
     }
 

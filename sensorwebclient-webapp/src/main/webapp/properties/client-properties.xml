@@ -19,7 +19,7 @@
 	<!-- default delay before hiding message toaster in seconds -->
 	<toasterFadeout>5</toasterFadeout>
 	<!-- if map selection modal window shall show up at client start -->
-	<showStationPickerAtStartup>true</showStationPickerAtStartup>
+	<showStationSelectorAtStartup>true</showStationSelectorAtStartup>
 	
 	<!-- Default styles for the line and sumline 
 	Possible values: 1=line, 2=area, 3=dots, 4=dashed-->
@@ -41,6 +41,8 @@
     <mapSrs>EPSG:4326</mapSrs>
     <!-- a WMS URL or just OSM -->
     <mapUrl>OSM</mapUrl>
+    
+    
 	<!-- 
 	<mapUrl>http://wsvmapserv.wsv.bund.de/wmsdbwk1000</mapUrl> 
     <wmsLayerName>WmsDBWK1000</wmsLayerName>
@@ -50,7 +52,7 @@
     <wmsBGColor>0xffffff</wmsBGColor>
      -->
      
-    <!-- Extent where Stationspicker is active -->
+    <!-- Extent where StationSelector is active -->
     <!-- Fallback is lon/lat BBOX [(-90.0,-45.0);(90.0,45.0) srs: EPSG:4326] -->
     <!-- 
     <defaultExtent>
@@ -60,5 +62,4 @@
 	    <urightY>55.0556</urightY>
     </defaultExtent>
      -->
-     
 </props>

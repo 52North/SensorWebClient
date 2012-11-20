@@ -35,7 +35,7 @@ import org.n52.client.view.View;
 import org.n52.client.view.gui.Impressum;
 import org.n52.client.view.gui.elements.interfaces.LegendElement;
 import org.n52.client.view.gui.widgets.buttons.ImageButton;
-import org.n52.client.view.gui.widgets.stationPicker.StationPicker;
+import org.n52.client.view.gui.widgets.stationPicker.StationSelector;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
@@ -218,7 +218,7 @@ public class Legend extends VLayout {
 
 //        addTS.addClickHandler(new ClickHandler() {
 //            public void onClick(ClickEvent evt) {
-//            	StationPicker.getInst().show();
+//            	StationSelector.getInst().show();
 //            }
 //        });
 
@@ -242,7 +242,7 @@ public class Legend extends VLayout {
 //        add.addMember(addTSLabel);
 //        add.addClickHandler(new ClickHandler() {
 //            public void onClick(ClickEvent event) {
-//            	StationPicker.getInst().show();
+//            	StationSelector.getInst().show();
 //            }
 //        });
         
@@ -427,7 +427,7 @@ public class Legend extends VLayout {
         addTS.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				StationPicker.getInst().show();
+				StationSelector.getInst().show();
 			}
 		});
         return addTS;
