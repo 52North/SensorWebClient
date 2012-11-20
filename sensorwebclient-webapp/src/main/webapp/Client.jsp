@@ -17,7 +17,7 @@
 <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
 <link rel="shortcut icon" href="img/fav.png" type="image/x-icon">
 <link rel="icon" href="img/fav.png" type="image/x-icon">
-<link rel="stylesheet" href="Client.css">
+<link rel="stylesheet" href="css/client.css">
 
 <script type="text/javascript" src="js/OpenLayers/OpenLayers.js"></script>
 <script type="text/javascript" src="js/OpenStreetMap.js"></script>

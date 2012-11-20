@@ -10,8 +10,6 @@
 		  -->
 	</tabs>
 	
-	<imprint>properties/imprint.html</imprint> 
-	<helpfile>properties/help.html</helpfile>
 	<!-- default time frame for loading timeseries data in days -->
 	<defaultInterval>1</defaultInterval>
 	<!-- default time frame for loading timeseries data for overview diagram in days -->

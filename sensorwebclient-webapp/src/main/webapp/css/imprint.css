@@ -1,0 +1,10 @@
+
+body {
+  margin: 0em 2em;
+}
+
+#editor > * > address {
+  border-left: 0.5em solid;
+  padding-left: 0.5em;
+  border-color: #f6f6f6;
+}

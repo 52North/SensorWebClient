@@ -32,6 +32,9 @@ import static org.n52.ext.link.sos.PermalinkParameter.PROCEDURES;
 import static org.n52.ext.link.sos.PermalinkParameter.SERVICES;
 import static org.n52.ext.link.sos.PermalinkParameter.VERSIONS;
 
+import java.util.List;
+import java.util.Map;
+
 import org.eesgmbh.gimv.client.event.StateChangeEvent;
 import org.n52.client.control.service.SOSController;
 import org.n52.client.control.service.SesController;
@@ -107,7 +110,7 @@ public final class Application {
     public static void finishStartup() {
         try {
             String currentUrl = URL.decode(Window.Location.getHref());
-            if (hasQueryString(currentUrl)) {
+            if (hasQueryString(currentUrl) && !isGwtHostedModeParameterOnly()) {
                 String[] services = getDecodedParameters(SERVICES);
                 String[] versions = getDecodedParameters(VERSIONS);
                 String[] features = getDecodedParameters(FEATURES);
@@ -166,6 +169,12 @@ public final class Application {
         } finally {
             finalEvents();
         }
+    }
+
+    private static boolean isGwtHostedModeParameterOnly() {
+        Map<String, List<String>> parameters = Window.Location.getParameterMap();
+        boolean hasGwtCodesrvParameter = parameters.containsKey("gwt.codesvr");
+        return !GWT.isProdMode() && parameters.size() == 1 && hasGwtCodesrvParameter;
     }
 
     static TimeRange createTimeRange() {
