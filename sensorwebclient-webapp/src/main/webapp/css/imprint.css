@@ -3,6 +3,18 @@ body {
   margin: 0em 2em;
 }
 
+.float-left {
+  float:left;
+}
+
+.float-right {
+  float: right;
+}
+
+.clear-float {
+	clear:both;
+}
+
 #editor > * > address {
   border-left: 0.5em solid;
   padding-left: 0.5em;
