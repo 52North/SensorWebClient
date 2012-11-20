@@ -17,35 +17,9 @@
 <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
 <link rel="shortcut icon" href="img/fav.png" type="image/x-icon">
 <link rel="icon" href="img/fav.png" type="image/x-icon">
-<link rel="stylesheet" href="css/client.css">
-
-<script type="text/javascript" src="js/OpenLayers/OpenLayers.js"></script>
-<script type="text/javascript" src="js/OpenStreetMap.js"></script>
-<script type="text/javascript" src="js/proj4js-compressed.js"></script>
-<script type="text/javascript">
-	/*<![CDATA[*/
-	function addBookmark(){
-		if(window.sidebar){
-		    window.sidebar.addPanel(document.title||location.href,location.href,"")
-		} else {
-		    if(window.external) {
-		    	window.external.AddFavorite(window.location.href,document.title || location.href)
-		    }
-		}
-	}
-
-	function addBookmarkWithParametrisizedUrl(title,url){
-		if(window.sidebar){
-			window.sidebar.addPanel(title,url,"")
-		} else {
-			if(window.external){
-				window.external.AddFavorite(url,title)
-			}
-		}
-	};
-	/*]]>*/
-	</script>
+<link href="css/client.min.css" rel="stylesheet">
 </head>
+
 <body>
 	<div id="loadingWrapper">
 		<div id="spacer"></div>
@@ -56,9 +30,10 @@
 			<span id="loadingMsg">Loading ${application.title}</span>
 		</div>
 	</div>
-	<script type="text/javascript" language="javascript"
-		src="client/client.nocache.js"></script>
-	<!-- OPTIONAL: include this if you want history support
-		<iframe src="javascript:''" id="__gwt_historyFrame" style="position:absolute;width:0;height:0;border:0"></iframe>-->
+	<script type="text/javascript" src="js/bookmark.js"></script>
+	<script type="text/javascript" src="js/proj4js-compressed.js"></script>
+	<script type="text/javascript" src="js/OpenLayers/OpenLayers.js"></script>
+	<script type="text/javascript" src="js/OpenStreetMap.js"></script>
+	<script type="text/javascript" src="client/client.nocache.js"></script>
 </body>
 </html>

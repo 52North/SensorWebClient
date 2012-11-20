@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.n52.sensorweb</groupId>
@@ -47,18 +48,9 @@
 					<include>hibernate.cfg.xml</include>
 				</includes>
 				<excludes>
-				    <exclude>logback-test.xml</exclude>
+					<exclude>logback-test.xml</exclude>
 				</excludes>
 				<filtering>true</filtering>
-			</resource>
-			<resource>
-				<!-- copy all other resources without filtering -->
-				<directory>src/main/resources</directory>
-				<excludes>
-					<exclude>logback.xml</exclude>
-                    <exclude>logback-test.xml</exclude>
-					<exclude>hibernate.cfg.xml</exclude>
-				</excludes>
 			</resource>
 		</resources>
 		<plugins>
@@ -95,6 +87,29 @@
 			<plugin>
 				<groupId>com.google.code.maven-svn-revision-number-plugin</groupId>
 				<artifactId>svn-revision-number-maven-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>lesscss-maven-plugin</artifactId>
+				<configuration>
+					<sourceDirectory>src/main/webapp/less</sourceDirectory>
+					<!-- output to src ==> clean output dir for minify plugin -->
+					<outputDirectory>src/main/webapp/css</outputDirectory>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.samaxes.maven</groupId>
+				<artifactId>minify-maven-plugin</artifactId>
+				<configuration>
+					<cssSourceDir>css</cssSourceDir>
+					<cssSourceFiles>
+						<cssSourceFile>client.css</cssSourceFile>
+						<cssSourceFile>imprint.css</cssSourceFile>
+					</cssSourceFiles>
+					<cssFinalFile>client.min.css</cssFinalFile>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

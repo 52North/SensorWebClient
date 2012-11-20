@@ -190,14 +190,15 @@ public class Header extends HLayout {
             public void onClick(ClickEvent event) {
                 com.smartgwt.client.widgets.Window w = new com.smartgwt.client.widgets.Window();
                 w.setTitle(I18N.sosClient.Impressum());
-                w.setWidth(500);
-                w.setHeight(500);
+                w.setWidth(450);
+                w.setHeight(460);
                 w.centerInPage();
                 w.setIsModal(true);
 
                 VLayout layout = new VLayout();
                 HTMLPane pane = new HTMLPane();
                 pane.setContentsURL(I18N.sosClient.imprintPath());
+                layout.setStyleName("sensorweb_client_imprint_content");
                 layout.addMember(pane);
                 w.addItem(layout);
                 w.show();

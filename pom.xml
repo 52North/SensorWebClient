@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.n52</groupId>
@@ -44,11 +45,11 @@
 				<artifactId>sensorwebclient-api</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-            <dependency>
-                <groupId>org.n52.sensorweb</groupId>
-                <artifactId>sensorwebclient-ext</artifactId>
-                <version>${project.version}</version>
-            </dependency>
+			<dependency>
+				<groupId>org.n52.sensorweb</groupId>
+				<artifactId>sensorwebclient-ext</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>org.n52.sensorweb</groupId>
 				<artifactId>sensorwebclient-sos-rpc</artifactId>
@@ -321,13 +322,13 @@
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 			</resource>
-            <resource>
-                <directory>src/test/resources</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>logback-test.xml</include>
-                </includes>
-            </resource>
+			<resource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>logback-test.xml</include>
+				</includes>
+			</resource>
 		</resources>
 		<pluginManagement>
 			<plugins>
@@ -388,17 +389,15 @@
 						<module>org.n52.SensorWebClient</module>
 						<runTarget>org.n52.Client/Client.jsp</runTarget>
 						<compileSourcesArtifacts>
-                            <artifact>org.n52.sensorweb:sensorwebclient-ext</artifact>
+							<artifact>org.n52.sensorweb:sensorwebclient-ext</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-sos-rpc</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-sos-shared</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-ses-rpc</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-ses-shared</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-ui</artifact>
 						</compileSourcesArtifacts>
-						<!-- 
-						 <style>PRETTY</style>
-						 -->
-						 <style>OBF</style>
+						<!-- <style>PRETTY</style> -->
+						<style>OBF</style>
 					</configuration>
 					<executions>
 						<execution>
@@ -482,6 +481,16 @@
 					</configuration>
 				</plugin>
 
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>lesscss-maven-plugin</artifactId>
+					<version>1.0-beta-3</version>
+					<configuration>
+						<sourceDirectory>src/main/webapp/less</sourceDirectory>
+						<!-- output to src ==> clean output dir for minify plugin -->
+						<outputDirectory>src/main/webapp/css</outputDirectory>
+					</configuration>
+				</plugin>
 
 				<plugin>
 					<!-- see http://wiki.eclipse.org/M2E_plugin_execution_not_covered -->
@@ -504,9 +513,37 @@
 										<ignore />
 									</action>
 								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>com.samaxes.maven</groupId>
+										<artifactId>minify-maven-plugin</artifactId>
+										<versionRange>[1.5.2,)</versionRange>
+										<goals>
+											<goal>minify</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>com.samaxes.maven</groupId>
+					<artifactId>minify-maven-plugin</artifactId>
+					<version>1.5.2</version>
+					<executions>
+						<execution>
+							<id>minify</id>
+							<phase>process-resources</phase>
+							<goals>
+								<goal>minify</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -645,12 +682,12 @@
 						<version>${project.version}</version>
 						<scope>provided</scope>
 					</dependency>
-                    <dependency>
-                        <groupId>org.n52.sensorweb</groupId>
-                        <artifactId>sensorwebclient-ext</artifactId>
-                        <version>${project.version}</version>
-                        <scope>provided</scope>
-                    </dependency>
+					<dependency>
+						<groupId>org.n52.sensorweb</groupId>
+						<artifactId>sensorwebclient-ext</artifactId>
+						<version>${project.version}</version>
+						<scope>provided</scope>
+					</dependency>
 					<dependency>
 						<groupId>org.n52.sensorweb</groupId>
 						<artifactId>sensorwebclient-api</artifactId>
@@ -721,12 +758,12 @@
 		<gwt.version>2.5.0</gwt.version>
 		<smartgwt.version>3.0</smartgwt.version>
 		<geotools.version>8.2</geotools.version>
-        <oxf.version>2.0.0-SNAPSHOT</oxf.version>
+		<oxf.version>2.0.0-SNAPSHOT</oxf.version>
 		<hibernate.version>3.5.0-Final</hibernate.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sensorwebclient.webapp.name>${project.artifactId}-${project.version}</sensorwebclient.webapp.name>
-        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
-        <timestamp>${maven.build.timestamp}</timestamp>
+		<maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+		<timestamp>${maven.build.timestamp}</timestamp>
 	</properties>
 
 
@@ -772,13 +809,8 @@
 			<name>spring-release-remote</name>
 			<url>http://repo.springsource.org/release</url>
 		</repository>
-		<!-- 
-		<repository>
-			<id>mvn-repo</id>
-			<name>mvnrepository.com</name>
-			<url>http://mvnrepository.com/artifact</url>
-		</repository>
-		 -->
+		<!-- <repository> <id>mvn-repo</id> <name>mvnrepository.com</name> <url>http://mvnrepository.com/artifact</url> 
+			</repository> -->
 		<repository>
 			<id>Apache</id>
 			<name>Apache repository</name>
