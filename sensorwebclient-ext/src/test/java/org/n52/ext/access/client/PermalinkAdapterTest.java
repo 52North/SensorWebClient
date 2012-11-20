@@ -21,19 +21,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.api.access.client;
+package org.n52.ext.access.client;
 
-import static org.n52.api.access.client.PermalinkGeneratorTestUtil.BASE_URL;
+import static junit.framework.Assert.*;
+import static org.n52.ext.access.client.PermalinkGeneratorTestUtil.BASE_URL;
 
-import java.net.URL;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
-
-import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.api.access.AccessLinkFactory;
+import org.n52.ext.access.AccessLinkFactory;
 
 public class PermalinkAdapterTest {
 
@@ -48,89 +46,68 @@ public class PermalinkAdapterTest {
 	@Before
 	public void setUp() throws Exception {
 		this.permalinkGenerator = testUtil.getPermalinkGenerator();
-		URL permalink = permalinkGenerator.createAccessURL(BASE_URL);
+		String permalink = permalinkGenerator.createAccessURL(BASE_URL);
 		this.permalinkAdapter = new PermalinkAdapter(permalink);
 		this.addedTimeSeries = testUtil.getAddedTimeSeriesParameters();
 	}
 	
-	private boolean containsParameter(Iterator<String> parsedValues, String parameter) {
-		while (parsedValues.hasNext()) {
-			String value = parsedValues.next();
-			if (value.equals(parameter)) {
-				return true;
-			}
-		}
-		return false;
+	@Test
+	public void testCreatingWithEmptyQueryString() {
+	    assertNotNull(new PermalinkAdapter("http://foobar.de/?"));
+        assertNotNull(new PermalinkAdapter("http://foobar.de/"));
 	}
 	
 	@Test
 	public void testGetServiceURLs() {
-		boolean found = false;
-		Iterable<String> parsedServiceURLs = permalinkAdapter.getServiceURLs();
+		Collection<String> parsedServiceURLs = permalinkAdapter.getServiceURLs();
 		for (TimeSeriesParameters timeSeries : addedTimeSeries) {
 			String serviceURL = timeSeries.getServiceURL();
-			if (containsParameter(parsedServiceURLs.iterator(), serviceURL)) {
-				found = true;
-				break;
-			};
+			assertTrue("Service not found: " + serviceURL, parsedServiceURLs.contains(serviceURL));
 		}
-		Assert.assertTrue("ServiceURLs do not match.", found);
 	}
+	
+	@Test
+    public void testGetServiceVersions() {
+        Collection<String> parsedVersions = permalinkAdapter.getVersions();
+        for (TimeSeriesParameters timeSeries : addedTimeSeries) {
+            // TODO add versions test
+        }
+    }
 
 	@Test
 	public void testGetOfferings() {
-		boolean found = false;
-		Iterable<String> parsedOfferings = permalinkAdapter.getOfferings();
+		Collection<String> parsedOfferings = permalinkAdapter.getOfferings();
 		for (TimeSeriesParameters timeSeries : addedTimeSeries) {
 			String offering = timeSeries.getOffering();
-			if (containsParameter(parsedOfferings.iterator(), offering)) {
-				found = true;
-				break;
-			};
+			assertTrue("Offering not found: " + offering, parsedOfferings.contains(offering));
 		}
-		Assert.assertTrue("Offerings do not match.", found);
 	}
 
 	@Test
 	public void testGetProcedures() {
-		boolean found = false;
-		Iterable<String> parsedProcedures = permalinkAdapter.getProcedures();
+		Collection<String> parsedProcedures = permalinkAdapter.getProcedures();
 		for (TimeSeriesParameters timeSeries : addedTimeSeries) {
 			String procedure = timeSeries.getProcedure();
-			if (containsParameter(parsedProcedures.iterator(), procedure)) {
-				found = true;
-				break;
-			};
+			assertTrue("Procedure not found:" + procedure, parsedProcedures.contains(procedure));
 		}
-		Assert.assertTrue("Procedures do not match.", found);
 	}
 
 	@Test
 	public void testGetPhenomenons() {
-		boolean found = false;
-		Iterable<String> parsedPhenomenons = permalinkAdapter.getPhenomenons();
+		Collection<String> parsedPhenomenons = permalinkAdapter.getPhenomenons();
 		for (TimeSeriesParameters timeSeries : addedTimeSeries) {
 			String phenomenon = timeSeries.getPhenomenon();
-			if (containsParameter(parsedPhenomenons.iterator(), phenomenon)) {
-				found = true;
-				break;
-			};
+			assertTrue("Phenomenon not found: " + phenomenon, parsedPhenomenons.contains(phenomenon));
 		}
-		Assert.assertTrue("Phenomenons do not match.", found);
 	}
 
 	@Test
 	public void testGetStations() {
-		boolean found = false;
-		Iterable<String> parsedStations = permalinkAdapter.getStations();
+		Collection<String> parsedStations = permalinkAdapter.getStations();
 		for (TimeSeriesParameters timeSeries : addedTimeSeries) {
 			String station = timeSeries.getStation();
-			if (containsParameter(parsedStations.iterator(), station)) {
-				found = true;
-				break;
-			};
+			assertTrue("Station not found: " + station, parsedStations.contains(station));
 		}
-		Assert.assertTrue("Stations do not match.", found);
 	}
 
 }

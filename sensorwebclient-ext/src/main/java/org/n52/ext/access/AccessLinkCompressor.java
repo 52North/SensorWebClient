@@ -21,13 +21,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.api.access;
+package org.n52.ext.access;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import org.n52.ext.ExternalToolsException;
 
-public interface AccessLinkUncompressor {
-
-    public URL uncompressAccessURL(URL accessURL) throws MalformedURLException;
-
+public interface AccessLinkCompressor {
+    
+    public String createCompressedAccessURL(String baseURL) throws ExternalToolsException;
 }

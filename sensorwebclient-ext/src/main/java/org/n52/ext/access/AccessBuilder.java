@@ -22,13 +22,9 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.api.access;
+package org.n52.ext.access;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+public interface AccessBuilder<T> {
 
-public interface AccessLinkFactory {
-
-    public URL createAccessURL(String baseURL) throws MalformedURLException;
-    
+    public T build();
 }

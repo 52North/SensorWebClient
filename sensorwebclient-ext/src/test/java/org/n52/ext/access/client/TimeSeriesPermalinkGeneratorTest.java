@@ -22,21 +22,16 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.api.access.client;
+package org.n52.ext.access.client;
 
-import static org.n52.api.access.client.PermalinkGeneratorTestUtil.BASE_URL;
-import static org.n52.api.access.client.PermalinkGeneratorTestUtil.MALFORMED_BASE_URL;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-
+import static org.n52.ext.access.client.PermalinkGeneratorTestUtil.BASE_URL;
 import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.api.access.AccessLinkCompressor;
-import org.n52.api.access.AccessLinkFactory;
-import org.omg.PortableInterceptor.SUCCESSFUL;
+import org.n52.ext.ExternalToolsException;
+import org.n52.ext.access.AccessLinkCompressor;
+import org.n52.ext.access.AccessLinkFactory;
 
 public class TimeSeriesPermalinkGeneratorTest {
 
@@ -53,32 +48,16 @@ public class TimeSeriesPermalinkGeneratorTest {
     }
 
     @Test
-    public void testCreateAccessURL() {
-        testMalformedBaseURL();
-        testAccessURLGeneration();
-    }
-
-    private void testMalformedBaseURL() {
+    public void testAccessURLGeneration() {
         try {
-            permalinkGenerator.createAccessURL(MALFORMED_BASE_URL);
-        }
-        catch (MalformedURLException e) {
-            Assert.assertTrue("Handle malformed URL", true);
-        }
-    }
-
-    private void testAccessURLGeneration() {
-        try {
-            URL permalink = permalinkGenerator.createAccessURL(BASE_URL);
-            String query = permalink.getQuery();
+            String permalink = permalinkGenerator.createAccessURL(BASE_URL);
             // TODO test query
-            String externalForm = permalink.toExternalForm();
+            String externalForm = permalink;
             // TODO test if equals to BASE_URL
         }
-        catch (MalformedURLException e) {
+        catch (ExternalToolsException e) {
             e.printStackTrace();
             Assert.fail(String.format("Failed, in spite of valid base URL: '%s'", BASE_URL));
-
         }
 
     }
@@ -86,29 +65,12 @@ public class TimeSeriesPermalinkGeneratorTest {
     @Test
     public void testCreateCompressedAccessURL() {
         try {
-            URL permalink = compressedPermalinkGenerator.createCompressedAccessURL(BASE_URL);
+            String permalink = compressedPermalinkGenerator.createCompressedAccessURL(BASE_URL);
 
             // TODO finish testing
             // fail("Not yet implemented");
         }
-        catch (MalformedURLException e) {
-            e.printStackTrace();
-            Assert.fail(String.format("Failed, in spite of valid base URL: '%s'", BASE_URL));
-        }
-    }
-
-    @Test
-    public void testUncompressAccessURL() {
-        try {
-            URL permalink = permalinkGenerator.createAccessURL(BASE_URL);
-            
-            URL compressedPermalink = compressedPermalinkGenerator.createCompressedAccessURL(BASE_URL);
-            PermalinkUncompressor uncompressor = new PermalinkUncompressor();
-            URL uncompressedPermalink = uncompressor.uncompressAccessURL(compressedPermalink);
-
-            Assert.assertEquals(permalink.toExternalForm(), uncompressedPermalink.toExternalForm());
-        }
-        catch (MalformedURLException e) {
+        catch (ExternalToolsException e) {
             e.printStackTrace();
             Assert.fail(String.format("Failed, in spite of valid base URL: '%s'", BASE_URL));
         }

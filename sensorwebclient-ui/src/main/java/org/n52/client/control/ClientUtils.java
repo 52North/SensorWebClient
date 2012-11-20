@@ -24,8 +24,6 @@
 
 package org.n52.client.control;
 
-import java.util.Date;
-
 import org.n52.client.view.gui.widgets.Toaster;
 
 import com.google.gwt.core.client.GWT;
@@ -52,47 +50,24 @@ public class ClientUtils {
         }
         return randomHex;
     }
-    
-    public static long parseDateStringToMillis(String date) {
-
-        String d = date.split("T")[0];
-        String t = date.split("T")[1];
-        String year = d.split("-")[0];
-        String month = d.split("-")[1];
-        String day = d.split("-")[2];
-        String hours = t.split(":")[0];
-        String minutes = t.split(":")[1];
-        String seconds = t.split(":")[2];
-        if (seconds.contains("+")) {
-            seconds = seconds.split("+")[0];
-        }
-
-        // TODO optimize, eg w/ Joda Time, but joda has no gwt port
-        Date newDate = new Date();
-        newDate.setDate(new Integer(day));
-        newDate.setYear(new Integer(year) - 1900);
-        newDate.setMonth(new Integer(month) - 1);
-        newDate.setHours(new Integer(hours));
-        newDate.setMinutes(new Integer(minutes));
-        newDate.setSeconds(new Integer(seconds));
-
-        return newDate.getTime();
-    }
 
     /**
-     * @param begin as millis
-     * @param end as millis
-     * @return
+     * @param begin
+     *        in millis
+     * @param end
+     *        in millis
+     * @return if given time range is allowed with respect to <code>minTimeFrameZoom</code> parameter.
      */
     public static boolean isValidTimeFrameForZoomIn(long begin, long end) {
         long minTime = 1;
         String parameter = PropertiesManager.getInstance().getParameterAsString("minTimeFrameZoom");
         try {
             minTime = Long.parseLong(parameter);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             GWT.log("Could not read property minTimeFrameZoom: " + parameter);
         }
-        if ((end - begin) >= (minTime * 1000 * 60)) {
+        if ( (end - begin) >= (minTime * 1000 * 60)) {
             return true;
         }
         Toaster.getInstance().addMessage(I18N.sosClient.maxZoomInTime());

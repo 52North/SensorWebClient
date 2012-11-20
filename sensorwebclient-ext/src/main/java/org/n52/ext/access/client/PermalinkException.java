@@ -21,9 +21,27 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.api.access.client;
+package org.n52.ext.access.client;
 
-public enum PermalinkParameter {
+public class PermalinkException extends Exception {
 
-	SOS,OFFERING,PROCEDURES,STATIONS,PHENOMENONS,BEGIN,END;
+	private static final long serialVersionUID = 4060462115604689305L;
+
+	public PermalinkException() {
+		super();
+	}
+
+	public PermalinkException(String message) {
+		super(message);
+	}
+
+	public PermalinkException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public PermalinkException(Throwable cause) {
+		super(cause);
+	}
+	
+	
 }

@@ -21,13 +21,16 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.api.access.client;
+package org.n52.ext.access.client;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.n52.api.access.AccessLinkCompressor;
-import org.n52.api.access.AccessLinkFactory;
+import org.n52.ext.access.AccessLinkCompressor;
+import org.n52.ext.access.AccessLinkFactory;
+import org.n52.ext.access.client.PermalinkCompressor;
+import org.n52.ext.access.client.TimeSeriesParameters;
+import org.n52.ext.access.client.TimeSeriesPermalinkBuilder;
 
 public final class PermalinkGeneratorTestUtil {
     
@@ -45,9 +48,9 @@ public final class PermalinkGeneratorTestUtil {
 		TimeSeriesPermalinkBuilder builder = new TimeSeriesPermalinkBuilder();
 		String proc = "urn:ogc:generalizationMethod:IFGI:SkipEverySecond";
 		addedTimeSeriesParameters = new ArrayList<TimeSeriesParameters>();
-		addedTimeSeriesParameters.add(new TimeSeriesParameters("url1", "off1", proc, "phen1", "feat1"));
-		addedTimeSeriesParameters.add(new TimeSeriesParameters("url1", "off2", proc, "phen2", "feat2"));
-		addedTimeSeriesParameters.add(new TimeSeriesParameters("url3", "off3", proc, "phen3", "feat1"));
+		addedTimeSeriesParameters.add(new TimeSeriesParameters("url1", "1.0.0", "off1", proc, "phen1", "feat1"));
+		addedTimeSeriesParameters.add(new TimeSeriesParameters("url1", "1.0.0", "off2", proc, "phen2", "feat2"));
+		addedTimeSeriesParameters.add(new TimeSeriesParameters("url3", "2.0.0", "off3", proc, "phen3", "feat1"));
 		for (TimeSeriesParameters parameters : addedTimeSeriesParameters) {
 			builder.addParameters(parameters);
 		}

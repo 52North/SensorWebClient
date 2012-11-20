@@ -22,17 +22,19 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.api.access.client;
+package org.n52.ext.access.client;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.n52.api.access.AccessBuilder;
-import org.n52.api.access.AccessLinkFactory;
+import org.n52.ext.access.AccessBuilder;
+import org.n52.ext.access.AccessLinkFactory;
 
 public class TimeSeriesPermalinkBuilder implements AccessBuilder<AccessLinkFactory> {
 
     private List<String> services = new ArrayList<String>();
+
+    private List<String> versions = new ArrayList<String>();
 
     private List<String> offerings = new ArrayList<String>();
 
@@ -46,18 +48,21 @@ public class TimeSeriesPermalinkBuilder implements AccessBuilder<AccessLinkFacto
 
     public TimeSeriesPermalinkBuilder addParameters(TimeSeriesParameters parameters) {
         this.services.add(parameters.getServiceURL());
+        this.versions.add(parameters.getVersion());
         this.offerings.add(parameters.getOffering());
         this.procedures.add(parameters.getProcedure());
         this.phenomenons.add(parameters.getPhenomenon());
         this.features.add(parameters.getStation());
-        if (parameters.isSetTimeRange() && this.timeRange != null) {
-            this.timeRange = TimeRange.union(this.timeRange, parameters.getTimeRange());
-        }
+        this.timeRange = parameters.getTimeRange();
         return this;
     }
 
     public Iterable<String> getServices() {
         return this.services;
+    }
+
+    public Iterable<String> getVersions() {
+        return this.versions;
     }
 
     public Iterable<String> getOfferings() {
@@ -90,8 +95,11 @@ public class TimeSeriesPermalinkBuilder implements AccessBuilder<AccessLinkFacto
 
     private boolean isConsistent() {
         int size = this.procedures.size();
-        if (size != this.features.size() || size != this.offerings.size() || size != this.phenomenons.size()
-                || size != this.services.size())
+        boolean invalidFeaturesSize = size != this.features.size();
+        boolean invalidOfferingsSize = size != this.offerings.size();
+        boolean invalidPhenomenonsSize = size != this.phenomenons.size();
+        boolean invalidServicesSize = size != this.services.size();
+        if (invalidFeaturesSize || invalidOfferingsSize || invalidPhenomenonsSize || invalidServicesSize)
             return false;
         return true;
     }

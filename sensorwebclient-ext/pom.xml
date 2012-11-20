@@ -5,13 +5,12 @@
 	<parent>
 		<groupId>org.n52.sensorweb</groupId>
 		<artifactId>sensorwebclient</artifactId>
-		<version>3.0.0-RC</version>
+		<version>3.1.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>52n-sensorwebclient-ext</artifactId>
+	<artifactId>sensorwebclient-ext</artifactId>
 	<packaging>jar</packaging>
 	<name>Sensor Web Client External Tools</name>
 	<url>http://52north.org/communities/sensorweb/</url>
-	<inceptionYear>2012</inceptionYear>
 	<dependencies>
 		<!-- ### 52n DEPENDENCIES ### -->
 		<!-- ### EXTERNAL DEPENDENCIES ### -->
@@ -20,8 +19,9 @@
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -40,29 +40,11 @@
 				<artifactId>maven-source-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<!-- run "mvn license:check" to check -->
-				<!-- run "mvn license:format" to add -->
 				<groupId>com.mycila.maven-license-plugin</groupId>
 				<artifactId>maven-license-plugin</artifactId>
 				<configuration>
-					<header>src/main/resources/52N_license.txt</header>
-					<includes>
-						<include>**/*.java</include>
-						<include>**/*.properties</include>
-					</includes>
-					<strictCheck>true</strictCheck>
-					<properties>
-						<year>${project.inceptionYear}</year>
-					</properties>
+					<header>../misc/52N_license.txt</header>
 				</configuration>
-				<executions>
-					<execution>
-						<phase>test</phase>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>

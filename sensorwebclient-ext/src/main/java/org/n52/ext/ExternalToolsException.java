@@ -21,40 +21,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
+package org.n52.ext;
 
-package org.n52.api.access.client;
+public class ExternalToolsException extends Exception {
 
-import java.util.Date;
+    private static final long serialVersionUID = 8492213459121231353L;
 
-public class TimeRange {
-
-	private long start;
-	private long end;
-	
-	private TimeRange(long start, long end) {
-		this.start = start;
-		this.end = end;
-	}
-	
-	public static TimeRange createTimeRangeByMillis(long start, long end) {
-		return new TimeRange(start, end);
-	}
-	
-	public static TimeRange createTimeRangeByDate(Date start, Date end) {
-		return new TimeRange(start.getTime(), end.getTime());
-	}
-
-    public long getStart() {
-        return this.start;
+    public ExternalToolsException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    public long getEnd() {
-        return this.end;
+    public ExternalToolsException(String message) {
+        super(message);
     }
-
-	static TimeRange union(TimeRange first, TimeRange second) {
-		long minStart = Math.min(first.getStart(), second.getStart());
-		long maxEnd = Math.max(first.getEnd(), second.getEnd());
-		return TimeRange.createTimeRangeByMillis(minStart, maxEnd);
-	}
 }

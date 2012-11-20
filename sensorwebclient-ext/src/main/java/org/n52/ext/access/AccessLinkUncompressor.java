@@ -21,43 +21,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.api.access.client;
+package org.n52.ext.access;
 
-import java.net.URL;
+import org.n52.ext.ExternalToolsException;
 
-public class PermalinkAdapter {
+public interface AccessLinkUncompressor {
 
-	private PermalinkParser parser;
-	private boolean compressed;
-	
-	public PermalinkAdapter(URL permalink) {
-		String queryString = permalink.getQuery();
-		this.compressed = isCompressed(queryString);
-		this.parser = new PermalinkParser(queryString, compressed);
-	}
-	
-	private boolean isCompressed(String queryString) {
-		return queryString.contains(QueryBuilder.COMPRESSION_PARAMETER);
-	}
-
-	public Iterable<String> getServiceURLs() {
-		return parser.parseServices();
-	}
-	
-	public Iterable<String> getOfferings() {
-		return parser.parseOfferings();
-	}
-	
-	public Iterable<String> getProcedures() {
-		return parser.parseProcedures();
-	}
-
-	public Iterable<String> getPhenomenons() {
-		return parser.pasePhenomenons();
-	}
-
-	public Iterable<String> getStations() {
-		return parser.parseStations();
-	}
+    public String uncompressAccessURL(String accessURL) throws ExternalToolsException;
 
 }

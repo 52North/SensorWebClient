@@ -22,11 +22,13 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.api.access.client;
+package org.n52.ext.access.client;
 
 public class TimeSeriesParameters {
 
     private String serviceURL;
+
+    private String version;
 
     private String offering;
 
@@ -38,8 +40,9 @@ public class TimeSeriesParameters {
 
     private TimeRange timeRange;
 
-    public TimeSeriesParameters(String serviceURL, String offering, String procedure, String phenomenon, String feature) {
+    public TimeSeriesParameters(String serviceURL, String version, String offering, String procedure, String phenomenon, String feature) {
         this.serviceURL = serviceURL;
+        this.version = version;
         this.offering = offering;
         this.procedure = procedure;
         this.phenomenon = phenomenon;
@@ -60,6 +63,10 @@ public class TimeSeriesParameters {
 
     public String getServiceURL() {
         return this.serviceURL;
+    }
+
+    public String getVersion() {
+        return this.version;
     }
 
     public String getOffering() {
@@ -83,6 +90,8 @@ public class TimeSeriesParameters {
         StringBuilder sb = new StringBuilder();
         sb.append("TimeSeriesParameters [");
         sb.append(this.serviceURL);
+        sb.append(", ");
+        sb.append(this.version);
         sb.append(", ");
         sb.append(this.offering);
         sb.append(", ");

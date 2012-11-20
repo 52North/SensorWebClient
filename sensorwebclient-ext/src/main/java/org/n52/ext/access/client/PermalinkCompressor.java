@@ -21,12 +21,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.api.access.client;
+package org.n52.ext.access.client;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import org.n52.api.access.AccessLinkCompressor;
+import org.n52.ext.access.AccessLinkCompressor;
 
 public class PermalinkCompressor extends PermalinkFactory implements AccessLinkCompressor {
 
@@ -35,21 +32,19 @@ public class PermalinkCompressor extends PermalinkFactory implements AccessLinkC
     }
 	
     @Override
-    public URL createCompressedAccessURL(String baseURL) throws MalformedURLException {
-        URL accessURL = new URL(baseURL);
-        String query = accessURL.getQuery();
-
-        queryBuilder.append(query == null ? "?" : query + "&");
-        queryBuilder.appendCompressedParameters("sos=", this.services);
-        queryBuilder.appendCompressedParameters("&stations=", this.features);
-        queryBuilder.appendCompressedParameters("&offering=", this.offerings);
-        queryBuilder.appendCompressedParameters("&procedures=", this.procedures);
-        queryBuilder.appendCompressedParameters("&phenomenons=", this.phenomenons);
-        queryBuilder.appendTimeRangeParameters(this.timeRange);
+    public String createCompressedAccessURL(String baseUrl) {
+        permalinkBuilder.initialize(baseUrl);
+        permalinkBuilder.appendCompressedParameters("sos=", services);
+        permalinkBuilder.appendCompressedParameters("&versions=", versions);
+        permalinkBuilder.appendCompressedParameters("&stations=", features);
+        permalinkBuilder.appendCompressedParameters("&offerings=", offerings);
+        permalinkBuilder.appendCompressedParameters("&procedures=", procedures);
+        permalinkBuilder.appendCompressedParameters("&phenomenons=", phenomenons);
+        permalinkBuilder.appendTimeRangeParameters(timeRange);
         
-        queryBuilder.appendCompressedParameter();
+        permalinkBuilder.appendCompressedParameter();
         
-        return new URL(accessURL + this.queryBuilder.toString());
+        return permalinkBuilder.toString();
     }
 
 

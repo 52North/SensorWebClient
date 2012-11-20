@@ -21,12 +21,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.api.access;
+package org.n52.ext.access.client;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+public enum PermalinkParameter {
 
-public interface AccessLinkCompressor {
-    
-    public URL createCompressedAccessURL(String baseURL) throws MalformedURLException;
+	SOS,VERSIONS,OFFERINGS,PROCEDURES,STATIONS,PHENOMENONS,BEGIN,END;
+	
+	public String nameLowerCase() {
+	    return name().toLowerCase();
+	}
 }

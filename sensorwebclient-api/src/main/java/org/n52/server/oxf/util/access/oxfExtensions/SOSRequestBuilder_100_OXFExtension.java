@@ -53,12 +53,6 @@ import org.slf4j.LoggerFactory;
 
 public class SOSRequestBuilder_100_OXFExtension extends SOSRequestBuilder_100 {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(SOSRequestBuilder_100_OXFExtension.class);
-
-    public SOSRequestBuilder_100_OXFExtension() {
-        LOGGER.debug("NEW {}", getClass().getSimpleName());
-    }
-    
     @Override
     public String buildGetObservationRequest(ParameterContainer parameters) throws OXFException {
 

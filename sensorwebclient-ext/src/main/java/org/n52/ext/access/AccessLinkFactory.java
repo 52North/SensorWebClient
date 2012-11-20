@@ -22,9 +22,12 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.api.access;
+package org.n52.ext.access;
 
-public interface AccessBuilder<T> {
+import org.n52.ext.ExternalToolsException;
 
-    public T build();
+public interface AccessLinkFactory {
+
+    public String createAccessURL(String baseURL) throws ExternalToolsException;
+    
 }
