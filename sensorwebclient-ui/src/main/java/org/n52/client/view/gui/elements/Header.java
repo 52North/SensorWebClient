@@ -76,6 +76,10 @@ public class Header extends HLayout {
 
         addMember(getHomeLabel());
         
+//        Layout linkLayoutStack = new VLayout();
+//        linkLayoutStack.setStyleName("sensorweb_client_linkStack");
+//        linkLayoutStack.addMember(getVersionInfo());
+        
         Layout linkLayout = new HLayout();
         linkLayout.setStyleName("sensorweb_client_linkBlock");
         linkLayout.setAlign(Alignment.RIGHT);
@@ -93,7 +97,20 @@ public class Header extends HLayout {
         addMember(linkLayout);
     }
 
-	private Layout getHomeLabel() {
+	private Label getVersionInfo() {
+	    String version = "foobar";
+	    Label versionLabel = getHeaderLinkLabel("Version: " +  version);
+	    versionLabel.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                Window.open("version-info.txt", "_blank", "");
+            }
+        });
+        return versionLabel;
+        
+    }
+
+    private Layout getHomeLabel() {
 		Layout layout = new HLayout();
 		layout.setStyleName("sensorweb_client_logoBlock");
 		Img homeLabel = new Img("../img/client-logo.png", 289, 55);

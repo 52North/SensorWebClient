@@ -41,5 +41,11 @@ public abstract class Button extends Img {
      * Sets the normal tooltip.
      */
     public abstract void setShortTooltip();
+    
+    @Override
+    public void addStyleName(String style) {
+        style = style == null ? "" : " ".concat(style);
+        setStyleName(getStyleName().concat(style));
+    }
 
 }

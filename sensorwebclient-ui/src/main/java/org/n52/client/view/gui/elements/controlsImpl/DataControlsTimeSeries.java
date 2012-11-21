@@ -560,7 +560,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
         // bottom layout
         // day
         this.setDiagBackDay(new ImageButton("diagBackDay", "../img/icons/control_left.png", I18N.sosClient
-                .back(), I18N.sosClient.backExtended(), 18));
+                .back(), I18N.sosClient.backExtended()));
         // this.getDiagBackDay().setShowRollOver(true);
 //        this.topLayout.addMember(this.getDiagBackDay());
         View.getInstance().registerTooltip(this.getDiagBackDay());
@@ -573,14 +573,14 @@ public abstract class DataControlsTimeSeries extends DataControls {
 //        this.topLayout.addMember(day);
 
         this.setDiagForwardDay(new ImageButton("diagForwardDay", "../img/icons/control_right.png",
-                I18N.sosClient.forth(), I18N.sosClient.forthExtended(), 18));
+                I18N.sosClient.forth(), I18N.sosClient.forthExtended()));
 //        this.topLayout.addMember(this.getDiagForwardDay());
         View.getInstance().registerTooltip(this.getDiagForwardDay());
         // this.getDiagForwardDay().setShowRollOver(true);
 
         // week
         this.setDiagBackWeek(new ImageButton("diagBackWeek", "../img/icons/control_left.png", I18N.sosClient
-                .back(), I18N.sosClient.backExtended(), 18));
+                .back(), I18N.sosClient.backExtended()));
 //        this.topLayout.addMember(this.getDiagBackWeek());
         View.getInstance().registerTooltip(this.getDiagBackWeek());
         // this.getDiagBackWeek().setShowRollOver(true);
@@ -593,14 +593,14 @@ public abstract class DataControlsTimeSeries extends DataControls {
 //        this.topLayout.addMember(week);
 
         this.setDiagForwardWeek(new ImageButton("diagForwardWeek", "../img/icons/control_right.png",
-                I18N.sosClient.forth(), I18N.sosClient.forthExtended(), 18));
+                I18N.sosClient.forth(), I18N.sosClient.forthExtended()));
 //        this.topLayout.addMember(this.getDiagForwardWeek());
         View.getInstance().registerTooltip(this.getDiagForwardWeek());
         // this.getDiagForwardWeek().setShowRollOver(true);
 
         // month
         this.setDiagBackMonth(new ImageButton("diagBackMonth", "../img/icons/control_left.png", I18N.sosClient
-                .back(), I18N.sosClient.backExtended(), 18));
+                .back(), I18N.sosClient.backExtended()));
 //        this.topLayout.addMember(this.getDiagBackMonth());
         View.getInstance().registerTooltip(this.getDiagBackMonth());
         // this.getDiagBackMonth().setShowRollOver(true);
@@ -613,14 +613,14 @@ public abstract class DataControlsTimeSeries extends DataControls {
 //        this.topLayout.addMember(month);
 
         this.setDiagForwardMonth(new ImageButton("diagForwardMonth", "../img/icons/control_right.png",
-                I18N.sosClient.forth(), I18N.sosClient.forthExtended(), 18));
+                I18N.sosClient.forth(), I18N.sosClient.forthExtended()));
 //        this.topLayout.addMember(this.getDiagForwardMonth());
         View.getInstance().registerTooltip(this.getDiagForwardMonth());
         // this.getDiagForwardMonth().setShowRollOver(true);
 
         // year
         this.setDiagBackYear(new ImageButton("diagBackYear", "../img/icons/control_left.png", I18N.sosClient
-                .back(), I18N.sosClient.backExtended(), 18));
+                .back(), I18N.sosClient.backExtended()));
 //        this.topLayout.addMember(this.getDiagBackYear());
         View.getInstance().registerTooltip(this.getDiagBackYear());
         // this.getDiagBackYear().setShowRollOver(true);
@@ -633,7 +633,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
 //        this.topLayout.addMember(year);
 
         this.setDiagForwardYear(new ImageButton("diagdiagForwardYear", "../img/icons/control_right.png",
-                I18N.sosClient.forth(), I18N.sosClient.forthExtended(), 18));
+                I18N.sosClient.forth(), I18N.sosClient.forthExtended()));
         View.getInstance().registerTooltip(this.getDiagForwardYear());
 //        this.topLayout.addMember(this.getDiagForwardYear());
         // this.getDiagForwardYear().setShowRollOver(true);
@@ -684,10 +684,14 @@ public abstract class DataControlsTimeSeries extends DataControls {
 		ImageButton expandDiagramInteractionMenuButton = new ImageButton(
 				"expander", "../img/icons/settings.png",
 				I18N.sosClient.expandDiagramInteraction(),
-				I18N.sosClient.expandDiagramInteractionTooltip(), 30);
+				I18N.sosClient.expandDiagramInteractionTooltip());
 		expandDiagramInteractionMenuButton.setAlign(Alignment.CENTER);
 		expandDiagramInteractionMenuButton.setZIndex(1000001);
-		expandDiagramInteractionMenuButton.setStyleName("sensorweb_client_interactionbutton");
+		// TODO extract size to css file!
+		expandDiagramInteractionMenuButton.setWidth(32);
+		expandDiagramInteractionMenuButton.setHeight(32);
+        expandDiagramInteractionMenuButton.addStyleName("sensorweb_client_options_button");
+		expandDiagramInteractionMenuButton.addStyleName("sensorweb_client_interactionbutton");
 		expandDiagramInteractionMenuButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {

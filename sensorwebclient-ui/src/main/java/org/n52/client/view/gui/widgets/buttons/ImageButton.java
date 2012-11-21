@@ -24,14 +24,13 @@
 
 package org.n52.client.view.gui.widgets.buttons;
 
-import java.util.Date;
-
 import org.n52.client.model.communication.LoaderManager;
 import org.n52.client.view.View;
 import org.n52.client.view.gui.widgets.LoaderImage;
 
 import com.google.gwt.user.client.Random;
 import com.smartgwt.client.types.Cursor;
+import com.smartgwt.client.widgets.Img;
 
 /**
  * Wrapperclass for Imagebuttons with special configurations such as tooltips.
@@ -40,6 +39,8 @@ import com.smartgwt.client.types.Cursor;
  */
 public class ImageButton extends Button {
 
+    private Img delegate; // TODO encapsulate UI elements
+    
     /** The size. */
     private int size = 16;
 
@@ -48,9 +49,6 @@ public class ImageButton extends Button {
 
     /** The show roll over. */
     private boolean showRollOver = false;
-
-    /** The margin. */
-    private int margin = 3;
 
     /** The parameterId. */
     private String id;
@@ -70,70 +68,29 @@ public class ImageButton extends Button {
     /** The extended tooltip. */
     private String extendedTooltip;
 
-    /**
-     * Instantiates a new image button.
-     * 
-     * @param parameterId
-     *        the parameterId
-     * @param icon
-     *        the icon
-     * @param toolTip
-     *        the tool tip
-     * @param extendedtooltip
-     *        the extendedtooltip
-     * @param size
-     *        the size
-     */
-    public ImageButton(String id, String icon, String toolTip, String extendedtooltip, int size) {
-
-        Date d = new Date();
-        this.icon = icon;
-        this.id = id + "_" + d.getTime(); //$NON-NLS-1$
-        this.shortToolTip = toolTip;
-        this.extendedTooltip = extendedtooltip;
-
-        this.size = size;
-
-        init();
-    }
-
-    /**
-     * Instantiates a new image button.
-     * 
-     * @param parameterId
-     *        the parameterId
-     * @param icon
-     *        the icon
-     * @param shortTooltip
-     *        the tool tip
-     * @param extendedTooltip
-     *        the extended tooltip
-     */
     public ImageButton(String id, String icon, String shortTooltip, String extendedTooltip) {
-
         this.icon = icon;
-        this.id = id + "_" + System.currentTimeMillis();
         this.shortToolTip = shortTooltip;
         this.extendedTooltip = extendedTooltip;
-
+        this.id = id + "_" + System.currentTimeMillis();
         init();
     }
-
+    
     private void init() {
-        int length = this.size + 2 * this.margin;
-        this.setWidth(length);
-        this.setHeight(length);
+        setStyleName("sensorweb_client_imagebutton");
+//        int length = this.size + 2 * this.margin;
+//        this.setWidth(length);
+//        this.setHeight(length);
 
         String loaderId = "loader_" + (LoaderManager.getInstance().getCount() + Random.nextInt(10000));
         this.loader = new LoaderImage(loaderId, "../img/mini_loader_bright.gif", this);
 
+        this.setID(this.id);
         this.setSrc(this.icon);
+        this.setShowHover(true);
         this.setShowRollOver(this.showRollOver);
         this.setShowDownIcon(this.showDown);
-        this.setShowHover(true);
         this.setShowFocusedAsOver(false);
-        this.setMargin(this.margin);
-        this.setID(this.id);
         this.setCursor(Cursor.POINTER);
         
         if (View.getInstance().isShowExtendedTooltip()) {

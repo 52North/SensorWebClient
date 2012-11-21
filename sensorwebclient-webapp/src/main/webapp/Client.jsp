@@ -17,7 +17,7 @@
 <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
 <link rel="shortcut icon" href="img/fav.png" type="image/x-icon">
 <link rel="icon" href="img/fav.png" type="image/x-icon">
-<link href="css/client.min.css" rel="stylesheet">
+<link href="css/layout.min.min.css" rel="stylesheet">
 </head>
 
 <body>

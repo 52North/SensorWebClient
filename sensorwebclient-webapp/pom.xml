@@ -62,6 +62,31 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>gwt-maven-plugin</artifactId>
 			</plugin>
+			
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>lesscss-maven-plugin</artifactId>
+                <configuration>
+                    <sourceDirectory>src/main/less</sourceDirectory>
+                    <outputDirectory>src/main/webapp/css</outputDirectory>
+                    <includes>
+                        <include>layout.less</include>
+                    </includes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.samaxes.maven</groupId>
+                <artifactId>minify-maven-plugin</artifactId>
+                <configuration>
+                    <cssSourceDir>css</cssSourceDir>
+                    <cssSourceFiles>
+                        <cssSourceFile>layout.css</cssSourceFile>
+                    </cssSourceFiles>
+                    <cssFinalFile>layout.min.css</cssFinalFile>
+                </configuration>
+            </plugin>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
@@ -77,6 +102,7 @@
 					<warName>${sensorwebclient.webapp.name}</warName>
 				</configuration>
 			</plugin>
+			
 			<plugin>
 				<groupId>com.mycila.maven-license-plugin</groupId>
 				<artifactId>maven-license-plugin</artifactId>
@@ -89,28 +115,6 @@
 				<artifactId>svn-revision-number-maven-plugin</artifactId>
 			</plugin>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>lesscss-maven-plugin</artifactId>
-				<configuration>
-					<sourceDirectory>src/main/webapp/less</sourceDirectory>
-					<!-- output to src ==> clean output dir for minify plugin -->
-					<outputDirectory>src/main/webapp/css</outputDirectory>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>com.samaxes.maven</groupId>
-				<artifactId>minify-maven-plugin</artifactId>
-				<configuration>
-					<cssSourceDir>css</cssSourceDir>
-					<cssSourceFiles>
-						<cssSourceFile>client.css</cssSourceFile>
-						<cssSourceFile>imprint.css</cssSourceFile>
-					</cssSourceFiles>
-					<cssFinalFile>client.min.css</cssFinalFile>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 

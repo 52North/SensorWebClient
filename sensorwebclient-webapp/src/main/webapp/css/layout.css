@@ -1,3 +1,8 @@
+.sensorweb_client_imagebutton {
+  margin: 3px;
+  width: 22px;
+  height: 22px;
+}
 /*
 kuler.adobe.com, base color #55B0BD, monochromatic
 
@@ -36,241 +41,9 @@ body {
   font-weight: bold;
   font-family: tahoma, arial, sans-serif;
 }
-/****************************************/
-/***************HEADER*******************/
-.sensorweb_client_headerContainer {
-  width: 100%;
-}
-.sensorweb_client_logoBlock {
-  float: left;
-  align: right;
-  margin-top: 5px;
-  margin-bottom: 2px;
-}
-.sensorweb_client_logo {
-  margin-left: 15px;
-  cursor: pointer;
-}
-.sensorweb_client_linkBlock {
-  padding-right: 5px;
-  margin: 2px;
-  margin-top: 25px;
-}
-.sensorweb_client_headerlink {
-  color: #2E3B3B;
-  font-size: 12px;
-  text-decoration: none;
-  cursor: pointer;
-}
-.sensorweb_client_headerlink:hover {
-  color: #408989;
-  cursor: pointer;
-  text-decoration: underline;
-}
-.sensorweb_client_pipe {
-  color: #2e3b3d;
-  font-size: 10px;
-  text-decoration: none;
-  padding-left: 3px;
-  padding-right: 3px;
-  cursor: default;
-}
-div .sensorweb_client_imprint_content {
-  background-color: white;
-  width: 450;
-  height: 460;
-  padding: 1em 1em 1em 1em;
-  text-align: left;
-}
-/****************************************/
-/***************LEGEND*******************/
-.sensorweb_client_legendArea {
-  background-color: #FFFFFF;
-}
-.sensorweb_client_legendEntryLayout {
-  margin-bottom: 5px;
-  margin-left: 2px;
-  margin-right: 2px;
-  border-radius: 2px;
-}
-.sensorweb_client_legendEntryHeader {
-  background-color: #ffffff;
-  cursor: pointer;
-  border: 2px solid #A5D6D6;
-}
-.sensorweb_client_legendEntryTitle {
-  margin: 7px 0px 0px 7px;
-  padding-left: 10px;
-  overflow: hide;
-  font-size: 8pt;
-  font-weight: bold;
-}
-.sensorweb_client_legendEntryHeaderSelected {
-  background-color: #A5D6D6;
-  cursor: pointer;
-  border: 2px solid #A5D6D6;
-}
-.sensorweb_client_legendEntryHeaderText {
-  font-size: 8pt;
-  color: #2E3B3B;
-  font-weight: bold;
-}
-.sensorweb_client_legendEntryHeaderTextSelected {
-  font-size: 8pt;
-  color: #2e3b3d;
-  font-weight: bold;
-}
-.sensorweb_client_legendEntryHeaderSelectedNoData {
-  background-color: #A5D6D6;
-  cursor: pointer;
-}
-.sensorweb_client_legendEntryHeaderNoData {
-  background-color: #ffffff;
-  cursor: pointer;
-}
-.sensorweb_client_legendEntryHeader option:hover {
-  cursor: pointer;
-}
-.sensorweb_client_legendEntryFooter {
-  width: inherit;
-  background-color: #ffffff;
-  padding-left: 5px;
-  padding-bottom: 5px;
-  padding-right: 5px;
-  border-left: 2px solid #A5D6D6;
-  border-right: 2px solid #A5D6D6;
-  border-bottom: 2px solid #A5D6D6;
-}
-.sensorweb_client_legendEntryFooterNoData {
-  width: inherit;
-  background-color: #ffffff;
-  padding-left: 5px;
-  padding-bottom: 5px;
-  padding-right: 5px;
-}
-.sensorweb_client_legendEntryFooterSelected {
-  width: inherit;
-  background-color: #ffffff;
-  padding-left: 5px;
-  padding-bottom: 5px;
-  padding-right: 5px;
-}
-.sensorweb_client_legendEntryFooterSelectedNoData {
-  width: inherit;
-  background-color: #ffffff;
-  padding-left: 5px;
-  padding-bottom: 5px;
-  padding-right: 5px;
-}
-.sensorweb_client_legendEntryFooterCollapse {
-  visibility: collapse;
-}
-.sensorweb_client_legendEntryTitleColorIndicator {
-  width: 16px;
-  height: 6px;
-  margin: 0px 10px 0px 4px;
-}
-.sensorweb_client_legendEntryTitleColorIndicatorSmall {
-  margin: 7px 0px 0px 7px;
-  text-align: center;
-}
-.sensorweb_client_legendInfoRow {
-  padding-top: 3px;
-  font-size: 11px;
-}
-.sensorweb_client_legendHider {
-  /*background-color: #A5D6D6;*/
-
-  cursor: pointer;
-}
-.sensorweb_client_legendHider:Hover {
-  /*background-color: @text-color-font;*/
-
-}
-.sensorweb_client_splitbar {
-  /*background-color: #A5D6D6;
-	color: @text-color-font;*/
-
-}
-.sensorweb_client_refValLayout {
-  padding-top: 3px;
-  margin-top: 5px;
-}
-/*********************************************/
-/*****************TOASTER*********************/
-.sensorweb_client_toasterMsg {
-  font-size: 8pt;
-  color: black;
-}
-.sensorweb_client_toasterErrorMsg {
-  font-size: 8pt;
-  color: red;
-}
-.sensorweb_client_dataControls {
-  background-color: white;
-  border-right: 1px solid #C0C3C7;
-}
-.sensorweb_client_mainLayout {
-  background-color: #F2F2F2;
-  border: 1px solid #0C374C;
-  margin: 0px;
-  padding: 0px;
-}
-.sensorweb_client_stationPicker {
-  background-color: #EFEFEF;
-}
-.sensorweb_client_controlLabel {
-  /*padding-top: 3px;*/
-
-  font-size: 8pt;
-  color: #25408F;
-}
-.sensorweb_client_legendAddBox {
-  border: 1px solid black;
-  margin-bottom: 5px;
-}
-.sensorweb_client_legendAddBoxLabel {
-  font-size: 11pt;
-}
-.sensorweb_client_topButtons {
-  padding: 0px 0px 0px 8px;
-}
-/*********************************************/
-/**************STATIONPICKER******************/
-.sensorweb_client_loadingSpinner {
-  padding-top: 20px;
-  visibility: hidden;
-}
-.sensorweb_client_marker {
-  cursor: pointer;
-}
-/*********************************************/
-/**************Controls******************/
-.sensorweb_client_diagramInteractionMenu {
-  margin: 5px;
-  font-size: 11px;
-  font-weight: bold;
-  color: #2E3B3B;
-}
-.sensorweb_client_jumpToTimeIntervalForm {
-  font-size: 11px;
-  font-weight: bold;
-}
-.sensorweb_client_scaleButtonLayout,
-.sensorweb_client_gridButtonLayout {
-  margin-left: 5px;
-  margin-right: 5px;
-}
-.sensorweb_client_scaleButton,
-.sensorweb_client_gridButton {
-  padding-right: 10px;
-  padding-left: 10px;
-}
-.sensorweb_client_tooltip {
-  font-size: 12px;
-  font-family: sans-serif;
-}
-/* buttonstyling */
+/*****************************
+* buttonstyling 
+*/
 .sensorweb_client_jumpToTodayButton,
 .sensorweb_client_gridButton,
 .sensorweb_client_scaleButton,
@@ -279,8 +52,6 @@ div .sensorweb_client_imprint_content {
 .sensorweb_client_legendbuttonDisabled,
 .sensorweb_client_legendbuttonPrimary {
   background-color: #a3d3d6;
-  /*F5F5F5;*/
-
   border-width: 1px;
   border-style: solid;
   border-color: #1c393d;
@@ -390,4 +161,246 @@ tr.sensorInfo:hover {
   background-color: #3E818A;
   /*@text-color-font;*/
 
+}
+.sensorweb_client_headerContainer {
+  width: 100%;
+}
+.sensorweb_client_logoBlock {
+  float: left;
+  align: right;
+  margin-top: 5px;
+  margin-bottom: 2px;
+}
+.sensorweb_client_logo {
+  margin-left: 15px;
+  cursor: pointer;
+}
+.sensorweb_client_linkBlock {
+  padding-right: 5px;
+  margin: 2px;
+  margin-top: 25px;
+}
+.sensorweb_client_headerlink {
+  color: #2E3B3B;
+  font-size: 12px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.sensorweb_client_headerlink:hover {
+  color: #408989;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.sensorweb_client_pipe {
+  color: #2e3b3d;
+  font-size: 10px;
+  text-decoration: none;
+  padding-left: 3px;
+  padding-right: 3px;
+  cursor: default;
+}
+div .sensorweb_client_imprint_content {
+  background-color: white;
+  width: 450;
+  height: 460;
+  padding: 1em 1em 1em 1em;
+  text-align: left;
+}
+.float-left {
+  float: left;
+}
+.float-right {
+  float: right;
+}
+.clear-float {
+  clear: both;
+}
+#editor > * > address {
+  border-left: 0.5em solid;
+  padding-left: 0.5em;
+  border-color: #f6f6f6;
+}
+.sensorweb_client_legend {
+  background-color: #FFFFFF;
+}
+.sensorweb_client_legendEntryLayout {
+  margin-bottom: 5px;
+  margin-left: 2px;
+  margin-right: 2px;
+  border-radius: 2px;
+}
+.sensorweb_client_legendEntryHeader {
+  background-color: #ffffff;
+  cursor: pointer;
+  border: 2px solid #A5D6D6;
+}
+.sensorweb_client_legendEntryTitle {
+  margin: 7px 0px 0px 7px;
+  padding-left: 10px;
+  overflow: hide;
+  font-size: 8pt;
+  font-weight: bold;
+}
+.sensorweb_client_legendEntryHeaderSelected {
+  background-color: #A5D6D6;
+  cursor: pointer;
+  border: 2px solid #A5D6D6;
+}
+.sensorweb_client_legendEntryHeaderText {
+  font-size: 8pt;
+  color: #2E3B3B;
+  font-weight: bold;
+}
+.sensorweb_client_legendEntryHeaderTextSelected {
+  font-size: 8pt;
+  color: #2e3b3d;
+  font-weight: bold;
+}
+.sensorweb_client_legendEntryHeaderSelectedNoData {
+  background-color: #A5D6D6;
+  cursor: pointer;
+}
+.sensorweb_client_legendEntryHeaderNoData {
+  background-color: #ffffff;
+  cursor: pointer;
+}
+.sensorweb_client_legendEntryHeader option:hover {
+  cursor: pointer;
+}
+.sensorweb_client_legendEntryFooter {
+  width: inherit;
+  background-color: #ffffff;
+  padding-left: 5px;
+  padding-bottom: 5px;
+  padding-right: 5px;
+  border-left: 2px solid #A5D6D6;
+  border-right: 2px solid #A5D6D6;
+  border-bottom: 2px solid #A5D6D6;
+}
+.sensorweb_client_legendEntryFooterNoData {
+  width: inherit;
+  background-color: #ffffff;
+  padding-left: 5px;
+  padding-bottom: 5px;
+  padding-right: 5px;
+}
+.sensorweb_client_legendEntryFooterSelected {
+  width: inherit;
+  background-color: #ffffff;
+  padding-left: 5px;
+  padding-bottom: 5px;
+  padding-right: 5px;
+}
+.sensorweb_client_legendEntryFooterSelectedNoData {
+  width: inherit;
+  background-color: #ffffff;
+  padding-left: 5px;
+  padding-bottom: 5px;
+  padding-right: 5px;
+}
+.sensorweb_client_legendEntryFooterCollapse {
+  visibility: collapse;
+}
+.sensorweb_client_legendEntryTitleColorIndicator {
+  width: 16px;
+  height: 6px;
+  margin: 0px 10px 0px 4px;
+}
+.sensorweb_client_legendEntryTitleColorIndicatorSmall {
+  margin: 7px 0px 0px 7px;
+  text-align: center;
+}
+.sensorweb_client_legendInfoRow {
+  padding-top: 3px;
+  font-size: 11px;
+}
+.sensorweb_client_legendHider {
+  /*background-color: #A5D6D6;*/
+
+  cursor: pointer;
+}
+.sensorweb_client_legendHider:Hover {
+  /*background-color: @text-color-font;*/
+
+}
+.sensorweb_client_splitbar {
+  /*background-color: #A5D6D6;
+    color: @text-color-font;*/
+
+}
+.sensorweb_client_refValLayout {
+  padding-top: 3px;
+  margin-top: 5px;
+}
+div .sensorweb_client_options_button img {
+  width: 36px;
+  height: 36px;
+}
+.sensorweb_client_diagramInteractionMenu {
+  margin: 5px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #2E3B3B;
+}
+.sensorweb_client_jumpToTimeIntervalForm {
+  font-size: 11px;
+  font-weight: bold;
+}
+.sensorweb_client_scaleButtonLayout,
+.sensorweb_client_gridButtonLayout {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.sensorweb_client_scaleButton,
+.sensorweb_client_gridButton {
+  padding-right: 10px;
+  padding-left: 10px;
+}
+.sensorweb_client_tooltip {
+  font-size: 12px;
+  font-family: sans-serif;
+}
+.sensorweb_client_loadingSpinner {
+  padding-top: 20px;
+  visibility: hidden;
+}
+.sensorweb_client_marker {
+  cursor: pointer;
+}
+.sensorweb_client_toasterMsg {
+  font-size: 8pt;
+  color: black;
+}
+.sensorweb_client_toasterErrorMsg {
+  font-size: 8pt;
+  color: red;
+}
+.sensorweb_client_dataControls {
+  background-color: white;
+  border-right: 1px solid #C0C3C7;
+}
+.sensorweb_client_mainLayout {
+  background-color: #F2F2F2;
+  border: 1px solid #0C374C;
+  margin: 0px;
+  padding: 0px;
+}
+.sensorweb_client_stationPicker {
+  background-color: #EFEFEF;
+}
+.sensorweb_client_controlLabel {
+  /*padding-top: 3px;*/
+
+  font-size: 8pt;
+  color: #25408F;
+}
+.sensorweb_client_legendAddBox {
+  border: 1px solid black;
+  margin-bottom: 5px;
+}
+.sensorweb_client_legendAddBoxLabel {
+  font-size: 11pt;
+}
+.sensorweb_client_topButtons {
+  padding: 0px 0px 0px 8px;
 }

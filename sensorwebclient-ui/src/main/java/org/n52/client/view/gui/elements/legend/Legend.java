@@ -80,6 +80,7 @@ public class Legend extends VLayout {
 
     public Legend(String id) {
         this.elemID = id;
+        setStyleName("sensorweb_client_legend");
         this.controller = new LegendController(this);
 
         generateLegend();
@@ -137,7 +138,6 @@ public class Legend extends VLayout {
         setMinWidth(220);
         // setOverflow(Overflow.CLIP_H);
         
-        setStyleName("sensorweb_client_legendArea");
         this.topButtons = new HLayout();
         this.topButtons.setTabIndex( -1);
         this.topButtons.setHeight(1);

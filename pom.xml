@@ -490,6 +490,15 @@
 						<!-- output to src ==> clean output dir for minify plugin -->
 						<outputDirectory>src/main/webapp/css</outputDirectory>
 					</configuration>
+                    <executions>
+                        <execution>
+                            <id>less-compile</id>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
 				</plugin>
 
 				<plugin>
@@ -526,6 +535,19 @@
 										<ignore />
 									</action>
 								</pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.mojo</groupId>
+                                        <artifactId>lesscss-maven-plugin</artifactId>
+                                        <versionRange>[1.0-beta-3,)</versionRange>
+                                        <goals>
+                                            <goal>compile</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
