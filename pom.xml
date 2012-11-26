@@ -427,6 +427,7 @@
 					<version>1.9.0</version>
 					<configuration>
 						<header>misc/52N_license.txt</header>
+						<aggregate>true</aggregate>
 						<includes>
 							<include>**/*.java</include>
 						</includes>

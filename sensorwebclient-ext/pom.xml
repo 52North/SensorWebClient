@@ -39,13 +39,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
 			</plugin>
-			<plugin>
-				<groupId>com.mycila.maven-license-plugin</groupId>
-				<artifactId>maven-license-plugin</artifactId>
-				<configuration>
-					<header>../misc/52N_license.txt</header>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 
