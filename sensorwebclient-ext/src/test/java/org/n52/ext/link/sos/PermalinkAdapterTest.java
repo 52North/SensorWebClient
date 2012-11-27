@@ -32,7 +32,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.ext.link.AccessLinkFactory;
-import org.n52.ext.link.sos.PermalinkAdapter;
+import org.n52.ext.link.sos.PermalinkParser;
 import org.n52.ext.link.sos.TimeSeriesParameters;
 
 public class PermalinkAdapterTest {
@@ -41,27 +41,27 @@ public class PermalinkAdapterTest {
 	
 	private AccessLinkFactory permalinkGenerator;
 
-	private PermalinkAdapter permalinkAdapter;
+	private PermalinkParser permalinkParser;
 
 	private List<TimeSeriesParameters> addedTimeSeries;
 
 	@Before
 	public void setUp() throws Exception {
-		this.permalinkGenerator = testUtil.getPermalinkGenerator();
+		permalinkGenerator = testUtil.getPermalinkGenerator();
 		String permalink = permalinkGenerator.createAccessURL(BASE_URL);
-		this.permalinkAdapter = new PermalinkAdapter(permalink);
-		this.addedTimeSeries = testUtil.getAddedTimeSeriesParameters();
+		permalinkParser = new PermalinkParser(permalink);
+		addedTimeSeries = testUtil.getAddedTimeSeriesParameters();
 	}
 	
 	@Test
 	public void testCreatingWithEmptyQueryString() {
-	    assertNotNull(new PermalinkAdapter("http://foobar.de/?"));
-        assertNotNull(new PermalinkAdapter("http://foobar.de/"));
+	    assertNotNull(new PermalinkParser("http://foobar.de/?"));
+        assertNotNull(new PermalinkParser("http://foobar.de/"));
 	}
 	
 	@Test
 	public void testGetServices() {
-		Collection<String> parsedServices = permalinkAdapter.getServices();
+		Collection<String> parsedServices = permalinkParser.getServices();
 		for (TimeSeriesParameters timeSeries : addedTimeSeries) {
 			String service = timeSeries.getService();
 			assertTrue("Service not found: " + service, parsedServices.contains(service));
@@ -70,7 +70,7 @@ public class PermalinkAdapterTest {
 	
 	@Test
     public void testGetServiceVersions() {
-        Collection<String> parsedVersions = permalinkAdapter.getVersions();
+        Collection<String> parsedVersions = permalinkParser.getVersions();
         for (TimeSeriesParameters timeSeries : addedTimeSeries) {
             // TODO add versions test
         }
@@ -78,7 +78,7 @@ public class PermalinkAdapterTest {
 
 	@Test
 	public void testGetOfferings() {
-		Collection<String> parsedOfferings = permalinkAdapter.getOfferings();
+		Collection<String> parsedOfferings = permalinkParser.getOfferings();
 		for (TimeSeriesParameters timeSeries : addedTimeSeries) {
 			String offering = timeSeries.getOffering();
 			assertTrue("Offering not found: " + offering, parsedOfferings.contains(offering));
@@ -87,7 +87,7 @@ public class PermalinkAdapterTest {
 
 	@Test
 	public void testGetProcedures() {
-		Collection<String> parsedProcedures = permalinkAdapter.getProcedures();
+		Collection<String> parsedProcedures = permalinkParser.getProcedures();
 		for (TimeSeriesParameters timeSeries : addedTimeSeries) {
 			String procedure = timeSeries.getProcedure();
 			assertTrue("Procedure not found:" + procedure, parsedProcedures.contains(procedure));
@@ -96,7 +96,7 @@ public class PermalinkAdapterTest {
 
 	@Test
 	public void testGetPhenomenons() {
-		Collection<String> parsedPhenomenons = permalinkAdapter.getPhenomenons();
+		Collection<String> parsedPhenomenons = permalinkParser.getPhenomenons();
 		for (TimeSeriesParameters timeSeries : addedTimeSeries) {
 			String phenomenon = timeSeries.getPhenomenon();
 			assertTrue("Phenomenon not found: " + phenomenon, parsedPhenomenons.contains(phenomenon));
@@ -105,7 +105,7 @@ public class PermalinkAdapterTest {
 
 	@Test
 	public void testGetFeatures() {
-		Collection<String> parsedFeatures = permalinkAdapter.getFeatures();
+		Collection<String> parsedFeatures = permalinkParser.getFeatures();
 		for (TimeSeriesParameters timeSeries : addedTimeSeries) {
 			String feature = timeSeries.getFeature();
 			assertTrue("Station not found: " + feature, parsedFeatures.contains(feature));

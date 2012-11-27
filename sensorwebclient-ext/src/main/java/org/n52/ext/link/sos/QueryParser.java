@@ -93,14 +93,12 @@ public class QueryParser {
         value = value.replace("%21", "!");
         value = value.replace("%23", "#");
         value = value.replace("%24", "$");
-        value = value.replace("%25", "%");
         value = value.replace("%26", "&");
         value = value.replace("%27", "'");
         value = value.replace("%28", "(");
         value = value.replace("%29", ")");
         value = value.replace("%2C", ",");
-        value = value.replace("%2F", ",");
-        value = value.replace("%2C", "/");
+        value = value.replace("%2F", "/");
         value = value.replace("%3A", ":");
         value = value.replace("%3B", ";");
         value = value.replace("%3D", "=");
@@ -108,9 +106,10 @@ public class QueryParser {
         value = value.replace("%40", "@");
         value = value.replace("%5B", "[");
         value = value.replace("%5D", "]");
-        // for the last two, the order is important
+        // for the last three, the order is important
         value = value.replace("+", " ");
         value = value.replace("%2B", "+");
+        value = value.replace("%25", "%");
         return value;
     }
 

@@ -38,6 +38,34 @@ class QueryBuilder {
     static final String COMPRESSION_PARAMETER = "compr";
 
     private StringBuilder queryBuilder = new StringBuilder();
+    
+    String encodeValue(String value) {
+        // ! # $ % & ' ( ) + , / : ; = ? @ [ ]
+        // %21 %23 %24 %25 %26 %27 %28 %29 %2B %2C %2F %3A %3B %3D %3F %40 %5B %5D
+        
+        // for the first three, the order is important
+        value = value.replace("%", "%25");
+        value = value.replace("+", "%2B");
+        value = value.replace(" ", "+");
+        
+        value = value.replace("!", "%21");
+        value = value.replace("#", "%23");
+        value = value.replace("$", "%24");
+        value = value.replace("&", "%26");
+        value = value.replace("'", "%27");
+        value = value.replace("(", "%28");
+        value = value.replace(")", "%29");
+        value = value.replace(",", "%2C");
+        value = value.replace("/", "%2F");
+        value = value.replace(":", "%3A");
+        value = value.replace(";", "%3B");
+        value = value.replace("=", "%3D");
+        value = value.replace("?", "%3F");
+        value = value.replace("@", "%40");
+        value = value.replace("[", "%5B");
+        value = value.replace("]", "%5D");
+        return value;
+    }
 
     public void removeLastComma(StringBuilder builder) {
         builder.deleteCharAt(builder.length() - 1);
@@ -48,23 +76,12 @@ class QueryBuilder {
             queryBuilder.append("&");
             queryBuilder.append("begin");
             queryBuilder.append("=");
-            queryBuilder.append(timeRange.getStart());
+            queryBuilder.append(encodeValue(timeRange.getStart()));
             queryBuilder.append("&");
             queryBuilder.append("end");
             queryBuilder.append("=");
-            queryBuilder.append(timeRange.getEnd());
+            queryBuilder.append(encodeValue(timeRange.getEnd()));
         }
-    }
-
-    void appendParameters(String key, Iterable<String> values) {
-        queryBuilder.append(key);
-        queryBuilder.append("=");
-
-        for (String value : values) {
-            queryBuilder.append(value);
-            queryBuilder.append(",");
-        }
-        removeLastComma(queryBuilder);
     }
 
     void appendCompressedParameters(String key, Iterable<String> values) {
@@ -89,7 +106,7 @@ class QueryBuilder {
         this.queryBuilder.append(key);
         for (String value : values) {
             if ( !duplicateUsageMap.containsKey(value)) {
-                this.queryBuilder.append(value);
+                this.queryBuilder.append(encodeValue(value));
             }
             else {
                 // handle duplicate
@@ -150,8 +167,15 @@ class QueryBuilder {
         return queryBuilder.length();
     }
 
-    public StringBuilder append(String str) {
-        return queryBuilder.append(str);
+    void appendParameters(String key, Iterable<String> values) {
+        queryBuilder.append(key);
+        queryBuilder.append("=");
+    
+        for (String value : values) {
+            queryBuilder.append(value);
+            queryBuilder.append(",");
+        }
+        removeLastComma(queryBuilder);
     }
 
     public void appendCompressedParameter() {

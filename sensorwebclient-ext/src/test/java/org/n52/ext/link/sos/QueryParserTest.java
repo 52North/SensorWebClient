@@ -38,14 +38,17 @@ import org.junit.Test;
 import org.n52.ext.link.sos.QueryParser;
 import org.n52.ext.link.sos.TimeRange;
 
-public class PermalinkParserTest {
+public class QueryParserTest {
     
     private static final String ENCODED_SOS_URL = "http%3A//sensorweb.demo.52north.org%3A80/PegelOnlineSOSv2.1/sos";
     
     private static String DECODED_SOS_URL;
+
+    private QueryParser permalinkParser;
     
     @Before
     public void setUp() throws Exception {
+        permalinkParser = new QueryParser(null, false);
         DECODED_SOS_URL = URLDecoder.decode(ENCODED_SOS_URL, Charset.forName("utf-8").name());
     }
 
@@ -57,7 +60,6 @@ public class PermalinkParserTest {
     
     @Test
     public void testNonExceptionsThrownWhenCreatedWithNullValues() {
-        QueryParser permalinkParser = new QueryParser(null, false);
         assertTrue(permalinkParser.parseOfferings().isEmpty());
         assertTrue(permalinkParser.parsePhenomenons().isEmpty());
         assertTrue(permalinkParser.parseProcedures().isEmpty());
@@ -68,7 +70,6 @@ public class PermalinkParserTest {
     @Test
     public void testParseValidKvps() {
         String validQuery = "single=blah&multiple=value1,vlaue2";
-        QueryParser permalinkParser = new QueryParser(null, false);
         Map<String, String> kvps = permalinkParser.parseKvps(validQuery);
         assertTrue("map does not contain value 'single'.", kvps.containsKey("SINGLE"));
         assertTrue("map does not contain value 'multiple'.", kvps.containsKey("MULTIPLE"));
@@ -77,7 +78,6 @@ public class PermalinkParserTest {
     @Test
     public void testParseInvalidKvps() {
         String invalidQuery = "single&multiple=value1,vlaue2";
-        QueryParser permalinkParser = new QueryParser(null, false);
         Map<String, String> kvps = permalinkParser.parseKvps(invalidQuery);
         assertFalse("map does not contain value 'single'.", kvps.containsKey("SINGLE"));
         assertTrue("map does not contain value 'multiple'.", kvps.containsKey("MULTIPLE"));
@@ -85,7 +85,6 @@ public class PermalinkParserTest {
     
     @Test
     public void testDecodeQuery() {
-        QueryParser permalinkParser = new QueryParser(null, false);
         assertEquals("Unexpected decoded URL.", DECODED_SOS_URL, permalinkParser.decodeValue(ENCODED_SOS_URL));
         String decodedCharacters = "! # $ % & ' ( ) * + , / : ; = ? @ [ ]";
         // check at http://www.ulimatbach.de/links/url_decoder.html
@@ -120,8 +119,8 @@ public class PermalinkParserTest {
     public void testParseServiceKvp() {
         StringBuilder validQuery = new StringBuilder();
         validQuery.append("services=").append(ENCODED_SOS_URL);
-        QueryParser permalinkParser = new QueryParser(validQuery.toString(), false);
-        Collection<String> parsedServices = permalinkParser.parseServices();
+        QueryParser parser = new QueryParser(validQuery.toString(), false);
+        Collection<String> parsedServices = parser.parseServices();
         assertTrue("Invalid size: " + parsedServices.size(), parsedServices.size() == 1);
         assertTrue("URL could not be parsed.", parsedServices.contains(DECODED_SOS_URL));
     }
@@ -130,8 +129,8 @@ public class PermalinkParserTest {
     public void testParseVersionKvp() {
         StringBuilder validQuery = new StringBuilder();
         validQuery.append("versions=").append("2.0.0");
-        QueryParser permalinkParser = new QueryParser(validQuery.toString(), false);
-        Collection<String> parsedVersions = permalinkParser.parseVersions();
+        QueryParser parser = new QueryParser(validQuery.toString(), false);
+        Collection<String> parsedVersions = parser.parseVersions();
         assertTrue("Invalid size: " + parsedVersions.size(), parsedVersions.size() == 1);
         assertTrue("Versions could not be parsed.", parsedVersions.contains("2.0.0"));
     }
@@ -140,8 +139,8 @@ public class PermalinkParserTest {
     public void testParseOfferingKvp() {
         StringBuilder validQuery = new StringBuilder();
         validQuery.append("offerings=").append("WASSERSTAND_ROHDATEN");
-        QueryParser permalinkParser = new QueryParser(validQuery.toString(), false);
-        Collection<String> parsedOfferings = permalinkParser.parseOfferings();
+        QueryParser parser = new QueryParser(validQuery.toString(), false);
+        Collection<String> parsedOfferings = parser.parseOfferings();
         assertTrue("Invalid size: " + parsedOfferings.size(), parsedOfferings.size() == 1);
         assertTrue("Offerings could not be parsed.", parsedOfferings.contains("WASSERSTAND_ROHDATEN"));
     }
@@ -150,8 +149,8 @@ public class PermalinkParserTest {
     public void testParseStationKvp() {
         StringBuilder validQuery = new StringBuilder();
         validQuery.append("features=").append("Heldra_41700105");
-        QueryParser permalinkParser = new QueryParser(validQuery.toString(), false);
-        Collection<String> parsedStations = permalinkParser.parseFeatures();
+        QueryParser parser = new QueryParser(validQuery.toString(), false);
+        Collection<String> parsedStations = parser.parseFeatures();
         assertTrue("Invalid size: " + parsedStations.size(), parsedStations.size() == 1);
         assertTrue("Stations could not be parsed.", parsedStations.contains("Heldra_41700105"));
     }
@@ -160,8 +159,8 @@ public class PermalinkParserTest {
     public void testParsePhenomenonsKvp() {
         StringBuilder validQuery = new StringBuilder();
         validQuery.append("phenomenons=").append("Wasserstand");
-        QueryParser permalinkParser = new QueryParser(validQuery.toString(), false);
-        Collection<String> parsedPhenomenons = permalinkParser.parsePhenomenons();
+        QueryParser parser = new QueryParser(validQuery.toString(), false);
+        Collection<String> parsedPhenomenons = parser.parsePhenomenons();
         assertTrue("Invalid size: " + parsedPhenomenons.size(), parsedPhenomenons.size() == 1);
         assertTrue("Stations could not be parsed.", parsedPhenomenons.contains("Wasserstand"));
     }
@@ -170,8 +169,8 @@ public class PermalinkParserTest {
     public void testParseProceduresKvp() {
         StringBuilder validQuery = new StringBuilder();
         validQuery.append("procedures=").append("Wasserstand-Heldra_41700105");
-        QueryParser permalinkParser = new QueryParser(validQuery.toString(), false);
-        Collection<String> parsedProcedures = permalinkParser.parseProcedures();
+        QueryParser parser = new QueryParser(validQuery.toString(), false);
+        Collection<String> parsedProcedures = parser.parseProcedures();
         assertTrue("Invalid size: " + parsedProcedures.size(), parsedProcedures.size() == 1);
         assertTrue("Stations could not be parsed.", parsedProcedures.contains("Wasserstand-Heldra_41700105"));
     }
@@ -186,8 +185,8 @@ public class PermalinkParserTest {
         validQuery.append("end");
         validQuery.append("=");
         validQuery.append("2014-10-01T12:01:00");
-        QueryParser permalinkParser = new QueryParser(validQuery.toString(), false);
-        TimeRange parsedTimeRange = permalinkParser.parseTimeRange();
+        QueryParser parser = new QueryParser(validQuery.toString(), false);
+        TimeRange parsedTimeRange = parser.parseTimeRange();
         assertEquals("2012-10-01T12:01:00", parsedTimeRange.getStart());
         assertEquals("2014-10-01T12:01:00", parsedTimeRange.getEnd());
     }

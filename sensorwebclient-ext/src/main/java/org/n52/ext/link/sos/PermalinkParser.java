@@ -43,12 +43,12 @@ import java.util.Collection;
  * <li>{@link PermalinkParameter.END}</li>
  * </ul>
  */
-public class PermalinkAdapter {
+public class PermalinkParser {
 
     private QueryParser parser;
     private boolean compressed;
 
-    public PermalinkAdapter(String permalink) {
+    public PermalinkParser(String permalink) {
         this.compressed = isCompressed(permalink);
         if (permalink.contains("?")) {
             String queryString = permalink.substring(permalink.indexOf('?') + 1);
