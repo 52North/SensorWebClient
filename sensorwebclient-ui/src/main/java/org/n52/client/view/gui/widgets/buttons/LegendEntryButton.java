@@ -23,7 +23,7 @@
  */
 package org.n52.client.view.gui.widgets.buttons;
 
-import org.n52.client.model.data.representations.interfaces.DataWrapper;
+import org.n52.client.model.data.representations.interfaces.LegendData;
 import org.n52.client.view.View;
 import org.n52.client.view.gui.elements.interfaces.LegendElement;
 import org.n52.client.view.gui.elements.legend.LegendEntryTimeSeries;
@@ -38,7 +38,7 @@ import com.smartgwt.client.types.Cursor;
 public class LegendEntryButton extends Button {
 
     /** The dw. */
-    private DataWrapper dw;
+    private LegendData dw;
 
     /** The le. */
     private LegendElement le;
@@ -71,7 +71,7 @@ public class LegendEntryButton extends Button {
     }
     
     public LegendEntryButton(String icon, String title, String extendedTooltip,
-            DataWrapper dw, LegendEntryTimeSeries le) {
+            LegendData dw, LegendEntryTimeSeries le) {
 
         this.dw = dw;
         this.le = le;
@@ -116,7 +116,7 @@ public class LegendEntryButton extends Button {
      * 
      * @return the data wrapper
      */
-    public DataWrapper getDataWrapper() {
+    public LegendData getDataWrapper() {
         return this.dw;
     }
 

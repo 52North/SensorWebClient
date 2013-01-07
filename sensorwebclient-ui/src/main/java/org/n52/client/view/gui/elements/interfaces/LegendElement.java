@@ -23,7 +23,7 @@
  */
 package org.n52.client.view.gui.elements.interfaces;
 
-import org.n52.client.model.data.representations.interfaces.DataWrapper;
+import org.n52.client.model.data.representations.interfaces.LegendData;
 
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.Layout;
@@ -34,7 +34,7 @@ public interface LegendElement  {
 
     public String getElemId();
 
-    public DataWrapper getDataWrapper();
+    public LegendData getDataWrapper();
 
     public void updateLayout();
 

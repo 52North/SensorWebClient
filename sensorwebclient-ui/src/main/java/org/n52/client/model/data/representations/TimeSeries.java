@@ -27,7 +27,7 @@ package org.n52.client.model.data.representations;
 import java.util.HashMap;
 
 import org.n52.client.control.ClientUtils;
-import org.n52.client.model.data.representations.interfaces.DataWrapper;
+import org.n52.client.model.data.representations.interfaces.LegendData;
 import org.n52.client.util.exceptions.DataparsingException;
 import org.n52.client.view.gui.elements.interfaces.LegendElement;
 import org.n52.client.view.gui.elements.legend.LegendEntryTimeSeries;
@@ -37,7 +37,7 @@ import org.n52.shared.serializable.pojos.Axis;
 import org.n52.shared.serializable.pojos.TimeSeriesProperties;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 
-public class TimeSeries implements DataWrapper {
+public class TimeSeries implements LegendData {
 
 	public static final String GRAPH_STYLE_GAUGELINE = "1";
 

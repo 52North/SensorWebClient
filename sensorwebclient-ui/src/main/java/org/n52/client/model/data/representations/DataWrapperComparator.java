@@ -25,7 +25,7 @@ package org.n52.client.model.data.representations;
 
 import java.util.Comparator;
 
-import org.n52.client.model.data.representations.interfaces.DataWrapper;
+import org.n52.client.model.data.representations.interfaces.LegendData;
 
 /**
  * The Class DataWrapperComparator.
@@ -35,8 +35,8 @@ import org.n52.client.model.data.representations.interfaces.DataWrapper;
 public class DataWrapperComparator implements Comparator<Object> {
 
     public int compare(Object arg0, Object arg1) {
-        DataWrapper ts1 = (DataWrapper) arg0;
-        DataWrapper ts2 = (DataWrapper) arg1;
+        LegendData ts1 = (LegendData) arg0;
+        LegendData ts2 = (LegendData) arg1;
 
         return new Integer(ts1.getOrdering()).compareTo(new Integer(ts2.getOrdering()));
     }

@@ -39,7 +39,7 @@ import org.n52.client.eventBus.EventBus;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
 import org.n52.client.model.data.dataManagers.TimeManager;
 import org.n52.client.model.data.representations.TimeSeries;
-import org.n52.client.model.data.representations.interfaces.DataWrapper;
+import org.n52.client.model.data.representations.interfaces.LegendData;
 import org.n52.client.sos.event.ChangeTimeSeriesStyleEvent;
 import org.n52.client.sos.event.DatesChangedEvent;
 import org.n52.client.sos.event.LegendElementSelectedEvent;
@@ -955,7 +955,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		return this.timeseriesID;
 	}
 
-	public DataWrapper getDataWrapper() {
+	public LegendData getDataWrapper() {
 		return DataStoreTimeSeriesImpl.getInst().getDataItem(this.timeseriesID);
 	}
 

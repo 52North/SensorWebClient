@@ -30,7 +30,7 @@ import org.n52.client.view.gui.elements.interfaces.LegendElement;
  * 
  * @author <a href="mailto:f.bache@52north.de">Felix Bache</a>
  */
-public interface DataWrapper {
+public interface LegendData {
 
     /**
      * Gets the iD.
