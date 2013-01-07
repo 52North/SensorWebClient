@@ -35,7 +35,7 @@ import org.eesgmbh.gimv.client.event.LoadImageDataEvent;
 import org.eesgmbh.gimv.client.event.SetDomainBoundsEvent;
 import org.eesgmbh.gimv.client.event.SetDomainBoundsEventHandler;
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.model.data.representations.DataWrapperComparator;
+import org.n52.client.model.data.representations.LegendDataComparator;
 import org.n52.client.model.data.representations.TimeSeries;
 import org.n52.client.sos.event.ChangeTimeSeriesStyleEvent;
 import org.n52.client.sos.event.DatesChangedEvent;
@@ -94,7 +94,7 @@ public class DataStoreTimeSeriesImpl extends ADataStore<TimeSeries> {
 
     public TimeSeries[] getTimeSeriesSorted() {
         TimeSeries[] timeSeries = new TimeSeries[this.dataItems.size()];
-        Arrays.sort(getDataAsArray(timeSeries), new DataWrapperComparator());
+        Arrays.sort(getDataAsArray(timeSeries), new LegendDataComparator());
         return timeSeries;
     }
 

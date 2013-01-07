@@ -27,12 +27,7 @@ import java.util.Comparator;
 
 import org.n52.client.view.gui.elements.legend.LegendData;
 
-/**
- * The Class DataWrapperComparator.
- * 
- * @author f_bach02
- */
-public class DataWrapperComparator implements Comparator<Object> {
+public class LegendDataComparator implements Comparator<Object> {
 
     public int compare(Object arg0, Object arg1) {
         LegendData ts1 = (LegendData) arg0;
