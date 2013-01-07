@@ -56,7 +56,6 @@ public class Phenomenon extends ObservationParameter implements Serializable {
 
     private String unitOfMeasure;
 
-    @SuppressWarnings("unused")
     private Phenomenon() {
         // for serialization
     }

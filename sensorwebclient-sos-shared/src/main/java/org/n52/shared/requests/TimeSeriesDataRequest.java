@@ -29,7 +29,6 @@ public class TimeSeriesDataRequest extends RepresentationRequest {
 
     private static final long serialVersionUID = 2993975401908052490L;
 
-    @SuppressWarnings("unused")
     private TimeSeriesDataRequest() {
         super();
     }

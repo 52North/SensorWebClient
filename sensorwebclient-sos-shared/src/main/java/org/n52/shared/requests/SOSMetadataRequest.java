@@ -31,7 +31,6 @@ public class SOSMetadataRequest implements Serializable {
     
     private String url;
 
-    @SuppressWarnings("unused")
     private SOSMetadataRequest() {
         // serializable for GWT needs empty default constructor
     }

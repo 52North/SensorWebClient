@@ -61,7 +61,6 @@ public class ServerException extends MetaException implements Serializable {
     /**
      * Instantiates a new ServerException
      */
-    @SuppressWarnings("unused")
     private ServerException() {
         // serializable for GWT needs empty default constructor
     }

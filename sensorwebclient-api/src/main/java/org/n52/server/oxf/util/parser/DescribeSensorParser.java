@@ -544,7 +544,6 @@ public class DescribeSensorParser {
      *        the sensorML document
      * @return the sensorML's characteristics modeled either in SensorML root or within Member/System
      */
-    @SuppressWarnings("unused")
     private Characteristics[] getSensorMLCharacteristics(SensorML sml) {
         // stub method for eventual later use
         Characteristics[] characteristicsArray = sml.getCharacteristicsArray();
@@ -567,7 +566,6 @@ public class DescribeSensorParser {
      *        the sensorML document
      * @return the sensorML's classifications modeled either in SensorML root or within Member/System
      */
-    @SuppressWarnings("unused")
     private Classification[] getSensorMLClassifications(SensorML sml) {
         // stub method for eventual later use
         Classification[] classificationArray = sml.getClassificationArray();

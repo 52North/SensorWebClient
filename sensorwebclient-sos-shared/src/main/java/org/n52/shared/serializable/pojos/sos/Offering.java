@@ -57,7 +57,6 @@ public class Offering extends ObservationParameter implements Serializable {
 
     // TODO store responseFormat as it may vary for each offering
 
-    @SuppressWarnings("unused")
     private Offering() {
         // for serialization
     }

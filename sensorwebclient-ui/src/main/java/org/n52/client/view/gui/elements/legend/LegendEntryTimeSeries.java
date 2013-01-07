@@ -114,7 +114,6 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 
 	private Label titleLabel;
 
-	@SuppressWarnings("unused")
 	private String width;
 
 	private String height;
@@ -375,7 +374,6 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		return tools;
 	}
 
-	@SuppressWarnings("unused")
 	private ImageButton createJumpToLastValueButton() {
 		final ImageButton jumpLast = new ImageButton("jumpLast",
 				"../img/icons/control_end_blue.png",
@@ -405,7 +403,6 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		return jumpLast;
 	}
 
-	@SuppressWarnings("unused")
 	private ImageButton createJumpToFirstValueButton() {
 		ImageButton jumpFirst = new ImageButton("jumpFirst",
 				"../img/icons/control_start_blue.png",
@@ -437,7 +434,6 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		return jumpFirst;
 	}
 
-	@SuppressWarnings("unused")
 	private ImageButton createPDFExportButton() {
 		ImageButton exportPDF = new ImageButton("exportPDF",
 				"../img/icons/page_white_acrobat.png",
@@ -456,7 +452,6 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		return exportPDF;
 	}
 
-	@SuppressWarnings("unused")
 	private ImageButton createXLSExportButton() {
 		ImageButton exportXLS = new ImageButton(
 				"exportXLS", "../img/icons/page_white_excel.png", //$NON-NLS-2$
@@ -475,7 +470,6 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		return exportXLS;
 	}
 
-	@SuppressWarnings("unused")
 	private ImageButton createCSVExportButton() {
 		ImageButton exportCSV = new ImageButton(
 				"exportCSV", "../img/icons/table.png", //$NON-NLS-2$
@@ -969,7 +963,6 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		// TODO not needed?
 	}
 
-	@SuppressWarnings("unused")
 	private HLayout createOrderEntryTools() {
 		HLayout ordButt = new HLayout();
 		ordButt.setTabIndex(-1);

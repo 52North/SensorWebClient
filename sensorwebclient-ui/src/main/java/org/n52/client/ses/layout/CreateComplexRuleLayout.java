@@ -221,7 +221,6 @@ public class CreateComplexRuleLayout extends Layout {
         this.createButtonItem = new ButtonItem();
         this.createButtonItem.setTitle(i18n.create());
         this.createButtonItem.addClickHandler(new ClickHandler() {
-            @SuppressWarnings("synthetic-access")
             public void onClick(ClickEvent event) {
                 if (CreateComplexRuleLayout.this.form.validate(false) 
                         && CreateComplexRuleLayout.this.form2.validate(false)) {

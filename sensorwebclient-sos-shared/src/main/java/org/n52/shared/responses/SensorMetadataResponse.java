@@ -33,7 +33,6 @@ public class SensorMetadataResponse implements Serializable {
     
     private TimeSeriesProperties props;
 
-    @SuppressWarnings("unused")
     private SensorMetadataResponse() {
         // serializable for GWT needs empty default constructor
     }

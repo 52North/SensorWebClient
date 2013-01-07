@@ -35,7 +35,6 @@ public class ReferenceValue implements Serializable {
     private boolean show = false;
     private String ID;
     
-    @SuppressWarnings("unused")
     private ReferenceValue() {
         // for serialization
     }

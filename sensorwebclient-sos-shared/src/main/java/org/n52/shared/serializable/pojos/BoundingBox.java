@@ -38,7 +38,6 @@ public class BoundingBox implements Serializable {
 
     private EastingNorthing ur;
 
-    @SuppressWarnings("unused")
 	private BoundingBox() {
         // client requires to be default instantiable
     }

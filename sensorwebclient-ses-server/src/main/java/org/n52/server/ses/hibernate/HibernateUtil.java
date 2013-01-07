@@ -148,7 +148,6 @@ public class HibernateUtil {
      *            the role
      * @return true, if successful
      */
-    @SuppressWarnings("unchecked")
     public static boolean changeUserRole(int userID, UserRole role) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -170,7 +169,6 @@ public class HibernateUtil {
      * @param status
      * @return {@link Boolean}
      */
-    @SuppressWarnings("unchecked")
     public static boolean changeUserActivation(int userID, boolean status) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -193,7 +191,6 @@ public class HibernateUtil {
      *            the user parameterId
      * @return the user by parameterId
      */
-    @SuppressWarnings("unchecked")
     public static User getUserByID(int userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -211,7 +208,6 @@ public class HibernateUtil {
      *            the user register ID
      * @return the user by register ID
      */
-    @SuppressWarnings("unchecked")
     public static User getUserByRegisterID(String registerID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -247,7 +243,6 @@ public class HibernateUtil {
      *            the user parameterId
      * @return {@link Boolean}
      */
-    @SuppressWarnings("unchecked")
     public static boolean deleteUserByID(int userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -269,7 +264,6 @@ public class HibernateUtil {
      *            the user name
      * @return the user by name
      */
-    @SuppressWarnings("unchecked")
     public static User getUserByName(String userName) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -288,7 +282,6 @@ public class HibernateUtil {
      * 
      * @return list of all users
      */
-    @SuppressWarnings("unchecked")
     public static List<User> getAllUsers() {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -341,7 +334,6 @@ public class HibernateUtil {
      *            the user parameterId
      * @return the list of basic rules
      */
-    @SuppressWarnings("unchecked")
     public static List<BasicRule> getAllOwnBasicRules(String userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -358,7 +350,6 @@ public class HibernateUtil {
      *            the user parameterId
      * @return the list of complex rules
      */
-    @SuppressWarnings("unchecked")
     public static List<ComplexRule> getAllOwnComplexRules(String userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -372,7 +363,6 @@ public class HibernateUtil {
      * @param ruleName
      * @return {@link BasicRule}
      */
-    @SuppressWarnings("unchecked")
     public static BasicRule getBasicRuleByName(String ruleName) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -390,7 +380,6 @@ public class HibernateUtil {
      * @param ruleName
      * @return {@link ComplexRule}
      */
-    @SuppressWarnings("unchecked")
     public static ComplexRule getComplexRuleByName(String ruleName) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -417,7 +406,6 @@ public class HibernateUtil {
      * @param userID
      * @return {@link List}
      */
-    @SuppressWarnings("unchecked")
     public static List<BasicRule> getAllOtherBasicRules(String userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -495,7 +483,6 @@ public class HibernateUtil {
      * @param userID
      * @return {@link List}
      */
-    @SuppressWarnings("unchecked")
     public static List<ComplexRule> getAllOtherComplexRules(String userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -521,7 +508,6 @@ public class HibernateUtil {
     /**
      * @return {@link List}
      */
-    @SuppressWarnings("unchecked")
     public static List<Sensor> getSensors() {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -553,7 +539,6 @@ public class HibernateUtil {
     /**
      * @return {@link List}
      */
-    @SuppressWarnings("unchecked")
     public static List<Sensor> getActiveSensors() {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -569,7 +554,6 @@ public class HibernateUtil {
      * @param newStatus
      * @return {@link Boolean}
      */
-    @SuppressWarnings("unchecked")
     public static boolean updateSensor(String sensorID, boolean newStatus) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -615,7 +599,6 @@ public class HibernateUtil {
     /**
      * @return {@link List}
      */
-    @SuppressWarnings("unchecked")
     public static List<BasicRule> getAllBasicRules() {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -630,7 +613,6 @@ public class HibernateUtil {
      * 
      * @return {@link List}
      */
-    @SuppressWarnings("unchecked")
     public static List<ComplexRule> getAllComplexRules() {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -648,7 +630,6 @@ public class HibernateUtil {
      * @param userID 
      * @return {@link String}
      */
-    @SuppressWarnings("unchecked")
     public static String getSubscriptionID(int ruleID, String medium, String format, int userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -665,7 +646,6 @@ public class HibernateUtil {
      * @param newStatus if true --> increment; false = decrement
      * @return {@link Boolean}
      */
-    @SuppressWarnings("unchecked")
     public static boolean updateSensorCount(String sensorID, boolean newStatus) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -716,7 +696,6 @@ public class HibernateUtil {
      * @param sensorID
      * @return {@link Boolean}
      */
-    @SuppressWarnings("unchecked")
     public static boolean deleteSensorByID(String sensorID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -739,7 +718,6 @@ public class HibernateUtil {
      * @return {@link List}
      * 
      */
-    @SuppressWarnings("unchecked")
     public static List<BasicRule> getAllPublishedBR() {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -753,7 +731,6 @@ public class HibernateUtil {
      * @return {@link List}
      * 
      */
-    @SuppressWarnings("unchecked")
     public static List<ComplexRule> getAllPublishedCR() {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -768,7 +745,6 @@ public class HibernateUtil {
      * @param ruleID
      * @return is rule subscribed to user parameterId
      */
-    @SuppressWarnings("unchecked")
     public static boolean isSubscribed(String id, int ruleID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -786,7 +762,6 @@ public class HibernateUtil {
      * @param userID
      * @return {@link Boolean}
      */
-    @SuppressWarnings("unchecked")
     public static boolean deleteSubscription(String subscriptionID, String userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -806,7 +781,6 @@ public class HibernateUtil {
      * @param ruleName
      * @return {@link Boolean}
      */
-    @SuppressWarnings("unchecked")
     public static boolean existsBasicRuleName(String ruleName) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -824,7 +798,6 @@ public class HibernateUtil {
      * @param ruleName
      * @return {@link Boolean}
      */
-    @SuppressWarnings("unchecked")
     public static boolean existsComplexRuleName(String ruleName) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -841,7 +814,6 @@ public class HibernateUtil {
      * @param userID
      * @return {@link Boolean}
      */
-    @SuppressWarnings("unchecked")
     public static List<Subscription> getUserSubscriptions(String userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -857,7 +829,6 @@ public class HibernateUtil {
      * @param ruleID
      * @return {@link List}
      */
-    @SuppressWarnings("unchecked")
     public static List<Subscription> getSubscriptionsFromRuleID(int ruleID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -872,7 +843,6 @@ public class HibernateUtil {
      * @param ruleID
      * @return {@link BasicRule}
      */
-    @SuppressWarnings("unchecked")
     public static BasicRule getBasicRuleByID(int ruleID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -899,7 +869,6 @@ public class HibernateUtil {
      * @param ruleID
      * @return {@link ComplexRule}
      */
-    @SuppressWarnings("unchecked")
     public static ComplexRule getComplexRuleByID(int ruleID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -927,7 +896,6 @@ public class HibernateUtil {
      * @param sensorID
      * @return {@link Boolean}
      */
-    @SuppressWarnings("unchecked")
     public static boolean existsSensor(String sensorID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -945,7 +913,6 @@ public class HibernateUtil {
      * @param userID
      * @return List
      */
-    @SuppressWarnings("unchecked")
     public static List<Subscription> getSubscriptionfromUserID(int userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -959,7 +926,6 @@ public class HibernateUtil {
      * @param userID 
      * @return otherAdminsExists
      */
-    @SuppressWarnings("unchecked")
     public static boolean otherAdminsExist(int userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -975,7 +941,6 @@ public class HibernateUtil {
     /**
      * @return {@link List}
      */
-    @SuppressWarnings("unchecked")
     public static List<User> deleteUnregisteredUser() {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -989,7 +954,6 @@ public class HibernateUtil {
      * @param ruleID
      * @return {@link Boolean}
      */
-    @SuppressWarnings("unchecked")
     public static boolean ruleIsSubscribed(int ruleID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -1006,7 +970,6 @@ public class HibernateUtil {
      * 
      * @return {@link List}
      */
-    @SuppressWarnings("unchecked")
     public static List<Subscription> getAllSubscriptions() {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -1024,7 +987,6 @@ public class HibernateUtil {
      * @param userID 
      * @return true if such subscription already exists
      */
-    @SuppressWarnings("unchecked")
     public static boolean existsSubscription(int ruleID, String medium, String format, int userID){
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -1042,7 +1004,6 @@ public class HibernateUtil {
      * @param ruleID
      * @return true if other subscriptions of this rule exist
      */
-    @SuppressWarnings("unchecked")
     public static boolean existsOtherSubscriptions(int ruleID){
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();

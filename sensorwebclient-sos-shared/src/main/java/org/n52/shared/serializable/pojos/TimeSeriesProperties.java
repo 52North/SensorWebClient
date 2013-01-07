@@ -101,7 +101,6 @@ public class TimeSeriesProperties implements Serializable {
 		this.isHasData = hasData;
 	}
 
-	@SuppressWarnings("unused")
 	private TimeSeriesProperties() {
 		// do nothing
 	}

@@ -128,7 +128,6 @@ public class TimeseriesFactory {
 
         LOGGER.debug("Starting compression");
 
-        @SuppressWarnings("deprecation")
         TimeSeries timeSeries = new TimeSeries(foiID + "___" + obsPropID + "___" + procID, Second.class);
 
         ITimePosition timeArray[] = seriesCollection.getSortedTimeArray();

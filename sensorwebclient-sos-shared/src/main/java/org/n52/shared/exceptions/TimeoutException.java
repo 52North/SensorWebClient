@@ -31,7 +31,6 @@ public class TimeoutException extends MetaException implements Serializable {
 
     private static final long serialVersionUID = 3114489573307632044L;
     
-    @SuppressWarnings("unused")
     private TimeoutException() {
         // serializable for GWT needs empty default constructor
     }

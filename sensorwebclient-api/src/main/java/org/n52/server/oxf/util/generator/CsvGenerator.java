@@ -56,7 +56,6 @@ public class CsvGenerator extends Generator {
     private static final Logger LOGGER = LoggerFactory.getLogger(CsvGenerator.class);
 
     /** The zip. */
-    @SuppressWarnings("unused")
 	private boolean zip;
 
     /**

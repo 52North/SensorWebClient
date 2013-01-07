@@ -54,7 +54,6 @@ public class FeatureOfInterest extends ObservationParameter implements Serializa
 
 	private static final long serialVersionUID = 693946840349140532L;
 
-	@SuppressWarnings("unused")
 	private FeatureOfInterest() {
 		// for serialization
 	}

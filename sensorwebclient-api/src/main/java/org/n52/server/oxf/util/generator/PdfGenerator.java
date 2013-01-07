@@ -280,7 +280,6 @@ public class PdfGenerator extends Generator {
      *            the proc parameterId
      * @return the table type
      */
-    @SuppressWarnings("unused")
 	private TableType buildUpTable(TimeSeriesProperties prop, OXFFeatureCollection obsColl,
             String foiID, String obsPropID, String procID) {
 

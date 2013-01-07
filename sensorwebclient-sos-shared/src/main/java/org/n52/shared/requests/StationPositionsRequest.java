@@ -31,7 +31,6 @@ public class StationPositionsRequest implements Serializable {
     
     private String sosUrl;
 
-    @SuppressWarnings("unused")
     private StationPositionsRequest() {
         // serializable for GWT needs empty default constructor
     }

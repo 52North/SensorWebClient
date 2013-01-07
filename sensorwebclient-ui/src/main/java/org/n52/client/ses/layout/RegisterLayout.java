@@ -191,7 +191,6 @@ public class RegisterLayout extends Layout {
         ButtonItem validateItem = new ButtonItem();
         validateItem.setTitle(i18n.register());
         validateItem.addClickHandler(new ClickHandler() {
-            @SuppressWarnings("synthetic-access")
             public void onClick(ClickEvent event) {
                 RegisterLayout.this.form.validate(true);
 

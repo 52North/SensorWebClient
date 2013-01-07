@@ -49,7 +49,6 @@ public class DesignOptions implements Serializable {
 
     private boolean grid;
 
-    @SuppressWarnings("unused")
     private DesignOptions() {
         // do nothin
     }

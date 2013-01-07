@@ -60,7 +60,6 @@ public class RpcSesRuleServlet extends RemoteServiceServlet implements RpcSesRul
     }
 
     // create basic rule from user inputs
-    @SuppressWarnings("incomplete-switch")
     public synchronized SesClientResponse createBasicRule(Rule rule, boolean edit, String oldRuleName) throws Exception {
         return service.createBasicRule(rule, edit, oldRuleName);
     }

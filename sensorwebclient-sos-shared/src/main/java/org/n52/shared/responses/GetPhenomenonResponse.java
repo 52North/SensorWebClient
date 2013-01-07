@@ -39,7 +39,6 @@ public class GetPhenomenonResponse implements Serializable {
 
     private String procID;
 
-    @SuppressWarnings("unused")
     private GetPhenomenonResponse() {
         // serializable for GWT needs empty default constructor
     }

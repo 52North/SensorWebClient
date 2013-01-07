@@ -33,7 +33,6 @@ public class TimeSeriesDataResponse extends RepresentationResponse {
     /** The data. ts_id to date to data */
     private HashMap<String, HashMap<Long, String>> data = null;
 
-    @SuppressWarnings("unused")
     private TimeSeriesDataResponse() {
         // serializable for GWT needs empty default constructor
     }

@@ -42,7 +42,6 @@ public class HibernateTest {
      * @param args
      *            the arguments
      */
-    @SuppressWarnings("nls")
     public static void main(String[] args) {
         try {
             new SesRulesServiceImpl().getRuleForEditing("fdghfgh");

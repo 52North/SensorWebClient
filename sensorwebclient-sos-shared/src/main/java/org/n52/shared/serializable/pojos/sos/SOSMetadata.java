@@ -119,7 +119,6 @@ public class SOSMetadata implements Serializable {
 
     private BoundingBox configuredExtent;
 
-    @SuppressWarnings("unused")
     private SOSMetadata() {
         // for serialization
     }

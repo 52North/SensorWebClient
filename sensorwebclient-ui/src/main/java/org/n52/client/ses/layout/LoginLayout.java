@@ -86,7 +86,6 @@ public class LoginLayout extends Layout {
         this.nameItem.setSelectOnFocus(true);
         this.nameItem.setLength(100);
         this.nameItem.addKeyPressHandler(new KeyPressHandler() {
-            @SuppressWarnings("synthetic-access")
             public void onKeyPress(KeyPressEvent event) {
                 if((event.getKeyName().equals("Enter"))&&(LoginLayout.this.form.validate(false))){
                     login();
@@ -101,7 +100,6 @@ public class LoginLayout extends Layout {
         this.passwordItem.setRequired(true);
         this.passwordItem.setLength(20);
         this.passwordItem.addKeyPressHandler(new KeyPressHandler() {
-            @SuppressWarnings("synthetic-access")
             public void onKeyPress(KeyPressEvent event) {
                 if((event.getKeyName().equals("Enter"))&&(LoginLayout.this.form.validate(false))){
                     login();
@@ -113,7 +111,6 @@ public class LoginLayout extends Layout {
         ButtonItem validateItem = new ButtonItem();
         validateItem.setTitle(i18n.login());
         validateItem.addClickHandler(new ClickHandler() {
-            @SuppressWarnings("synthetic-access")
             public void onClick(ClickEvent event) {
                 if (LoginLayout.this.form.validate(false)) {
                     login();

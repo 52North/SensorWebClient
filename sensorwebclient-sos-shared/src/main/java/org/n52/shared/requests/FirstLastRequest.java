@@ -31,7 +31,6 @@ public class FirstLastRequest implements Serializable {
 
     private String param;
 
-    @SuppressWarnings("unused")
     private FirstLastRequest() {
         // for serialization
     }

@@ -45,7 +45,6 @@ public class FirstLastResponse implements Serializable {
      * 
      */
 
-    @SuppressWarnings("unused")
     private FirstLastResponse() {
         // needed for GWT
     }

@@ -120,7 +120,6 @@ public class SESInitializationServlet extends HttpServlet {
      */
     private void checkAvailability() {
         Thread checkThread = new Thread(new Runnable() {
-            @SuppressWarnings("static-access")
             public void run() {
                 while (!SESInitializationServlet.SESavailable || !SESInitializationServlet.WNSavailable) {
                     try {
@@ -137,7 +136,7 @@ public class SESInitializationServlet extends HttpServlet {
                         }
                         // check all 20 seconds
                         Thread.yield();
-                        Thread.currentThread().sleep(20000);
+                        Thread.sleep(20000);
                     } catch (InterruptedException e) {
                         LOGGER.trace("Checking service was interrupted.", e);
                     }

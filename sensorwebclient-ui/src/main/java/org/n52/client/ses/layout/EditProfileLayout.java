@@ -175,7 +175,6 @@ public class EditProfileLayout extends Layout {
         saveButton.setWidth(135);
         saveButton.setAutoFit(true);
         saveButton.addClickHandler(new ClickHandler() {
-            @SuppressWarnings("synthetic-access")
             public void onClick(ClickEvent event) {
                 if (EditProfileLayout.this.form.validate(false)) {
                     UserRole userRole;

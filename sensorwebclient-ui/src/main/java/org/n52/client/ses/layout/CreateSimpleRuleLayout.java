@@ -219,7 +219,6 @@ public class CreateSimpleRuleLayout extends Layout {
         this.conditionRadioGroup.setValueMap(i18n.yes(), i18n.no());
         this.conditionRadioGroup.setDefaultValue(i18n.yes());
         this.conditionRadioGroup.addChangedHandler(new ChangedHandler() {
-            @SuppressWarnings("synthetic-access")
             public void onChanged(ChangedEvent event) {
                 if (event.getValue().toString().equals(i18n.no())) {
                     setRuleConditionFields();
@@ -243,7 +242,6 @@ public class CreateSimpleRuleLayout extends Layout {
         this.createButtonItem = new ButtonItem();
         this.createButtonItem.setTitle("Create");
         this.createButtonItem.addClickHandler(new ClickHandler() {
-            @SuppressWarnings({ "synthetic-access" })
             public void onClick(ClickEvent event) {
                 if (CreateSimpleRuleLayout.this.form.validate(false)
                         && CreateSimpleRuleLayout.this.form2.validate(false)) {

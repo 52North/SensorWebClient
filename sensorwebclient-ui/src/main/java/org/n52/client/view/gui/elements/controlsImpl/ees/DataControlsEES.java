@@ -141,7 +141,6 @@ public class DataControlsEES extends DataControlsTimeSeries implements SwitchGri
         this.controlButtons.addMember(this.grid);
 
         DiagramMoveZoomToggleView moveZoom = new DiagramMoveZoomToggleView(this.move, this.bbox);
-        @SuppressWarnings("unused")
 		DiagramMoveZoomPresenter moveZoomPresenter = new DiagramMoveZoomPresenter(moveZoom, EventBus.getMainEventBus());
 //        moveZoomPresenter.getHandlerManager().fireEvent(
 //                StateChangeEvent.createMove());

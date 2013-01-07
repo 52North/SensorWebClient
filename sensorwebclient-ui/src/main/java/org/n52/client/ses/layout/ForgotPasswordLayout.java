@@ -82,7 +82,6 @@ public class ForgotPasswordLayout extends Layout {
         ButtonItem validateItem = new ButtonItem();
         validateItem.setTitle(i18n.sendEmail());
         validateItem.addClickHandler(new ClickHandler() {
-            @SuppressWarnings("synthetic-access")
             public void onClick(ClickEvent event) {
                 if (ForgotPasswordLayout.this.form.validate()) {
                     String name = ForgotPasswordLayout.this.nameItem.getValue().toString();

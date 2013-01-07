@@ -33,7 +33,6 @@ public class SensorMetadataRequest implements Serializable {
     
     private TimeSeriesProperties props;
 
-    @SuppressWarnings("unused")
     private SensorMetadataRequest() {
         // IsSerializable needs default constructor
     }

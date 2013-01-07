@@ -29,7 +29,6 @@ public class EESDataRequest extends RepresentationRequest {
 
     private static final long serialVersionUID = -5853951638828258828L;
 
-    @SuppressWarnings("unused")
     private EESDataRequest() {
     }
 

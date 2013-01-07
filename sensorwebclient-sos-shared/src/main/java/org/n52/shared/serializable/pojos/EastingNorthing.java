@@ -32,7 +32,6 @@ public class EastingNorthing implements Serializable {
     String easting;
     String northing;
     
-    @SuppressWarnings("unused")
     private EastingNorthing() {
         // client requires class to be default instantiable
     }

@@ -44,7 +44,6 @@ public class StationPositionsResponse implements Serializable {
 
     private String srs;
 
-    @SuppressWarnings("unused")
     private StationPositionsResponse() {
         // serializable for GWT needs empty default constructor
     }

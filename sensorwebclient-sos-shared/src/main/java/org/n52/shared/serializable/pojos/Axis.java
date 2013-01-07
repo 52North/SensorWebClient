@@ -58,7 +58,6 @@ public class Axis implements Serializable {
     /**
      * Instantiates a new axis.
      */
-    @SuppressWarnings("unused")
     private Axis() {
         // do nothin
     }

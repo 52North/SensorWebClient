@@ -42,7 +42,6 @@ import org.hibernate.usertype.ParameterizedType;
 public class EnumType implements EnhancedUserType, ParameterizedType {
 
     /** The enum class. */
-    @SuppressWarnings("rawtypes")
     private Class<Enum> enumClass;
 
     /*
@@ -51,7 +50,6 @@ public class EnumType implements EnhancedUserType, ParameterizedType {
      * @see
      * org.hibernate.usertype.EnhancedUserType#fromXMLString(java.lang.String)
      */
-    @SuppressWarnings("unchecked")
     public Object fromXMLString(String xmlValue) {
         return Enum.valueOf(this.enumClass, xmlValue);
     }
@@ -63,7 +61,6 @@ public class EnumType implements EnhancedUserType, ParameterizedType {
      * org.hibernate.usertype.EnhancedUserType#objectToSQLString(java.lang.Object
      * )
      */
-    @SuppressWarnings("rawtypes")
     public String objectToSQLString(Object value) {
         return '\'' + ((Enum) value).name() + '\'';
     }
@@ -74,7 +71,6 @@ public class EnumType implements EnhancedUserType, ParameterizedType {
      * @see
      * org.hibernate.usertype.EnhancedUserType#toXMLString(java.lang.Object)
      */
-    @SuppressWarnings("rawtypes")
     public String toXMLString(Object value) {
         return ((Enum) value).name();
     }
@@ -103,7 +99,6 @@ public class EnumType implements EnhancedUserType, ParameterizedType {
      * 
      * @see org.hibernate.usertype.UserType#disassemble(java.lang.Object)
      */
-    @SuppressWarnings("rawtypes")
     public Serializable disassemble(Object value) throws HibernateException {
         return (Enum) value;
     }
@@ -142,7 +137,6 @@ public class EnumType implements EnhancedUserType, ParameterizedType {
      * @see org.hibernate.usertype.UserType#nullSafeGet(java.sql.ResultSet,
      * java.lang.String[], java.lang.Object)
      */
-    @SuppressWarnings("unchecked")
     public Object nullSafeGet(ResultSet rs, String[] names, Object owner) throws HibernateException, SQLException {
         String name = rs.getString(names[0]);
         return rs.wasNull() ? null : Enum.valueOf(this.enumClass, name);
@@ -155,7 +149,6 @@ public class EnumType implements EnhancedUserType, ParameterizedType {
      * org.hibernate.usertype.UserType#nullSafeSet(java.sql.PreparedStatement,
      * java.lang.Object, int)
      */
-    @SuppressWarnings("rawtypes")
     public void nullSafeSet(PreparedStatement st, Object value, int index) throws HibernateException, SQLException {
         if (value == null) {
             st.setNull(index, Types.VARCHAR);
@@ -179,7 +172,6 @@ public class EnumType implements EnhancedUserType, ParameterizedType {
      * 
      * @see org.hibernate.usertype.UserType#returnedClass()
      */
-    @SuppressWarnings("rawtypes")
     public Class returnedClass() {
         return this.enumClass;
     }

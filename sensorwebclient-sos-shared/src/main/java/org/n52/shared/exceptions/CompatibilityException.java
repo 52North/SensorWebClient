@@ -31,7 +31,6 @@ public class CompatibilityException extends MetaException implements Serializabl
 
     private static final long serialVersionUID = 2933187017067217452L;
 
-    @SuppressWarnings("unused")
     private CompatibilityException() {
         // serializable for GWT needs empty default constructor
     }

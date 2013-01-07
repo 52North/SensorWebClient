@@ -56,7 +56,6 @@ public class EESDataResponse extends RepresentationResponse {
 
     private ArrayList<TimeSeriesProperties> propertiesList;
 
-    @SuppressWarnings("unused")
     private EESDataResponse() {
         // for serialization
     }

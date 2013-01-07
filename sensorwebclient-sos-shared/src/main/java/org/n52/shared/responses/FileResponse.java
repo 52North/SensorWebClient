@@ -39,7 +39,6 @@ public class FileResponse extends RepresentationResponse {
     /**
      * Instantiates a new file response.
      */
-    @SuppressWarnings("unused")
     private FileResponse() {
         // do nothin
     }
