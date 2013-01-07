@@ -28,7 +28,7 @@ import static com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat.ISO_860
 
 import java.util.Date;
 
-import org.n52.client.control.I18N;
+import org.n52.client.i18n.I18N;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
 import org.n52.client.model.data.dataManagers.DataManagerSosImpl;
 import org.n52.client.model.data.dataManagers.TimeManager;

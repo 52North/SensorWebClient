@@ -26,7 +26,6 @@ package org.n52.client.view.gui.elements.controlsImpl;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import org.n52.client.control.I18N;
 import org.n52.client.control.PropertiesManager;
 import org.n52.client.control.sesTab.SesTabController;
 import org.n52.client.eventBus.EventBus;
@@ -34,6 +33,7 @@ import org.n52.client.eventBus.events.ses.ChangeLayoutEvent;
 import org.n52.client.eventBus.events.ses.GetAllPublishedRulesEvent;
 import org.n52.client.eventBus.events.ses.GetStationsEvent;
 import org.n52.client.eventBus.events.ses.LogoutEvent;
+import org.n52.client.i18n.I18N;
 import org.n52.client.view.gui.elements.interfaces.Layout.Layouts;
 import org.n52.client.view.gui.elements.tabImpl.SesTab;
 import org.n52.shared.serializable.pojos.UserRole;

@@ -52,6 +52,7 @@ import org.n52.client.eventBus.events.dataEvents.sos.OverviewIntervalChangedEven
 import org.n52.client.eventBus.events.dataEvents.sos.OverviewIntervalChangedEvent.IntervalType;
 import org.n52.client.eventBus.events.dataEvents.sos.RequestDataEvent;
 import org.n52.client.eventBus.events.dataEvents.sos.StoreSOSMetadataEvent;
+import org.n52.client.i18n.I18N;
 import org.n52.client.model.communication.requestManager.RequestManager;
 import org.n52.client.model.data.dataManagers.DataManagerSosImpl;
 import org.n52.client.model.data.dataManagers.TimeManager;

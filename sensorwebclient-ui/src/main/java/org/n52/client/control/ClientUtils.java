@@ -24,6 +24,7 @@
 
 package org.n52.client.control;
 
+import org.n52.client.i18n.I18N;
 import org.n52.client.view.gui.widgets.Toaster;
 
 import com.google.gwt.core.client.GWT;

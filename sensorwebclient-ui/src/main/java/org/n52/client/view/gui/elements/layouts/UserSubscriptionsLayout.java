@@ -25,9 +25,9 @@ package org.n52.client.view.gui.elements.layouts;
 
 import java.util.ArrayList;
 
-import org.n52.client.control.I18N;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.eventBus.events.ses.UnsubscribeEvent;
+import org.n52.client.i18n.I18N;
 import org.n52.client.model.communication.requestManager.SesRequestManager;
 import org.n52.client.model.data.representations.RuleRecord;
 import org.n52.client.view.gui.elements.interfaces.Layout;

@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.n52.client.control.I18N;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.eventBus.events.ses.ChangeLayoutEvent;
 import org.n52.client.eventBus.events.ses.EditSimpleRuleEvent;
@@ -41,6 +40,7 @@ import org.n52.client.eventBus.events.ses.LogoutEvent;
 import org.n52.client.eventBus.events.ses.SetRoleEvent;
 import org.n52.client.eventBus.events.ses.ShowAllUserEvent;
 import org.n52.client.eventBus.events.ses.UpdateProfileEvent;
+import org.n52.client.i18n.I18N;
 import org.n52.client.view.gui.elements.interfaces.Layout;
 import org.n52.client.view.gui.elements.interfaces.Layout.Layouts;
 import org.n52.client.view.gui.widgets.Toaster;

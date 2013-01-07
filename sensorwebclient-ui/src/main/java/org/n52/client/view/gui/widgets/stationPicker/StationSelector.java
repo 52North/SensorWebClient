@@ -32,9 +32,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.gwtopenmaps.openlayers.client.MapWidget;
-import org.n52.client.control.I18N;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.eventBus.events.dataEvents.sos.NewTimeSeriesEvent;
+import org.n52.client.i18n.I18N;
 import org.n52.client.view.gui.widgets.LoadingSpinner;
 import org.n52.client.view.gui.widgets.Toaster;
 import org.n52.client.view.gui.widgets.buttons.SmallButton;

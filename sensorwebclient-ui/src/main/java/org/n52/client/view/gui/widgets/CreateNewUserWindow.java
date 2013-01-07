@@ -25,10 +25,10 @@ package org.n52.client.view.gui.widgets;
 
 import java.util.Date;
 
-import org.n52.client.control.I18N;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.eventBus.events.ses.NewPasswordEvent;
 import org.n52.client.eventBus.events.ses.RegisterUserEvent;
+import org.n52.client.i18n.I18N;
 import org.n52.shared.serializable.pojos.UserDTO;
 import org.n52.shared.serializable.pojos.UserRole;
 

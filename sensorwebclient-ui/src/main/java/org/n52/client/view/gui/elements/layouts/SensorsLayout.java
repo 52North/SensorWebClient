@@ -25,9 +25,9 @@ package org.n52.client.view.gui.elements.layouts;
 
 import java.util.List;
 
-import org.n52.client.control.I18N;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.eventBus.events.ses.UpdateSensorEvent;
+import org.n52.client.i18n.I18N;
 import org.n52.client.view.gui.elements.interfaces.Layout;
 import org.n52.shared.serializable.pojos.TESTSensorDS;
 

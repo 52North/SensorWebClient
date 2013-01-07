@@ -23,7 +23,7 @@
  */
 package org.n52.client.view.gui.elements.layouts;
 
-import org.n52.client.control.I18N;
+import org.n52.client.i18n.I18N;
 import org.n52.client.view.gui.elements.interfaces.Layout;
 import org.n52.shared.serializable.pojos.UserDTO;
 

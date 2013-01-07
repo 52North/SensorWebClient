@@ -27,7 +27,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 
-import org.n52.client.control.I18N;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.eventBus.events.LegendElementSelectedEvent;
 import org.n52.client.eventBus.events.dataEvents.sos.DeleteTimeSeriesEvent;
@@ -39,6 +38,7 @@ import org.n52.client.eventBus.events.dataEvents.sos.handler.DeleteTimeSeriesEve
 import org.n52.client.eventBus.events.dataEvents.sos.handler.ExportFinishedEventHandler;
 import org.n52.client.eventBus.events.dataEvents.sos.handler.FinishedLoadingTimeSeriesEventHandler;
 import org.n52.client.eventBus.events.handler.LegendElementSelectedEventHandler;
+import org.n52.client.i18n.I18N;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
 import org.n52.client.model.data.dataManagers.TimeManager;
 import org.n52.client.model.data.representations.TimeSeries;

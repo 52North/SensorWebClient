@@ -26,7 +26,7 @@ package org.n52.client.model.communication;
 
 import java.util.HashMap;
 
-import org.n52.client.control.I18N;
+import org.n52.client.i18n.I18N;
 import org.n52.client.view.gui.elements.DataPanel;
 import org.n52.client.view.gui.widgets.Loader;
 

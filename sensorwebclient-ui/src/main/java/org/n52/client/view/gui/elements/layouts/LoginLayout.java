@@ -23,9 +23,9 @@
  */
 package org.n52.client.view.gui.elements.layouts;
 
-import org.n52.client.control.I18N;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.eventBus.events.ses.LoginEvent;
+import org.n52.client.i18n.I18N;
 import org.n52.client.view.gui.elements.controlsImpl.DataControlsSes;
 import org.n52.client.view.gui.elements.interfaces.Layout;
 import org.n52.client.view.gui.elements.tabImpl.SesTab;

@@ -23,7 +23,7 @@
  */
 package org.n52.client.view.gui;
 
-import org.n52.client.control.I18N;
+import org.n52.client.i18n.I18N;
 
 import com.smartgwt.client.widgets.HTMLPane;
 import com.smartgwt.client.widgets.Window;

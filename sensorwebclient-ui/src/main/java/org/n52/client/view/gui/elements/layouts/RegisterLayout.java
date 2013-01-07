@@ -25,11 +25,11 @@ package org.n52.client.view.gui.elements.layouts;
 
 import java.util.Date;
 
-import org.n52.client.control.I18N;
 import org.n52.client.control.PropertiesManager;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.eventBus.events.ses.GetTermsOfUseEvent;
 import org.n52.client.eventBus.events.ses.RegisterUserEvent;
+import org.n52.client.i18n.I18N;
 import org.n52.client.model.communication.requestManager.SesRequestManager;
 import org.n52.client.view.gui.elements.controlsImpl.DataControlsSes;
 import org.n52.client.view.gui.elements.interfaces.Layout;

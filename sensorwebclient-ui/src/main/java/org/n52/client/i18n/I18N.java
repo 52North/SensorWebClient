@@ -21,13 +21,16 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.control;
 
-import org.n52.client.i18n.SESClientI18N;
-import org.n52.client.i18n.SOSClientI18N;
+package org.n52.client.i18n;
 
 import com.google.gwt.core.client.GWT;
 
+/**
+ * Shortcut class providing i18n interfaces which offer access to internationalized language strings.
+ * 
+ * TODO refactor so that SOS client and SES client UI access their own i18n class from separated packages.
+ */
 public class I18N {
 
     public static SOSClientI18N sosClient;

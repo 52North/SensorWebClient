@@ -26,9 +26,9 @@ package org.n52.shared.serializable.pojos;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.n52.client.control.I18N;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.eventBus.events.ses.InformUserEvent;
+import org.n52.client.i18n.I18N;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.service.rpc.RpcSesDataSourceService;
 import org.n52.shared.service.rpc.RpcSesDataSourceServiceAsync;

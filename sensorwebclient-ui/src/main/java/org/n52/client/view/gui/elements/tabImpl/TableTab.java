@@ -28,8 +28,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 
-import org.n52.client.control.I18N;
 import org.n52.client.control.tableTab.TableTabController;
+import org.n52.client.i18n.I18N;
 import org.n52.client.model.data.representations.TimeSeries;
 import org.n52.client.view.gui.elements.controlsImpl.DataControls;
 import org.n52.client.view.gui.elements.interfaces.DataPanelTab;

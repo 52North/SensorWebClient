@@ -26,7 +26,6 @@ package org.n52.client.control.sesTab;
 import java.util.ArrayList;
 
 import org.n52.client.control.Controller;
-import org.n52.client.control.I18N;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.eventBus.events.TabSelectedEvent;
 import org.n52.client.eventBus.events.TimeSeriesChangedEvent;
@@ -52,6 +51,7 @@ import org.n52.client.eventBus.events.ses.handler.InformUserEventHandler;
 import org.n52.client.eventBus.events.ses.handler.SetRoleEventHandler;
 import org.n52.client.eventBus.events.ses.handler.ShowAllUserEventHandler;
 import org.n52.client.eventBus.events.ses.handler.UpdateProfileEventHandler;
+import org.n52.client.i18n.I18N;
 import org.n52.client.model.communication.requestManager.SesRequestManager;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
 import org.n52.client.model.data.representations.TimeSeries;
