@@ -24,15 +24,15 @@
 package org.n52.client.control;
 
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.eventBus.events.dataEvents.sos.NewTimeSeriesEvent;
-import org.n52.client.eventBus.events.dataEvents.sos.StoreFeatureEvent;
-import org.n52.client.eventBus.events.dataEvents.sos.StoreOfferingEvent;
-import org.n52.client.eventBus.events.dataEvents.sos.StoreProcedureEvent;
-import org.n52.client.eventBus.events.dataEvents.sos.StoreStationEvent;
-import org.n52.client.eventBus.events.dataEvents.sos.handler.StoreFeatureEventHandler;
-import org.n52.client.eventBus.events.dataEvents.sos.handler.StoreOfferingEventHandler;
-import org.n52.client.eventBus.events.dataEvents.sos.handler.StoreProcedureEventHandler;
-import org.n52.client.eventBus.events.dataEvents.sos.handler.StoreStationEventHandler;
+import org.n52.client.eventBus.events.sos.NewTimeSeriesEvent;
+import org.n52.client.eventBus.events.sos.StoreFeatureEvent;
+import org.n52.client.eventBus.events.sos.StoreOfferingEvent;
+import org.n52.client.eventBus.events.sos.StoreProcedureEvent;
+import org.n52.client.eventBus.events.sos.StoreStationEvent;
+import org.n52.client.eventBus.events.sos.handler.StoreFeatureEventHandler;
+import org.n52.client.eventBus.events.sos.handler.StoreOfferingEventHandler;
+import org.n52.client.eventBus.events.sos.handler.StoreProcedureEventHandler;
+import org.n52.client.eventBus.events.sos.handler.StoreStationEventHandler;
 import org.n52.client.model.data.dataManagers.DataManagerSosImpl;
 import org.n52.client.view.gui.widgets.Toaster;
 import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
