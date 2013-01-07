@@ -24,9 +24,9 @@
 package org.n52.client.view.gui.widgets.stationPicker;
 
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.eventBus.events.sos.GetPhenomenonsEvent;
-import org.n52.client.eventBus.events.sos.GetStationsEvent;
 import org.n52.client.model.data.dataManagers.DataManagerSosImpl;
+import org.n52.client.sos.event.data.GetPhenomenonsEvent;
+import org.n52.client.sos.event.data.GetStationsEvent;
 import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SOSMetadataBuilder;

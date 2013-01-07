@@ -26,11 +26,11 @@ package org.n52.client.view.gui.elements.layouts;
 import java.util.List;
 
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.eventBus.events.ses.DeleteUserEvent;
-import org.n52.client.eventBus.events.ses.GetAllUsersEvent;
 import org.n52.client.i18n.I18N;
 import org.n52.client.model.data.representations.UserDS;
 import org.n52.client.model.data.representations.UserRecord;
+import org.n52.client.ses.event.DeleteUserEvent;
+import org.n52.client.ses.event.GetAllUsersEvent;
 import org.n52.client.view.gui.elements.interfaces.Layout;
 import org.n52.client.view.gui.widgets.CreateNewUserWindow;
 import org.n52.client.view.gui.widgets.EditUserWindow;

@@ -23,10 +23,8 @@
  */
 package org.n52.client.model.communication.requestManager;
 
-import org.n52.client.eventBus.EventBus;
-import org.n52.client.eventBus.events.exceptionEvents.CapabilitiesExceptionEvent;
-import org.n52.client.util.exceptions.CapabilitiesException;
 import org.n52.client.util.exceptions.ExceptionHandler;
+import org.n52.client.util.exceptions.RequestFailedException;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -44,8 +42,7 @@ public abstract class Callback<T> implements AsyncCallback<T> {
 
     public void onFailure(Throwable caught) {
         requestMgr.removeRequest();
-        ExceptionHandler.handleException(new CapabilitiesException(errorMsg, caught));
-        EventBus.getMainEventBus().fireEvent(new CapabilitiesExceptionEvent());
+        ExceptionHandler.handleException(new RequestFailedException(errorMsg, caught));
     }
     
     protected void removeRequest() {

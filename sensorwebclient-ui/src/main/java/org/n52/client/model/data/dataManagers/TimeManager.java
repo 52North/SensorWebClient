@@ -28,16 +28,16 @@ import java.util.Stack;
 
 import org.n52.client.control.PropertiesManager;
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.eventBus.events.DatesChangedEvent;
-import org.n52.client.eventBus.events.handler.DatesChangedEventHandler;
-import org.n52.client.eventBus.events.sos.OverviewIntervalChangedEvent;
-import org.n52.client.eventBus.events.sos.RequestDataEvent;
-import org.n52.client.eventBus.events.sos.UndoEvent;
-import org.n52.client.eventBus.events.sos.OverviewIntervalChangedEvent.IntervalType;
-import org.n52.client.eventBus.events.sos.handler.OverviewIntervalChangedEventHandler;
-import org.n52.client.eventBus.events.sos.handler.UndoEventHandler;
 import org.n52.client.i18n.I18N;
 import org.n52.client.model.data.representations.DateAction;
+import org.n52.client.sos.event.DatesChangedEvent;
+import org.n52.client.sos.event.data.OverviewIntervalChangedEvent;
+import org.n52.client.sos.event.data.RequestDataEvent;
+import org.n52.client.sos.event.data.UndoEvent;
+import org.n52.client.sos.event.data.OverviewIntervalChangedEvent.IntervalType;
+import org.n52.client.sos.event.data.handler.OverviewIntervalChangedEventHandler;
+import org.n52.client.sos.event.data.handler.UndoEventHandler;
+import org.n52.client.sos.event.handler.DatesChangedEventHandler;
 import org.n52.client.view.gui.widgets.Toaster;
 import org.n52.shared.Constants;
 

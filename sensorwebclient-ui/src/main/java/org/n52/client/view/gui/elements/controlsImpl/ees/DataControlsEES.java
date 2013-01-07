@@ -25,12 +25,12 @@ package org.n52.client.view.gui.elements.controlsImpl.ees;
 
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.eventBus.EventCallback;
-import org.n52.client.eventBus.events.SwitchGridEvent;
-import org.n52.client.eventBus.events.handler.SwitchGridEventHandler;
-import org.n52.client.eventBus.events.sos.RequestDataEvent;
-import org.n52.client.eventBus.events.sos.SwitchAutoscaleEvent;
-import org.n52.client.eventBus.events.sos.UndoEvent;
 import org.n52.client.i18n.I18N;
+import org.n52.client.sos.event.SwitchGridEvent;
+import org.n52.client.sos.event.data.RequestDataEvent;
+import org.n52.client.sos.event.data.SwitchAutoscaleEvent;
+import org.n52.client.sos.event.data.UndoEvent;
+import org.n52.client.sos.event.handler.SwitchGridEventHandler;
 import org.n52.client.view.View;
 import org.n52.client.view.gui.elements.controlsImpl.DataControlsTimeSeries;
 import org.n52.client.view.gui.widgets.buttons.DiagramMoveZoomPresenter;

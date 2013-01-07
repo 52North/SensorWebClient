@@ -53,7 +53,7 @@ import org.eesgmbh.gimv.client.event.ViewportDragInProgressEventHandler;
 import org.eesgmbh.gimv.client.view.GenericWidgetView;
 import org.eesgmbh.gimv.shared.util.Bounds;
 import org.n52.client.control.ClientUtils;
-import org.n52.client.eventBus.events.sos.SwitchAutoscaleEvent;
+import org.n52.client.sos.event.data.SwitchAutoscaleEvent;
 
 import com.google.gwt.event.shared.HandlerManager;
 

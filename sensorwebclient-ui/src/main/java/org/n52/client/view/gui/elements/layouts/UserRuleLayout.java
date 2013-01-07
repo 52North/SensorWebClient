@@ -26,10 +26,10 @@ package org.n52.client.view.gui.elements.layouts;
 import java.util.ArrayList;
 
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.eventBus.events.ses.SubscribeEvent;
 import org.n52.client.i18n.I18N;
 import org.n52.client.model.communication.requestManager.SesRequestManager;
 import org.n52.client.model.data.representations.RuleRecord;
+import org.n52.client.ses.event.SubscribeEvent;
 import org.n52.client.view.gui.elements.controlsImpl.DataControlsSes;
 import org.n52.client.view.gui.elements.interfaces.Layout;
 import org.n52.shared.serializable.pojos.BasicRuleDTO;

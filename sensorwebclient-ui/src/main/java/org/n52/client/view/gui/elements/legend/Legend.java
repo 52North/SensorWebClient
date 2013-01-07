@@ -29,8 +29,8 @@ import java.util.Iterator;
 
 import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.n52.client.control.PropertiesManager;
-import org.n52.client.eventBus.events.sos.ExportEvent.ExportType;
 import org.n52.client.i18n.I18N;
+import org.n52.client.sos.event.data.ExportEvent.ExportType;
 import org.n52.client.view.View;
 import org.n52.client.view.gui.Impressum;
 import org.n52.client.view.gui.elements.interfaces.LegendElement;

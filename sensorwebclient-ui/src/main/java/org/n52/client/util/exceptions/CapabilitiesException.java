@@ -23,7 +23,7 @@
  */
 package org.n52.client.util.exceptions;
 
-public class CapabilitiesException extends RequestFailedException {
+class CapabilitiesException extends RequestFailedException {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 5262005059514079615L;

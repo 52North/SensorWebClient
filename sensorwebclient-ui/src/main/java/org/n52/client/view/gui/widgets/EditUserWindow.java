@@ -26,10 +26,10 @@ package org.n52.client.view.gui.widgets;
 import java.util.Date;
 
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.eventBus.events.ses.UpdateUserEvent;
 import org.n52.client.i18n.I18N;
 import org.n52.client.model.communication.requestManager.SesRequestManager;
 import org.n52.client.model.data.representations.UserRecord;
+import org.n52.client.ses.event.UpdateUserEvent;
 import org.n52.shared.serializable.pojos.UserDTO;
 import org.n52.shared.serializable.pojos.UserRole;
 

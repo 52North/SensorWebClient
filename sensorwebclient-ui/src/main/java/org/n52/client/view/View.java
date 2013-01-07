@@ -28,8 +28,8 @@ import java.util.ArrayList;
 
 import org.n52.client.control.PropertiesManager;
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.eventBus.events.TabSelectedEvent;
 import org.n52.client.i18n.I18N;
+import org.n52.client.sos.event.TabSelectedEvent;
 import org.n52.client.view.gui.elements.DataPanel;
 import org.n52.client.view.gui.elements.Header;
 import org.n52.client.view.gui.elements.MainPanel;

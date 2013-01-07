@@ -31,18 +31,18 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.eventBus.events.AddMarkerEvent;
-import org.n52.client.eventBus.events.sos.NewPhenomenonsEvent;
-import org.n52.client.eventBus.events.sos.NewStationPositionsEvent;
-import org.n52.client.eventBus.events.sos.StorePhenomenaEvent;
-import org.n52.client.eventBus.events.sos.StoreSOSMetadataEvent;
-import org.n52.client.eventBus.events.sos.StoreStationsEvent;
-import org.n52.client.eventBus.events.sos.handler.StorePhenomenaEventHandler;
-import org.n52.client.eventBus.events.sos.handler.StoreSOSMetadataEventHandler;
-import org.n52.client.eventBus.events.sos.handler.StoreStationsEventHandler;
-import org.n52.client.util.exceptions.CapabilitiesException;
+import org.n52.client.sos.event.AddMarkerEvent;
+import org.n52.client.sos.event.data.NewPhenomenonsEvent;
+import org.n52.client.sos.event.data.NewStationPositionsEvent;
+import org.n52.client.sos.event.data.StorePhenomenaEvent;
+import org.n52.client.sos.event.data.StoreSOSMetadataEvent;
+import org.n52.client.sos.event.data.StoreStationsEvent;
+import org.n52.client.sos.event.data.handler.StorePhenomenaEventHandler;
+import org.n52.client.sos.event.data.handler.StoreSOSMetadataEventHandler;
+import org.n52.client.sos.event.data.handler.StoreStationsEventHandler;
 import org.n52.client.util.exceptions.DataparsingException;
 import org.n52.client.util.exceptions.ExceptionHandler;
+import org.n52.client.util.exceptions.RequestFailedException;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
@@ -89,7 +89,7 @@ public class DataManagerSosImpl implements DataManager<SOSMetadata> {
 			SOSMetadata meta = getServiceMetadata(evt.getSosURL());
 			if (meta == null) {
 				String reason = "Request failed for datamapping reasons.";
-				CapabilitiesException e = new CapabilitiesException(reason);
+				RequestFailedException e = new RequestFailedException(reason);
 				ExceptionHandler.handleUnexpectedException(e);
 				return;
 			}
@@ -106,7 +106,8 @@ public class DataManagerSosImpl implements DataManager<SOSMetadata> {
 			SOSMetadata metadata = getServiceMetadata(evt.getSosURL());
 			if (metadata == null) {
 				String reason = "An unknown SERVICES instance was requested.";
-				ExceptionHandler.handleUnexpectedException(new CapabilitiesException(reason));
+				RequestFailedException e = new RequestFailedException(reason);
+                ExceptionHandler.handleUnexpectedException(e);
 				return;
 			}
 
