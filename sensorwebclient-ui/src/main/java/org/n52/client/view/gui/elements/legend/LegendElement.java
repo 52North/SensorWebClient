@@ -23,7 +23,6 @@
  */
 package org.n52.client.view.gui.elements.legend;
 
-import org.n52.client.model.data.representations.interfaces.LegendData;
 
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.Layout;

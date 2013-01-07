@@ -25,7 +25,7 @@ package org.n52.client.model.data.representations;
 
 import java.util.Comparator;
 
-import org.n52.client.model.data.representations.interfaces.LegendData;
+import org.n52.client.view.gui.elements.legend.LegendData;
 
 /**
  * The Class DataWrapperComparator.
