@@ -176,6 +176,7 @@ tr.sensorInfo:hover {
   cursor: pointer;
 }
 .sensorweb_client_linkBlock {
+  float: right;
   padding-right: 5px;
   margin: 2px;
   margin-top: 25px;
