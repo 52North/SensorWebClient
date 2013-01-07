@@ -21,18 +21,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
+
 package org.n52.client.eventBus;
 
 /**
- * The Interface EventCallback.
- * 
- * @author <a href="mailto:f.bache@52north.de">Felix Bache</a>
+ * A generic callback interface. An asynchronous event have to implement this callback interface to be
+ * handled correctly by the client's UI.
  */
 public interface EventCallback {
 
-    /**
-     * On event fired.
-     */
     void onEventFired();
 
 }
