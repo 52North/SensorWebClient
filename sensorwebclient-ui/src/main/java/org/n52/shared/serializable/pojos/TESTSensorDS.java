@@ -23,11 +23,12 @@
  */
 package org.n52.shared.serializable.pojos;
 
+import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.ses.event.InformUserEvent;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.service.rpc.RpcSesDataSourceService;
@@ -89,10 +90,10 @@ public class TESTSensorDS extends GwtRpcDataSource {
                 for (int i = 0; i < list.length; i++) {
                     testRecord = result.get(i);
                     if (Boolean.parseBoolean(testRecord.getStatus())) {
-                        status = I18N.sesClient.active();
+                        status = i18n.active();
                         activated++;
                     } else {
-                        status = I18N.sesClient.inactive();
+                        status = i18n.inactive();
                         deactivated++;
                     }
                     

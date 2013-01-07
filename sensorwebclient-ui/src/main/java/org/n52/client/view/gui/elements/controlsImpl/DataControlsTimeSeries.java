@@ -23,6 +23,8 @@
  */
 package org.n52.client.view.gui.elements.controlsImpl;
 
+import static org.n52.client.sos.i18n.I18NStringsAccessor.i18n;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -32,7 +34,6 @@ import org.n52.client.control.ClientUtils;
 import org.n52.client.control.PropertiesManager;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.eventBus.EventCallback;
-import org.n52.client.i18n.I18N;
 import org.n52.client.model.communication.LoaderManager;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
 import org.n52.client.model.data.dataManagers.TimeManager;
@@ -42,10 +43,10 @@ import org.n52.client.sos.event.SwitchGridEvent;
 import org.n52.client.sos.event.data.ExportEvent;
 import org.n52.client.sos.event.data.FirstValueOfTimeSeriesEvent;
 import org.n52.client.sos.event.data.OverviewIntervalChangedEvent;
+import org.n52.client.sos.event.data.OverviewIntervalChangedEvent.IntervalType;
 import org.n52.client.sos.event.data.RequestDataEvent;
 import org.n52.client.sos.event.data.StoreTimeSeriesLastValueEvent;
 import org.n52.client.sos.event.data.SwitchAutoscaleEvent;
-import org.n52.client.sos.event.data.OverviewIntervalChangedEvent.IntervalType;
 import org.n52.client.sos.event.data.handler.OverviewIntervalChangedEventHandler;
 import org.n52.client.sos.event.data.handler.StoreTimeSeriesFirstValueEventHandler;
 import org.n52.client.sos.event.data.handler.StoreTimeSeriesLastValueEventHandler;
@@ -227,7 +228,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
         this.bottomLayout.setTabIndex(-1);
 
         this.expertsWindow = new Window();
-        this.expertsWindow.setTitle(I18N.sosClient.expertsMenu());
+        this.expertsWindow.setTitle(i18n.expertsMenu());
         this.expertsWindow.setIsModal(true);
         // this.expertsWindow.setAutoSize(true);
         this.expertsWindow.setWidth(290);
@@ -241,8 +242,8 @@ public abstract class DataControlsTimeSeries extends DataControls {
         this.expertsWindow.addItem(this.expertsLayout);
 
         ImageButton experts =
-                new ImageButton("experts", "../img/icons/clock.png", I18N.sosClient.expertsMenuButton(),
-                        I18N.sosClient.expertsMenuButton());
+                new ImageButton("experts", "../img/icons/clock.png", i18n.expertsMenuButton(),
+                        i18n.expertsMenuButton());
         experts.addClickHandler(new ClickHandler() {
 
             public void onClick(ClickEvent event) {
@@ -256,7 +257,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
         DynamicForm intervalForm = new DynamicForm();
 
         // date and time pickers
-        this.fromDateItem.setTitle(I18N.sosClient.from());
+        this.fromDateItem.setTitle(i18n.from());
         this.fromDateItem.setValidateOnChange(true);
         this.fromDateItem.setValidateOnExit(true);
         this.fromDateItem.setDateFormatter(DateDisplayFormat.TOEUROPEANSHORTDATE);
@@ -268,8 +269,8 @@ public abstract class DataControlsTimeSeries extends DataControls {
         // }
         // });
         // fromDateItem.setUseTextField(true);
-        this.fromTimeItem.setTitle(I18N.sosClient.time());
-        this.fromTimeItem.setTooltip(I18N.sosClient.time());
+        this.fromTimeItem.setTitle(i18n.time());
+        this.fromTimeItem.setTooltip(i18n.time());
         this.fromTimeItem.setShowHint(false);
         this.fromTimeItem.setShowTitle(false);
         //this.fromTimeItem.setTimeFormatter(TimeDisplayFormat.TOSHORTPADDED24HOURTIME);
@@ -282,7 +283,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
 
         this.from = TimeManager.getInst().getBegin();
 
-        this.toDateItem.setTitle(I18N.sosClient.to());
+        this.toDateItem.setTitle(i18n.to());
         this.toDateItem.setValidateOnChange(true);
         this.toDateItem.setValidateOnExit(true);
         this.toDateItem.setDateFormatter(DateDisplayFormat.TOEUROPEANSHORTDATE);
@@ -301,8 +302,8 @@ public abstract class DataControlsTimeSeries extends DataControls {
         // this.toDateItem.setErrorIconWidth(16);
         // this.toDateItem.setErrorOrientation(FormErrorOrientation.LEFT);
         // toDateItem.setUseTextField(true);
-        this.toTimeItem.setTitle(I18N.sosClient.time());
-        this.toTimeItem.setTooltip(I18N.sosClient.time());
+        this.toTimeItem.setTitle(i18n.time());
+        this.toTimeItem.setTooltip(i18n.time());
         this.toTimeItem.setShowHint(false);
         this.toTimeItem.setShowTitle(false);
         //this.fromTimeItem.setTimeFormatter(TimeDisplayFormat.TOSHORTPADDED24HOURTIME);
@@ -343,22 +344,22 @@ public abstract class DataControlsTimeSeries extends DataControls {
         LayoutSpacer spacer = new LayoutSpacer();
         spacer.setWidth(10);
 
-        this.setRefresh(new ImageButton("diagRefresh", "../img/icons/arrow_refresh.png", I18N.sosClient
-                .refresh(), I18N.sosClient.refreshExtended()));
+        this.setRefresh(new ImageButton("diagRefresh", "../img/icons/arrow_refresh.png", i18n
+                .refresh(), i18n.refreshExtended()));
         View.getInstance().registerTooltip(this.getRefresh());
         intervalForm.setNumCols(3);
 
         this.overviewInterval = new TextItem();
-        this.overviewInterval.setTitle(I18N.sosClient.overviewInterval());
+        this.overviewInterval.setTitle(i18n.overviewInterval());
         this.overviewInterval.setWidth(40);
         this.overviewInterval.setDefaultValue(PropertiesManager.getInstance().getParameterAsString(
                 "defaultOverviewInterval"));
 
         this.overviewIntervalType = new ComboBoxItem();
-        this.overviewIntervalType.setTitle(I18N.sosClient.in());
+        this.overviewIntervalType.setTitle(i18n.in());
         this.overviewIntervalType.setShowTitle(false);
         this.overviewIntervalType.setWidth(70);
-        String[] types = I18N.sosClient.intervalTypes().split(",");
+        String[] types = i18n.intervalTypes().split(",");
         LinkedHashMap<String, String> values = new LinkedHashMap<String, String>();
         for (int i = 0; i < types.length; i += 2) {
 
@@ -462,8 +463,8 @@ public abstract class DataControlsTimeSeries extends DataControls {
         this.expertsLayout.addMember(oIntervalForm);
 
         ImageButton confExp =
-                new ImageButton("confExp", "../img/icons/accept.png", I18N.sosClient.OK(),
-                        I18N.sosClient.OK());
+                new ImageButton("confExp", "../img/icons/accept.png", i18n.OK(),
+                        i18n.OK());
         confExp.addClickHandler(new ClickHandler() {
 
             public void onClick(ClickEvent event) {
@@ -482,7 +483,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
 
                     long interval = end.getTime() - begin.getTime();
                     if (interval > DataControlsTimeSeries.this.currentInterval) {
-                        Toaster.getInstance().addMessage(I18N.sosClient.errorOverviewInterval());
+                        Toaster.getInstance().addMessage(i18n.errorOverviewInterval());
                         DataControlsTimeSeries.this.getRefresh().setNotClicked();
                         LoaderManager.getInstance().stopLoadingAnimations();
                         return;
@@ -509,8 +510,8 @@ public abstract class DataControlsTimeSeries extends DataControls {
             }
         });
         ImageButton cancelExp =
-                new ImageButton("cancelExp", "../img/icons/cancel.png", I18N.sosClient.cancel(),
-                        I18N.sosClient.cancel());
+                new ImageButton("cancelExp", "../img/icons/cancel.png", i18n.cancel(),
+                        i18n.cancel());
         cancelExp.addClickHandler(new ClickHandler() {
 
             public void onClick(ClickEvent event) {
@@ -559,13 +560,13 @@ public abstract class DataControlsTimeSeries extends DataControls {
 
         // bottom layout
         // day
-        this.setDiagBackDay(new ImageButton("diagBackDay", "../img/icons/control_left.png", I18N.sosClient
-                .back(), I18N.sosClient.backExtended()));
+        this.setDiagBackDay(new ImageButton("diagBackDay", "../img/icons/control_left.png", i18n
+                .back(), i18n.backExtended()));
         // this.getDiagBackDay().setShowRollOver(true);
 //        this.topLayout.addMember(this.getDiagBackDay());
         View.getInstance().registerTooltip(this.getDiagBackDay());
 
-        Label day = new Label(I18N.sosClient.day());
+        Label day = new Label(i18n.day());
         day.setWidth(35);
         day.setAlign(Alignment.CENTER);
         day.setPosition(Positioning.ABSOLUTE);
@@ -573,19 +574,19 @@ public abstract class DataControlsTimeSeries extends DataControls {
 //        this.topLayout.addMember(day);
 
         this.setDiagForwardDay(new ImageButton("diagForwardDay", "../img/icons/control_right.png",
-                I18N.sosClient.forth(), I18N.sosClient.forthExtended()));
+                i18n.forth(), i18n.forthExtended()));
 //        this.topLayout.addMember(this.getDiagForwardDay());
         View.getInstance().registerTooltip(this.getDiagForwardDay());
         // this.getDiagForwardDay().setShowRollOver(true);
 
         // week
-        this.setDiagBackWeek(new ImageButton("diagBackWeek", "../img/icons/control_left.png", I18N.sosClient
-                .back(), I18N.sosClient.backExtended()));
+        this.setDiagBackWeek(new ImageButton("diagBackWeek", "../img/icons/control_left.png", i18n
+                .back(), i18n.backExtended()));
 //        this.topLayout.addMember(this.getDiagBackWeek());
         View.getInstance().registerTooltip(this.getDiagBackWeek());
         // this.getDiagBackWeek().setShowRollOver(true);
 
-        Label week = new Label(I18N.sosClient.week());
+        Label week = new Label(i18n.week());
         week.setWidth(35);
         week.setAlign(Alignment.CENTER);
         week.setPosition(Positioning.ABSOLUTE);
@@ -593,19 +594,19 @@ public abstract class DataControlsTimeSeries extends DataControls {
 //        this.topLayout.addMember(week);
 
         this.setDiagForwardWeek(new ImageButton("diagForwardWeek", "../img/icons/control_right.png",
-                I18N.sosClient.forth(), I18N.sosClient.forthExtended()));
+                i18n.forth(), i18n.forthExtended()));
 //        this.topLayout.addMember(this.getDiagForwardWeek());
         View.getInstance().registerTooltip(this.getDiagForwardWeek());
         // this.getDiagForwardWeek().setShowRollOver(true);
 
         // month
-        this.setDiagBackMonth(new ImageButton("diagBackMonth", "../img/icons/control_left.png", I18N.sosClient
-                .back(), I18N.sosClient.backExtended()));
+        this.setDiagBackMonth(new ImageButton("diagBackMonth", "../img/icons/control_left.png", i18n
+                .back(), i18n.backExtended()));
 //        this.topLayout.addMember(this.getDiagBackMonth());
         View.getInstance().registerTooltip(this.getDiagBackMonth());
         // this.getDiagBackMonth().setShowRollOver(true);
 
-        Label month = new Label(I18N.sosClient.month());
+        Label month = new Label(i18n.month());
         month.setWidth(35);
         month.setAlign(Alignment.CENTER);
         month.setPosition(Positioning.ABSOLUTE);
@@ -613,19 +614,19 @@ public abstract class DataControlsTimeSeries extends DataControls {
 //        this.topLayout.addMember(month);
 
         this.setDiagForwardMonth(new ImageButton("diagForwardMonth", "../img/icons/control_right.png",
-                I18N.sosClient.forth(), I18N.sosClient.forthExtended()));
+                i18n.forth(), i18n.forthExtended()));
 //        this.topLayout.addMember(this.getDiagForwardMonth());
         View.getInstance().registerTooltip(this.getDiagForwardMonth());
         // this.getDiagForwardMonth().setShowRollOver(true);
 
         // year
-        this.setDiagBackYear(new ImageButton("diagBackYear", "../img/icons/control_left.png", I18N.sosClient
-                .back(), I18N.sosClient.backExtended()));
+        this.setDiagBackYear(new ImageButton("diagBackYear", "../img/icons/control_left.png", i18n
+                .back(), i18n.backExtended()));
 //        this.topLayout.addMember(this.getDiagBackYear());
         View.getInstance().registerTooltip(this.getDiagBackYear());
         // this.getDiagBackYear().setShowRollOver(true);
 
-        Label year = new Label(I18N.sosClient.year());
+        Label year = new Label(i18n.year());
         year.setWidth(35);
         year.setAlign(Alignment.CENTER);
         year.setPosition(Positioning.ABSOLUTE);
@@ -633,7 +634,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
 //        this.topLayout.addMember(year);
 
         this.setDiagForwardYear(new ImageButton("diagdiagForwardYear", "../img/icons/control_right.png",
-                I18N.sosClient.forth(), I18N.sosClient.forthExtended()));
+                i18n.forth(), i18n.forthExtended()));
         View.getInstance().registerTooltip(this.getDiagForwardYear());
 //        this.topLayout.addMember(this.getDiagForwardYear());
         // this.getDiagForwardYear().setShowRollOver(true);
@@ -647,26 +648,26 @@ public abstract class DataControlsTimeSeries extends DataControls {
 
         // zip-export pdf
         this.exportZipPDF =
-                new ImageButton("diagExportZipPDF", "../img/icons/folder_acrobat.png", I18N.sosClient
-                        .exportZipPDF(), I18N.sosClient.exportZipPDFExtended());
+                new ImageButton("diagExportZipPDF", "../img/icons/folder_acrobat.png", i18n
+                        .exportZipPDF(), i18n.exportZipPDFExtended());
         View.getInstance().registerTooltip(this.exportZipPDF);
 
         // zip-export CSV
         this.exportZipCSV =
-                new ImageButton("diagExportZipCSV", "../img/icons/folder_csv.png", I18N.sosClient
-                        .exportZipCSV(), I18N.sosClient.exportZipCSVExtended());
+                new ImageButton("diagExportZipCSV", "../img/icons/folder_csv.png", i18n
+                        .exportZipCSV(), i18n.exportZipCSVExtended());
         View.getInstance().registerTooltip(this.exportZipCSV);
 
         // zip-export XLS
         this.exportZipXLS =
-                new ImageButton("diagExportZipXLS", "../img/icons/folder_excel.png", I18N.sosClient
-                        .exportZipXLS(), I18N.sosClient.exportZipXLSExtended());
+                new ImageButton("diagExportZipXLS", "../img/icons/folder_excel.png", i18n
+                        .exportZipXLS(), i18n.exportZipXLSExtended());
         View.getInstance().registerTooltip(this.exportZipXLS);
 
         // zip-export XLS
         this.exportPDFallInOne =
                 new ImageButton("diagExportPDFallIneOne", "../img/icons/page_white_acrobat_add.png",
-                        I18N.sosClient.exportPDFallInOne(), I18N.sosClient.exportPDFallInOneExtended());
+                        i18n.exportPDFallInOne(), i18n.exportPDFallInOneExtended());
         View.getInstance().registerTooltip(this.exportPDFallInOne);
 
         LayoutSpacer s = new LayoutSpacer();
@@ -683,8 +684,8 @@ public abstract class DataControlsTimeSeries extends DataControls {
 
 		ImageButton expandDiagramInteractionMenuButton = new ImageButton(
 				"expander", "../img/icons/settings.png",
-				I18N.sosClient.expandDiagramInteraction(),
-				I18N.sosClient.expandDiagramInteractionTooltip());
+				i18n.expandDiagramInteraction(),
+				i18n.expandDiagramInteractionTooltip());
 		expandDiagramInteractionMenuButton.setAlign(Alignment.CENTER);
 		expandDiagramInteractionMenuButton.setZIndex(1000001);
 		// TODO extract size to css file!
@@ -722,13 +723,13 @@ public abstract class DataControlsTimeSeries extends DataControls {
 
 	private Canvas createJumpToTimeIntervalForm() {
     	ComboBoxItem jumpToCombo = new ComboBoxItem();
-        jumpToCombo.setTitle(I18N.sosClient.jumpTo());
+        jumpToCombo.setTitle(i18n.jumpTo());
     	jumpToCombo.setDefaultToFirstOption(true);
         jumpToCombo.setWrapTitle(false);
         jumpToCombo.setShowTitle(true);
         jumpToCombo.setWidth(100);
 
-        String[] jumpToTypes = I18N.sosClient.jumpToTypes().split(",");
+        String[] jumpToTypes = i18n.jumpToTypes().split(",");
         LinkedHashMap<String, String> jumpToValues = new LinkedHashMap<String, String>();
         for (int i = 0; i < jumpToTypes.length; i += 2) {
             jumpToValues.put(jumpToTypes[i], jumpToTypes[i + 1]);
@@ -783,7 +784,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
 		Layout layout = new Layout();
 		layout.setStyleName("sensorweb_client_gridButtonLayout");
 		gridShown = true;
-		gridButton = new Label(I18N.sosClient.hideGrid());
+		gridButton = new Label(i18n.hideGrid());
 		gridButton.setStyleName("sensorweb_client_gridButton");
 		gridButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
@@ -792,10 +793,10 @@ public abstract class DataControlsTimeSeries extends DataControls {
                         EventBus.getMainEventBus().fireEvent(new RequestDataEvent());
                         final boolean gridShown = DataControlsTimeSeries.this.gridShown;
                         if (gridShown) {
-                        	String contents = "<html>" + I18N.sosClient.showGrid() + "</html>";
+                        	String contents = "<html>" + i18n.showGrid() + "</html>";
                             gridButton.setContents(contents);
                         } else {
-                        	String contents = "<html>" + I18N.sosClient.hideGrid() + "</html>";
+                        	String contents = "<html>" + i18n.hideGrid() + "</html>";
                             gridButton.setContents(contents);
                         }
                         DataControlsTimeSeries.this.gridShown = !gridShown;
@@ -812,7 +813,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
 	private Canvas createAutoScaleButton() {
 		Layout layout = new Layout();
 		layout.setStyleName("sensorweb_client_scaleButtonLayout");
-		autoScaleButton = new Label(I18N.sosClient.resetScale());
+		autoScaleButton = new Label(i18n.resetScale());
 		autoScaleButton.setStyleName("sensorweb_client_scaleButton");
 	    autoScaleButton.addClickHandler(new ClickHandler() {
 	        public void onClick(ClickEvent event) {
@@ -905,7 +906,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
 
                     long interval = end.getTime() - begin.getTime();
                     if (interval > DataControlsTimeSeries.this.currentInterval) {
-                        Toaster.getInstance().addMessage(I18N.sosClient.errorOverviewInterval());
+                        Toaster.getInstance().addMessage(i18n.errorOverviewInterval());
                         DataControlsTimeSeries.this.getRefresh().setNotClicked();
                         LoaderManager.getInstance().stopLoadingAnimations();
                         return;
@@ -983,14 +984,14 @@ public abstract class DataControlsTimeSeries extends DataControls {
         // check for date crossing
         if (begin > end) {
             // violated cross dates
-            Toaster.getInstance().addErrorMessage(I18N.sosClient.errorCrossDates());
+            Toaster.getInstance().addErrorMessage(i18n.errorCrossDates());
             resetDatePicker();
             return false;
         }
 
         // check for bigger interval than 5min
         if ((end - begin) < 5000) {
-            Toaster.getInstance().addErrorMessage(I18N.sosClient.errorMinimalInterval());
+            Toaster.getInstance().addErrorMessage(i18n.errorMinimalInterval());
             resetDatePicker();
             return false;
         }

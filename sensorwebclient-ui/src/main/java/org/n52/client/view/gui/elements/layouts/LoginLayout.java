@@ -23,8 +23,9 @@
  */
 package org.n52.client.view.gui.elements.layouts;
 
+import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
+
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.ses.event.LoginEvent;
 import org.n52.client.view.gui.elements.controlsImpl.DataControlsSes;
 import org.n52.client.view.gui.elements.interfaces.Layout;
@@ -61,7 +62,7 @@ public class LoginLayout extends Layout {
      *            the tab
      */
     public LoginLayout(SesTab tab) {
-        super(I18N.sesClient.login());
+        super(i18n.login());
         init();
     }
 
@@ -80,7 +81,7 @@ public class LoginLayout extends Layout {
         // NameItem
         this.nameItem = new TextItem();
         this.nameItem.setName("userName");
-        this.nameItem.setTitle(I18N.sesClient.userName());
+        this.nameItem.setTitle(i18n.userName());
         this.nameItem.setRequired(true);
         this.nameItem.setSelectOnFocus(true);
         this.nameItem.setLength(100);
@@ -96,7 +97,7 @@ public class LoginLayout extends Layout {
         // PasswordItem
         this.passwordItem = new PasswordItem();
         this.passwordItem.setName("password");
-        this.passwordItem.setTitle(I18N.sesClient.password());
+        this.passwordItem.setTitle(i18n.password());
         this.passwordItem.setRequired(true);
         this.passwordItem.setLength(20);
         this.passwordItem.addKeyPressHandler(new KeyPressHandler() {
@@ -110,7 +111,7 @@ public class LoginLayout extends Layout {
 
         // Login button
         ButtonItem validateItem = new ButtonItem();
-        validateItem.setTitle(I18N.sesClient.login());
+        validateItem.setTitle(i18n.login());
         validateItem.addClickHandler(new ClickHandler() {
             @SuppressWarnings("synthetic-access")
             public void onClick(ClickEvent event) {

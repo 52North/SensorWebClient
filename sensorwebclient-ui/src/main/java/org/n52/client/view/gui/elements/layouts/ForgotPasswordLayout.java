@@ -23,8 +23,9 @@
  */
 package org.n52.client.view.gui.elements.layouts;
 
+import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
+
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.ses.event.NewPasswordEvent;
 import org.n52.client.view.gui.elements.interfaces.Layout;
 
@@ -55,12 +56,12 @@ public class ForgotPasswordLayout extends Layout {
      * Instantiates a new forgot password layout.
      */
     public ForgotPasswordLayout() {
-        super(I18N.sesClient.forgotPassword());
+        super(i18n.forgotPassword());
 
         DataSource dataSource = new DataSource();
 
-        DataSourceTextField nameField = new DataSourceTextField("name", I18N.sesClient.userName(), 50, true);
-        DataSourceTextField emailField = new DataSourceTextField("email", I18N.sesClient.email(), 100, true);
+        DataSourceTextField nameField = new DataSourceTextField("name", i18n.userName(), 50, true);
+        DataSourceTextField emailField = new DataSourceTextField("email", i18n.email(), 100, true);
 
         RegExpValidator emailValidator = new RegExpValidator();
         emailValidator.setErrorMessage("Invalid email address");
@@ -79,7 +80,7 @@ public class ForgotPasswordLayout extends Layout {
 
         // OK button
         ButtonItem validateItem = new ButtonItem();
-        validateItem.setTitle(I18N.sesClient.sendEmail());
+        validateItem.setTitle(i18n.sendEmail());
         validateItem.addClickHandler(new ClickHandler() {
             @SuppressWarnings("synthetic-access")
             public void onClick(ClickEvent event) {

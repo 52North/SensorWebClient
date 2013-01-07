@@ -31,13 +31,13 @@ import com.google.gwt.core.client.GWT;
  * 
  * TODO refactor so that SOS client and SES client UI access their own i18n class from separated packages.
  */
-public class I18N {
+class I18NShortCut {
 
-    public static SOSClientI18N sosClient;
-    public static SESClientI18N sesClient;
+    public static org.n52.client.sos.i18n.I18N sosClient;
+    public static org.n52.client.ses.i18n.I18N sesClient;
 
-    public I18N() {
-        sosClient = GWT.create(SOSClientI18N.class);
-        sesClient = GWT.create(SESClientI18N.class);
+    public I18NShortCut() {
+        sosClient = GWT.create(org.n52.client.sos.i18n.I18N.class);
+        sesClient = GWT.create(org.n52.client.ses.i18n.I18N.class);
     }
 }

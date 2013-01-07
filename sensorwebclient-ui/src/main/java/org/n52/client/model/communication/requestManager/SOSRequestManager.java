@@ -24,6 +24,8 @@
 
 package org.n52.client.model.communication.requestManager;
 
+import static org.n52.client.sos.i18n.I18NStringsAccessor.i18n;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -44,7 +46,6 @@ import org.n52.client.control.Application;
 import org.n52.client.control.PropertiesManager;
 import org.n52.client.control.ServiceController;
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.model.communication.requestManager.callbacks.EESDataCallback;
 import org.n52.client.model.communication.requestManager.callbacks.FileCallback;
 import org.n52.client.model.communication.requestManager.callbacks.GetFeatureCallback;
@@ -481,7 +482,7 @@ public class SOSRequestManager extends RequestManager {
                         throw new Exception("Pattern for hex color do not match");
                     }
                 } catch (Exception e) {
-                    Toaster.getInstance().addErrorMessage(I18N.sosClient.errorPhenomenonProperties());
+                    Toaster.getInstance().addErrorMessage(i18n.errorPhenomenonProperties());
                 }
             }
         }

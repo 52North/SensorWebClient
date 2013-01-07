@@ -24,11 +24,12 @@
 
 package org.n52.client.view;
 
+import static org.n52.client.sos.i18n.I18NStringsAccessor.i18n;
+
 import java.util.ArrayList;
 
 import org.n52.client.control.PropertiesManager;
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.sos.event.TabSelectedEvent;
 import org.n52.client.view.gui.elements.DataPanel;
 import org.n52.client.view.gui.elements.Header;
@@ -97,12 +98,12 @@ public class View {
         mainPanel.setOverflow(Overflow.HIDDEN);
         
         int fadeout = PropertiesManager.getInstance().getParamaterAsInt("toasterFadeout", 5);
-        Toaster.createInstance("toaster", 400, 200, I18N.sosClient.loggerWindowTitle(), mainPanel, fadeout * 1000);
+        Toaster.createInstance("toaster", 400, 200, i18n.loggerWindowTitle(), mainPanel, fadeout * 1000);
         VLayout vLayout = createLayoutStack();
         mainPanel.addMember(vLayout);
 
         // TODO change tabs to widgets
-        eesTab = new EESTab("ees", I18N.sosClient.diagram());
+        eesTab = new EESTab("ees", i18n.diagram());
         registerTabWidget(eesTab);
         if (PropertiesManager.getInstance().getTabsFromPropertiesFile().contains("SesTab")) {
         	sesTab = new SesTab("SES", "SES");

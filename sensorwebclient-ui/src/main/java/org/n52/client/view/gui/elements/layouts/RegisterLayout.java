@@ -23,11 +23,12 @@
  */
 package org.n52.client.view.gui.elements.layouts;
 
+import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
+
 import java.util.Date;
 
 import org.n52.client.control.PropertiesManager;
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.model.communication.requestManager.SesRequestManager;
 import org.n52.client.ses.event.GetTermsOfUseEvent;
 import org.n52.client.ses.event.RegisterUserEvent;
@@ -91,19 +92,19 @@ public class RegisterLayout extends Layout {
      * Instantiates a new register layout.
      */
     public RegisterLayout() {
-        super(I18N.sesClient.registration());
+        super(i18n.registration());
         this.scClassName = "VLayout";
 
         DataSource dataSource = new DataSource();
 
-        DataSourceTextField userNameField = new DataSourceTextField("userName", I18N.sesClient.userName(), 50, true);
-        DataSourceTextField nameField = new DataSourceTextField("name", I18N.sesClient.name(), 50, false);
-        DataSourcePasswordField passwordField = new DataSourcePasswordField("password", I18N.sesClient.password(), 20, true);
-        DataSourceTextField emailField = new DataSourceTextField("email", I18N.sesClient.email(), 100, true);
-        DataSourceTextField handyField = new DataSourceTextField("handy", I18N.sesClient.handy(), 20, false);
+        DataSourceTextField userNameField = new DataSourceTextField("userName", i18n.userName(), 50, true);
+        DataSourceTextField nameField = new DataSourceTextField("name", i18n.name(), 50, false);
+        DataSourcePasswordField passwordField = new DataSourcePasswordField("password", i18n.password(), 20, true);
+        DataSourceTextField emailField = new DataSourceTextField("email", i18n.email(), 100, true);
+        DataSourceTextField handyField = new DataSourceTextField("handy", i18n.handy(), 20, false);
 
         RegExpValidator emailValidator = new RegExpValidator();
-        emailValidator.setErrorMessage(I18N.sesClient.invalidEmail());
+        emailValidator.setErrorMessage(i18n.invalidEmail());
         emailValidator.setExpression("^([a-zA-Z0-9_.\\-+])+@(([a-zA-Z0-9\\-])+\\.)+[a-zA-Z0-9]{2,4}$");
         emailField.setValidators(emailValidator);
 
@@ -124,15 +125,15 @@ public class RegisterLayout extends Layout {
         // password
         this.passwordItem = new PasswordItem();
         this.passwordItem.setName("password");
-        this.passwordItem.setHint("<nobr>" + I18N.sesClient.possibleChars() + " [0-9 a-z A-Z _ -]" + "</nobr>");
+        this.passwordItem.setHint("<nobr>" + i18n.possibleChars() + " [0-9 a-z A-Z _ -]" + "</nobr>");
         this.passwordItem.setKeyPressFilter("[0-9 a-z A-Z _ -]");
         
         // repeat password
         this.passwordItem2 = new PasswordItem();
         this.passwordItem2.setName("password2");
-        this.passwordItem2.setTitle(I18N.sesClient.passwordAgain());
+        this.passwordItem2.setTitle(i18n.passwordAgain());
         this.passwordItem2.setRequired(true);
-        this.passwordItem2.setHint("<nobr>" + I18N.sesClient.possibleChars() + " [0-9 a-z A-Z _ -]" + "</nobr>");
+        this.passwordItem2.setHint("<nobr>" + i18n.possibleChars() + " [0-9 a-z A-Z _ -]" + "</nobr>");
         this.passwordItem2.setKeyPressFilter("[0-9 a-z A-Z _ -]");
         this.passwordItem2.setLength(250);
 
@@ -144,33 +145,33 @@ public class RegisterLayout extends Layout {
         // repeat email
         this.emailItem2 = new TextItem();
         this.emailItem2.setName("email2");
-        this.emailItem2.setTitle(I18N.sesClient.emailAgain());
+        this.emailItem2.setTitle(i18n.emailAgain());
         this.emailItem2.setRequired(true);
         this.emailItem2.setLength(250);
 
         // email validator
         MatchesFieldValidator matchesValidatorEmail = new MatchesFieldValidator();
         matchesValidatorEmail.setOtherField("email");
-        matchesValidatorEmail.setErrorMessage(I18N.sesClient.emailDoNotMatch());
+        matchesValidatorEmail.setErrorMessage(i18n.emailDoNotMatch());
         this.emailItem2.setValidators(matchesValidatorEmail);
 
         // password validator
         MatchesFieldValidator matchesValidator = new MatchesFieldValidator();
         matchesValidator.setOtherField("password");
-        matchesValidator.setErrorMessage(I18N.sesClient.passwordDoNotMatch());
+        matchesValidator.setErrorMessage(i18n.passwordDoNotMatch());
         this.passwordItem2.setValidators(matchesValidator);
 
         // handy
         this.handyItem = new TextItem();
         this.handyItem.setName("handy");
-        this.handyItem.setTitle(I18N.sesClient.handy());
+        this.handyItem.setTitle(i18n.handy());
         this.handyItem.setKeyPressFilter("[0-9+]");
         // this.handyItem.setHint("Numeric only<br>[0-9]");
         this.handyItem.setLength(250);
 
         // linkItem for terms of use
         this.linkTerms = new LinkItem("");
-        this.linkTerms.setLinkTitle(I18N.sesClient.termsOfUse());
+        this.linkTerms.setLinkTitle(i18n.termsOfUse());
         this.linkTerms.setShouldSaveValue(false);
         this.linkTerms.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
@@ -181,14 +182,14 @@ public class RegisterLayout extends Layout {
         // acceptBox
         this.acceptBox = new CheckboxItem();
         this.acceptBox.setName("acceptTerms");
-        this.acceptBox.setTitle(I18N.sesClient.acceptTermsOfUse());
+        this.acceptBox.setTitle(i18n.acceptTermsOfUse());
         // this.acceptBox.setRequired(true);
         this.acceptBox.setValue(false);
         this.acceptBox.setWidth(120);
         this.acceptBox.setRequired(true);
 
         ButtonItem validateItem = new ButtonItem();
-        validateItem.setTitle(I18N.sesClient.register());
+        validateItem.setTitle(i18n.register());
         validateItem.addClickHandler(new ClickHandler() {
             @SuppressWarnings("synthetic-access")
             public void onClick(ClickEvent event) {
@@ -219,7 +220,7 @@ public class RegisterLayout extends Layout {
                     UserDTO u = new UserDTO(userName, name, password, eMail, handyNr, role, activated, new Date());
                     EventBus.getMainEventBus().fireEvent(new RegisterUserEvent(u));
                 } else if (RegisterLayout.this.form.validate() && !(Boolean) RegisterLayout.this.acceptBox.getValue()) {
-                    SC.say(I18N.sesClient.acceptTermsOfUseInfo());
+                    SC.say(i18n.acceptTermsOfUseInfo());
                 }
             }
         });

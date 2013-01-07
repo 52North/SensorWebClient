@@ -23,10 +23,11 @@
  */
 package org.n52.client.view.gui.widgets;
 
+import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
+
 import java.util.Date;
 
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.model.communication.requestManager.SesRequestManager;
 import org.n52.client.model.data.representations.UserRecord;
 import org.n52.client.ses.event.UpdateUserEvent;
@@ -70,7 +71,7 @@ public class EditUserWindow {
         window.setWidth(300);
         window.setHeight(250);
         window.setAutoSize(true);
-        window.setTitle(I18N.sesClient.editUserData());
+        window.setTitle(i18n.editUserData());
         window.setCanDragReposition(true);
         window.setCanDragResize(true);
         window.centerInPage();
@@ -89,7 +90,7 @@ public class EditUserWindow {
 
         // user name
         final TextItem userNameItem = new TextItem();
-        userNameItem.setTitle(I18N.sesClient.userName());
+        userNameItem.setTitle(i18n.userName());
         userNameItem.setName("userName");
         userNameItem.setLength(length);
         userNameItem.setRequired(true);
@@ -97,7 +98,7 @@ public class EditUserWindow {
 
         // name
         final TextItem nameItem = new TextItem();
-        nameItem.setTitle(I18N.sesClient.name());
+        nameItem.setTitle(i18n.name());
         nameItem.setName("name");
         nameItem.setLength(length);
         nameItem.setValue(record.getName());
@@ -110,17 +111,17 @@ public class EditUserWindow {
 
         // email
         final TextItem emailItem = new TextItem();
-        emailItem.setTitle(I18N.sesClient.email());
+        emailItem.setTitle(i18n.email());
         emailItem.setName("email");
         emailItem.setLength(length);
         emailItem.setRequired(true);
         emailItem.setValue(record.getEMail());
         
         DataSource dataSource = new DataSource();
-        DataSourceTextField emailField = new DataSourceTextField("email", I18N.sesClient.email(), 100, true);
+        DataSourceTextField emailField = new DataSourceTextField("email", i18n.email(), 100, true);
         
         RegExpValidator emailValidator = new RegExpValidator();
-        emailValidator.setErrorMessage(I18N.sesClient.invalidEmail());
+        emailValidator.setErrorMessage(i18n.invalidEmail());
         emailValidator.setExpression("^([a-zA-Z0-9_.\\-+])+@(([a-zA-Z0-9\\-])+\\.)+[a-zA-Z0-9]{2,4}$");
         emailField.setValidators(emailValidator);
         
@@ -130,7 +131,7 @@ public class EditUserWindow {
         // handy
         final TextItem handyItem = new TextItem();
         handyItem.setName("handy");
-        handyItem.setTitle(I18N.sesClient.handy());
+        handyItem.setTitle(i18n.handy());
         handyItem.setKeyPressFilter("[0-9+]");
         // this.handyItem.setHint("Numeric only<br>[0-9]");
         handyItem.setLength(length);
@@ -139,13 +140,13 @@ public class EditUserWindow {
         // role
         final SelectItem roleItem = new SelectItem();
         roleItem.setName("role");
-        roleItem.setTitle(I18N.sesClient.role());
+        roleItem.setTitle(i18n.role());
         roleItem.setValueMap(UserRole.USER.toString(), UserRole.ADMIN.toString());
         roleItem.setRequired(true);
         roleItem.setValue(record.getRole());
 
         ButtonItem editItem = new ButtonItem();
-        editItem.setTitle(I18N.sesClient.saveChanges());
+        editItem.setTitle(i18n.saveChanges());
         editItem.setAlign(Alignment.CENTER);
         editItem.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {

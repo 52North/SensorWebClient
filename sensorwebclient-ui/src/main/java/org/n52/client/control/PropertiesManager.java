@@ -24,9 +24,10 @@
 
 package org.n52.client.control;
 
+import static org.n52.client.sos.i18n.I18NStringsAccessor.i18n;
+
 import java.util.ArrayList;
 
-import org.n52.client.i18n.I18N;
 import org.n52.client.view.gui.widgets.Toaster;
 
 import com.google.gwt.core.client.GWT;
@@ -68,7 +69,7 @@ public class PropertiesManager {
             RequestCallback callback = new RequestCallback() {
 
                 public void onError(Request request, Throwable exception) {
-                    Toaster.getInstance().addMessage(I18N.sosClient.errorRequest());
+                    Toaster.getInstance().addMessage(i18n.errorRequest());
                 }
 
                 public void onResponseReceived(Request request, Response response) {
@@ -79,7 +80,7 @@ public class PropertiesManager {
             requestBuilder.sendRequest(null, callback);
         }
         catch (RequestException ex) {
-            Toaster.getInstance().addMessage(I18N.sosClient.errorRequest());
+            Toaster.getInstance().addMessage(i18n.errorRequest());
         }
     }
 

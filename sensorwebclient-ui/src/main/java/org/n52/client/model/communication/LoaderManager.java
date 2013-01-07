@@ -24,9 +24,10 @@
 
 package org.n52.client.model.communication;
 
+import static org.n52.client.sos.i18n.I18NStringsAccessor.i18n;
+
 import java.util.HashMap;
 
-import org.n52.client.i18n.I18N;
 import org.n52.client.view.gui.elements.DataPanel;
 import org.n52.client.view.gui.widgets.Loader;
 
@@ -57,7 +58,7 @@ public class LoaderManager {
     public void addActiveRequest() {
         this.activeRequests++;
         startLoadingAnimations();
-        DataPanel.requestCounter.setText(I18N.sosClient.requestsLeft() + " " + this.activeRequests);
+        DataPanel.requestCounter.setText(i18n.requestsLeft() + " " + this.activeRequests);
     }
 
     public static LoaderManager getInstance() {

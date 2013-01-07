@@ -23,10 +23,11 @@
  */
 package org.n52.client.view.gui.elements.layouts;
 
+import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
+
 import java.util.ArrayList;
 
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.model.communication.requestManager.SesRequestManager;
 import org.n52.client.model.data.representations.RuleRecord;
 import org.n52.client.ses.event.DeleteRuleEvent;
@@ -38,7 +39,6 @@ import org.n52.shared.serializable.pojos.ComplexRuleDTO;
 import org.n52.shared.serializable.pojos.RuleDS;
 
 import com.google.gwt.user.client.Cookies;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.SortDirection;
 import com.smartgwt.client.util.BooleanCallback;
@@ -49,6 +49,7 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 /**
  * The Class AllRulesLayout.
@@ -68,7 +69,7 @@ public class AllRulesLayout extends Layout {
      * Instantiates a new all rules layout.
      */
     public AllRulesLayout() {
-        super(I18N.sesClient.allRules());
+        super(i18n.allRules());
         
         // init DataSource
         this.dataSource = new RuleDS();
@@ -91,7 +92,7 @@ public class AllRulesLayout extends Layout {
                     if (fieldName.equals("published")) {
 
                         // publish button
-                        IButton publishButton = new IButton(I18N.sesClient.publishButton());
+                        IButton publishButton = new IButton(i18n.publishButton());
                         publishButton.setShowDown(false);
                         publishButton.setShowRollOver(false);
                         publishButton.setLayoutAlign(Alignment.CENTER);
@@ -106,8 +107,8 @@ public class AllRulesLayout extends Layout {
                         
                         
                         if (published && !userID.equals(recordUserID)) {
-                            publishButton.setTitle(I18N.sesClient.unpublishButton());
-                            publishButton.setPrompt(I18N.sesClient.cancelPublication());
+                            publishButton.setTitle(i18n.unpublishButton());
+                            publishButton.setPrompt(i18n.cancelPublication());
                             publishButton.addClickHandler(new ClickHandler() {
                                 public void onClick(ClickEvent event) {
                                     EventBus.getMainEventBus().fireEvent(new PublishRuleEvent(ruleName, !published, "ADMIN"));
@@ -117,16 +118,16 @@ public class AllRulesLayout extends Layout {
                             return publishButton;
                         } else if (userID.equals(recordUserID)) {
                             if (published) {
-                                publishButton.setTitle(I18N.sesClient.unpublishButton());
-                                publishButton.setPrompt(I18N.sesClient.cancelPublication());
+                                publishButton.setTitle(i18n.unpublishButton());
+                                publishButton.setPrompt(i18n.cancelPublication());
                                 publishButton.addClickHandler(new ClickHandler() {
                                     public void onClick(ClickEvent event) {
                                         EventBus.getMainEventBus().fireEvent(new PublishRuleEvent(ruleName, !published, "ADMIN"));
                                     }
                                 });
                             } else {
-                                publishButton.setTitle(I18N.sesClient.publishButton());
-                                publishButton.setPrompt(I18N.sesClient.publishThisRule());
+                                publishButton.setTitle(i18n.publishButton());
+                                publishButton.setPrompt(i18n.publishThisRule());
                                 publishButton.addClickHandler(new ClickHandler() {
                                     public void onClick(ClickEvent event) {
                                         EventBus.getMainEventBus().fireEvent(new PublishRuleEvent(ruleName, !published, "ADMIN"));
@@ -142,11 +143,11 @@ public class AllRulesLayout extends Layout {
                         String userID = Cookies.getCookie(SesRequestManager.COOKIE_USER_ID);
                         if (record.getAttribute("ownerID").equals(userID)) {
                             // subscribe button
-                            IButton editButton = new IButton(I18N.sesClient.edit());
+                            IButton editButton = new IButton(i18n.edit());
                             editButton.setShowDown(false);
                             editButton.setShowRollOver(false);
                             editButton.setLayoutAlign(Alignment.CENTER);
-                            editButton.setPrompt(I18N.sesClient.editThisRule());
+                            editButton.setPrompt(i18n.editThisRule());
                             editButton.setHeight(16);
                             editButton.addClickHandler(new ClickHandler() {
                                 public void onClick(ClickEvent event) {
@@ -159,15 +160,15 @@ public class AllRulesLayout extends Layout {
 
                     } else if (fieldName.equals("delete")) {
                         // delete button
-                        IButton deleteButton = new IButton(I18N.sesClient.delete());
+                        IButton deleteButton = new IButton(i18n.delete());
                         deleteButton.setShowDown(false);
                         deleteButton.setShowRollOver(false);
                         deleteButton.setLayoutAlign(Alignment.CENTER);
-                        deleteButton.setPrompt(I18N.sesClient.deleteThisRule());
+                        deleteButton.setPrompt(i18n.deleteThisRule());
                         deleteButton.setHeight(16);
                         deleteButton.addClickHandler(new ClickHandler() {
                             public void onClick(ClickEvent event) {
-                                SC.ask(I18N.sesClient.reallyDeleteRule(), new BooleanCallback() {
+                                SC.ask(i18n.reallyDeleteRule(), new BooleanCallback() {
                                     public void execute(Boolean value) {
                                         if (value) {
                                             EventBus.getMainEventBus().fireEvent(new DeleteRuleEvent(record.getAttribute("name"), Cookies.getCookie(SesRequestManager.COOKIE_USER_ROLE)));
@@ -202,31 +203,31 @@ public class AllRulesLayout extends Layout {
         this.rulesGrid.sort(1, SortDirection.ASCENDING);
 
         // grid fields
-        ListGridField typeField = new ListGridField("type", I18N.sesClient.type());
+        ListGridField typeField = new ListGridField("type", i18n.type());
         typeField.setWidth(60);
         typeField.setAlign(Alignment.CENTER);
         
-        ListGridField ownerField = new ListGridField("ownerName", I18N.sesClient.owner());
+        ListGridField ownerField = new ListGridField("ownerName", i18n.owner());
         ownerField.setWidth(150);
         ownerField.setAlign(Alignment.CENTER);
 
-        ListGridField nameField = new ListGridField("name", I18N.sesClient.name());
+        ListGridField nameField = new ListGridField("name", i18n.name());
         nameField.setAlign(Alignment.CENTER);
 
-        ListGridField descriptionField = new ListGridField("description", I18N.sesClient.description());
+        ListGridField descriptionField = new ListGridField("description", i18n.description());
         descriptionField.setAlign(Alignment.CENTER);
         
-        ListGridField publishField = new ListGridField("published", I18N.sesClient.publish());
+        ListGridField publishField = new ListGridField("published", i18n.publish());
         publishField.setWidth(110);
         publishField.setCanFilter(false);
         publishField.setAlign(Alignment.CENTER);
 
-        ListGridField editField = new ListGridField("edit", I18N.sesClient.edit());
+        ListGridField editField = new ListGridField("edit", i18n.edit());
         editField.setWidth(110);
         editField.setCanFilter(false);
         editField.setAlign(Alignment.CENTER);
 
-        ListGridField deleteField = new ListGridField("delete", I18N.sesClient.delete());
+        ListGridField deleteField = new ListGridField("delete", i18n.delete());
         deleteField.setWidth(110);
         deleteField.setCanFilter(false);
         deleteField.setAlign(Alignment.CENTER);
@@ -259,14 +260,14 @@ public class AllRulesLayout extends Layout {
 
         for (int i = 0; i < basicRules.size(); i++) {
             basicDTO = basicRules.get(i);
-            rule = new RuleRecord(I18N.sesClient.basic(), basicDTO.getOwnerName(), String.valueOf(basicDTO.getOwnerID()), basicDTO.getName(), basicDTO.getDescription(), "SMS", "XML", basicDTO.isRelease(), basicDTO.isSubscribed());
+            rule = new RuleRecord(i18n.basic(), basicDTO.getOwnerName(), String.valueOf(basicDTO.getOwnerID()), basicDTO.getName(), basicDTO.getDescription(), "SMS", "XML", basicDTO.isRelease(), basicDTO.isSubscribed());
             
             this.rulesGrid.addData(rule);
         }
 
         for (int i = 0; i < complexRules.size(); i++) {
             complexDTO = complexRules.get(i);
-            rule = new RuleRecord(I18N.sesClient.complex(), complexDTO.getOwnerName(), String.valueOf(complexDTO.getOwnerID()), complexDTO.getName(), complexDTO.getDescription(), "SMS", "XML", complexDTO.isRelease(), complexDTO.isSubscribed());
+            rule = new RuleRecord(i18n.complex(), complexDTO.getOwnerName(), String.valueOf(complexDTO.getOwnerID()), complexDTO.getName(), complexDTO.getDescription(), "SMS", "XML", complexDTO.isRelease(), complexDTO.isSubscribed());
        
             this.rulesGrid.addData(rule);
         }

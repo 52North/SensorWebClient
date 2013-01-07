@@ -23,11 +23,12 @@
  */
 package org.n52.client.control.sesTab;
 
+import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
+
 import java.util.ArrayList;
 
 import org.n52.client.control.Controller;
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.model.communication.requestManager.SesRequestManager;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
 import org.n52.client.model.data.representations.TimeSeries;
@@ -59,8 +60,8 @@ import org.n52.client.util.exceptions.ExceptionHandler;
 import org.n52.client.util.exceptions.GUIException;
 import org.n52.client.view.View;
 import org.n52.client.view.gui.elements.controlsImpl.DataControlsSes;
-import org.n52.client.view.gui.elements.interfaces.LegendElement;
 import org.n52.client.view.gui.elements.interfaces.Layout.Layouts;
+import org.n52.client.view.gui.elements.interfaces.LegendElement;
 import org.n52.client.view.gui.elements.tabImpl.ATabEventBroker;
 import org.n52.client.view.gui.elements.tabImpl.SesTab;
 import org.n52.shared.responses.SesClientResponse;
@@ -80,7 +81,7 @@ public class SesTabController extends Controller<SesTab> {
         try {
             dataControls = new DataControlsSes(this);
         } catch (Exception e) {
-            ExceptionHandler.handleException(new GUIException(I18N.sesClient.failedLoadControls(), e));
+            ExceptionHandler.handleException(new GUIException(i18n.failedLoadControls(), e));
         }
         EventBus.getMainEventBus().fireEvent(new GetDataEvent());
     }
@@ -211,7 +212,7 @@ public class SesTabController extends Controller<SesTab> {
                 getTab().getWelcomeLayout().setData(evt.getResponse().getUser());
                 break;
             case LOGIN_ACTIVATED:
-                SC.say(I18N.sesClient.accountNotActivated());
+                SC.say(i18n.accountNotActivated());
                 break;
             case LOGIN_NAME:
                 getTab().getLoginLayout().getNameItem().setValue("");
@@ -219,7 +220,7 @@ public class SesTabController extends Controller<SesTab> {
                 getTab().getLoginLayout().getNameItem().setErrorFormatter(new FormItemErrorFormatter() {
                     public String getErrorHTML(String[] errors) {
                         return "<img src='../ThinSweClient2.0/img/icons/exclamation.png' alt='invalide name' title='"
-                                + I18N.sesClient.invalidName() + "'/>";
+                                + i18n.invalidName() + "'/>";
                     }
                 });
                 break;
@@ -229,12 +230,12 @@ public class SesTabController extends Controller<SesTab> {
                 getTab().getLoginLayout().getPasswordItem().setErrorFormatter(new FormItemErrorFormatter() {
                     public String getErrorHTML(String[] errors) {
                         return "<img src='../ThinSweClient2.0/img/icons/exclamation.png' alt='invalide password' title='"
-                                + I18N.sesClient.invalidPassword() + "'/>";
+                                + i18n.invalidPassword() + "'/>";
                     }
                 });
                 break;
             case LOGIN_LOCKED:
-                SC.say(I18N.sesClient.accountLocked());
+                SC.say(i18n.accountLocked());
                 break;
             // case NEW_PASSWORD_NAME:
             // getTab().getForgorPasswordLayout().getNameItem().setErrorFormatter(new
@@ -318,7 +319,7 @@ public class SesTabController extends Controller<SesTab> {
 
             if (userName != null) {
                 // build text string
-                String text = I18N.sesClient.loggedinAs() + ": " + userName;
+                String text = i18n.loggedinAs() + ": " + userName;
 
                 // set string to all views
                 getTab().getShowUserLayout().getUserNameLabel().setText(text);

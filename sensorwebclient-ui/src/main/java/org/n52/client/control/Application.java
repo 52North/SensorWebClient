@@ -23,6 +23,7 @@
  */
 package org.n52.client.control;
 
+import static org.n52.client.sos.i18n.I18NStringsAccessor.i18n;
 import static org.n52.ext.link.sos.PermalinkParameter.BEGIN;
 import static org.n52.ext.link.sos.PermalinkParameter.END;
 import static org.n52.ext.link.sos.PermalinkParameter.FEATURES;
@@ -40,7 +41,6 @@ import org.n52.client.control.service.SOSController;
 import org.n52.client.control.service.SesController;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.eventBus.EventCallback;
-import org.n52.client.i18n.I18N;
 import org.n52.client.model.communication.requestManager.RequestManager;
 import org.n52.client.model.data.dataManagers.DataManagerSosImpl;
 import org.n52.client.model.data.dataManagers.TimeManager;
@@ -53,9 +53,9 @@ import org.n52.client.sos.event.data.GetProcedureEvent;
 import org.n52.client.sos.event.data.GetStationEvent;
 import org.n52.client.sos.event.data.NewSOSMetadataEvent;
 import org.n52.client.sos.event.data.OverviewIntervalChangedEvent;
+import org.n52.client.sos.event.data.OverviewIntervalChangedEvent.IntervalType;
 import org.n52.client.sos.event.data.RequestDataEvent;
 import org.n52.client.sos.event.data.StoreSOSMetadataEvent;
-import org.n52.client.sos.event.data.OverviewIntervalChangedEvent.IntervalType;
 import org.n52.client.view.View;
 import org.n52.client.view.gui.widgets.Toaster;
 import org.n52.client.view.gui.widgets.stationPicker.StationSelector;
@@ -94,7 +94,6 @@ public final class Application {
 
         // init handlers before throwing events
         DataManagerSosImpl.getInst();
-        new I18N();
         new SOSController();
         if (PropertiesManager.getInstance().getTabsFromPropertiesFile().contains("SesTab")) {
             new SesController();
@@ -121,7 +120,7 @@ public final class Application {
                 TimeRange timeRange = createTimeRange();
                 
                 if (!isAllParametersAvailable(services, versions, offerings, features, procedures, phenomenons)) {
-                    Toaster.getInstance().addErrorMessage(I18N.sosClient.errorUrlParsing());
+                    Toaster.getInstance().addErrorMessage(i18n.errorUrlParsing());
                     return;
                 }
 
@@ -166,7 +165,7 @@ public final class Application {
                 GWT.log("Error evaluating permalink!", e);
             }
             showStationSelectorWhenConfigured();
-            Toaster.getInstance().addErrorMessage(I18N.sosClient.errorUrlParsing());
+            Toaster.getInstance().addErrorMessage(i18n.errorUrlParsing());
         } finally {
             finalEvents();
         }

@@ -23,10 +23,11 @@
  */
 package org.n52.client.view.gui.elements.layouts;
 
+import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
+
 import java.util.List;
 
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.model.data.representations.UserDS;
 import org.n52.client.model.data.representations.UserRecord;
 import org.n52.client.ses.event.DeleteUserEvent;
@@ -36,7 +37,6 @@ import org.n52.client.view.gui.widgets.CreateNewUserWindow;
 import org.n52.client.view.gui.widgets.EditUserWindow;
 import org.n52.shared.serializable.pojos.UserDTO;
 
-import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.SortDirection;
 import com.smartgwt.client.util.BooleanCallback;
@@ -47,6 +47,7 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 /**
  * The Class ShowUserLayout.
@@ -69,7 +70,7 @@ public class ShowUserLayout extends Layout {
      * Instantiates a new show user layout.
      */
     public ShowUserLayout() {
-        super(I18N.sesClient.userManagement());
+        super(i18n.userManagement());
         
         // init database
         this.dataSource = new UserDS();
@@ -90,11 +91,11 @@ public class ShowUserLayout extends Layout {
                 if (fieldName.equals("editField")) {
 
                     // edit button
-                    IButton editButton = new IButton(I18N.sesClient.edit());
+                    IButton editButton = new IButton(i18n.edit());
                     editButton.setShowDown(false);
                     editButton.setShowRollOver(false);
                     editButton.setLayoutAlign(Alignment.CENTER);
-                    editButton.setPrompt(I18N.sesClient.editUserData());
+                    editButton.setPrompt(i18n.editUserData());
                     editButton.setHeight(16);
                     editButton.addClickHandler(new ClickHandler() {
                         public void onClick(ClickEvent event) {
@@ -107,15 +108,15 @@ public class ShowUserLayout extends Layout {
                 } else if (fieldName.equals("deleteField")) {
 
                     // delete button
-                    IButton deleteButton = new IButton(I18N.sesClient.delete());
+                    IButton deleteButton = new IButton(i18n.delete());
                     deleteButton.setShowDown(false);
                     deleteButton.setShowRollOver(false);
                     deleteButton.setLayoutAlign(Alignment.CENTER);
-                    deleteButton.setPrompt(I18N.sesClient.deleteUserData());
+                    deleteButton.setPrompt(i18n.deleteUserData());
                     deleteButton.setHeight(16);
                     deleteButton.addClickHandler(new ClickHandler() {
                         public void onClick(ClickEvent event) {
-                            SC.ask(I18N.sesClient.reallyDeleteUser() + ": " + record.getAttribute("userName") +  "?", new BooleanCallback() {
+                            SC.ask(i18n.reallyDeleteUser() + ": " + record.getAttribute("userName") +  "?", new BooleanCallback() {
                                 public void execute(Boolean value) {
                                     if (value) {
                                         EventBus.getMainEventBus().fireEvent(
@@ -148,28 +149,28 @@ public class ShowUserLayout extends Layout {
         this.userGrid.setCanResizeFields(false);
 
         // grid fields
-        ListGridField userNameField = new ListGridField("userName", I18N.sesClient.userName());
+        ListGridField userNameField = new ListGridField("userName", i18n.userName());
         userNameField.setAlign(Alignment.CENTER);
         
-        ListGridField nameField = new ListGridField("name", I18N.sesClient.name());
+        ListGridField nameField = new ListGridField("name", i18n.name());
         nameField.setAlign(Alignment.CENTER);
 
-        ListGridField emailField = new ListGridField("eMail", I18N.sesClient.emailAddress());
+        ListGridField emailField = new ListGridField("eMail", i18n.emailAddress());
         emailField.setAlign(Alignment.CENTER);
 
-        ListGridField handyField = new ListGridField("handy", I18N.sesClient.handyNumber());
+        ListGridField handyField = new ListGridField("handy", i18n.handyNumber());
         handyField.setAlign(Alignment.CENTER);
 
-        ListGridField roleField = new ListGridField("role", I18N.sesClient.role());
+        ListGridField roleField = new ListGridField("role", i18n.role());
         roleField.setWidth(90);
         roleField.setAlign(Alignment.CENTER);
 
-        ListGridField editField = new ListGridField("editField", I18N.sesClient.edit());
+        ListGridField editField = new ListGridField("editField", i18n.edit());
         editField.setWidth(110);
         editField.setAlign(Alignment.CENTER);
         editField.setCanFilter(false);
 
-        ListGridField deleteField = new ListGridField("deleteField", I18N.sesClient.delete());
+        ListGridField deleteField = new ListGridField("deleteField", i18n.delete());
         deleteField.setWidth(110);
         deleteField.setAlign(Alignment.CENTER);
         deleteField.setCanFilter(false);
@@ -177,11 +178,11 @@ public class ShowUserLayout extends Layout {
         this.userGrid.setFields(userNameField, nameField, emailField, handyField, roleField, editField, deleteField);
 
         // createNewUser button
-        IButton createUserButton = new IButton(I18N.sesClient.createNewUser());
+        IButton createUserButton = new IButton(i18n.createNewUser());
         createUserButton.setShowDown(false);
         createUserButton.setShowRollOver(false);
         createUserButton.setLayoutAlign(Alignment.LEFT);
-        createUserButton.setPrompt(I18N.sesClient.createNewUser());
+        createUserButton.setPrompt(i18n.createNewUser());
         createUserButton.setHeight(20);
         createUserButton.setWidth(130);
         createUserButton.addClickHandler(new ClickHandler() {

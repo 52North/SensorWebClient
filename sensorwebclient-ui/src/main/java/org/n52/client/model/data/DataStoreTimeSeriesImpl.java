@@ -24,6 +24,8 @@
 
 package org.n52.client.model.data;
 
+import static org.n52.client.sos.i18n.I18NStringsAccessor.i18n;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,7 +35,6 @@ import org.eesgmbh.gimv.client.event.LoadImageDataEvent;
 import org.eesgmbh.gimv.client.event.SetDomainBoundsEvent;
 import org.eesgmbh.gimv.client.event.SetDomainBoundsEventHandler;
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.model.data.representations.DataWrapperComparator;
 import org.n52.client.model.data.representations.TimeSeries;
 import org.n52.client.sos.event.ChangeTimeSeriesStyleEvent;
@@ -201,7 +202,7 @@ public class DataStoreTimeSeriesImpl extends ADataStore<TimeSeries> {
                 }
                 dataItem.getProperties().setSetAxis(true);
             } catch (NullPointerException e) {
-                Toaster.getInstance().addErrorMessage(I18N.sosClient.timeSeriesNotExists());
+                Toaster.getInstance().addErrorMessage(i18n.timeSeriesNotExists());
             }
         }
 
@@ -279,7 +280,7 @@ public class DataStoreTimeSeriesImpl extends ADataStore<TimeSeries> {
             try {
                 DataStoreTimeSeriesImpl.this.getDataItem(evt.getTSID()).setHasData(evt.hasData());
             } catch (NullPointerException e) {
-                Toaster.getInstance().addErrorMessage(I18N.sosClient.timeSeriesNotExists());
+                Toaster.getInstance().addErrorMessage(i18n.timeSeriesNotExists());
             }
         }
 

@@ -24,6 +24,8 @@
 
 package org.n52.client.view.gui.elements.legend;
 
+import static org.n52.client.sos.i18n.I18NStringsAccessor.i18n;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -34,7 +36,6 @@ import org.eesgmbh.gimv.client.event.LoadImageDataEvent;
 import org.n52.client.control.PropertiesManager;
 import org.n52.client.control.service.SOSController;
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
 import org.n52.client.model.data.dataManagers.TimeManager;
 import org.n52.client.model.data.representations.TimeSeries;
@@ -235,7 +236,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.legendEntryHead.setHeight(this.height);
 
 		this.noDataSign = new Img("../img/icons/exclamation.png");
-		this.noDataSign.setTooltip(I18N.sosClient.noDataAvailable());
+		this.noDataSign.setTooltip(i18n.noDataAvailable());
 		this.noDataSign.setWidth(16);
 		this.noDataSign.setHeight(16);
 		this.noDataSign.setPadding(6);
@@ -245,8 +246,8 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.loadingSpinner.setHeight(16);
 		this.loadingSpinner.setPadding(6);
 
-		this.titleCol = new SmallButton(new Label(), I18N.sosClient.changeColor(),
-				I18N.sosClient.changeColorExtended());
+		this.titleCol = new SmallButton(new Label(), i18n.changeColor(),
+				i18n.changeColorExtended());
 		this.titleCol.hide();
 		this.titleCol.addClickHandler(new ClickHandler() {
 			@Override
@@ -339,7 +340,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.lastValueInterval.setAutoWidth();
 		this.lastValueInterval.setWrap(false);
 		this.lastValueInterval.setStyleName("sensorweb_client_legendlink");
-		Label separator = new Label(I18N.sosClient.to());
+		Label separator = new Label(i18n.to());
 		separator.setAlign(Alignment.CENTER);
 		separator.setWidth(20);
 		interval.addMember(this.firstValueInterval);
@@ -378,8 +379,8 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 	private ImageButton createJumpToLastValueButton() {
 		final ImageButton jumpLast = new ImageButton("jumpLast",
 				"../img/icons/control_end_blue.png",
-				I18N.sosClient.jumpToLast(),
-				I18N.sosClient.jumpToLastExtended());
+				i18n.jumpToLast(),
+				i18n.jumpToLastExtended());
 		View.getInstance().registerTooltip(jumpLast);
 		jumpLast.addClickHandler(new ClickHandler() {
 
@@ -388,8 +389,8 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 						.getLastValueDate();
 				if (date == 0) {
 					Toaster.getInstance().addMessage(
-							I18N.sosClient.errorSOS() + ": "
-									+ I18N.sosClient.jumpToLast());
+							i18n.errorSOS() + ": "
+									+ i18n.jumpToLast());
 					return;
 				}
 				long interval = TimeManager.getInst().getEnd() - date;
@@ -408,8 +409,8 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 	private ImageButton createJumpToFirstValueButton() {
 		ImageButton jumpFirst = new ImageButton("jumpFirst",
 				"../img/icons/control_start_blue.png",
-				I18N.sosClient.jumpToFirst(),
-				I18N.sosClient.jumpToFirstExtended());
+				i18n.jumpToFirst(),
+				i18n.jumpToFirstExtended());
 		View.getInstance().registerTooltip(jumpFirst);
 		jumpFirst.addClickHandler(new ClickHandler() {
 
@@ -419,8 +420,8 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 
 				if (date == 0) {
 					Toaster.getInstance().addMessage(
-							I18N.sosClient.errorSOS() + ": "
-									+ I18N.sosClient.jumpToFirst());
+							i18n.errorSOS() + ": "
+									+ i18n.jumpToFirst());
 					return;
 				}
 
@@ -440,7 +441,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 	private ImageButton createPDFExportButton() {
 		ImageButton exportPDF = new ImageButton("exportPDF",
 				"../img/icons/page_white_acrobat.png",
-				I18N.sosClient.exportPDF(), I18N.sosClient.exportPDFExtended());
+				i18n.exportPDF(), i18n.exportPDFExtended());
 		View.getInstance().registerTooltip(exportPDF);
 		exportPDF.addClickHandler(new ClickHandler() {
 
@@ -459,7 +460,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 	private ImageButton createXLSExportButton() {
 		ImageButton exportXLS = new ImageButton(
 				"exportXLS", "../img/icons/page_white_excel.png", //$NON-NLS-2$
-				I18N.sosClient.exportXLS(), I18N.sosClient.exportXLSExtended());
+				i18n.exportXLS(), i18n.exportXLSExtended());
 		View.getInstance().registerTooltip(exportXLS);
 		exportXLS.addClickHandler(new ClickHandler() {
 
@@ -478,7 +479,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 	private ImageButton createCSVExportButton() {
 		ImageButton exportCSV = new ImageButton(
 				"exportCSV", "../img/icons/table.png", //$NON-NLS-2$
-				I18N.sosClient.exportCSV(), I18N.sosClient.exportCSVExtended());
+				i18n.exportCSV(), i18n.exportCSVExtended());
 		View.getInstance().registerTooltip(exportCSV);
 		exportCSV.addClickHandler(new ClickHandler() {
 
@@ -495,11 +496,11 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 
 	private void createDeleteLegendEntryButton() {
 		this.deleteButton = new SmallButton(new Img("../img/icons/del.png"),
-				I18N.sosClient.delete(), I18N.sosClient.deleteExtended());
+				i18n.delete(), i18n.deleteExtended());
 		this.deleteButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent evt) {
 				if (SOSController.isDeletingTS) {
-					Toaster.getInstance().addMessage(I18N.sosClient.deleteTimeSeriesActiv());
+					Toaster.getInstance().addMessage(i18n.deleteTimeSeriesActiv());
 				} else {
 					SOSController.isDeletingTS = true;
 					LegendEntryTimeSeries.this.getEventBroker().unregister();
@@ -513,7 +514,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 
 	private void createInformationButton() {
 		this.infoButton = new SmallButton(new Img("../img/icons/info.png"),
-				I18N.sosClient.infos(), I18N.sosClient.infoExtended());
+				i18n.infos(), i18n.infoExtended());
 		this.infoButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (informationWindow == null) {
@@ -540,8 +541,8 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 
 	private void createColorChangeButton() {
 		this.colorButton = new SmallButton(
-				new Img("../img/icons/bullet_wrench.png"), I18N.sosClient.changeColor(),
-				I18N.sosClient.changeColorExtended());
+				new Img("../img/icons/bullet_wrench.png"), i18n.changeColor(),
+				i18n.changeColorExtended());
 //		View.getInstance().registerTooltip(this.colorButton);
 		this.colorButton.addClickHandler(new ClickHandler() {
 
@@ -588,9 +589,9 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.lineStyles.setValue(getTimeSeries().getLineStyle());
 		this.lineWidth.setValue(getTimeSeries().getLineWidth());
 		if (getTimeSeries().isAutoScale()) {
-			this.scale.setDefaultValue(I18N.sosClient.autoScale());
+			this.scale.setDefaultValue(i18n.autoScale());
 		} else {
-			this.scale.setDefaultValue(I18N.sosClient.zeroScale());
+			this.scale.setDefaultValue(i18n.zeroScale());
 		}
 		this.slider.setValue(getTimeSeries().getOpacity());
 		this.colors.setValue(getTimeSeries().getColor());
@@ -620,7 +621,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		// }
 		StringBuilder phenomenonHtmlContent = new StringBuilder();
 		phenomenonHtmlContent.append("<span>");
-		phenomenonHtmlContent.append(I18N.sosClient.phenomenonLabel());
+		phenomenonHtmlContent.append(i18n.phenomenonLabel());
 		phenomenonHtmlContent.append(":</span> ");
 		phenomenonHtmlContent.append(phenomenon);
 		if (uom != null && !uom.isEmpty()) {
@@ -636,7 +637,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		// station = station.substring(station.lastIndexOf("/") + 1);
 		// }
 		this.stationLabel.setContents("<span>"
-				+ I18N.sosClient.foiLabel() + ":</span> "
+				+ i18n.foiLabel() + ":</span> "
 				+ getStationName(this.getTimeSeries()));
 
 		Set<String> values = this.getTimeSeries().getProperties()
@@ -737,8 +738,8 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 							.getFirstValueDate();
 					if (date == 0) {
 						Toaster.getInstance().addMessage(
-								I18N.sosClient.errorSOS() + ": "
-										+ I18N.sosClient.jumpToFirst());
+								i18n.errorSOS() + ": "
+										+ i18n.jumpToFirst());
 						return;
 					}
 					long interval = TimeManager.getInst().getBegin() - date;
@@ -748,7 +749,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 				}
 			});
 		} else {
-			this.firstValueInterval.setContents(I18N.sosClient.noData());
+			this.firstValueInterval.setContents(i18n.noData());
 		}
 	}
 
@@ -767,8 +768,8 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 							.getLastValueDate();
 					if (date == 0) {
 						Toaster.getInstance().addMessage(
-								I18N.sosClient.errorSOS() + ": "
-										+ I18N.sosClient.jumpToLast());
+								i18n.errorSOS() + ": "
+										+ i18n.jumpToLast());
 						return;
 					}
 					long interval = TimeManager.getInst().getEnd() - date;
@@ -778,7 +779,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 				}
 			});
 		} else {
-			this.lastValueInterval.setContents(I18N.sosClient.noData());
+			this.lastValueInterval.setContents(i18n.noData());
 		}
 	}
 
@@ -795,7 +796,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.setCanDrag(true);
 		// opacity-slider
 		this.slider = new SliderItem();
-		this.slider.setTitle(I18N.sosClient.Opacity());
+		this.slider.setTitle(i18n.Opacity());
 		this.slider.setWidth(120);
 		this.slider.setHeight(30);
 		this.slider.setMinValue(0f);
@@ -803,14 +804,14 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.slider.setValue(this.slider.getMaxValue());
 
 		this.seriesType = new ComboBoxItem();
-		String levelLine = I18N.sosClient.levelLine();
-		String sumLine = I18N.sosClient.sumLine();
+		String levelLine = i18n.levelLine();
+		String sumLine = i18n.sumLine();
 		LinkedHashMap<String, String> levelstyle = new LinkedHashMap<String, String>();
 		levelstyle.put(TimeSeries.GRAPH_STYLE_GAUGELINE, levelLine);
 		levelstyle.put(TimeSeries.GRAPH_STYLE_SUMLINE, sumLine);
 		this.seriesType.setValueMap(levelstyle);
 		this.seriesType.setWidth(85);
-		this.seriesType.setTitle(I18N.sosClient.seriesType());
+		this.seriesType.setTitle(i18n.seriesType());
 
 		this.seriesType.addChangedHandler(new ChangedHandler() {
 
@@ -837,28 +838,28 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		});
 
 		LinkedHashMap<String, String> styles = new LinkedHashMap<String, String>();
-		styles.put(LINE_STYLE_LINE, I18N.sosClient.lineStyle());
-		styles.put(LINE_STYLE_DOTS, I18N.sosClient.dottedStyle());
-		styles.put(LINE_STYLE_AREA, I18N.sosClient.areaStyle());
-		styles.put(LINE_STYLE_DASHED, I18N.sosClient.dashedStyle());
-		styles.put(LINE_STYLE_LINE_DOTS, I18N.sosClient.lineDotsStyle());
+		styles.put(LINE_STYLE_LINE, i18n.lineStyle());
+		styles.put(LINE_STYLE_DOTS, i18n.dottedStyle());
+		styles.put(LINE_STYLE_AREA, i18n.areaStyle());
+		styles.put(LINE_STYLE_DASHED, i18n.dashedStyle());
+		styles.put(LINE_STYLE_LINE_DOTS, i18n.lineDotsStyle());
 
 		this.lineStyles = new ComboBoxItem();
-		this.lineStyles.setTitle(I18N.sosClient.linestyle());
+		this.lineStyles.setTitle(i18n.linestyle());
 		this.lineStyles.setShowTitle(true);
 		this.lineStyles.setValueMap(styles);
 		this.lineStyles.setWidth(85);
 		
 		this.lineWidth = new ComboBoxItem();
-		this.lineWidth.setTitle(I18N.sosClient.lineWidth());
+		this.lineWidth.setTitle(i18n.lineWidth());
 		this.lineWidth.setShowTitle(true);
 		this.lineWidth.setWidth(85);
 		this.lineWidth.setValueMap("1","2","3","4","5","6","7","8","9","10");
 
 		this.scale = new RadioGroupItem();
-		this.scale.setTitle(I18N.sosClient.scale());
-		this.scale.setValueMap(I18N.sosClient.zeroScale(),
-				I18N.sosClient.autoScale());
+		this.scale.setTitle(i18n.scale());
+		this.scale.setValueMap(i18n.zeroScale(),
+				i18n.autoScale());
 
 		this.cpForm = new DynamicForm();
 		this.cpForm.setNumCols(1);
@@ -867,7 +868,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 
 		this.colors = new ColorPickerItem();
 		this.colors.setShowTitle(true);
-		this.colors.setTitle(I18N.sosClient.color());
+		this.colors.setTitle(i18n.color());
 		this.colors.setWidth(85);
 		this.cpForm.setShowComplexFields(false);
 		this.cpForm.setFields(this.scale, this.seriesType, this.lineStyles, 
@@ -876,8 +877,8 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 
 		SmallButton conf = new SmallButton(
 				new Img("../img/icons/acc.png"),
-				I18N.sosClient.setAndRefresh(),
-				I18N.sosClient.setAndRefreshExt());
+				i18n.setAndRefresh(),
+				i18n.setAndRefreshExt());
 		conf.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
@@ -895,7 +896,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 				boolean scaleToNullCheck = false;
 				boolean autoScaleCheck = false;
 				if (LegendEntryTimeSeries.this.scale.getValueAsString().equals(
-						I18N.sosClient.zeroScale())) {
+						i18n.zeroScale())) {
 					scaleToNullCheck = true;
 				} else {
 					autoScaleCheck = true;
@@ -924,8 +925,8 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 			}
 		});
 		SmallButton cancelColor = new SmallButton(new Img(
-				"../img/icons/del.png"), I18N.sosClient.cancel(),
-				I18N.sosClient.cancel());
+				"../img/icons/del.png"), i18n.cancel(),
+				i18n.cancel());
 		cancelColor.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				LegendEntryTimeSeries.this.styleChanger.hide();
@@ -976,10 +977,10 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		ordButt.setAlign(Alignment.RIGHT);
 
 		ImageButton up = new ImageButton("up", "../img/icons/arrow_up.png",
-				I18N.sosClient.up(), I18N.sosClient.upExt());
+				i18n.up(), i18n.upExt());
 		ImageButton down = new ImageButton("down",
-				"../img/icons/arrow_down.png", I18N.sosClient.down(),
-				I18N.sosClient.downExt());
+				"../img/icons/arrow_down.png", i18n.down(),
+				i18n.downExt());
 		up.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
@@ -1258,7 +1259,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 						LegendEntryTimeSeries.this.legendEntryHead
 								.setStyleName("sensorweb_client_legendEntryHeaderSelectedNoData");
 						Toaster.getInstance().addMessage(
-								I18N.sosClient.noDataAvailable()
+								i18n.noDataAvailable()
 										+ LegendEntryTimeSeries.this
 												.getTimeSeries().getProcedureId());
 					}
@@ -1272,7 +1273,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 						LegendEntryTimeSeries.this.legendEntryHead
 								.setStyleName("sensorweb_client_legendEntryHeaderNoData");
 						Toaster.getInstance().addMessage(
-								I18N.sosClient.noDataAvailable()
+								i18n.noDataAvailable()
 										+ LegendEntryTimeSeries.this
 												.getTimeSeries().getProcedureId());
 					}
@@ -1298,13 +1299,13 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 				if (evt.isAutoScale()) {
 					LegendEntryTimeSeries.this.getTimeSeries().setAutoScale(
 							evt.isAutoScale());
-					LegendEntryTimeSeries.this.scale.setValue(I18N.sosClient
+					LegendEntryTimeSeries.this.scale.setValue(i18n
 							.autoScale());
 				}
 				if (evt.isScaleToNull()) {
 					LegendEntryTimeSeries.this.getTimeSeries().setScaleToZero(
 							evt.isScaleToNull());
-					LegendEntryTimeSeries.this.scale.setValue(I18N.sosClient
+					LegendEntryTimeSeries.this.scale.setValue(i18n
 							.zeroScale());
 				}
 			}
@@ -1313,7 +1314,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		@Override
 		public void onSwitch(SwitchAutoscaleEvent evt) {
 			LegendEntryTimeSeries.this.getTimeSeries().setAutoScale(evt.getSwitch());
-			LegendEntryTimeSeries.this.scale.setValue(I18N.sosClient.autoScale());
+			LegendEntryTimeSeries.this.scale.setValue(i18n.autoScale());
 			LegendEntryTimeSeries.this.getTimeSeries().setScaleToZero(false);
 		}
 	}

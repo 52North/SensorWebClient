@@ -23,11 +23,12 @@
  */
 package org.n52.client.view.gui.elements.layouts;
 
+import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.model.communication.requestManager.SesRequestManager;
 import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.CreateComplexRuleEvent;
@@ -117,7 +118,7 @@ public class CreateComplexRuleLayout extends Layout {
      * Instantiates a new creates the complex rule layout.
      */
     public CreateComplexRuleLayout() {
-        super(I18N.sesClient.createComplexRule());
+        super(i18n.createComplexRule());
 
         this.rulesHashMap = new LinkedHashMap<String, String>();
 
@@ -128,9 +129,9 @@ public class CreateComplexRuleLayout extends Layout {
         // TitleItem
         this.nameItem = new TextItem();
         this.nameItem.setName("title");
-        this.nameItem.setTitle(I18N.sesClient.name());
+        this.nameItem.setTitle(i18n.name());
         this.nameItem.setKeyPressFilter("[0-9a-zA-Z_]");
-        this.nameItem.setHint(I18N.sesClient.possibleChars() + " [0-9 a-z A-Z _]");
+        this.nameItem.setHint(i18n.possibleChars() + " [0-9 a-z A-Z _]");
         //"</nobr>"
         this.nameItem.setShowHintInField(true);
         this.nameItem.setRequired(true);
@@ -145,11 +146,11 @@ public class CreateComplexRuleLayout extends Layout {
         // DescriptionItem
         this.descriptionItem = new TextAreaItem();
         this.descriptionItem.setName("description");
-        this.descriptionItem.setTitle(I18N.sesClient.description());
+        this.descriptionItem.setTitle(i18n.description());
         this.descriptionItem.setRequired(true);
         this.descriptionItem.setHeight(100);
         this.descriptionItem.setWidth(250);
-        this.descriptionItem.setHint(I18N.sesClient.possibleChars() + " [0-9 a-z A-Z _ -]");
+        this.descriptionItem.setHint(i18n.possibleChars() + " [0-9 a-z A-Z _ -]");
         this.descriptionItem.setShowHintInField(true);
         this.descriptionItem.addKeyPressHandler(new KeyPressHandler() {
             public void onKeyPress(KeyPressEvent event) {
@@ -168,31 +169,31 @@ public class CreateComplexRuleLayout extends Layout {
 
         // ====================
         // radioButtons
-        this.publishRadioGroup = new RadioGroupItem("publish", I18N.sesClient.publish());
-        this.publishRadioGroup.setValueMap(I18N.sesClient.yes(), I18N.sesClient.no());
-        this.publishRadioGroup.setDefaultValue(I18N.sesClient.yes());
+        this.publishRadioGroup = new RadioGroupItem("publish", i18n.publish());
+        this.publishRadioGroup.setValueMap(i18n.yes(), i18n.no());
+        this.publishRadioGroup.setDefaultValue(i18n.yes());
         
         // filter to distinguish bestween own, other or all published rules
-        this.filterRadioGroup = new RadioGroupItem("filter", I18N.sesClient.rules());
-        this.filterRadioGroup.setValueMap(I18N.sesClient.filterOwn(), I18N.sesClient.filterOther(), I18N.sesClient.filterBoth());
-        this.filterRadioGroup.setDefaultValue(I18N.sesClient.filterOwn());
+        this.filterRadioGroup = new RadioGroupItem("filter", i18n.rules());
+        this.filterRadioGroup.setValueMap(i18n.filterOwn(), i18n.filterOther(), i18n.filterBoth());
+        this.filterRadioGroup.setDefaultValue(i18n.filterOwn());
         this.filterRadioGroup.setVertical(false);
         this.filterRadioGroup.setTitleOrientation(TitleOrientation.LEFT);
         this.filterRadioGroup.addChangedHandler(new ChangedHandler() {
             public void onChanged(final ChangedEvent event) {
-                SC.ask(I18N.sesClient.filterQuestion(), new BooleanCallback() {
+                SC.ask(i18n.filterQuestion(), new BooleanCallback() {
                     public void execute(Boolean value) {
                         if (value) {
-                            if (event.getValue().equals(I18N.sesClient.filterOwn())) {
-                                oldSelectedFilter = I18N.sesClient.filterOwn();
+                            if (event.getValue().equals(i18n.filterOwn())) {
+                                oldSelectedFilter = i18n.filterOwn();
                                 EventBus.getMainEventBus().fireEvent(new GetAllPublishedRulesEvent(1));
                                 clearBlock();
-                            } else if (event.getValue().equals(I18N.sesClient.filterOther())) {
-                                oldSelectedFilter = I18N.sesClient.filterOther();
+                            } else if (event.getValue().equals(i18n.filterOther())) {
+                                oldSelectedFilter = i18n.filterOther();
                                 EventBus.getMainEventBus().fireEvent(new GetAllPublishedRulesEvent(2));
                                 clearBlock();
-                            } else if (event.getValue().equals(I18N.sesClient.filterBoth())) {
-                                oldSelectedFilter = I18N.sesClient.filterBoth();
+                            } else if (event.getValue().equals(i18n.filterBoth())) {
+                                oldSelectedFilter = i18n.filterBoth();
                                 EventBus.getMainEventBus().fireEvent(new GetAllPublishedRulesEvent(3));
                                 clearBlock();
                             }
@@ -203,7 +204,7 @@ public class CreateComplexRuleLayout extends Layout {
                 });
             }
         });
-        this.oldSelectedFilter = I18N.sesClient.filterOwn();
+        this.oldSelectedFilter = i18n.filterOwn();
         
         DynamicForm filterRadioForm = new DynamicForm();
         filterRadioForm.setWidth("30%");
@@ -218,7 +219,7 @@ public class CreateComplexRuleLayout extends Layout {
         form3.setUseAllDataSourceFields(true);
 
         this.createButtonItem = new ButtonItem();
-        this.createButtonItem.setTitle(I18N.sesClient.create());
+        this.createButtonItem.setTitle(i18n.create());
         this.createButtonItem.addClickHandler(new ClickHandler() {
             @SuppressWarnings("synthetic-access")
             public void onClick(ClickEvent event) {
@@ -230,7 +231,7 @@ public class CreateComplexRuleLayout extends Layout {
         });
         
         this.cancelButton = new ButtonItem();
-        this.cancelButton.setTitle(I18N.sesClient.cancel());
+        this.cancelButton.setTitle(i18n.cancel());
         this.cancelButton.setVisible(false);
         this.cancelButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
@@ -246,7 +247,7 @@ public class CreateComplexRuleLayout extends Layout {
         form3.setFields(this.createButtonItem, this.cancelButton);
 
         // buttons for the rule block
-        this.blockButtonItem = new IButton(I18N.sesClient.addBlock());
+        this.blockButtonItem = new IButton(i18n.addBlock());
         this.blockButtonItem.setWidth("130px");
         this.blockButtonItem.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
             
@@ -263,7 +264,7 @@ public class CreateComplexRuleLayout extends Layout {
                 }
             }
         });
-        this.singleButtonItem = new IButton(I18N.sesClient.addSingleRule());
+        this.singleButtonItem = new IButton(i18n.addSingleRule());
         this.singleButtonItem.setWidth("130px");
         this.singleButtonItem.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
             public void onClick(com.smartgwt.client.widgets.events.ClickEvent event) {
@@ -275,7 +276,7 @@ public class CreateComplexRuleLayout extends Layout {
             }
         });
 
-        this.resetButtonItem = new IButton(I18N.sesClient.reset());
+        this.resetButtonItem = new IButton(i18n.reset());
         this.resetButtonItem.setWidth("130px");
         this.resetButtonItem.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
             public void onClick(com.smartgwt.client.widgets.events.ClickEvent event) {
@@ -611,7 +612,7 @@ public class CreateComplexRuleLayout extends Layout {
         clearBlock();
         
         // change button text
-        this.createButtonItem.setTitle(I18N.sesClient.create());
+        this.createButtonItem.setTitle(i18n.create());
 
         // clear title
         this.nameItem.clearValue();
@@ -620,8 +621,8 @@ public class CreateComplexRuleLayout extends Layout {
         this.descriptionItem.clearValue();
 
         // set radio buttons to "yes"
-        this.publishRadioGroup.setValue(I18N.sesClient.yes());
-        this.filterRadioGroup.setValue(I18N.sesClient.filterOwn());
+        this.publishRadioGroup.setValue(i18n.yes());
+        this.filterRadioGroup.setValue(i18n.filterOwn());
         
 //        resetBlock();
     }
@@ -674,7 +675,7 @@ public class CreateComplexRuleLayout extends Layout {
         String description = (String) this.descriptionItem.getValue();
 
         boolean publish = false;
-        if (this.publishRadioGroup.getValue().toString().equals(I18N.sesClient.yes())) {
+        if (this.publishRadioGroup.getValue().toString().equals(i18n.yes())) {
             publish = true;
         }
 
@@ -706,13 +707,13 @@ public class CreateComplexRuleLayout extends Layout {
                 String ruleName = this.nameItem.getValueAsString();
                 if (Character.isDigit(ruleName.charAt(0))) {
                     // if rulename starts with number, inform user
-                    SC.say(I18N.sesClient.ruleNameStartsWithDigit());
+                    SC.say(i18n.ruleNameStartsWithDigit());
                     valid = false;
                 }
                 
-                if (leftRuleName.contains(I18N.sesClient.ruleNotFound())
-                        || rightRuleName.contains(I18N.sesClient.ruleNotFound())) {
-                    SC.say(I18N.sesClient.invalidInputs());
+                if (leftRuleName.contains(i18n.ruleNotFound())
+                        || rightRuleName.contains(i18n.ruleNotFound())) {
+                    SC.say(i18n.invalidInputs());
                     valid = false;
                 }
                 
@@ -722,7 +723,7 @@ public class CreateComplexRuleLayout extends Layout {
 
                     EventBus.getMainEventBus().fireEvent(new CreateComplexRuleEvent(data, this.editCR, this.oldRuleName));
                 } else {
-                    SC.say(I18N.sesClient.invalidInputs());
+                    SC.say(i18n.invalidInputs());
                 }
             }
         } else {
@@ -735,7 +736,7 @@ public class CreateComplexRuleLayout extends Layout {
             for (int i = 0; i < this.treeContent.size(); i++) {
                 if (this.treeContent.get(i).equals("") 
                         || this.treeContent.get(i) == null 
-                        || this.treeContent.get(i).contains(I18N.sesClient.ruleNotFound())) {
+                        || this.treeContent.get(i).contains(i18n.ruleNotFound())) {
                     valid = false;
                 }
             }
@@ -748,7 +749,7 @@ public class CreateComplexRuleLayout extends Layout {
 
                 EventBus.getMainEventBus().fireEvent(new CreateComplexRuleEvent(data, this.editCR, this.oldRuleName));
             } else {
-                SC.say(I18N.sesClient.invalidInputs());
+                SC.say(i18n.invalidInputs());
             }
         }
     }
@@ -791,10 +792,10 @@ public class CreateComplexRuleLayout extends Layout {
         this.oldRuleName = rule.getTitle();
 
         // set header
-        this.headerItem.setValue(I18N.sesClient.editComplexRule());
+        this.headerItem.setValue(i18n.editComplexRule());
         
         // rename button
-        this.createButtonItem.setTitle(I18N.sesClient.saveChanges());
+        this.createButtonItem.setTitle(i18n.saveChanges());
 
         // set title
         this.nameItem.setValue(rule.getTitle());
@@ -804,9 +805,9 @@ public class CreateComplexRuleLayout extends Layout {
 
         // set published
         if (rule.isPublish()) {
-            this.publishRadioGroup.setValue(I18N.sesClient.yes());
+            this.publishRadioGroup.setValue(i18n.yes());
         } else {
-            this.publishRadioGroup.setValue(I18N.sesClient.no());
+            this.publishRadioGroup.setValue(i18n.no());
         }
 
         ArrayList<String> ruleNames = new ArrayList<String>();
@@ -825,7 +826,7 @@ public class CreateComplexRuleLayout extends Layout {
             if ((!content.equals(LogicalOperator.AND.toString()) && !content.equals(LogicalOperator.OR.toString()) && !content.equals(LogicalOperator.AND_NOT.toString()))) {
                 // replace the placeholder with user warning
                 if (content.contains(Constants.SES_OP_SEPARATOR)) {
-                    content = content.replace(Constants.SES_OP_SEPARATOR, I18N.sesClient.ruleNotFound()+": ");
+                    content = content.replace(Constants.SES_OP_SEPARATOR, i18n.ruleNotFound()+": ");
                 }
                 // add rule names
                 ruleNames.add(content);

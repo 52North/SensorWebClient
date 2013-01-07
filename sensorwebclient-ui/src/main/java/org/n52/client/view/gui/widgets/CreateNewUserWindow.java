@@ -23,10 +23,11 @@
  */
 package org.n52.client.view.gui.widgets;
 
+import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
+
 import java.util.Date;
 
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.ses.event.NewPasswordEvent;
 import org.n52.client.ses.event.RegisterUserEvent;
 import org.n52.shared.serializable.pojos.UserDTO;
@@ -64,7 +65,7 @@ public class CreateNewUserWindow {
         window.setWidth(300);
         window.setHeight(250);
         window.setAutoSize(true);
-        window.setTitle(I18N.sesClient.createNewUser());
+        window.setTitle(i18n.createNewUser());
         window.setCanDragReposition(true);
         window.setCanDragResize(true);
         window.centerInPage();
@@ -82,14 +83,14 @@ public class CreateNewUserWindow {
 
         // user name
         final TextItem userNameItem = new TextItem();
-        userNameItem.setTitle(I18N.sesClient.userName());
+        userNameItem.setTitle(i18n.userName());
         userNameItem.setName("userName");
         userNameItem.setLength(length);
         userNameItem.setRequired(true);
 
         // name
         final TextItem nameItem = new TextItem();
-        nameItem.setTitle(I18N.sesClient.name());
+        nameItem.setTitle(i18n.name());
         nameItem.setName("name");
         nameItem.setLength(length);
 
@@ -100,10 +101,10 @@ public class CreateNewUserWindow {
 
         // email
         DataSource dataSource = new DataSource();
-        DataSourceTextField emailField = new DataSourceTextField("email", I18N.sesClient.email(), 100, true);
+        DataSourceTextField emailField = new DataSourceTextField("email", i18n.email(), 100, true);
         
         RegExpValidator emailValidator = new RegExpValidator();
-        emailValidator.setErrorMessage(I18N.sesClient.invalidEmail());
+        emailValidator.setErrorMessage(i18n.invalidEmail());
         emailValidator.setExpression("^([a-zA-Z0-9_.\\-+])+@(([a-zA-Z0-9\\-])+\\.)+[a-zA-Z0-9]{2,4}$");
         emailField.setValidators(emailValidator);
         
@@ -111,7 +112,7 @@ public class CreateNewUserWindow {
         form.setDataSource(dataSource);
         
         final TextItem emailItem = new TextItem();
-        emailItem.setTitle(I18N.sesClient.email());
+        emailItem.setTitle(i18n.email());
         emailItem.setName("email");
         emailItem.setLength(length);
         emailItem.setRequired(true);
@@ -119,7 +120,7 @@ public class CreateNewUserWindow {
         // handy
         final TextItem handyItem = new TextItem();
         handyItem.setName("handy");
-        handyItem.setTitle(I18N.sesClient.handy());
+        handyItem.setTitle(i18n.handy());
         handyItem.setKeyPressFilter("[0-9+]");
         // this.handyItem.setHint("Numeric only<br>[0-9]");
         handyItem.setLength(length);
@@ -127,12 +128,12 @@ public class CreateNewUserWindow {
         // role
         final SelectItem roleItem = new SelectItem();
         roleItem.setName("role");
-        roleItem.setTitle(I18N.sesClient.role());
+        roleItem.setTitle(i18n.role());
         roleItem.setValueMap(UserRole.NOT_REGISTERED_USER.toString(), UserRole.ADMIN.toString());
         roleItem.setRequired(true);
 
         ButtonItem createItem = new ButtonItem();
-        createItem.setTitle(I18N.sesClient.create());
+        createItem.setTitle(i18n.create());
         createItem.setAlign(Alignment.CENTER);
         createItem.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {

@@ -23,7 +23,7 @@
  */
 package org.n52.shared.serializable.pojos;
 
-import org.n52.client.i18n.I18N;
+import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.fields.DataSourceIntegerField;
@@ -44,13 +44,13 @@ public class RuleDS extends DataSource {
         pkField.setHidden(true);  
         pkField.setPrimaryKey(true);
 
-        DataSourceTextField name = new DataSourceTextField("name", I18N.sesClient.name());
+        DataSourceTextField name = new DataSourceTextField("name", i18n.name());
 
-        DataSourceTextField type = new DataSourceTextField("type", I18N.sesClient.type());
-        DataSourceTextField owner = new DataSourceTextField("ownerName", I18N.sesClient.owner());
-        DataSourceTextField description = new DataSourceTextField("description", I18N.sesClient.description());
-        DataSourceTextField medium = new DataSourceTextField("medium", I18N.sesClient.description());
-        DataSourceTextField format = new DataSourceTextField("format", I18N.sesClient.description());
+        DataSourceTextField type = new DataSourceTextField("type", i18n.type());
+        DataSourceTextField owner = new DataSourceTextField("ownerName", i18n.owner());
+        DataSourceTextField description = new DataSourceTextField("description", i18n.description());
+        DataSourceTextField medium = new DataSourceTextField("medium", i18n.description());
+        DataSourceTextField format = new DataSourceTextField("format", i18n.description());
 
         setFields(pkField, type, owner, name, description, medium, format);
 

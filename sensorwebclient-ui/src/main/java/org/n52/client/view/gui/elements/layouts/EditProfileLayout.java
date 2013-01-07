@@ -23,10 +23,11 @@
  */
 package org.n52.client.view.gui.elements.layouts;
 
+import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
+
 import java.util.Date;
 
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.model.communication.requestManager.SesRequestManager;
 import org.n52.client.ses.event.DeleteProfileEvent;
 import org.n52.client.ses.event.LogoutEvent;
@@ -80,7 +81,7 @@ public class EditProfileLayout extends Layout {
      * Instantiates a new edits the profile layout.
      */
     public EditProfileLayout() {
-        super(I18N.sesClient.editProfile());
+        super(i18n.editProfile());
         this.scClassName = "VLayout";
 
         DataSource dataSource = new DataSource();
@@ -102,44 +103,44 @@ public class EditProfileLayout extends Layout {
 
         this.userNameItem = new TextItem();
         this.userNameItem.setName("userName");
-        this.userNameItem.setTitle(I18N.sesClient.userName());
+        this.userNameItem.setTitle(i18n.userName());
         this.userNameItem.setRequired(true);
         this.userNameItem.setWidth(this.fieldWidth);
         
         this.nameItem = new TextItem();
         this.nameItem.setName("name");
-        this.nameItem.setTitle(I18N.sesClient.name());
+        this.nameItem.setTitle(i18n.name());
         this.nameItem.setWidth(this.fieldWidth);
         
         this.currentPasswordItem = new PasswordItem();
         this.currentPasswordItem.setName("oldPassword");
-        this.currentPasswordItem.setTitle(I18N.sesClient.currentPassword());
+        this.currentPasswordItem.setTitle(i18n.currentPassword());
         this.currentPasswordItem.setRequired(true);
         this.currentPasswordItem.setWidth(this.fieldWidth);
 
         this.newPasswordItem = new PasswordItem();
         this.newPasswordItem.setName("newPassword");
-        this.newPasswordItem.setTitle(I18N.sesClient.newPassword());
+        this.newPasswordItem.setTitle(i18n.newPassword());
         this.newPasswordItem.setWidth(this.fieldWidth);
         
         // repeat password
         PasswordItem newPasswordAgainItem = new PasswordItem();
         newPasswordAgainItem.setName("password2");
-        newPasswordAgainItem.setTitle(I18N.sesClient.passwordAgain());
+        newPasswordAgainItem.setTitle(i18n.passwordAgain());
         newPasswordAgainItem.setLength(250);
         newPasswordAgainItem.setWidth(this.fieldWidth);
 
         // email
         this.emailItem = new TextItem();
         this.emailItem.setName("email");
-        this.emailItem.setTitle(I18N.sesClient.email());
+        this.emailItem.setTitle(i18n.email());
         this.emailItem.setRequired(true);
         this.emailItem.setWidth(this.fieldWidth);
 
         // repeat email
         TextItem emailItem2 = new TextItem();
         emailItem2.setName("email2");
-        emailItem2.setTitle(I18N.sesClient.emailAgain());
+        emailItem2.setTitle(i18n.emailAgain());
         emailItem2.setRequired(true);
         emailItem2.setLength(250);
         emailItem2.setWidth(this.fieldWidth);
@@ -147,13 +148,13 @@ public class EditProfileLayout extends Layout {
         // email validator
         MatchesFieldValidator matchesValidatorEmail = new MatchesFieldValidator();
         matchesValidatorEmail.setOtherField("email");
-        matchesValidatorEmail.setErrorMessage(I18N.sesClient.emailDoNotMatch());
+        matchesValidatorEmail.setErrorMessage(i18n.emailDoNotMatch());
         emailItem2.setValidators(matchesValidatorEmail);
 
         // password validator
         MatchesFieldValidator matchesValidator = new MatchesFieldValidator();
         matchesValidator.setOtherField("newPassword");
-        matchesValidator.setErrorMessage(I18N.sesClient.passwordDoNotMatch());
+        matchesValidator.setErrorMessage(i18n.passwordDoNotMatch());
         newPasswordAgainItem.setValidators(matchesValidator);
 
         RegExpValidator regExpValidator = new RegExpValidator();  
@@ -162,7 +163,7 @@ public class EditProfileLayout extends Layout {
         // handy item
         this.handyItem = new TextItem();
         this.handyItem.setName("handy");
-        this.handyItem.setTitle(I18N.sesClient.handy());
+        this.handyItem.setTitle(i18n.handy());
         this.handyItem.setKeyPressFilter("[0-9+]");
         this.handyItem.setLength(250);
         this.handyItem.setWidth(this.fieldWidth);
@@ -170,7 +171,7 @@ public class EditProfileLayout extends Layout {
 
         // save button
         ButtonItem saveButton = new ButtonItem();
-        saveButton.setTitle(I18N.sesClient.saveChanges());
+        saveButton.setTitle(i18n.saveChanges());
         saveButton.setWidth(135);
         saveButton.setAutoFit(true);
         saveButton.addClickHandler(new ClickHandler() {
@@ -207,11 +208,11 @@ public class EditProfileLayout extends Layout {
         });
 
         ButtonItem deleteButton = new ButtonItem();
-        deleteButton.setTitle(I18N.sesClient.deleteProfile());
+        deleteButton.setTitle(i18n.deleteProfile());
         deleteButton.setWidth(saveButton.getWidth());
         deleteButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                SC.ask(I18N.sesClient.reallyDeleteProfile(), new BooleanCallback() {
+                SC.ask(i18n.reallyDeleteProfile(), new BooleanCallback() {
                     public void execute(Boolean value) {
                         if (value) {
                             EventBus.getMainEventBus().fireEvent(

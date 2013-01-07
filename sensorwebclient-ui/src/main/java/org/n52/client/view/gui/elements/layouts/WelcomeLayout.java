@@ -23,7 +23,8 @@
  */
 package org.n52.client.view.gui.elements.layouts;
 
-import org.n52.client.i18n.I18N;
+import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
+
 import org.n52.client.view.gui.elements.interfaces.Layout;
 import org.n52.shared.serializable.pojos.UserDTO;
 
@@ -47,7 +48,7 @@ public class WelcomeLayout extends Layout {
      * Instantiates a welcome layout.
      */
     public WelcomeLayout() {
-        super(I18N.sesClient.welcomeText());
+        super(i18n.welcomeText());
         this.scClassName = "VLayout";
         
         SpacerItem spacerItem = new SpacerItem();
@@ -73,7 +74,7 @@ public class WelcomeLayout extends Layout {
      */
     public void setData(UserDTO userDTO){
 
-        this.welcomeText.setValue(I18N.sesClient.welcome() + " " + userDTO.getName());
-        this.roleText.setValue(I18N.sesClient.welcomeUserRole() + ": " + userDTO.getRole());
+        this.welcomeText.setValue(i18n.welcome() + " " + userDTO.getName());
+        this.roleText.setValue(i18n.welcomeUserRole() + ": " + userDTO.getRole());
     }
 }

@@ -23,10 +23,11 @@
  */
 package org.n52.client.view.gui.elements.layouts;
 
+import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
+
 import java.util.ArrayList;
 
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.model.communication.requestManager.SesRequestManager;
 import org.n52.client.model.data.representations.RuleRecord;
 import org.n52.client.ses.event.UnsubscribeEvent;
@@ -68,7 +69,7 @@ public class UserSubscriptionsLayout extends Layout {
      * Instantiates a new user rule layout.
      */
     public UserSubscriptionsLayout() {
-        super(I18N.sesClient.subscriptions());
+        super(i18n.subscriptions());
         
         // init DataSource
         this.dataSource = new RuleDS();
@@ -90,8 +91,8 @@ public class UserSubscriptionsLayout extends Layout {
 
                     if (fieldName.equals("subscribe")) {
                         // subscribe button
-                        IButton subscribeButton = new IButton(I18N.sesClient.unsubscribe());
-                        subscribeButton.setPrompt(I18N.sesClient.unsubscribeThisRule());
+                        IButton subscribeButton = new IButton(i18n.unsubscribe());
+                        subscribeButton.setPrompt(i18n.unsubscribeThisRule());
                         subscribeButton.setShowDown(false);
                         subscribeButton.setShowRollOver(false);
                         subscribeButton.setHeight(16);
@@ -124,17 +125,17 @@ public class UserSubscriptionsLayout extends Layout {
         this.subscriptionsGrid.sort(1, SortDirection.ASCENDING);
 
         // fields of the table
-        ListGridField typeField = new ListGridField("type", I18N.sesClient.type());
+        ListGridField typeField = new ListGridField("type", i18n.type());
         typeField.setWidth(60);
         typeField.setAlign(Alignment.CENTER);
 
-        ListGridField nameField = new ListGridField("name", I18N.sesClient.name());
+        ListGridField nameField = new ListGridField("name", i18n.name());
         nameField.setAlign(Alignment.CENTER);
 
-        ListGridField descriptionField = new ListGridField("description", I18N.sesClient.description());
+        ListGridField descriptionField = new ListGridField("description", i18n.description());
         descriptionField.setAlign(Alignment.CENTER);
 
-        ListGridField mediumField = new ListGridField("medium", I18N.sesClient.medium());
+        ListGridField mediumField = new ListGridField("medium", i18n.medium());
         mediumField.setWidth(90);
         mediumField.setAlign(Alignment.CENTER);
 
@@ -142,7 +143,7 @@ public class UserSubscriptionsLayout extends Layout {
         formatField.setWidth(90);
         formatField.setAlign(Alignment.CENTER);
 
-        ListGridField subscribeField = new ListGridField("subscribe", I18N.sesClient.unsubscribe());
+        ListGridField subscribeField = new ListGridField("subscribe", i18n.unsubscribe());
         subscribeField.setWidth(150);
         subscribeField.setAlign(Alignment.CENTER);
         subscribeField.setCanFilter(false);
@@ -175,14 +176,14 @@ public class UserSubscriptionsLayout extends Layout {
 
         for (int i = 0; i < basicRules.size(); i++) {
             ruleDTO = basicRules.get(i);
-            rule = new RuleRecord(I18N.sesClient.basic(), "", "", ruleDTO.getName(), ruleDTO.getDescription(), ruleDTO.getMedium(), ruleDTO.getFormat(), ruleDTO.isRelease(), ruleDTO.isSubscribed());
+            rule = new RuleRecord(i18n.basic(), "", "", ruleDTO.getName(), ruleDTO.getDescription(), ruleDTO.getMedium(), ruleDTO.getFormat(), ruleDTO.isRelease(), ruleDTO.isSubscribed());
             
             this.subscriptionsGrid.addData(rule);
         }
 
         for (int i = 0; i < complexRules.size(); i++) {
             complexDTO = complexRules.get(i);
-            rule = new RuleRecord(I18N.sesClient.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), complexDTO.getMedium(), complexDTO.getFormat(), complexDTO.isRelease(), complexDTO.isSubscribed());
+            rule = new RuleRecord(i18n.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), complexDTO.getMedium(), complexDTO.getFormat(), complexDTO.isRelease(), complexDTO.isSubscribed());
 
             this.subscriptionsGrid.addData(rule);
         }

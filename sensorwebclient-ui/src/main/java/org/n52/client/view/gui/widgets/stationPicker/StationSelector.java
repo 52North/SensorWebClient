@@ -24,6 +24,8 @@
 
 package org.n52.client.view.gui.widgets.stationPicker;
 
+import static org.n52.client.sos.i18n.I18NStringsAccessor.i18n;
+
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -33,7 +35,6 @@ import java.util.TreeMap;
 
 import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.sos.event.data.NewTimeSeriesEvent;
 import org.n52.client.view.gui.widgets.LoadingSpinner;
 import org.n52.client.view.gui.widgets.Toaster;
@@ -128,7 +129,7 @@ public class StationSelector extends Window {
 
 	private void initializeWindow() {
         setShowModalMask(true);
-        setTitle(I18N.sosClient.pickStation());
+        setTitle(i18n.pickStation());
         setWidth(WIDTH);
         setHeight(HEIGHT);
         centerInPage();
@@ -176,7 +177,7 @@ public class StationSelector extends Window {
 	}
 
 	private Canvas createSelectionMenuButton() {
-    	showSelectionMenuButton = new Label(I18N.sosClient.chooseDataSource());
+    	showSelectionMenuButton = new Label(i18n.chooseDataSource());
     	showSelectionMenuButton.setStyleName("sensorweb_client_legendbuttonPrimary");
     	showSelectionMenuButton.setZIndex(1000000);
     	showSelectionMenuButton.setAutoHeight();
@@ -211,7 +212,7 @@ public class StationSelector extends Window {
 		selectionMenu.setZIndex(1000000);
 		selectionMenu.setWidth(250);
 		selectionMenu.setHeight(290);
-		selectionMenu.setWindowTitle(I18N.sosClient.dataprovider());
+		selectionMenu.setWindowTitle(i18n.dataprovider());
 		setSelectionMenuWindowPosition();
 		return selectionMenu;
 	}
@@ -292,8 +293,8 @@ public class StationSelector extends Window {
 
 	private SmallButton createAddTimeSeriesButton() {
         Img img = new Img("../img/icons/acc.png");
-        String normalTooltip = I18N.sosClient.addNewTimeseries();
-        String extendedTooltip = I18N.sosClient.addNewTimeseriesExt();
+        String normalTooltip = i18n.addNewTimeseries();
+        String extendedTooltip = i18n.addNewTimeseriesExt();
         confirmSelectionButton = new SmallButton(img, normalTooltip, extendedTooltip);
         confirmSelectionButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent evt) {
@@ -306,8 +307,8 @@ public class StationSelector extends Window {
 	
 	private SmallButton createCancelButton() {
 		Img img = new Img("../img/icons/del.png");
-        String normalTooltip = I18N.sosClient.cancel();
-        String extendedTooltip = I18N.sosClient.cancel();
+        String normalTooltip = i18n.cancel();
+        String extendedTooltip = i18n.cancel();
         SmallButton cancelSelectionButton = new SmallButton(img, normalTooltip, extendedTooltip);
         cancelSelectionButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
@@ -433,13 +434,13 @@ public class StationSelector extends Window {
 			foiDesc = controller.getSelectedFeature().getLabel();
 		}
 		if (phenDesc != null && !phenDesc.isEmpty()) {
-			phenomenonInfoLabel.setContents(I18N.sosClient.phenomenonLabel() + ": " + phenDesc);
+			phenomenonInfoLabel.setContents(i18n.phenomenonLabel() + ": " + phenDesc);
 			phenomenonInfoLabel.show();
 		} else {
 			phenomenonInfoLabel.hide();
 		}
 		if (foiDesc != null && !foiDesc.isEmpty()) {
-			stationInfoLabel.setContents(I18N.sosClient.foiLabel() + ": " + foiDesc);
+			stationInfoLabel.setContents(i18n.foiLabel() + ": " + foiDesc);
 			stationInfoLabel.show();
 		} else {
 			stationInfoLabel.hide();

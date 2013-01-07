@@ -23,13 +23,14 @@
  */
 package org.n52.client.view.gui.elements.tabImpl;
 
+import static org.n52.client.sos.i18n.I18NStringsAccessor.i18n;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 
 import org.n52.client.control.tableTab.TableTabController;
-import org.n52.client.i18n.I18N;
 import org.n52.client.model.data.representations.TimeSeries;
 import org.n52.client.view.gui.elements.controlsImpl.DataControls;
 import org.n52.client.view.gui.elements.interfaces.DataPanelTab;
@@ -140,9 +141,9 @@ public class TableTab extends DataPanelTab {
         // grid.setWidth100();
         // grid.setHeight100();
         // grid.setHeight(View.getInstance().getHeightForDataPanel());
-        this.grid.setEmptyMessage(I18N.sosClient.noData());
+        this.grid.setEmptyMessage(i18n.noData());
 
-        this.dateField = new ListGridField("date", I18N.sosClient.date()); //$NON-NLS-1$
+        this.dateField = new ListGridField("date", i18n.date()); //$NON-NLS-1$
         this.dateField.setAlign(Alignment.CENTER);
         this.dateField.setType(ListGridFieldType.TEXT);
         this.dateField.setCanFilter(false);

@@ -23,10 +23,11 @@
  */
 package org.n52.client.view.gui.elements.layouts;
 
+import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
+
 import java.util.ArrayList;
 
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.model.communication.requestManager.SesRequestManager;
 import org.n52.client.model.data.representations.RuleRecord;
 import org.n52.client.ses.event.EditRuleEvent;
@@ -37,11 +38,6 @@ import org.n52.shared.serializable.pojos.ComplexRuleDTO;
 import org.n52.shared.serializable.pojos.RuleDS;
 
 import com.google.gwt.user.client.Cookies;
-import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.fields.ButtonItem;
-import com.smartgwt.client.widgets.form.fields.SelectItem;
-import com.smartgwt.client.widgets.form.fields.TextItem;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.SortDirection;
 import com.smartgwt.client.types.TitleOrientation;
@@ -49,8 +45,13 @@ import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.ButtonItem;
+import com.smartgwt.client.widgets.form.fields.SelectItem;
+import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 /**
  * The Class AllRulesLayout.
@@ -82,7 +83,7 @@ public class SearchLayout extends Layout {
      * Instantiates a new all rules layout.
      */
     public SearchLayout() {
-        super(I18N.sesClient.search());
+        super(i18n.search());
         
         // init DataSource
         this.dataSource = new RuleDS();
@@ -104,11 +105,11 @@ public class SearchLayout extends Layout {
 
                     if (fieldName.equals("edit")) {
                         // subscribe button
-                        IButton editButton = new IButton(I18N.sesClient.edit());
+                        IButton editButton = new IButton(i18n.edit());
                         editButton.setShowDown(false);
                         editButton.setShowRollOver(false);
                         editButton.setLayoutAlign(Alignment.CENTER);
-                        editButton.setPrompt(I18N.sesClient.editThisRule());
+                        editButton.setPrompt(i18n.editThisRule());
                         editButton.setHeight(16);
                         editButton.addClickHandler(new ClickHandler() {
                             public void onClick(ClickEvent event) {
@@ -140,17 +141,17 @@ public class SearchLayout extends Layout {
         this.rulesGrid.sort(1, SortDirection.ASCENDING);
 
         // grid fields
-        ListGridField typeField = new ListGridField("type", I18N.sesClient.type());
+        ListGridField typeField = new ListGridField("type", i18n.type());
         typeField.setWidth(60);
         typeField.setAlign(Alignment.CENTER);
 
-        ListGridField nameField = new ListGridField("name", I18N.sesClient.name());
+        ListGridField nameField = new ListGridField("name", i18n.name());
         nameField.setAlign(Alignment.CENTER);
 
-        ListGridField descriptionField = new ListGridField("description", I18N.sesClient.description());
+        ListGridField descriptionField = new ListGridField("description", i18n.description());
         descriptionField.setAlign(Alignment.CENTER);
         
-        ListGridField editField = new ListGridField("edit", I18N.sesClient.edit());
+        ListGridField editField = new ListGridField("edit", i18n.edit());
         editField.setWidth(110);
         editField.setCanFilter(false);
         editField.setAlign(Alignment.CENTER);
@@ -168,22 +169,22 @@ public class SearchLayout extends Layout {
         this.form2.setNumCols(3);
         
         this.textItem = new TextItem("text");
-        this.textItem.setTitle(I18N.sesClient.searchWord());
+        this.textItem.setTitle(i18n.searchWord());
         this.textItem.setWidth(this.itemWidth);
         
         this.comboBoxItem = new SelectItem("select");
-        this.comboBoxItem.setTitle(I18N.sesClient.searchCriterion());
+        this.comboBoxItem.setTitle(i18n.searchCriterion());
         this.comboBoxItem.setType("comboBox"); 
         this.comboBoxItem.setValueMap(
-                I18N.sesClient.searchFullText(),
-                I18N.sesClient.name(), I18N.sesClient.description(),
-                I18N.sesClient.sensor(), I18N.sesClient.phenomenon());
+                i18n.searchFullText(),
+                i18n.name(), i18n.description(),
+                i18n.sensor(), i18n.phenomenon());
         
-        this.comboBoxItem.setDefaultValue(I18N.sesClient.searchFullText());
+        this.comboBoxItem.setDefaultValue(i18n.searchFullText());
         this.comboBoxItem.setWidth(this.itemWidth);
         
         this.buttonItem = new ButtonItem("button");
-        this.buttonItem.setTitle(I18N.sesClient.search());
+        this.buttonItem.setTitle(i18n.search());
         this.buttonItem.setWidth(100);
         this.buttonItem.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
             public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
@@ -194,15 +195,15 @@ public class SearchLayout extends Layout {
                     String userID = Cookies.getCookie(SesRequestManager.COOKIE_USER_ID);
                     int operator = 0;
                     
-                    if (criterion.equals(I18N.sesClient.searchFullText())) {
+                    if (criterion.equals(i18n.searchFullText())) {
                         operator = 1;
-                    } else if (criterion.equals(I18N.sesClient.name())) {
+                    } else if (criterion.equals(i18n.name())) {
                         operator = 2;
-                    } else if (criterion.equals(I18N.sesClient.description())) {
+                    } else if (criterion.equals(i18n.description())) {
                         operator = 3;
-                    } else if (criterion.equals(I18N.sesClient.sensor())) {
+                    } else if (criterion.equals(i18n.sensor())) {
                         operator = 4;
-                    } else if (criterion.equals(I18N.sesClient.phenomenon())) {
+                    } else if (criterion.equals(i18n.phenomenon())) {
                         operator = 5;
                     }
                     EventBus.getMainEventBus().fireEvent(new SearchEvent(text, operator, userID));
@@ -236,14 +237,14 @@ public class SearchLayout extends Layout {
 
         for (int i = 0; i < basicRules.size(); i++) {
             basicDTO = basicRules.get(i);
-            rule = new RuleRecord(I18N.sesClient.basic(), "", "", basicDTO.getName(), basicDTO.getDescription(), "SMS", "XML", basicDTO.isRelease(), basicDTO.isSubscribed());
+            rule = new RuleRecord(i18n.basic(), "", "", basicDTO.getName(), basicDTO.getDescription(), "SMS", "XML", basicDTO.isRelease(), basicDTO.isSubscribed());
             
             this.rulesGrid.addData(rule);
         }
 
         for (int i = 0; i < complexRules.size(); i++) {
             complexDTO = complexRules.get(i);
-            rule = new RuleRecord(I18N.sesClient.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), "SMS", "XML", complexDTO.isRelease(), complexDTO.isSubscribed());
+            rule = new RuleRecord(i18n.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), "SMS", "XML", complexDTO.isRelease(), complexDTO.isSubscribed());
             
             this.rulesGrid.addData(rule);
         }

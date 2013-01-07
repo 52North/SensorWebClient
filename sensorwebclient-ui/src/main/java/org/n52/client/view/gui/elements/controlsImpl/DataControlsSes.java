@@ -23,13 +23,14 @@
  */
 package org.n52.client.view.gui.elements.controlsImpl;
 
+import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.n52.client.control.PropertiesManager;
 import org.n52.client.control.sesTab.SesTabController;
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.GetAllPublishedRulesEvent;
 import org.n52.client.ses.event.GetStationsEvent;
@@ -165,7 +166,7 @@ public class DataControlsSes extends DataControls {
         this.bottomLayout.setTabIndex(-1);
 
         // loginButton
-        this.loginButton = new IButton(I18N.sesClient.login());
+        this.loginButton = new IButton(i18n.login());
         this.loginButton.setWidth(this.buttonWidth);
         this.loginButton.setShowRollOver(true);
         this.loginButton.setShowDown(true);
@@ -177,7 +178,7 @@ public class DataControlsSes extends DataControls {
         });
 
         // registerButton
-        this.registerButton = new IButton(I18N.sesClient.register());
+        this.registerButton = new IButton(i18n.register());
         this.registerButton.setWidth(this.buttonWidth);
         this.registerButton.setShowRollOver(true);
         this.registerButton.setShowDown(true);
@@ -191,7 +192,7 @@ public class DataControlsSes extends DataControls {
         this.registerButton.hide();
 
         // getPasswordButton
-        this.getPasswordButton = new IButton(I18N.sesClient.forgotPassword());
+        this.getPasswordButton = new IButton(i18n.forgotPassword());
         this.getPasswordButton.setWidth(this.buttonWidth);
         this.getPasswordButton.setShowRollOver(true);
         this.getPasswordButton.setShowDown(true);
@@ -203,7 +204,7 @@ public class DataControlsSes extends DataControls {
         });
 
         // editProfileButton
-        this.editProfileButton = new IButton(I18N.sesClient.editProfile());
+        this.editProfileButton = new IButton(i18n.editProfile());
         this.editProfileButton.setWidth(this.buttonWidth);
         this.editProfileButton.setShowRollOver(true);
         this.editProfileButton.setShowDown(true);
@@ -215,7 +216,7 @@ public class DataControlsSes extends DataControls {
         });
 
         // aboRuleButton
-        this.aboRuleButton = new IButton(I18N.sesClient.subscribeRules());
+        this.aboRuleButton = new IButton(i18n.subscribeRules());
         this.aboRuleButton.setWidth(this.buttonWidth);
         this.aboRuleButton.setShowRollOver(true);
         this.aboRuleButton.setShowDown(true);
@@ -227,7 +228,7 @@ public class DataControlsSes extends DataControls {
         });
 
         // createSimpleRuleButton
-        this.createSimpleRuleButton = new IButton(I18N.sesClient.createBasicRule());
+        this.createSimpleRuleButton = new IButton(i18n.createBasicRule());
         this.createSimpleRuleButton.setWidth(this.buttonWidth);
         this.createSimpleRuleButton.setShowRollOver(true);
         this.createSimpleRuleButton.setShowDown(true);
@@ -240,7 +241,7 @@ public class DataControlsSes extends DataControls {
         });
 
         // createComplexRuleButton
-        this.createComplexRuleButton = new IButton(I18N.sesClient.createComplexRule());
+        this.createComplexRuleButton = new IButton(i18n.createComplexRule());
         this.createComplexRuleButton.setWidth(this.buttonWidth);
         this.createComplexRuleButton.setShowRollOver(true);
         this.createComplexRuleButton.setShowDown(true);
@@ -252,7 +253,7 @@ public class DataControlsSes extends DataControls {
         });
 
         // editRulesButton
-        this.editRulesButton = new IButton(I18N.sesClient.editRules());
+        this.editRulesButton = new IButton(i18n.editRules());
         this.editRulesButton.setWidth(this.buttonWidth);
         this.editRulesButton.setShowRollOver(true);
         this.editRulesButton.setShowDown(true);
@@ -265,7 +266,7 @@ public class DataControlsSes extends DataControls {
         });
 
         // subscriptionsButton
-        this.subscriptionsButton = new IButton(I18N.sesClient.subscriptions());
+        this.subscriptionsButton = new IButton(i18n.subscriptions());
         this.subscriptionsButton.setWidth(this.buttonWidth);
         this.subscriptionsButton.setShowRollOver(true);
         this.subscriptionsButton.setShowDown(true);
@@ -277,7 +278,7 @@ public class DataControlsSes extends DataControls {
         });
 
         // manageUserButton
-        this.manageUserButton = new IButton(I18N.sesClient.userManagement());
+        this.manageUserButton = new IButton(i18n.userManagement());
         this.manageUserButton.setWidth(this.buttonWidth);
         this.manageUserButton.setShowRollOver(true);
         this.manageUserButton.setShowDown(true);
@@ -289,7 +290,7 @@ public class DataControlsSes extends DataControls {
         });
 
         // manageSensorButton
-        this.manageSensorButton = new IButton(I18N.sesClient.sensorManagement());
+        this.manageSensorButton = new IButton(i18n.sensorManagement());
         this.manageSensorButton.setWidth(this.buttonWidth);
         this.manageSensorButton.setShowRollOver(true);
         this.manageSensorButton.setShowDown(true);
@@ -301,7 +302,7 @@ public class DataControlsSes extends DataControls {
         });
 
         // manageRulesButton
-        this.manageRulesButton = new IButton(I18N.sesClient.showAllRules());
+        this.manageRulesButton = new IButton(i18n.showAllRules());
         this.manageRulesButton.setWidth(this.buttonWidth);
         this.manageRulesButton.setShowRollOver(true);
         this.manageRulesButton.setShowDown(true);
@@ -313,7 +314,7 @@ public class DataControlsSes extends DataControls {
         });
 
         // logoutButton
-        this.logoutButton = new IButton(I18N.sesClient.logout());
+        this.logoutButton = new IButton(i18n.logout());
         this.logoutButton.setWidth(this.buttonWidth);
         this.logoutButton.setShowRollOver(true);
         this.logoutButton.setShowDown(true);
@@ -324,7 +325,7 @@ public class DataControlsSes extends DataControls {
         });
 
         // manageRulesButton
-        this.searchRulesButton = new IButton(I18N.sesClient.search());
+        this.searchRulesButton = new IButton(i18n.search());
         this.searchRulesButton.setWidth(this.buttonWidth);
         this.searchRulesButton.setShowRollOver(true);
         this.searchRulesButton.setShowDown(true);
@@ -336,7 +337,7 @@ public class DataControlsSes extends DataControls {
         });
 
         // helpButton
-        this.helpButton = new IButton(I18N.sesClient.help());
+        this.helpButton = new IButton(i18n.help());
         this.helpButton.setWidth(this.buttonWidth);
         this.helpButton.setShowRollOver(true);
         this.helpButton.setShowDown(true);

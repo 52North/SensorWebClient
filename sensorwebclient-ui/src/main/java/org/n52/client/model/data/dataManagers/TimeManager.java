@@ -24,17 +24,18 @@
 
 package org.n52.client.model.data.dataManagers;
 
+import static org.n52.client.sos.i18n.I18NStringsAccessor.i18n;
+
 import java.util.Stack;
 
 import org.n52.client.control.PropertiesManager;
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.model.data.representations.DateAction;
 import org.n52.client.sos.event.DatesChangedEvent;
 import org.n52.client.sos.event.data.OverviewIntervalChangedEvent;
+import org.n52.client.sos.event.data.OverviewIntervalChangedEvent.IntervalType;
 import org.n52.client.sos.event.data.RequestDataEvent;
 import org.n52.client.sos.event.data.UndoEvent;
-import org.n52.client.sos.event.data.OverviewIntervalChangedEvent.IntervalType;
 import org.n52.client.sos.event.data.handler.OverviewIntervalChangedEventHandler;
 import org.n52.client.sos.event.data.handler.UndoEventHandler;
 import org.n52.client.sos.event.handler.DatesChangedEventHandler;
@@ -108,7 +109,7 @@ public class TimeManager {
 
     protected void undoLast() {
         if (this.undoStack.isEmpty()) {
-            Toaster.getInstance().addMessage(I18N.sosClient.undoMessage());
+            Toaster.getInstance().addMessage(i18n.undoMessage());
             return;
         }
         DateAction last = this.undoStack.pop();
@@ -168,7 +169,7 @@ public class TimeManager {
         public void onChanged(OverviewIntervalChangedEvent evt) {
             long interval = TimeManager.this.end - TimeManager.this.begin;
             if (interval > evt.getInterval()) {
-                Toaster.getInstance().addMessage(I18N.sosClient.errorOverviewInterval());
+                Toaster.getInstance().addMessage(i18n.errorOverviewInterval());
             }
             else {
                 TimeManager.this.intervalType = evt.getType();

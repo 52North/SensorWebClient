@@ -23,21 +23,22 @@
  */
 package org.n52.client.view.gui.elements.legend;
 
+import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
+
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
 import org.n52.client.model.data.dataManagers.TimeManager;
 import org.n52.client.model.data.representations.TimeSeries;
 import org.n52.client.sos.event.LegendElementSelectedEvent;
 import org.n52.client.sos.event.data.DeleteTimeSeriesEvent;
 import org.n52.client.sos.event.data.ExportEvent;
+import org.n52.client.sos.event.data.ExportEvent.ExportType;
 import org.n52.client.sos.event.data.ExportFinishedEvent;
 import org.n52.client.sos.event.data.FinishedLoadingTimeSeriesEvent;
-import org.n52.client.sos.event.data.ExportEvent.ExportType;
 import org.n52.client.sos.event.data.handler.DeleteTimeSeriesEventHandler;
 import org.n52.client.sos.event.data.handler.ExportFinishedEventHandler;
 import org.n52.client.sos.event.data.handler.FinishedLoadingTimeSeriesEventHandler;
@@ -141,7 +142,7 @@ public class LegendController {
 	}
 	
 	void confirmBeforeReload(final String url) {
-		SC.ask(I18N.sesClient.changeLanguage(), new BooleanCallback() {
+		SC.ask(i18n.changeLanguage(), new BooleanCallback() {
             public void execute(Boolean value) {
                 if (value) {
                     Window.Location.assign(url);

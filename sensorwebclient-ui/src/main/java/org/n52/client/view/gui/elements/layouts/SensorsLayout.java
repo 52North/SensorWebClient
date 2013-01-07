@@ -23,26 +23,27 @@
  */
 package org.n52.client.view.gui.elements.layouts;
 
+import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
+
 import java.util.List;
 
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.ses.event.UpdateSensorEvent;
 import org.n52.client.view.gui.elements.interfaces.Layout;
 import org.n52.shared.serializable.pojos.TESTSensorDS;
 
 import com.google.gwt.user.client.Random;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.ListGridFieldType;
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.form.fields.StaticTextItem;
 import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
 import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
-import com.smartgwt.client.types.Alignment;
-import com.smartgwt.client.types.ListGridFieldType;
-import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 /**
  * The Class SensorsLayout.
@@ -70,7 +71,7 @@ public class SensorsLayout extends Layout {
      * Instantiates a new sensors layout.
      */
     public SensorsLayout() {
-        super(I18N.sesClient.sensorManagement());
+        super(i18n.sensorManagement());
 //        this.dataSource = new SensorDS("Sensors", null);
         this.ds = new TESTSensorDS("SensorsTest");
         init();
@@ -96,23 +97,23 @@ public class SensorsLayout extends Layout {
                         activeItem.setWidth(90);
                         activeItem.setMultiple(false);
                         activeItem.setShowTitle(false);
-                        activeItem.setValueMap(I18N.sesClient.active(), I18N.sesClient.inactive());
+                        activeItem.setValueMap(i18n.active(), i18n.inactive());
                         activeItem.addChangedHandler(new ChangedHandler() {
                             public void onChanged(ChangedEvent event) {
-                                if (event.getValue().equals(I18N.sesClient.active())) {
+                                if (event.getValue().equals(i18n.active())) {
                                     activatedSensors++;
                                     deactivatedSensors--;
-                                    record.setAttribute("status", I18N.sesClient.active());
+                                    record.setAttribute("status", i18n.active());
                                 } else {
                                     deactivatedSensors++;
                                     activatedSensors--;
-                                    record.setAttribute("status", I18N.sesClient.inactive());
+                                    record.setAttribute("status", i18n.inactive());
                                 }
                                 // save changes
                                 String sensorID = record.getAttribute("name");
                                 boolean newStatus = false;
                                 String status = record.getAttribute("status");
-                                if (status.equals(I18N.sesClient.active())) {
+                                if (status.equals(i18n.active())) {
                                     newStatus = true;
                                 }
                                 
@@ -122,10 +123,10 @@ public class SensorsLayout extends Layout {
                             }
                         });
                         
-                        if (record.getAttribute("status").equals(I18N.sesClient.active())) {
-                            activeItem.setValue(I18N.sesClient.active());
-                        } else if (record.getAttribute("status").equals(I18N.sesClient.inactive())) {
-                            activeItem.setValue(I18N.sesClient.inactive());
+                        if (record.getAttribute("status").equals(i18n.active())) {
+                            activeItem.setValue(i18n.active());
+                        } else if (record.getAttribute("status").equals(i18n.inactive())) {
+                            activeItem.setValue(i18n.inactive());
                         }
                         
                         dynamic.setFields(activeItem);
@@ -159,16 +160,16 @@ public class SensorsLayout extends Layout {
 
         ListGridField statusField = new ListGridField("status", "Status");
         statusField.setAlign(Alignment.CENTER);
-        statusField.setValueMap(I18N.sesClient.active(), I18N.sesClient.inactive());
+        statusField.setValueMap(i18n.active(), i18n.inactive());
 
-        ListGridField inUseField = new ListGridField("inUse", I18N.sesClient.inUse());
+        ListGridField inUseField = new ListGridField("inUse", i18n.inUse());
         inUseField.setAlign(Alignment.CENTER);
 
         this.sensorGrid.setFields(nameField, statusField, inUseField);
         
         // sensorCountItem
         this.sensorCountItem = new StaticTextItem();
-        this.sensorCountItem.setTitle(I18N.sesClient.active() + "/" + I18N.sesClient.inactive());
+        this.sensorCountItem.setTitle(i18n.active() + "/" + i18n.inactive());
 
         // add member
         this.form.setFields(this.headerItem, this.sensorCountItem);

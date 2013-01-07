@@ -23,9 +23,10 @@
  */
 package org.n52.client.view.gui.elements.controlsImpl.ees;
 
+import static org.n52.client.sos.i18n.I18NStringsAccessor.i18n;
+
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.eventBus.EventCallback;
-import org.n52.client.i18n.I18N;
 import org.n52.client.sos.event.SwitchGridEvent;
 import org.n52.client.sos.event.data.RequestDataEvent;
 import org.n52.client.sos.event.data.SwitchAutoscaleEvent;
@@ -61,19 +62,19 @@ public class DataControlsEES extends DataControlsTimeSeries implements SwitchGri
         EventBus.getMainEventBus().addHandler(SwitchGridEvent.TYPE, this);
 
         this.bbox = new ImageButton("diagBBox", "../img/icons/zoom_in.png",
-                I18N.sosClient.bboxZoom(), I18N.sosClient.bboxZoomExt());
+                i18n.bboxZoom(), i18n.bboxZoomExt());
         View.getInstance().registerTooltip(this.bbox);
 
         this.move = new ImageButton("diagMove", "../img/icons/dragger.png",
-                I18N.sosClient.diagMove(), I18N.sosClient.diagMoveExt());
+                i18n.diagMove(), i18n.diagMoveExt());
         View.getInstance().registerTooltip(this.move);
 
         this.undo =
-                new ImageButton("undo", "../img/icons/arrow_undo.png", I18N.sosClient.undo(),
-                        I18N.sosClient.undoExt());
+                new ImageButton("undo", "../img/icons/arrow_undo.png", i18n.undo(),
+                        i18n.undoExt());
         View.getInstance().registerTooltip(this.undo);        
         
-        sesTabButton = new Button( I18N.sosClient.sesTabButton());
+        sesTabButton = new Button( i18n.sesTabButton());
         
         sesTabButton.setIcon("../img/icons/email_go.png");
         
@@ -108,7 +109,7 @@ public class DataControlsEES extends DataControlsTimeSeries implements SwitchGri
         });
         this.autoScale =
                 new ImageButton("autoScale", "../img/icons/arrow_up_down.png",
-                        I18N.sosClient.autoScaleButton(), I18N.sosClient.autoScaleButtonExtra());
+                        i18n.autoScaleButton(), i18n.autoScaleButtonExtra());
         View.getInstance().registerTooltip(this.autoScale);
         this.autoScale.addClickHandler(new ClickHandler() {
 

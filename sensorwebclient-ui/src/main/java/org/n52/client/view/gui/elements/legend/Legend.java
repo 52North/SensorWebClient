@@ -24,12 +24,13 @@
 
 package org.n52.client.view.gui.elements.legend;
 
+import static org.n52.client.sos.i18n.I18NStringsAccessor.i18n;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.n52.client.control.PropertiesManager;
-import org.n52.client.i18n.I18N;
 import org.n52.client.sos.event.data.ExportEvent.ExportType;
 import org.n52.client.view.View;
 import org.n52.client.view.gui.Impressum;
@@ -146,37 +147,37 @@ public class Legend extends VLayout {
 
         ImageButton us = new ImageButton("us_lang",
                                          "../img/icons/gb.png",
-                                         I18N.sosClient.usLang(),
-                                         I18N.sosClient.usLangExtended());
+                                         i18n.usLang(),
+                                         i18n.usLangExtended());
         View.getInstance().registerTooltip(us);
         ImageButton de = new ImageButton("de_lang",
                                          "../img/icons/de.png",
-                                         I18N.sosClient.deLang(),
-                                         I18N.sosClient.deLangExtended());
+                                         i18n.deLang(),
+                                         i18n.deLangExtended());
         View.getInstance().registerTooltip(de);
         ImageButton ttips = new ImageButton("ttips",
                                             "../img/icons/comment.png",
-                                            I18N.sosClient.ttips(),
-                                            I18N.sosClient.ttipsExtended());
+                                            i18n.ttips(),
+                                            i18n.ttipsExtended());
         View.getInstance().registerTooltip(ttips);
         ImageButton help = new ImageButton("help",
                                            "../img/icons/help.png",
-                                           I18N.sosClient.help(),
-                                           I18N.sosClient.helpExtended());
+                                           i18n.help(),
+                                           i18n.helpExtended());
         View.getInstance().registerTooltip(help);
         ImageButton logger = new ImageButton("logger",
                                              "../img/icons/report.png",
-                                             I18N.sosClient.logger(),
-                                             I18N.sosClient.loggerExtended());
+                                             i18n.logger(),
+                                             i18n.loggerExtended());
         View.getInstance().registerTooltip(logger);
 
         ImageButton impressum = new ImageButton("impressum",
                                                 "../img/icons/information.png",
-                                                I18N.sosClient.Impressum(),
-                                                I18N.sosClient.Impressum());
+                                                i18n.Impressum(),
+                                                i18n.Impressum());
         
-        Label imprint = new Label(I18N.sosClient.Impressum());
-        imprint.setTooltip(I18N.sosClient.Impressum());
+        Label imprint = new Label(i18n.Impressum());
+        imprint.setTooltip(i18n.Impressum());
         imprint.setStyleName("label");
         imprint.setWidth(60);
         
@@ -193,7 +194,7 @@ public class Legend extends VLayout {
         help.addClickHandler(new ClickHandler() {
 
             public void onClick(ClickEvent event) {
-                String helpUrl = GWT.getHostPageBaseURL() + I18N.sosClient.helpPath();
+                String helpUrl = GWT.getHostPageBaseURL() + i18n.helpPath();
                 Window.open(helpUrl, "", "");
             }
         });
@@ -264,7 +265,7 @@ public class Legend extends VLayout {
         
         
 
-        Button exportZipCSV = new Button(I18N.sosClient.csv());
+        Button exportZipCSV = new Button(i18n.csv());
         exportZipCSV.setIcon("../img/icons/table.png");
         exportZipCSV.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
@@ -272,7 +273,7 @@ public class Legend extends VLayout {
             }
         });
 
-        Button exportPDFallInOne = new Button(I18N.sosClient.pdf());
+        Button exportPDFallInOne = new Button(i18n.pdf());
         exportPDFallInOne.setStyleName("input");
         exportPDFallInOne.setIcon("../img/icons/page_white_acrobat_add.png");
         exportPDFallInOne.addClickHandler(new ClickHandler() {
@@ -358,7 +359,7 @@ public class Legend extends VLayout {
 	}
 
 	private Label createCSVLabel() {
-		Label toCSV = new Label(I18N.sosClient.toCSV());
+		Label toCSV = new Label(i18n.toCSV());
 		toCSV.setWrap(false);
 		toCSV.setAutoFit(true);
 		toCSV.setPadding(3);
@@ -375,7 +376,7 @@ public class Legend extends VLayout {
 	}
 
 	private Label createPDFLabel() {
-		Label toPDF = new Label(I18N.sosClient.toPDF());
+		Label toPDF = new Label(i18n.toPDF());
         toPDF.setWrap(false);
         toPDF.setAutoFit(true);
         toPDF.setPadding(3);
@@ -392,7 +393,7 @@ public class Legend extends VLayout {
 	}
 
 	private Label createExportLabelButton() {
-        Label export = new Label(I18N.sosClient.export());
+        Label export = new Label(i18n.export());
         export.setStyleName("sensorweb_client_legendbuttonDisabled");
         export.addClickHandler(new ClickHandler() {
 			@Override
@@ -422,7 +423,7 @@ public class Legend extends VLayout {
 	}
 
 	private Label createAddTimeSeriesLabelButton() {
-		Label addTS = new Label(I18N.sosClient.picker()) ;
+		Label addTS = new Label(i18n.picker()) ;
         addTS.setStyleName("sensorweb_client_legendbuttonPrimary");
         addTS.addClickHandler(new ClickHandler() {
 			@Override
@@ -434,7 +435,7 @@ public class Legend extends VLayout {
 	}
 	
 	private Label createEESTabLabelButton() {
-		Label eesTabLabelButton = new Label(I18N.sosClient.diagram());
+		Label eesTabLabelButton = new Label(i18n.diagram());
 		eesTabLabelButton.setStyleName("sensorweb_client_legendbutton");
 		eesTabLabelButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -447,7 +448,7 @@ public class Legend extends VLayout {
 	}
 	
 	private Label createSESTabLabelButton() {
-		Label sesTabLabelButton = new Label(I18N.sosClient.sesTabButton());
+		Label sesTabLabelButton = new Label(i18n.sesTabButton());
 		sesTabLabelButton.setStyleName("sensorweb_client_legendbutton");
 		sesTabLabelButton.addClickHandler(new ClickHandler() {
 			@Override

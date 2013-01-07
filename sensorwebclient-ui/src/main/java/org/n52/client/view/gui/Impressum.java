@@ -23,7 +23,7 @@
  */
 package org.n52.client.view.gui;
 
-import org.n52.client.i18n.I18N;
+import static org.n52.client.sos.i18n.I18NStringsAccessor.i18n;
 
 import com.smartgwt.client.widgets.HTMLPane;
 import com.smartgwt.client.widgets.Window;
@@ -32,8 +32,8 @@ import com.smartgwt.client.widgets.layout.VLayout;
 
 public class Impressum extends Window {
 	
-	private static final String IMPRESSUM_TITLE = I18N.sosClient.Impressum();
-	public static final String CONTENT_PATH = I18N.sosClient.imprintPath();
+	private static final String IMPRESSUM_TITLE = i18n.Impressum();
+	public static final String CONTENT_PATH = i18n.imprintPath();
 
 	public Impressum() {
 		setTitle(IMPRESSUM_TITLE);

@@ -25,10 +25,10 @@ package org.n52.client.view.gui.elements;
 
 
 import static com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat.ISO_8601;
+import static org.n52.client.sos.i18n.I18NStringsAccessor.i18n;
 
 import java.util.Date;
 
-import org.n52.client.i18n.I18N;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
 import org.n52.client.model.data.dataManagers.DataManagerSosImpl;
 import org.n52.client.model.data.dataManagers.TimeManager;
@@ -145,7 +145,7 @@ public class Header extends HLayout {
 	}
 
 	private Label getAddBookmarkLink() {
-		Label addToFavorites = getHeaderLinkLabel(I18N.sosClient.addToBookmarks());
+		Label addToFavorites = getHeaderLinkLabel(i18n.addToBookmarks());
         addToFavorites.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent evt) {
                 addToFavorites();
@@ -155,7 +155,7 @@ public class Header extends HLayout {
 	}
 
 	private Label getRestartLink() {
-		Label restart = getHeaderLinkLabel(I18N.sosClient.restart());
+		Label restart = getHeaderLinkLabel(i18n.restart());
         restart.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent evt) {
             	String localeParameter = Window.Location.getParameter("locale");
@@ -191,10 +191,10 @@ public class Header extends HLayout {
 	}
 
 	private Label getHelpLink() {
-		Label help = getHeaderLinkLabel(I18N.sosClient.help());
+		Label help = getHeaderLinkLabel(i18n.help());
         help.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
             public void onClick(com.smartgwt.client.widgets.events.ClickEvent event) {
-                String helpUrl = GWT.getHostPageBaseURL() + I18N.sosClient.helpPath();
+                String helpUrl = GWT.getHostPageBaseURL() + i18n.helpPath();
                 Window.open(helpUrl, "", "");
             }
         });
@@ -202,11 +202,11 @@ public class Header extends HLayout {
 	}
 
 	private Label getImprintLink() {
-		Label imprint = getHeaderLinkLabel(I18N.sosClient.Impressum());
+		Label imprint = getHeaderLinkLabel(i18n.Impressum());
         imprint.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 com.smartgwt.client.widgets.Window w = new com.smartgwt.client.widgets.Window();
-                w.setTitle(I18N.sosClient.Impressum());
+                w.setTitle(i18n.Impressum());
                 w.setWidth(450);
                 w.setHeight(460);
                 w.centerInPage();
@@ -214,7 +214,7 @@ public class Header extends HLayout {
 
                 VLayout layout = new VLayout();
                 HTMLPane pane = new HTMLPane();
-                pane.setContentsURL(I18N.sosClient.imprintPath());
+                pane.setContentsURL(i18n.imprintPath());
                 layout.setStyleName("sensorweb_client_imprint_content");
                 layout.addMember(pane);
                 w.addItem(layout);

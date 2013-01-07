@@ -24,7 +24,8 @@
 
 package org.n52.client.control;
 
-import org.n52.client.i18n.I18N;
+import static org.n52.client.sos.i18n.I18NStringsAccessor.i18n;
+
 import org.n52.client.view.gui.widgets.Toaster;
 
 import com.google.gwt.core.client.GWT;
@@ -71,7 +72,7 @@ public class ClientUtils {
         if ( (end - begin) >= (minTime * 1000 * 60)) {
             return true;
         }
-        Toaster.getInstance().addMessage(I18N.sosClient.maxZoomInTime());
+        Toaster.getInstance().addMessage(i18n.maxZoomInTime());
         return false;
     }
 }

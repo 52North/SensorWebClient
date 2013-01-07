@@ -23,10 +23,11 @@
  */
 package org.n52.client.view.gui.elements.layouts;
 
+import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
+
 import java.util.ArrayList;
 
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.model.communication.requestManager.SesRequestManager;
 import org.n52.client.model.data.representations.RuleRecord;
 import org.n52.client.ses.event.SubscribeEvent;
@@ -80,7 +81,7 @@ public class UserRuleLayout extends Layout {
      * Instantiates a new user rule layout.
      */
     public UserRuleLayout() {
-        super(I18N.sesClient.subscribeRules());
+        super(i18n.subscribeRules());
         
         // init DataSource 
         this.ownDataSource = new RuleDS();
@@ -129,7 +130,7 @@ public class UserRuleLayout extends Layout {
                                 if (DataControlsSes.warnUserLongNotification) {
                                     if (record.getAttribute("medium").contains("SMS")) {
                                         if (record.getAttribute("format").contains("XML") || record.getAttribute("format").contains("EML")) {
-                                            SC.say(I18N.sesClient.longNotificationMessage());
+                                            SC.say(i18n.longNotificationMessage());
                                             return;
                                         }
                                     }
@@ -168,7 +169,7 @@ public class UserRuleLayout extends Layout {
                                 if (DataControlsSes.warnUserLongNotification) {
                                     if (record.getAttribute("medium").contains("SMS")) {
                                         if (record.getAttribute("format").contains("XML") || record.getAttribute("format").contains("EML")) {
-                                            SC.say(I18N.sesClient.longNotificationMessage());
+                                            SC.say(i18n.longNotificationMessage());
                                             return;
                                         }
                                     }
@@ -181,7 +182,7 @@ public class UserRuleLayout extends Layout {
 
                     } else if (fieldName.equals("subscribe")) {
                         // subscribe button
-                        IButton subscribeButton = new IButton(I18N.sesClient.subscribe());
+                        IButton subscribeButton = new IButton(i18n.subscribe());
                         subscribeButton.setShowDown(false);
                         subscribeButton.setShowRollOver(false);
                         subscribeButton.setHeight(16);
@@ -191,17 +192,17 @@ public class UserRuleLayout extends Layout {
                         subscribeButton.addClickHandler(new ClickHandler() {
                             public void onClick(ClickEvent event) {
                                 if (record.getAttribute("medium").equals("")){
-                                    SC.say(I18N.sesClient.selectMedium());
+                                    SC.say(i18n.selectMedium());
                                 } else if (record.getAttribute("format").equals("")){
-                                    SC.say(I18N.sesClient.selectFormat());
+                                    SC.say(i18n.selectFormat());
                                 } else {
                                     String userID = Cookies.getCookie(SesRequestManager.COOKIE_USER_ID);
                                     EventBus.getMainEventBus().fireEvent(new SubscribeEvent(userID, record.getAttribute("name"), record.getAttribute("medium"), record.getAttribute("format")));
                                 }
                             }
                         });
-                        subscribeButton.setTitle(I18N.sesClient.subscribe());
-                        subscribeButton.setPrompt(I18N.sesClient.subscribeThisRule());
+                        subscribeButton.setTitle(i18n.subscribe());
+                        subscribeButton.setPrompt(i18n.subscribeThisRule());
 
                         return subscribeButton;
                     } else {
@@ -247,7 +248,7 @@ public class UserRuleLayout extends Layout {
                                 if (DataControlsSes.warnUserLongNotification) {
                                     if (record.getAttribute("medium").contains("SMS")) {
                                         if (record.getAttribute("format").contains("XML") || record.getAttribute("format").contains("EML")) {
-                                            SC.say(I18N.sesClient.longNotificationMessage());
+                                            SC.say(i18n.longNotificationMessage());
                                             return;
                                         }
                                     }
@@ -286,7 +287,7 @@ public class UserRuleLayout extends Layout {
                                 if (DataControlsSes.warnUserLongNotification) {
                                     if (record.getAttribute("medium").contains("SMS")) {
                                         if (record.getAttribute("format").contains("XML") || record.getAttribute("format").contains("EML")) {
-                                            SC.say(I18N.sesClient.longNotificationMessage());
+                                            SC.say(i18n.longNotificationMessage());
                                             return;
                                         }
                                     }
@@ -299,7 +300,7 @@ public class UserRuleLayout extends Layout {
 
                     } else if (fieldName.equals("subscribe")) {
                         // subscribe button
-                        IButton subscribeButton = new IButton(I18N.sesClient.subscribe());
+                        IButton subscribeButton = new IButton(i18n.subscribe());
                         subscribeButton.setShowDown(false);
                         subscribeButton.setShowRollOver(false);
                         subscribeButton.setHeight(19);
@@ -309,9 +310,9 @@ public class UserRuleLayout extends Layout {
                         subscribeButton.addClickHandler(new ClickHandler() {
                             public void onClick(ClickEvent event) {
                                 if (record.getAttribute("medium").equals("")){
-                                    SC.say(I18N.sesClient.selectMedium());
+                                    SC.say(i18n.selectMedium());
                                 } else if (record.getAttribute("format").equals("")){
-                                    SC.say(I18N.sesClient.selectFormat());
+                                    SC.say(i18n.selectFormat());
                                 } else {
                                     String userID = Cookies.getCookie(SesRequestManager.COOKIE_USER_ID);
                                     EventBus.getMainEventBus().fireEvent(new SubscribeEvent(userID, record.getAttribute("name"), record.getAttribute("medium"), record.getAttribute("format")));
@@ -319,8 +320,8 @@ public class UserRuleLayout extends Layout {
                             }
                         });
 
-                        subscribeButton.setTitle(I18N.sesClient.subscribe());
-                        subscribeButton.setPrompt(I18N.sesClient.subscribeThisRule());
+                        subscribeButton.setTitle(i18n.subscribe());
+                        subscribeButton.setPrompt(i18n.subscribeThisRule());
 
                         return subscribeButton;
                     } else {
@@ -358,17 +359,17 @@ public class UserRuleLayout extends Layout {
         this.otherRulesGrid.sort(1, SortDirection.ASCENDING);
 
         // fields of tables
-        ListGridField typeField = new ListGridField("type", I18N.sesClient.type());
+        ListGridField typeField = new ListGridField("type", i18n.type());
         typeField.setWidth(60);
         typeField.setAlign(Alignment.CENTER);
 
-        ListGridField nameField = new ListGridField("name", I18N.sesClient.name());
+        ListGridField nameField = new ListGridField("name", i18n.name());
         nameField.setAlign(Alignment.CENTER);
 
-        ListGridField descriptionField = new ListGridField("description", I18N.sesClient.description());
+        ListGridField descriptionField = new ListGridField("description", i18n.description());
         descriptionField.setAlign(Alignment.CENTER);
 
-        ListGridField mediumField = new ListGridField("medium", I18N.sesClient.medium());
+        ListGridField mediumField = new ListGridField("medium", i18n.medium());
         mediumField.setWidth(90);
         mediumField.setAlign(Alignment.CENTER);
         mediumField.setCanFilter(false);
@@ -378,7 +379,7 @@ public class UserRuleLayout extends Layout {
         formatField.setAlign(Alignment.CENTER);
         formatField.setCanFilter(false);
 
-        ListGridField subscribeField = new ListGridField("subscribe", I18N.sesClient.subscribe());
+        ListGridField subscribeField = new ListGridField("subscribe", i18n.subscribe());
         subscribeField.setWidth(150);
         subscribeField.setAlign(Alignment.CENTER);
         subscribeField.setCanFilter(false);
@@ -395,12 +396,12 @@ public class UserRuleLayout extends Layout {
         // table header
         DynamicForm headerForm1 = new DynamicForm();
         HeaderItem header1 = new HeaderItem();
-        header1.setDefaultValue(I18N.sesClient.ownRules());
+        header1.setDefaultValue(i18n.ownRules());
         headerForm1.setItems(header1);
 
         DynamicForm headerForm2 = new DynamicForm();
         HeaderItem header2 = new HeaderItem();
-        header2.setDefaultValue(I18N.sesClient.otherRules());
+        header2.setDefaultValue(i18n.otherRules());
         headerForm2.setItems(header2);
 
         // add to mainLayout
@@ -432,14 +433,14 @@ public class UserRuleLayout extends Layout {
         
         for (int i = 0; i < basicRules.size(); i++) {
             basicDTO = basicRules.get(i);
-            rule = new RuleRecord(I18N.sesClient.basic(), "", "", basicDTO.getName(), basicDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), basicDTO.isRelease(), basicDTO.isSubscribed());
+            rule = new RuleRecord(i18n.basic(), "", "", basicDTO.getName(), basicDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), basicDTO.isRelease(), basicDTO.isSubscribed());
             
             this.ownRulesGrid.addData(rule);
         }
         
         for (int i = 0; i < complexRules.size(); i++) {
             complexDTO = complexRules.get(i);
-            rule = new RuleRecord(I18N.sesClient.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), complexDTO.isRelease(), complexDTO.isSubscribed());
+            rule = new RuleRecord(i18n.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), complexDTO.isRelease(), complexDTO.isSubscribed());
             
             this.ownRulesGrid.addData(rule);
         }
@@ -466,14 +467,14 @@ public class UserRuleLayout extends Layout {
 
         for (int i = 0; i < basicRules.size(); i++) {
             ruleDTO = basicRules.get(i);
-            rule = new RuleRecord(I18N.sesClient.basic(), "", "", ruleDTO.getName(), ruleDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), ruleDTO.isRelease(), ruleDTO.isSubscribed());
+            rule = new RuleRecord(i18n.basic(), "", "", ruleDTO.getName(), ruleDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), ruleDTO.isRelease(), ruleDTO.isSubscribed());
             
             this.otherRulesGrid.addData(rule);
         }
         
         for (int i = 0; i < complexRules.size(); i++) {
             complexDTO = complexRules.get(i);
-            rule = new RuleRecord(I18N.sesClient.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), complexDTO.isRelease(), complexDTO.isSubscribed());
+            rule = new RuleRecord(i18n.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), complexDTO.isRelease(), complexDTO.isSubscribed());
 
             this.otherRulesGrid.addData(rule);
             

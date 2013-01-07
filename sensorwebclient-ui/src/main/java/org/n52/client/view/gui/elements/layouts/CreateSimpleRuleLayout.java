@@ -23,11 +23,12 @@
  */
 package org.n52.client.view.gui.elements.layouts;
 
+import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.i18n.I18N;
 import org.n52.client.model.communication.requestManager.SesRequestManager;
 import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.CreateSimpleRuleEvent;
@@ -156,7 +157,7 @@ public class CreateSimpleRuleLayout extends Layout {
      * Instantiates a new creates the simple rule layout.
      */
     public CreateSimpleRuleLayout() {
-        super(I18N.sesClient.createBasicRule());
+        super(i18n.createBasicRule());
 
         DataSource dataSource = new DataSource();
 
@@ -165,12 +166,12 @@ public class CreateSimpleRuleLayout extends Layout {
         // Title of the rule
         this.nameItem = new TextItem();
         this.nameItem.setName("title");
-        this.nameItem.setTitle(I18N.sesClient.name());
+        this.nameItem.setTitle(i18n.name());
         this.nameItem.setRequired(true);
         this.nameItem.setLength(70);
         this.nameItem.setWidth(this.selectItemWidth);
         this.nameItem.setKeyPressFilter("[0-9a-zA-Z_]");
-        this.nameItem.setHint(I18N.sesClient.possibleChars() + " [0-9 a-z A-Z _]");
+        this.nameItem.setHint(i18n.possibleChars() + " [0-9 a-z A-Z _]");
         this.nameItem.setShowHintInField(true);
 
         this.form.setFields(this.headerItem, this.nameItem);
@@ -183,11 +184,11 @@ public class CreateSimpleRuleLayout extends Layout {
         // DescriptionItem
         this.descriptionItem = new TextAreaItem();
         this.descriptionItem.setName("description");
-        this.descriptionItem.setTitle(I18N.sesClient.description());
+        this.descriptionItem.setTitle(i18n.description());
         this.descriptionItem.setRequired(true);
         this.descriptionItem.setHeight(100);
         this.descriptionItem.setWidth(250);
-        this.descriptionItem.setHint(I18N.sesClient.possibleChars() + " [0-9 a-z A-Z _ -]");
+        this.descriptionItem.setHint(i18n.possibleChars() + " [0-9 a-z A-Z _ -]");
         this.descriptionItem.setShowHintInField(true);
         this.descriptionItem.addKeyPressHandler(new KeyPressHandler() {
             public void onKeyPress(KeyPressEvent event) {
@@ -209,17 +210,17 @@ public class CreateSimpleRuleLayout extends Layout {
 
         // ====================
         // radioButtons
-        this.publishRadioGroup = new RadioGroupItem("publish", I18N.sesClient.publish());
-        this.publishRadioGroup.setValueMap(I18N.sesClient.yes(), I18N.sesClient.no());
-        this.publishRadioGroup.setDefaultValue(I18N.sesClient.yes());
+        this.publishRadioGroup = new RadioGroupItem("publish", i18n.publish());
+        this.publishRadioGroup.setValueMap(i18n.yes(), i18n.no());
+        this.publishRadioGroup.setDefaultValue(i18n.yes());
 
-        this.conditionRadioGroup = new RadioGroupItem("condition", I18N.sesClient.enterExitCondition());
-        this.conditionRadioGroup.setValueMap(I18N.sesClient.yes(), I18N.sesClient.no());
-        this.conditionRadioGroup.setDefaultValue(I18N.sesClient.yes());
+        this.conditionRadioGroup = new RadioGroupItem("condition", i18n.enterExitCondition());
+        this.conditionRadioGroup.setValueMap(i18n.yes(), i18n.no());
+        this.conditionRadioGroup.setDefaultValue(i18n.yes());
         this.conditionRadioGroup.addChangedHandler(new ChangedHandler() {
             @SuppressWarnings("synthetic-access")
             public void onChanged(ChangedEvent event) {
-                if (event.getValue().toString().equals(I18N.sesClient.no())) {
+                if (event.getValue().toString().equals(i18n.no())) {
                     setRuleConditionFields();
                 } else {
                     CreateSimpleRuleLayout.this.ruleElementsConditionForm.setFields();
@@ -253,7 +254,7 @@ public class CreateSimpleRuleLayout extends Layout {
         });
         
         this.cancelButton = new ButtonItem();
-        this.cancelButton.setTitle(I18N.sesClient.cancel());
+        this.cancelButton.setTitle(i18n.cancel());
         this.cancelButton.setVisible(false);
         this.cancelButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
@@ -319,49 +320,49 @@ public class CreateSimpleRuleLayout extends Layout {
         String ruleName = this.nameItem.getValueAsString();
         if (Character.isDigit(ruleName.charAt(0))) {
             // if rulename starts with number, inform user
-            SC.say(I18N.sesClient.ruleNameStartsWithDigit());
+            SC.say(i18n.ruleNameStartsWithDigit());
             return false;
         }
         
         // check station
         String station = this.sensorItem.getValueAsString();
         if (station == null || station.equals("")) {
-            SC.say(I18N.sesClient.chooseStation());
+            SC.say(i18n.chooseStation());
             return false;
         }
         // check phenomenon
         String phenomenon = this.phenomenonItem.getValueAsString();
         if (phenomenon == null || phenomenon.equals("")) {
-            SC.say(I18N.sesClient.choosePhenomenon());
+            SC.say(i18n.choosePhenomenon());
             return false;
         }
         // check ruleType
         if (this.selectedType == SimpleRuleType.NONE) {
-            SC.say(I18N.sesClient.chooseRuleType());
+            SC.say(i18n.chooseRuleType());
             return false;
         }
         // check trend over time
         if (this.selectedType == SimpleRuleType.TENDENZ_ZEIT) {
             // check time and unit
             if (this.timeItem.getValue() == null || this.timeUnitItem.getValue() == null) {
-                SC.say(I18N.sesClient.indicateTimeUnit());
+                SC.say(i18n.indicateTimeUnit());
                 return false;
             }
             // check value and unit
             if (this.ruleValueItem.getValue() == null || this.ruleValueUnitItem.getValue() == null) {
-                SC.say(I18N.sesClient.indicateValueUnit());
+                SC.say(i18n.indicateValueUnit());
                 return false;
             }
             // check condition
-            if (this.conditionRadioGroup.getValue().toString().equals(I18N.sesClient.no())) {
+            if (this.conditionRadioGroup.getValue().toString().equals(i18n.no())) {
                 // check condition time and value
                 if (this.cTimeItem.getValue() == null || this.cTimeUnitItem.getValue() == null) {
-                    SC.say(I18N.sesClient.indicateConditionTimeUnit());
+                    SC.say(i18n.indicateConditionTimeUnit());
                     return false;
                 }
                 // check condition value and unit
                 if (this.ruleValueCondItem.getValue() == null || this.ruleValueUnitCondItem.getValue() == null) {
-                    SC.say(I18N.sesClient.indicateConditionValueUnit());
+                    SC.say(i18n.indicateConditionValueUnit());
                     return false;
                 }
             }
@@ -370,24 +371,24 @@ public class CreateSimpleRuleLayout extends Layout {
         if (this.selectedType == SimpleRuleType.TENDENZ_ANZAHL) {
             // check count
             if (this.countItem.getValue() == null) {
-                SC.say(I18N.sesClient.indicateCount());
+                SC.say(i18n.indicateCount());
                 return false;
             }
             // check value and unit
             if (this.ruleValueItem.getValue() == null || this.ruleValueUnitItem.getValue() == null) {
-                SC.say(I18N.sesClient.indicateValueUnit());
+                SC.say(i18n.indicateValueUnit());
                 return false;
             }
             // check condition
-            if (this.conditionRadioGroup.getValue().toString().equals(I18N.sesClient.no())) {
+            if (this.conditionRadioGroup.getValue().toString().equals(i18n.no())) {
                 // check condition count
                 if (this.countCondItem.getValue() == null) {
-                    SC.say(I18N.sesClient.indicateConditionCount());
+                    SC.say(i18n.indicateConditionCount());
                     return false;
                 }
                 // check condition value and unit
                 if (this.ruleValueCondItem.getValue() == null || this.ruleValueUnitCondItem.getValue() == null) {
-                    SC.say(I18N.sesClient.indicateConditionValueUnit());
+                    SC.say(i18n.indicateConditionValueUnit());
                     return false;
                 }
             }
@@ -396,14 +397,14 @@ public class CreateSimpleRuleLayout extends Layout {
         if (this.selectedType == SimpleRuleType.UEBER_UNTERSCHREITUNG) {
             // check value and unit
             if (this.ruleValueItem.getValue() == null || this.ruleValueUnitItem.getValue() == null) {
-                SC.say(I18N.sesClient.indicateValueUnit());
+                SC.say(i18n.indicateValueUnit());
                 return false;
             }
             // check condition
-            if (this.conditionRadioGroup.getValue().toString().equals(I18N.sesClient.no())) {
+            if (this.conditionRadioGroup.getValue().toString().equals(i18n.no())) {
                 // check condition value and unit
                 if (this.ruleValueCondItem.getValue() == null || this.ruleValueUnitCondItem.getValue() == null) {
-                    SC.say(I18N.sesClient.indicateConditionValueUnit());
+                    SC.say(i18n.indicateConditionValueUnit());
                     return false;
                 }
             }
@@ -412,12 +413,12 @@ public class CreateSimpleRuleLayout extends Layout {
         if (this.selectedType == SimpleRuleType.SUMME_ZEIT) {
             // check value and unit
             if (this.ruleValueItem.getValue() == null || this.ruleValueUnitItem.getValue() == null) {
-                SC.say(I18N.sesClient.indicateValueUnit());
+                SC.say(i18n.indicateValueUnit());
                 return false;
             }
             // check count
             if (this.countItem.getValue() == null) {
-                SC.say(I18N.sesClient.indicateCount());
+                SC.say(i18n.indicateCount());
                 return false;
             }
         }
@@ -425,7 +426,7 @@ public class CreateSimpleRuleLayout extends Layout {
         if (this.selectedType == SimpleRuleType.AUSFALL) {
             // check time and unit
             if (this.timeItem.getValue() == null || this.timeUnitItem.getValue() == null) {
-                SC.say(I18N.sesClient.indicateTimeUnit());
+                SC.say(i18n.indicateTimeUnit());
                 return false;
             }
         }
@@ -447,7 +448,7 @@ public class CreateSimpleRuleLayout extends Layout {
         this.publish = false;
         this.condition = false;
 
-        if (this.publishRadioGroup.getValue().toString().equals(I18N.sesClient.yes())) {
+        if (this.publishRadioGroup.getValue().toString().equals(i18n.yes())) {
             this.publish = true;
         }
 
@@ -495,7 +496,7 @@ public class CreateSimpleRuleLayout extends Layout {
         
         String rCount = this.countItem.getValueAsString();
         
-        if (this.conditionRadioGroup.getValue().toString().equals(I18N.sesClient.no())) {
+        if (this.conditionRadioGroup.getValue().toString().equals(i18n.no())) {
             // enter condition != exit condition
             operatorIndexCond = getOperatorIndex(this.operatorCondItem.getValueAsString());
             cValue = this.ruleValueCondItem.getValueAsString();
@@ -536,7 +537,7 @@ public class CreateSimpleRuleLayout extends Layout {
         String cTime;
         String cTimeUnit;
 
-        if (this.conditionRadioGroup.getValue().toString().equals(I18N.sesClient.no())) {
+        if (this.conditionRadioGroup.getValue().toString().equals(i18n.no())) {
             // enter condition != exit condition
             operatorIndexCond = getOperatorIndex(this.operatorCondItem.getValueAsString());
             
@@ -579,7 +580,7 @@ public class CreateSimpleRuleLayout extends Layout {
         String countValue = this.countItem.getValueAsString();
         String countCondValue;
 
-        if (this.conditionRadioGroup.getValue().toString().equals(I18N.sesClient.no())) {
+        if (this.conditionRadioGroup.getValue().toString().equals(i18n.no())) {
             // enter condition != exit condition
             operatorIndexCond = getOperatorIndex(this.operatorCondItem.getValueAsString());
             
@@ -620,7 +621,7 @@ public class CreateSimpleRuleLayout extends Layout {
         String cValue;
         String cUnit;
 
-        if (this.conditionRadioGroup.getValue().toString().equals(I18N.sesClient.no())) {
+        if (this.conditionRadioGroup.getValue().toString().equals(i18n.no())) {
             // enter condition != exit condition
             operatorIndexCond = getOperatorIndex(this.operatorCondItem.getValueAsString());
             
@@ -819,9 +820,9 @@ public class CreateSimpleRuleLayout extends Layout {
         this.edit = false;
         this.oldRuleName = "";
         // rename header
-        this.headerItem.setDefaultValue(I18N.sesClient.createBasicRule());
+        this.headerItem.setDefaultValue(i18n.createBasicRule());
         // rename button
-        this.createButtonItem.setTitle(I18N.sesClient.create());
+        this.createButtonItem.setTitle(i18n.create());
         
         // hide cancelButton
         this.cancelButton.setVisible(false);
@@ -834,7 +835,7 @@ public class CreateSimpleRuleLayout extends Layout {
 
         // set selectedType to nothing
         this.selectedType = SimpleRuleType.NONE;
-        this.conditionRadioGroup.setValue(I18N.sesClient.yes());
+        this.conditionRadioGroup.setValue(i18n.yes());
 
         // clear first three list boxes
         this.station = null;
@@ -845,7 +846,7 @@ public class CreateSimpleRuleLayout extends Layout {
         this.descriptionItem.clearValue();
 
         // set radio buttons to "yes"
-        this.publishRadioGroup.setValue(I18N.sesClient.yes());
+        this.publishRadioGroup.setValue(i18n.yes());
 
         if (this.ruleTypeItem != null) {
             this.ruleTypeItem.clearValue();
@@ -872,7 +873,7 @@ public class CreateSimpleRuleLayout extends Layout {
      */
     private void initComboBoxes() {
         
-        this.sensorItem = new ComboBoxItem("sensors", I18N.sesClient.sensor());
+        this.sensorItem = new ComboBoxItem("sensors", i18n.sensor());
         this.sensorItem.setWidth(this.selectItemWidth);
         this.sensorItem.setTitleOrientation(TitleOrientation.TOP);
         this.sensorItem.addChangedHandler(new ChangedHandler() {
@@ -887,12 +888,12 @@ public class CreateSimpleRuleLayout extends Layout {
             }
         });
         
-        this.phenomenonItem = new SelectItem("phenomena", I18N.sesClient.phenomenon());
+        this.phenomenonItem = new SelectItem("phenomena", i18n.phenomenon());
         this.phenomenonItem.setWidth(this.selectItemWidth2);
         this.phenomenonItem.setTitleOrientation(TitleOrientation.TOP);
         this.phenomenonItem.setDisabled(true);
         
-        this.ruleTypeItem = new SelectItem("ruleType", I18N.sesClient.ruleType());
+        this.ruleTypeItem = new SelectItem("ruleType", i18n.ruleType());
         this.ruleTypeItem.setWidth(this.selectItemWidth2);
         this.ruleTypeItem.setTitleOrientation(TitleOrientation.TOP);
         this.ruleTypeItem.setDisabled(true);
@@ -901,15 +902,15 @@ public class CreateSimpleRuleLayout extends Layout {
 
                 String value = event.getValue().toString();
 
-                if (value.equals(I18N.sesClient.overUnderShoot())) {
+                if (value.equals(i18n.overUnderShoot())) {
                     CreateSimpleRuleLayout.this.selectedType = SimpleRuleType.UEBER_UNTERSCHREITUNG;
-                } else if (value.equals(I18N.sesClient.trendOverTime())) {
+                } else if (value.equals(i18n.trendOverTime())) {
                     CreateSimpleRuleLayout.this.selectedType = SimpleRuleType.TENDENZ_ZEIT;
-                } else if (value.equals(I18N.sesClient.trendOverCount())) {
+                } else if (value.equals(i18n.trendOverCount())) {
                     CreateSimpleRuleLayout.this.selectedType = SimpleRuleType.TENDENZ_ANZAHL;
-                } else if (value.equals(I18N.sesClient.sumOverCountMeasurements())) {
+                } else if (value.equals(i18n.sumOverCountMeasurements())) {
                     CreateSimpleRuleLayout.this.selectedType = SimpleRuleType.SUMME_ZEIT;
-                } else if (value.equals(I18N.sesClient.sensorFailure())) {
+                } else if (value.equals(i18n.sensorFailure())) {
                     CreateSimpleRuleLayout.this.selectedType = SimpleRuleType.AUSFALL;
                 } else {
                     CreateSimpleRuleLayout.this.selectedType = null;
@@ -930,15 +931,15 @@ public class CreateSimpleRuleLayout extends Layout {
         this.cancelButton.setVisible(true);
         this.oldRuleName = rule.getTitle();
         // rename header
-        this.headerItem.setDefaultValue(I18N.sesClient.editBasicRule());
+        this.headerItem.setDefaultValue(i18n.editBasicRule());
         // rename button
-        this.createButtonItem.setTitle(I18N.sesClient.saveChanges());
+        this.createButtonItem.setTitle(i18n.saveChanges());
         
         // set publishrRadioGroup
         if (rule.isPublish()) {
-            this.publishRadioGroup.setValue(I18N.sesClient.yes());
+            this.publishRadioGroup.setValue(i18n.yes());
         } else {
-            this.publishRadioGroup.setValue(I18N.sesClient.no());
+            this.publishRadioGroup.setValue(i18n.no());
         }
         
         // title
@@ -962,19 +963,19 @@ public class CreateSimpleRuleLayout extends Layout {
         // ruleType
         this.selectedType = rule.getRuleType();
         if (this.selectedType.equals(SimpleRuleType.TENDENZ_ZEIT)) {
-            this.ruleTypeItem.setValue(I18N.sesClient.trendOverTime());
+            this.ruleTypeItem.setValue(i18n.trendOverTime());
         }
         if (this.selectedType.equals(SimpleRuleType.TENDENZ_ANZAHL)) {
-            this.ruleTypeItem.setValue(I18N.sesClient.trendOverCount());
+            this.ruleTypeItem.setValue(i18n.trendOverCount());
         }
         if (this.selectedType.equals(SimpleRuleType.UEBER_UNTERSCHREITUNG)) {
-            this.ruleTypeItem.setValue(I18N.sesClient.overUnderShoot());
+            this.ruleTypeItem.setValue(i18n.overUnderShoot());
         }
         if (this.selectedType.equals(SimpleRuleType.SUMME_ZEIT)) {
-            this.ruleTypeItem.setValue(I18N.sesClient.sumOverCountMeasurements());
+            this.ruleTypeItem.setValue(i18n.sumOverCountMeasurements());
         }
         if (this.selectedType.equals(SimpleRuleType.AUSFALL)) {
-            this.ruleTypeItem.setValue(I18N.sesClient.sensorFailure());
+            this.ruleTypeItem.setValue(i18n.sensorFailure());
         }
         
         String operator = "";
@@ -1010,10 +1011,10 @@ public class CreateSimpleRuleLayout extends Layout {
         // set condition radio group
         if (rule.isEnterEqualsExitCondition()) {
             this.condition = true;
-            this.conditionRadioGroup.setValue(I18N.sesClient.yes());
+            this.conditionRadioGroup.setValue(i18n.yes());
         } else {
             this.condition = false;
-            this.conditionRadioGroup.setValue(I18N.sesClient.no());
+            this.conditionRadioGroup.setValue(i18n.no());
             
             setRuleValueCondItem();
             setRuleValueUnitCondItem();
@@ -1121,11 +1122,11 @@ public class CreateSimpleRuleLayout extends Layout {
      */
     private void setHashMapData(){
         // set ruletypes
-        this.ruleTypesHashMap.put(I18N.sesClient.trendOverTime(), I18N.sesClient.trendOverTime());
-        this.ruleTypesHashMap.put(I18N.sesClient.trendOverCount(), I18N.sesClient.trendOverCount());
-        this.ruleTypesHashMap.put(I18N.sesClient.overUnderShoot(), I18N.sesClient.overUnderShoot());
-        this.ruleTypesHashMap.put(I18N.sesClient.sumOverCountMeasurements(), I18N.sesClient.sumOverCountMeasurements());
-        this.ruleTypesHashMap.put(I18N.sesClient.sensorFailure(), I18N.sesClient.sensorFailure());
+        this.ruleTypesHashMap.put(i18n.trendOverTime(), i18n.trendOverTime());
+        this.ruleTypesHashMap.put(i18n.trendOverCount(), i18n.trendOverCount());
+        this.ruleTypesHashMap.put(i18n.overUnderShoot(), i18n.overUnderShoot());
+        this.ruleTypesHashMap.put(i18n.sumOverCountMeasurements(), i18n.sumOverCountMeasurements());
+        this.ruleTypesHashMap.put(i18n.sensorFailure(), i18n.sensorFailure());
 
         // set operators
         this.operatorHashMap.put("=", "=");
@@ -1144,7 +1145,7 @@ public class CreateSimpleRuleLayout extends Layout {
     private void setRuleValueItem() {
         this.ruleValueItem = new TextItem();
         this.ruleValueItem.setWidth(this.ruleItemWidth);
-        this.ruleValueItem.setTitle(I18N.sesClient.value());
+        this.ruleValueItem.setTitle(i18n.value());
         this.ruleValueItem.setTitleOrientation(TitleOrientation.TOP);
         this.ruleValueItem.setKeyPressFilter("[0-9]");
     }
@@ -1152,7 +1153,7 @@ public class CreateSimpleRuleLayout extends Layout {
     private void setRuleValueUnitItem() {
         this.ruleValueUnitItem = new SelectItem();
         this.ruleValueUnitItem.setWidth(this.ruleItemWidth);
-        this.ruleValueUnitItem.setTitle(I18N.sesClient.unit());
+        this.ruleValueUnitItem.setTitle(i18n.unit());
         this.ruleValueUnitItem.setTitleOrientation(TitleOrientation.TOP);
         this.ruleValueUnitItem.setValueMap(this.unitHashMap);
         this.ruleValueUnitItem.setTextAlign(Alignment.CENTER);
@@ -1166,7 +1167,7 @@ public class CreateSimpleRuleLayout extends Layout {
     private void setCountItem() {
         this.countItem = new TextItem();
         this.countItem.setWidth(this.ruleItemWidth);
-        this.countItem.setTitle(I18N.sesClient.count());
+        this.countItem.setTitle(i18n.count());
         this.countItem.setTitleOrientation(TitleOrientation.TOP);
         this.countItem.setKeyPressFilter("[0-9]");
     }
@@ -1174,7 +1175,7 @@ public class CreateSimpleRuleLayout extends Layout {
     private void setTimeItem() {
         this.timeItem = new TextItem();
         this.timeItem.setWidth(this.ruleItemWidth);
-        this.timeItem.setTitle("<nobr>" + I18N.sesClient.timeValue() + "</nobr>");
+        this.timeItem.setTitle("<nobr>" + i18n.timeValue() + "</nobr>");
         this.timeItem.setTitleOrientation(TitleOrientation.TOP);
         this.timeItem.setKeyPressFilter("[0-9]");
     }
@@ -1182,9 +1183,9 @@ public class CreateSimpleRuleLayout extends Layout {
     private void setTimeUnitItem() {
         this.timeUnitItem = new SelectItem();
         this.timeUnitItem.setWidth(this.ruleItemWidth);
-        this.timeUnitItem.setTitle(I18N.sesClient.timeUnit());
+        this.timeUnitItem.setTitle(i18n.timeUnit());
         this.timeUnitItem.setTitleOrientation(TitleOrientation.TOP);
-        this.timeUnitItem.setTooltip("<nobr>" + I18N.sesClient.unitsTime() + "</nobr>");
+        this.timeUnitItem.setTooltip("<nobr>" + i18n.unitsTime() + "</nobr>");
         this.timeUnitItem.setValueMap(this.timeUnitHashMap);
         this.timeUnitItem.setDefaultValue("H");
         this.timeUnitItem.setTextAlign(Alignment.CENTER);
@@ -1193,7 +1194,7 @@ public class CreateSimpleRuleLayout extends Layout {
     private void setRuleValueCondItem() {
         this.ruleValueCondItem = new TextItem();
         this.ruleValueCondItem.setWidth(this.ruleItemWidth);
-        this.ruleValueCondItem.setTitle(I18N.sesClient.value());
+        this.ruleValueCondItem.setTitle(i18n.value());
         this.ruleValueCondItem.setTitleOrientation(TitleOrientation.TOP);
         this.ruleValueCondItem.setKeyPressFilter("[0-9]");
     }
@@ -1201,7 +1202,7 @@ public class CreateSimpleRuleLayout extends Layout {
     private void setRuleValueUnitCondItem() {
         this.ruleValueUnitCondItem = new SelectItem();
         this.ruleValueUnitCondItem.setWidth(this.ruleItemWidth);
-        this.ruleValueUnitCondItem.setTitle(I18N.sesClient.unit());
+        this.ruleValueUnitCondItem.setTitle(i18n.unit());
         this.ruleValueUnitCondItem.setTitleOrientation(TitleOrientation.TOP);
         this.ruleValueUnitCondItem.setValueMap(this.unitHashMap);
         this.ruleValueUnitCondItem.setTextAlign(Alignment.CENTER);
@@ -1215,7 +1216,7 @@ public class CreateSimpleRuleLayout extends Layout {
     private void setCountCondItem() {
         this.countCondItem = new TextItem();
         this.countCondItem.setWidth(this.ruleItemWidth);
-        this.countCondItem.setTitle(I18N.sesClient.count());
+        this.countCondItem.setTitle(i18n.count());
         this.countCondItem.setTitleOrientation(TitleOrientation.TOP);
         this.countCondItem.setKeyPressFilter("[0-9]");
     }
@@ -1223,7 +1224,7 @@ public class CreateSimpleRuleLayout extends Layout {
     private void setcTimeItem() {
         this.cTimeItem = new TextItem();
         this.cTimeItem.setWidth(this.ruleItemWidth);
-        this.cTimeItem.setTitle("<nobr>" + I18N.sesClient.timeValue() + "</nobr>");
+        this.cTimeItem.setTitle("<nobr>" + i18n.timeValue() + "</nobr>");
         this.cTimeItem.setTitleOrientation(TitleOrientation.TOP);
         this.cTimeItem.setKeyPressFilter("[0-9]");
     }
@@ -1231,9 +1232,9 @@ public class CreateSimpleRuleLayout extends Layout {
     private void setcTimeUnitItem() {
         this.cTimeUnitItem = new SelectItem();
         this.cTimeUnitItem.setWidth(this.ruleItemWidth);
-        this.cTimeUnitItem.setTitle(I18N.sesClient.timeUnit());
+        this.cTimeUnitItem.setTitle(i18n.timeUnit());
         this.cTimeUnitItem.setTitleOrientation(TitleOrientation.TOP);
-        this.cTimeUnitItem.setTooltip("<nobr>" + I18N.sesClient.unitsTime() + "</nobr>");
+        this.cTimeUnitItem.setTooltip("<nobr>" + i18n.unitsTime() + "</nobr>");
         this.cTimeUnitItem.setValueMap(this.timeUnitHashMap);
         this.cTimeUnitItem.setDefaultValue("H");
         this.cTimeUnitItem.setTextAlign(Alignment.CENTER);
@@ -1242,7 +1243,7 @@ public class CreateSimpleRuleLayout extends Layout {
     private void setOperatorRuleItem() {
         this.operatorRuleItem = new SelectItem();
         this.operatorRuleItem.setWidth(this.ruleItemWidth);
-        this.operatorRuleItem.setTitle(I18N.sesClient.operator());
+        this.operatorRuleItem.setTitle(i18n.operator());
         this.operatorRuleItem.setTitleOrientation(TitleOrientation.TOP);
         this.operatorRuleItem.setValueMap(this.operatorHashMap);
         this.operatorRuleItem.setDefaultValue(">");
@@ -1259,7 +1260,7 @@ public class CreateSimpleRuleLayout extends Layout {
     private void setOperatorCondItem() {
         this.operatorCondItem = new SelectItem();
         this.operatorCondItem.setWidth(this.ruleItemWidth);
-        this.operatorCondItem.setTitle(I18N.sesClient.operator());
+        this.operatorCondItem.setTitle(i18n.operator());
         this.operatorCondItem.setTitleOrientation(TitleOrientation.TOP);
         this.operatorCondItem.setValueMap(this.operatorHashMap);
         this.operatorCondItem.setTextAlign(Alignment.CENTER);
