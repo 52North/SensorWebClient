@@ -32,7 +32,7 @@ import java.util.Date;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
 import org.n52.client.model.data.dataManagers.DataManagerSosImpl;
 import org.n52.client.model.data.dataManagers.TimeManager;
-import org.n52.client.model.data.representations.TimeSeries;
+import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.view.gui.widgets.Toaster;
 import org.n52.ext.ExternalToolsException;
 import org.n52.ext.link.AccessLinkFactory;

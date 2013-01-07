@@ -28,8 +28,8 @@ import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
 import java.util.List;
 
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.model.data.representations.UserDS;
-import org.n52.client.model.data.representations.UserRecord;
+import org.n52.client.ses.data.UserDS;
+import org.n52.client.ses.data.UserRecord;
 import org.n52.client.ses.event.DeleteUserEvent;
 import org.n52.client.ses.event.GetAllUsersEvent;
 import org.n52.client.view.gui.elements.interfaces.Layout;

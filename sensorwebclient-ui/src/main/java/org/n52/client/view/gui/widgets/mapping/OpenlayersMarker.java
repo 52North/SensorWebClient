@@ -35,7 +35,7 @@ import org.gwtopenmaps.openlayers.client.event.EventHandler;
 import org.gwtopenmaps.openlayers.client.event.EventObject;
 import org.gwtopenmaps.openlayers.client.popup.FramedCloud;
 import org.gwtopenmaps.openlayers.client.popup.Popup;
-import org.n52.client.model.data.representations.TimeSeries;
+import org.n52.client.sos.legend.TimeSeries;
 
 /**
  * The Class OpenlayersMarker.

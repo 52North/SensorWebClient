@@ -29,7 +29,7 @@ import java.util.ArrayList;
 
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.model.communication.requestManager.SesRequestManager;
-import org.n52.client.model.data.representations.RuleRecord;
+import org.n52.client.ses.data.RuleRecord;
 import org.n52.client.ses.event.CopyEvent;
 import org.n52.client.ses.event.DeleteRuleEvent;
 import org.n52.client.ses.event.EditRuleEvent;

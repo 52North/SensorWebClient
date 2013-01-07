@@ -38,9 +38,9 @@ import org.gwtopenmaps.openlayers.client.popup.Popup;
 import org.n52.client.control.PropertiesManager;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
-import org.n52.client.model.data.representations.TimeSeries;
 import org.n52.client.sos.event.InitEvent;
 import org.n52.client.sos.event.handler.InitEventHandler;
+import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.view.gui.elements.legend.OverviewMapController;
 import org.n52.shared.Constants;
 

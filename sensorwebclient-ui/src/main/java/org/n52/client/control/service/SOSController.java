@@ -35,7 +35,6 @@ import org.n52.client.eventBus.EventBus;
 import org.n52.client.model.communication.requestManager.SOSRequestManager;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
 import org.n52.client.model.data.dataManagers.DataManagerSosImpl;
-import org.n52.client.model.data.representations.TimeSeries;
 import org.n52.client.sos.event.data.ExportEvent;
 import org.n52.client.sos.event.data.FinishedLoadingTimeSeriesEvent;
 import org.n52.client.sos.event.data.GetFeatureEvent;
@@ -66,6 +65,7 @@ import org.n52.client.sos.event.data.handler.StoreFeatureEventHandler;
 import org.n52.client.sos.event.data.handler.StoreOfferingEventHandler;
 import org.n52.client.sos.event.data.handler.StoreProcedureEventHandler;
 import org.n52.client.sos.event.data.handler.StoreStationEventHandler;
+import org.n52.client.sos.legend.TimeSeries;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 
 import com.google.gwt.core.client.GWT;

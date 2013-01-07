@@ -21,50 +21,41 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.model.data.representations;
+package org.n52.client.ses.data;
+
+import java.util.List;
+
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.fields.DataSourceTextField;
 
 /**
- * The Class DateAction.
- * 
- * @author <a href="mailto:f.bache@52north.de">Felix Bache</a>
+ * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
+ *
  */
-public class DateAction {
-
-    /** The begin. */
-    private long begin;
-
-    /** The end. */
-    private long end;
+public class SensorDS extends DataSource {
 
     /**
-     * Instantiates a new date action.
+     * @param parameterId 
+     * @param sensors 
      * 
-     * @param begin
-     *            the begin
-     * @param end
-     *            the end
      */
-    public DateAction(long begin, long end) {
-        this.begin = begin;
-        this.end = end;
-    }
+    public SensorDS(String id, List sensors) {
+        setID(id);
+//        setRecordXPath("Sensors/sensor");
+        
+        DataSourceTextField name = new DataSourceTextField("name", "SensorID");
+        name.setPrimaryKey(true);
+        name.setHidden(true);
+        addField(name);
+        
+        DataSourceTextField status = new DataSourceTextField("status", "Status", 125);
+        addField(status);
 
-    /**
-     * Gets the begin.
-     * 
-     * @return the begin
-     */
-    public long getBegin() {
-        return this.begin;
+        DataSourceTextField inUse = new DataSourceTextField("inUse", "In Use", 200);
+        addField(inUse);
+        
+        setClientOnly(true);
+//        setTestData(testData);
+//        setDataURL("http://127.0.0.1:8888/Sensors.xml");
     }
-
-    /**
-     * Gets the end.
-     * 
-     * @return the end
-     */
-    public long getEnd() {
-        return this.end;
-    }
-
 }

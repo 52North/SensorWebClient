@@ -26,8 +26,8 @@ package org.n52.client.sos.event.data;
 import java.util.Collection;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
-import org.n52.client.model.data.representations.TimeSeries;
 import org.n52.client.sos.event.data.handler.ExportEventHandler;
+import org.n52.client.sos.legend.TimeSeries;
 
 public class ExportEvent extends FilteredDispatchGwtEvent<ExportEventHandler> {
 

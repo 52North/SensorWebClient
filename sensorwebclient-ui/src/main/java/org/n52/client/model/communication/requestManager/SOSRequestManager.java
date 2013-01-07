@@ -60,7 +60,6 @@ import org.n52.client.model.communication.requestManager.callbacks.TimeSeriesDat
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
 import org.n52.client.model.data.dataManagers.DataManagerSosImpl;
 import org.n52.client.model.data.dataManagers.TimeManager;
-import org.n52.client.model.data.representations.TimeSeries;
 import org.n52.client.sos.event.DeleteMarkersEvent;
 import org.n52.client.sos.event.LegendElementSelectedEvent;
 import org.n52.client.sos.event.data.FinishedLoadingTimeSeriesEvent;
@@ -81,6 +80,7 @@ import org.n52.client.sos.event.data.StoreTimeSeriesEvent;
 import org.n52.client.sos.event.data.StoreTimeSeriesLastValueEvent;
 import org.n52.client.sos.event.data.StoreTimeSeriesPropsEvent;
 import org.n52.client.sos.event.data.TimeSeriesHasDataEvent;
+import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.util.exceptions.ExceptionHandler;
 import org.n52.client.util.exceptions.RequestFailedException;
 import org.n52.client.view.View;

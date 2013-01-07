@@ -37,7 +37,6 @@ import org.n52.client.eventBus.EventCallback;
 import org.n52.client.model.communication.LoaderManager;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
 import org.n52.client.model.data.dataManagers.TimeManager;
-import org.n52.client.model.data.representations.TimeSeries;
 import org.n52.client.sos.event.DatesChangedEvent;
 import org.n52.client.sos.event.SwitchGridEvent;
 import org.n52.client.sos.event.data.ExportEvent;
@@ -51,6 +50,7 @@ import org.n52.client.sos.event.data.handler.OverviewIntervalChangedEventHandler
 import org.n52.client.sos.event.data.handler.StoreTimeSeriesFirstValueEventHandler;
 import org.n52.client.sos.event.data.handler.StoreTimeSeriesLastValueEventHandler;
 import org.n52.client.sos.event.handler.DatesChangedEventHandler;
+import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.view.View;
 import org.n52.client.view.gui.elements.tabImpl.EESTab;
 import org.n52.client.view.gui.widgets.Toaster;

@@ -24,8 +24,8 @@
 package org.n52.client.sos.event.data;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
-import org.n52.client.model.data.representations.TimeSeries;
 import org.n52.client.sos.event.data.handler.StoreTimeSeriesEventHandler;
+import org.n52.client.sos.legend.TimeSeries;
 
 /**
  * The Class StoreTimeSeriesEvent.

@@ -30,7 +30,6 @@ import java.util.Stack;
 
 import org.n52.client.control.PropertiesManager;
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.model.data.representations.DateAction;
 import org.n52.client.sos.event.DatesChangedEvent;
 import org.n52.client.sos.event.data.OverviewIntervalChangedEvent;
 import org.n52.client.sos.event.data.OverviewIntervalChangedEvent.IntervalType;
