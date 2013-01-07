@@ -34,7 +34,7 @@ import org.n52.client.control.tableTab.TableTabController;
 import org.n52.client.model.data.representations.TimeSeries;
 import org.n52.client.view.gui.elements.controlsImpl.DataControls;
 import org.n52.client.view.gui.elements.interfaces.DataPanelTab;
-import org.n52.client.view.gui.elements.interfaces.LegendElement;
+import org.n52.client.view.gui.elements.legend.LegendElement;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;

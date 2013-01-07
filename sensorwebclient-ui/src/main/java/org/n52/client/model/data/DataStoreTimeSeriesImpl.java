@@ -68,7 +68,7 @@ import org.n52.client.sos.event.handler.SwitchGridEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
 import org.n52.client.util.exceptions.DataparsingException;
 import org.n52.client.util.exceptions.ExceptionHandler;
-import org.n52.client.view.gui.elements.interfaces.LegendElement;
+import org.n52.client.view.gui.elements.legend.LegendElement;
 import org.n52.client.view.gui.elements.legend.LegendEntryTimeSeries;
 import org.n52.client.view.gui.widgets.Toaster;
 import org.n52.shared.serializable.pojos.Axis;

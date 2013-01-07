@@ -84,7 +84,7 @@ import org.n52.client.sos.event.data.TimeSeriesHasDataEvent;
 import org.n52.client.util.exceptions.ExceptionHandler;
 import org.n52.client.util.exceptions.RequestFailedException;
 import org.n52.client.view.View;
-import org.n52.client.view.gui.elements.interfaces.LegendElement;
+import org.n52.client.view.gui.elements.legend.LegendElement;
 import org.n52.client.view.gui.elements.tabImpl.EESTab;
 import org.n52.client.view.gui.widgets.Toaster;
 import org.n52.shared.exceptions.CompatibilityException;

@@ -61,7 +61,7 @@ import org.n52.client.util.exceptions.GUIException;
 import org.n52.client.view.View;
 import org.n52.client.view.gui.elements.controlsImpl.DataControlsSes;
 import org.n52.client.view.gui.elements.interfaces.Layout.Layouts;
-import org.n52.client.view.gui.elements.interfaces.LegendElement;
+import org.n52.client.view.gui.elements.legend.LegendElement;
 import org.n52.client.view.gui.elements.tabImpl.ATabEventBroker;
 import org.n52.client.view.gui.elements.tabImpl.SesTab;
 import org.n52.shared.responses.SesClientResponse;

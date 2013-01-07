@@ -23,7 +23,7 @@
  */
 package org.n52.client.model.data.representations.interfaces;
 
-import org.n52.client.view.gui.elements.interfaces.LegendElement;
+import org.n52.client.view.gui.elements.legend.LegendElement;
 
 /**
  * The Interface DataWrapper.

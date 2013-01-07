@@ -60,7 +60,6 @@ import org.n52.client.sos.event.handler.LegendElementSelectedEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
 import org.n52.client.sos.event.handler.UpdateScaleEventHandler;
 import org.n52.client.view.View;
-import org.n52.client.view.gui.elements.interfaces.LegendElement;
 import org.n52.client.view.gui.widgets.Toaster;
 import org.n52.client.view.gui.widgets.buttons.ImageButton;
 import org.n52.client.view.gui.widgets.buttons.SmallButton;

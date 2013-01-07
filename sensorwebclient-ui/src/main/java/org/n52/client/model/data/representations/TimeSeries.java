@@ -29,7 +29,7 @@ import java.util.HashMap;
 import org.n52.client.control.ClientUtils;
 import org.n52.client.model.data.representations.interfaces.LegendData;
 import org.n52.client.util.exceptions.DataparsingException;
-import org.n52.client.view.gui.elements.interfaces.LegendElement;
+import org.n52.client.view.gui.elements.legend.LegendElement;
 import org.n52.client.view.gui.elements.legend.LegendEntryTimeSeries;
 import org.n52.client.view.gui.widgets.mapping.Coordinate;
 import org.n52.client.view.gui.widgets.mapping.OpenLayersMapWrapper;

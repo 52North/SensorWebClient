@@ -46,7 +46,6 @@ import org.n52.client.sos.event.handler.LegendElementSelectedEventHandler;
 import org.n52.client.view.View;
 import org.n52.client.view.gui.elements.DataPanel;
 import org.n52.client.view.gui.elements.interfaces.DataPanelTab;
-import org.n52.client.view.gui.elements.interfaces.LegendElement;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;

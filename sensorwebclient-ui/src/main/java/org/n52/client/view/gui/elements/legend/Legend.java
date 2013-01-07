@@ -34,7 +34,6 @@ import org.n52.client.control.PropertiesManager;
 import org.n52.client.sos.event.data.ExportEvent.ExportType;
 import org.n52.client.view.View;
 import org.n52.client.view.gui.Impressum;
-import org.n52.client.view.gui.elements.interfaces.LegendElement;
 import org.n52.client.view.gui.widgets.buttons.ImageButton;
 import org.n52.client.view.gui.widgets.stationPicker.StationSelector;
 

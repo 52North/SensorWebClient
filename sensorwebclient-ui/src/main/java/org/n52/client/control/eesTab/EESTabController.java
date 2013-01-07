@@ -66,7 +66,7 @@ import org.n52.client.sos.event.handler.TabSelectedEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
 import org.n52.client.view.View;
 import org.n52.client.view.gui.elements.controlsImpl.ees.DataControlsEES;
-import org.n52.client.view.gui.elements.interfaces.LegendElement;
+import org.n52.client.view.gui.elements.legend.LegendElement;
 import org.n52.client.view.gui.elements.tabImpl.ATabEventBroker;
 import org.n52.client.view.gui.elements.tabImpl.EESTab;
 

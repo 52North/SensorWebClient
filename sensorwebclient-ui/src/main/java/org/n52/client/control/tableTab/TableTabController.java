@@ -51,8 +51,8 @@ import org.n52.client.util.exceptions.ExceptionHandler;
 import org.n52.client.util.exceptions.GUIException;
 import org.n52.client.view.View;
 import org.n52.client.view.gui.elements.controlsImpl.DataControlsTable;
-import org.n52.client.view.gui.elements.interfaces.LegendElement;
 import org.n52.client.view.gui.elements.legend.Legend;
+import org.n52.client.view.gui.elements.legend.LegendElement;
 import org.n52.client.view.gui.elements.tabImpl.ATabEventBroker;
 import org.n52.client.view.gui.elements.tabImpl.TableTab;
 

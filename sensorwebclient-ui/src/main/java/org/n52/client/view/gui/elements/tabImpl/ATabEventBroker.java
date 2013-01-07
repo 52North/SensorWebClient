@@ -26,8 +26,8 @@ package org.n52.client.view.gui.elements.tabImpl;
 import java.util.ArrayList;
 
 import org.n52.client.view.View;
-import org.n52.client.view.gui.elements.interfaces.LegendElement;
 import org.n52.client.view.gui.elements.legend.Legend;
+import org.n52.client.view.gui.elements.legend.LegendElement;
 
 
 public abstract class ATabEventBroker {

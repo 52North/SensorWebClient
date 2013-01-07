@@ -25,7 +25,7 @@ package org.n52.client.view.gui.widgets.buttons;
 
 import org.n52.client.model.data.representations.interfaces.LegendData;
 import org.n52.client.view.View;
-import org.n52.client.view.gui.elements.interfaces.LegendElement;
+import org.n52.client.view.gui.elements.legend.LegendElement;
 import org.n52.client.view.gui.elements.legend.LegendEntryTimeSeries;
 
 import com.smartgwt.client.types.Cursor;
