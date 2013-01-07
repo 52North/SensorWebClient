@@ -29,6 +29,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
 
+/**
+ * The client's backbone for event handling.
+ */
 public class EventBus extends HandlerManager {
 
     private static EventBus mainEventBus;
@@ -53,13 +56,6 @@ public class EventBus extends HandlerManager {
         return overviewChartEventBus;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.google.gwt.event.shared.HandlerManager#fireEvent(com.google.gwt.event
-     * .shared.GwtEvent)
-     */
     @Override
     public void fireEvent(GwtEvent<?> event) {
         try {
@@ -72,14 +68,6 @@ public class EventBus extends HandlerManager {
         }
     }
 
-    /**
-     * Fire event.
-     * 
-     * @param event
-     *            the event
-     * @param callback
-     *            the callback
-     */
     public void fireEvent(GwtEvent<?> event, EventCallback callback) {
         try {
             if (!GWT.isProdMode()) {
