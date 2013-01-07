@@ -24,24 +24,24 @@
 package org.n52.client.view.gui.elements.tabImpl;
 
 import org.n52.client.control.sesTab.SesTabController;
+import org.n52.client.ses.layouts.AllRulesLayout;
+import org.n52.client.ses.layouts.CreateComplexRuleLayout;
+import org.n52.client.ses.layouts.CreateSimpleRuleLayout;
+import org.n52.client.ses.layouts.EditProfileLayout;
+import org.n52.client.ses.layouts.EditRulesLayout;
+import org.n52.client.ses.layouts.ForgotPasswordLayout;
+import org.n52.client.ses.layouts.LoginLayout;
+import org.n52.client.ses.layouts.RegisterLayout;
+import org.n52.client.ses.layouts.SearchLayout;
+import org.n52.client.ses.layouts.SensorsLayout;
+import org.n52.client.ses.layouts.ShowUserLayout;
+import org.n52.client.ses.layouts.UserRuleLayout;
+import org.n52.client.ses.layouts.UserSubscriptionsLayout;
+import org.n52.client.ses.layouts.WelcomeLayout;
 import org.n52.client.view.gui.elements.controlsImpl.DataControls;
 import org.n52.client.view.gui.elements.interfaces.DataPanelTab;
 import org.n52.client.view.gui.elements.interfaces.Layout;
 import org.n52.client.view.gui.elements.interfaces.Layout.Layouts;
-import org.n52.client.view.gui.elements.layouts.AllRulesLayout;
-import org.n52.client.view.gui.elements.layouts.CreateComplexRuleLayout;
-import org.n52.client.view.gui.elements.layouts.CreateSimpleRuleLayout;
-import org.n52.client.view.gui.elements.layouts.EditProfileLayout;
-import org.n52.client.view.gui.elements.layouts.EditRulesLayout;
-import org.n52.client.view.gui.elements.layouts.ForgotPasswordLayout;
-import org.n52.client.view.gui.elements.layouts.LoginLayout;
-import org.n52.client.view.gui.elements.layouts.RegisterLayout;
-import org.n52.client.view.gui.elements.layouts.SearchLayout;
-import org.n52.client.view.gui.elements.layouts.SensorsLayout;
-import org.n52.client.view.gui.elements.layouts.ShowUserLayout;
-import org.n52.client.view.gui.elements.layouts.UserRuleLayout;
-import org.n52.client.view.gui.elements.layouts.UserSubscriptionsLayout;
-import org.n52.client.view.gui.elements.layouts.WelcomeLayout;
 
 import com.smartgwt.client.widgets.layout.VLayout;
 
