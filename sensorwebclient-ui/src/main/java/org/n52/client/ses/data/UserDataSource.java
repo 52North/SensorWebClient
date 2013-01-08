@@ -23,39 +23,29 @@
  */
 package org.n52.client.ses.data;
 
-import java.util.List;
+import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
 import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.fields.DataSourceIntegerField;
 import com.smartgwt.client.data.fields.DataSourceTextField;
 
-/**
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- *
- */
-public class SensorDS extends DataSource {
+public class UserDataSource extends DataSource {
 
-    /**
-     * @param parameterId 
-     * @param sensors 
-     * 
-     */
-    public SensorDS(String id, List sensors) {
-        setID(id);
-//        setRecordXPath("Sensors/sensor");
-        
-        DataSourceTextField name = new DataSourceTextField("name", "SensorID");
-        name.setPrimaryKey(true);
-        name.setHidden(true);
-        addField(name);
-        
-        DataSourceTextField status = new DataSourceTextField("status", "Status", 125);
-        addField(status);
+    public UserDataSource() {
 
-        DataSourceTextField inUse = new DataSourceTextField("inUse", "In Use", 200);
-        addField(inUse);
-        
+        DataSourceIntegerField id = new DataSourceIntegerField("parameterId", "ID");
+        id.setPrimaryKey(true);
+        id.setHidden(true);
+
+        DataSourceTextField userName = new DataSourceTextField("userName", i18n.userName());
+        DataSourceTextField name = new DataSourceTextField("name", i18n.name());
+        DataSourceTextField password = new DataSourceTextField("password", i18n.password());
+        DataSourceTextField eMail = new DataSourceTextField("eMail", i18n.emailAddress());
+        DataSourceTextField handy = new DataSourceTextField("handy", i18n.handyNumber());
+        DataSourceTextField role = new DataSourceTextField("role", i18n.role());
+
+        setFields(id, userName, name, password, eMail, handy, role);
+
         setClientOnly(true);
-//        setTestData(testData);
-//        setDataURL("http://127.0.0.1:8888/Sensors.xml");
     }
 }

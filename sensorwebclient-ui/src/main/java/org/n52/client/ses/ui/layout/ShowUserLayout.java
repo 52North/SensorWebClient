@@ -28,7 +28,7 @@ import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import java.util.List;
 
 import org.n52.client.bus.EventBus;
-import org.n52.client.ses.data.UserDS;
+import org.n52.client.ses.data.UserDataSource;
 import org.n52.client.ses.event.DeleteUserEvent;
 import org.n52.client.ses.event.GetAllUsersEvent;
 import org.n52.client.ses.ui.CreateNewUserWindow;
@@ -62,7 +62,7 @@ public class ShowUserLayout extends Layout {
     /** The user grid. */
     private ListGrid userGrid;
 
-    private UserDS dataSource;
+    private UserDataSource dataSource;
     
     private boolean first = true;
 
@@ -73,7 +73,7 @@ public class ShowUserLayout extends Layout {
         super(i18n.userManagement());
         
         // init database
-        this.dataSource = new UserDS();
+        this.dataSource = new UserDataSource();
         
         init();
     }

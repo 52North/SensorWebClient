@@ -26,7 +26,7 @@ package org.n52.client.sos.ui;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.n52.shared.data.SOSDataSource;
+import org.n52.client.sos.data.SOSDataSource;
 
 import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.widgets.Canvas;
