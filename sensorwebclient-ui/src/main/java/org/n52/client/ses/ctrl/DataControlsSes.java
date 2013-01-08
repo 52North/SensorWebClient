@@ -156,7 +156,7 @@ public class DataControlsSes extends DataControls {
         setHeight(52);
         setOverflow(Overflow.AUTO);
         // default is "normal"
-        setStyleName("sensorweb_client_dataControls");
+        setStyleName("n52_sensorweb_client_dataControls");
 
         this.innerLayout = new VLayout();
         this.innerLayout.setTabIndex(-1);

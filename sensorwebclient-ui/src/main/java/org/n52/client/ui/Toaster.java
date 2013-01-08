@@ -155,7 +155,7 @@ public class Toaster {
 
         Label l = new Label(timeStamp + " " + msg);
         l.setCanSelectText(true);
-        l.setStyleName("sensorweb_client_toasterMsg");
+        l.setStyleName("n52_sensorweb_client_toasterMsg");
         l.setAutoHeight();
 
         this.messages.add(l);
@@ -185,7 +185,7 @@ public class Toaster {
 
         Label l = new Label(timeStamp + " " + error);
         l.setCanSelectText(true);
-        l.setStyleName("sensorweb_client_toasterErrorMsg");
+        l.setStyleName("n52_sensorweb_client_toasterErrorMsg");
         l.setAutoHeight();
 
         for (int i = 0; i < this.messages.size(); i++) {

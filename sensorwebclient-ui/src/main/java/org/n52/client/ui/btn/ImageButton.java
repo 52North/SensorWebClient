@@ -77,7 +77,7 @@ public class ImageButton extends Button {
     }
     
     private void init() {
-        setStyleName("sensorweb_client_imagebutton");
+        setStyleName("n52_sensorweb_client_imagebutton");
 //        int length = this.size + 2 * this.margin;
 //        this.setWidth(length);
 //        this.setHeight(length);

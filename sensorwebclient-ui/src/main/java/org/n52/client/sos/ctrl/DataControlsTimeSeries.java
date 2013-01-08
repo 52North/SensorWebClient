@@ -86,6 +86,7 @@ import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.LayoutSpacer;
 import com.smartgwt.client.widgets.layout.VLayout;
 
+@Deprecated
 public abstract class DataControlsTimeSeries extends DataControls {
 
     private VLayout innerLayout;
@@ -219,7 +220,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
         setHeight(DataControls.CONTROL_HEIGHT);
         setOverflow(Overflow.AUTO);
         // setAlign(Alignment.CENTER);
-        setStyleName("sensorweb_client_dataControls");
+        setStyleName("n52_sensorweb_client_dataControls");
 
         this.innerLayout = new VLayout();
         this.innerLayout.setTabIndex(-1);
@@ -692,8 +693,8 @@ public abstract class DataControlsTimeSeries extends DataControls {
 		// TODO extract size to css file!
 		expandDiagramInteractionMenuButton.setWidth(32);
 		expandDiagramInteractionMenuButton.setHeight(32);
-        expandDiagramInteractionMenuButton.addStyleName("sensorweb_client_options_button");
-		expandDiagramInteractionMenuButton.addStyleName("sensorweb_client_interactionbutton");
+        expandDiagramInteractionMenuButton.addStyleName("n52_sensorweb_client_options_button");
+		expandDiagramInteractionMenuButton.addStyleName("n52_sensorweb_client_interactionbutton");
 		expandDiagramInteractionMenuButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -707,7 +708,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
 		EESTab.layout.addChild(expandDiagramInteractionMenuButton);
 
         buttonLayout = new HLayout();
-        buttonLayout.setStyleName("sensorweb_client_diagramInteractionMenu");
+        buttonLayout.setStyleName("n52_sensorweb_client_diagramInteractionMenu");
         buttonLayout.addMember(createJumpToTimeIntervalForm());
         buttonLayout.addMember(createGridToggleButton());
         buttonLayout.addMember(createAutoScaleButton());
@@ -774,7 +775,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
         });
         
     	DynamicForm jumpToForm = new DynamicForm();
-    	jumpToForm.setStyleName("sensorweb_client_jumpToTimeIntervalForm");
+    	jumpToForm.setStyleName("n52_sensorweb_client_jumpToTimeIntervalForm");
         jumpToForm.setNumCols(2);
         jumpToForm.setFields(jumpToCombo);
         jumpToForm.setHeight("*");
@@ -783,10 +784,10 @@ public abstract class DataControlsTimeSeries extends DataControls {
 
 	private Canvas createGridToggleButton() {
 		Layout layout = new Layout();
-		layout.setStyleName("sensorweb_client_gridButtonLayout");
+		layout.setStyleName("n52_sensorweb_client_gridButtonLayout");
 		gridShown = true;
 		gridButton = new Label(i18n.hideGrid());
-		gridButton.setStyleName("sensorweb_client_gridButton");
+		gridButton.setStyleName("n52_sensorweb_client_gridButton");
 		gridButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 EventBus.getMainEventBus().fireEvent(new SwitchGridEvent(), new EventCallback() {
@@ -813,9 +814,9 @@ public abstract class DataControlsTimeSeries extends DataControls {
 
 	private Canvas createAutoScaleButton() {
 		Layout layout = new Layout();
-		layout.setStyleName("sensorweb_client_scaleButtonLayout");
+		layout.setStyleName("n52_sensorweb_client_scaleButtonLayout");
 		autoScaleButton = new Label(i18n.resetScale());
-		autoScaleButton.setStyleName("sensorweb_client_scaleButton");
+		autoScaleButton.setStyleName("n52_sensorweb_client_scaleButton");
 	    autoScaleButton.addClickHandler(new ClickHandler() {
 	        public void onClick(ClickEvent event) {
 	            EventBus.getMainEventBus().fireEvent(new SwitchAutoscaleEvent(true), new EventCallback() {
@@ -1000,7 +1001,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
         return true;
     }
 
-    Date createDate(Date date, String time) {
+    private Date createDate(Date date, String time) {
         if (time.length() == 5) {
             date.setHours(new Integer(time.substring(0, 2)));
             date.setMinutes(new Integer(time.substring(3, 5)));
@@ -1011,7 +1012,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
         return date;
     }
 
-    void changeYear(int i) {
+    private void changeYear(int i) {
 
         Date begin = (Date) this.fromDateItem.getValue();
         Date end = (Date) this.toDateItem.getValue();

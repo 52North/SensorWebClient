@@ -164,7 +164,7 @@ public class EESGenerator extends Generator {
         StringBuilder html = new StringBuilder();
         html.append("<div style='background-color: #F6F3F2;border: 2px solid ");
         html.append("#").append(color).append(";");
-        html.append("'>").append("<span class='sensorweb_client_tooltip'>");
+        html.append("'>").append("<span class='n52_sensorweb_client_tooltip'>");
         html.append(f.format(new Date((long) time)));
         html.append(":&nbsp;").append(value).append(" ").append(uom);
         html.append("</span></div>");

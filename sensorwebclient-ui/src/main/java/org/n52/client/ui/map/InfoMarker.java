@@ -64,7 +64,7 @@ public class InfoMarker extends Marker {
     	final InfoMarker marker = this;
 		getEvents().register("click", marker, getClickHandler());
 //		getEvents().register("zoomend", marker, getZoomEndHandler());
-//		getJSObject().setProperty("class", "sensorweb_client_marker");
+//		getJSObject().setProperty("class", "n52_sensorweb_client_marker");
     }
 
     // TODO resize marker dependend on zoom level 

@@ -162,7 +162,7 @@ public class View {
             legendHider.addMember(hideButton);
             legendHider.addMember(spacer);
 
-            legendHider.setStyleName("sensorweb_client_legendHider");
+            legendHider.setStyleName("n52_sensorweb_client_legendHider");
             legendHider.addClickHandler(new ClickHandler() {
                 public void onClick(ClickEvent event) {
                     hideLegend();

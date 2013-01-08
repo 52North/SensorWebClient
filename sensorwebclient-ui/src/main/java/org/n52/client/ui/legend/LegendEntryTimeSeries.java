@@ -209,7 +209,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 	private void init() {
 
 		setAutoHeight();
-		setStyleName("sensorweb_client_legendEntryLayout");
+		setStyleName("n52_sensorweb_client_legendEntryLayout");
 		setCanDrag(true);
 		setCanDrop(true);
 		setKeepInParentRect(true);
@@ -228,7 +228,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		// legend head
 		this.legendEntryHead = new HLayout();
 		this.legendEntryHead.setTabIndex(-1);
-		this.legendEntryHead.setStyleName("sensorweb_client_legendEntryHeaderNoData");
+		this.legendEntryHead.setStyleName("n52_sensorweb_client_legendEntryHeaderNoData");
 		this.legendEntryHead.setCursor(Cursor.POINTER);
 		this.legendEntryHead.setHeight(this.height);
 
@@ -255,7 +255,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		
 		this.titleLabel = new Label();
 		this.titleLabel.setWidth100();
-		this.titleLabel.setStyleName("sensorweb_client_legendEntryTitle");
+		this.titleLabel.setStyleName("n52_sensorweb_client_legendEntryTitle");
 		this.titleLabel.setOverflow(Overflow.HIDDEN);
 		this.titleLabel.setCursor(Cursor.POINTER);
 		this.titleLabel.addClickHandler(new ClickHandler() {
@@ -280,7 +280,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 
 		// legend foot
 		this.legendEntryFoot = new VLayout();
-		this.legendEntryFoot.setStyleName("sensorweb_client_legendEntryFooter");
+		this.legendEntryFoot.setStyleName("n52_sensorweb_client_legendEntryFooter");
 		HLayout hLegendInfos = new HLayout();
 		
 		HStack separator = new HStack();
@@ -310,8 +310,8 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.firstValueInterval = new Label();
 		this.lastValueInterval = new Label();
 		
-		this.phenonmenonLabel.setStyleName("sensorweb_client_legendInfoRow");
-		this.stationLabel.setStyleName("sensorweb_client_legendInfoRow");
+		this.phenonmenonLabel.setStyleName("n52_sensorweb_client_legendInfoRow");
+		this.stationLabel.setStyleName("n52_sensorweb_client_legendInfoRow");
 
 		// this.offeringLabel.setHeight(15);
 		// this.procedureLabel.setHeight(15);
@@ -330,13 +330,13 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 	private Canvas createValueIntervalLabel() {
 		Layout interval = new HLayout();
 		interval.setAutoWidth();
-		interval.setStyleName("sensorweb_client_legendInfoRow");
+		interval.setStyleName("n52_sensorweb_client_legendInfoRow");
 		this.firstValueInterval.setAutoWidth();
 		this.firstValueInterval.setWrap(false);
-		this.firstValueInterval.setStyleName("sensorweb_client_legendlink");
+		this.firstValueInterval.setStyleName("n52_sensorweb_client_legendlink");
 		this.lastValueInterval.setAutoWidth();
 		this.lastValueInterval.setWrap(false);
-		this.lastValueInterval.setStyleName("sensorweb_client_legendlink");
+		this.lastValueInterval.setStyleName("n52_sensorweb_client_legendlink");
 		Label separator = new Label(i18n.to());
 		separator.setAlign(Alignment.CENTER);
 		separator.setWidth(20);
@@ -351,7 +351,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.refvalLayout.setTabIndex(-1);
 		this.refvalLayout.setHeight("*");
 		this.refvalLayout.setOverflow(Overflow.VISIBLE);
-		this.refvalLayout.setStyleName("sensorweb_client_refValLayout");
+		this.refvalLayout.setStyleName("n52_sensorweb_client_refValLayout");
 
 		return this.refvalLayout;
 	}
@@ -562,17 +562,17 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		if (dw.hasData()) {
 			this.noDataSign.hide();
 			if (this.isSelected) {
-				this.legendEntryHead.setStyleName("sensorweb_client_legendEntryHeaderSelected");
+				this.legendEntryHead.setStyleName("n52_sensorweb_client_legendEntryHeaderSelected");
 			} else {
-				this.legendEntryHead.setStyleName("sensorweb_client_legendEntryHeader");
+				this.legendEntryHead.setStyleName("n52_sensorweb_client_legendEntryHeader");
 			}
 		} else {
 			this.noDataSign.show();
 			if (this.isSelected) {
 				this.legendEntryHead
-						.setStyleName("sensorweb_client_legendEntryHeaderSelectedNoData");
+						.setStyleName("n52_sensorweb_client_legendEntryHeaderSelectedNoData");
 			} else {
-				this.legendEntryHead.setStyleName("sensorweb_client_legendEntryHeaderNoData");
+				this.legendEntryHead.setStyleName("n52_sensorweb_client_legendEntryHeaderNoData");
 			}
 
 		}
@@ -683,7 +683,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 					colorLayout.setHeight(20);
 					colorLayout.setWidth(20);
 					String color = getTimeSeries().getProperties().getRefValue(value).getColor();
-					colorLayout.setStyleName("sensorweb_client_legendEntryTitleColorIndicatorSmall");
+					colorLayout.setStyleName("n52_sensorweb_client_legendEntryTitleColorIndicatorSmall");
 					colorLayout.setBackgroundColor(color);
 
 					refValRow.addMember(refValForm);
@@ -941,7 +941,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		vlayout.addMember(hlayout);
 		vlayout.addMember(buttonsStyle);
 		
-		this.styleChanger.setStyleName("sensorweb_client_styleChangerForm");
+		this.styleChanger.setStyleName("n52_sensorweb_client_styleChangerForm");
 		this.styleChanger.addItem(vlayout);
 
 		this.styleChanger.hide();
@@ -1214,11 +1214,11 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 				if (LegendEntryTimeSeries.this.getTimeSeries().hasData()) {
 					LegendEntryTimeSeries.this.noDataSign.hide();
 					LegendEntryTimeSeries.this.legendEntryHead
-							.setStyleName("sensorweb_client_legendEntryHeaderSelected");
+							.setStyleName("n52_sensorweb_client_legendEntryHeaderSelected");
 				} else {
 					LegendEntryTimeSeries.this.noDataSign.show();
 					LegendEntryTimeSeries.this.legendEntryHead
-							.setStyleName("sensorweb_client_legendEntryHeaderSelectedNoData");
+							.setStyleName("n52_sensorweb_client_legendEntryHeaderSelectedNoData");
 				}
 			} else {
 				LegendEntryTimeSeries.this.isSelected = false;
@@ -1226,11 +1226,11 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 				if (LegendEntryTimeSeries.this.getTimeSeries().hasData()) {
 					LegendEntryTimeSeries.this.noDataSign.hide();
 					LegendEntryTimeSeries.this.legendEntryHead
-							.setStyleName("sensorweb_client_legendEntryHeader");
+							.setStyleName("n52_sensorweb_client_legendEntryHeader");
 				} else {
 					LegendEntryTimeSeries.this.noDataSign.show();
 					LegendEntryTimeSeries.this.legendEntryHead
-							.setStyleName("sensorweb_client_legendEntryHeaderNoData");
+							.setStyleName("n52_sensorweb_client_legendEntryHeaderNoData");
 				}
 			}
 		}
@@ -1244,11 +1244,11 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 					if (evt.hasData()) {
 						LegendEntryTimeSeries.this.noDataSign.hide();
 						LegendEntryTimeSeries.this.legendEntryHead
-								.setStyleName("sensorweb_client_legendEntryHeaderSelected");
+								.setStyleName("n52_sensorweb_client_legendEntryHeaderSelected");
 					} else {
 						LegendEntryTimeSeries.this.noDataSign.show();
 						LegendEntryTimeSeries.this.legendEntryHead
-								.setStyleName("sensorweb_client_legendEntryHeaderSelectedNoData");
+								.setStyleName("n52_sensorweb_client_legendEntryHeaderSelectedNoData");
 						Toaster.getInstance().addMessage(
 								i18n.noDataAvailable()
 										+ LegendEntryTimeSeries.this
@@ -1258,11 +1258,11 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 					if (evt.hasData()) {
 						LegendEntryTimeSeries.this.noDataSign.hide();
 						LegendEntryTimeSeries.this.legendEntryHead
-								.setStyleName("sensorweb_client_legendEntryHeader");
+								.setStyleName("n52_sensorweb_client_legendEntryHeader");
 					} else {
 						LegendEntryTimeSeries.this.noDataSign.show();
 						LegendEntryTimeSeries.this.legendEntryHead
-								.setStyleName("sensorweb_client_legendEntryHeaderNoData");
+								.setStyleName("n52_sensorweb_client_legendEntryHeaderNoData");
 						Toaster.getInstance().addMessage(
 								i18n.noDataAvailable()
 										+ LegendEntryTimeSeries.this

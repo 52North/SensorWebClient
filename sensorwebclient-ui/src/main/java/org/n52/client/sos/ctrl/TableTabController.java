@@ -55,6 +55,7 @@ import org.n52.client.ui.View;
 import org.n52.client.ui.legend.Legend;
 import org.n52.client.ui.legend.LegendElement;
 
+@Deprecated
 public class TableTabController extends Controller<TableTab> {
 
     private LegendElement selectedLegendElement;

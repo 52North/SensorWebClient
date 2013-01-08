@@ -80,7 +80,7 @@ public class Legend extends VLayout {
 
     public Legend(String id) {
         this.elemID = id;
-        setStyleName("sensorweb_client_legend");
+        setStyleName("n52_sensorweb_client_legend");
         this.controller = new LegendController(this);
 
         generateLegend();
@@ -121,7 +121,7 @@ public class Legend extends VLayout {
             button.setMargin(0);
             // ib.setWidth(16);
             // ib.setHeight(16);
-            button.setStyleName("sensorweb_client_topButtons");
+            button.setStyleName("n52_sensorweb_client_topButtons");
             topButtons.addMember(button);
         }
         this.contributedButtons.addAll(buttons);
@@ -363,7 +363,7 @@ public class Legend extends VLayout {
 		toCSV.setAutoFit(true);
 		toCSV.setPadding(3);
 		toCSV.setWidth100();
-		toCSV.setStyleName("sensorweb_client_exportEntry");
+		toCSV.setStyleName("n52_sensorweb_client_exportEntry");
 		toCSV.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -380,7 +380,7 @@ public class Legend extends VLayout {
         toPDF.setAutoFit(true);
         toPDF.setPadding(3);
         toPDF.setWidth100();
-        toPDF.setStyleName("sensorweb_client_exportEntry");
+        toPDF.setStyleName("n52_sensorweb_client_exportEntry");
         toPDF.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -393,7 +393,7 @@ public class Legend extends VLayout {
 
 	private Label createExportLabelButton() {
         Label export = new Label(i18n.export());
-        export.setStyleName("sensorweb_client_legendbuttonDisabled");
+        export.setStyleName("n52_sensorweb_client_legendbuttonDisabled");
         export.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -413,7 +413,7 @@ public class Legend extends VLayout {
 		exportMenu = new VLayout();
 	    exportMenu.setLeft(exportButton.getAbsoluteLeft());
 	    exportMenu.setTop(30);
-	    exportMenu.setStyleName("sensorweb_client_interactionmenu");
+	    exportMenu.setStyleName("n52_sensorweb_client_interactionmenu");
 	    exportMenu.setAutoHeight();
 	    exportMenu.setZIndex(1000000);
 	    exportMenu.addMember(createPDFLabel());
@@ -423,7 +423,7 @@ public class Legend extends VLayout {
 
 	private Label createAddTimeSeriesLabelButton() {
 		Label addTS = new Label(i18n.picker()) ;
-        addTS.setStyleName("sensorweb_client_legendbuttonPrimary");
+        addTS.setStyleName("n52_sensorweb_client_legendbuttonPrimary");
         addTS.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -435,7 +435,7 @@ public class Legend extends VLayout {
 	
 	private Label createEESTabLabelButton() {
 		Label eesTabLabelButton = new Label(i18n.diagram());
-		eesTabLabelButton.setStyleName("sensorweb_client_legendbutton");
+		eesTabLabelButton.setStyleName("n52_sensorweb_client_legendbutton");
 		eesTabLabelButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {				
@@ -448,7 +448,7 @@ public class Legend extends VLayout {
 	
 	private Label createSESTabLabelButton() {
 		Label sesTabLabelButton = new Label(i18n.sesTabButton());
-		sesTabLabelButton.setStyleName("sensorweb_client_legendbutton");
+		sesTabLabelButton.setStyleName("n52_sensorweb_client_legendbutton");
 		sesTabLabelButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -582,10 +582,10 @@ public class Legend extends VLayout {
 	public void setExportButtonActiv(boolean activ) {
 		if (activ) {
 			exportButton.setDisabled(false);
-			exportButton.setStyleName("sensorweb_client_legendbutton");
+			exportButton.setStyleName("n52_sensorweb_client_legendbutton");
 		} else {
 			exportButton.setDisabled(true);
-			exportButton.setStyleName("sensorweb_client_legendbuttonDisabled");
+			exportButton.setStyleName("n52_sensorweb_client_legendbuttonDisabled");
 		}
 	}
 

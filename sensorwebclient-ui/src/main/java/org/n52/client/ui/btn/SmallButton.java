@@ -45,7 +45,7 @@ public class SmallButton extends Layout {
 		this.canvas = canvas;
 		this.tooltip = tooltip;
 		this.extendedTooltip = extendedTooltip;
-		setStyleName("sensorweb_client_smallicon");
+		setStyleName("n52_sensorweb_client_smallicon");
 		init();
 	}
 	

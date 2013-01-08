@@ -171,12 +171,13 @@ public class EESTab extends DataPanelTab {
     private Viewport getMainChartViewport() {
         Image mainChartImage = new Image("img/blank.gif");
     
-        Viewport mainchart = new Viewport("100%", "100%");
+        Viewport mainchart = new Viewport("95%", "100%");
         mainchart.setEnableZoomWhenShiftkeyPressed(true);
         mainchart.add(mainChartImage);
     
         // as it is focusable, we do not want to see an outline
         DOM.setStyleAttribute(mainchart.getElement(), "outline", "none");
+        DOM.setStyleAttribute(mainchart.getElement(), "overflow", "visible");
         ImageViewImpl imageView = new ImageViewImpl(mainChartImage);
     
         new ImagePresenter(this.mainChartEventBus, imageView);
@@ -188,7 +189,7 @@ public class EESTab extends DataPanelTab {
 
     private Viewport getOverviewChartViewport() {
         Image overviewChartImage = new Image("img/blank.gif");
-        Viewport overview = new Viewport("100%", "100px");
+        Viewport overview = new Viewport("95%", "100px");
         overview.add(overviewChartImage);
     
         DOM.setStyleAttribute(overview.getElement(), "outline", "none");

@@ -23,7 +23,7 @@
  */
 package org.n52.client.sos.ctrl;
 
-
+@Deprecated
 public class DataControlsTable extends DataControlsTimeSeries {
 
     public DataControlsTable(TableTabController ctrl) {

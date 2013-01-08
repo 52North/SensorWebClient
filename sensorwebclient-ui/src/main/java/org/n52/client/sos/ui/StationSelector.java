@@ -179,7 +179,7 @@ public class StationSelector extends Window {
 
 	private Canvas createSelectionMenuButton() {
     	showSelectionMenuButton = new Label(i18n.chooseDataSource());
-    	showSelectionMenuButton.setStyleName("sensorweb_client_legendbuttonPrimary");
+    	showSelectionMenuButton.setStyleName("n52_sensorweb_client_legendbuttonPrimary");
     	showSelectionMenuButton.setZIndex(1000000);
     	showSelectionMenuButton.setAutoHeight();
     	showSelectionMenuButton.setAutoWidth();

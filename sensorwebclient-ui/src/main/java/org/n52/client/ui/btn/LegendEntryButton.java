@@ -75,7 +75,7 @@ public class LegendEntryButton extends Button {
 
         this.dw = dw;
         this.le = le;
-        setStyleName("sensorweb_client_legendEntryButton");
+        setStyleName("n52_sensorweb_client_legendEntryButton");
         this.icon = icon;
         this.toolTip = title;
         this.extendedTooltip = extendedTooltip;

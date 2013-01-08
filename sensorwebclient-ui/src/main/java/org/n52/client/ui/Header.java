@@ -69,7 +69,7 @@ public class Header extends HLayout {
 
     private void generateHeader(){
 
-        setStyleName("sensorweb_client_headerContainer");
+        setStyleName("n52_sensorweb_client_headerContainer");
         setBackgroundImage("../img/52n_bg.png");
         setAutoHeight();
 
@@ -77,7 +77,7 @@ public class Header extends HLayout {
         
         
         Layout linkLayout = new HLayout();
-        linkLayout.setStyleName("sensorweb_client_linkBlock");
+        linkLayout.setStyleName("n52_sensorweb_client_linkBlock");
         linkLayout.setAlign(Alignment.RIGHT);
 
 //        linkLayout.addMember(getVersionInfo());
@@ -97,9 +97,9 @@ public class Header extends HLayout {
 
     private Layout getHomeLabel() {
 		Layout layout = new HLayout();
-		layout.setStylePrimaryName("sensorweb_client_logoBlock");
+		layout.setStylePrimaryName("n52_sensorweb_client_logoBlock");
 		Img homeLabel = new Img("../img/client-logo.png", 289, 55);
-		homeLabel.setStyleName("sensorweb_client_logo");
+		homeLabel.setStyleName("n52_sensorweb_client_logo");
 		homeLabel.setCursor(Cursor.POINTER);
         homeLabel.addClickHandler(new ClickHandler() {
 			@Override
@@ -213,7 +213,7 @@ public class Header extends HLayout {
                 VLayout layout = new VLayout();
                 HTMLPane pane = new HTMLPane();
                 pane.setContentsURL(i18n.imprintPath());
-                layout.setStyleName("sensorweb_client_imprint_content");
+                layout.setStyleName("n52_sensorweb_client_imprint_content");
                 layout.addMember(pane);
                 w.addItem(layout);
                 w.show();
@@ -224,7 +224,7 @@ public class Header extends HLayout {
 
     private Label getHeaderLinkLabel(String labelText) {
     	Label label = new Label(labelText);
-        label.setStyleName("sensorweb_client_headerlink");
+        label.setStyleName("n52_sensorweb_client_headerlink");
         label.setAutoWidth();
         label.setWrap(false);
 		return label;
@@ -233,7 +233,7 @@ public class Header extends HLayout {
     
     private Label getSeparator(){
         Label pipe = new Label("|");
-        pipe.setStyleName("sensorweb_client_pipe");
+        pipe.setStyleName("n52_sensorweb_client_pipe");
         pipe.setAutoWidth();
         return pipe;
     }

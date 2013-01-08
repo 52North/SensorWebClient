@@ -39,13 +39,13 @@ public class InteractionWindow extends VLayout {
 		title = new Label();
 		title.setWidth100();
 		title.setAutoHeight();
-		title.setStyleName("sensorweb_client_interactionmenuHeader");
+		title.setStyleName("n52_sensorweb_client_interactionmenuHeader");
 		title.setWrap(false);
 		title.hide();
 		addMember(title);
 		addMember(content);
 		
-		setStyleName("sensorweb_client_interactionmenu");
+		setStyleName("n52_sensorweb_client_interactionmenu");
 	}
 
 	public String getWindowTitle() {
