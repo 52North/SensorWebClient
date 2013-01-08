@@ -28,6 +28,7 @@ import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import java.util.ArrayList;
 
 import org.n52.client.bus.EventBus;
+import org.n52.client.ctrl.ATabEventBroker;
 import org.n52.client.ctrl.Controller;
 import org.n52.client.model.DataStoreTimeSeriesImpl;
 import org.n52.client.ses.event.ChangeLayoutEvent;
@@ -58,10 +59,9 @@ import org.n52.client.sos.event.handler.TabSelectedEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.ui.View;
+import org.n52.client.ui.legend.LegendElement;
 import org.n52.client.util.exceptions.ExceptionHandler;
 import org.n52.client.util.exceptions.GUIException;
-import org.n52.client.view.gui.elements.ATabEventBroker;
-import org.n52.client.view.gui.elements.legend.LegendElement;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.serializable.pojos.UserRole;
 

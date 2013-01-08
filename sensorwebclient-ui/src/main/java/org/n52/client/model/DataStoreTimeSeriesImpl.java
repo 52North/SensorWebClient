@@ -65,12 +65,12 @@ import org.n52.client.sos.event.handler.ChangeTimeSeriesStyleEventHandler;
 import org.n52.client.sos.event.handler.SwitchGridEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
 import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.ui.Toaster;
+import org.n52.client.ui.legend.LegendDataComparator;
+import org.n52.client.ui.legend.LegendElement;
+import org.n52.client.ui.legend.LegendEntryTimeSeries;
 import org.n52.client.util.exceptions.DataparsingException;
 import org.n52.client.util.exceptions.ExceptionHandler;
-import org.n52.client.view.gui.elements.legend.LegendDataComparator;
-import org.n52.client.view.gui.elements.legend.LegendElement;
-import org.n52.client.view.gui.elements.legend.LegendEntryTimeSeries;
-import org.n52.client.view.gui.widgets.Toaster;
 import org.n52.shared.serializable.pojos.Axis;
 
 public class DataStoreTimeSeriesImpl extends ADataStore<TimeSeries> {

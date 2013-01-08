@@ -45,7 +45,7 @@ import org.n52.client.ses.event.ShowAllUserEvent;
 import org.n52.client.ses.event.UpdateProfileEvent;
 import org.n52.client.ses.ui.Layout;
 import org.n52.client.ses.ui.Layout.Layouts;
-import org.n52.client.view.gui.widgets.Toaster;
+import org.n52.client.ui.Toaster;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.responses.SesClientResponse.types;
 import org.n52.shared.serializable.pojos.ComplexRuleData;

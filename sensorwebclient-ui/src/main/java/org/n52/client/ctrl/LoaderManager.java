@@ -28,8 +28,8 @@ import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.HashMap;
 
-import org.n52.client.view.gui.elements.DataPanel;
-import org.n52.client.view.gui.widgets.Loader;
+import org.n52.client.ui.DataPanel;
+import org.n52.client.ui.Loader;
 
 /**
  * Controller for the (spinning) AJAX-loader images. Register {@link Loader} instances

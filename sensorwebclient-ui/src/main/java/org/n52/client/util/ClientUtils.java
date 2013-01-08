@@ -27,7 +27,7 @@ package org.n52.client.util;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import org.n52.client.ctrl.PropertiesManager;
-import org.n52.client.view.gui.widgets.Toaster;
+import org.n52.client.ui.Toaster;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Random;

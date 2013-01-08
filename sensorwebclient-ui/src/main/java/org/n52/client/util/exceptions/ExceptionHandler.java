@@ -23,7 +23,7 @@
  */
 package org.n52.client.util.exceptions;
 
-import org.n52.client.view.gui.widgets.Toaster;
+import org.n52.client.ui.Toaster;
 import org.n52.shared.MetaException;
 
 import com.google.gwt.core.client.GWT;

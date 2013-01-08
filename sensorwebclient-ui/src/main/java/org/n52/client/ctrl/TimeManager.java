@@ -37,7 +37,7 @@ import org.n52.client.sos.event.data.UndoEvent;
 import org.n52.client.sos.event.data.handler.OverviewIntervalChangedEventHandler;
 import org.n52.client.sos.event.data.handler.UndoEventHandler;
 import org.n52.client.sos.event.handler.DatesChangedEventHandler;
-import org.n52.client.view.gui.widgets.Toaster;
+import org.n52.client.ui.Toaster;
 import org.n52.shared.Constants;
 
 public class TimeManager {

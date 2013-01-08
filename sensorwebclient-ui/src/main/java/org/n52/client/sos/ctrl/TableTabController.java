@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.n52.client.bus.EventBus;
+import org.n52.client.ctrl.ATabEventBroker;
 import org.n52.client.ctrl.Controller;
 import org.n52.client.ctrl.TimeManager;
 import org.n52.client.model.DataStoreTimeSeriesImpl;
@@ -49,11 +50,10 @@ import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.sos.ui.TableTab;
 import org.n52.client.ui.View;
+import org.n52.client.ui.legend.Legend;
+import org.n52.client.ui.legend.LegendElement;
 import org.n52.client.util.exceptions.ExceptionHandler;
 import org.n52.client.util.exceptions.GUIException;
-import org.n52.client.view.gui.elements.ATabEventBroker;
-import org.n52.client.view.gui.elements.legend.Legend;
-import org.n52.client.view.gui.elements.legend.LegendElement;
 
 public class TableTabController extends Controller<TableTab> {
 

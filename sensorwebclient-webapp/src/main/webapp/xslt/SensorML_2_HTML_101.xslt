@@ -8,15 +8,15 @@
 	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:altova="http://www.altova.com">
 	<xsl:variable name="XML" select="/" />
-	<xsl:output version="1.0" method="html" indent="no"
-		encoding="UTF-8" doctype-public="-//W3C//DTD HTML 4.0 Transitional//EN"
-		doctype-system="http://www.w3.org/TR/html4/loose.dtd" />
+    <xsl:output method="html" encoding="utf-8" indent="yes" />
+    
 	<xsl:param name="SV_OutputFormat" select="'HTML'" />
 	<xsl:template match="/">
+       <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
 		<html>
 			<head>
 				<title />
-				<link rel="stylesheet" href="../Client.css" />
+				<link rel="stylesheet" href="../css/layout.min.min.css" />
 			</head>
 			<body>
 				<table class="sensorInfo" border="0" width="100%">

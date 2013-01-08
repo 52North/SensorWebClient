@@ -1,30 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.1"
-	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	xmlns:fn="http://www.w3.org/2005/xpath-functions"
-	xmlns:gml="http://www.opengis.net/gml"
-	xmlns:ism="urn:us:gov:ic:ism:v2"
-	xmlns:sch="http://www.ascc.net/xml/schematron"
-	xmlns:smil20="http://www.w3.org/2001/SMIL20/"
-	xmlns:smil20lang="http://www.w3.org/2001/SMIL20/Language"
-	xmlns:sml="http://www.opengis.net/sensorML/@SENSORML_NAMESPACE@"
-	xmlns:swe="http://www.opengis.net/swe/1.0"
-	xmlns:xdt="http://www.w3.org/2005/xpath-datatypes"
-	xmlns:xlink="http://www.w3.org/1999/xlink"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:altova="http://www.altova.com">
-	<xsl:variable name="XML" select="/*1.0.1*"/>
-	<xsl:output version="1.0" method="html" indent="no" encoding="UTF-8" doctype-public="-//W3C//DTD HTML 4.0 Transitional//EN" doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
-	<xsl:param name="SV_OutputFormat" select="'HTML'"/>
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fn="http://www.w3.org/2005/xpath-functions"
+	xmlns:gml="http://www.opengis.net/gml" xmlns:ism="urn:us:gov:ic:ism:v2"
+	xmlns:sch="http://www.ascc.net/xml/schematron" xmlns:smil20="http://www.w3.org/2001/SMIL20/"
+	xmlns:smil20lang="http://www.w3.org/2001/SMIL20/Language" xmlns:sml="http://www.opengis.net/sensorML/@SENSORML_NAMESPACE@"
+	xmlns:swe="http://www.opengis.net/swe/1.0" xmlns:xdt="http://www.w3.org/2005/xpath-datatypes"
+	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:altova="http://www.altova.com">
+	<xsl:variable name="XML" select="/*1.0.1*" />
+    <xsl:output method="html" encoding="utf-8" indent="yes" />
+    
+	<xsl:param name="SV_OutputFormat" select="'HTML'" />
 	<xsl:template match="/">
+		<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
 		<html>
 			<head>
-				<title/>
+				<title />
 				<script language="javascript">
 					function linkTo() {
-						var link = '<xsl:value-of select="sml:SensorML/sml:member/sml:System/sml:documentation/sml:Document/sml:onlineResource/@xlink:href"/>';
-						window.open(link, '', '');
+					var link = '
+					<xsl:value-of
+						select="sml:SensorML/sml:member/sml:System/sml:documentation/sml:Document/sml:onlineResource/@xlink:href" />
+					';
+					window.open(link, '', '');
 					}
 				</script>
 			</head>
@@ -32,11 +30,12 @@
 				<xsl:for-each select="$XML">
 					<xsl:for-each select="sml:SensorML">
 
-						<xsl:variable name="sml_ident" select="sml:identification"/>
+						<xsl:variable name="sml_ident" select="sml:identification" />
 						<xsl:choose>
 							<xsl:when test="$sml_ident">
-				
-								<!-- IF AN IDENTIFICATION-TAG IS DIRECT CHILD OF SensorML-TAG USE THIS ONE OHERWISE PROCEED NORMAL-->
+
+								<!-- IF AN IDENTIFICATION-TAG IS DIRECT CHILD OF SensorML-TAG USE 
+									THIS ONE OHERWISE PROCEED NORMAL -->
 
 								<xsl:for-each select="sml:identification">
 									<xsl:for-each select="sml:IdentifierList">
@@ -47,25 +46,25 @@
 												</span>
 												<xsl:for-each select="sml:Term">
 													<xsl:for-each select="sml:value">
-														<xsl:apply-templates/>
+														<xsl:apply-templates />
 													</xsl:for-each>
 												</xsl:for-each>
 											</xsl:if>
-											<br/>
+											<br />
 											<xsl:if test="@name  = &quot;stationID&quot;">
 												<span>
 													<b>ID: </b>
 												</span>
 												<xsl:for-each select="sml:Term">
 													<xsl:for-each select="sml:value">
-														<xsl:apply-templates/>
+														<xsl:apply-templates />
 													</xsl:for-each>
 												</xsl:for-each>
 											</xsl:if>
 										</xsl:for-each>
 									</xsl:for-each>
 								</xsl:for-each>
-								<br/>
+								<br />
 								<xsl:for-each select="sml:classification">
 									<xsl:for-each select="sml:ClassifierList">
 										<xsl:for-each select="sml:classifier">
@@ -75,7 +74,7 @@
 												</span>
 												<xsl:for-each select="sml:Term">
 													<xsl:for-each select="sml:value">
-														<xsl:apply-templates/>
+														<xsl:apply-templates />
 													</xsl:for-each>
 												</xsl:for-each>
 											</xsl:if>
@@ -85,13 +84,16 @@
 								<xsl:for-each select="sml:characteristics">
 									<xsl:for-each select="swe:SimpleDataRecord">
 										<xsl:for-each select="swe:field">
-											<br/>
+											<br />
 											<xsl:for-each select="swe:Text">
 												<xsl:for-each select="gml:description">
-													<b><xsl:apply-templates/>: </b>
+													<b>
+														<xsl:apply-templates />
+														:
+													</b>
 												</xsl:for-each>
 												<xsl:for-each select="swe:value">
-													<xsl:apply-templates/>
+													<xsl:apply-templates />
 												</xsl:for-each>
 											</xsl:for-each>
 										</xsl:for-each>
@@ -100,51 +102,59 @@
 								<xsl:for-each select="sml:capabilities">
 									<xsl:for-each select="swe:SimpleDataRecord">
 										<xsl:for-each select="swe:field">
-											<br/>
+											<br />
 											<xsl:for-each select="swe:Text">
 												<xsl:for-each select="gml:description">
-													<b><xsl:apply-templates/>: </b>
+													<b>
+														<xsl:apply-templates />
+														:
+													</b>
 												</xsl:for-each>
 												<xsl:for-each select="swe:value">
-													<xsl:apply-templates/>
+													<xsl:apply-templates />
 												</xsl:for-each>
 											</xsl:for-each>
 										</xsl:for-each>
 									</xsl:for-each>
 								</xsl:for-each>
-								<br/>
+								<br />
 								<xsl:for-each select="sml:documentation">
 									<xsl:for-each select="sml:Document">
 										<xsl:for-each select="gml:description">
-											<b><xsl:apply-templates/>: </b>
+											<b>
+												<xsl:apply-templates />
+												:
+											</b>
 										</xsl:for-each>
 										<span onclick="linkTo();" style="cursor:pointer; color:#994433">
-											<xsl:value-of select="./sml:onlineResource/@xlink:href"/>
+											<xsl:value-of select="./sml:onlineResource/@xlink:href" />
 										</span>
 										<a>
 											<xsl:attribute name="href">
-												<xsl:value-of select="./sml:onlineResource/@xlink:href"/>
+												<xsl:value-of select="./sml:onlineResource/@xlink:href" />
 											</xsl:attribute>
 											<xsl:attribute name="target">
 												"_blank"
 											</xsl:attribute>
-											<xsl:value-of select="./sml:onlineResource/@xlink:href"/>
+											<xsl:value-of select="./sml:onlineResource/@xlink:href" />
 										</a>
-										
+
 									</xsl:for-each>
 								</xsl:for-each>
-								
-								<br/>
+
+								<br />
 								<xsl:for-each select="sml:positions">
 									<xsl:for-each select="sml:PositionList">
 										<xsl:for-each select="sml:position">
 											<xsl:for-each select="swe:Position">
-												<br/>
+												<br />
 												<span>
-													<b>Position: </b>(
+													<b>Position: </b>
+													(
 												</span>
 												<span>
-													<xsl:value-of select="substring-after( @referenceFrame, &quot;urn:ogc:crs:&quot;)"/>
+													<xsl:value-of
+														select="substring-after( @referenceFrame, &quot;urn:ogc:crs:&quot;)" />
 												</span>
 												<span>
 													<xsl:text> )</xsl:text>
@@ -152,10 +162,10 @@
 												<xsl:for-each select="swe:location">
 													<xsl:for-each select="swe:Vector">
 														<xsl:for-each select="swe:coordinate">
-															<br/>
+															<br />
 															<xsl:for-each select="@name">
 																<span>
-																	<xsl:value-of select="string(.)"/>
+																	<xsl:value-of select="string(.)" />
 																</span>
 																<span>
 																	<xsl:text>: </xsl:text>
@@ -163,7 +173,7 @@
 															</xsl:for-each>
 															<xsl:for-each select="swe:Quantity">
 																<xsl:for-each select="swe:value">
-																	<xsl:apply-templates/>
+																	<xsl:apply-templates />
 																</xsl:for-each>
 																<xsl:for-each select="swe:uom">
 																	<xsl:for-each select="@code">
@@ -171,7 +181,7 @@
 																			<xsl:text>&#160;</xsl:text>
 																		</span>
 																		<span>
-																			<xsl:value-of select="string(.)"/>
+																			<xsl:value-of select="string(.)" />
 																		</span>
 																	</xsl:for-each>
 																</xsl:for-each>
@@ -179,12 +189,12 @@
 														</xsl:for-each>
 													</xsl:for-each>
 												</xsl:for-each>
-												<br/>
+												<br />
 											</xsl:for-each>
 										</xsl:for-each>
 									</xsl:for-each>
 								</xsl:for-each>
-							<br/>
+								<br />
 							</xsl:when>
 							<xsl:otherwise>
 								<xsl:for-each select="sml:member">
@@ -198,25 +208,25 @@
 														</span>
 														<xsl:for-each select="sml:Term">
 															<xsl:for-each select="sml:value">
-																<xsl:apply-templates/>
+																<xsl:apply-templates />
 															</xsl:for-each>
 														</xsl:for-each>
 													</xsl:if>
-													<br/>
+													<br />
 													<xsl:if test="@name  = &quot;stationID&quot;">
 														<span>
 															<b>ID: </b>
 														</span>
 														<xsl:for-each select="sml:Term">
 															<xsl:for-each select="sml:value">
-																<xsl:apply-templates/>
+																<xsl:apply-templates />
 															</xsl:for-each>
 														</xsl:for-each>
 													</xsl:if>
 												</xsl:for-each>
 											</xsl:for-each>
 										</xsl:for-each>
-										<br/>
+										<br />
 										<xsl:for-each select="sml:classification">
 											<xsl:for-each select="sml:ClassifierList">
 												<xsl:for-each select="sml:classifier">
@@ -226,7 +236,7 @@
 														</span>
 														<xsl:for-each select="sml:Term">
 															<xsl:for-each select="sml:value">
-																<xsl:apply-templates/>
+																<xsl:apply-templates />
 															</xsl:for-each>
 														</xsl:for-each>
 													</xsl:if>
@@ -236,13 +246,16 @@
 										<xsl:for-each select="sml:characteristics">
 											<xsl:for-each select="swe:SimpleDataRecord">
 												<xsl:for-each select="swe:field">
-													<br/>
+													<br />
 													<xsl:for-each select="swe:Text">
 														<xsl:for-each select="gml:description">
-															<b><xsl:apply-templates/>: </b>
+															<b>
+																<xsl:apply-templates />
+																:
+															</b>
 														</xsl:for-each>
 														<xsl:for-each select="swe:value">
-															<xsl:apply-templates/>
+															<xsl:apply-templates />
 														</xsl:for-each>
 													</xsl:for-each>
 												</xsl:for-each>
@@ -251,51 +264,59 @@
 										<xsl:for-each select="sml:capabilities">
 											<xsl:for-each select="swe:SimpleDataRecord">
 												<xsl:for-each select="swe:field">
-													<br/>
+													<br />
 													<xsl:for-each select="swe:Text">
 														<xsl:for-each select="gml:description">
-															<b><xsl:apply-templates/>: </b>
+															<b>
+																<xsl:apply-templates />
+																:
+															</b>
 														</xsl:for-each>
 														<xsl:for-each select="swe:value">
-															<xsl:apply-templates/>
+															<xsl:apply-templates />
 														</xsl:for-each>
 													</xsl:for-each>
 												</xsl:for-each>
 											</xsl:for-each>
 										</xsl:for-each>
-										<br/>
+										<br />
 										<xsl:for-each select="sml:documentation">
 											<xsl:for-each select="sml:Document">
 												<xsl:for-each select="gml:description">
-													<b><xsl:apply-templates/>: </b>
+													<b>
+														<xsl:apply-templates />
+														:
+													</b>
 												</xsl:for-each>
 												<span onclick="linkTo();" style="cursor:pointer; color:#994433">
-													<xsl:value-of select="./sml:onlineResource/@xlink:href"/>
+													<xsl:value-of select="./sml:onlineResource/@xlink:href" />
 												</span>
 												<a>
 													<xsl:attribute name="href">
-														<xsl:value-of select="./sml:onlineResource/@xlink:href"/>
+														<xsl:value-of select="./sml:onlineResource/@xlink:href" />
 													</xsl:attribute>
 													<xsl:attribute name="target">
 														"_blank"
 													</xsl:attribute>
-													<xsl:value-of select="./sml:onlineResource/@xlink:href"/>
+													<xsl:value-of select="./sml:onlineResource/@xlink:href" />
 												</a>
-												
+
 											</xsl:for-each>
 										</xsl:for-each>
-										
-										<br/>
+
+										<br />
 										<xsl:for-each select="sml:positions">
 											<xsl:for-each select="sml:PositionList">
 												<xsl:for-each select="sml:position">
 													<xsl:for-each select="swe:Position">
-														<br/>
+														<br />
 														<span>
-															<b>Position: </b>(
+															<b>Position: </b>
+															(
 														</span>
 														<span>
-															<xsl:value-of select="substring-after( @referenceFrame, &quot;urn:ogc:crs:&quot;)"/>
+															<xsl:value-of
+																select="substring-after( @referenceFrame, &quot;urn:ogc:crs:&quot;)" />
 														</span>
 														<span>
 															<xsl:text> )</xsl:text>
@@ -303,10 +324,10 @@
 														<xsl:for-each select="swe:location">
 															<xsl:for-each select="swe:Vector">
 																<xsl:for-each select="swe:coordinate">
-																	<br/>
+																	<br />
 																	<xsl:for-each select="@name">
 																		<span>
-																			<xsl:value-of select="string(.)"/>
+																			<xsl:value-of select="string(.)" />
 																		</span>
 																		<span>
 																			<xsl:text>: </xsl:text>
@@ -314,7 +335,7 @@
 																	</xsl:for-each>
 																	<xsl:for-each select="swe:Quantity">
 																		<xsl:for-each select="swe:value">
-																			<xsl:apply-templates/>
+																			<xsl:apply-templates />
 																		</xsl:for-each>
 																		<xsl:for-each select="swe:uom">
 																			<xsl:for-each select="@code">
@@ -322,7 +343,7 @@
 																					<xsl:text>&#160;</xsl:text>
 																				</span>
 																				<span>
-																					<xsl:value-of select="string(.)"/>
+																					<xsl:value-of select="string(.)" />
 																				</span>
 																			</xsl:for-each>
 																		</xsl:for-each>
@@ -330,22 +351,22 @@
 																</xsl:for-each>
 															</xsl:for-each>
 														</xsl:for-each>
-														<br/>
+														<br />
 													</xsl:for-each>
 												</xsl:for-each>
 											</xsl:for-each>
 										</xsl:for-each>
 									</xsl:for-each>
 								</xsl:for-each>
-							<br/>
+								<br />
 							</xsl:otherwise>
 						</xsl:choose>
 						<xsl:otherwise>
 							<span>Not the right SensorML-Version</span>
 						</xsl:otherwise>
-					</xsl:for-each>	
+					</xsl:for-each>
 				</xsl:for-each>
-				<br/>
+				<br />
 			</body>
 		</html>
 	</xsl:template>

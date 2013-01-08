@@ -26,13 +26,13 @@ package org.n52.client.sos.legend;
 
 import java.util.HashMap;
 
+import org.n52.client.ui.legend.LegendData;
+import org.n52.client.ui.legend.LegendElement;
+import org.n52.client.ui.legend.LegendEntryTimeSeries;
+import org.n52.client.ui.map.Coordinate;
+import org.n52.client.ui.map.OpenLayersMapWrapper;
 import org.n52.client.util.ClientUtils;
 import org.n52.client.util.exceptions.DataparsingException;
-import org.n52.client.view.gui.elements.legend.LegendData;
-import org.n52.client.view.gui.elements.legend.LegendElement;
-import org.n52.client.view.gui.elements.legend.LegendEntryTimeSeries;
-import org.n52.client.view.gui.widgets.mapping.Coordinate;
-import org.n52.client.view.gui.widgets.mapping.OpenLayersMapWrapper;
 import org.n52.shared.serializable.pojos.Axis;
 import org.n52.shared.serializable.pojos.TimeSeriesProperties;
 import org.n52.shared.serializable.pojos.sos.Procedure;

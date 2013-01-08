@@ -46,8 +46,8 @@ import org.n52.client.model.DataStoreTimeSeriesImpl;
 import org.n52.client.sos.ctrl.DragImageControl;
 import org.n52.client.sos.ctrl.EESTabController;
 import org.n52.client.sos.ctrl.MouseWheelControl;
+import org.n52.client.ui.DataPanelTab;
 import org.n52.client.util.exceptions.ExceptionHandler;
-import org.n52.client.view.gui.elements.DataPanelTab;
 import org.n52.shared.Constants;
 
 import com.google.gwt.event.dom.client.KeyCodes;

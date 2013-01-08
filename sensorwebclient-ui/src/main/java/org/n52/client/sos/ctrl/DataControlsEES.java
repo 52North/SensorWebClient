@@ -33,7 +33,7 @@ import org.n52.client.sos.event.data.SwitchAutoscaleEvent;
 import org.n52.client.sos.event.data.UndoEvent;
 import org.n52.client.sos.event.handler.SwitchGridEventHandler;
 import org.n52.client.ui.View;
-import org.n52.client.view.gui.widgets.buttons.ImageButton;
+import org.n52.client.ui.btn.ImageButton;
 
 import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.events.ClickEvent;

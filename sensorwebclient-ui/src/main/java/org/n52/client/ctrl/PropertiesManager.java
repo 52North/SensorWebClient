@@ -29,7 +29,7 @@ import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 import java.util.ArrayList;
 
 import org.n52.client.Application;
-import org.n52.client.view.gui.widgets.Toaster;
+import org.n52.client.ui.Toaster;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;

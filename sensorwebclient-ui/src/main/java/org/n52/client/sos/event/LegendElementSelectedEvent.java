@@ -25,7 +25,7 @@ package org.n52.client.sos.event;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.handler.LegendElementSelectedEventHandler;
-import org.n52.client.view.gui.elements.legend.LegendElement;
+import org.n52.client.ui.legend.LegendElement;
 
 /**
  * The Class LegendElementSelectedEvent.

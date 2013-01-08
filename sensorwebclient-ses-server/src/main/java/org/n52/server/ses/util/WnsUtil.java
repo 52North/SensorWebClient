@@ -96,16 +96,19 @@ public class WnsUtil {
         pw.close();
         BufferedReader in = new BufferedReader(new InputStreamReader(connect.getInputStream()));
         // Antwort merken
-        do {
-            sb.append(in.readLine() + "\n");
-        } while (in.ready());
-        in.close();
-        connect.disconnect();
-        // WNS UserID filtern
-        UserID = sb.toString().split("UserID");
-        result = UserID[1].substring(1, UserID[1].length() - 2);
-    	LOGGER.debug("WNS_USER_ID: {} ", result);
-        return result;
+        try {
+            while (in.ready()) {
+                sb.append(in.readLine() + "\n");
+            }
+            // WNS UserID filtern
+            UserID = sb.toString().split("UserID");
+            result = UserID[1].substring(1, UserID[1].length() - 2);
+            LOGGER.debug("WNS_USER_ID: {}", result);
+            return result;
+        } finally {
+            in.close();
+            connect.disconnect();
+        }
     }
 
     /**
@@ -130,12 +133,15 @@ public class WnsUtil {
         pw.write(createUpdateSingleUserMailRequest(wnsID, mail, oldMail));
         pw.close();
         BufferedReader in = new BufferedReader(new InputStreamReader(connect.getInputStream()));
-        do {
-            sb.append(in.readLine() + "\n");
-        } while (in.ready());
-        in.close();
-        connect.disconnect();
-    	LOGGER.trace(sb.toString());
+        try {
+            while (in.ready()) {
+                sb.append(in.readLine() + "\n");
+            }
+            LOGGER.trace(sb.toString());
+        } finally {
+            in.close();
+            connect.disconnect();
+        }
     }
 
     /**
@@ -160,12 +166,15 @@ public class WnsUtil {
         pw.write(createUpdateSingleUserSMSRequest(wnsID, handy, oldHandy));
         pw.close();
         BufferedReader in = new BufferedReader(new InputStreamReader(connect.getInputStream()));
-        do {
-            sb.append(in.readLine() + "\n");
-        } while (in.ready());
-        in.close();
-        connect.disconnect();
-    	LOGGER.trace(sb.toString());
+        try {
+            while (in.ready()) {
+                sb.append(in.readLine() + "\n");
+            }
+            LOGGER.trace(sb.toString());
+        } finally {
+            in.close();
+            connect.disconnect();
+        }
     }
 
     /**
@@ -193,16 +202,19 @@ public class WnsUtil {
         pw.close();
         BufferedReader in = new BufferedReader(new InputStreamReader(connect.getInputStream()));
         // Antwort merken
-        do {
-            sb.append(in.readLine() + "\n");
-        } while (in.ready());
-        in.close();
-        connect.disconnect();
-        // WNS UserID filtern
-        UserID = sb.toString().split("UserID");
-        result = UserID[1].substring(1, UserID[1].length() - 2);
-    	LOGGER.debug("WNS_USER_ID: {}", result);
-        return result;
+        try {
+            while (in.ready()) {
+                sb.append(in.readLine() + "\n");
+            }
+            // WNS UserID filtern
+            UserID = sb.toString().split("UserID");
+            result = UserID[1].substring(1, UserID[1].length() - 2);
+            LOGGER.debug("WNS_USER_ID: {}", result);
+            return result;
+        } finally {
+            in.close();
+            connect.disconnect();
+        }
     }
 
     /**
@@ -228,17 +240,20 @@ public class WnsUtil {
         pw.close();
         BufferedReader in = new BufferedReader(new InputStreamReader(connect.getInputStream()));
         // Antwort merken
-        do {
-            sb.append(in.readLine() + "\n");
-        } while (in.ready());
-        in.close();
-        connect.disconnect();
-        result = sb.toString();
-        // UserID = sb.toString().split("UserID");
-        // result = UserID[1].substring(1, UserID[1].length() - 2);
-        // TODO WHAT? Please specify this!
-    	LOGGER.debug("WNS_RESULT: {} ", result);
-        return result;
+        try {
+            while (in.ready()) {
+                sb.append(in.readLine() + "\n");
+            }
+            LOGGER.trace(sb.toString());
+            result = sb.toString();
+            // UserID = sb.toString().split("UserID");
+            // result = UserID[1].substring(1, UserID[1].length() - 2);
+            // TODO WHAT? Please specify this!
+            return result;
+        } finally {
+            in.close();
+            connect.disconnect();
+        }
     }
 
     /**

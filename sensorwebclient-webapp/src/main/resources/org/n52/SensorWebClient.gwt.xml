@@ -12,6 +12,7 @@
 	<!-- <set-property name='user.agent' value="ie6,ie8,ie9,gecko1_8,safari,opera" /> -->
     <set-configuration-property name="locale.useragent" value="true"/>
 	<set-configuration-property name="locale.searchorder" value="queryparam,useragent"/>
+	<set-configuration-property name="document.compatMode" value="CSS1Compat"/>
 	
 	<entry-point class='org.n52.client.ClientStarter' />
 	

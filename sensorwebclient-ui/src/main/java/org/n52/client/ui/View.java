@@ -35,13 +35,8 @@ import org.n52.client.ses.ui.SesTab;
 import org.n52.client.sos.event.TabSelectedEvent;
 import org.n52.client.sos.i18n.SosStringsAccessor;
 import org.n52.client.sos.ui.EESTab;
-import org.n52.client.view.gui.elements.DataPanel;
-import org.n52.client.view.gui.elements.DataPanelTab;
-import org.n52.client.view.gui.elements.Header;
-import org.n52.client.view.gui.elements.MainPanel;
-import org.n52.client.view.gui.elements.legend.Legend;
-import org.n52.client.view.gui.widgets.Toaster;
-import org.n52.client.view.gui.widgets.buttons.Button;
+import org.n52.client.ui.btn.Button;
+import org.n52.client.ui.legend.Legend;
 
 import com.smartgwt.client.types.Cursor;
 import com.smartgwt.client.types.Overflow;

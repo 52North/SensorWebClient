@@ -96,6 +96,7 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
     @Override
     public GetProcedureDetailsUrlResponse getProcedureDetailsUrl(String serviceURL, String procedure) throws Exception {
         try {
+            LOG.debug("Request -> getProcedureDetailsUrl");
             SOSMetadata metadata = ConfigurationContext.getSOSMetadata(serviceURL);
             OperationResult result = requestDescribeSensor(serviceURL, procedure, metadata);
             ByteArrayInputStream resultInputStream = result.getIncomingResultAsStream();

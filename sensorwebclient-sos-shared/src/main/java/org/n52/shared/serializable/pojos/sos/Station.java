@@ -26,7 +26,6 @@ package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.n52.shared.serializable.pojos.EastingNorthing;
 
@@ -47,9 +46,7 @@ public class Station implements Serializable {
     private String srs; // TODO srs and location into one object!
     private EastingNorthing location;
     
-
     private ArrayList<ParameterConstellation> parameterConstellations; 
-
 
     private String feature;
     

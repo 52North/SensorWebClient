@@ -52,11 +52,11 @@ import org.n52.client.sos.event.data.handler.StoreTimeSeriesLastValueEventHandle
 import org.n52.client.sos.event.handler.DatesChangedEventHandler;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.sos.ui.EESTab;
-import org.n52.client.sos.ui.InteractionWindow;
+import org.n52.client.ui.InteractionWindow;
+import org.n52.client.ui.Toaster;
 import org.n52.client.ui.View;
+import org.n52.client.ui.btn.ImageButton;
 import org.n52.client.util.ClientUtils;
-import org.n52.client.view.gui.widgets.Toaster;
-import org.n52.client.view.gui.widgets.buttons.ImageButton;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;

@@ -40,7 +40,7 @@ import org.n52.client.ses.ui.layout.ShowUserLayout;
 import org.n52.client.ses.ui.layout.UserRuleLayout;
 import org.n52.client.ses.ui.layout.UserSubscriptionsLayout;
 import org.n52.client.ses.ui.layout.WelcomeLayout;
-import org.n52.client.view.gui.elements.DataPanelTab;
+import org.n52.client.ui.DataPanelTab;
 
 import com.smartgwt.client.widgets.layout.VLayout;
 

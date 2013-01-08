@@ -24,7 +24,6 @@
 
 package org.n52.client;
 
-import org.n52.client.control.Application;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
