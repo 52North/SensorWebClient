@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.client.model.data.dataManagers;
+package org.n52.client.model;
 
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 

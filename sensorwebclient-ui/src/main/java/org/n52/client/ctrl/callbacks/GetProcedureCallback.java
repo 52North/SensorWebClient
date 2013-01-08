@@ -21,15 +21,18 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.model.communication.requestManager.callbacks;
+package org.n52.client.ctrl.callbacks;
 
-import org.n52.client.model.communication.requestManager.ServerCallback;
-import org.n52.client.model.communication.requestManager.RequestManager;
-import org.n52.shared.responses.RepresentationResponse;
+import org.n52.client.ctrl.RequestManager;
+import org.n52.client.ctrl.ServerCallback;
+import org.n52.shared.responses.GetProcedureResponse;
 
-public abstract class GetFileCallback extends ServerCallback<RepresentationResponse> {
+public abstract class GetProcedureCallback extends
+		ServerCallback<GetProcedureResponse> {
 
-    public GetFileCallback(RequestManager requestMgr, String errorMsg) {
-        super(requestMgr, errorMsg);
-    }
+	public GetProcedureCallback(RequestManager requestMgr,
+			String errorMsg) {
+		super(requestMgr, errorMsg);
+	}
+
 }

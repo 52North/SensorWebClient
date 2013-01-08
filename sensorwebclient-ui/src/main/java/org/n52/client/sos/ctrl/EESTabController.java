@@ -40,7 +40,7 @@ import org.eesgmbh.gimv.shared.util.Bounds;
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.Application;
 import org.n52.client.ctrl.Controller;
-import org.n52.client.model.data.DataStoreTimeSeriesImpl;
+import org.n52.client.model.DataStoreTimeSeriesImpl;
 import org.n52.client.sos.event.DatesChangedEvent;
 import org.n52.client.sos.event.InitEvent;
 import org.n52.client.sos.event.ResizeEvent;

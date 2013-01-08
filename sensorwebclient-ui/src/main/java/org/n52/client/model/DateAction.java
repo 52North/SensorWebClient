@@ -21,16 +21,50 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.model.communication.requestManager.callbacks;
+package org.n52.client.model;
 
-import org.n52.client.model.communication.requestManager.ServerCallback;
-import org.n52.client.model.communication.requestManager.RequestManager;
-import org.n52.shared.responses.GetStationResponse;
+/**
+ * The Class DateAction.
+ * 
+ * @author <a href="mailto:f.bache@52north.de">Felix Bache</a>
+ */
+public class DateAction {
 
-public abstract class GetStationCallback extends ServerCallback<GetStationResponse> {
+    /** The begin. */
+    private long begin;
 
-	public GetStationCallback(RequestManager requestMgr, String errorMsg) {
-		super(requestMgr, errorMsg);
-	}
+    /** The end. */
+    private long end;
+
+    /**
+     * Instantiates a new date action.
+     * 
+     * @param begin
+     *            the begin
+     * @param end
+     *            the end
+     */
+    public DateAction(long begin, long end) {
+        this.begin = begin;
+        this.end = end;
+    }
+
+    /**
+     * Gets the begin.
+     * 
+     * @return the begin
+     */
+    public long getBegin() {
+        return this.begin;
+    }
+
+    /**
+     * Gets the end.
+     * 
+     * @return the end
+     */
+    public long getEnd() {
+        return this.end;
+    }
 
 }

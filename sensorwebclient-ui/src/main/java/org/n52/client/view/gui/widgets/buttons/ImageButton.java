@@ -24,7 +24,7 @@
 
 package org.n52.client.view.gui.widgets.buttons;
 
-import org.n52.client.model.communication.LoaderManager;
+import org.n52.client.ctrl.LoaderManager;
 import org.n52.client.ui.View;
 import org.n52.client.view.gui.widgets.LoaderImage;
 

@@ -41,7 +41,7 @@ import org.eesgmbh.gimv.shared.util.Bounds;
 import org.eesgmbh.gimv.shared.util.Direction;
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.Application;
-import org.n52.client.model.data.DataStoreTimeSeriesImpl;
+import org.n52.client.model.DataStoreTimeSeriesImpl;
 import org.n52.client.sos.ctrl.EESTabController;
 import org.n52.client.util.exceptions.ExceptionHandler;
 import org.n52.client.view.gui.elements.DataPanelTab;

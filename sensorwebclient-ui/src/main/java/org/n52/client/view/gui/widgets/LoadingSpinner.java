@@ -23,7 +23,7 @@
  */
 package org.n52.client.view.gui.widgets;
 
-import org.n52.client.model.communication.LoaderManager;
+import org.n52.client.ctrl.LoaderManager;
 
 /**
  * The Class LoadingSpinner.

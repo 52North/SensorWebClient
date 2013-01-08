@@ -21,16 +21,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.model.communication.requestManager.callbacks;
+package org.n52.client.ctrl.callbacks;
 
-import org.n52.client.model.communication.requestManager.ServerCallback;
-import org.n52.client.model.communication.requestManager.RequestManager;
-import org.n52.shared.responses.GetPhenomenonResponse;
+import org.n52.client.ctrl.RequestManager;
+import org.n52.client.ctrl.ServerCallback;
+import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 
-public abstract class GetPhenomenaCallback extends ServerCallback<GetPhenomenonResponse> {
+public abstract class SOSMetadataCallback extends ServerCallback<SOSMetadata> {
 
-    public GetPhenomenaCallback(RequestManager requestMgr, String errorMsg) {
+    public SOSMetadataCallback(RequestManager requestMgr, String errorMsg) {
         super(requestMgr, errorMsg);
     }
-
 }

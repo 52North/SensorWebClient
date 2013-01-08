@@ -21,15 +21,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.model.communication.requestManager.callbacks;
+package org.n52.client.ctrl.callbacks;
 
-import org.n52.client.model.communication.requestManager.ServerCallback;
-import org.n52.client.model.communication.requestManager.RequestManager;
-import org.n52.shared.responses.EESDataResponse;
+import org.n52.client.ctrl.RequestManager;
+import org.n52.client.ctrl.ServerCallback;
+import org.n52.shared.responses.StationPositionsResponse;
 
-public abstract class EESDataCallback extends ServerCallback<EESDataResponse> {
+public abstract class GetPositionsCallback extends ServerCallback<StationPositionsResponse> {
 
-    public EESDataCallback(RequestManager requestMgr, String errorMsg) {
+    public GetPositionsCallback(RequestManager requestMgr, String errorMsg) {
         super(requestMgr, errorMsg);
     }
 }
