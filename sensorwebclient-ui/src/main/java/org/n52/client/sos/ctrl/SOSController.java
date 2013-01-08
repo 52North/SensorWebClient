@@ -33,7 +33,6 @@ import org.eesgmbh.gimv.client.event.SetOverviewDomainBoundsEventHandler;
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.ServiceController;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
-import org.n52.client.model.data.dataManagers.DataManagerSosImpl;
 import org.n52.client.sos.event.data.ExportEvent;
 import org.n52.client.sos.event.data.FinishedLoadingTimeSeriesEvent;
 import org.n52.client.sos.event.data.GetFeatureEvent;

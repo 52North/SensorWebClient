@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.client.model.data.dataManagers;
+package org.n52.client.sos.ctrl;
 
 import java.util.ArrayList;
 import java.util.Collection;

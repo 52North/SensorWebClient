@@ -24,7 +24,7 @@
 package org.n52.client.sos.ui;
 
 import org.n52.client.bus.EventBus;
-import org.n52.client.model.data.dataManagers.DataManagerSosImpl;
+import org.n52.client.sos.ctrl.DataManagerSosImpl;
 import org.n52.client.sos.event.data.GetPhenomenonsEvent;
 import org.n52.client.sos.event.data.GetStationsEvent;
 import org.n52.shared.serializable.pojos.BoundingBox;

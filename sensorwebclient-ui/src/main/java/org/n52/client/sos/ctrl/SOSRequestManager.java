@@ -60,7 +60,6 @@ import org.n52.client.model.communication.requestManager.callbacks.GetStationCal
 import org.n52.client.model.communication.requestManager.callbacks.SensorMetadataCallback;
 import org.n52.client.model.communication.requestManager.callbacks.TimeSeriesDataCallback;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
-import org.n52.client.model.data.dataManagers.DataManagerSosImpl;
 import org.n52.client.model.data.dataManagers.TimeManager;
 import org.n52.client.sos.event.DeleteMarkersEvent;
 import org.n52.client.sos.event.LegendElementSelectedEvent;

@@ -30,8 +30,8 @@ import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 import java.util.Date;
 
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
-import org.n52.client.model.data.dataManagers.DataManagerSosImpl;
 import org.n52.client.model.data.dataManagers.TimeManager;
+import org.n52.client.sos.ctrl.DataManagerSosImpl;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.view.gui.widgets.Toaster;
 import org.n52.ext.ExternalToolsException;
