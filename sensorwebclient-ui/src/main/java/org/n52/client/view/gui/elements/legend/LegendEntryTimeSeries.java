@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eesgmbh.gimv.client.event.LoadImageDataEvent;
-import org.n52.client.control.PropertiesManager;
+import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
 import org.n52.client.model.data.dataManagers.TimeManager;

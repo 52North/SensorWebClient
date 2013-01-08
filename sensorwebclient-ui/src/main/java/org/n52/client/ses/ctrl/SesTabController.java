@@ -27,7 +27,7 @@ import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
 import java.util.ArrayList;
 
-import org.n52.client.control.Controller;
+import org.n52.client.ctrl.Controller;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.model.communication.requestManager.SesRequestManager;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;

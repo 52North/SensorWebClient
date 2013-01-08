@@ -39,7 +39,7 @@ import org.gwtopenmaps.openlayers.client.control.MousePosition;
 import org.gwtopenmaps.openlayers.client.control.MousePositionOptions;
 import org.gwtopenmaps.openlayers.client.control.MousePositionOutput;
 import org.gwtopenmaps.openlayers.client.layer.Markers;
-import org.n52.client.control.PropertiesManager;
+import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.view.gui.widgets.mapping.InfoMarker;
 import org.n52.client.view.gui.widgets.mapping.MapController;
 import org.n52.client.view.gui.widgets.mapping.OpenLayersMapWrapper;

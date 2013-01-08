@@ -30,7 +30,7 @@ import org.eesgmbh.gimv.client.event.SetDomainBoundsEvent;
 import org.eesgmbh.gimv.client.event.SetDomainBoundsEventHandler;
 import org.eesgmbh.gimv.client.event.SetOverviewDomainBoundsEvent;
 import org.eesgmbh.gimv.client.event.SetOverviewDomainBoundsEventHandler;
-import org.n52.client.control.ServiceController;
+import org.n52.client.ctrl.ServiceController;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.model.communication.requestManager.SOSRequestManager;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;

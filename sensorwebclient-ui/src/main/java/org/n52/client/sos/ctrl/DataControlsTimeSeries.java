@@ -30,8 +30,8 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.n52.client.control.ClientUtils;
-import org.n52.client.control.PropertiesManager;
+import org.n52.client.ctrl.ClientUtils;
+import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.eventBus.EventCallback;
 import org.n52.client.model.communication.LoaderManager;

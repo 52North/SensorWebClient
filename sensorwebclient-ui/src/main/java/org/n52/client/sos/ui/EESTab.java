@@ -39,7 +39,7 @@ import org.eesgmbh.gimv.client.widgets.Viewport;
 import org.eesgmbh.gimv.shared.util.Bound;
 import org.eesgmbh.gimv.shared.util.Bounds;
 import org.eesgmbh.gimv.shared.util.Direction;
-import org.n52.client.control.Application;
+import org.n52.client.ctrl.Application;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
 import org.n52.client.sos.ctrl.EESTabController;

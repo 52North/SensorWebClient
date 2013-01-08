@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.gwtopenmaps.openlayers.client.MapWidget;
-import org.n52.client.control.PropertiesManager;
+import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.sos.event.data.ExportEvent.ExportType;
 import org.n52.client.sos.ui.StationSelector;
 import org.n52.client.ui.Impressum;

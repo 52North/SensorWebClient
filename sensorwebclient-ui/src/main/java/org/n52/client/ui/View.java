@@ -28,7 +28,7 @@ import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.ArrayList;
 
-import org.n52.client.control.PropertiesManager;
+import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.ses.i18n.SesStringsAccessor;
 import org.n52.client.ses.ui.SesTab;

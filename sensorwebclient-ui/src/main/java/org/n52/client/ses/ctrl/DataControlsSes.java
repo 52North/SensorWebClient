@@ -28,7 +28,7 @@ import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import org.n52.client.control.PropertiesManager;
+import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.GetAllPublishedRulesEvent;

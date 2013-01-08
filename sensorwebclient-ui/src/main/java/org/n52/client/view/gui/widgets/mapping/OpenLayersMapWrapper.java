@@ -41,7 +41,7 @@ import org.gwtopenmaps.openlayers.client.layer.OSM;
 import org.gwtopenmaps.openlayers.client.layer.WMS;
 import org.gwtopenmaps.openlayers.client.layer.WMSOptions;
 import org.gwtopenmaps.openlayers.client.layer.WMSParams;
-import org.n52.client.control.PropertiesManager;
+import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.view.gui.widgets.Toaster;
 import org.n52.shared.Constants;
 import org.n52.shared.serializable.pojos.BoundingBox;
