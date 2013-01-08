@@ -30,15 +30,11 @@ public class MainPanel extends Layout {
     
     public MainPanel() {
         setID("mainPanel");
-//        setHeight("100%");
-//        setWidth("100%");
-//        setOverflow(Overflow.HIDDEN);
-        setStyleName("sensorweb_client_mainLayout");
+        setHeight("100%");
+        setWidth("100%");
+        setOverflow(Overflow.HIDDEN);
+        setStylePrimaryName("sensorweb_client_mainLayout");
     }
-
-    @Override
-    protected void onDraw() {
-        super.onDraw();
-    }
+    
 
 }

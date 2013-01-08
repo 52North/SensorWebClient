@@ -23,7 +23,7 @@
  */
 package org.n52.client.ses.ui.layout;
 
-import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
+import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
 import java.util.ArrayList;
 

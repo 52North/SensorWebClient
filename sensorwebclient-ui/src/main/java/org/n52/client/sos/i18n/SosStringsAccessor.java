@@ -27,10 +27,19 @@ package org.n52.client.sos.i18n;
 import com.google.gwt.core.client.GWT;
 
 /**
- * Shortcut class providing i18n interfaces which offer access to internationalized language strings.
+ * Shortcut class providing i18n interfaces which offer access to internationalized language strings.<br>
+ * <br>
+ * The {@link SosStringsAccessor} have to be initialized statically which allows deferred binding via GWT.
  */
-public class I18NStringsAccessor {
+public class SosStringsAccessor {
 
-    public final static I18N i18n = GWT.create(I18N.class);
+    public static I18N i18n;
+    
+    /**
+     * Initializes {@link I18N} as deferred binding.
+     */
+    public static void init() {
+        i18n = GWT.create(I18N.class);
+    }
 
 }

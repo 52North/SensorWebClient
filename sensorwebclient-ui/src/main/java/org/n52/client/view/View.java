@@ -24,13 +24,15 @@
 
 package org.n52.client.view;
 
-import static org.n52.client.sos.i18n.I18NStringsAccessor.i18n;
+import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.ArrayList;
 
 import org.n52.client.control.PropertiesManager;
 import org.n52.client.eventBus.EventBus;
+import org.n52.client.ses.i18n.SesStringsAccessor;
 import org.n52.client.sos.event.TabSelectedEvent;
+import org.n52.client.sos.i18n.SosStringsAccessor;
 import org.n52.client.view.gui.elements.DataPanel;
 import org.n52.client.view.gui.elements.Header;
 import org.n52.client.view.gui.elements.MainPanel;
@@ -91,6 +93,8 @@ public class View {
         tooltipElements = new ArrayList<Button>();
 
         mainPanel = new MainPanel();
+        SosStringsAccessor.init();
+        SesStringsAccessor.init();
         
         int fadeout = PropertiesManager.getInstance().getParamaterAsInt("toasterFadeout", 5);
         Toaster.createInstance("toaster", 400, 200, i18n.loggerWindowTitle(), mainPanel, fadeout * 1000);
@@ -105,12 +109,7 @@ public class View {
         	registerTabWidget(sesTab);
         }
         
-//        registerTabWidget(new EESTab("ees", I18N.sosClient.diagram()));
-//        registerTabWidget(new OpenlayersTab("map", I18N.sosClient.map()));
-//        registerTabWidget(new TableTab("table", I18N.sosClient.table()));
-//        registerTabWidget(new SesTab("SES", "SES"));
         EventBus.getMainEventBus().fireEvent(new TabSelectedEvent(datapanel.getTab(0)));
-        mainPanel.draw();
     }
 
     private void registerTabWidget(DataPanelTab widget) {

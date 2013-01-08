@@ -23,7 +23,7 @@
  */
 package org.n52.client.control;
 
-import static org.n52.client.sos.i18n.I18NStringsAccessor.i18n;
+import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 import static org.n52.ext.link.sos.PermalinkParameter.BEGIN;
 import static org.n52.ext.link.sos.PermalinkParameter.END;
 import static org.n52.ext.link.sos.PermalinkParameter.FEATURES;

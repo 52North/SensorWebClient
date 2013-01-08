@@ -23,7 +23,7 @@
  */
 package org.n52.shared.serializable.pojos;
 
-import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
+import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.fields.DataSourceIntegerField;

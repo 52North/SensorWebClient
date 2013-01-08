@@ -25,7 +25,7 @@ package org.n52.client.view.gui.elements;
 
 
 import static com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat.ISO_8601;
-import static org.n52.client.sos.i18n.I18NStringsAccessor.i18n;
+import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.Date;
 

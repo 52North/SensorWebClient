@@ -23,7 +23,7 @@
  */
 package org.n52.client.view.gui.elements.tabImpl;
 
-import static org.n52.client.sos.i18n.I18NStringsAccessor.i18n;
+import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.ArrayList;
 import java.util.Arrays;

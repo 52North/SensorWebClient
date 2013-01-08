@@ -23,7 +23,7 @@
  */
 package org.n52.client.view.gui.elements.legend;
 
-import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
+import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
 import java.util.Collection;
 import java.util.Date;
