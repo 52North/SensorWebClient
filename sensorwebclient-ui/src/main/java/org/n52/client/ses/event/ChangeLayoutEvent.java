@@ -25,7 +25,7 @@ package org.n52.client.ses.event;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.ChangeLayoutEventHandler;
-import org.n52.client.view.gui.elements.interfaces.Layout.Layouts;
+import org.n52.client.ses.ui.Layout.Layouts;
 
 /**
  * The Class ChangeLayoutEvent.

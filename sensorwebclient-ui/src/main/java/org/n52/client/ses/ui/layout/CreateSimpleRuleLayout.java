@@ -33,7 +33,7 @@ import org.n52.client.model.communication.requestManager.SesRequestManager;
 import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.CreateSimpleRuleEvent;
 import org.n52.client.ses.event.GetPhenomenaEvent;
-import org.n52.client.view.gui.elements.interfaces.Layout;
+import org.n52.client.ses.ui.Layout;
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 import org.n52.shared.serializable.pojos.Rule;
 

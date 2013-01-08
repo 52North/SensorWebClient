@@ -25,7 +25,7 @@ package org.n52.client.ses.ui.layout;
 
 import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
 
-import org.n52.client.view.gui.elements.interfaces.Layout;
+import org.n52.client.ses.ui.Layout;
 import org.n52.shared.serializable.pojos.UserDTO;
 
 import com.smartgwt.client.widgets.form.fields.SpacerItem;

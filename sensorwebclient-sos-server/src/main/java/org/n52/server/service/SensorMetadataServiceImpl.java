@@ -23,12 +23,14 @@
  */
 package org.n52.server.service;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.n52.server.oxf.util.ConfigurationContext.SERVER_TIMEOUT;
+
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
 
 import org.n52.client.service.SensorMetadataService;
 import org.n52.oxf.adapter.OperationResult;
@@ -137,8 +139,7 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
         AccessorThreadPool.execute(task);
 
         // read sensor description
-        OperationResult result = task.get(ConfigurationContext.SERVER_TIMEOUT, TimeUnit.MILLISECONDS);
-        return result;
+        return task.get(SERVER_TIMEOUT, MILLISECONDS);
     }
 
 }

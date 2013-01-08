@@ -24,6 +24,7 @@
 
 package org.n52.server.oxf.util.access;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_EVENT_TIME_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_FEATURE_OF_INTEREST_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_OBSERVED_PROPERTY_PARAMETER;
@@ -34,6 +35,7 @@ import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_RESULT_
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_SERVICE_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_TEMPORAL_FILTER_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_VERSION_PARAMETER;
+import static org.n52.server.oxf.util.ConfigurationContext.SERVER_TIMEOUT;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -92,7 +94,7 @@ public class ObservationAccessor {
                 AccessorThreadPool.execute(task);
 
                 OXFFeatureCollection featureColl = null;
-                OperationResult opResult = task.get(ConfigurationContext.SERVER_TIMEOUT, TimeUnit.MILLISECONDS);
+                OperationResult opResult = task.get(SERVER_TIMEOUT, MILLISECONDS);
                 SOSObservationStore featureStore = new SOSObservationStore(opResult);
                 featureColl = featureStore.unmarshalFeatures();
                 // put the received observations into the observationCollMap:

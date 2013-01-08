@@ -23,9 +23,11 @@
  */
 package org.n52.server.oxf.util.connector.hydro;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER;
 import static org.n52.oxf.sos.adapter.SOSAdapter.GET_FEATURE_OF_INTEREST;
+import static org.n52.server.oxf.util.ConfigurationContext.SERVER_TIMEOUT;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -181,7 +183,7 @@ public class HydroMetadataHandler extends MetadataHandler {
 			AccessorThreadPool.execute(futureTasks.get(station));
 			try {
 				FutureTask<OperationResult> futureTask = futureTasks.get(station);
-				OperationResult opRes = futureTask.get(ConfigurationContext.SERVER_TIMEOUT, TimeUnit.MILLISECONDS);
+				OperationResult opRes = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
 				metadata.removeStation(station);
 				if (opRes == null) {
 					LOGGER.error("Get no result for GetFeatureOfInterest " + station + "!");

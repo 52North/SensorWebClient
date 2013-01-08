@@ -33,7 +33,7 @@ import org.n52.client.ses.ctrl.DataControlsSes;
 import org.n52.client.ses.event.DeleteProfileEvent;
 import org.n52.client.ses.event.LogoutEvent;
 import org.n52.client.ses.event.UpdateUserEvent;
-import org.n52.client.view.gui.elements.interfaces.Layout;
+import org.n52.client.ses.ui.Layout;
 import org.n52.shared.serializable.pojos.UserDTO;
 import org.n52.shared.serializable.pojos.UserRole;
 

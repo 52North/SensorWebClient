@@ -33,7 +33,7 @@ import org.n52.client.model.communication.requestManager.SesRequestManager;
 import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.CreateComplexRuleEvent;
 import org.n52.client.ses.event.GetAllPublishedRulesEvent;
-import org.n52.client.view.gui.elements.interfaces.Layout;
+import org.n52.client.ses.ui.Layout;
 import org.n52.shared.Constants;
 import org.n52.shared.LogicalOperator;
 import org.n52.shared.responses.SesClientResponse;

@@ -24,6 +24,9 @@
 
 package org.n52.server.oxf.util.parser;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.n52.server.oxf.util.ConfigurationContext.SERVER_TIMEOUT;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -41,8 +44,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import net.opengis.swe.x10.ConstrainedPhenomenonDocument;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -68,7 +69,6 @@ import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
 import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -256,9 +256,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
                 LOGGER.trace("Sending request {}", i++);
                 FutureTask<OperationResult> futureTask = futureTasks.get(procedureId);
                 AccessorThreadPool.execute(futureTask);
-                TimeUnit unit = TimeUnit.MILLISECONDS;
-                long timeout = ConfigurationContext.SERVER_TIMEOUT;
-                OperationResult opResult = futureTask.get(timeout, unit);
+                OperationResult opResult = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
                 if (opResult == null) {
                     illegalProcedures.add(procedureId);
                     LOGGER.debug("Got NO sensor description for '{}'", procedureId);

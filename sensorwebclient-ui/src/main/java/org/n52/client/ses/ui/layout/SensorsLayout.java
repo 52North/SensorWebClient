@@ -29,7 +29,7 @@ import java.util.List;
 
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.ses.event.UpdateSensorEvent;
-import org.n52.client.view.gui.elements.interfaces.Layout;
+import org.n52.client.ses.ui.Layout;
 import org.n52.shared.serializable.pojos.TESTSensorDS;
 
 import com.google.gwt.user.client.Random;

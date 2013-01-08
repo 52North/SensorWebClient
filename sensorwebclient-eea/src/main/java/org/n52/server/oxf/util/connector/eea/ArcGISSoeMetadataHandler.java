@@ -24,12 +24,14 @@
 
 package org.n52.server.oxf.util.connector.eea;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.n52.server.oxf.util.ConfigurationContext.SERVER_TIMEOUT;
+
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.xml.namespace.QName;
@@ -177,7 +179,7 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 			AccessorThreadPool.execute(futureTasks.get(station));
 			try {
 				FutureTask<OperationResult> futureTask = futureTasks.get(station);
-				OperationResult opRes = futureTask.get(ConfigurationContext.SERVER_TIMEOUT, TimeUnit.MILLISECONDS);
+				OperationResult opRes = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
 				metadata.removeStation(station);
 				if (opRes == null) {
 					LOGGER.error("Get no result for GetFeatureOfInterest " + station + "!");

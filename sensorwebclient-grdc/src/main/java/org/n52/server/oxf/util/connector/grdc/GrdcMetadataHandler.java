@@ -23,6 +23,9 @@
  */
 package org.n52.server.oxf.util.connector.grdc;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.n52.server.oxf.util.ConfigurationContext.SERVER_TIMEOUT;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -175,7 +178,7 @@ public class GrdcMetadataHandler extends MetadataHandler {
 			for (String foi : keys) {
 				try {
 					FutureTask<OperationResult> futureTask = futureTasks.get(foi);
-					OperationResult opRes = futureTask.get(ConfigurationContext.SERVER_TIMEOUT, TimeUnit.MILLISECONDS);
+					OperationResult opRes = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
 					Set<Station> stations = metadata.getStationsByFeatureID(foi);
 					metadata.removeStations(stations);
 					if (opRes == null) {

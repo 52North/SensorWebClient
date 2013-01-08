@@ -41,6 +41,7 @@ import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.sos.adapter.SOSAdapter;
 import org.n52.oxf.sos.util.SosUtil;
+import org.n52.oxf.util.web.SimpleHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
@@ -48,6 +49,8 @@ import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
 public class SOSwithSoapAdapter extends SOSAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSwithSoapAdapter.class);
+    
+    private static final int SOCKET_TIMEOUT = 30000;
 
     /**
      * Creates an adapter to connect SOS with SOAP binding. <br>
@@ -59,7 +62,7 @@ public class SOSwithSoapAdapter extends SOSAdapter {
      *        the SOS version
      */
     public SOSwithSoapAdapter(String sosVersion) {
-        super(sosVersion);
+        super(sosVersion, new SimpleHttpClient(5000, SOCKET_TIMEOUT));
         setRequestBuilder(new SoapSOSRequestBuilder_200());
     }
 
@@ -79,6 +82,7 @@ public class SOSwithSoapAdapter extends SOSAdapter {
      */
     public SOSwithSoapAdapter(String sosVersion, ISOSRequestBuilder requestBuilder) {
         super(sosVersion, new SoapSOSRequestBuilder_200());
+        setHttpClient(new SimpleHttpClient(5000, SOCKET_TIMEOUT));
         LOGGER.warn("This is a deprecated constructor and will be removed soon w/o notice.");
     }
 

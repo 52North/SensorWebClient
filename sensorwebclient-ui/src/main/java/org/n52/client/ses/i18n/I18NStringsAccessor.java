@@ -31,9 +31,6 @@ import com.google.gwt.core.client.GWT;
  */
 public class I18NStringsAccessor {
 
-    public static I18N i18n;
+    public final static I18N i18n = GWT.create(I18N.class);
 
-    public I18NStringsAccessor() {
-        i18n = GWT.create(I18N.class);
-    }
 }

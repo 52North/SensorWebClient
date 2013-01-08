@@ -24,6 +24,8 @@
 package org.n52.client.view.gui.elements.tabImpl;
 
 import org.n52.client.control.sesTab.SesTabController;
+import org.n52.client.ses.ui.Layout;
+import org.n52.client.ses.ui.Layout.Layouts;
 import org.n52.client.ses.ui.layout.AllRulesLayout;
 import org.n52.client.ses.ui.layout.CreateComplexRuleLayout;
 import org.n52.client.ses.ui.layout.CreateSimpleRuleLayout;
@@ -40,8 +42,6 @@ import org.n52.client.ses.ui.layout.UserSubscriptionsLayout;
 import org.n52.client.ses.ui.layout.WelcomeLayout;
 import org.n52.client.view.gui.elements.controlsImpl.DataControls;
 import org.n52.client.view.gui.elements.interfaces.DataPanelTab;
-import org.n52.client.view.gui.elements.interfaces.Layout;
-import org.n52.client.view.gui.elements.interfaces.Layout.Layouts;
 
 import com.smartgwt.client.widgets.layout.VLayout;
 

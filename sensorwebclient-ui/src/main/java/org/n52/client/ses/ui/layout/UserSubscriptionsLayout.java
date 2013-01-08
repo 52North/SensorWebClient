@@ -31,7 +31,7 @@ import org.n52.client.eventBus.EventBus;
 import org.n52.client.model.communication.requestManager.SesRequestManager;
 import org.n52.client.ses.data.RuleRecord;
 import org.n52.client.ses.event.UnsubscribeEvent;
-import org.n52.client.view.gui.elements.interfaces.Layout;
+import org.n52.client.ses.ui.Layout;
 import org.n52.shared.serializable.pojos.BasicRuleDTO;
 import org.n52.shared.serializable.pojos.ComplexRuleDTO;
 import org.n52.shared.serializable.pojos.RuleDS;

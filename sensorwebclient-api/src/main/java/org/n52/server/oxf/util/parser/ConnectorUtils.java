@@ -23,6 +23,9 @@
  */
 package org.n52.server.oxf.util.parser;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.n52.server.oxf.util.ConfigurationContext.SERVER_TIMEOUT;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -67,15 +70,15 @@ public class ConnectorUtils {
             };
             FutureTask<ServiceDescriptor> t = new FutureTask<ServiceDescriptor>(callable);
             AccessorThreadPool.execute(t);
-            return t.get(ConfigurationContext.SERVER_TIMEOUT, TimeUnit.MILLISECONDS);
+            return t.get(SERVER_TIMEOUT, MILLISECONDS);
         } catch (InterruptedException e) {
             LOGGER.warn("Requesting capabilities of '{}' was interrupted.", sosUrl, e);
 //            throw new IllegalStateException(String.format("Service descriptor unaccessable: %s ", sosUrl));
         }
         catch (ExecutionException e) {
             StringBuilder sb = new StringBuilder();
-            sb.append("Error executing capabilities request.");
-            sb.append("SOS URL: '").append(sosUrl).append("'");
+            sb.append("Error executing capabilities request,  ");
+            sb.append("SOS URL: '").append(sosUrl).append("', ");
             sb.append("SOSAdapter: ").append(adapter.getClass().getName());
             LOGGER.warn(sb.toString(), e.getCause());
 //            throw new IllegalStateException(String.format("Service descriptor unaccessable: %s ", sosUrl));

@@ -57,6 +57,8 @@ public class SOSAdapterByGET extends SOSAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSAdapterByGET.class);
 
+    private static final int SOCKET_TIMEOUT = 30000;
+
     private HttpClient httpClient;
     
     /**
@@ -69,7 +71,7 @@ public class SOSAdapterByGET extends SOSAdapter {
      *        the SOS version
      */
     public SOSAdapterByGET(String sosVersion) {
-        super(sosVersion);
+        super(sosVersion, new SimpleHttpClient(5000, SOCKET_TIMEOUT));
         setRequestBuilder(new SOSRequestBuilderGET_200());
         HttpClient proxyAwareClient = new ProxyAwareHttpClient(new SimpleHttpClient());
         httpClient = new GzipEnabledHttpClient(proxyAwareClient);
@@ -92,6 +94,7 @@ public class SOSAdapterByGET extends SOSAdapter {
      */
     public SOSAdapterByGET(String sosVersion, ISOSRequestBuilder requestBuilder) {
         super(sosVersion, new SOSRequestBuilderGET_200());
+        setHttpClient(new SimpleHttpClient(5000, SOCKET_TIMEOUT));
         LOGGER.warn("This is a deprecated constructor and will be removed soon w/o notice.");
     }
 

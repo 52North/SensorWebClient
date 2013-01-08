@@ -32,7 +32,7 @@ import org.n52.client.ses.data.UserDS;
 import org.n52.client.ses.data.UserRecord;
 import org.n52.client.ses.event.DeleteUserEvent;
 import org.n52.client.ses.event.GetAllUsersEvent;
-import org.n52.client.view.gui.elements.interfaces.Layout;
+import org.n52.client.ses.ui.Layout;
 import org.n52.client.view.gui.widgets.CreateNewUserWindow;
 import org.n52.client.view.gui.widgets.EditUserWindow;
 import org.n52.shared.serializable.pojos.UserDTO;

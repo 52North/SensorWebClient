@@ -23,18 +23,25 @@
  */
 package org.n52.server.service;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_OUTPUT_FORMAT;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_DESCRIPTION_FORMAT;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_PARAMETER;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_SERVICE_PARAMETER;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_VERSION_PARAMETER;
+import static org.n52.oxf.sos.adapter.SOSAdapter.DESCRIBE_SENSOR;
+import static org.n52.server.oxf.util.ConfigurationContext.SERVER_TIMEOUT;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
 
 import org.n52.client.service.FileDataService;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
-import org.n52.oxf.sos.adapter.SOSAdapter;
 import org.n52.oxf.sos.util.SosUtil;
 import org.n52.oxf.util.IOHelper;
 import org.n52.oxf.util.JavaHelper;
@@ -179,25 +186,25 @@ public class FileDataServiceImpl implements FileDataService {
             String sosVersion = meta.getSosVersion();
             String procedureId = prop.getProcedure().getId();
             String smlVersion = meta.getSensorMLVersion();
-            paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_SERVICE_PARAMETER, "SOS");
-            paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_VERSION_PARAMETER, sosVersion);
-            paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_PARAMETER, procedureId);
+            paramCon.addParameterShell(DESCRIBE_SENSOR_SERVICE_PARAMETER, "SOS");
+            paramCon.addParameterShell(DESCRIBE_SENSOR_VERSION_PARAMETER, sosVersion);
+            paramCon.addParameterShell(DESCRIBE_SENSOR_PROCEDURE_PARAMETER, procedureId);
             if (SosUtil.isVersion100(sosVersion)) {
-                paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_OUTPUT_FORMAT, smlVersion);
+                paramCon.addParameterShell(DESCRIBE_SENSOR_OUTPUT_FORMAT, smlVersion);
             } else if (SosUtil.isVersion200(sosVersion)) {
-                paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_DESCRIPTION_FORMAT, smlVersion);
+                paramCon.addParameterShell(DESCRIBE_SENSOR_PROCEDURE_DESCRIPTION_FORMAT, smlVersion);
             } else {
                 throw new IllegalStateException("SOS Version (" + sosVersion + ") is not supported!");
             }
     
             ISOSRequestBuilder requestBuilder = SosRequestBuilderFactory.createRequestBuilder(sosVersion);
             SOSAdapter_OXFExtension adapter = new SOSAdapter_OXFExtension(sosVersion, requestBuilder);
-            Operation descSensorOperation = new Operation(SOSAdapter.DESCRIBE_SENSOR, sosUrl, sosUrl);
+            Operation descSensorOperation = new Operation(DESCRIBE_SENSOR, sosUrl, sosUrl);
             OperationAccessor callable = new OperationAccessor(adapter, descSensorOperation, paramCon);
             FutureTask<OperationResult> t = new FutureTask<OperationResult>(callable);
             try {
                 AccessorThreadPool.execute(t);
-                opResult = t.get(ConfigurationContext.SERVER_TIMEOUT, TimeUnit.MILLISECONDS);
+                opResult = t.get(SERVER_TIMEOUT, MILLISECONDS);
             } catch (java.util.concurrent.TimeoutException e) {
                 throw new TimeoutException("Server did not respond in time", e);
             }

@@ -91,11 +91,6 @@ public class View {
         tooltipElements = new ArrayList<Button>();
 
         mainPanel = new MainPanel();
-        mainPanel.setID("mainPanel");
-        mainPanel.setHeight("100%");
-        mainPanel.setWidth("100%");
-        mainPanel.setStyleName("sensorweb_client_mainLayout");
-        mainPanel.setOverflow(Overflow.HIDDEN);
         
         int fadeout = PropertiesManager.getInstance().getParamaterAsInt("toasterFadeout", 5);
         Toaster.createInstance("toaster", 400, 200, i18n.loggerWindowTitle(), mainPanel, fadeout * 1000);
