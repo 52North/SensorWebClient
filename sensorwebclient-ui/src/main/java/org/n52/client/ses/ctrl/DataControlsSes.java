@@ -29,7 +29,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.n52.client.control.PropertiesManager;
-import org.n52.client.control.sesTab.SesTabController;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.GetAllPublishedRulesEvent;

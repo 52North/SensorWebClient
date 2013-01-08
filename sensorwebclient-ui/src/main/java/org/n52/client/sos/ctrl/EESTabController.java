@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.client.control.eesTab;
+package org.n52.client.sos.ctrl;
 
 import java.util.ArrayList;
 
@@ -41,7 +41,6 @@ import org.n52.client.control.Application;
 import org.n52.client.control.Controller;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
-import org.n52.client.sos.ctrl.DataControlsEES;
 import org.n52.client.sos.event.DatesChangedEvent;
 import org.n52.client.sos.event.InitEvent;
 import org.n52.client.sos.event.ResizeEvent;
@@ -66,7 +65,7 @@ import org.n52.client.sos.event.handler.TabSelectedEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.sos.ui.EESTab;
-import org.n52.client.view.View;
+import org.n52.client.ui.View;
 import org.n52.client.view.gui.elements.ATabEventBroker;
 import org.n52.client.view.gui.elements.legend.LegendElement;
 

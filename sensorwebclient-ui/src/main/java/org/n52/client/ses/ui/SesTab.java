@@ -23,7 +23,7 @@
  */
 package org.n52.client.ses.ui;
 
-import org.n52.client.control.sesTab.SesTabController;
+import org.n52.client.ses.ctrl.SesTabController;
 import org.n52.client.ses.ui.Layout.Layouts;
 import org.n52.client.ses.ui.layout.AllRulesLayout;
 import org.n52.client.ses.ui.layout.CreateComplexRuleLayout;

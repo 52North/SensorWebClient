@@ -23,7 +23,6 @@
  */
 package org.n52.client.sos.ctrl;
 
-import org.n52.client.control.tableTab.TableTabController;
 
 public class DataControlsTable extends DataControlsTimeSeries {
 

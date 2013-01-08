@@ -25,7 +25,7 @@ package org.n52.client.sos.event.data;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.data.handler.NewTimeSeriesEventHandler;
-import org.n52.client.view.View;
+import org.n52.client.ui.View;
 import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;

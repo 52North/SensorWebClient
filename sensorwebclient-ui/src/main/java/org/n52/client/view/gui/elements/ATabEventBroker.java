@@ -25,7 +25,7 @@ package org.n52.client.view.gui.elements;
 
 import java.util.ArrayList;
 
-import org.n52.client.view.View;
+import org.n52.client.ui.View;
 import org.n52.client.view.gui.elements.legend.Legend;
 import org.n52.client.view.gui.elements.legend.LegendElement;
 

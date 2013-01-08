@@ -23,7 +23,7 @@
  */
 package org.n52.client.view.gui.widgets.buttons;
 
-import org.n52.client.view.View;
+import org.n52.client.ui.View;
 
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.Layout;

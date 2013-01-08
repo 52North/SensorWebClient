@@ -34,7 +34,7 @@ import org.n52.client.sos.event.data.UndoEvent;
 import org.n52.client.sos.event.handler.SwitchGridEventHandler;
 import org.n52.client.sos.ui.DiagramMoveZoomPresenter;
 import org.n52.client.sos.ui.DiagramMoveZoomToggleView;
-import org.n52.client.view.View;
+import org.n52.client.ui.View;
 import org.n52.client.view.gui.widgets.buttons.ImageButton;
 
 import com.smartgwt.client.widgets.Button;

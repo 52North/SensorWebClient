@@ -43,7 +43,7 @@ import org.n52.client.sos.event.data.handler.ExportFinishedEventHandler;
 import org.n52.client.sos.event.data.handler.FinishedLoadingTimeSeriesEventHandler;
 import org.n52.client.sos.event.handler.LegendElementSelectedEventHandler;
 import org.n52.client.sos.legend.TimeSeries;
-import org.n52.client.view.View;
+import org.n52.client.ui.View;
 import org.n52.client.view.gui.elements.DataPanel;
 import org.n52.client.view.gui.elements.DataPanelTab;
 

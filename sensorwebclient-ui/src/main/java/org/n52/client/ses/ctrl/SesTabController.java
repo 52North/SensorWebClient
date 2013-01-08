@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.control.sesTab;
+package org.n52.client.ses.ctrl;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
@@ -31,7 +31,6 @@ import org.n52.client.control.Controller;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.model.communication.requestManager.SesRequestManager;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
-import org.n52.client.ses.ctrl.DataControlsSes;
 import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.EditSimpleRuleEvent;
 import org.n52.client.ses.event.GetAllOtherRulesEvent;
@@ -59,9 +58,9 @@ import org.n52.client.sos.event.TimeSeriesChangedEvent;
 import org.n52.client.sos.event.handler.TabSelectedEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
 import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.ui.View;
 import org.n52.client.util.exceptions.ExceptionHandler;
 import org.n52.client.util.exceptions.GUIException;
-import org.n52.client.view.View;
 import org.n52.client.view.gui.elements.ATabEventBroker;
 import org.n52.client.view.gui.elements.legend.LegendElement;
 import org.n52.shared.responses.SesClientResponse;

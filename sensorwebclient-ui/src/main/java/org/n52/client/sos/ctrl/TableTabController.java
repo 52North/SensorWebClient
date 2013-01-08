@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.client.control.tableTab;
+package org.n52.client.sos.ctrl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +31,6 @@ import org.n52.client.control.Controller;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
 import org.n52.client.model.data.dataManagers.TimeManager;
-import org.n52.client.sos.ctrl.DataControlsTable;
 import org.n52.client.sos.event.LegendElementSelectedEvent;
 import org.n52.client.sos.event.ResizeEvent;
 import org.n52.client.sos.event.TabSelectedEvent;
@@ -49,9 +48,9 @@ import org.n52.client.sos.event.handler.TabSelectedEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.sos.ui.TableTab;
+import org.n52.client.ui.View;
 import org.n52.client.util.exceptions.ExceptionHandler;
 import org.n52.client.util.exceptions.GUIException;
-import org.n52.client.view.View;
 import org.n52.client.view.gui.elements.ATabEventBroker;
 import org.n52.client.view.gui.elements.legend.Legend;
 import org.n52.client.view.gui.elements.legend.LegendElement;
