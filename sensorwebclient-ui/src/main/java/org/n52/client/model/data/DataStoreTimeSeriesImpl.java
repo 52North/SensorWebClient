@@ -34,7 +34,7 @@ import java.util.Set;
 import org.eesgmbh.gimv.client.event.LoadImageDataEvent;
 import org.eesgmbh.gimv.client.event.SetDomainBoundsEvent;
 import org.eesgmbh.gimv.client.event.SetDomainBoundsEventHandler;
-import org.n52.client.eventBus.EventBus;
+import org.n52.client.bus.EventBus;
 import org.n52.client.sos.event.ChangeTimeSeriesStyleEvent;
 import org.n52.client.sos.event.DatesChangedEvent;
 import org.n52.client.sos.event.LegendElementSelectedEvent;

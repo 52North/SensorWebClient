@@ -25,8 +25,8 @@ package org.n52.client.sos.ctrl;
 
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
-import org.n52.client.eventBus.EventBus;
-import org.n52.client.eventBus.EventCallback;
+import org.n52.client.bus.EventBus;
+import org.n52.client.bus.EventCallback;
 import org.n52.client.sos.event.SwitchGridEvent;
 import org.n52.client.sos.event.data.RequestDataEvent;
 import org.n52.client.sos.event.data.SwitchAutoscaleEvent;

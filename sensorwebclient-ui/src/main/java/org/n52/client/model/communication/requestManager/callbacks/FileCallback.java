@@ -23,7 +23,7 @@
  */
 package org.n52.client.model.communication.requestManager.callbacks;
 
-import org.n52.client.eventBus.EventBus;
+import org.n52.client.bus.EventBus;
 import org.n52.client.model.communication.requestManager.SOSRequestManager;
 import org.n52.client.sos.event.data.ExportFinishedEvent;
 import org.n52.client.util.exceptions.ExceptionHandler;

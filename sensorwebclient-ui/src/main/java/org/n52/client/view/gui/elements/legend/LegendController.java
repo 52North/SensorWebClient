@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 
-import org.n52.client.eventBus.EventBus;
+import org.n52.client.bus.EventBus;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
 import org.n52.client.model.data.dataManagers.TimeManager;
 import org.n52.client.sos.event.LegendElementSelectedEvent;

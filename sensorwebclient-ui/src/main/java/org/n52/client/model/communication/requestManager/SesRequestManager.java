@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.n52.client.eventBus.EventBus;
+import org.n52.client.bus.EventBus;
 import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.EditSimpleRuleEvent;
 import org.n52.client.ses.event.GetAllOtherRulesEvent;

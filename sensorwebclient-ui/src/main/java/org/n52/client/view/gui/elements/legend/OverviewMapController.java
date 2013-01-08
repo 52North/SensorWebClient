@@ -27,7 +27,7 @@ import java.util.ArrayList;
 
 import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.gwtopenmaps.openlayers.client.Marker;
-import org.n52.client.eventBus.EventBus;
+import org.n52.client.bus.EventBus;
 import org.n52.client.sos.event.LegendElementSelectedEvent;
 import org.n52.client.sos.event.ResizeEvent;
 import org.n52.client.sos.event.TimeSeriesChangedEvent;

@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.client.eventBus.EventBus;
+import org.n52.client.bus.EventBus;
 import org.n52.client.sos.event.AddMarkerEvent;
 import org.n52.client.sos.event.data.NewPhenomenonsEvent;
 import org.n52.client.sos.event.data.NewStationPositionsEvent;

@@ -25,8 +25,8 @@ package org.n52.client.view.gui.elements;
 
 import java.util.ArrayList;
 
+import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.Application;
-import org.n52.client.eventBus.EventBus;
 import org.n52.client.sos.event.InitEvent;
 import org.n52.client.sos.event.ResizeEvent;
 import org.n52.client.sos.event.TabSelectedEvent;

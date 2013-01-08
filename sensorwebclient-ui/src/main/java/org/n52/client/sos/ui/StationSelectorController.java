@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.gwtopenmaps.openlayers.client.MapWidget;
-import org.n52.client.eventBus.EventBus;
+import org.n52.client.bus.EventBus;
 import org.n52.client.model.data.dataManagers.DataManagerSosImpl;
 import org.n52.client.sos.event.AddMarkerEvent;
 import org.n52.client.sos.event.data.GetFeatureEvent;

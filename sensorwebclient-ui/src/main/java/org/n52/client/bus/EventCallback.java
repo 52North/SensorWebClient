@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.client.eventBus;
+package org.n52.client.bus;
 
 /**
  * A generic callback interface. An asynchronous event have to implement this callback interface to be

@@ -27,7 +27,7 @@ import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
 import java.util.List;
 
-import org.n52.client.eventBus.EventBus;
+import org.n52.client.bus.EventBus;
 import org.n52.client.ses.data.UserDS;
 import org.n52.client.ses.data.UserRecord;
 import org.n52.client.ses.event.DeleteUserEvent;

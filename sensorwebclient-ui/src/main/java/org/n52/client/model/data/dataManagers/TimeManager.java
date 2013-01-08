@@ -28,8 +28,8 @@ import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.Stack;
 
+import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.PropertiesManager;
-import org.n52.client.eventBus.EventBus;
 import org.n52.client.sos.event.DatesChangedEvent;
 import org.n52.client.sos.event.data.OverviewIntervalChangedEvent;
 import org.n52.client.sos.event.data.OverviewIntervalChangedEvent.IntervalType;

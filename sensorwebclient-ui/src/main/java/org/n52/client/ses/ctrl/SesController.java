@@ -23,8 +23,8 @@
  */
 package org.n52.client.ses.ctrl;
 
+import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.ServiceController;
-import org.n52.client.eventBus.EventBus;
 import org.n52.client.model.communication.requestManager.SesRequestManager;
 import org.n52.client.ses.event.CopyEvent;
 import org.n52.client.ses.event.CreateComplexRuleEvent;

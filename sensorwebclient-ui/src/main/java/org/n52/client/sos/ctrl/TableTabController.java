@@ -27,8 +27,8 @@ package org.n52.client.sos.ctrl;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.Controller;
-import org.n52.client.eventBus.EventBus;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
 import org.n52.client.model.data.dataManagers.TimeManager;
 import org.n52.client.sos.event.LegendElementSelectedEvent;

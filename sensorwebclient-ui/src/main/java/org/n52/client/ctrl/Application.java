@@ -37,8 +37,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eesgmbh.gimv.client.event.StateChangeEvent;
-import org.n52.client.eventBus.EventBus;
-import org.n52.client.eventBus.EventCallback;
+import org.n52.client.bus.EventBus;
+import org.n52.client.bus.EventCallback;
 import org.n52.client.model.communication.requestManager.RequestManager;
 import org.n52.client.model.data.dataManagers.DataManagerSosImpl;
 import org.n52.client.model.data.dataManagers.TimeManager;

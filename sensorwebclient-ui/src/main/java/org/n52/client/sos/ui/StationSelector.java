@@ -34,7 +34,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.gwtopenmaps.openlayers.client.MapWidget;
-import org.n52.client.eventBus.EventBus;
+import org.n52.client.bus.EventBus;
 import org.n52.client.sos.event.data.NewTimeSeriesEvent;
 import org.n52.client.view.gui.widgets.LoadingSpinner;
 import org.n52.client.view.gui.widgets.Toaster;

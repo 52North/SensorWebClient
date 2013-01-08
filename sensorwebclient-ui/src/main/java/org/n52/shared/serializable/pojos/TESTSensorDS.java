@@ -28,7 +28,7 @@ import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.n52.client.eventBus.EventBus;
+import org.n52.client.bus.EventBus;
 import org.n52.client.ses.event.InformUserEvent;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.service.rpc.RpcSesDataSourceService;
