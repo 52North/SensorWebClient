@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.view.gui.elements.controlsImpl.ees;
+package org.n52.client.sos.ctrl;
 
 import static org.n52.client.sos.i18n.I18NStringsAccessor.i18n;
 
@@ -33,7 +33,6 @@ import org.n52.client.sos.event.data.SwitchAutoscaleEvent;
 import org.n52.client.sos.event.data.UndoEvent;
 import org.n52.client.sos.event.handler.SwitchGridEventHandler;
 import org.n52.client.view.View;
-import org.n52.client.view.gui.elements.controlsImpl.DataControlsTimeSeries;
 import org.n52.client.view.gui.widgets.buttons.DiagramMoveZoomPresenter;
 import org.n52.client.view.gui.widgets.buttons.DiagramMoveZoomToggleView;
 import org.n52.client.view.gui.widgets.buttons.ImageButton;

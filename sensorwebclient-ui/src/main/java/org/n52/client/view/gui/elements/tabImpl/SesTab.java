@@ -52,17 +52,13 @@ import com.smartgwt.client.widgets.layout.VLayout;
  */
 public class SesTab extends DataPanelTab {
 
-    /** The title. */
     private String title;
 
-    /** The parameterId. */
     private String id;
 
     // layouts
-    /** The layout. */
     private VLayout layout;
 
-    /** The register layout. */
     private RegisterLayout registerLayout;
 
     /** The login layout. */
@@ -116,12 +112,11 @@ public class SesTab extends DataPanelTab {
      *            the title
      */
     public SesTab(String id, String title) {
-
+        super("SesTab");
         this.controller = new SesTabController(this);
 
         this.id = id;
         this.title = title;
-        TAB_ID = "SesTab";
         init();
     }
 

@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.view.gui.elements.controlsImpl;
+package org.n52.client.sos.ctrl;
 
 import static org.n52.client.sos.i18n.I18NStringsAccessor.i18n;
 
@@ -52,6 +52,7 @@ import org.n52.client.sos.event.data.handler.StoreTimeSeriesLastValueEventHandle
 import org.n52.client.sos.event.handler.DatesChangedEventHandler;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.view.View;
+import org.n52.client.view.gui.elements.controlsImpl.DataControls;
 import org.n52.client.view.gui.elements.tabImpl.EESTab;
 import org.n52.client.view.gui.widgets.Toaster;
 import org.n52.client.view.gui.widgets.buttons.ImageButton;

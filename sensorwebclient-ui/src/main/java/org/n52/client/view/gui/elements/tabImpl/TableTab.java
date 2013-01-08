@@ -80,12 +80,11 @@ public class TableTab extends DataPanelTab {
      *            the title
      */
     public TableTab(String id, String title) {
-
+        super("TableTab");
         this.controller = new TableTabController(this);
 
         this.id = id;
         this.title = title;
-        TAB_ID = "TableTab";
         
         VStack dragStack = new VStack();
         

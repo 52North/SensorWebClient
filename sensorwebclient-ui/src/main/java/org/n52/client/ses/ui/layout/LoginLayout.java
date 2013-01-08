@@ -26,8 +26,8 @@ package org.n52.client.ses.ui.layout;
 import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
 
 import org.n52.client.eventBus.EventBus;
+import org.n52.client.ses.ctrl.DataControlsSes;
 import org.n52.client.ses.event.LoginEvent;
-import org.n52.client.view.gui.elements.controlsImpl.DataControlsSes;
 import org.n52.client.view.gui.elements.interfaces.Layout;
 import org.n52.client.view.gui.elements.tabImpl.SesTab;
 

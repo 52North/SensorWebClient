@@ -96,6 +96,7 @@ public class EESTab extends DataPanelTab {
     
 
     public EESTab(String ID, String title) {
+        super("DiagramTab");
     	layout = new Layout();
     	
         MousePointerDomainBoundsHandler listener = new MousePointerDomainBoundsHandler();
@@ -106,7 +107,6 @@ public class EESTab extends DataPanelTab {
         setID(ID);
         setTitle(title);
         setIcon("../img/icons/chart_curve.png");
-        TAB_ID = "DiagramTab";
     }
 
     public static int getPanelHeight() {

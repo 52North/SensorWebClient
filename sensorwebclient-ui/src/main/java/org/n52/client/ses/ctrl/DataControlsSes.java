@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.view.gui.elements.controlsImpl;
+package org.n52.client.ses.ctrl;
 
 import static org.n52.client.ses.i18n.I18NStringsAccessor.i18n;
 
@@ -35,6 +35,7 @@ import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.GetAllPublishedRulesEvent;
 import org.n52.client.ses.event.GetStationsEvent;
 import org.n52.client.ses.event.LogoutEvent;
+import org.n52.client.view.gui.elements.controlsImpl.DataControls;
 import org.n52.client.view.gui.elements.interfaces.Layout.Layouts;
 import org.n52.client.view.gui.elements.tabImpl.SesTab;
 import org.n52.shared.serializable.pojos.UserRole;

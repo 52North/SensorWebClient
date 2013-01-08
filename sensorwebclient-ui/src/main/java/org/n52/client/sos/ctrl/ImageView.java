@@ -1,3 +1,4 @@
+package org.n52.client.sos.ctrl;
 /**
  * ﻿Copyright (C) 2012
  * by 52 North Initiative for Geospatial Open Source Software GmbH

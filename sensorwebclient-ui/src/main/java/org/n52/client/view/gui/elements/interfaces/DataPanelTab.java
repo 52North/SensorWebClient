@@ -27,27 +27,18 @@ import org.n52.client.view.gui.elements.controlsImpl.DataControls;
 
 import com.smartgwt.client.widgets.tab.Tab;
 
-/**
- * The Class DataPanelTab.
- * 
- * @author <a href="mailto:f.bache@52north.de">Felix Bache</a>
- */
 public abstract class DataPanelTab extends Tab {
 
-    /**
-     * Tab ID
-     */
-    public static String TAB_ID = null;
+    private static String TAB_ID = null;
 
-    /**
-     * Gets the data controls.
-     * 
-     * @return DataControls
-     */
+    public DataPanelTab(String tabId) {
+        TAB_ID = tabId;
+    }
+
     public abstract DataControls getDataControls();
 
     /**
-     * @return A String ID to clearyl identify the tab while loading
+     * @return A String ID to clearly identify the tab while loading
      */
     public static String getTabIdentifier() {
         return TAB_ID;
