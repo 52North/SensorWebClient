@@ -29,6 +29,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.n52.client.bus.EventBus;
+import org.n52.client.ctrl.DataControls;
 import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.GetAllPublishedRulesEvent;
@@ -36,7 +37,6 @@ import org.n52.client.ses.event.GetStationsEvent;
 import org.n52.client.ses.event.LogoutEvent;
 import org.n52.client.ses.ui.SesTab;
 import org.n52.client.ses.ui.Layout.Layouts;
-import org.n52.client.view.gui.elements.ctrl.DataControls;
 import org.n52.shared.serializable.pojos.UserRole;
 
 import com.google.gwt.core.client.GWT;

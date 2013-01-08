@@ -23,6 +23,7 @@
  */
 package org.n52.client.ses.ui;
 
+import org.n52.client.ctrl.DataControls;
 import org.n52.client.ses.ctrl.SesTabController;
 import org.n52.client.ses.ui.Layout.Layouts;
 import org.n52.client.ses.ui.layout.AllRulesLayout;
@@ -40,7 +41,6 @@ import org.n52.client.ses.ui.layout.UserRuleLayout;
 import org.n52.client.ses.ui.layout.UserSubscriptionsLayout;
 import org.n52.client.ses.ui.layout.WelcomeLayout;
 import org.n52.client.view.gui.elements.DataPanelTab;
-import org.n52.client.view.gui.elements.ctrl.DataControls;
 
 import com.smartgwt.client.widgets.layout.VLayout;
 

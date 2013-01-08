@@ -21,20 +21,50 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.view.gui.elements.ctrl;
+package org.n52.client.ctrl;
 
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.layout.VLayout;
+/**
+ * The Class DateAction.
+ * 
+ * @author <a href="mailto:f.bache@52north.de">Felix Bache</a>
+ */
+public class DateAction {
 
-public abstract class DataControls extends VLayout {
+    /** The begin. */
+    private long begin;
 
-    public static final int CONTROL_HEIGHT = 30;
+    /** The end. */
+    private long end;
 
-    public Canvas getControls() {
-        return null;
+    /**
+     * Instantiates a new date action.
+     * 
+     * @param begin
+     *            the begin
+     * @param end
+     *            the end
+     */
+    public DateAction(long begin, long end) {
+        this.begin = begin;
+        this.end = end;
     }
 
-    public abstract int getControlHeight();
+    /**
+     * Gets the begin.
+     * 
+     * @return the begin
+     */
+    public long getBegin() {
+        return this.begin;
+    }
 
-    public abstract int getControlWidth();
+    /**
+     * Gets the end.
+     * 
+     * @return the end
+     */
+    public long getEnd() {
+        return this.end;
+    }
+
 }

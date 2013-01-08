@@ -22,10 +22,11 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.client.ctrl;
+package org.n52.client.util;
 
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
+import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.view.gui.widgets.Toaster;
 
 import com.google.gwt.core.client.GWT;

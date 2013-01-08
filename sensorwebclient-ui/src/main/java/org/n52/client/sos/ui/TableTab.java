@@ -30,10 +30,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.n52.client.ctrl.DataControls;
 import org.n52.client.sos.ctrl.TableTabController;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.view.gui.elements.DataPanelTab;
-import org.n52.client.view.gui.elements.ctrl.DataControls;
 import org.n52.client.view.gui.elements.legend.LegendElement;
 
 import com.google.gwt.core.client.GWT;

@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.ctrl;
+package org.n52.client;
 
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 import static org.n52.ext.link.sos.PermalinkParameter.BEGIN;
@@ -39,7 +39,10 @@ import java.util.Map;
 import org.eesgmbh.gimv.client.event.StateChangeEvent;
 import org.n52.client.bus.EventBus;
 import org.n52.client.bus.EventCallback;
-import org.n52.client.model.TimeManager;
+import org.n52.client.ctrl.PermaLinkController;
+import org.n52.client.ctrl.PropertiesManager;
+import org.n52.client.ctrl.RequestManager;
+import org.n52.client.ctrl.TimeManager;
 import org.n52.client.ses.ctrl.SesController;
 import org.n52.client.sos.ctrl.DataManagerSosImpl;
 import org.n52.client.sos.ctrl.SOSController;

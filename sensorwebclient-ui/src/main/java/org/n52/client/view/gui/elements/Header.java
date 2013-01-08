@@ -29,8 +29,8 @@ import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.Date;
 
+import org.n52.client.ctrl.TimeManager;
 import org.n52.client.model.DataStoreTimeSeriesImpl;
-import org.n52.client.model.TimeManager;
 import org.n52.client.sos.ctrl.DataManagerSosImpl;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.view.gui.widgets.Toaster;

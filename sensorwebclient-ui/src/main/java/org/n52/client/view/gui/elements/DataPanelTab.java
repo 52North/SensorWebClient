@@ -23,7 +23,7 @@
  */
 package org.n52.client.view.gui.elements;
 
-import org.n52.client.view.gui.elements.ctrl.DataControls;
+import org.n52.client.ctrl.DataControls;
 
 import com.smartgwt.client.widgets.tab.Tab;
 

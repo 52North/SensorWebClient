@@ -32,11 +32,11 @@ import java.util.List;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.bus.EventCallback;
-import org.n52.client.ctrl.ClientUtils;
+import org.n52.client.ctrl.DataControls;
 import org.n52.client.ctrl.LoaderManager;
 import org.n52.client.ctrl.PropertiesManager;
+import org.n52.client.ctrl.TimeManager;
 import org.n52.client.model.DataStoreTimeSeriesImpl;
-import org.n52.client.model.TimeManager;
 import org.n52.client.sos.event.DatesChangedEvent;
 import org.n52.client.sos.event.SwitchGridEvent;
 import org.n52.client.sos.event.data.ExportEvent;
@@ -54,7 +54,7 @@ import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.sos.ui.EESTab;
 import org.n52.client.sos.ui.InteractionWindow;
 import org.n52.client.ui.View;
-import org.n52.client.view.gui.elements.ctrl.DataControls;
+import org.n52.client.util.ClientUtils;
 import org.n52.client.view.gui.widgets.Toaster;
 import org.n52.client.view.gui.widgets.buttons.ImageButton;
 

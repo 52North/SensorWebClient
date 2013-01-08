@@ -26,7 +26,7 @@ package org.n52.client.sos.legend;
 
 import java.util.HashMap;
 
-import org.n52.client.ctrl.ClientUtils;
+import org.n52.client.util.ClientUtils;
 import org.n52.client.util.exceptions.DataparsingException;
 import org.n52.client.view.gui.elements.legend.LegendData;
 import org.n52.client.view.gui.elements.legend.LegendElement;
