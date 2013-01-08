@@ -23,11 +23,11 @@
  */
 package org.n52.client.model.communication.requestManager.callbacks;
 
-import org.n52.client.model.communication.requestManager.Callback;
+import org.n52.client.model.communication.requestManager.ServerCallback;
 import org.n52.client.model.communication.requestManager.RequestManager;
 import org.n52.shared.responses.RepresentationResponse;
 
-public abstract class GetFileCallback extends Callback<RepresentationResponse> {
+public abstract class GetFileCallback extends ServerCallback<RepresentationResponse> {
 
     public GetFileCallback(RequestManager requestMgr, String errorMsg) {
         super(requestMgr, errorMsg);

@@ -23,11 +23,11 @@
  */
 package org.n52.client.model.communication.requestManager.callbacks;
 
-import org.n52.client.model.communication.requestManager.Callback;
+import org.n52.client.model.communication.requestManager.ServerCallback;
 import org.n52.client.model.communication.requestManager.RequestManager;
 import org.n52.shared.responses.SensorMetadataResponse;
 
-public abstract class SensorMetadataCallback extends Callback<SensorMetadataResponse> {
+public abstract class SensorMetadataCallback extends ServerCallback<SensorMetadataResponse> {
 
     public SensorMetadataCallback(RequestManager requestMgr, String errorMsg) {
         super(requestMgr, errorMsg);

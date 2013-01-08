@@ -23,11 +23,11 @@
  */
 package org.n52.client.model.communication.requestManager.callbacks;
 
-import org.n52.client.model.communication.requestManager.Callback;
+import org.n52.client.model.communication.requestManager.ServerCallback;
 import org.n52.client.model.communication.requestManager.RequestManager;
 import org.n52.shared.responses.GetPhenomenonResponse;
 
-public abstract class GetPhenomenaCallback extends Callback<GetPhenomenonResponse> {
+public abstract class GetPhenomenaCallback extends ServerCallback<GetPhenomenonResponse> {
 
     public GetPhenomenaCallback(RequestManager requestMgr, String errorMsg) {
         super(requestMgr, errorMsg);

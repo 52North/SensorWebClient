@@ -23,12 +23,12 @@
  */
 package org.n52.client.model.communication.requestManager.callbacks;
 
-import org.n52.client.model.communication.requestManager.Callback;
+import org.n52.client.model.communication.requestManager.ServerCallback;
 import org.n52.client.model.communication.requestManager.RequestManager;
 import org.n52.shared.responses.GetProcedureResponse;
 
 public abstract class GetProcedureCallback extends
-		Callback<GetProcedureResponse> {
+		ServerCallback<GetProcedureResponse> {
 
 	public GetProcedureCallback(RequestManager requestMgr,
 			String errorMsg) {

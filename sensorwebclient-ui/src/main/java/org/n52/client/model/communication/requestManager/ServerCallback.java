@@ -28,12 +28,12 @@ import org.n52.client.util.exceptions.RequestFailedException;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public abstract class Callback<T> implements AsyncCallback<T> {
+public abstract class ServerCallback<T> implements AsyncCallback<T> {
     
     protected RequestManager requestMgr;
     protected String errorMsg = "Request failed.";
 
-    public Callback(RequestManager requestMgr, String errorMsg) {
+    public ServerCallback(RequestManager requestMgr, String errorMsg) {
         this.requestMgr = requestMgr;
         this.errorMsg  = errorMsg;
     }
