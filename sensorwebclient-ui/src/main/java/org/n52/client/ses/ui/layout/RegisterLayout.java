@@ -29,8 +29,8 @@ import java.util.Date;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.PropertiesManager;
-import org.n52.client.model.communication.requestManager.SesRequestManager;
 import org.n52.client.ses.ctrl.DataControlsSes;
+import org.n52.client.ses.ctrl.SesRequestManager;
 import org.n52.client.ses.event.GetTermsOfUseEvent;
 import org.n52.client.ses.event.RegisterUserEvent;
 import org.n52.client.ses.ui.Layout;

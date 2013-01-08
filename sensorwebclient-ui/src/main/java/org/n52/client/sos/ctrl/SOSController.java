@@ -32,7 +32,6 @@ import org.eesgmbh.gimv.client.event.SetOverviewDomainBoundsEvent;
 import org.eesgmbh.gimv.client.event.SetOverviewDomainBoundsEventHandler;
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.ServiceController;
-import org.n52.client.model.communication.requestManager.SOSRequestManager;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
 import org.n52.client.model.data.dataManagers.DataManagerSosImpl;
 import org.n52.client.sos.event.data.ExportEvent;
@@ -71,6 +70,10 @@ import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import com.google.gwt.core.client.GWT;
 
 public class SOSController extends ServiceController {
+
+    public static final String SOS_PARAM_FIRST = "getFirst";
+
+    public static final String SOS_PARAM_LAST = "latest";
 
     protected boolean isAddingNewTimeSeries;
     

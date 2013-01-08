@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import org.n52.client.bus.EventBus;
-import org.n52.client.model.communication.requestManager.SesRequestManager;
+import org.n52.client.ses.ctrl.SesRequestManager;
 import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.CreateSimpleRuleEvent;
 import org.n52.client.ses.event.GetPhenomenaEvent;

@@ -22,8 +22,10 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.client.model.communication.requestManager;
+package org.n52.client.sos.ctrl;
 
+import static org.n52.client.sos.ctrl.SOSController.SOS_PARAM_FIRST;
+import static org.n52.client.sos.ctrl.SOSController.SOS_PARAM_LAST;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.ArrayList;
@@ -45,7 +47,7 @@ import org.eesgmbh.gimv.shared.util.ImageEntity;
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.Application;
 import org.n52.client.ctrl.PropertiesManager;
-import org.n52.client.ctrl.ServiceController;
+import org.n52.client.model.communication.requestManager.RequestManager;
 import org.n52.client.model.communication.requestManager.callbacks.EESDataCallback;
 import org.n52.client.model.communication.requestManager.callbacks.FileCallback;
 import org.n52.client.model.communication.requestManager.callbacks.GetFeatureCallback;
@@ -226,11 +228,10 @@ public class SOSRequestManager extends RequestManager {
             ArrayList<TimeSeriesProperties> series = new ArrayList<TimeSeriesProperties>();
             series.add(timeSeries.getProperties());
 
-            String firstValue = ServiceController.SOS_PARAM_FIRST;
             boolean grid = DataStoreTimeSeriesImpl.getInst().isGridEnabled();
             long begin = TimeManager.getInst().getBegin();
             long end = TimeManager.getInst().getEnd();
-            DesignOptions options = new DesignOptions(series, begin, end, firstValue, grid);
+            DesignOptions options = new DesignOptions(series, begin, end, SOS_PARAM_FIRST, grid);
             requestFirstValueFromTimeSeries(new TimeSeriesDataRequest(options), timeSeries);
         }
         catch (TimeoutException ex) {
@@ -245,11 +246,10 @@ public class SOSRequestManager extends RequestManager {
         try {
             ArrayList<TimeSeriesProperties> series = new ArrayList<TimeSeriesProperties>();
             series.add(timeSeries.getProperties());
-            String lastValue = ServiceController.SOS_PARAM_LAST;
             boolean grid = DataStoreTimeSeriesImpl.getInst().isGridEnabled();
             long begin = TimeManager.getInst().getBegin();
             long end = TimeManager.getInst().getEnd();
-            DesignOptions options = new DesignOptions(series, begin, end, lastValue, grid);
+            DesignOptions options = new DesignOptions(series, begin, end, SOS_PARAM_LAST, grid);
             requestLastTimeSeriesData(new TimeSeriesDataRequest(options), timeSeries);
         }
         catch (TimeoutException ex) {

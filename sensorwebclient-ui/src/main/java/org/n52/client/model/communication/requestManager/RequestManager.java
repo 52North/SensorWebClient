@@ -31,18 +31,18 @@ public abstract class RequestManager {
 
     private static int requestCount = 0;
 
-    protected void removeRequest(long duration) {
+    public void removeRequest(long duration) {
         if (!GWT.isProdMode()) GWT.log("Request took " + duration + "ms");
         if (requestCount > 0) requestCount--;
         LoaderManager.getInstance().removeActiveRequest();
     }
 
-    protected void addRequest() {
+    public void addRequest() {
         requestCount++;
         LoaderManager.getInstance().addActiveRequest();
     }
 
-    protected void removeRequest() {
+    public void removeRequest() {
         if (requestCount > 0) requestCount--;
         LoaderManager.getInstance().removeActiveRequest();
     }

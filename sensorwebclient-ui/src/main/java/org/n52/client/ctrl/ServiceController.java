@@ -25,9 +25,5 @@ package org.n52.client.ctrl;
 
 public abstract class ServiceController {
 
-    public static final String SOS_PARAM_FIRST = "getFirst";
-
-    public static final String SOS_PARAM_LAST = "latest";
-
     // just for architectural reasons
 }

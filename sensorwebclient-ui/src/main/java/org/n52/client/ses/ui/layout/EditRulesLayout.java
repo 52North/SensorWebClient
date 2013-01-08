@@ -28,7 +28,7 @@ import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import java.util.ArrayList;
 
 import org.n52.client.bus.EventBus;
-import org.n52.client.model.communication.requestManager.SesRequestManager;
+import org.n52.client.ses.ctrl.SesRequestManager;
 import org.n52.client.ses.data.RuleRecord;
 import org.n52.client.ses.event.CopyEvent;
 import org.n52.client.ses.event.DeleteRuleEvent;
