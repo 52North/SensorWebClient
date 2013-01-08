@@ -32,8 +32,6 @@ import org.n52.client.sos.event.data.RequestDataEvent;
 import org.n52.client.sos.event.data.SwitchAutoscaleEvent;
 import org.n52.client.sos.event.data.UndoEvent;
 import org.n52.client.sos.event.handler.SwitchGridEventHandler;
-import org.n52.client.sos.ui.DiagramMoveZoomPresenter;
-import org.n52.client.sos.ui.DiagramMoveZoomToggleView;
 import org.n52.client.ui.View;
 import org.n52.client.view.gui.widgets.buttons.ImageButton;
 
@@ -81,17 +79,7 @@ public class DataControlsEES extends DataControlsTimeSeries implements SwitchGri
 			
 			@Override
 			public void onClick(ClickEvent event) {
-//				View.getInstance().getDataPanel().setWidth100();
-//                View.getInstance().getDataPanel().setHeight100();
-//
-//                org.n52.client.eventBus.events.TabSelectedEvent customEvent;
-//                customEvent = new org.n52.client.eventBus.events.TabSelectedEvent(View.getInstance().getSesTab());
-//                EventBus.getMainEventBus().fireEvent(customEvent);
-				
 				View.getInstance().getDataPanel().getPanel().selectTab(View.getInstance().getSesTab());
-				
-//				View.getInstance().getDataPanel().setCurrentTab(View.getInstance().getSesTab());
-//				View.getInstance().getDataPanel().update();
 			}
 		});
         
@@ -138,34 +126,8 @@ public class DataControlsEES extends DataControlsTimeSeries implements SwitchGri
         });
 
         this.controlButtons.addMember(this.grid);
-
-        DiagramMoveZoomToggleView moveZoom = new DiagramMoveZoomToggleView(this.move, this.bbox);
-		DiagramMoveZoomPresenter moveZoomPresenter = new DiagramMoveZoomPresenter(moveZoom, EventBus.getMainEventBus());
-//        moveZoomPresenter.getHandlerManager().fireEvent(
-//                StateChangeEvent.createMove());
-//        moveZoomPresenter.getHandlerManager().fireEvent(
-//                StateChangeEvent.createMove());
-        
-//        getButtonLayout().addMember(this.grid, 15);
-//        getButtonLayout().addMember(this.autoScale, 15);
-        
-//        getButtonLayout().addMember(moveZoom.getMoveButton(), 15);
-        
-        
-//        getTopLayout().addMember(this.grid, 15);
-//        getTopLayout().addMember(this.autoScale, 15);
-//        getTopLayout().addMember(this.undo, 15);
-//        getTopLayout().addMember(this.sesTabButton, 15);
-//        getTopLayout().addMember(moveZoom.getZoomButton(), 15);
-//        getTopLayout().addMember(moveZoom.getMoveButton(), 15);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.n52.client.eventBus.events.handler.SwitchGridEventHandler#onSwitch()
-     */
     public void onSwitch() {
         if (this.isGrid) {
             this.grid.setSrc("../img/icons/grid_off.png");

@@ -76,9 +76,9 @@ public class ExceptionHandler {
     public static void handleUnexpectedException(Exception e) {
         Toaster t = Toaster.getInstance();
         StringBuilder sb = new StringBuilder();
-        sb.append("Unexpected Exception occured: \n");
-        sb.append(e.getMessage());
-        sb.append("Caused: \n");
+        sb.append("Unexpected Exception occured. Msg: \"");
+        sb.append(e.getMessage()).append("\"");
+        sb.append(", CausedBy: ");
         sb.append(e.getCause());
         t.addErrorMessage(sb.toString());
         if (!GWT.isProdMode()) GWT.log(sb.toString(), e);

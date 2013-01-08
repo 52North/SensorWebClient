@@ -175,17 +175,17 @@ public class StationSelectorMap extends OpenLayersMapWrapper {
         map.zoomToExtent(markers.getDataExtent());
     }
 
-    public void addStationToMap(final Station station) {
-        InfoMarker infoMarker = InfoMarker.createInfoMarker(station, controller);
-        infoMarker.registerHoverHandler();
-        addMarker(infoMarker);
-    }
-
     public void updateStations(final SOSMetadata metadata) {
         clearMap();
         for (Station station : metadata.getStations()) {
             addStationToMap(station);
         }
+    }
+
+    public void addStationToMap(final Station station) {
+        InfoMarker infoMarker = InfoMarker.createInfoMarker(station, controller);
+        infoMarker.registerHoverHandler();
+        addMarker(infoMarker);
     }
 
     public void selectMarker(InfoMarker infoMarker) {
