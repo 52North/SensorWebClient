@@ -21,29 +21,21 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.util.exceptions;
+package org.n52.client.sos;
 
 import org.n52.shared.MetaException;
 
-/**
- * The Class RequestFailedException.
- * 
- * @author <a href="mailto:f.bache@52north.de">Felix Bache</a>
- */
-public class RequestFailedException extends MetaException {
+public class DataparsingException extends MetaException {
+    
+    private static final long serialVersionUID = 8707264775573493332L;
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1981704499586890849L;
+    public DataparsingException(String message) {
+        super(message);
+    }
 
-    public RequestFailedException(String string, Throwable cause) {
+    public DataparsingException(String string, Throwable cause) {
         super(string, cause);
         this.weight = ExceptionWeight.severe;
     }
-
-    public RequestFailedException(String message) {
-        super(message);
-    }
     
-    
-
 }

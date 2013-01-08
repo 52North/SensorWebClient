@@ -29,9 +29,9 @@ import java.util.ArrayList;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.ctrl.SesRequestManager;
-import org.n52.client.ses.data.RuleRecord;
 import org.n52.client.ses.event.UnsubscribeEvent;
 import org.n52.client.ses.ui.Layout;
+import org.n52.client.ses.ui.RuleRecord;
 import org.n52.shared.serializable.pojos.BasicRuleDTO;
 import org.n52.shared.serializable.pojos.ComplexRuleDTO;
 import org.n52.shared.serializable.pojos.RuleDS;

@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.client.model;
+package org.n52.client.sos.data;
 
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
@@ -35,6 +35,9 @@ import org.eesgmbh.gimv.client.event.LoadImageDataEvent;
 import org.eesgmbh.gimv.client.event.SetDomainBoundsEvent;
 import org.eesgmbh.gimv.client.event.SetDomainBoundsEventHandler;
 import org.n52.client.bus.EventBus;
+import org.n52.client.ctrl.ExceptionHandler;
+import org.n52.client.model.ADataStore;
+import org.n52.client.sos.DataparsingException;
 import org.n52.client.sos.event.ChangeTimeSeriesStyleEvent;
 import org.n52.client.sos.event.DatesChangedEvent;
 import org.n52.client.sos.event.LegendElementSelectedEvent;
@@ -69,8 +72,6 @@ import org.n52.client.ui.Toaster;
 import org.n52.client.ui.legend.LegendDataComparator;
 import org.n52.client.ui.legend.LegendElement;
 import org.n52.client.ui.legend.LegendEntryTimeSeries;
-import org.n52.client.util.exceptions.DataparsingException;
-import org.n52.client.util.exceptions.ExceptionHandler;
 import org.n52.shared.serializable.pojos.Axis;
 
 public class DataStoreTimeSeriesImpl extends ADataStore<TimeSeries> {

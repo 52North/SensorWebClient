@@ -29,7 +29,6 @@ import java.util.Date;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.ctrl.SesRequestManager;
-import org.n52.client.ses.data.UserRecord;
 import org.n52.client.ses.event.UpdateUserEvent;
 import org.n52.shared.serializable.pojos.UserDTO;
 import org.n52.shared.serializable.pojos.UserRole;

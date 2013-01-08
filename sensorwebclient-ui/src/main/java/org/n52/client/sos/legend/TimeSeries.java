@@ -26,13 +26,13 @@ package org.n52.client.sos.legend;
 
 import java.util.HashMap;
 
+import org.n52.client.sos.DataparsingException;
 import org.n52.client.ui.legend.LegendData;
 import org.n52.client.ui.legend.LegendElement;
 import org.n52.client.ui.legend.LegendEntryTimeSeries;
 import org.n52.client.ui.map.Coordinate;
 import org.n52.client.ui.map.OpenLayersMapWrapper;
 import org.n52.client.util.ClientUtils;
-import org.n52.client.util.exceptions.DataparsingException;
 import org.n52.shared.serializable.pojos.Axis;
 import org.n52.shared.serializable.pojos.TimeSeriesProperties;
 import org.n52.shared.serializable.pojos.sos.Procedure;
@@ -84,8 +84,7 @@ public class TimeSeries implements LegendData {
 		// this.legendElement = new LegendEntryTimeSeries(this, "320px", "30");
 	}
 
-	public void addData(HashMap<Long, String> datamap)
-			throws DataparsingException {
+	public void addData(HashMap<Long, String> datamap) throws DataparsingException {
 		try {
 			// TODO do it this way, when enable caching
 			// this.data.putAll(data);

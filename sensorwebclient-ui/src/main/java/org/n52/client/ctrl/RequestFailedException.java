@@ -21,18 +21,23 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.util.exceptions;
+package org.n52.client.ctrl;
 
-class CapabilitiesException extends RequestFailedException {
+import org.n52.shared.MetaException;
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 5262005059514079615L;
+public class RequestFailedException extends MetaException {
 
-    public CapabilitiesException(String string, Throwable cause) {
+    private static final long serialVersionUID = 1981704499586890849L;
+
+    public RequestFailedException(String string, Throwable cause) {
         super(string, cause);
+        this.weight = ExceptionWeight.severe;
     }
 
-    public CapabilitiesException(String message) {
+    public RequestFailedException(String message) {
         super(message);
     }
+    
+    
+
 }

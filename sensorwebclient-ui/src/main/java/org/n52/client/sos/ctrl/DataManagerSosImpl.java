@@ -32,6 +32,9 @@ import java.util.Set;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.DataManager;
+import org.n52.client.ctrl.ExceptionHandler;
+import org.n52.client.ctrl.RequestFailedException;
+import org.n52.client.sos.DataparsingException;
 import org.n52.client.sos.event.AddMarkerEvent;
 import org.n52.client.sos.event.data.NewPhenomenonsEvent;
 import org.n52.client.sos.event.data.NewStationPositionsEvent;
@@ -41,9 +44,6 @@ import org.n52.client.sos.event.data.StoreStationsEvent;
 import org.n52.client.sos.event.data.handler.StorePhenomenaEventHandler;
 import org.n52.client.sos.event.data.handler.StoreSOSMetadataEventHandler;
 import org.n52.client.sos.event.data.handler.StoreStationsEventHandler;
-import org.n52.client.util.exceptions.DataparsingException;
-import org.n52.client.util.exceptions.ExceptionHandler;
-import org.n52.client.util.exceptions.RequestFailedException;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
@@ -103,7 +103,6 @@ public class DataManagerSosImpl implements DataManager<SOSMetadata> {
 		}
 
 		public void onStore(StoreStationsEvent evt) {
-
 			SOSMetadata metadata = getServiceMetadata(evt.getSosURL());
 			if (metadata == null) {
 				String reason = "An unknown SERVICES instance was requested.";

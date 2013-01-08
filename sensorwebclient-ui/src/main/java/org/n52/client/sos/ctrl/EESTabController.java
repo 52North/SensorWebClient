@@ -41,7 +41,7 @@ import org.n52.client.Application;
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.ATabEventBroker;
 import org.n52.client.ctrl.Controller;
-import org.n52.client.model.DataStoreTimeSeriesImpl;
+import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
 import org.n52.client.sos.event.DatesChangedEvent;
 import org.n52.client.sos.event.InitEvent;
 import org.n52.client.sos.event.ResizeEvent;

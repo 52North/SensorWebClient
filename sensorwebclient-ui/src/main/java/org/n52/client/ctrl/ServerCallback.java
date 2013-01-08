@@ -23,8 +23,6 @@
  */
 package org.n52.client.ctrl;
 
-import org.n52.client.util.exceptions.ExceptionHandler;
-import org.n52.client.util.exceptions.RequestFailedException;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

@@ -42,12 +42,12 @@ import org.eesgmbh.gimv.shared.util.Direction;
 import org.n52.client.Application;
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.DataControls;
-import org.n52.client.model.DataStoreTimeSeriesImpl;
+import org.n52.client.ctrl.ExceptionHandler;
 import org.n52.client.sos.ctrl.DragImageControl;
 import org.n52.client.sos.ctrl.EESTabController;
 import org.n52.client.sos.ctrl.MouseWheelControl;
+import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
 import org.n52.client.ui.DataPanelTab;
-import org.n52.client.util.exceptions.ExceptionHandler;
 import org.n52.shared.Constants;
 
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -168,6 +168,115 @@ public class EESTab extends DataPanelTab {
         }
     }
 
+    private Viewport getMainChartViewport() {
+        Image mainChartImage = new Image("img/blank.gif");
+    
+        Viewport mainchart = new Viewport("100%", "100%");
+        mainchart.setEnableZoomWhenShiftkeyPressed(true);
+        mainchart.add(mainChartImage);
+    
+        // as it is focusable, we do not want to see an outline
+        DOM.setStyleAttribute(mainchart.getElement(), "outline", "none");
+        ImageViewImpl imageView = new ImageViewImpl(mainChartImage);
+    
+        new ImagePresenter(this.mainChartEventBus, imageView);
+        new DragImageControl(this.mainChartEventBus);
+        new MouseWheelControl(this.mainChartEventBus);
+    
+        return mainchart;
+    }
+
+    private Viewport getOverviewChartViewport() {
+        Image overviewChartImage = new Image("img/blank.gif");
+        Viewport overview = new Viewport("100%", "100px");
+        overview.add(overviewChartImage);
+    
+        DOM.setStyleAttribute(overview.getElement(), "outline", "none");
+        this.horizontalSlider = createOverviewSlider();
+        overview.add(this.horizontalSlider);
+    
+        ImageViewImpl imageView = new ImageViewImpl(overviewChartImage);
+        new ImagePresenter(this.overviewEventBus, imageView);
+        return overview;
+    }
+
+    /**
+     * Creates the Slider the user can interact with to change the shown time intervals of the given
+     * timeseries'.
+     * 
+     * @return the TimeSlider as a whole
+     */
+    private HorizontalPanel createOverviewSlider() {
+        HorizontalPanel horizontalSlider = new HorizontalPanel();
+        DOM.setStyleAttribute(horizontalSlider.getElement(), "marginTop", "6px");
+        horizontalSlider.setHeight("75px");
+    
+        this.leftHandleWidget = buildSliderPart("8px", "75px", "w-resize", "#6585d0", 0.5);
+        this.rightHandleWidget = buildSliderPart("8px", "75px", "e-resize", "#6585d0", 0.5);
+        this.mainHandleWidget = buildSliderPart("100%", "75px", "move", "#aaa", 0.5);
+    
+        horizontalSlider.add(this.leftHandleWidget);
+        horizontalSlider.setCellWidth(this.leftHandleWidget, "15px");
+        horizontalSlider.add(this.mainHandleWidget);
+        horizontalSlider.setCellWidth(this.mainHandleWidget, "100%");
+        horizontalSlider.add(this.rightHandleWidget);
+        horizontalSlider.setCellWidth(this.rightHandleWidget, "15px");
+        DOM.setStyleAttribute(horizontalSlider.getElement(), "visibility", "hidden");
+        
+        GenericWidgetViewImpl view = new GenericWidgetViewImpl(horizontalSlider);
+        OverviewPresenter overviewPresenter = new OverviewPresenter(view, this.overviewEventBus, this.mainChartEventBus);
+    
+        // Define handles for overview control
+        GenericWidgetView leftHandle = new GenericWidgetViewImpl(this.leftHandleWidget);
+        GenericWidgetView mainHandle = new GenericWidgetViewImpl(this.mainHandleWidget);
+        GenericWidgetView rightHandle = new GenericWidgetViewImpl(this.rightHandleWidget);
+    
+        overviewPresenter.addHandle(leftHandle, Bound.LEFT);
+        overviewPresenter.addHandle(mainHandle, Bound.RIGHT, Bound.LEFT);
+        overviewPresenter.addHandle(rightHandle, Bound.RIGHT);
+        overviewPresenter.setMinClippingWidth(40); // min width
+        overviewPresenter.setVerticallyLocked(true); // drag horizontally only
+    
+        return horizontalSlider;
+    }
+
+    private HTML buildSliderPart(String width, String height, String cursor, String color, double transparancy) {
+        HTML container = new HTML();
+        container.setWidth(width);
+        container.setHeight(height);
+        DOM.setStyleAttribute(container.getElement(), "cursor", cursor);
+        DOM.setStyleAttribute(container.getElement(), "backgroundColor", color);
+        
+        // transparency styling (see also bug#449 and http://www.quirksmode.org/css/opacity.html)
+        // note: since GWT complains, '-msFilter' has to be in plain camelCase (w/o '-')
+        // ordering is important here
+        DOM.setStyleAttribute(container.getElement(), "opacity", Double.toString(transparancy));
+        DOM.setStyleAttribute(container.getElement(), "mozOpacity", Double.toString(transparancy));
+        String opacity = "(opacity=" +Double.toString(transparancy*100) + ")";
+        DOM.setStyleAttribute(container.getElement(), "msFilter", "\"progid:DXImageTransform.Microsoft.Alpha"+ opacity + "\"");
+        DOM.setStyleAttribute(container.getElement(), "filter", "alpha" + opacity);
+        return container;
+    }
+
+    private void initKeyControls() {
+        KeystrokeControl kCtrl = new KeystrokeControl(this.mainChartEventBus);
+        kCtrl.addTargetElement(this.mainChartViewport.getElement());
+        kCtrl.addTargetElement(this.overviewChartViewport.getElement());
+        kCtrl.addDocumentAndBodyAsTarget();
+    
+        // 10px offset each
+        kCtrl.registerKey(KeyCodes.KEY_LEFT, Direction.EAST, 10);
+        kCtrl.registerKey(KeyCodes.KEY_UP, Direction.SOUTH, 10);
+        kCtrl.registerKey(KeyCodes.KEY_RIGHT, Direction.WEST, 10);
+        kCtrl.registerKey(KeyCodes.KEY_DOWN, Direction.NORTH, 10);
+    
+        // 30px offset if ctrl is pressed
+        kCtrl.registerKey(KeyCodes.KEY_LEFT, true, false, false, false, Direction.EAST, 30);
+        kCtrl.registerKey(KeyCodes.KEY_UP, true, false, false, false, Direction.NORTH, 30);
+        kCtrl.registerKey(KeyCodes.KEY_RIGHT, true, false, false, false, Direction.WEST, 30);
+        kCtrl.registerKey(KeyCodes.KEY_DOWN, true, false, false, false, Direction.SOUTH, 30);
+    }
+
     private void initZooming() {
         HTML zoomBox = new HTML();
         DOM.setStyleAttribute(zoomBox.getElement(), "opacity", "0.15");
@@ -184,36 +293,24 @@ public class EESTab extends DataPanelTab {
         new ZoomBoxPresenter(this.mainChartEventBus, zoomBoxView);
     }
 
-    private Viewport getMainChartViewport() {
-        Image mainChartImage = new Image("img/blank.gif");
-
-        Viewport mainchart = new Viewport("100%", "100%");
-        mainchart.setEnableZoomWhenShiftkeyPressed(true);
-        mainchart.add(mainChartImage);
-
-        // as it is focusable, we do not want to see an outline
-        DOM.setStyleAttribute(mainchart.getElement(), "outline", "none");
-        ImageViewImpl imageView = new ImageViewImpl(mainChartImage);
-
-        new ImagePresenter(this.mainChartEventBus, imageView);
-        new DragImageControl(this.mainChartEventBus);
-        new MouseWheelControl(this.mainChartEventBus);
-
-        return mainchart;
-    }
-
-    private Viewport getOverviewChartViewport() {
-        Image overviewChartImage = new Image("img/blank.gif");
-        Viewport overview = new Viewport("100%", "100px");
-        overview.add(overviewChartImage);
-
-        DOM.setStyleAttribute(overview.getElement(), "outline", "none");
-        this.horizontalSlider = createOverviewSlider();
-        overview.add(this.horizontalSlider);
-
-        ImageViewImpl imageView = new ImageViewImpl(overviewChartImage);
-        new ImagePresenter(this.overviewEventBus, imageView);
-        return overview;
+    private void initTooltips() {
+    
+        Element mousePointerElement = getMousePointerLineElement();
+        DOM.setStyleAttribute(mousePointerElement, "backgroundColor", "blue");
+        DOM.setStyleAttribute(mousePointerElement, "width", "0px");
+        DOM.setStyleAttribute(mousePointerElement, "height", "0px");
+        DOM.setStyleAttribute(mousePointerElement, "visibility", "hidden");
+        DOM.setStyleAttribute(mousePointerElement, "marginTop", "6px");
+        this.mainChartViewport.add(this.verticalMousePointerLine);
+    
+        this.tooltipPresenter = new TooltipPresenter(this.mainChartEventBus);
+    
+        this.tooltipPresenter.configureHoverMatch(true, false, false);
+        this.tooltipPresenter.setTooltipZIndex(Constants.Z_INDEX_ON_TOP);
+    
+        GenericWidgetViewImpl widget = new GenericWidgetViewImpl(this.verticalMousePointerLine);
+        MousePointerPresenter mpp = new MousePointerPresenter(this.mainChartEventBus, widget);
+        mpp.configure(true, false);
     }
 
     public void setVisibleSlider(boolean isVisible) {
@@ -240,108 +337,11 @@ public class EESTab extends DataPanelTab {
         }
     }
 
-    /**
-     * Creates the Slider the user can interact with to change the shown time intervals of the given
-     * timeseries'.
-     * 
-     * @return the TimeSlider as a whole
-     */
-    private HorizontalPanel createOverviewSlider() {
-        HorizontalPanel horizontalSlider = new HorizontalPanel();
-        DOM.setStyleAttribute(horizontalSlider.getElement(), "marginTop", "6px");
-        horizontalSlider.setHeight("75px");
-
-        this.leftHandleWidget = buildSliderPart("8px", "75px", "w-resize", "#6585d0", 0.5);
-        this.rightHandleWidget = buildSliderPart("8px", "75px", "e-resize", "#6585d0", 0.5);
-        this.mainHandleWidget = buildSliderPart("100%", "75px", "move", "#aaa", 0.5);
-
-        horizontalSlider.add(this.leftHandleWidget);
-        horizontalSlider.setCellWidth(this.leftHandleWidget, "15px");
-        horizontalSlider.add(this.mainHandleWidget);
-        horizontalSlider.setCellWidth(this.mainHandleWidget, "100%");
-        horizontalSlider.add(this.rightHandleWidget);
-        horizontalSlider.setCellWidth(this.rightHandleWidget, "15px");
-        DOM.setStyleAttribute(horizontalSlider.getElement(), "visibility", "hidden");
-        
-        GenericWidgetViewImpl view = new GenericWidgetViewImpl(horizontalSlider);
-        OverviewPresenter overviewPresenter = new OverviewPresenter(view, this.overviewEventBus, this.mainChartEventBus);
-
-        // Define handles for overview control
-        GenericWidgetView leftHandle = new GenericWidgetViewImpl(this.leftHandleWidget);
-        GenericWidgetView mainHandle = new GenericWidgetViewImpl(this.mainHandleWidget);
-        GenericWidgetView rightHandle = new GenericWidgetViewImpl(this.rightHandleWidget);
-
-        overviewPresenter.addHandle(leftHandle, Bound.LEFT);
-        overviewPresenter.addHandle(mainHandle, Bound.RIGHT, Bound.LEFT);
-        overviewPresenter.addHandle(rightHandle, Bound.RIGHT);
-        overviewPresenter.setMinClippingWidth(40); // min width
-        overviewPresenter.setVerticallyLocked(true); // drag horizontally only
-
-        return horizontalSlider;
-    }
-
-    private void initTooltips() {
-
-        Element mousePointerElement = getMousePointerLineElement();
-        DOM.setStyleAttribute(mousePointerElement, "backgroundColor", "blue");
-        DOM.setStyleAttribute(mousePointerElement, "width", "0px");
-        DOM.setStyleAttribute(mousePointerElement, "height", "0px");
-        DOM.setStyleAttribute(mousePointerElement, "visibility", "hidden");
-        DOM.setStyleAttribute(mousePointerElement, "marginTop", "6px");
-        this.mainChartViewport.add(this.verticalMousePointerLine);
-
-        this.tooltipPresenter = new TooltipPresenter(this.mainChartEventBus);
-
-        this.tooltipPresenter.configureHoverMatch(true, false, false);
-        this.tooltipPresenter.setTooltipZIndex(Constants.Z_INDEX_ON_TOP);
-
-        GenericWidgetViewImpl widget = new GenericWidgetViewImpl(this.verticalMousePointerLine);
-        MousePointerPresenter mpp = new MousePointerPresenter(this.mainChartEventBus, widget);
-        mpp.configure(true, false);
-    }
-
     protected Element getMousePointerLineElement() {
         if (this.verticalMousePointerLine == null) {
             this.verticalMousePointerLine = new HTML();
         }
         return this.verticalMousePointerLine.getElement();
-    }
-
-    private void initKeyControls() {
-        KeystrokeControl kCtrl = new KeystrokeControl(this.mainChartEventBus);
-        kCtrl.addTargetElement(this.mainChartViewport.getElement());
-        kCtrl.addTargetElement(this.overviewChartViewport.getElement());
-        kCtrl.addDocumentAndBodyAsTarget();
-
-        // 10px offset each
-        kCtrl.registerKey(KeyCodes.KEY_LEFT, Direction.EAST, 10);
-        kCtrl.registerKey(KeyCodes.KEY_UP, Direction.SOUTH, 10);
-        kCtrl.registerKey(KeyCodes.KEY_RIGHT, Direction.WEST, 10);
-        kCtrl.registerKey(KeyCodes.KEY_DOWN, Direction.NORTH, 10);
-
-        // 30px offset if ctrl is pressed
-        kCtrl.registerKey(KeyCodes.KEY_LEFT, true, false, false, false, Direction.EAST, 30);
-        kCtrl.registerKey(KeyCodes.KEY_UP, true, false, false, false, Direction.NORTH, 30);
-        kCtrl.registerKey(KeyCodes.KEY_RIGHT, true, false, false, false, Direction.WEST, 30);
-        kCtrl.registerKey(KeyCodes.KEY_DOWN, true, false, false, false, Direction.SOUTH, 30);
-    }
-
-    private HTML buildSliderPart(String width, String height, String cursor, String color, double transparancy) {
-        HTML container = new HTML();
-        container.setWidth(width);
-        container.setHeight(height);
-        DOM.setStyleAttribute(container.getElement(), "cursor", cursor);
-        DOM.setStyleAttribute(container.getElement(), "backgroundColor", color);
-        
-        // transparency styling (see also bug#449 and http://www.quirksmode.org/css/opacity.html)
-        // note: since GWT complains, '-msFilter' has to be in plain camelCase (w/o '-')
-        // ordering is important here
-        DOM.setStyleAttribute(container.getElement(), "opacity", Double.toString(transparancy));
-        DOM.setStyleAttribute(container.getElement(), "mozOpacity", Double.toString(transparancy));
-        String opacity = "(opacity=" +Double.toString(transparancy*100) + ")";
-        DOM.setStyleAttribute(container.getElement(), "msFilter", "\"progid:DXImageTransform.Microsoft.Alpha"+ opacity + "\"");
-        DOM.setStyleAttribute(container.getElement(), "filter", "alpha" + opacity);
-        return container;
     }
 
     @Override

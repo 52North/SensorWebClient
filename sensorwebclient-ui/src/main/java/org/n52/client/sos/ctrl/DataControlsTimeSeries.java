@@ -36,7 +36,7 @@ import org.n52.client.ctrl.DataControls;
 import org.n52.client.ctrl.LoaderManager;
 import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ctrl.TimeManager;
-import org.n52.client.model.DataStoreTimeSeriesImpl;
+import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
 import org.n52.client.sos.event.DatesChangedEvent;
 import org.n52.client.sos.event.SwitchGridEvent;
 import org.n52.client.sos.event.data.ExportEvent;

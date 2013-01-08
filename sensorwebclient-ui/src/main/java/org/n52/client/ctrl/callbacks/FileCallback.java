@@ -24,9 +24,9 @@
 package org.n52.client.ctrl.callbacks;
 
 import org.n52.client.bus.EventBus;
+import org.n52.client.ctrl.ExceptionHandler;
 import org.n52.client.sos.ctrl.SOSRequestManager;
 import org.n52.client.sos.event.data.ExportFinishedEvent;
-import org.n52.client.util.exceptions.ExceptionHandler;
 import org.n52.shared.responses.FileResponse;
 import org.n52.shared.responses.RepresentationResponse;
 

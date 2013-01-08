@@ -23,7 +23,7 @@
  */
 package org.n52.client.bus;
 
-import org.n52.client.util.exceptions.ExceptionHandler;
+import org.n52.client.ctrl.ExceptionHandler;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.GwtEvent;

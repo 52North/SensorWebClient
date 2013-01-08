@@ -30,8 +30,10 @@ import java.util.HashMap;
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.ATabEventBroker;
 import org.n52.client.ctrl.Controller;
+import org.n52.client.ctrl.ExceptionHandler;
+import org.n52.client.ctrl.GUIException;
 import org.n52.client.ctrl.TimeManager;
-import org.n52.client.model.DataStoreTimeSeriesImpl;
+import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
 import org.n52.client.sos.event.LegendElementSelectedEvent;
 import org.n52.client.sos.event.ResizeEvent;
 import org.n52.client.sos.event.TabSelectedEvent;
@@ -52,8 +54,6 @@ import org.n52.client.sos.ui.TableTab;
 import org.n52.client.ui.View;
 import org.n52.client.ui.legend.Legend;
 import org.n52.client.ui.legend.LegendElement;
-import org.n52.client.util.exceptions.ExceptionHandler;
-import org.n52.client.util.exceptions.GUIException;
 
 public class TableTabController extends Controller<TableTab> {
 
