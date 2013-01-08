@@ -21,10 +21,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.view.gui.elements.tabImpl;
+package org.n52.client.ses.ui;
 
 import org.n52.client.control.sesTab.SesTabController;
-import org.n52.client.ses.ui.Layout;
 import org.n52.client.ses.ui.Layout.Layouts;
 import org.n52.client.ses.ui.layout.AllRulesLayout;
 import org.n52.client.ses.ui.layout.CreateComplexRuleLayout;
@@ -40,8 +39,8 @@ import org.n52.client.ses.ui.layout.ShowUserLayout;
 import org.n52.client.ses.ui.layout.UserRuleLayout;
 import org.n52.client.ses.ui.layout.UserSubscriptionsLayout;
 import org.n52.client.ses.ui.layout.WelcomeLayout;
-import org.n52.client.view.gui.elements.controlsImpl.DataControls;
-import org.n52.client.view.gui.elements.interfaces.DataPanelTab;
+import org.n52.client.view.gui.elements.DataPanelTab;
+import org.n52.client.view.gui.elements.ctrl.DataControls;
 
 import com.smartgwt.client.widgets.layout.VLayout;
 

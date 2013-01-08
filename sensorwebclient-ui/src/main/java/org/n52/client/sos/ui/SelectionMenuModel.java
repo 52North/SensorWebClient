@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.view.gui.widgets.stationPicker;
+package org.n52.client.sos.ui;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +39,7 @@ import com.smartgwt.client.widgets.grid.events.DataArrivedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 
-public class SelectionMenuModel {
+class SelectionMenuModel {
 
 	private final ListGrid listGrid;
 	

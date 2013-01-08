@@ -48,13 +48,13 @@ import org.n52.client.sos.event.handler.ResizeEventHandler;
 import org.n52.client.sos.event.handler.TabSelectedEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
 import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.sos.ui.TableTab;
 import org.n52.client.util.exceptions.ExceptionHandler;
 import org.n52.client.util.exceptions.GUIException;
 import org.n52.client.view.View;
+import org.n52.client.view.gui.elements.ATabEventBroker;
 import org.n52.client.view.gui.elements.legend.Legend;
 import org.n52.client.view.gui.elements.legend.LegendElement;
-import org.n52.client.view.gui.elements.tabImpl.ATabEventBroker;
-import org.n52.client.view.gui.elements.tabImpl.TableTab;
 
 public class TableTabController extends Controller<TableTab> {
 

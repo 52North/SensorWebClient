@@ -65,10 +65,10 @@ import org.n52.client.sos.event.handler.SwitchGridEventHandler;
 import org.n52.client.sos.event.handler.TabSelectedEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
 import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.sos.ui.EESTab;
 import org.n52.client.view.View;
+import org.n52.client.view.gui.elements.ATabEventBroker;
 import org.n52.client.view.gui.elements.legend.LegendElement;
-import org.n52.client.view.gui.elements.tabImpl.ATabEventBroker;
-import org.n52.client.view.gui.elements.tabImpl.EESTab;
 
 import com.smartgwt.client.types.Visibility;
 

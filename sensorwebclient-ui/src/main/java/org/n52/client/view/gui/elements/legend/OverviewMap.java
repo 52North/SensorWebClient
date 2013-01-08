@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.client.view.gui.widgets.mapping;
+package org.n52.client.view.gui.elements.legend;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,7 +41,9 @@ import org.n52.client.model.data.DataStoreTimeSeriesImpl;
 import org.n52.client.sos.event.InitEvent;
 import org.n52.client.sos.event.handler.InitEventHandler;
 import org.n52.client.sos.legend.TimeSeries;
-import org.n52.client.view.gui.elements.legend.OverviewMapController;
+import org.n52.client.view.gui.widgets.mapping.Coordinate;
+import org.n52.client.view.gui.widgets.mapping.OpenLayersMapWrapper;
+import org.n52.client.view.gui.widgets.mapping.OpenlayersMarker;
 import org.n52.shared.Constants;
 
 import com.google.gwt.core.client.GWT;
@@ -57,6 +59,7 @@ public class OverviewMap extends OpenLayersMapWrapper {
 	private Popup popup;
 
     public OverviewMap(OverviewMapController controller) {
+        super("270px"); // XXX map needs explicit px height
     	this.controller = controller;
         map.addLayer(this.markerLayer);
         new OverviewMapEventBroker();

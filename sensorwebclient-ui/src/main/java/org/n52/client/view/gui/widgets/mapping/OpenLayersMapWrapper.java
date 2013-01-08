@@ -70,14 +70,18 @@ public abstract class OpenLayersMapWrapper {
     protected OSM osm;
 
     public OpenLayersMapWrapper() {
-        initializeMapWidget();
+        this("100%");
+    }
+
+    public OpenLayersMapWrapper(String cssHeight) {
+        initializeMapWidget(cssHeight);
         initializeBackgroundMapLayer();
         map.zoomTo(DEFAULT_ZOOM_LEVEL);
     }
 
-    private void initializeMapWidget() {
+    private void initializeMapWidget(String cssheight) {
         initializeDefaultMapOptions();
-        mapWidget = new MapWidget("100%", "100%", defaultMapOptions);
+        mapWidget = new MapWidget("100%", cssheight, defaultMapOptions);
         map = mapWidget.getMap();
         addMapControls(defaultMapOptions);
     }

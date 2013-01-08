@@ -3,7 +3,6 @@
 	web interface -->
 <!-- Some of these properties are not implemented yet! -->
 <instances>
-    <!-- 
 	<instance>
 		<itemName>PEGELONLINE</itemName>
 		<url>http://pegelonline.wsv.de/webservices/gis/gdi-sos</url>
@@ -20,6 +19,7 @@
 		<defaultZoom>13</defaultZoom>
 	</instance>
 	
+    <!-- 
     <instance>
         <itemName>Tideelbe SOS</itemName>
         <url>http://geodata-srv02.rzi.dlz-it.de:8080/52nSOS_ZDM_PORTALE/sos</url>
@@ -35,7 +35,6 @@
         <urNorthing>54.1</urNorthing>
         <defaultZoom>13</defaultZoom>
     </instance>
-     -->
     
     <instance>
         <itemName>Wupperverband</itemName>
@@ -53,6 +52,7 @@
         <autoZoom>true</autoZoom>
     </instance>
 	
+     -->
 <!-- 
 	<instance>
 		<itemName>GRDC (Kisters SOS)</itemName>

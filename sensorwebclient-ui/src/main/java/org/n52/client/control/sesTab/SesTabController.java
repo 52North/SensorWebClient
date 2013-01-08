@@ -52,6 +52,7 @@ import org.n52.client.ses.event.handler.InformUserEventHandler;
 import org.n52.client.ses.event.handler.SetRoleEventHandler;
 import org.n52.client.ses.event.handler.ShowAllUserEventHandler;
 import org.n52.client.ses.event.handler.UpdateProfileEventHandler;
+import org.n52.client.ses.ui.SesTab;
 import org.n52.client.ses.ui.Layout.Layouts;
 import org.n52.client.sos.event.TabSelectedEvent;
 import org.n52.client.sos.event.TimeSeriesChangedEvent;
@@ -61,9 +62,8 @@ import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.util.exceptions.ExceptionHandler;
 import org.n52.client.util.exceptions.GUIException;
 import org.n52.client.view.View;
+import org.n52.client.view.gui.elements.ATabEventBroker;
 import org.n52.client.view.gui.elements.legend.LegendElement;
-import org.n52.client.view.gui.elements.tabImpl.ATabEventBroker;
-import org.n52.client.view.gui.elements.tabImpl.SesTab;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.serializable.pojos.UserRole;
 

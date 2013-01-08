@@ -23,7 +23,6 @@
  */
 package org.n52.client.view.gui.elements;
 
-import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.layout.Layout;
 
 public class MainPanel extends Layout {
@@ -32,8 +31,7 @@ public class MainPanel extends Layout {
         setID("mainPanel");
         setHeight("100%");
         setWidth("100%");
-        setOverflow(Overflow.HIDDEN);
-        setStylePrimaryName("sensorweb_client_mainLayout");
+        setStylePrimaryName("n52_sensorweb_client_main");
     }
     
 

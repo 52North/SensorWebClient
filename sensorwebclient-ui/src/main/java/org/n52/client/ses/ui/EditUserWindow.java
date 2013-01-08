@@ -21,19 +21,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.view.gui.widgets;
+package org.n52.client.ses.ui;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
 import java.util.Date;
 
 import org.n52.client.eventBus.EventBus;
-import org.n52.client.ses.event.NewPasswordEvent;
-import org.n52.client.ses.event.RegisterUserEvent;
+import org.n52.client.model.communication.requestManager.SesRequestManager;
+import org.n52.client.ses.data.UserRecord;
+import org.n52.client.ses.event.UpdateUserEvent;
 import org.n52.shared.serializable.pojos.UserDTO;
 import org.n52.shared.serializable.pojos.UserRole;
 
-import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.fields.DataSourceTextField;
 import com.smartgwt.client.types.Alignment;
@@ -52,23 +53,29 @@ import com.smartgwt.client.widgets.form.validator.RegExpValidator;
  * 
  * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
  */
-public class CreateNewUserWindow {
+public class EditUserWindow {
+
+    private static UserRecord record;
+    private static Window window;
 
     /**
-     * Inits the.
+     * Inits the EditUserWindow.
+     * @param record 
      */
-    public static void init() {
+    public static void init(UserRecord record) {
         int length = 250;
+        EditUserWindow.record = record;
 
         // init window
         Window window = new Window();
         window.setWidth(300);
         window.setHeight(250);
         window.setAutoSize(true);
-        window.setTitle(i18n.createNewUser());
+        window.setTitle(i18n.editUserData());
         window.setCanDragReposition(true);
         window.setCanDragResize(true);
         window.centerInPage();
+        EditUserWindow.window = window;
 
         // init form
         final DynamicForm form = new DynamicForm();
@@ -87,19 +94,29 @@ public class CreateNewUserWindow {
         userNameItem.setName("userName");
         userNameItem.setLength(length);
         userNameItem.setRequired(true);
+        userNameItem.setValue(record.getUserName());
 
         // name
         final TextItem nameItem = new TextItem();
         nameItem.setTitle(i18n.name());
         nameItem.setName("name");
         nameItem.setLength(length);
+        nameItem.setValue(record.getName());
 
         // password
 //        final PasswordItem passwordItem = new PasswordItem();
 //        passwordItem.setTitle(i18nManager.i18nSESClient.password());
 //        passwordItem.setName("password");
+//        passwordItem.setValue(record.getPassword());
 
         // email
+        final TextItem emailItem = new TextItem();
+        emailItem.setTitle(i18n.email());
+        emailItem.setName("email");
+        emailItem.setLength(length);
+        emailItem.setRequired(true);
+        emailItem.setValue(record.getEMail());
+        
         DataSource dataSource = new DataSource();
         DataSourceTextField emailField = new DataSourceTextField("email", i18n.email(), 100, true);
         
@@ -110,12 +127,6 @@ public class CreateNewUserWindow {
         
         dataSource.setFields(emailField);
         form.setDataSource(dataSource);
-        
-        final TextItem emailItem = new TextItem();
-        emailItem.setTitle(i18n.email());
-        emailItem.setName("email");
-        emailItem.setLength(length);
-        emailItem.setRequired(true);
 
         // handy
         final TextItem handyItem = new TextItem();
@@ -124,62 +135,50 @@ public class CreateNewUserWindow {
         handyItem.setKeyPressFilter("[0-9+]");
         // this.handyItem.setHint("Numeric only<br>[0-9]");
         handyItem.setLength(length);
+        handyItem.setValue(record.getHandy());
 
         // role
         final SelectItem roleItem = new SelectItem();
         roleItem.setName("role");
         roleItem.setTitle(i18n.role());
-        roleItem.setValueMap(UserRole.NOT_REGISTERED_USER.toString(), UserRole.ADMIN.toString());
+        roleItem.setValueMap(UserRole.USER.toString(), UserRole.ADMIN.toString());
         roleItem.setRequired(true);
+        roleItem.setValue(record.getRole());
 
-        ButtonItem createItem = new ButtonItem();
-        createItem.setTitle(i18n.create());
-        createItem.setAlign(Alignment.CENTER);
-        createItem.addClickHandler(new ClickHandler() {
+        ButtonItem editItem = new ButtonItem();
+        editItem.setTitle(i18n.saveChanges());
+        editItem.setAlign(Alignment.CENTER);
+        editItem.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (form.validate(false)) {
-                    final String userName = (String) userNameItem.getValue();
+                    String userName = (String) userNameItem.getValue();
                     String name = (String) nameItem.getValue();
-                    String password = "";
-                    final String email = (String) emailItem.getValue();
+//                    String password = (String) passwordItem.getValue();
+                    String email = (String) emailItem.getValue();
                     String handy = (String) handyItem.getValue();
                     UserRole role;
-                    
-                    if (name == null || name.equals("")) {
-                        name = "";
-                    }
-                    
-                    if (handy == null || handy.equals("")) {
-                        handy = "";
-                    }
 
                     String roleString = (String) roleItem.getValue();
                     if (roleString.equals(UserRole.ADMIN.toString())) {
                         role = UserRole.ADMIN;
                     } else {
-                        role = UserRole.NOT_REGISTERED_USER;
+                        role = UserRole.USER;
                     }
 
                     // create new User
-                    UserDTO user = new UserDTO(userName, name, password, email, handy, role, false, new Date());
-                    EventBus.getMainEventBus().fireEvent(new RegisterUserEvent(user));
-                    
-                    Timer timer = new Timer() {
-                        public void run() {
-                            EventBus.getMainEventBus().fireEvent(new NewPasswordEvent(userName, email));
-                        }
-                    };
-                    timer.schedule(5000);
+                    UserDTO user = new UserDTO(Integer.valueOf(EditUserWindow.record.getId()), userName, name, null, email, handy, role, new Date());
+                    user.setActivated(true);
+                    EventBus.getMainEventBus().fireEvent(new UpdateUserEvent(user,Cookies.getCookie(SesRequestManager.COOKIE_USER_ID)));
+                    EditUserWindow.window.destroy();
                 }
             }
         });
 
         // set Fields to form
-        form.setFields(spacer, userNameItem, nameItem, emailItem, handyItem, roleItem, createItem);
+        form.setFields(spacer, userNameItem, nameItem, emailItem, handyItem, roleItem, editItem);
 
         // add form to window
         window.addItem(form);
         window.draw();
     }
-
 }

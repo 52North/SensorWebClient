@@ -29,7 +29,7 @@ import org.n52.client.eventBus.EventBus;
 import org.n52.client.ses.ctrl.DataControlsSes;
 import org.n52.client.ses.event.LoginEvent;
 import org.n52.client.ses.ui.Layout;
-import org.n52.client.view.gui.elements.tabImpl.SesTab;
+import org.n52.client.ses.ui.SesTab;
 
 import com.smartgwt.client.widgets.form.fields.ButtonItem;
 import com.smartgwt.client.widgets.form.fields.PasswordItem;

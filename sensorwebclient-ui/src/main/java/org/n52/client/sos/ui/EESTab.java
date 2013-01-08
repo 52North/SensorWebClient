@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.client.view.gui.elements.tabImpl;
+package org.n52.client.sos.ui;
 
 import org.eesgmbh.gimv.client.controls.KeystrokeControl;
 import org.eesgmbh.gimv.client.event.SetDomainBoundsEvent;
@@ -44,8 +44,8 @@ import org.n52.client.control.eesTab.EESTabController;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.model.data.DataStoreTimeSeriesImpl;
 import org.n52.client.util.exceptions.ExceptionHandler;
-import org.n52.client.view.gui.elements.controlsImpl.DataControls;
-import org.n52.client.view.gui.elements.interfaces.DataPanelTab;
+import org.n52.client.view.gui.elements.DataPanelTab;
+import org.n52.client.view.gui.elements.ctrl.DataControls;
 import org.n52.shared.Constants;
 
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -82,7 +82,7 @@ public class EESTab extends DataPanelTab {
 
     protected TooltipPresenter tooltipPresenter;
 
-    private HorizontalPanel horizontalSlider;
+    private HorizontalPanel horizontalSlider; // TODO use a flowpanel instead
 
     private int lastSliderPosition;
 

@@ -25,7 +25,7 @@ package org.n52.client.sos.event;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.handler.TabSelectedEventHandler;
-import org.n52.client.view.gui.elements.interfaces.DataPanelTab;
+import org.n52.client.view.gui.elements.DataPanelTab;
 
 /**
  * The Class TabSelectedEvent.

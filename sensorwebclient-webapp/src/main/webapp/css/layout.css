@@ -41,14 +41,12 @@ body {
   font-weight: bold;
   font-family: tahoma, arial, sans-serif;
 }
-/**
-// currently set in code
-.sensorweb_client_mainLayout {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
+.n52_sensorweb_client_main {
+  margin: -8px;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
-*/
 /*****************************
 * buttonstyling 
 */
@@ -172,10 +170,9 @@ tr.sensorInfo:hover {
 }
 .sensorweb_client_headerContainer {
   width: 100%;
+  height: 100%;
 }
 .sensorweb_client_logoBlock {
-  float: left;
-  align: right;
   margin-top: 5px;
   margin-bottom: 2px;
 }
@@ -184,9 +181,7 @@ tr.sensorInfo:hover {
   cursor: pointer;
 }
 .sensorweb_client_linkBlock {
-  float: right;
-  padding-right: 5px;
-  margin: 2px;
+  left: 750px;
   margin-top: 25px;
 }
 .sensorweb_client_headerlink {
@@ -368,6 +363,10 @@ div .sensorweb_client_options_button img {
 .sensorweb_client_tooltip {
   font-size: 12px;
   font-family: sans-serif;
+}
+.n52-sensorwebclient-stationselector-map {
+  width: 950px;
+  height: 560px;
 }
 .sensorweb_client_loadingSpinner {
   padding-top: 20px;

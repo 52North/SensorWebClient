@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.client.view.gui.widgets.stationPicker;
+package org.n52.client.sos.ui;
 
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
@@ -40,7 +40,6 @@ import org.n52.client.view.gui.widgets.LoadingSpinner;
 import org.n52.client.view.gui.widgets.Toaster;
 import org.n52.client.view.gui.widgets.buttons.SmallButton;
 import org.n52.client.view.gui.widgets.mapping.InfoMarker;
-import org.n52.client.view.gui.widgets.windows.InteractionWindow;
 import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
@@ -73,7 +72,7 @@ import com.smartgwt.client.widgets.layout.VLayout;
 
 public class StationSelector extends Window {
 	
-    private static final String COMPONENT_ID = "stationPicker";
+    private static final String COMPONENT_ID = "stationSelector";
     
     private static int WIDTH = 950;
     
@@ -129,6 +128,7 @@ public class StationSelector extends Window {
 
 	private void initializeWindow() {
         setShowModalMask(true);
+        setID(COMPONENT_ID);
         setTitle(i18n.pickStation());
         setWidth(WIDTH);
         setHeight(HEIGHT);

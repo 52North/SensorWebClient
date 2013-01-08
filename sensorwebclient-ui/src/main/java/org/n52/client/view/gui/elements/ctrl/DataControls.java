@@ -21,35 +21,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.view.gui.widgets;
+package org.n52.client.view.gui.elements.ctrl;
 
-import com.smartgwt.client.widgets.tree.TreeNode;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.layout.VLayout;
 
-/**
- * @author <a href="mailto:f.bache@52north.de">Felix Bache</a>
- */
-public class SWETreeNode extends TreeNode {
+public abstract class DataControls extends VLayout {
 
-    private String id;
+    public static final int CONTROL_HEIGHT = 30;
 
-    private Object sweObject;
-
-    public SWETreeNode(String id, String title, Object sweObj) {
-        this.id = id;
-        this.sweObject = sweObj;
-        setTitle(title);
-        setID(id);
+    public Canvas getControls() {
+        return null;
     }
 
-    public String getID() {
-        return this.id;
-    }
+    public abstract int getControlHeight();
 
-    public Object getSWEObject() {
-        return this.sweObject;
-    }
-
-    public void setSWEObject(Object o) {
-        this.sweObject = o;
-    }
+    public abstract int getControlWidth();
 }

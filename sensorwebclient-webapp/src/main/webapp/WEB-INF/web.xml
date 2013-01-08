@@ -208,6 +208,7 @@
 
 	<!-- SES specific Servlets. Comment them out if SES is not needed in the 
 		client.
+     -->
 
 	<servlet>
 		<servlet-name>SESInitializationServlet</servlet-name>
@@ -272,5 +273,4 @@
 		<servlet-name>SesUserService</servlet-name>
 		<url-pattern>/client/SesUserService</url-pattern>
 	</servlet-mapping>
-	 -->
 </web-app>

@@ -21,9 +21,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.view.gui.elements.interfaces;
+package org.n52.client.view.gui.elements;
 
-import org.n52.client.view.gui.elements.controlsImpl.DataControls;
+import org.n52.client.view.gui.elements.ctrl.DataControls;
 
 import com.smartgwt.client.widgets.tab.Tab;
 

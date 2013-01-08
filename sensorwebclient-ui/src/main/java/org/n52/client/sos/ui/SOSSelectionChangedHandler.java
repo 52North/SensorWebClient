@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.view.gui.widgets.stationPicker;
+package org.n52.client.sos.ui;
 
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.model.data.dataManagers.DataManagerSosImpl;

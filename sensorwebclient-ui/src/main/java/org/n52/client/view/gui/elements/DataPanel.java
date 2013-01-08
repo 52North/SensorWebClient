@@ -34,8 +34,7 @@ import org.n52.client.sos.event.TimeSeriesChangedEvent;
 import org.n52.client.sos.event.handler.InitEventHandler;
 import org.n52.client.sos.event.handler.TabSelectedEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
-import org.n52.client.view.gui.elements.controlsImpl.DataControls;
-import org.n52.client.view.gui.elements.interfaces.DataPanelTab;
+import org.n52.client.view.gui.elements.ctrl.DataControls;
 import org.n52.client.view.gui.widgets.LoadingSpinner;
 
 import com.google.gwt.core.client.GWT;

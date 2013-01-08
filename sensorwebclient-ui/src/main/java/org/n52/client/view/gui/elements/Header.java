@@ -76,14 +76,13 @@ public class Header extends HLayout {
 
         addMember(getHomeLabel());
         
-//        Layout linkLayoutStack = new VLayout();
-//        linkLayoutStack.setStyleName("sensorweb_client_linkStack");
-//        linkLayoutStack.addMember(getVersionInfo());
         
         Layout linkLayout = new HLayout();
         linkLayout.setStyleName("sensorweb_client_linkBlock");
         linkLayout.setAlign(Alignment.RIGHT);
 
+//        linkLayout.addMember(getVersionInfo());
+//        linkLayout.addMember(getSeparator());
         linkLayout.addMember(getRestartLink());
         linkLayout.addMember(getSeparator());
         linkLayout.addMember(getHelpLink());
@@ -97,22 +96,9 @@ public class Header extends HLayout {
         addMember(linkLayout);
     }
 
-	private Label getVersionInfo() {
-	    String version = "foobar";
-	    Label versionLabel = getHeaderLinkLabel("Version: " +  version);
-	    versionLabel.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                Window.open("version-info.txt", "_blank", "");
-            }
-        });
-        return versionLabel;
-        
-    }
-
     private Layout getHomeLabel() {
 		Layout layout = new HLayout();
-		layout.setStyleName("sensorweb_client_logoBlock");
+		layout.setStylePrimaryName("sensorweb_client_logoBlock");
 		Img homeLabel = new Img("../img/client-logo.png", 289, 55);
 		homeLabel.setStyleName("sensorweb_client_logo");
 		homeLabel.setCursor(Cursor.POINTER);
@@ -127,12 +113,25 @@ public class Header extends HLayout {
 		return layout;
 	}
 
+    private Label getVersionInfo() {
+        String version = "foobar";
+        Label versionLabel = getHeaderLinkLabel("Version: " +  version);
+        versionLabel.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                Window.open("version-info.txt", "_blank", "");
+            }
+        });
+        return versionLabel;
+        
+    }
+
 	private Label getCopyrightLink() {
 
-        DateTimeFormat dateFormatter = DateTimeFormat.getFormat("YYYY");
+        DateTimeFormat dateFormatter = DateTimeFormat.getFormat("yyyy");
 		String year = dateFormatter.format(new Date());
 
-        Label copyright = getHeaderLinkLabel("&copy; 52&#176;North, " + year);
+        Label copyright = getHeaderLinkLabel("&copy; 52&#176;North, GmbH " + year);
         copyright.addClickHandler(new ClickHandler() {
 			
 			@Override

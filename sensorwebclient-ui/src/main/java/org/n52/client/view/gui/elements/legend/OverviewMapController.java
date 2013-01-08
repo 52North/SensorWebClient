@@ -42,7 +42,6 @@ import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.view.gui.widgets.mapping.InfoMarker;
 import org.n52.client.view.gui.widgets.mapping.MapController;
 import org.n52.client.view.gui.widgets.mapping.OpenlayersMarker;
-import org.n52.client.view.gui.widgets.mapping.OverviewMap;
 
 public class OverviewMapController implements MapController {
 

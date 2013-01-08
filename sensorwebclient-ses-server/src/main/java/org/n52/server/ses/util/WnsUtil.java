@@ -63,9 +63,7 @@ public class WnsUtil {
 	            
 	            return true;
 	        } catch (Exception e) {
-	        	if(LOGGER.isDebugEnabled()) {
-	        		LOGGER.trace("WNS is not available");
-	        	}
+        		LOGGER.trace("WNS is not available");
 	            if (connect != null) {
 	            	connect.disconnect();
 				}
@@ -106,9 +104,7 @@ public class WnsUtil {
         // WNS UserID filtern
         UserID = sb.toString().split("UserID");
         result = UserID[1].substring(1, UserID[1].length() - 2);
-        if(LOGGER.isDebugEnabled()) {
-        	LOGGER.debug("WNS_USER_ID: " + result);
-        }
+    	LOGGER.debug("WNS_USER_ID: {} ", result);
         return result;
     }
 
@@ -139,9 +135,7 @@ public class WnsUtil {
         } while (in.ready());
         in.close();
         connect.disconnect();
-        if(LOGGER.isDebugEnabled()) {
-        	LOGGER.debug(sb.toString());
-        }
+    	LOGGER.trace(sb.toString());
     }
 
     /**
@@ -171,9 +165,7 @@ public class WnsUtil {
         } while (in.ready());
         in.close();
         connect.disconnect();
-        if(LOGGER.isDebugEnabled()) {
-        	LOGGER.debug(sb.toString());
-        }
+    	LOGGER.trace(sb.toString());
     }
 
     /**
@@ -209,9 +201,7 @@ public class WnsUtil {
         // WNS UserID filtern
         UserID = sb.toString().split("UserID");
         result = UserID[1].substring(1, UserID[1].length() - 2);
-        if(LOGGER.isDebugEnabled()) {
-        	LOGGER.debug("WNS_USER_ID: " + result);
-        }
+    	LOGGER.debug("WNS_USER_ID: {}", result);
         return result;
     }
 
@@ -247,9 +237,7 @@ public class WnsUtil {
         // UserID = sb.toString().split("UserID");
         // result = UserID[1].substring(1, UserID[1].length() - 2);
         // TODO WHAT? Please specify this!
-        if(LOGGER.isDebugEnabled()) {
-        	LOGGER.debug("WNS_RESULT: " + result);
-        }
+    	LOGGER.debug("WNS_RESULT: {} ", result);
         return result;
     }
 
@@ -278,9 +266,7 @@ public class WnsUtil {
 
         WNSrequest = sb.toString();
         
-        if(LOGGER.isDebugEnabled()) {
-        	LOGGER.debug("\n * * * Beginn Request * * * \n" + WNSrequest + "\n * * * Ende Request * * * \n");
-        }
+    	LOGGER.trace("\n * * * Beginn Request * * * \n" + WNSrequest + "\n * * * Ende Request * * * \n");
         return WNSrequest;
     }
 
@@ -309,9 +295,7 @@ public class WnsUtil {
 
         WNSrequest = sb.toString();
         
-        if(LOGGER.isDebugEnabled()) {
-        	LOGGER.debug("\n * * * Beginn Request * * * \n" + WNSrequest + "\n * * * Ende Request * * * \n");
-        }
+    	LOGGER.trace("\n * * * Beginn Request * * * \n" + WNSrequest + "\n * * * Ende Request * * * \n");
         return WNSrequest;
     }
 
@@ -334,9 +318,7 @@ public class WnsUtil {
 
         WNSrequest = sb.toString();
         
-        if(LOGGER.isDebugEnabled()) {
-        	LOGGER.debug("\n * * * Beginn Request * * * \n" + WNSrequest + "\n * * * Ende Request * * * \n");
-        }
+    	LOGGER.trace("\n * * * Beginn Request * * * \n" + WNSrequest + "\n * * * Ende Request * * * \n");
         return WNSrequest;
     }
 
@@ -366,9 +348,7 @@ public class WnsUtil {
 
         WNSrequest = sb.toString();
         
-        if(LOGGER.isDebugEnabled()) {
-        	LOGGER.debug("\n * * * Beginn Request * * * \n" + WNSrequest + "\n * * * Ende Request * * * \n");
-        }
+    	LOGGER.trace("\n * * * Beginn Request * * * \n" + WNSrequest + "\n * * * Ende Request * * * \n");
         return WNSrequest;
     }
 
@@ -398,9 +378,7 @@ public class WnsUtil {
 
         WNSrequest = sb.toString();
         
-        if(LOGGER.isDebugEnabled()) {
-        	LOGGER.debug("\n * * * Beginn Request * * * \n" + WNSrequest + "\n * * * Ende Request * * * \n");
-        }
+    	LOGGER.trace("\n * * * Beginn Request * * * \n" + WNSrequest + "\n * * * Ende Request * * * \n");
         return WNSrequest;
 
     }
@@ -417,9 +395,7 @@ public class WnsUtil {
         
         WNSrequest = sb.toString();
         
-//        if(LOGGER.isDebugEnabled()) {
-//        	LOGGER.debug("\n * * * Beginn Request * * * \n" + WNSrequest + "\n * * * Ende Request * * * \n");
-//        }
+    	LOGGER.trace("\n * * * Beginn Request * * * \n" + WNSrequest + "\n * * * Ende Request * * * \n");
         return WNSrequest;
     }
 }

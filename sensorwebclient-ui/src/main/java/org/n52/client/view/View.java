@@ -31,15 +31,15 @@ import java.util.ArrayList;
 import org.n52.client.control.PropertiesManager;
 import org.n52.client.eventBus.EventBus;
 import org.n52.client.ses.i18n.SesStringsAccessor;
+import org.n52.client.ses.ui.SesTab;
 import org.n52.client.sos.event.TabSelectedEvent;
 import org.n52.client.sos.i18n.SosStringsAccessor;
+import org.n52.client.sos.ui.EESTab;
 import org.n52.client.view.gui.elements.DataPanel;
+import org.n52.client.view.gui.elements.DataPanelTab;
 import org.n52.client.view.gui.elements.Header;
 import org.n52.client.view.gui.elements.MainPanel;
-import org.n52.client.view.gui.elements.interfaces.DataPanelTab;
 import org.n52.client.view.gui.elements.legend.Legend;
-import org.n52.client.view.gui.elements.tabImpl.EESTab;
-import org.n52.client.view.gui.elements.tabImpl.SesTab;
 import org.n52.client.view.gui.widgets.Toaster;
 import org.n52.client.view.gui.widgets.buttons.Button;
 

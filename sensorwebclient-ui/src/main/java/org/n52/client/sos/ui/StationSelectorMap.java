@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.client.view.gui.widgets.mapping;
+package org.n52.client.sos.ui;
 
 import static org.n52.shared.Constants.DISPLAY_PROJECTION;
 import static org.n52.shared.Constants.EPSG_4326;
@@ -40,6 +40,9 @@ import org.gwtopenmaps.openlayers.client.control.MousePositionOptions;
 import org.gwtopenmaps.openlayers.client.control.MousePositionOutput;
 import org.gwtopenmaps.openlayers.client.layer.Markers;
 import org.n52.client.control.PropertiesManager;
+import org.n52.client.view.gui.widgets.mapping.InfoMarker;
+import org.n52.client.view.gui.widgets.mapping.MapController;
+import org.n52.client.view.gui.widgets.mapping.OpenLayersMapWrapper;
 import org.n52.shared.Constants;
 import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.EastingNorthing;
@@ -48,7 +51,7 @@ import org.n52.shared.serializable.pojos.sos.Station;
 
 import com.google.gwt.core.client.GWT;
 
-public class StationPickerMap extends OpenLayersMapWrapper {
+public class StationSelectorMap extends OpenLayersMapWrapper {
 
     private final MapController controller;
 
@@ -60,7 +63,9 @@ public class StationPickerMap extends OpenLayersMapWrapper {
 
     private Markers markerLayer = new Markers("markers");
 
-    public StationPickerMap(MapController controller) {
+    public StationSelectorMap(MapController controller) {
+        super("523px"); // XXX map needs explicit height in px
+        getMapWidget().setStylePrimaryName("n52-sensorwebclient-stationselector-map");
         this.controller = controller;
         map.addLayer(markerLayer);
         try {

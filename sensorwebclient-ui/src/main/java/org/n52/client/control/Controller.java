@@ -23,7 +23,7 @@
  */
 package org.n52.client.control;
 
-import org.n52.client.view.gui.elements.controlsImpl.DataControls;
+import org.n52.client.view.gui.elements.ctrl.DataControls;
 
 public abstract class Controller<T> {
 

@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.client.view.gui.widgets.stationPicker;
+package org.n52.client.sos.ui;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,7 +54,6 @@ import org.n52.client.sos.event.data.handler.StoreProcedureDetailsUrlEventHandle
 import org.n52.client.sos.event.handler.AddMarkerEventHandler;
 import org.n52.client.view.gui.widgets.mapping.InfoMarker;
 import org.n52.client.view.gui.widgets.mapping.MapController;
-import org.n52.client.view.gui.widgets.mapping.StationPickerMap;
 import org.n52.shared.Constants;
 import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
@@ -66,9 +65,9 @@ import org.n52.shared.serializable.pojos.sos.Station;
 
 import com.google.gwt.core.client.GWT;
 
-public class StationSelectorController implements MapController {
+class StationSelectorController implements MapController {
 
-    private StationPickerMap map;
+    private StationSelectorMap map;
 
     private StationSelector stationSelector;
 
@@ -79,7 +78,7 @@ public class StationSelectorController implements MapController {
     private Station selectedStation;
 
     public StationSelectorController() {
-        map = new StationPickerMap(this);
+        map = new StationSelectorMap(this);
         new StationPickerControllerEventBroker(this);
         this.selectedStationFilterByServiceUrl = new HashMap<String, String>();
     }
