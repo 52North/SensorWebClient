@@ -30,6 +30,7 @@ import java.util.LinkedHashMap;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.ctrl.SesRequestManager;
+import org.n52.client.ses.data.Tree;
 import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.CreateComplexRuleEvent;
 import org.n52.client.ses.event.GetAllPublishedRulesEvent;
@@ -39,7 +40,6 @@ import org.n52.shared.LogicalOperator;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.serializable.pojos.ComplexRuleData;
 import org.n52.shared.serializable.pojos.Rule;
-import org.n52.shared.serializable.pojos.Tree;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Cookies;

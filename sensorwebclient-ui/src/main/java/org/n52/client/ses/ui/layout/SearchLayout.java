@@ -29,13 +29,13 @@ import java.util.ArrayList;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.ctrl.SesRequestManager;
+import org.n52.client.ses.data.RuleDataSource;
 import org.n52.client.ses.event.EditRuleEvent;
 import org.n52.client.ses.event.SearchEvent;
 import org.n52.client.ses.ui.Layout;
 import org.n52.client.ses.ui.RuleRecord;
 import org.n52.shared.serializable.pojos.BasicRuleDTO;
 import org.n52.shared.serializable.pojos.ComplexRuleDTO;
-import org.n52.shared.serializable.pojos.RuleDS;
 
 import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.types.Alignment;
@@ -72,7 +72,7 @@ public class SearchLayout extends Layout {
     
     private ButtonItem buttonItem;
 
-    private RuleDS dataSource;
+    private RuleDataSource dataSource;
     
     private boolean first = true;
     
@@ -86,7 +86,7 @@ public class SearchLayout extends Layout {
         super(i18n.search());
         
         // init DataSource
-        this.dataSource = new RuleDS();
+        this.dataSource = new RuleDataSource();
         
         init();
     }

@@ -29,6 +29,7 @@ import java.util.ArrayList;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.ctrl.SesRequestManager;
+import org.n52.client.ses.data.RuleDataSource;
 import org.n52.client.ses.event.DeleteRuleEvent;
 import org.n52.client.ses.event.EditRuleEvent;
 import org.n52.client.ses.event.PublishRuleEvent;
@@ -36,7 +37,6 @@ import org.n52.client.ses.ui.Layout;
 import org.n52.client.ses.ui.RuleRecord;
 import org.n52.shared.serializable.pojos.BasicRuleDTO;
 import org.n52.shared.serializable.pojos.ComplexRuleDTO;
-import org.n52.shared.serializable.pojos.RuleDS;
 
 import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.types.Alignment;
@@ -63,7 +63,7 @@ public class AllRulesLayout extends Layout {
     
     private boolean first = true;
     
-    private RuleDS dataSource;
+    private RuleDataSource dataSource;
 
     /**
      * Instantiates a new all rules layout.
@@ -72,7 +72,7 @@ public class AllRulesLayout extends Layout {
         super(i18n.allRules());
         
         // init DataSource
-        this.dataSource = new RuleDS();
+        this.dataSource = new RuleDataSource();
         
         init();
     }

@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.shared.serializable.pojos;
+package org.n52.client.ses.data;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
@@ -29,16 +29,9 @@ import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.fields.DataSourceIntegerField;
 import com.smartgwt.client.data.fields.DataSourceTextField;
 
-/**
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- *
- */
-public class RuleDS extends DataSource {
+public class RuleDataSource extends DataSource {
 
-    /**
-     * 
-     */
-    public RuleDS() {
+    public RuleDataSource() {
         
         DataSourceIntegerField pkField = new DataSourceIntegerField("itemID");  
         pkField.setHidden(true);  

@@ -28,9 +28,9 @@ import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import java.util.List;
 
 import org.n52.client.bus.EventBus;
+import org.n52.client.ses.data.test.TESTSensorDS;
 import org.n52.client.ses.event.UpdateSensorEvent;
 import org.n52.client.ses.ui.Layout;
-import org.n52.shared.serializable.pojos.TESTSensorDS;
 
 import com.google.gwt.user.client.Random;
 import com.smartgwt.client.types.Alignment;
