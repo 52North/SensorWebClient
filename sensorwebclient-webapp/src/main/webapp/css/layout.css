@@ -19,6 +19,7 @@ body {
   height: 100%;
   overflow: hidden;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: 0px;
 }
 #spacer {
   height: 45%;
@@ -42,7 +43,6 @@ body {
   font-family: tahoma, arial, sans-serif;
 }
 .n52_sensorweb_client_main {
-  margin: -8px;
   width: 100%;
   height: 100%;
   overflow: hidden;

@@ -171,7 +171,7 @@ public class EESTab extends DataPanelTab {
     private Viewport getMainChartViewport() {
         Image mainChartImage = new Image("img/blank.gif");
     
-        Viewport mainchart = new Viewport("95%", "100%");
+        Viewport mainchart = new Viewport("100%", "100%");
         mainchart.setEnableZoomWhenShiftkeyPressed(true);
         mainchart.add(mainChartImage);
     
@@ -189,7 +189,7 @@ public class EESTab extends DataPanelTab {
 
     private Viewport getOverviewChartViewport() {
         Image overviewChartImage = new Image("img/blank.gif");
-        Viewport overview = new Viewport("95%", "100px");
+        Viewport overview = new Viewport("100%", "100px");
         overview.add(overviewChartImage);
     
         DOM.setStyleAttribute(overview.getElement(), "outline", "none");
