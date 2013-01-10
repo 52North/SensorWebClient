@@ -273,4 +273,19 @@
 		<servlet-name>SesUserService</servlet-name>
 		<url-pattern>/client/SesUserService</url-pattern>
 	</servlet-mapping>
+	
+	   <servlet>
+        <servlet-name>SosSesFeeder</servlet-name>
+        <servlet-class>org.n52.sos.feeder.baw.SosSesFeeder</servlet-class>
+        <init-param>
+            <param-name>CONFIG_FILE</param-name>
+            <param-value>/WEB-INF/conf/configuration.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>SosSesFeeder</servlet-name>
+        <url-pattern>/SosSesFeeder</url-pattern>
+    </servlet-mapping>
 </web-app>

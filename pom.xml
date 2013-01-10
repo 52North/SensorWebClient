@@ -18,6 +18,7 @@
 	<modules>
 		<module>sensorwebclient-api</module>
 		<module>sensorwebclient-ext</module>
+        <module>sensorwebclient-ses-feeder</module>
 		<module>sensorwebclient-ses-rpc</module>
 		<module>sensorwebclient-ses-server</module>
 		<module>sensorwebclient-ses-shared</module>
@@ -55,6 +56,11 @@
 				<artifactId>sensorwebclient-sos-rpc</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>sensorwebclient-ses-feeder</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>org.n52.sensorweb</groupId>
 				<artifactId>sensorwebclient-ses-rpc</artifactId>
@@ -116,6 +122,21 @@
 				<artifactId>oxf-ses-adapter</artifactId>
 				<version>${oxf.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sensorML-v101</artifactId>
+                <version>${n52.xml.commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-om-v100</artifactId>
+                <version>${n52.xml.commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-ows-v100</artifactId>
+                <version>${n52.xml.commons.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>org.n52.sensorweb</groupId>
 				<artifactId>52n-xml-xlink-v110</artifactId>
@@ -775,6 +796,7 @@
 		<smartgwt.version>3.0</smartgwt.version>
 		<geotools.version>8.2</geotools.version>
 		<oxf.version>2.0.0-SNAPSHOT</oxf.version>
+		<n52.xml.commons.version>1.1.2</n52.xml.commons.version>
 		<hibernate.version>3.5.0-Final</hibernate.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sensorwebclient.webapp.name>${project.artifactId}-${project.version}</sensorwebclient.webapp.name>

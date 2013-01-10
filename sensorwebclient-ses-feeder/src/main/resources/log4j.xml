@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd" >
+<log4j:configuration>
+	<!--<appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{ISO8601} %1p (%c{1}.java:%L) - %m%n" />
+		</layout>
+	</appender>-->
+	<appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
+		<!-- 
+			kiribati
+		 -->
+		<!-- <param name="File" value="/opt/apache-tomcat-6.0.32/logs/52n-sensorweb-sossesfeeder.log"/> -->
+		<!-- 
+			local
+		 -->
+		<param name="File" value="D:/52North/Entwicklung/Tomcat/apache-tomcat-6.0.26/logs/52n-sensorweb-sossesfeeder.log"/> 
+		<param name="Append" value="true"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %-1p (%c{1}.java:%L) - %m %n"/>
+		</layout>
+	</appender>
+		<logger name="org.n52">
+		<level value="DEBUG" />
+	</logger>
+	<logger name="org.n52.oxf">
+		<level value="ERROR" />
+	</logger>
+	<logger name="httpclient.wire">
+		<level value="ERROR" />
+	</logger>
+	<logger name="org.apache.commons.httpclient">
+		<level value="ERROR" />
+	</logger>
+	<logger name="org.hibernate">
+		<level value="ERROR"></level>
+	</logger>
+	<logger name="org.hibernate.SQL">
+		<level value="ERROR"></level>
+	</logger>
+	<logger name="net.sf.ehcache">
+		<level value="ERROR"></level>
+	</logger>
+	<root>
+		<priority value="debug"></priority>
+		<!-- <appender-ref ref="STDOUT" /> -->
+		<appender-ref ref="FILE"/>
+	</root>
+</log4j:configuration>

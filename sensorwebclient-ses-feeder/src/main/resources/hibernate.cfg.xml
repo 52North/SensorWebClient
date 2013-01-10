@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8'?>
+  <!--
+    /****************************************************************************
+    * Copyright (C) 2010 * by 52 North Initiative for Geospatial Open
+    Source Software GmbH * * Contact: Andreas Wytzisk * 52 North
+    Initiative for Geospatial Open Source Software GmbH *
+    Martin-Luther-King-Weg 24 * 48155 Muenster, Germany *
+    info@52north.org * * This program is free software; you can
+    redistribute and/or modify it under * the terms of the GNU General
+    Public License version 2 as published by the * Free Software
+    Foundation. * * This program is distributed WITHOUT ANY WARRANTY;
+    even without the implied * WARRANTY OF MERCHANTABILITY or FITNESS
+    FOR A PARTICULAR PURPOSE. See the GNU * General Public License for
+    more details. * * You should have received a copy of the GNU General
+    Public License along with * this program (see gnu-gpl v2.txt). If
+    not, write to the Free Software * Foundation, Inc., 59 Temple Place
+    - Suite 330, Boston, MA 02111-1307, USA or * visit the Free Software
+    Foundation web page, http://www.fsf.org. * * Author: Jan Schulte *
+    Created: 19.05.2010
+    *****************************************************************************/
+  -->
+<!DOCTYPE hibernate-configuration PUBLIC
+   "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+   "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+  	<!--
+  	  sensorweb.demo
+  	 -->
+    <!-- <property name="connection.url">jdbc:postgresql://localhost:5432/sesSosFeeder</property>
+    <property name="connection.username">sesSosFeeder</property>
+    <property name="connection.password">Zmq0UZAY03ZUItL</property> -->
+    <!--  
+    	kiribati
+     -->
+    <!-- <property name="connection.username">postgres</property>
+	<property name="connection.password">postgres</property>-->
+    <property name="connection.url">jdbc:postgresql://localhost:5432/sossesfeeder</property>
+    <property name="connection.username">sesclient</property>
+    <property name="connection.password">sesclient</property>
+    <property name="connection.driver_class">
+      org.postgresql.Driver
+      </property>
+    <property name="dialect">
+      org.hibernate.dialect.PostgreSQLDialect
+      </property>
+    <property name="cache.provider_class">
+      org.hibernate.cache.EhCacheProvider
+      </property>
+    <property name="current_session_context_class">thread
+      </property>
+    <property name="hibernate.transaction.factory_class">
+      org.hibernate.transaction.JDBCTransactionFactory
+      </property>
+    <!-- <property name="hibernate.hbm2ddl.auto">create</property>-->
+    <mapping resource="org/n52/sos/feeder/baw/hibernate/SOS.hbm.xml" />
+    <mapping resource="org/n52/sos/feeder/baw/hibernate/Sensor.hbm.xml" />
+    <mapping resource="org/n52/sos/feeder/baw/hibernate/Offering.hbm.xml"/>
+    <mapping resource="org/n52/sos/feeder/baw/hibernate/ObservedProperty.hbm.xml"/>
+  </session-factory>
+</hibernate-configuration>
