@@ -51,6 +51,8 @@ public class SOSwithSoapAdapter extends SOSAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSwithSoapAdapter.class);
     
     private static final int SOCKET_TIMEOUT = 30000;
+    
+    private SoapSOSRequestBuilder_200 requestBuilder;
 
     /**
      * Creates an adapter to connect SOS with SOAP binding. <br>
@@ -63,7 +65,8 @@ public class SOSwithSoapAdapter extends SOSAdapter {
      */
     public SOSwithSoapAdapter(String sosVersion) {
         super(sosVersion, new SimpleHttpClient(5000, SOCKET_TIMEOUT));
-        setRequestBuilder(new SoapSOSRequestBuilder_200());
+        requestBuilder = new SoapSOSRequestBuilder_200();
+        setRequestBuilder(requestBuilder);
     }
 
     /**
@@ -126,6 +129,10 @@ public class SOSwithSoapAdapter extends SOSAdapter {
     @Override
     public OperationResult doOperation(Operation operation, ParameterContainer parameters) throws ExceptionReport,
             OXFException {
+    	// set sos url to used it for an extra GetObs 
+    	if (operation.getDcps()[0].getHTTPPostRequestMethods().size() > 0) {
+    		requestBuilder.setUrl(operation.getDcps()[0].getHTTPPostRequestMethods().get(0).getOnlineResource().getHref());
+        }
         OperationResult result = super.doOperation(operation, parameters);
         ByteArrayInputStream resultStream = result.getIncomingResultAsStream();
         try {
