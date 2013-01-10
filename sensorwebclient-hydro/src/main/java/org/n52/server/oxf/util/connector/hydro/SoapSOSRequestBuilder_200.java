@@ -34,6 +34,7 @@ import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.adapter.ParameterShell;
 import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.util.web.HttpClient;
+import org.n52.oxf.util.web.ProxyAwareHttpClient;
 import org.n52.oxf.util.web.SimpleHttpClient;
 import org.n52.oxf.xmlbeans.tools.XmlUtil;
 import org.n52.server.oxf.util.access.oxfExtensions.SOSRequestBuilder_200_OXFExtension;
@@ -97,7 +98,7 @@ public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtensio
 				// first send GetDataAvailability to get the start time then use this start time to get the first observation by getObs
 				String getDataAvailability = buildGetDataAvailabilityRequest(parameters);
 				try {
-					HttpClient httpClient = new SimpleHttpClient();
+					HttpClient httpClient = new ProxyAwareHttpClient(new SimpleHttpClient());
 					HttpResponse httpResponse = httpClient.executePost(this.sosUrl.trim(), getDataAvailability, ContentType.TEXT_XML);
 					HttpEntity responseEntity = httpResponse.getEntity();
 					OperationResult result = new OperationResult(responseEntity.getContent(), parameters, getDataAvailability);
