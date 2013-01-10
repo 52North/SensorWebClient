@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<!-- URL to the SES and some other configurations for the SES -->
+	<entry key="ses_url">@conf.ses_url@</entry>
+	
+	<entry key="ses_version">@conf.ses_version@</entry>
+	
+	<!-- Supported sos version -->
+	<entry key="sos_version">@conf.sos_version@</entry>
+	
+	<!-- Period to start to collect the sensorML documents in seconds -->
+	<entry key="capabilities_task_period">@conf.capabilities_task_period@</entry>
+	
+	<!-- Period to start to collect the new observations in seconds -->
+	<entry key="observations_task_period">@conf.observations_task_period@</entry>
+	
+	<!-- Constraints for the procedure names as comma separated value -->
+	<entry key="procedure_name_constraints">@conf.procedure_name_constraints@</entry>
+	
+    <!-- NoData wildcards as comma separated values -->
+	<entry key="nodatas">@conf.nodatas@</entry>
+	
+	
+	<!-- ################################################## 
+		        ADVANCED CONFIGURATION PARAMETERS
+	     ################################################## -->
+	     
+	<entry key="ses_basic_port_type_path">@conf.ses_basic_port_type_path@</entry>
+	<entry key="ses_default_topic_dialect">@conf.ses_default_topic_dialect@</entry>
+	<entry key="ses_register_publisher_lifetime">@conf.ses_register_publisher_lifetime@</entry>
+	<entry key="ses_register_publisher_endpoint">@conf.ses_register_publisher_endpoint@</entry>
+	<entry key="ses_default_topic">@conf.ses_default_topic@</entry>
+
+	<!-- Minimum update time for new observations in seconds -->
+	<entry key="update_observation_period">@conf.update_observation_period@</entry>
+	<!-- Number of Maximum loaded procedures -->
+	<entry key="maximum_number_procedures">@conf.maximum_number_procedures@</entry>
+    <!-- Prohibit procedure names as comma separated value -->
+    <entry key="prohibit_procedure_names">@conf.prohibit_procedure_names@</entry>
+    <!-- Start timestamp in seconds before actual time -->
+    <entry key="start_timestamp">@conf.start_timestamp@</entry>
+    <!-- Sleep time between two observations send to SES in milliseconds -->
+    <entry key="sleep_time_observation">@conf.sleep_time_observation@</entry>
+    <!-- Take just the youngest new observation an send it to the ses -->
+    <entry key="only_youngest_observation">@conf.only_youngest_observation@</entry>
+	
+</properties>
