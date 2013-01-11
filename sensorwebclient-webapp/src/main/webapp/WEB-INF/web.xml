@@ -274,7 +274,8 @@
 		<url-pattern>/client/SesUserService</url-pattern>
 	</servlet-mapping>
 	
-	   <servlet>
+<!-- 
+   <servlet>
         <servlet-name>SosSesFeeder</servlet-name>
         <servlet-class>org.n52.sos.feeder.baw.SosSesFeeder</servlet-class>
         <init-param>
@@ -288,4 +289,5 @@
         <servlet-name>SosSesFeeder</servlet-name>
         <url-pattern>/SosSesFeeder</url-pattern>
     </servlet-mapping>
+ -->
 </web-app>
