@@ -393,4 +393,7 @@ public interface I18N extends Constants {
     String currentPassword();
     
     String ruleNotFound();
+    
+    String sesCommunicatorTitle();
+    
 }

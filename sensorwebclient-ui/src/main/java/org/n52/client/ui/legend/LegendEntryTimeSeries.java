@@ -36,6 +36,7 @@ import org.eesgmbh.gimv.client.event.LoadImageDataEvent;
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ctrl.TimeManager;
+import org.n52.client.ses.ui.SesCommunicator;
 import org.n52.client.sos.ctrl.SOSController;
 import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
 import org.n52.client.sos.event.ChangeTimeSeriesStyleEvent;
@@ -58,6 +59,7 @@ import org.n52.client.sos.event.handler.LegendElementSelectedEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
 import org.n52.client.sos.event.handler.UpdateScaleEventHandler;
 import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.sos.ui.StationSelector;
 import org.n52.client.ui.Toaster;
 import org.n52.client.ui.View;
 import org.n52.client.ui.btn.ImageButton;
@@ -154,7 +156,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 
 	private LegendEntryTimeSeriesEventBroker eventBroker;
 
-	private SmallButton colorButton;
+	private SmallButton sesComButton;
 
 	private SmallButton infoButton;
 	
@@ -243,16 +245,6 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.loadingSpinner.setHeight(16);
 		this.loadingSpinner.setPadding(6);
 
-		this.titleCol = new SmallButton(new Label(), i18n.changeColor(),
-				i18n.changeColorExtended());
-		this.titleCol.hide();
-		this.titleCol.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				LegendEntryTimeSeries.this.styleChanger.show();
-			}
-		});
-		
 		this.titleLabel = new Label();
 		this.titleLabel.setWidth100();
 		this.titleLabel.setStyleName("n52_sensorweb_client_legendEntryTitle");
@@ -275,7 +267,6 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.legendEntryHead.addMember(this.loadingSpinner);
 		this.legendEntryHead.addMember(this.noDataSign);
 		this.legendEntryHead.addMember(this.titleLabel);
-		this.legendEntryHead.addMember(this.titleCol);
 		this.legendEntryHead.addMember(createLegendTools());
 
 		// legend foot
@@ -361,11 +352,14 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 	}
 
 	private Canvas createLegendTools() {
+		createSesCommunicatorButton();
 		createColorChangeButton();
 		createInformationButton();
 		createDeleteLegendEntryButton();
 
 		HLayout tools = new HLayout();
+		tools.addMember(this.titleCol);
+		tools.addMember(this.sesComButton);
 		tools.addMember(this.infoButton);
 		tools.addMember(this.deleteButton);
 
@@ -526,24 +520,33 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		informationWindow.centerInPage();
 		HTMLPane htmlPane = new HTMLPane();
 		htmlPane.setContentsURL(LegendEntryTimeSeries.this
-				.getTimeSeries().getMetadataUrl());
+				.getTimeSeries().getMetadataUrl()); 
 		htmlPane.setContentsType(ContentsType.PAGE);
 		informationWindow.addItem(htmlPane);
 	}
 
-	private void createColorChangeButton() {
-		this.colorButton = new SmallButton(
-				new Img("../img/icons/bullet_wrench.png"), i18n.changeColor(),
-				i18n.changeColorExtended());
-//		View.getInstance().registerTooltip(this.colorButton);
-		this.colorButton.addClickHandler(new ClickHandler() {
-
+	private void createSesCommunicatorButton() {
+		this.sesComButton = new SmallButton(
+				new Img("../img/icons/event.png"), i18n.sesCommunicatorButton(), i18n.sesCommunicatorButtonExtend());
+		this.sesComButton.hide();
+		this.sesComButton.addClickHandler(new ClickHandler() {
+			
+			@Override
 			public void onClick(ClickEvent event) {
-				if (LegendEntryTimeSeries.this.styleChanger.isVisible()) {
-					LegendEntryTimeSeries.this.styleChanger.hide();
-				} else {
-					LegendEntryTimeSeries.this.styleChanger.show();
-				}
+				SesCommunicator.getInst().setTimeseriesID(LegendEntryTimeSeries.this.timeseriesID);
+				SesCommunicator.getInst().show();
+			}
+		});
+	}
+
+	private void createColorChangeButton() {
+		this.titleCol = new SmallButton(new Label(), i18n.changeColor(),
+				i18n.changeColorExtended());
+		this.titleCol.hide();
+		this.titleCol.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				LegendEntryTimeSeries.this.styleChanger.show();
 			}
 		});
 	}
@@ -1074,12 +1077,14 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.infoButton.hide();
 		this.deleteButton.hide();
 		this.legendEntryFoot.hide();
+		this.sesComButton.hide();
 	}
 
 	public void showFooter() {
 		this.infoButton.show();
 		this.deleteButton.show();
 		this.legendEntryFoot.show();
+		this.sesComButton.show();
 	}
 
 	public Canvas getClickTarget() {

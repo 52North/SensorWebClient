@@ -412,3 +412,7 @@ div .n52_sensorweb_client_options_button img {
 .n52_sensorweb_client_topButtons {
   padding: 0px 0px 0px 8px;
 }
+.n52_sensorweb_client_modalWindow {
+  width: 950px;
+  height: 550px;
+}

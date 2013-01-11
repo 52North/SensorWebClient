@@ -384,5 +384,9 @@ public interface I18N extends Constants {
 	String loggerWindowTitle();
 	
 	String dataprovider();
-
+	
+	String sesCommunicatorButton();
+	
+	String sesCommunicatorButtonExtend();
+	
 }
