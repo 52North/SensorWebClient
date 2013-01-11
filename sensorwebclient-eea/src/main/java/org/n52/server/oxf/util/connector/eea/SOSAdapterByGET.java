@@ -95,6 +95,8 @@ public class SOSAdapterByGET extends SOSAdapter {
     public SOSAdapterByGET(String sosVersion, ISOSRequestBuilder requestBuilder) {
         super(sosVersion, new SOSRequestBuilderGET_200());
         setHttpClient(new SimpleHttpClient(5000, SOCKET_TIMEOUT));
+        HttpClient proxyAwareClient = new ProxyAwareHttpClient(new SimpleHttpClient());
+        httpClient = new GzipEnabledHttpClient(proxyAwareClient);
         LOGGER.warn("This is a deprecated constructor and will be removed soon w/o notice.");
     }
 
@@ -214,16 +216,16 @@ public class SOSAdapterByGET extends SOSAdapter {
 
     private String fixServiceUrl(Operation operation, String href) throws OXFException {
         if (operation.getName().equals(GET_CAPABILITIES)) {
-            return href.replace("?", "").concat("GetCapabilities?");
+            return href.replace("?", "").concat("GetCapabilities");
         }
         else if (operation.getName().equals(GET_FEATURE_OF_INTEREST)) {
-            return href.replace("?", "").concat("GetFeatureOfInterest?");
+            return href.replace("?", "").concat("GetFeatureOfInterest");
         }
         else if (operation.getName().equals(GET_OBSERVATION)) {
-            return href.replace("?", "").concat("GetObservation?");
+            return href.replace("?", "").concat("GetObservation");
         }
         else if (operation.getName().equals(DESCRIBE_SENSOR)) {
-            return href.replace("?", "").concat("DescribeSensor?");
+            return href.replace("?", "").concat("DescribeSensor");
         }
         else {
             throw new OXFException("The Operation '" + operation.getName() + "' is not supported");
