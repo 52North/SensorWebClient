@@ -32,8 +32,8 @@ import javax.xml.namespace.QName;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.n52.oxf.adapter.ParameterContainer;
-import org.n52.oxf.serviceAdapters.ses.SESRequestBuilder_00;
-import org.n52.oxf.serviceAdapters.ses.SESUtils;
+import org.n52.oxf.ses.adapter.SESRequestBuilder_00;
+import org.n52.oxf.ses.adapter.SESUtils;
 import org.w3.x2003.x05.soapEnvelope.Body;
 import org.w3.x2003.x05.soapEnvelope.Envelope;
 import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
@@ -70,7 +70,7 @@ public class SESRequestBuilder_01 extends SESRequestBuilder_00 {
         Envelope env = envDoc.addNewEnvelope();
         Header header = env.addNewHeader();
         Body body = env.addNewBody();
-        String sesURL = (String)parameter.getParameterShellWithCommonName(ISESRequestBuilder.NOTIFY_SES_URL).getSpecifiedValue();
+        String sesURL = (String)parameter.getParameterShellWithCommonName(NOTIFY_SES_URL).getSpecifiedValue();
         XmlCursor cur = null;
 
         SESUtils.addNamespacesToEnvelope_000(env);
@@ -97,8 +97,8 @@ public class SESRequestBuilder_01 extends SESRequestBuilder_00 {
 
         cur.beginElement(new QName(ns_wsNotification,"Topic","wsnt"));
         cur.insertAttributeWithValue(/*new QName(ns_wsNotification,"Dialect","wsnt")*/"Dialect", 
-                (String)parameter.getParameterShellWithCommonName(ISESRequestBuilder.NOTIFY_TOPIC_DIALECT).getSpecifiedValue());
-        cur.insertChars((String)parameter.getParameterShellWithCommonName(ISESRequestBuilder.NOTIFY_TOPIC).getSpecifiedValue());
+                (String)parameter.getParameterShellWithCommonName(NOTIFY_TOPIC_DIALECT).getSpecifiedValue());
+        cur.insertChars((String)parameter.getParameterShellWithCommonName(NOTIFY_TOPIC).getSpecifiedValue());
         cur.toNextToken();
 
         cur.beginElement(new QName(ns_wsNotification,"Message","wsnt"));
@@ -106,7 +106,7 @@ public class SESRequestBuilder_01 extends SESRequestBuilder_00 {
         cur.dispose();
 
         request = envDoc.xmlText();
-        request = request.replaceAll("@MSG_REPLACER@",(String)parameter.getParameterShellWithCommonName(ISESRequestBuilder.NOTIFY_XML_MESSAGE).getSpecifiedValue());
+        request = request.replaceAll("@MSG_REPLACER@",(String)parameter.getParameterShellWithCommonName(NOTIFY_XML_MESSAGE).getSpecifiedValue());
 
         return request;
     }
@@ -123,11 +123,11 @@ public class SESRequestBuilder_01 extends SESRequestBuilder_00 {
         Envelope env = envDoc.addNewEnvelope();
         Header header = env.addNewHeader();
         Body body = env.addNewBody();
-        String sesURL = (String)parameter.getParameterShellWithCommonName(ISESRequestBuilder.REGISTER_PUBLISHER_SES_URL).getSpecifiedValue();
+        String sesURL = (String)parameter.getParameterShellWithCommonName(REGISTER_PUBLISHER_SES_URL).getSpecifiedValue();
         XmlCursor cur = null;
         String from = "http://www.w3.org/2005/08/addressing/role/anonymous";
-        if(parameter.getParameterShellWithCommonName(ISESRequestBuilder.REGISTER_PUBLISHER_FROM) != null){
-            from = (String)parameter.getParameterShellWithCommonName(ISESRequestBuilder.REGISTER_PUBLISHER_FROM).getSpecifiedValue();
+        if(parameter.getParameterShellWithCommonName(REGISTER_PUBLISHER_FROM) != null){
+            from = (String)parameter.getParameterShellWithCommonName(REGISTER_PUBLISHER_FROM).getSpecifiedValue();
         }
         SESUtils.addNamespacesToEnvelope_000(env);
 
@@ -148,12 +148,12 @@ public class SESRequestBuilder_01 extends SESRequestBuilder_00 {
         cur.toFirstContentToken();
         cur.beginElement(new QName(ns_wsBrokeredNotification,"RegisterPublisher","wsbn"));
         cur.insertElementWithText(new QName("http://docs.oasis-open.org/wsrf/rl-2","RequestedLifetimeDuration","wsrf"),
-                (String)parameter.getParameterShellWithCommonName(ISESRequestBuilder.REGISTER_PUBLISHER_LIFETIME_DURATION).getSpecifiedValue());
+                (String)parameter.getParameterShellWithCommonName(REGISTER_PUBLISHER_LIFETIME_DURATION).getSpecifiedValue());
 
         cur.beginElement(new QName(ns_wsBrokeredNotification,"Topic","wsbn"));
         cur.insertAttributeWithValue(/*new QName(ns_wsBrokeredNotification,"Dialect","wsrf")*/"dialect", 
-                (String)parameter.getParameterShellWithCommonName(ISESRequestBuilder.REGISTER_PUBLISHER_TOPIC_DIALECT).getSpecifiedValue());
-        cur.insertChars((String)parameter.getParameterShellWithCommonName(ISESRequestBuilder.REGISTER_PUBLISHER_TOPIC).getSpecifiedValue());
+                (String)parameter.getParameterShellWithCommonName(REGISTER_PUBLISHER_TOPIC_DIALECT).getSpecifiedValue());
+        cur.insertChars((String)parameter.getParameterShellWithCommonName(REGISTER_PUBLISHER_TOPIC).getSpecifiedValue());
         cur.toNextToken();
 
 //        cur.beginElement(new QName("http://www.opengis.net/sensorML/1.0.1","SensorML","sml"));
@@ -166,7 +166,7 @@ public class SESRequestBuilder_01 extends SESRequestBuilder_00 {
         cur.dispose();
 
         request = envDoc.xmlText();
-        request = request.replaceAll("@SML_REPLACER@", (String)parameter.getParameterShellWithCommonName(ISESRequestBuilder.REGISTER_PUBLISHER_SENSORML).getSpecifiedValue());
+        request = request.replaceAll("@SML_REPLACER@", (String)parameter.getParameterShellWithCommonName(REGISTER_PUBLISHER_SENSORML).getSpecifiedValue());
 
         return request;
     }
@@ -182,7 +182,7 @@ public class SESRequestBuilder_01 extends SESRequestBuilder_00 {
         Envelope env = envDoc.addNewEnvelope();
         Header header = env.addNewHeader();
         Body body = env.addNewBody();
-        String sesURL = (String)parameter.getParameterShellWithCommonName(ISESRequestBuilder.GET_CAPABILITIES_SES_URL).getSpecifiedValue();
+        String sesURL = (String)parameter.getParameterShellWithCommonName(GET_CAPABILITIES_SES_URL).getSpecifiedValue();
         XmlCursor cur = null;
 
         SESUtils.addNamespacesToEnvelope_000(env);

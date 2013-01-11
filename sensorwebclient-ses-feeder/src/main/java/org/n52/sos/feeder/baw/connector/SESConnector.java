@@ -27,6 +27,21 @@
 
 package org.n52.sos.feeder.baw.connector;
 
+import static org.n52.oxf.ses.adapter.ISESRequestBuilder.GET_CAPABILITIES_SES_URL;
+import static org.n52.oxf.ses.adapter.ISESRequestBuilder.NOTIFY_SES_URL;
+import static org.n52.oxf.ses.adapter.ISESRequestBuilder.NOTIFY_TOPIC;
+import static org.n52.oxf.ses.adapter.ISESRequestBuilder.NOTIFY_TOPIC_DIALECT;
+import static org.n52.oxf.ses.adapter.ISESRequestBuilder.NOTIFY_XML_MESSAGE;
+import static org.n52.oxf.ses.adapter.ISESRequestBuilder.REGISTER_PUBLISHER_FROM;
+import static org.n52.oxf.ses.adapter.ISESRequestBuilder.REGISTER_PUBLISHER_LIFETIME_DURATION;
+import static org.n52.oxf.ses.adapter.ISESRequestBuilder.REGISTER_PUBLISHER_SENSORML;
+import static org.n52.oxf.ses.adapter.ISESRequestBuilder.REGISTER_PUBLISHER_SES_URL;
+import static org.n52.oxf.ses.adapter.ISESRequestBuilder.REGISTER_PUBLISHER_TOPIC;
+import static org.n52.oxf.ses.adapter.ISESRequestBuilder.REGISTER_PUBLISHER_TOPIC_DIALECT;
+import static org.n52.oxf.ses.adapter.SESAdapter.GET_CAPABILITIES;
+import static org.n52.oxf.ses.adapter.SESAdapter.NOTIFY;
+import static org.n52.oxf.ses.adapter.SESAdapter.REGISTER_PUBLISHER;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,10 +64,6 @@ import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.ows.ExceptionReport;
 import org.n52.oxf.ows.ServiceDescriptor;
 import org.n52.oxf.ows.capabilities.Operation;
-//import org.n52.oxf.serviceAdapters.OperationResult;
-//import org.n52.oxf.serviceAdapters.ParameterContainer;
-//import org.n52.oxf.serviceAdapters.ses.ISESRequestBuilder;
-//import org.n52.oxf.serviceAdapters.ses.SESAdapter;
 import org.n52.sos.feeder.baw.Configuration;
 import org.n52.sos.feeder.baw.SosSesFeeder;
 import org.n52.sos.feeder.baw.utils.SESAdapter_01;
@@ -147,21 +158,21 @@ public class SESConnector {
             String lifetime = Configuration.getInstance().getSesLifetimeDuration();
             String localEndpoint = Configuration.getInstance().getSesEndpoint();
             String sensorMLString = sensorML.toString();
-            parameter.addParameterShell(ISESRequestBuilder.REGISTER_PUBLISHER_SES_URL, this.sesUrl);
-            parameter.addParameterShell(ISESRequestBuilder.REGISTER_PUBLISHER_SENSORML, sensorMLString);
-            parameter.addParameterShell(ISESRequestBuilder.REGISTER_PUBLISHER_TOPIC_DIALECT, defaultTopicDialect);
-            parameter.addParameterShell(ISESRequestBuilder.REGISTER_PUBLISHER_TOPIC, defaultTopic);
-            parameter.addParameterShell(ISESRequestBuilder.REGISTER_PUBLISHER_LIFETIME_DURATION, lifetime);
-            parameter.addParameterShell(ISESRequestBuilder.REGISTER_PUBLISHER_FROM, localEndpoint);
+            parameter.addParameterShell(REGISTER_PUBLISHER_SES_URL, this.sesUrl);
+            parameter.addParameterShell(REGISTER_PUBLISHER_SENSORML, sensorMLString);
+            parameter.addParameterShell(REGISTER_PUBLISHER_TOPIC_DIALECT, defaultTopicDialect);
+            parameter.addParameterShell(REGISTER_PUBLISHER_TOPIC, defaultTopic);
+            parameter.addParameterShell(REGISTER_PUBLISHER_LIFETIME_DURATION, lifetime);
+            parameter.addParameterShell(REGISTER_PUBLISHER_FROM, localEndpoint);
 
             log.debug("RegisterPublisher request: \n"
                     + new SESRequestBuilder_01().buildRegisterPublisherRequest(parameter));
 
-            opRes = this.sesAdapter.doOperation(new Operation(SESAdapter.REGISTER_PUBLISHER,
+            opRes = this.sesAdapter.doOperation(new Operation(REGISTER_PUBLISHER,
                                                               this.sesUrl + "?",
                                                               this.sesUrl), parameter);
 
-            XmlObject response = this.sesAdapter.handle(SESAdapter.REGISTER_PUBLISHER,
+            XmlObject response = this.sesAdapter.handle(REGISTER_PUBLISHER,
                                                         opRes.getIncomingResultAsStream());
 
             log.debug("RegisterPublisher response: \n" + response);
@@ -226,14 +237,14 @@ public class SESConnector {
     private void createAndSendRequest(String observationXML) {
         ParameterContainer parameter = new ParameterContainer();
         try {
-            parameter.addParameterShell(ISESRequestBuilder.NOTIFY_SES_URL, sesUrl);
-            parameter.addParameterShell(ISESRequestBuilder.NOTIFY_TOPIC, topic);
-            parameter.addParameterShell(ISESRequestBuilder.NOTIFY_TOPIC_DIALECT, dialect);
-            parameter.addParameterShell(ISESRequestBuilder.NOTIFY_XML_MESSAGE, observationXML);
+            parameter.addParameterShell(NOTIFY_SES_URL, sesUrl);
+            parameter.addParameterShell(NOTIFY_TOPIC, topic);
+            parameter.addParameterShell(NOTIFY_TOPIC_DIALECT, dialect);
+            parameter.addParameterShell(NOTIFY_XML_MESSAGE, observationXML);
 
             log.debug("Notify request: \n" + new SESRequestBuilder_01().buildNotifyRequest(parameter));
 
-            this.sesAdapter.doOperation(new Operation(SESAdapter.NOTIFY, this.sesUrl + "?", this.sesUrl), parameter);
+            this.sesAdapter.doOperation(new Operation(NOTIFY, this.sesUrl + "?", this.sesUrl), parameter);
 
         }
         catch (OXFException e) {
@@ -256,8 +267,8 @@ public class SESConnector {
 
         OperationResult opsRes;
         try {
-            parameter.addParameterShell(ISESRequestBuilder.GET_CAPABILITIES_SES_URL, this.sesUrl);
-            opsRes = this.sesAdapter.doOperation(new Operation(SESAdapter.GET_CAPABILITIES,
+            parameter.addParameterShell(GET_CAPABILITIES_SES_URL, this.sesUrl);
+            opsRes = this.sesAdapter.doOperation(new Operation(GET_CAPABILITIES,
                                                                this.sesUrl + "?",
                                                                this.sesUrl), parameter);
 

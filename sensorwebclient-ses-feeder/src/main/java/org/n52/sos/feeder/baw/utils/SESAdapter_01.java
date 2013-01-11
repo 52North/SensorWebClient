@@ -33,8 +33,8 @@ import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.ows.capabilities.Operation;
-import org.n52.oxf.serviceAdapters.ses.ISESRequestBuilder;
-import org.n52.oxf.serviceAdapters.ses.SESAdapter;
+import org.n52.oxf.ses.adapter.ISESRequestBuilder;
+import org.n52.oxf.ses.adapter.SESAdapter;
 
 /**
  * The Class SESAdapter_01.
