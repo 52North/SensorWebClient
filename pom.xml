@@ -796,7 +796,7 @@
 		<smartgwt.version>3.0</smartgwt.version>
 		<geotools.version>8.2</geotools.version>
 		<oxf.version>2.0.0-SNAPSHOT</oxf.version>
-		<n52.xml.commons.version>1.1.2</n52.xml.commons.version>
+		<n52.xml.commons.version>1.1.3</n52.xml.commons.version>
 		<hibernate.version>3.5.0-Final</hibernate.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sensorwebclient.webapp.name>${project.artifactId}-${project.version}</sensorwebclient.webapp.name>
