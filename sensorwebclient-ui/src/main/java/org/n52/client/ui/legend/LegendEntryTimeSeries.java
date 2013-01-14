@@ -59,7 +59,6 @@ import org.n52.client.sos.event.handler.LegendElementSelectedEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
 import org.n52.client.sos.event.handler.UpdateScaleEventHandler;
 import org.n52.client.sos.legend.TimeSeries;
-import org.n52.client.sos.ui.StationSelector;
 import org.n52.client.ui.Toaster;
 import org.n52.client.ui.View;
 import org.n52.client.ui.btn.ImageButton;
@@ -352,17 +351,22 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 	}
 
 	private Canvas createLegendTools() {
-		createSesCommunicatorButton();
-		createColorChangeButton();
-		createInformationButton();
-		createDeleteLegendEntryButton();
-
 		HLayout tools = new HLayout();
+		
+		createColorChangeButton();
 		tools.addMember(this.titleCol);
-		tools.addMember(this.sesComButton);
+		
+		if (PropertiesManager.getInstance().getTabsFromPropertiesFile().contains("SesTab")) {
+			createSesCommunicatorButton();
+			tools.addMember(this.sesComButton);
+		}
+		
+		createInformationButton();
 		tools.addMember(this.infoButton);
+		
+		createDeleteLegendEntryButton();
 		tools.addMember(this.deleteButton);
-
+		
 		return tools;
 	}
 
