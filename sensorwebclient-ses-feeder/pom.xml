@@ -14,6 +14,10 @@
 	<dependencies>
 		<!-- ### 52n DEPENDENCIES ### -->
 		<dependency>
+		  <groupId>org.n52.sensorweb</groupId>
+		  <artifactId>sensorwebclient-api</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>oxf-sos-adapter</artifactId>
 		</dependency>
@@ -36,17 +40,16 @@
 
 		<!-- ### External DEPENDENCIES ### -->
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
