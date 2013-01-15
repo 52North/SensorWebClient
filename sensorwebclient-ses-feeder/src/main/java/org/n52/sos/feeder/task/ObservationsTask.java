@@ -25,7 +25,7 @@
  * Created: 17.05.2010
  *****************************************************************************/
 
-package org.n52.sos.feeder.baw.task;
+package org.n52.sos.feeder.task;
 
 import java.util.List;
 import java.util.TimerTask;
@@ -33,8 +33,8 @@ import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.n52.sos.feeder.baw.hibernate.Sensor;
-import org.n52.sos.feeder.baw.utils.DatabaseAccess;
+import org.n52.sos.feeder.hibernate.Sensor;
+import org.n52.sos.feeder.utils.DatabaseAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

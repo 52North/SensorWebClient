@@ -24,7 +24,7 @@
  * Author: Jan Schulte
  * Created: 04.01.2011
  *****************************************************************************/
-package org.n52.sos.feeder.baw.hibernate;
+package org.n52.sos.feeder.hibernate;
 
 import java.io.Serializable;
 

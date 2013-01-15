@@ -22,46 +22,35 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  * 
  * Author: Jan Schulte
- * Created: 05.07.2010
+ * Created: 19.05.2010
  *****************************************************************************/
-package org.n52.sos.feeder.baw.utils;
+package org.n52.sos.feeder.hibernate;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import org.n52.sos.feeder.utils.Strings;
 
 /**
- * Manages the access to used strings.
- * 
+ * Initialize a connection to the database.
  * @author Jan Schulte
  * 
  */
-public class Strings {
-   
-    /** The Constant BUNDLE_NAME. */
-    private static final String BUNDLE_NAME = "strings"; 
+public class InitSessionFactory {
     
-    /** The Constant RESOURCE_BUNDLE. */
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+    /** The session factory. */
+    private static SessionFactory sessionFactory;
 
     /**
-     * Instantiates a new strings.
+     * Gets the single instance of InitSessionFactory.
+     *
+     * @return The SessionFactory
      */
-    private Strings() {
-        // empty Constructor
-    }
-
-    /**
-     * Returns the value belonging to the given key.
-     * 
-     * @param key
-     *            The given key
-     * @return The belonging value
-     */
-    public static String getString(String key) {
-        try {
-            return RESOURCE_BUNDLE.getString(key);
-        } catch (MissingResourceException e) {
-            return '!' + key + '!';
+    public static SessionFactory getInstance() {
+        if (sessionFactory == null) {
+            final Configuration cfg = new Configuration();
+            cfg.configure("/hibernate.cfg.xml");
+            sessionFactory = cfg.buildSessionFactory();
         }
+        return sessionFactory;
     }
 }

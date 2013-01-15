@@ -25,7 +25,7 @@
  * Created: 27.05.2010
  *****************************************************************************/
 
-package org.n52.sos.feeder.baw.connector;
+package org.n52.sos.feeder.connector;
 
 import static org.n52.oxf.ses.adapter.ISESRequestBuilder.GET_CAPABILITIES_SES_URL;
 import static org.n52.oxf.ses.adapter.ISESRequestBuilder.NOTIFY_SES_URL;
@@ -64,10 +64,10 @@ import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.ows.ExceptionReport;
 import org.n52.oxf.ows.ServiceDescriptor;
 import org.n52.oxf.ows.capabilities.Operation;
-import org.n52.sos.feeder.baw.Configuration;
-import org.n52.sos.feeder.baw.SosSesFeeder;
-import org.n52.sos.feeder.baw.utils.SESAdapter_01;
-import org.n52.sos.feeder.baw.utils.SESRequestBuilder_01;
+import org.n52.sos.feeder.Configuration;
+import org.n52.sos.feeder.SosSesFeeder;
+import org.n52.sos.feeder.utils.SESAdapter_01;
+import org.n52.sos.feeder.utils.SESRequestBuilder_01;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3.x2003.x05.soapEnvelope.Body;

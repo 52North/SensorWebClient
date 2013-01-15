@@ -25,7 +25,7 @@
  * Created: 22.06.2010
  *****************************************************************************/
 
-package org.n52.sos.feeder.baw.task;
+package org.n52.sos.feeder.task;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -52,13 +52,13 @@ import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-import org.n52.sos.feeder.baw.Configuration;
-import org.n52.sos.feeder.baw.connector.SESConnector;
-import org.n52.sos.feeder.baw.connector.SOSConnector;
-import org.n52.sos.feeder.baw.hibernate.InitSessionFactory;
-import org.n52.sos.feeder.baw.hibernate.Offering;
-import org.n52.sos.feeder.baw.hibernate.Sensor;
-import org.n52.sos.feeder.baw.utils.Strings;
+import org.n52.sos.feeder.Configuration;
+import org.n52.sos.feeder.connector.SESConnector;
+import org.n52.sos.feeder.connector.SOSConnector;
+import org.n52.sos.feeder.hibernate.InitSessionFactory;
+import org.n52.sos.feeder.hibernate.Offering;
+import org.n52.sos.feeder.hibernate.Sensor;
+import org.n52.sos.feeder.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

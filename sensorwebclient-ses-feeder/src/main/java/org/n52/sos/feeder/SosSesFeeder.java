@@ -24,7 +24,7 @@
  * Author: Jan Schulte
  * Created: 17.05.2010
  *****************************************************************************/
-package org.n52.sos.feeder.baw;
+package org.n52.sos.feeder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,9 +38,9 @@ import java.util.Vector;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPException;
 
-import org.n52.sos.feeder.baw.hibernate.InitSessionFactory;
-import org.n52.sos.feeder.baw.task.DescriptionTask;
-import org.n52.sos.feeder.baw.task.ObservationsTask;
+import org.n52.sos.feeder.hibernate.InitSessionFactory;
+import org.n52.sos.feeder.task.DescriptionTask;
+import org.n52.sos.feeder.task.ObservationsTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

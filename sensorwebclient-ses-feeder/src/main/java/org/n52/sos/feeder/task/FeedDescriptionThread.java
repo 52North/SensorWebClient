@@ -24,7 +24,7 @@
  * Author: Jan Schulte
  * Created: 01.07.2010
  *****************************************************************************/
-package org.n52.sos.feeder.baw.task;
+package org.n52.sos.feeder.task;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -37,13 +37,13 @@ import net.opengis.sensorML.x101.SensorMLDocument;
 import net.opengis.sensorML.x101.SensorMLDocument.SensorML.Member;
 import net.opengis.sensorML.x101.SystemType;
 
-import org.n52.sos.feeder.baw.connector.SESConnector;
-import org.n52.sos.feeder.baw.connector.SOSConnector;
-import org.n52.sos.feeder.baw.hibernate.ObservedProperty;
-import org.n52.sos.feeder.baw.hibernate.Offering;
-import org.n52.sos.feeder.baw.hibernate.SOS;
-import org.n52.sos.feeder.baw.hibernate.Sensor;
-import org.n52.sos.feeder.baw.utils.DatabaseAccess;
+import org.n52.sos.feeder.connector.SESConnector;
+import org.n52.sos.feeder.connector.SOSConnector;
+import org.n52.sos.feeder.hibernate.ObservedProperty;
+import org.n52.sos.feeder.hibernate.Offering;
+import org.n52.sos.feeder.hibernate.SOS;
+import org.n52.sos.feeder.hibernate.Sensor;
+import org.n52.sos.feeder.utils.DatabaseAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

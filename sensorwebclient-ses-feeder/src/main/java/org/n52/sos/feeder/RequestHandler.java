@@ -24,7 +24,7 @@
  * Author: Jan Schulte
  * Created: 17.05.2010
  *****************************************************************************/
-package org.n52.sos.feeder.baw;
+package org.n52.sos.feeder;
 
 import java.util.Iterator;
 
@@ -33,9 +33,9 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
-import org.n52.sos.feeder.baw.task.DescriptionTask;
-import org.n52.sos.feeder.baw.utils.DatabaseAccess;
-import org.n52.sos.feeder.baw.utils.Strings;
+import org.n52.sos.feeder.task.DescriptionTask;
+import org.n52.sos.feeder.utils.DatabaseAccess;
+import org.n52.sos.feeder.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

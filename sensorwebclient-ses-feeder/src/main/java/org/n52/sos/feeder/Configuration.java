@@ -24,7 +24,25 @@
  * Author: Jan Schulte
  * Created: 17.05.2010
  *****************************************************************************/
-package org.n52.sos.feeder.baw;
+
+package org.n52.sos.feeder;
+
+import static org.n52.sos.feeder.Configuration.ConfigurationKeys.KEY_CAPABILITIES_TASK_PERIOD;
+import static org.n52.sos.feeder.Configuration.ConfigurationKeys.KEY_MAXIMUM_NUMBER_PROCEDURES;
+import static org.n52.sos.feeder.Configuration.ConfigurationKeys.KEY_NODATAS;
+import static org.n52.sos.feeder.Configuration.ConfigurationKeys.KEY_OBSERVATIONS_TASK_PERIOD;
+import static org.n52.sos.feeder.Configuration.ConfigurationKeys.KEY_ONLY_YOUNGEST_OBSERVATION;
+import static org.n52.sos.feeder.Configuration.ConfigurationKeys.KEY_PROCEDURE_NAME_CONSTRAINTS;
+import static org.n52.sos.feeder.Configuration.ConfigurationKeys.KEY_PROHIBIT_PROCEDURE_NAMES;
+import static org.n52.sos.feeder.Configuration.ConfigurationKeys.KEY_SES_BASIC_PORT_TYPE_PATH;
+import static org.n52.sos.feeder.Configuration.ConfigurationKeys.KEY_SES_DEFAULT_TOPIC;
+import static org.n52.sos.feeder.Configuration.ConfigurationKeys.KEY_SES_DEFAULT_TOPIC_DIALECT;
+import static org.n52.sos.feeder.Configuration.ConfigurationKeys.KEY_SES_ENDPOINT;
+import static org.n52.sos.feeder.Configuration.ConfigurationKeys.KEY_SES_LIFETIME_DURATION;
+import static org.n52.sos.feeder.Configuration.ConfigurationKeys.KEY_SES_URL;
+import static org.n52.sos.feeder.Configuration.ConfigurationKeys.KEY_SOS_VERSION;
+import static org.n52.sos.feeder.Configuration.ConfigurationKeys.KEY_START_TIMESTAMP;
+import static org.n52.sos.feeder.Configuration.ConfigurationKeys.KEY_UPDATE_OBSERVATION_PERIOD;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.n52.sos.feeder.baw.utils.Strings;
+import org.apache.avalon.framework.availability.UnavailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,64 +68,6 @@ public class Configuration {
     private Properties props;
 
     private int updateInterval;
-
-    // Keys of the configuration properties
-
-    /**
-     * Key for the period to start to collect the sensorML documents in
-     * milliseconds.
-     */
-    private static final String KEY_CAPABILITIES_TASK_PERIOD = "capabilities_task_period";
-
-    /** Key for the period to collect the new observations in milliseconds. */
-    private static final String KEY_OBSERVATIONS_TASK_PERIOD = "observations_task_period";
-
-    /** Key for the supported SOS version. */
-    private static final String KEY_SOS_VERSION = "sos_version";
-
-    /** Key for the minimum update time of an observation in milliseconds. */
-    private static final String KEY_UPDATE_OBSERVATION_PERIOD = "update_observation_period";
-
-    /** Key for the maximum number of procedures. */
-    private static final String KEY_MAXIMUM_NUMBER_PROCEDURES = "maximum_number_procedures";
-
-    /** Key for a list of procedure name constraints. */
-    private static final String KEY_PROCEDURE_NAME_CONSTRAINTS = "procedure_name_constraints";
-
-    /** Key for a list of prohibit procedure names. */
-    private static final String KEY_PROHIBIT_PROCEDURE_NAMES = "prohibit_procedure_names";
-
-    /** Key for a list of no data values. */
-    private static final String KEY_NODATAS = "nodatas";
-
-    /** Key for the supported SES version. */
-    private static final String KEY_SES_VERSION = "ses_version";
-
-    /** Key for the SES url. */
-    private static final String KEY_SES_URL = "ses_url";
-
-    /** Key for the basic port type path of the SES. */
-    private static final String KEY_SES_BASIC_PORT_TYPE_PATH = "ses_basic_port_type_path";
-
-    /** Key for the default topic dialect in the SES requests. */
-    private static final String KEY_SES_DEFAULT_TOPIC_DIALECT = "ses_default_topic_dialect";
-
-    /** Key for the default topic in the SES request. */
-    private static final String KEY_SES_DEFAULT_TOPIC = "ses_default_topic";
-
-    /** Key for the lifetime duration in the SES. */
-    private static final String KEY_SES_LIFETIME_DURATION = "ses_register_publisher_lifetime";
-
-    /** Key for the SES endpoint. */
-    private static final String KEY_SES_ENDPOINT = "ses_register_publisher_endpoint";
-
-    /** Key for the start timestamp for a feeded sensor */
-    private static final String KEY_START_TIMESTAMP = "start_timestamp";
-
-    /** Key for the youngest new observation sended to the ses */
-    private static final String KEY_ONLY_YOUNGEST_OBSERVATION = "only_youngest_observation";
-
-    // private static final String KEY_SLEEP_TIME_OBSERVATIONS = "sleep_time_observation";
 
     /** The procedure name constraints list. */
     private List<String> procedureNameConstraints;
@@ -145,12 +105,10 @@ public class Configuration {
     private int startTimestamp;
 
     /**
-     * Instantiates a new configuration.
-     * 
      * @param is
-     *            InputStream for the configuration file of the servlet.
+     *        InputStream for the configuration file of the servlet.
      * @throws IOException
-     *             Signals that an I/O exception has occurred.
+     *         Signals that an I/O exception has occurred.
      */
     private Configuration(InputStream is) throws IOException {
         this.props = new Properties();
@@ -159,7 +117,8 @@ public class Configuration {
         // Capabilities Task Period
         try {
             this.capTime = Long.parseLong(getValue(KEY_CAPABILITIES_TASK_PERIOD)) * 1000;
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             this.capTime = 86400000;
             LOGGER.warn("Error while parsing " + KEY_CAPABILITIES_TASK_PERIOD + ". Defaultvalue is now " + this.capTime);
         }
@@ -167,7 +126,8 @@ public class Configuration {
         // Observation Task Period
         try {
             this.obsTime = Long.parseLong(getValue(KEY_OBSERVATIONS_TASK_PERIOD)) * 1000;
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             this.obsTime = 60000;
             LOGGER.warn("Error while parsing " + KEY_OBSERVATIONS_TASK_PERIOD + ". Defaultvalue is now " + this.obsTime);
         }
@@ -182,7 +142,8 @@ public class Configuration {
         // update Observation period
         try {
             this.updateInterval = Integer.parseInt(getValue(KEY_UPDATE_OBSERVATION_PERIOD)) * 1000;
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             this.updateInterval = 120000;
             LOGGER.warn("Error while parsing " + KEY_UPDATE_OBSERVATION_PERIOD + ". Defaultvalue is now "
                     + this.updateInterval);
@@ -191,7 +152,8 @@ public class Configuration {
         // maximum number of procedures
         try {
             this.maxNumProc = Integer.parseInt(getValue(KEY_MAXIMUM_NUMBER_PROCEDURES));
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             this.maxNumProc = Integer.MAX_VALUE;
             LOGGER.warn("Error while parsing " + KEY_MAXIMUM_NUMBER_PROCEDURES + ". Defaultvalue is now "
                     + this.maxNumProc);
@@ -202,13 +164,15 @@ public class Configuration {
         String tmp = getValue(KEY_PROCEDURE_NAME_CONSTRAINTS);
         if (tmp == null) {
             LOGGER.warn("Error while parsing " + KEY_PROCEDURE_NAME_CONSTRAINTS + ". Defaultvalue is now an empty list");
-        } else if (tmp.contains(",")) {
+        }
+        else if (tmp.contains(",")) {
             for (String constraint : tmp.split(",")) {
-                if (!constraint.isEmpty()) {
+                if ( !constraint.isEmpty()) {
                     this.procedureNameConstraints.add(constraint);
                 }
             }
-        } else if (!tmp.equals("")) {
+        }
+        else if ( !tmp.equals("")) {
             this.procedureNameConstraints.add(tmp);
         }
 
@@ -217,13 +181,15 @@ public class Configuration {
         tmp = getValue(KEY_NODATAS);
         if (tmp == null) {
             LOGGER.warn("Error while parsing " + KEY_NODATAS + ". Defaultvalue is now an empty list");
-        } else if (tmp.contains(",")) {
+        }
+        else if (tmp.contains(",")) {
             for (String noData : tmp.split(",")) {
-                if (!noData.isEmpty()) {
+                if ( !noData.isEmpty()) {
                     this.noDatas.add(noData);
                 }
             }
-        } else if (!tmp.equals("")) {
+        }
+        else if ( !tmp.equals("")) {
             this.noDatas.add(tmp);
         }
 
@@ -232,13 +198,15 @@ public class Configuration {
         tmp = getValue(KEY_PROHIBIT_PROCEDURE_NAMES);
         if (tmp == null) {
             LOGGER.warn("Error while parsing " + KEY_PROHIBIT_PROCEDURE_NAMES + ". Defaultvalue is now an empty list");
-        } else if (tmp.contains(",")) {
+        }
+        else if (tmp.contains(",")) {
             for (String prohibitProcName : tmp.split(",")) {
-                if (!prohibitProcName.isEmpty()) {
+                if ( !prohibitProcName.isEmpty()) {
                     this.prohibitProcedureNames.add(prohibitProcName);
                 }
             }
-        } else if (!tmp.equals("")) {
+        }
+        else if ( !tmp.equals("")) {
             this.prohibitProcedureNames.add(tmp);
         }
 
@@ -269,7 +237,8 @@ public class Configuration {
         this.sesDefaultTopic = getValue(KEY_SES_DEFAULT_TOPIC);
         if (this.sesDefaultTopic == null) {
             this.sesDefaultTopic = "ses:Measurements";
-            LOGGER.warn("Missing Parameter: " + KEY_SES_DEFAULT_TOPIC + ". Default value is now " + this.sesDefaultTopic);
+            LOGGER.warn("Missing Parameter: " + KEY_SES_DEFAULT_TOPIC + ". Default value is now "
+                    + this.sesDefaultTopic);
         }
 
         // SES lifetime duration
@@ -290,15 +259,16 @@ public class Configuration {
         // start timestamp
         try {
             this.startTimestamp = Integer.parseInt(getValue(KEY_START_TIMESTAMP)) * 1000;
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             this.startTimestamp = 120000;
             LOGGER.warn("Error while parsing " + KEY_UPDATE_OBSERVATION_PERIOD + ". Defaultvalue is now "
                     + this.startTimestamp);
         }
-        
+
         // only youngest observation
         this.onlyYoungestName = Boolean.parseBoolean(getValue(KEY_ONLY_YOUNGEST_OBSERVATION));
-        
+
         LOGGER.info("######################################################################");
         LOGGER.info("######################  Configuration loaded   #######################");
         LOGGER.info("######################################################################");
@@ -321,10 +291,10 @@ public class Configuration {
      * Instance.
      * 
      * @param is
-     *            InputStream for the configuration file of the servlet.
+     *        InputStream for the configuration file of the servlet.
      * @return The instance of the Configuration class.
      * @throws IOException
-     *             Signals that an I/O exception has occurred.
+     *         Signals that an I/O exception has occurred.
      */
     public static Configuration instance(InputStream is) throws IOException {
         LOGGER.trace("instance()");
@@ -338,7 +308,7 @@ public class Configuration {
      * Gets the value of the given key.
      * 
      * @param key
-     *            Configuration key
+     *        Configuration key
      * @return The value to the given configuration key
      */
     public String getValue(String key) {
@@ -459,6 +429,63 @@ public class Configuration {
      */
     public boolean isOnlyYoungestName() {
         return onlyYoungestName;
+    }
+
+    class ConfigurationKeys {
+        /**
+         * Key for the period to start to collect the sensorML documents in milliseconds.
+         */
+        static final String KEY_CAPABILITIES_TASK_PERIOD = "capabilities_task_period";
+
+        /** Key for the period to collect the new observations in milliseconds. */
+        static final String KEY_OBSERVATIONS_TASK_PERIOD = "observations_task_period";
+
+        /** Key for the supported SOS version. */
+        static final String KEY_SOS_VERSION = "sos_version";
+
+        /** Key for the minimum update time of an observation in milliseconds. */
+        static final String KEY_UPDATE_OBSERVATION_PERIOD = "update_observation_period";
+
+        /** Key for the maximum number of procedures. */
+        static final String KEY_MAXIMUM_NUMBER_PROCEDURES = "maximum_number_procedures";
+
+        /** Key for a list of procedure name constraints. */
+        static final String KEY_PROCEDURE_NAME_CONSTRAINTS = "procedure_name_constraints";
+
+        /** Key for a list of prohibit procedure names. */
+        static final String KEY_PROHIBIT_PROCEDURE_NAMES = "prohibit_procedure_names";
+
+        /** Key for a list of no data values. */
+        static final String KEY_NODATAS = "nodatas";
+
+        /** Key for the supported SES version. */
+        static final String KEY_SES_VERSION = "ses_version";
+
+        /** Key for the SES url. */
+        static final String KEY_SES_URL = "ses_url";
+
+        /** Key for the basic port type path of the SES. */
+        static final String KEY_SES_BASIC_PORT_TYPE_PATH = "ses_basic_port_type_path";
+
+        /** Key for the default topic dialect in the SES requests. */
+        static final String KEY_SES_DEFAULT_TOPIC_DIALECT = "ses_default_topic_dialect";
+
+        /** Key for the default topic in the SES request. */
+        static final String KEY_SES_DEFAULT_TOPIC = "ses_default_topic";
+
+        /** Key for the lifetime duration in the SES. */
+        static final String KEY_SES_LIFETIME_DURATION = "ses_register_publisher_lifetime";
+
+        /** Key for the SES endpoint. */
+        static final String KEY_SES_ENDPOINT = "ses_register_publisher_endpoint";
+
+        /** Key for the start timestamp for a feeded sensor */
+        static final String KEY_START_TIMESTAMP = "start_timestamp";
+
+        /** Key for the youngest new observation sended to the ses */
+        static final String KEY_ONLY_YOUNGEST_OBSERVATION = "only_youngest_observation";
+
+        // static final String KEY_SLEEP_TIME_OBSERVATIONS = "sleep_time_observation";
     }
 
 }

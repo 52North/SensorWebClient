@@ -24,7 +24,7 @@
  * Author: Jan Schulte
  * Created: 17.05.2010
  *****************************************************************************/
-package org.n52.sos.feeder.baw.task;
+package org.n52.sos.feeder.task;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -37,14 +37,14 @@ import java.util.concurrent.Executors;
 import org.n52.oxf.ows.ServiceDescriptor;
 import org.n52.oxf.ows.capabilities.Contents;
 import org.n52.oxf.sos.capabilities.ObservationOffering;
-import org.n52.sos.feeder.baw.Configuration;
-import org.n52.sos.feeder.baw.connector.SESConnector;
-import org.n52.sos.feeder.baw.connector.SOSConnector;
-import org.n52.sos.feeder.baw.hibernate.ObservedProperty;
-import org.n52.sos.feeder.baw.hibernate.Offering;
-import org.n52.sos.feeder.baw.hibernate.SOS;
-import org.n52.sos.feeder.baw.hibernate.Sensor;
-import org.n52.sos.feeder.baw.utils.DatabaseAccess;
+import org.n52.sos.feeder.Configuration;
+import org.n52.sos.feeder.connector.SESConnector;
+import org.n52.sos.feeder.connector.SOSConnector;
+import org.n52.sos.feeder.hibernate.ObservedProperty;
+import org.n52.sos.feeder.hibernate.Offering;
+import org.n52.sos.feeder.hibernate.SOS;
+import org.n52.sos.feeder.hibernate.Sensor;
+import org.n52.sos.feeder.utils.DatabaseAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

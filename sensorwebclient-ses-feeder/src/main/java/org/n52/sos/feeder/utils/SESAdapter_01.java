@@ -24,7 +24,7 @@
  * Author: Jan Schulte
  * Created: 07.06.2010
  *****************************************************************************/
-package org.n52.sos.feeder.baw.utils;
+package org.n52.sos.feeder.utils;
 
 import java.io.IOException;
 import java.io.InputStream;

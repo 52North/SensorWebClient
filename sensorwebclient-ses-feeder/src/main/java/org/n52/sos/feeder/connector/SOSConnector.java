@@ -24,7 +24,7 @@
  * Author: Jan Schulte
  * Created: 18.05.2010
  *****************************************************************************/
-package org.n52.sos.feeder.baw.connector;
+package org.n52.sos.feeder.connector;
 
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_CAPABILITIES_ACCEPT_VERSIONS_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_CAPABILITIES_SERVICE_PARAMETER;
@@ -42,7 +42,6 @@ import javax.xml.namespace.QName;
 import net.opengis.gml.TimePeriodType;
 import net.opengis.gml.TimePositionType;
 import net.opengis.ogc.BinaryTemporalOpType;
-import net.opengis.ogc.PropertyNameType;
 import net.opengis.om.x10.ObservationCollectionDocument;
 import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.ows.x11.ExceptionType;
@@ -65,10 +64,9 @@ import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.oxf.sos.capabilities.SOSContents;
 import org.n52.server.util.TimeUtil;
-import org.n52.sos.feeder.baw.Configuration;
-import org.n52.sos.feeder.baw.utils.IOHelper;
-import org.n52.sos.feeder.baw.utils.SOSAdapter_01;
-import org.n52.sos.feeder.baw.utils.Strings;
+import org.n52.sos.feeder.Configuration;
+import org.n52.sos.feeder.utils.IOHelper;
+import org.n52.sos.feeder.utils.SOSAdapter_01;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,19 +78,14 @@ import org.slf4j.LoggerFactory;
  */
 public class SOSConnector {
 
-    /** The Constant log. */
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSConnector.class);
 
-    /** The sos url. */
     private String sosURL;
 
-    /** The service version. */
     private String serviceVersion;
 
-    /** The sos adapter. */
     private SOSAdapter_01 sosAdapter;
 
-    /** The desc. */
     private ServiceDescriptor desc;
 
     /**

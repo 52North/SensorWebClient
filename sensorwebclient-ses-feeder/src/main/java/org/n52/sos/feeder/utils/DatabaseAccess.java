@@ -24,7 +24,7 @@
  * Author: Jan Schulte
  * Created: 01.07.2010
  *****************************************************************************/
-package org.n52.sos.feeder.baw.utils;
+package org.n52.sos.feeder.utils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -35,11 +35,11 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
-import org.n52.sos.feeder.baw.hibernate.InitSessionFactory;
-import org.n52.sos.feeder.baw.hibernate.ObservedProperty;
-import org.n52.sos.feeder.baw.hibernate.Offering;
-import org.n52.sos.feeder.baw.hibernate.SOS;
-import org.n52.sos.feeder.baw.hibernate.Sensor;
+import org.n52.sos.feeder.hibernate.InitSessionFactory;
+import org.n52.sos.feeder.hibernate.ObservedProperty;
+import org.n52.sos.feeder.hibernate.Offering;
+import org.n52.sos.feeder.hibernate.SOS;
+import org.n52.sos.feeder.hibernate.Sensor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
