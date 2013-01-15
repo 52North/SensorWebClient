@@ -21,6 +21,7 @@ public class SosAdapterFactory {
      * @return the custom adapter implementation, or the default {@link SOSAdapter}.
      */
     public static SOSAdapter createSosAdapter(SOSMetadata metadata) {
+        // TODO switch to new oxf interface when ready
         try {
             String adapter = metadata.getAdapter();
             String sosVersion = metadata.getSosVersion();
