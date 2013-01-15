@@ -40,27 +40,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The RequestHandler class handles the incoming request for the used and unused
- * sensors.
+ * The RequestHandler class handles the incoming request for used and unused sensors.
  * 
  * @author Jan Schulte
- * 
  */
 public class RequestHandler {
 
-    /** The logger. */
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequestHandler.class);
 
-    /**
-     * Gets the response.
-     *
-     * @param msg The incoming SOAPMessage
-     * @return The response the to request
-     */
     public SOAPMessage getResponse(SOAPMessage msg) {
         SOAPMessage message = null;
         try {
-            log.info("Incoming request!");
+            LOGGER.debug("Incoming SOAP request.");
 
             // get contents of response
             SOAPBody body = msg.getSOAPBody();
@@ -73,24 +64,21 @@ public class RequestHandler {
                     // check the request
                     SOAPElement elem = (SOAPElement) next;
                     // usedSensors element
-                    if (elem.getElementName().getLocalName().equals(
-                            Strings.getString("IncomingRequest.usedSensorsRequest"))) { 
+                    if (elem.getElementName().getLocalName().equals("usedSensors")) { 
                         usedSensors(elem);
                     }
                     // unsedSensors element
-                    if (elem.getElementName().getLocalName().equals(
-                            Strings.getString("IncomingRequest.unusedSensorsRequest"))) { 
+                    if (elem.getElementName().getLocalName().equals("unusedSensors")) { 
                         unusedSensors(elem);
                     }
                     // addSOS element
-                    if (elem.getElementName().getLocalName()
-                            .equals(Strings.getString("IncomingRequest.addSOSRequest"))) { 
+                    if (elem.getElementName().getLocalName().equals("addSOS")) { 
                         addSOS(elem);
                     }
                 }
             }
         } catch (SOAPException e) {
-            log.error("Unable to parse SOAPrequest: " + e);
+            LOGGER.error("Unable to parse SOAPrequest: " + e);
         }
         return message;
     }
@@ -107,8 +95,8 @@ public class RequestHandler {
             if (next instanceof SOAPElement) {
                 // check if it is a sensor element
                 SOAPElement elem = (SOAPElement) next;
-                if (elem.getElementName().getLocalName().equals(Strings.getString("IncomingRequest.sosElement"))) { 
-                    log.info("New SOS added: " + elem.getValue()); 
+                if (elem.getElementName().getLocalName().equals("sos")) { 
+                    LOGGER.info("New SOS added: " + elem.getValue()); 
                     // save in database
                     DatabaseAccess.saveNewSOS(elem.getValue());
                     // start an DescriptionTask
@@ -131,8 +119,8 @@ public class RequestHandler {
             if (next instanceof SOAPElement) {
                 // check if it is a sensor element
                 SOAPElement elem = (SOAPElement) next;
-                if (elem.getElementName().getLocalName().equals(Strings.getString("IncomingRequest.sensorElement"))) { 
-                    log.info("New Unused Sensor: " + elem.getValue()); 
+                if (elem.getElementName().getLocalName().equals("sensor")) { 
+                    LOGGER.info("New Unused Sensor: " + elem.getValue()); 
                     DatabaseAccess.saveSensorUsage(elem.getValue(), false);
                     // FIXME delete lastupdate timestamp
                 }
@@ -152,8 +140,8 @@ public class RequestHandler {
             if (next instanceof SOAPElement) {
                 // check if it is a sensor element
                 SOAPElement elem = (SOAPElement) next;
-                if (elem.getElementName().getLocalName().equals(Strings.getString("IncomingRequest.sensorElement"))) { 
-                    log.info("New Used Sensor: " + elem.getValue()); 
+                if (elem.getElementName().getLocalName().equals("sensor")) { 
+                    LOGGER.info("New Used Sensor: " + elem.getValue()); 
                     DatabaseAccess.saveSensorUsage(elem.getValue(), true);
                 }
             }

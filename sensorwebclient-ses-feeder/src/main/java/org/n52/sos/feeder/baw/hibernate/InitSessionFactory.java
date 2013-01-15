@@ -48,7 +48,7 @@ public class InitSessionFactory {
     public static SessionFactory getInstance() {
         if (sessionFactory == null) {
             final Configuration cfg = new Configuration();
-            cfg.configure(Strings.getString("Hibernate.configFile"));
+            cfg.configure("/hibernate.cfg.xml");
             sessionFactory = cfg.buildSessionFactory();
         }
         return sessionFactory;

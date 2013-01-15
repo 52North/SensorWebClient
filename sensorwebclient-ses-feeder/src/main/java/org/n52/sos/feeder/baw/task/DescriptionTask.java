@@ -57,7 +57,6 @@ import org.slf4j.LoggerFactory;
  */
 public class DescriptionTask extends TimerTask {
 
-    /** The Constant log. */
     private static final Logger log = LoggerFactory.getLogger(DescriptionTask.class);
 
     private SESConnector sesConn = new SESConnector();

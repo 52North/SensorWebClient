@@ -119,7 +119,7 @@ public class DatabaseAccess {
     /**
      * Load sensor from database and save with the new usage status.
      * <br>
-     * If set to false, it resets the field <code>Strings.getString("Database.tsensor.lastUpdate")</code>!
+     * If set to false, it resets the field the last updated value in database.
      * 
      * 
      * @param id
@@ -131,7 +131,7 @@ public class DatabaseAccess {
         Session session = InitSessionFactory.getInstance().getCurrentSession();
         Transaction transaction = session.beginTransaction();
         Criteria crit = session.createCriteria(Sensor.class);
-        List<?> sensorList = crit.add(Restrictions.eq(Strings.getString("Database.tsensor.procedure"), id)).list();
+        List<?> sensorList = crit.add(Restrictions.eq("procedure", id)).list();
         for (Object object : sensorList) {
             Sensor sensor = (Sensor) object;
             sensor.setUsed(used);
@@ -153,7 +153,7 @@ public class DatabaseAccess {
         List<SOS> SOSes = new ArrayList<SOS>();
         Session session = InitSessionFactory.getInstance().getCurrentSession();
         Transaction transaction = session.beginTransaction();
-        Query query = session.createQuery(Strings.getString("Database.fromSOS"));
+        Query query = session.createQuery("from SOS sos");
         for (Iterator<?> it = query.iterate(); it.hasNext();) {
             SOS sos = (SOS) it.next();
             log.info("Read SOS out of Database: " + sos.getUrl() + " with " + sos.getSensors().size() + " procedures");
@@ -178,7 +178,7 @@ public class DatabaseAccess {
         Session session = InitSessionFactory.getInstance().getCurrentSession();
         Transaction transaction = session.beginTransaction();
         Criteria crit = session.createCriteria(Sensor.class);
-        List<Sensor> sensors = crit.add(Restrictions.eq(Strings.getString("Database.tsensor.used"), true)).list();
+        List<Sensor> sensors = crit.add(Restrictions.eq("used", true)).list();
         // lazy loading
         for (Sensor sensor : sensors) {
             for (Offering offering : sensor.getOfferings()) {

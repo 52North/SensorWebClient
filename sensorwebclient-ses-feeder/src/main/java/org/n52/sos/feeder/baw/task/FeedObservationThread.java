@@ -241,8 +241,7 @@ public class FeedObservationThread extends Thread {
     private ObservationPropertyType checkObservations(ObservationPropertyType obsPropType) {
         // zum tag hin navigieren
         XmlCursor cResult = obsPropType.getObservation().getResult().newCursor();
-        cResult.toChild(new QName(Strings.getString("Schema.Namespace.Swe101"), Strings
-                .getString("Schema.Type.DataArray")));
+        cResult.toChild(new QName("http://www.opengis.net/swe/1.0.1", "DataArray"));
         DataArrayDocument dataArrayDoc = null;
         try {
             dataArrayDoc = DataArrayDocument.Factory.parse(cResult.getDomNode());
@@ -299,8 +298,7 @@ public class FeedObservationThread extends Thread {
 
             updateInterval = Configuration.getInstance().getUpdateInterval();
             XmlCursor cResult = observation.getResult().newCursor();
-            cResult.toChild(new QName(Strings.getString("Schema.Namespace.Swe101"), Strings
-                    .getString("Schema.Type.DataArray")));
+            cResult.toChild(new QName("http://www.opengis.net/swe/1.0.1", "DataArray"));
             DataArrayDocument dataArrayDoc = null;
             try {
                 dataArrayDoc = DataArrayDocument.Factory.parse(cResult.getDomNode());

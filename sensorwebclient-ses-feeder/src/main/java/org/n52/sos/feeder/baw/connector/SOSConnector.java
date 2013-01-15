@@ -64,6 +64,7 @@ import org.n52.oxf.ows.ServiceDescriptor;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.oxf.sos.capabilities.SOSContents;
+import org.n52.server.util.TimeUtil;
 import org.n52.sos.feeder.baw.Configuration;
 import org.n52.sos.feeder.baw.utils.IOHelper;
 import org.n52.sos.feeder.baw.utils.SOSAdapter_01;
@@ -80,7 +81,7 @@ import org.slf4j.LoggerFactory;
 public class SOSConnector {
 
     /** The Constant log. */
-    private static final Logger log = LoggerFactory.getLogger(SOSConnector.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SOSConnector.class);
 
     /** The sos url. */
     private String sosURL;
@@ -106,7 +107,7 @@ public class SOSConnector {
             this.sosAdapter = new SOSAdapter_01(this.serviceVersion);
         }
         catch (IllegalStateException e) {
-            log.debug("Configuration is not available (anymore).",e);
+            LOGGER.debug("Configuration is not available (anymore).",e);
         }
     }
 
@@ -121,19 +122,19 @@ public class SOSConnector {
             paramCon.addParameterShell(GET_CAPABILITIES_ACCEPT_VERSIONS_PARAMETER,
                     this.serviceVersion);
             paramCon.addParameterShell(GET_CAPABILITIES_SERVICE_PARAMETER, "SOS");
-            log.debug("GetCapabilitiesRequest to " + this.sosURL + ":\n"
+            LOGGER.debug("GetCapabilitiesRequest to " + this.sosURL + ":\n"
                     + this.sosAdapter.getRequestBuilder().buildGetCapabilitiesRequest(paramCon));
 
             Operation getCapOperation = new Operation(SOSAdapter_01.GET_CAPABILITIES, this.sosURL + "?", this.sosURL);
             OperationResult opResult = this.sosAdapter.doOperation(getCapOperation, paramCon);
             this.desc = this.sosAdapter.initService(opResult);
         } catch (ExceptionReport e) {
-            log.error("Error while init SOS service: " + e.getMessage());
+            LOGGER.error("Error while init SOS service: " + e.getMessage());
             return false;
         } catch (OXFException e) {
-            log.error("Error while init SOS serivce: " + e.getMessage());
+            LOGGER.error("Error while init SOS serivce: " + e.getMessage());
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return true;
     }
@@ -163,16 +164,16 @@ public class SOSConnector {
         DescribeSensorDocument descSensDoc = DescribeSensorDocument.Factory.newInstance();
         DescribeSensor descSens = descSensDoc.addNewDescribeSensor();
         descSens.setProcedure(procedure);
-        descSens.setService(Strings.getString("ServiceType.SOS"));
-        descSens.setVersion(this.serviceVersion);
-        descSens.setOutputFormat(Strings.getString("OutputFormat.sensorML"));
+        descSens.setService("SOS");
+        descSens.setVersion(serviceVersion);
+        descSens.setOutputFormat("text/xml;subtype=\"sensorML/1.0.1\"");
 
         // send request
         XmlObject response = null;
         try {
             response = sendRequest(descSensDoc);
         } catch (IOException e) {
-            log.error("Error while requesting sensorML document: " + e.getMessage());
+            LOGGER.error("Error while requesting sensorML document: " + e.getMessage());
         }
         // parse request to SensorML Document
         // FIXME add try catch if response is not SensorML
@@ -180,7 +181,7 @@ public class SOSConnector {
         	SensorMLDocument sensorML = (SensorMLDocument) response;
             return sensorML;
         } catch (Exception e) {
-        	log.error("Problems during parsing of describe sensor response: " + e.getMessage(),e);
+        	LOGGER.error("Problems during parsing of describe sensor response: " + e.getMessage(),e);
         }
         return null;
     }
@@ -201,24 +202,20 @@ public class SOSConnector {
         GetObservationDocument getObsDoc = GetObservationDocument.Factory.newInstance();
         GetObservation getObs = getObsDoc.addNewGetObservation();
         // set version
-        getObs.setVersion(this.serviceVersion);
+        getObs.setVersion(serviceVersion);
         // set serviceType
-        getObs.setService(Strings.getString("ServiceType.SOS"));
+        getObs.setService("SOS");
         // set Offering
         getObs.setOffering(offering);
         // set time
         EventTime eventTime = getObs.addNewEventTime();
         BinaryTemporalOpType binTempOp = BinaryTemporalOpType.Factory.newInstance();
 
-        @SuppressWarnings("unused")
-        PropertyNameType propertyName = binTempOp.addNewPropertyName();
         XmlCursor cursor = binTempOp.newCursor();
-        cursor.toChild(new QName(Strings.getString("Schema.Namespace.ogc"), Strings
-                .getString("Schema.Type.PropertyName")));
-        cursor.setTextValue(Strings.getString("urn.iso8601time"));
+        cursor.toChild(new QName("http://www.opengis.net/ogc", "PropertyName"));
+        cursor.setTextValue("urn:ogc:data:time:iso8601");
 
-        SimpleDateFormat ISO8601FORMAT = new SimpleDateFormat(Strings.getString("ISO8601Dateformat"));
-
+        SimpleDateFormat ISO8601FORMAT = TimeUtil.createIso8601Formatter();
         TimePeriodType timePeriod = TimePeriodType.Factory.newInstance();
 
         TimePositionType beginPosition = timePeriod.addNewBeginPosition();
@@ -227,40 +224,32 @@ public class SOSConnector {
         TimePositionType endPosition = timePeriod.addNewEndPosition();
         Date date = new Date();
         endPosition.setStringValue(ISO8601FORMAT.format(date));
-        log.debug("Update Time for " + procedure +": "+ date.getTime());
+        LOGGER.debug("Update Time for " + procedure +": "+ date.getTime());
 
         binTempOp.setTimeObject(timePeriod);
         eventTime.setTemporalOps(binTempOp);
 
         // rename elements
         cursor = eventTime.newCursor();
-        cursor.toChild(new QName(Strings.getString("Schema.Namespace.ogc"), Strings
-                .getString("Schema.Type.temporalOps")));
-        cursor
-                .setName(new QName(Strings.getString("Schema.Namespace.ogc"), Strings
-                        .getString("Schema.Type.tm_during")));
+        cursor.toChild(new QName("http://www.opengis.net/ogc", "temporalOps"));
+        cursor.setName(new QName("http://www.opengis.net/ogc", "TM_During"));
 
-        cursor.toChild(new QName(Strings.getString("Schema.Namespace.gml"), Strings
-                .getString("Schema.Type._timeObject")));
-        cursor.setName(new QName(Strings.getString("Schema.Namespace.gml"), Strings
-                .getString("Schema.Type.timePeriod")));
+        cursor.toChild(new QName("http://www.opengis.net/gml", "_TimeObject"));
+        cursor.setName(new QName("http://www.opengis.net/gml", "TimePeriod"));
 
-        // set procedure
         getObs.setProcedureArray(new String[] { procedure });
-        // set observed property
         getObs.setObservedPropertyArray(observedProperties);
-        // set responseFormat
-        getObs.setResponseFormat(Strings.getString("OutputFormat.om"));
+        getObs.setResponseFormat("text/xml;subtype=\"om/1.0.0\"");
 
         // send request
         XmlObject response = null;
-        log.debug("GetObservation Request: " + getObsDoc);
+        LOGGER.debug("GetObservation Request: " + getObsDoc);
         try {
             response = sendRequest(getObsDoc);
         } catch (IOException e) {
-            log.error("Error while sending getObservation request: " + e.getMessage());
+            LOGGER.error("Error while sending getObservation request: " + e.getMessage());
         }
-        log.debug("GetObservation Response: " + response);
+        LOGGER.debug("GetObservation Response: " + response);
         // parse request to ObservationCollectionDocument
         if (response instanceof ObservationCollectionDocument) {
             return (ObservationCollectionDocument) response;
@@ -288,7 +277,7 @@ public class SOSConnector {
         try {
             response = replaceSpecialCharacters(XmlObject.Factory.parse(responseIS));
         } catch (XmlException e) {
-            log.error("Error while parsing response stream: " + e.getMessage());
+            LOGGER.error("Error while parsing response stream: " + e.getMessage());
         }
 
         return response;
@@ -314,7 +303,7 @@ public class SOSConnector {
         try {
             return XmlObject.Factory.parse(tempStr);
         } catch (XmlException e) {
-            log.error("Error while replacing special characters: " + e.getMessage());
+            LOGGER.error("Error while replacing special characters: " + e.getMessage());
         }
         return null;
     }

@@ -40,6 +40,7 @@ import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
+import org.n52.server.util.TimeUtil;
 import org.n52.sos.feeder.baw.hibernate.InitSessionFactory;
 import org.n52.sos.feeder.baw.hibernate.SOS;
 import org.n52.sos.feeder.baw.task.DescriptionTask;
@@ -60,7 +61,7 @@ public class TestFeeder {
      */
     public static void main(String[] args) {
 
-        SimpleDateFormat ISO8601FORMAT = new SimpleDateFormat(Strings.getString("ISO8601Dateformat"));
+        SimpleDateFormat ISO8601FORMAT = TimeUtil.createIso8601Formatter();
         DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
         DateTime datetime = new DateTime(new Date());
         String print = fmt.print(datetime);
