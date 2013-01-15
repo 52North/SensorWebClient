@@ -28,7 +28,6 @@ package org.n52.server.oxf.util.generator;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Constructor;
 import java.util.Date;
 import java.util.Map;
 
@@ -68,6 +67,7 @@ import org.n52.oxf.sos.util.SosUtil;
 import org.n52.oxf.util.JavaHelper;
 import org.n52.oxf.valueDomains.time.ITimePosition;
 import org.n52.server.oxf.util.ConfigurationContext;
+import org.n52.server.util.SosAdapterFactory;
 import org.n52.shared.exceptions.ServerException;
 import org.n52.shared.responses.FileResponse;
 import org.n52.shared.responses.RepresentationResponse;
@@ -202,18 +202,7 @@ public class PdfGenerator extends Generator {
         }
 
         Operation descSensorOperation = new Operation(SOSAdapter.DESCRIBE_SENSOR, sosURL, sosURL);
-//		Class<SOSAdapter> adapterClass = (Class<SOSAdapter>) Class.forName(metadata.getAdapter());
-//        Constructor<SOSAdapter> constructor = adapterClass.getConstructor(new Class[]{String.class, ISOSRequestBuilder.class});
-//        ISOSRequestBuilder requestBuilder = SosRequestBuilderFactory.createRequestBuilder(sosVersion);
-//		SOSAdapter adapter = constructor.newInstance(sosVersion, requestBuilder);
-
-//      ISOSRequestBuilder requestBuilder = SosRequestBuilderFactory.createRequestBuilder(sosVersion);
-//      Constructor<SOSAdapter> constructor = clazz.getConstructor(new Class[]{String.class, ISOSRequestBuilder.class});
-//      SOSAdapter adapter = constructor.newInstance(sosVersion, requestBuilder);
-        Class<SOSAdapter> clazz = (Class<SOSAdapter>) Class.forName(metadata.getAdapter());
-        Constructor<SOSAdapter> constructor = clazz.getConstructor(new Class[]{String.class});
-        SOSAdapter adapter = constructor.newInstance(sosVersion);
-		
+        SOSAdapter adapter = SosAdapterFactory.createSosAdapter(metadata);
 		
         OperationResult opResult = adapter.doOperation(descSensorOperation, paramCon);
 

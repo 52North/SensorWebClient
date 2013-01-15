@@ -37,14 +37,11 @@ import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_TEMPORA
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_VERSION_PARAMETER;
 import static org.n52.server.oxf.util.ConfigurationContext.SERVER_TIMEOUT;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.n52.oxf.OXFException;
@@ -59,8 +56,8 @@ import org.n52.oxf.sos.feature.SOSObservationStore;
 import org.n52.oxf.util.JavaHelper;
 import org.n52.oxf.valueDomains.time.TemporalValueDomain;
 import org.n52.server.oxf.util.ConfigurationContext;
-import org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension;
 import org.n52.server.oxf.util.generator.RequestConfig;
+import org.n52.server.util.SosAdapterFactory;
 import org.n52.shared.Constants;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
@@ -89,7 +86,8 @@ public class ObservationAccessor {
 
                 ParameterContainer paramters = createParameterContainer(request, sosVersion, waterML);
                 Operation operation = new Operation(SOSAdapter.GET_OBSERVATION, sosUrl + "?", sosUrl);
-                OperationAccessor callable = new OperationAccessor(createSosAdapter(metadata), operation, paramters);
+                SOSAdapter adapter = SosAdapterFactory.createSosAdapter(metadata);
+                OperationAccessor callable = new OperationAccessor(adapter, operation, paramters);
                 FutureTask<OperationResult> task = new FutureTask<OperationResult>(callable);
                 AccessorThreadPool.execute(task);
 
@@ -124,37 +122,6 @@ public class ObservationAccessor {
         }
         catch (ExecutionException e) {
             throw new AccessException("Could not execute GetObservation request.", e.getCause());
-        }
-    }
-
-    private SOSAdapter createSosAdapter(SOSMetadata metadata) {
-        try {
-            String adapter = metadata.getAdapter();
-            String sosVersion = metadata.getSosVersion();
-            if (adapter == null) {
-                return new SOSAdapter_OXFExtension(sosVersion);
-            }
-            else {
-                Class<SOSAdapter> clazz = (Class<SOSAdapter>) Class.forName(adapter);
-                Class< ? >[] arguments = new Class< ? >[] {String.class};
-                Constructor<SOSAdapter> constructor = clazz.getConstructor(arguments);
-                return constructor.newInstance(sosVersion);
-            }
-        }
-        catch (ClassNotFoundException e) {
-            throw new RuntimeException("Could not find Adapter class.", e);
-        }
-        catch (NoSuchMethodException e) {
-            throw new RuntimeException("Invalid Adapter constructor. ", e);
-        }
-        catch (InstantiationException e) {
-            throw new RuntimeException("Could not create Adapter.", e);
-        }
-        catch (IllegalAccessException e) {
-            throw new RuntimeException("Not allowed to create Adapter.", e);
-        }
-        catch (InvocationTargetException e) {
-            throw new RuntimeException("Instantiation of Adapter failed.", e);
         }
     }
 

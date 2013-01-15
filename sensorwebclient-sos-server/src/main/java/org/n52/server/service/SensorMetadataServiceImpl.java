@@ -44,6 +44,7 @@ import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.access.AccessorThreadPool;
 import org.n52.server.oxf.util.access.OperationAccessor;
 import org.n52.server.oxf.util.parser.DescribeSensorParser;
+import org.n52.server.util.SosAdapterFactory;
 import org.n52.shared.responses.GetProcedureDetailsUrlResponse;
 import org.n52.shared.responses.SensorMetadataResponse;
 import org.n52.shared.serializable.pojos.ReferenceValue;
@@ -128,12 +129,7 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
         }
    
         Operation describeSensor = new Operation(SOSAdapter.DESCRIBE_SENSOR, sosUrl, sosUrl);
-//        ISOSRequestBuilder requestBuilder = SosRequestBuilderFactory.createRequestBuilder(sosVersion);
-//        Constructor<SOSAdapter> constructor = clazz.getConstructor(new Class[]{String.class, ISOSRequestBuilder.class});
-//        SOSAdapter adapter = constructor.newInstance(sosVersion, requestBuilder);
-        Class<SOSAdapter> clazz = (Class<SOSAdapter>) Class.forName(metadata.getAdapter());
-        Constructor<SOSAdapter> constructor = clazz.getConstructor(new Class[]{String.class});
-        SOSAdapter adapter = constructor.newInstance(sosVersion);
+        SOSAdapter adapter = SosAdapterFactory.createSosAdapter(metadata);
 
         OperationAccessor accessor = new OperationAccessor(adapter, describeSensor, parameters);
         FutureTask<OperationResult> task = new FutureTask<OperationResult>(accessor);

@@ -31,8 +31,6 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -63,9 +61,9 @@ import org.n52.oxf.xmlbeans.parser.XMLHandlingException;
 import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.access.AccessorThreadPool;
 import org.n52.server.oxf.util.access.OperationAccessor;
-import org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension;
 import org.n52.server.oxf.util.connector.MetadataHandler;
 import org.n52.server.oxf.util.parser.utils.ParsedPoint;
+import org.n52.server.util.SosAdapterFactory;
 import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
@@ -83,8 +81,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
 
     public SOSMetadataResponse performMetadataCompletion(String sosUrl, String sosVersion) throws OXFException, InterruptedException, XMLHandlingException {
     	SOSMetadata sosMetadata = ConfigurationContext.getServiceMetadatas().get(sosUrl);
-    	String adapterStr = sosMetadata.getAdapter();
-    	SOSAdapter adapter = createSosAdapter(adapterStr, sosVersion);  
+    	SOSAdapter adapter = SosAdapterFactory.createSosAdapter(sosMetadata);  
     	
         ServiceDescriptor serviceDesc = ConnectorUtils.getServiceDescriptor(sosUrl, adapter);
 
@@ -232,7 +229,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
         String smlVersion = metadata.getSensorMLVersion();
         Map<String, FutureTask<OperationResult>> futureTasks = new ConcurrentHashMap<String, FutureTask<OperationResult>>();
         for (Procedure proc : procedures) {
-        	SOSAdapter adapter = createSosAdapter(metadata.getAdapter(), sosVersion);
+        	SOSAdapter adapter = SosAdapterFactory.createSosAdapter(metadata);
             Operation operation = new Operation(SOSAdapter.DESCRIBE_SENSOR, sosUrl, sosUrl);
             ParameterContainer paramCon = new ParameterContainer();
             paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_SERVICE_PARAMETER, "SOS");
@@ -431,34 +428,4 @@ public class DefaultMetadataHandler extends MetadataHandler {
         }
     }
     
-    private SOSAdapter createSosAdapter(String adapter, String sosVersion) {
-        try {
-            if (adapter == null) {
-                return new SOSAdapter_OXFExtension(sosVersion);
-            }
-            else {
-                Class<SOSAdapter> clazz = (Class<SOSAdapter>) Class.forName(adapter);
-                Class< ? >[] arguments = new Class< ? >[] {String.class};
-                Constructor<SOSAdapter> constructor = clazz.getConstructor(arguments);
-                return constructor.newInstance(sosVersion);
-            }
-        }
-        catch (ClassNotFoundException e) {
-            throw new RuntimeException("Could not find Adapter class.", e);
-        }
-        catch (NoSuchMethodException e) {
-            throw new RuntimeException("Invalid Adapter constructor. ", e);
-        }
-        catch (InstantiationException e) {
-            throw new RuntimeException("Could not create Adapter.", e);
-        }
-        catch (IllegalAccessException e) {
-            throw new RuntimeException("Not allowed to create Adapter.", e);
-        }
-        catch (InvocationTargetException e) {
-            throw new RuntimeException("Instantiation of Adapter failed.", e);
-        }
-    }
-
-
 }

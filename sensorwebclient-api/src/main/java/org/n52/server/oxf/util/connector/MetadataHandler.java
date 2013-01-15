@@ -29,8 +29,8 @@ import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 
 public abstract class MetadataHandler {
-
-    // TODO pull up general methods and technics for extending handlers
+    
+    // TODO pull up general methods and technics from extending handlers.
 
     public abstract SOSMetadataResponse performMetadataCompletion(String sosUrl, String sosVersion) throws Exception;
 
@@ -49,4 +49,5 @@ public abstract class MetadataHandler {
             return AReferencingHelper.createEpsgStrictAxisOrder();
         }
     }
+    
 }
