@@ -21,7 +21,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
 <hibernate-mapping package="org.n52.shared.serializable.pojos">
-	<class name="User" table="Tuser">
+	<class name="User" table="sesclient_user">
 		<id name="id" column="id">
 			<generator class="sequence">
 				<param name="sequence">user_id_seq</param>

@@ -8,33 +8,28 @@
 		<property name="connection.username">${ses.database.user}</property>
 		<property name="connection.password">${ses.database.password}</property>
 		<property name="hibernate.hbm2ddl.auto">${ses.database.hibernate.hbm2ddl.auto}</property>
-		
-		
-		<property name="connection.driver_class">
-			org.postgresql.Driver
-		</property>
-		<!-- <property name="connection.pool_size">10</property> -->
-		<property name="dialect">
-			org.hibernate.dialect.PostgreSQLDialect
-		</property>
-		<property name="cache.provider_class">
-			net.sf.ehcache.hibernate.SingletonEhCacheProvider
-		</property>
-		<property name="current_session_context_class">thread
-		</property>
-		<property name="hibernate.transaction.factory_class">
-			org.hibernate.transaction.JDBCTransactionFactory
-		</property>
-		<property name="hibernate.bytecode.provider">
-			cglib
-		</property>
+
+		<property name="connection.driver_class">org.postgresql.Driver</property>
+		<property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+		<property name="cache.provider_class">net.sf.ehcache.hibernate.SingletonEhCacheProvider</property>
+		<property name="current_session_context_class">thread</property>
+		<property name="hibernate.transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property>
+		<property name="hibernate.bytecode.provider">cglib</property>
 		<property name="hibernate.temp.use_jdbc_metadata_defaults">false</property>
 		<!-- <property name="hibernate.cache.use_second_level_cache">true</property> -->
+		
+        <!-- ses-client database mapping files -->
 		<mapping resource="org/n52/shared/serializable/pojos/User.hbm.xml" />
 		<mapping resource="org/n52/shared/serializable/pojos/Subscription.hbm.xml" />
 		<mapping resource="org/n52/shared/serializable/pojos/Sensor.hbm.xml" />
 		<mapping resource="org/n52/shared/serializable/pojos/ComplexRule.hbm.xml" />
 		<mapping resource="org/n52/shared/serializable/pojos/BasicRule.hbm.xml" />
 		<mapping resource="org/n52/shared/serializable/pojos/ListOfUses.hbm.xml" />
+
+        <!-- feeder database mapping files -->
+		<mapping resource="org/n52/sos/feeder/hibernate/SOS.hbm.xml" />
+		<mapping resource="org/n52/sos/feeder/hibernate/Sensor.hbm.xml" />
+		<mapping resource="org/n52/sos/feeder/hibernate/Offering.hbm.xml" />
+		<mapping resource="org/n52/sos/feeder/hibernate/ObservedProperty.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>

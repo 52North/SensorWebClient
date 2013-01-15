@@ -28,8 +28,8 @@
  -->
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
-<hibernate-mapping package="org.n52.sos.feeder.baw.hibernate">
-  <class name="ObservedProperty" table="tobservedProperty" >
+<hibernate-mapping package="org.n52.sos.feeder.hibernate">
+  <class name="ObservedProperty" table="feeder_observed_property" >
       <id name="obsPropId">
          <generator class="sequence">
             <param name="sequence">obs_Prop_id_seq</param>

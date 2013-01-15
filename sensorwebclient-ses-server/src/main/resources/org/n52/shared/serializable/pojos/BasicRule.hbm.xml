@@ -29,7 +29,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
 <hibernate-mapping package="org.n52.shared.serializable.pojos">
-  <class name="BasicRule" table="TbasicRule" >
+  <class name="BasicRule" table="sesclient_basic_rule" >
       <id name="basicRuleID" column="ID">
          <generator class="native"/>
       </id>

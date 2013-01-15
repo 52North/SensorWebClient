@@ -52,7 +52,7 @@
     <property name="hibernate.transaction.factory_class">
       org.hibernate.transaction.JDBCTransactionFactory
       </property>
-    <!-- <property name="hibernate.hbm2ddl.auto">create</property>-->
+    <!-- <property name="hibernate.hbm2ddl.auto">create</property> -->
     <mapping resource="org/n52/sos/feeder/baw/hibernate/SOS.hbm.xml" />
     <mapping resource="org/n52/sos/feeder/baw/hibernate/Sensor.hbm.xml" />
     <mapping resource="org/n52/sos/feeder/baw/hibernate/Offering.hbm.xml"/>
