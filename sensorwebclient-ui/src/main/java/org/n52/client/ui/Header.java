@@ -30,6 +30,7 @@ import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 import java.util.Date;
 
 import org.n52.client.ctrl.TimeManager;
+import org.n52.client.ses.util.SesUtil;
 import org.n52.client.sos.ctrl.DataManagerSosImpl;
 import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
 import org.n52.client.sos.legend.TimeSeries;
@@ -88,6 +89,10 @@ public class Header extends HLayout {
         linkLayout.addMember(getSeparator());
         linkLayout.addMember(getAddBookmarkLink());
         linkLayout.addMember(getSeparator());
+        if (SesUtil.isSesActiv()) {
+        	linkLayout.addMember(getAdminLink());
+        	linkLayout.addMember(getSeparator());
+        }
         linkLayout.addMember(getImprintLink());
         linkLayout.addMember(getSeparator());
         linkLayout.addMember(getCopyrightLink());
@@ -95,7 +100,7 @@ public class Header extends HLayout {
         addMember(linkLayout);
     }
 
-    private Layout getHomeLabel() {
+	private Layout getHomeLabel() {
 		Layout layout = new HLayout();
 		layout.setStylePrimaryName("n52_sensorweb_client_logoBlock");
 		Img homeLabel = new Img("../img/client-logo.png", 289, 55);
@@ -178,6 +183,26 @@ public class Header extends HLayout {
             }
         });
 		return restart;
+	}
+	
+	private Label getAdminLink() {
+		Label admin = getHeaderLinkLabel(i18n.admin());
+		admin.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				DataPanel dataPanel = View.getInstance().getDataPanel();
+				DataPanelTab newTab;
+				if (dataPanel.getCurrentTab().equals(View.getInstance().getSesTab())) {
+					newTab = View.getInstance().getEesTab();
+				} else {
+					newTab = View.getInstance().getSesTab();
+				}
+				dataPanel.getPanel().selectTab(newTab);
+				dataPanel.setCurrentTab(newTab);
+				dataPanel.update();
+			}
+		});
+		return admin;
 	}
 	
 	private boolean isEnglishLocale(String value) {

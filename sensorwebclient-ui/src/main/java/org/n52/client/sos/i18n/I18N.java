@@ -108,6 +108,8 @@ public interface I18N extends Constants {
     String deLang();
 
     String help();
+    
+    String admin();
 
     String map();
 
