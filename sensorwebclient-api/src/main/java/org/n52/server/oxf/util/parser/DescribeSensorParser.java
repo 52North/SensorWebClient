@@ -41,6 +41,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import net.opengis.sensorML.x101.AbstractComponentType;
 import net.opengis.sensorML.x101.AbstractProcessType;
 import net.opengis.sensorML.x101.CapabilitiesDocument.Capabilities;
 import net.opengis.sensorML.x101.CharacteristicsDocument.Characteristics;
@@ -52,7 +53,6 @@ import net.opengis.sensorML.x101.OutputsDocument.Outputs.OutputList;
 import net.opengis.sensorML.x101.SensorMLDocument;
 import net.opengis.sensorML.x101.SensorMLDocument.SensorML;
 import net.opengis.sensorML.x101.SensorMLDocument.SensorML.Member;
-import net.opengis.sensorML.x101.SystemType;
 import net.opengis.sensorML.x101.impl.ProcessModelTypeImpl;
 import net.opengis.swe.x101.AnyScalarPropertyType;
 import net.opengis.swe.x101.DataComponentPropertyType;
@@ -73,7 +73,6 @@ import org.n52.oxf.OXFException;
 import org.n52.oxf.util.IOHelper;
 import org.n52.oxf.util.JavaHelper;
 import org.n52.oxf.xml.NcNameResolver;
-import org.n52.oxf.xmlbeans.parser.XMLBeansParser;
 import org.n52.oxf.xmlbeans.parser.XMLHandlingException;
 import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.crs.AReferencingHelper;
@@ -118,8 +117,8 @@ public class DescribeSensorParser {
     public String buildUpSensorMetadataStationName() {
         String stationName = "";
         AbstractProcessType abstractProcessType = smlDoc.getSensorML().getMemberArray(0).getProcess();
-        if (abstractProcessType instanceof SystemType) {
-            stationName = getStationNameBySystemType((SystemType) abstractProcessType);
+        if (abstractProcessType instanceof AbstractComponentType) {
+            stationName = getStationNameByAbstractComponentType((AbstractComponentType) abstractProcessType);
         }
         return stationName;
     }
@@ -127,8 +126,8 @@ public class DescribeSensorParser {
     public String buildUpSensorMetadataUom(String phenomenonID) {
         String uom = "";
         AbstractProcessType abstractProcessType = smlDoc.getSensorML().getMemberArray(0).getProcess();
-        if (abstractProcessType instanceof SystemType) {
-            uom = getUomBySystemType(phenomenonID, (SystemType) abstractProcessType);
+        if (abstractProcessType instanceof AbstractComponentType) {
+            uom = getUomByAbstractComponentType(phenomenonID, (AbstractComponentType) abstractProcessType);
         }
         else if (abstractProcessType instanceof ProcessModelTypeImpl) {
             uom = getUomByProcessModelTypeImpl(phenomenonID, (ProcessModelTypeImpl) abstractProcessType);
@@ -160,7 +159,7 @@ public class DescribeSensorParser {
         SensorML sensorML = smlDoc.getSensorML();
         for (Member member : sensorML.getMemberArray()) {
 
-            SystemType sysDoc = (SystemType) member.getProcess();
+        	AbstractComponentType sysDoc = (AbstractComponentType) member.getProcess();
             PositionType position = sysDoc.getPosition().getPosition();
             String srsUrn = position.getReferenceFrame();
             VectorPropertyType location = position.getLocation();
@@ -226,10 +225,10 @@ public class DescribeSensorParser {
         return uom;
     }
 
-    private String getUomBySystemType(String phenomenonID, SystemType system) {
+    private String getUomByAbstractComponentType(String phenomenonID, AbstractComponentType absComponent) {
         String uom = "";
         try {
-            OutputList outList = system.getOutputs().getOutputList();
+            OutputList outList = absComponent.getOutputs().getOutputList();
             IoComponentPropertyType[] outputs = outList.getOutputArray();
             for (int j = 0; j < outputs.length; j++) {
                 if (outputs[j].getQuantity().getDefinition().equals(phenomenonID)) {
@@ -282,10 +281,10 @@ public class DescribeSensorParser {
         return uom;
     }
 
-    private String getStationNameBySystemType(SystemType system) {
+    private String getStationNameByAbstractComponentType(AbstractComponentType absComponentType) {
         String station = null;
         String uniqueId = null;
-        Identification[] identifications = getSensorMLIdentification(system);
+        Identification[] identifications = getSensorMLIdentification(absComponentType);
         for (Identification identification : identifications) {
 
             Identifier[] identifiers = identification.getIdentifierList().getIdentifierArray();
@@ -513,8 +512,8 @@ public class DescribeSensorParser {
         }
         else {
             Member member = sml.getMemberArray(0);
-            if (member.getProcess() instanceof SystemType) {
-                return ((SystemType) member.getProcess()).getCapabilitiesArray();
+            if (member.getProcess() instanceof AbstractComponentType) {
+                return ((AbstractComponentType) member.getProcess()).getCapabilitiesArray();
             }
             else {
                 SchemaType type = member.getProcess() != null ? member.getProcess().schemaType() : null;
@@ -525,17 +524,17 @@ public class DescribeSensorParser {
     }
 
     /**
-     * @param system
+     * @param absComponent
      *        the sensorML document
      * @return the sensorML's identification modeled either in SensorML root or within Member/System
      */
-    private Identification[] getSensorMLIdentification(SystemType system) {
-        Identification[] identificationArray = system.getIdentificationArray();
+    private Identification[] getSensorMLIdentification(AbstractComponentType absComponent) {
+        Identification[] identificationArray = absComponent.getIdentificationArray();
         if (identificationArray != null && identificationArray.length != 0) {
             return identificationArray;
         }
         else {
-            return system.getIdentificationArray();
+            return absComponent.getIdentificationArray();
         }
     }
 
@@ -552,12 +551,12 @@ public class DescribeSensorParser {
         }
         else {
             Member member = sml.getMemberArray(0);
-            SystemType system = member.isSetProcess() ? (SystemType) member.getProcess() : null;
-            if (system == null) {
+            AbstractComponentType absComponent = member.isSetProcess() ? (AbstractComponentType) member.getProcess() : null;
+            if (absComponent == null) {
                 LOGGER.warn("SensorML does not contain a process substitution.");
                 return new Characteristics[0];
             }
-            return system.getCharacteristicsArray();
+            return absComponent.getCharacteristicsArray();
         }
     }
 
@@ -574,12 +573,12 @@ public class DescribeSensorParser {
         }
         else {
             Member member = sml.getMemberArray(0);
-            SystemType system = member.isSetProcess() ? (SystemType) member.getProcess() : null;
-            if (system == null) {
+            AbstractComponentType absComponent = member.isSetProcess() ? (AbstractComponentType) member.getProcess() : null;
+            if (absComponent == null) {
                 LOGGER.warn("SensorML does not contain a process substitution.");
                 return new Classification[0];
             }
-            return system.getClassificationArray();
+            return absComponent.getClassificationArray();
         }
     }
 
@@ -627,8 +626,8 @@ public class DescribeSensorParser {
     public List<String> getPhenomenons() {
         List<String> phenomenons = new ArrayList<String>();
         Member member = smlDoc.getSensorML().getMemberArray()[0];
-        SystemType system = (SystemType) member.getProcess();
-        OutputList outputs = system.getOutputs().getOutputList();
+        AbstractComponentType absComponent = (AbstractComponentType) member.getProcess();
+        OutputList outputs = absComponent.getOutputs().getOutputList();
         for (IoComponentPropertyType output : outputs.getOutputArray()) {
             if (output.isSetObservableProperty()) {
                 phenomenons.add(output.getObservableProperty().getDefinition());
@@ -659,10 +658,7 @@ public class DescribeSensorParser {
             }
             else {
                 for (Description description : descriptionArray) {
-                    smlDoc = SensorMLDocument.Factory.newInstance();
-                    Member member = smlDoc.addNewSensorML().addNewMember();
                     Data dataDescription = description.getSensorDescription().getData();
-
                     String namespace = "declare namespace gml='http://www.opengis.net/gml'; ";
                     for (XmlObject xml : dataDescription.selectPath(namespace + "$this//*/@gml:id")) {
                         XmlCursor cursor = xml.newCursor();
@@ -672,7 +668,8 @@ public class DescribeSensorParser {
                         }
                     }
 
-                    member.set(XMLBeansParser.parse(dataDescription.newInputStream()));
+                    smlDoc = SensorMLDocument.Factory.parse(dataDescription.newInputStream());
+//                    member.set(XMLBeansParser.parse());
                     break;
                 }
             }
