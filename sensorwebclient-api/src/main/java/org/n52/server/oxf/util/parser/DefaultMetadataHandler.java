@@ -131,16 +131,23 @@ public class DefaultMetadataHandler extends MetadataHandler {
             String offeringID = offering.getIdentifier();
 
             // associate:
-            String[] foiArray = offering.getFeatureOfInterest();
-            offeringFoiMap.put(offeringID, foiArray);
-
-            // associate:
             String[] procArray = offering.getProcedures();
             offeringProcMap.put(offeringID, procArray);
 
             // associate:
             String[] phenArray = offering.getObservedProperties();
             offeringPhenMap.put(offeringID, phenArray);
+
+            // associate:
+            String[] foiArray = new String[]{};
+            if (SosUtil.isVersion100(sosVersion)) {
+                foiArray = offering.getFeatureOfInterest();
+                offeringFoiMap.put(offeringID, foiArray);
+            } else if (SosUtil.isVersion100(sosVersion)) {
+                
+                //TODO retrieve fois via GetFOI + procedure + bbox
+                
+            }
 
             // iterate over fois to delete double entries for the request
             for (int j = 0; j < foiArray.length; j++) {
