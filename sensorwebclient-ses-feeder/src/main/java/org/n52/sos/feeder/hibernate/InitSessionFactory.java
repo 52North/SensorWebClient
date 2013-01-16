@@ -28,7 +28,6 @@ package org.n52.sos.feeder.hibernate;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.n52.sos.feeder.utils.Strings;
 
 /**
  * Initialize a connection to the database.
@@ -47,8 +46,7 @@ public class InitSessionFactory {
      */
     public static SessionFactory getInstance() {
         if (sessionFactory == null) {
-            final Configuration cfg = new Configuration();
-            cfg.configure("/hibernate.cfg.xml");
+            final Configuration cfg = new Configuration().configure();
             sessionFactory = cfg.buildSessionFactory();
         }
         return sessionFactory;

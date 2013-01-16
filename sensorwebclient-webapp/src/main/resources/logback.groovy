@@ -15,13 +15,7 @@ import ch.qos.logback.core.ConsoleAppender
 import ch.qos.logback.core.rolling.RollingFileAppender
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy
 
-import static ch.qos.logback.classic.Level.${CONFIG.LOGGER.LEVEL.CLIENT}
-import static ch.qos.logback.classic.Level.${CONFIG.LOGGER.LEVEL.OXF}
-import static ch.qos.logback.classic.Level.${CONFIG.LOGGER.LEVEL.SERVER}
-import static ch.qos.logback.classic.Level.${CONFIG.LOGGER.LEVEL}
-import static ch.qos.logback.classic.Level.ERROR
-import static ch.qos.logback.classic.Level.INFO
-import static ch.qos.logback.classic.Level.WARN
+import static ch.qos.logback.classic.Level.*
 
 scan()
 def logFile = "${config.logger.fileappender.filepath}/${pom.artifactId}-${project.version}"
@@ -40,10 +34,10 @@ appender("STDOUT", ConsoleAppender) {
     pattern = "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{0} - %msg%n"
   }
 }
-logger("org.n52", ${CONFIG.LOGGER.LEVEL})
-logger("org.n52.oxf", ${CONFIG.LOGGER.LEVEL.OXF})
-logger("org.n52.client", ${CONFIG.LOGGER.LEVEL.CLIENT})
-logger("org.n52.server", ${CONFIG.LOGGER.LEVEL.SERVER})
+logger("org.n52", ${config.logger.level})
+logger("org.n52.oxf", ${config.logger.level.oxf})
+logger("org.n52.client", ${config.logger.level.client})
+logger("org.n52.server", ${config.logger.level.server})
 logger("org.geotools", WARN)
 logger("org.apache.commons.httpclient", WARN)
 logger("com.sun.xml", ERROR)

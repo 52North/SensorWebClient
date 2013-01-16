@@ -29,9 +29,7 @@ public class SosAdapterFactory {
                 return new SOSAdapter(sosVersion);
             }
             else {
-                Class<?> clazz1 = Class.forName(adapter);
-                if (clazz1.isAssignableFrom(SOSAdapter.class)) {
-                    @SuppressWarnings("unchecked")
+                if (SOSAdapter.class.isAssignableFrom(Class.forName(adapter))) {
                     Class<SOSAdapter> clazz = (Class<SOSAdapter>) Class.forName(adapter);
                     Class< ? >[] arguments = new Class< ? >[] {String.class};
                     Constructor<SOSAdapter> constructor = clazz.getConstructor(arguments);
