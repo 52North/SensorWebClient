@@ -7,7 +7,7 @@ import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.n52.server.ses.feeder.hibernate.Sensor;
+import org.n52.server.ses.feeder.hibernate.SensorToFeed;
 import org.n52.server.ses.feeder.util.DatabaseAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,10 +44,10 @@ public class ObservationsTask extends TimerTask {
         isActive = true;
         try {
             log.info("############## Prepare Observations task ################");
-            List<Sensor> sensors = DatabaseAccess.getUsedSensors();
+            List<SensorToFeed> sensors = DatabaseAccess.getUsedSensors();
             log.info("Number of GetObservations: " + sensors.size());
             long time = System.currentTimeMillis();
-            for (Sensor sensor : sensors) {
+            for (SensorToFeed sensor : sensors) {
                 if (sensor.getLastUpdate() == null
                         || (time - sensor.getUpdateInterval() > sensor.getLastUpdate().getTimeInMillis())) {
                     // 

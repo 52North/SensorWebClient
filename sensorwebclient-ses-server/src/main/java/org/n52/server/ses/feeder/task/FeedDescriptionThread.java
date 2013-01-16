@@ -16,7 +16,7 @@ import org.n52.server.ses.feeder.connector.SOSConnector;
 import org.n52.server.ses.feeder.hibernate.ObservedProperty;
 import org.n52.server.ses.feeder.hibernate.Offering;
 import org.n52.server.ses.feeder.hibernate.SOS;
-import org.n52.server.ses.feeder.hibernate.Sensor;
+import org.n52.server.ses.feeder.hibernate.SensorToFeed;
 import org.n52.server.ses.feeder.util.DatabaseAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ public class FeedDescriptionThread extends Thread {
     private static final Logger log = LoggerFactory.getLogger(FeedDescriptionThread.class);
 
     /** The sensor. */
-    private Sensor sensor;
+    private SensorToFeed sensor;
 
     /** The sos. */
     private SOS sos;
@@ -56,7 +56,7 @@ public class FeedDescriptionThread extends Thread {
      * @param sos
      *            The sos to which the sensor belong
      */
-    public FeedDescriptionThread(Sensor sensor, SOS sos) {
+    public FeedDescriptionThread(SensorToFeed sensor, SOS sos) {
         super("Description_" + sensor.getProcedure());
         this.sensor = sensor;
         this.sosCon = new SOSConnector(sos.getUrl());

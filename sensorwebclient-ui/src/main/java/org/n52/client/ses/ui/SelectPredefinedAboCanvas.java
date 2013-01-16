@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.ses.ui.layout;
+package org.n52.client.ses.ui;
 
 import java.util.Set;
 
@@ -35,23 +35,25 @@ import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.layout.Layout;
 
-public class SimpleRuleForTimeSeriesLayout extends Layout {
+public class SelectPredefinedAboCanvas extends Layout {
 
+    private CreateEventAbonnementController controller;
+    
 	private FlexTable entries;
 	
     private RadioGroupItem operatorRadioGroup;
 
     private TextItem value;
-    
-    private TimeSeries timeSeries;
-    
-    public SimpleRuleForTimeSeriesLayout() {
+
+    public SelectPredefinedAboCanvas(CreateEventAbonnementController controller) {
+        this.setStylePrimaryName("n52_sensorweb_client_abo_selection");
+        this.controller = controller;
     	this.entries = new FlexTable();
     	addMember(this.entries);
     }
     
-	public void setTimeSeries(TimeSeries timeSeries) {
-		this.timeSeries = timeSeries;
+	public void setTimeSeries() {
+        TimeSeries timeSeries = controller.getTimeSeries();
 		this.entries.removeAllRows();
 		
 		addRow("Datenanbieter",timeSeries.getSosUrl());
@@ -63,7 +65,7 @@ public class SimpleRuleForTimeSeriesLayout extends Layout {
 		addRow("Wert", "");
 		addRow("Maßeinheit", timeSeries.getUnitOfMeasure());
 
-		addRefValueTable();
+		addRefValueTable(timeSeries);
 	}
 
 	private void addRow(String label, FormItem item) {
@@ -78,8 +80,8 @@ public class SimpleRuleForTimeSeriesLayout extends Layout {
 		entries.getFlexCellFormatter().setStyleName(row, 1, "52n_simpleRuleTable_right_column");
 	}
 	
-	private void addRefValueTable() {
-		TimeSeriesProperties properties = this.timeSeries.getProperties();
+	private void addRefValueTable(TimeSeries timeSeries) {
+		TimeSeriesProperties properties = timeSeries.getProperties();
 		Set<String> refValues = properties.getrefValues();
 		if (refValues != null && refValues.size() > 0) {
 			for (String refValueStr : refValues) {

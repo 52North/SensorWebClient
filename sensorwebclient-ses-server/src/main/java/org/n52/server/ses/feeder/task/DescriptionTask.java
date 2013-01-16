@@ -17,7 +17,7 @@ import org.n52.server.ses.feeder.connector.SOSConnector;
 import org.n52.server.ses.feeder.hibernate.ObservedProperty;
 import org.n52.server.ses.feeder.hibernate.Offering;
 import org.n52.server.ses.feeder.hibernate.SOS;
-import org.n52.server.ses.feeder.hibernate.Sensor;
+import org.n52.server.ses.feeder.hibernate.SensorToFeed;
 import org.n52.server.ses.feeder.util.DatabaseAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,8 +92,8 @@ public class DescriptionTask extends TimerTask {
                 int sensorCount = sesProcedures.size();
                 // check sensors of the database
                 log.debug("Check sensor of database");
-                List<Sensor> sensors = DatabaseAccess.getAllSensors();
-                for (Sensor sensor : sensors) {
+                List<SensorToFeed> sensors = DatabaseAccess.getAllSensors();
+                for (SensorToFeed sensor : sensors) {
                     if (!sesProcedures.contains(sensor.getProcedure())) {
                         log.info("Get Sensor: " + sensor);
                         if (!executor.isShutdown()) {
@@ -112,7 +112,7 @@ public class DescriptionTask extends TimerTask {
                             throw new IllegalStateException("SOS is not available.");
                         }
 
-                        Set<Sensor> sensorsNew = new HashSet<Sensor>();
+                        Set<SensorToFeed> sensorsNew = new HashSet<SensorToFeed>();
                         // get observation offerings of the current SOS
                         log.debug("Get observation offerings of current sos: " + sos);
                         ServiceDescriptor serviceDescriptor = sosCon.getDesc();
@@ -153,7 +153,7 @@ public class DescriptionTask extends TimerTask {
                                 }
 
                                 if (constraintMatch && !prohibitMatch) {
-                                    Sensor sensor = sensorInside(procedure, sensorsNew);
+                                    SensorToFeed sensor = sensorInside(procedure, sensorsNew);
                                     if (sensor != null) {
                                         Set<Offering> offerings = sensor.getOfferings();
                                         Offering offering = new Offering();
@@ -167,7 +167,7 @@ public class DescriptionTask extends TimerTask {
                                         offerings.add(offering);
                                         log.info("Add new offering to Sensor: " + procedure);
                                     } else {
-                                        sensor = new Sensor();
+                                        sensor = new SensorToFeed();
                                         sensor.setProcedure(procedure);
                                         sensor.setLastUpdate(null);
                                         sensor.setUsed(false);
@@ -189,7 +189,7 @@ public class DescriptionTask extends TimerTask {
                             }
                         }
 
-                        for (Sensor sensor : sensorsNew) {
+                        for (SensorToFeed sensor : sensorsNew) {
                             if (!executor.isShutdown()) {
                                 log.info("Get new Sensor for feeding: " + sensor.getProcedure());
                                 executor.execute(new FeedDescriptionThread(sensor, sos));
@@ -247,8 +247,8 @@ public class DescriptionTask extends TimerTask {
      *            the sensors
      * @return sensor if procedure is already in the set, else null
      */
-    private Sensor sensorInside(String procedure, Set<Sensor> sensors) {
-        for (Sensor sensor : sensors) {
+    private SensorToFeed sensorInside(String procedure, Set<SensorToFeed> sensors) {
+        for (SensorToFeed sensor : sensors) {
             if (sensor.getProcedure().equals(procedure)) {
                 return sensor;
             }

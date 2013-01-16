@@ -24,30 +24,49 @@
 
 package org.n52.client.ses.ui;
 
-import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
+import java.util.Date;
+
 import org.n52.client.sos.legend.TimeSeries;
 
+class CreateEventAbonnementController {
 
-class SesCommunicatorController {
+    private CreateEventAbonnementWindow sesCommunicator;
 
-    private SesCommunicator sesCommunicator;
-    
     private TimeSeries timeseries;
 
-    public SesCommunicatorController() {
+    private String abonnementName;
+
+    public CreateEventAbonnementController() {
     }
 
-    void setSesCommunicator(SesCommunicator sesCommunicator) {
+    void setSesCommunicator(CreateEventAbonnementWindow sesCommunicator) {
         this.sesCommunicator = sesCommunicator;
     }
-    
-	public void setTimeseriesByID(String timeseriesID) {
-    	this.timeseries = DataStoreTimeSeriesImpl.getInst()
-				.getDataItem(timeseriesID);
-	}
 
-	public TimeSeries getTimeSeries() {
-		return this.timeseries;
-	}
+    public void setTimeseries(TimeSeries timeseries) {
+        this.timeseries = timeseries;
+    }
+
+    public TimeSeries getTimeSeries() {
+        return this.timeseries;
+    }
+
+    public void setAbonnementName(String currentAbonnementName) {
+        this.abonnementName = currentAbonnementName;
+    }
+    
+    public String getAbonnementName() {
+        return abonnementName;
+    }
+
+    /**
+     * @return an abonnement name suggestion for current timeseries.
+     */
+    public String createSuggestedAbonnementName() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(timeseries.getProcedureId());
+        // TODO adjust suggested name
+        return sb.toString();
+    }
 
 }

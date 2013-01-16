@@ -31,7 +31,7 @@ import org.n52.server.ses.feeder.connector.SESConnector;
 import org.n52.server.ses.feeder.connector.SOSConnector;
 import org.n52.server.ses.feeder.hibernate.InitSessionFactory;
 import org.n52.server.ses.feeder.hibernate.Offering;
-import org.n52.server.ses.feeder.hibernate.Sensor;
+import org.n52.server.ses.feeder.hibernate.SensorToFeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +49,7 @@ public class FeedObservationThread extends Thread {
     private static final Logger log = LoggerFactory.getLogger(FeedObservationThread.class);
 
     /** The sensor. */
-    private Sensor sensor;
+    private SensorToFeed sensor;
 
     private boolean running = true;
     
@@ -79,7 +79,7 @@ public class FeedObservationThread extends Thread {
      *            The sensor for the observation collection is done.
      * @param minDelay
      */
-    public FeedObservationThread(Sensor sensor, Vector<String> v) {
+    public FeedObservationThread(SensorToFeed sensor, Vector<String> v) {
         super("Observation_" + sensor.getProcedure());
         this.sensor = sensor;
         this.currentlyFeedingSensors = v;

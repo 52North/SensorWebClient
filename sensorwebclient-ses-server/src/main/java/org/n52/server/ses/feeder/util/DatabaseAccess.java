@@ -13,7 +13,7 @@ import org.n52.server.ses.feeder.hibernate.InitSessionFactory;
 import org.n52.server.ses.feeder.hibernate.ObservedProperty;
 import org.n52.server.ses.feeder.hibernate.Offering;
 import org.n52.server.ses.feeder.hibernate.SOS;
-import org.n52.server.ses.feeder.hibernate.Sensor;
+import org.n52.server.ses.feeder.hibernate.SensorToFeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ public class DatabaseAccess {
      * @param sensor
      *            The sensor to be saved
      */
-    public static synchronized void saveState(SOS sos, Sensor sensor) {
+    public static synchronized void saveState(SOS sos, SensorToFeed sensor) {
         Session session = InitSessionFactory.getInstance().getCurrentSession();
         Transaction transaction = session.beginTransaction();
         session.saveOrUpdate(sos);
@@ -104,10 +104,10 @@ public class DatabaseAccess {
     public static synchronized void saveSensorUsage(String id, boolean used) {
         Session session = InitSessionFactory.getInstance().getCurrentSession();
         Transaction transaction = session.beginTransaction();
-        Criteria crit = session.createCriteria(Sensor.class);
+        Criteria crit = session.createCriteria(SensorToFeed.class);
         List<?> sensorList = crit.add(Restrictions.eq("procedure", id)).list();
         for (Object object : sensorList) {
-            Sensor sensor = (Sensor) object;
+            SensorToFeed sensor = (SensorToFeed) object;
             sensor.setUsed(used);
             // if sensor is not used anymore, reset the last update field!
             if(!used) {
@@ -132,7 +132,7 @@ public class DatabaseAccess {
             SOS sos = (SOS) it.next();
             log.info("Read SOS out of Database: " + sos.getUrl() + " with " + sos.getSensors().size() + " procedures");
             SOSes.add(sos);
-            for (Sensor sensor : sos.getSensors()) {
+            for (SensorToFeed sensor : sos.getSensors()) {
                 for (Offering offering : sensor.getOfferings()) {
                     offering.getObservedProperties().size();
                 }
@@ -148,13 +148,13 @@ public class DatabaseAccess {
      * @return the used sensors
      */
     @SuppressWarnings("unchecked")
-    public static synchronized List<Sensor> getUsedSensors() {
+    public static synchronized List<SensorToFeed> getUsedSensors() {
         Session session = InitSessionFactory.getInstance().getCurrentSession();
         Transaction transaction = session.beginTransaction();
-        Criteria crit = session.createCriteria(Sensor.class);
-        List<Sensor> sensors = crit.add(Restrictions.eq("used", true)).list();
+        Criteria crit = session.createCriteria(SensorToFeed.class);
+        List<SensorToFeed> sensors = crit.add(Restrictions.eq("used", true)).list();
         // lazy loading
-        for (Sensor sensor : sensors) {
+        for (SensorToFeed sensor : sensors) {
             for (Offering offering : sensor.getOfferings()) {
                 offering.getObservedProperties().size();
             }
@@ -163,14 +163,14 @@ public class DatabaseAccess {
         return sensors;
     }
 
-    public static List<Sensor> getAllSensors() {
-        List<Sensor> sensors = new ArrayList<Sensor>();
+    public static List<SensorToFeed> getAllSensors() {
+        List<SensorToFeed> sensors = new ArrayList<SensorToFeed>();
         Session session = InitSessionFactory.getInstance().getCurrentSession();
         Transaction transaction = session.beginTransaction();
         Query query = session.createQuery("from Sensor sensor");
         // lazy loading
         for (Iterator<?> it = query.iterate(); it.hasNext();) {
-            Sensor sensor = (Sensor) it.next();
+            SensorToFeed sensor = (SensorToFeed) it.next();
             sensors.add(sensor);
             for (Offering offering : sensor.getOfferings()) {
                 offering.getObservedProperties().size();
@@ -185,9 +185,9 @@ public class DatabaseAccess {
         boolean check = true;
         Session session = InitSessionFactory.getInstance().getCurrentSession();
         Transaction transaction = session.beginTransaction();
-        Criteria crit = session.createCriteria(Sensor.class);
-        List<Sensor> sensors = crit.add(Restrictions.eq("procedure", procedure)).list();
-        for (Sensor sensor : sensors) {
+        Criteria crit = session.createCriteria(SensorToFeed.class);
+        List<SensorToFeed> sensors = crit.add(Restrictions.eq("procedure", procedure)).list();
+        for (SensorToFeed sensor : sensors) {
             if (sensor.getSos().getUrl().equals(sos)) {
                 check = false;
                 break;

@@ -395,5 +395,7 @@ public interface I18N extends Constants {
     String ruleNotFound();
     
     String sesCommunicatorTitle();
+
+    String aboName();
     
 }

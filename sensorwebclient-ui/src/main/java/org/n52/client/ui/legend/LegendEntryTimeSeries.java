@@ -36,7 +36,7 @@ import org.eesgmbh.gimv.client.event.LoadImageDataEvent;
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ctrl.TimeManager;
-import org.n52.client.ses.ui.SesCommunicator;
+import org.n52.client.ses.ui.CreateEventAbonnementWindow;
 import org.n52.client.sos.ctrl.SOSController;
 import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
 import org.n52.client.sos.event.ChangeTimeSeriesStyleEvent;
@@ -537,8 +537,9 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				SesCommunicator.getInst().setTimeseriesID(LegendEntryTimeSeries.this.timeseriesID);
-				SesCommunicator.getInst().show();
+			    TimeSeries dataItem = DataStoreTimeSeriesImpl.getInst().getDataItem(timeseriesID);
+				CreateEventAbonnementWindow.getInst().setTimeseries(dataItem);
+				CreateEventAbonnementWindow.getInst().show();
 			}
 		});
 	}

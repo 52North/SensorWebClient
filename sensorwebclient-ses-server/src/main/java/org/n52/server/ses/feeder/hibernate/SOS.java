@@ -20,7 +20,7 @@ public class SOS implements Serializable {
     private String url;
 
     /** The sensors. */
-    private Set<Sensor> sensors = new HashSet<Sensor>();
+    private Set<SensorToFeed> sensors = new HashSet<SensorToFeed>();
 
     /**
      * Gets the id.
@@ -63,7 +63,7 @@ public class SOS implements Serializable {
      *
      * @return the sensors
      */
-    public Set<Sensor> getSensors() {
+    public Set<SensorToFeed> getSensors() {
         return this.sensors;
     }
 
@@ -72,7 +72,7 @@ public class SOS implements Serializable {
      *
      * @param sensors the sensors to set
      */
-    public void setSensors(Set<Sensor> sensors) {
+    public void setSensors(Set<SensorToFeed> sensors) {
         this.sensors = sensors;
     }
 

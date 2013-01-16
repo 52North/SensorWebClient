@@ -11,7 +11,7 @@ import java.util.Set;
  * @author Jan Schulte
  */
 @SuppressWarnings("serial")
-public class Sensor implements Serializable {
+public class SensorToFeed implements Serializable {
 
     /** The id. */
     private Integer id;

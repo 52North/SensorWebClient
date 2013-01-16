@@ -19,7 +19,7 @@ public class Offering implements Serializable {
     private String name;
 
     /** The sensor. */
-    private Sensor sensor;
+    private SensorToFeed sensor;
     
     /** The observed properties. */
     private Set<ObservedProperty> observedProperties;
@@ -69,14 +69,14 @@ public class Offering implements Serializable {
     /**
      * @param sensor the sensor to set
      */
-    public void setSensor(Sensor sensor) {
+    public void setSensor(SensorToFeed sensor) {
         this.sensor = sensor;
     }
 
     /**
      * @return the sensor
      */
-    public Sensor getSensor() {
+    public SensorToFeed getSensor() {
         return this.sensor;
     }
     

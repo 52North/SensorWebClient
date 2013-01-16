@@ -26,54 +26,53 @@ package org.n52.client.ses.ui;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
-import org.n52.client.ses.ui.layout.LoginLayout;
-import org.n52.client.ses.ui.layout.SimpleRuleForTimeSeriesLayout;
+import org.n52.client.sos.legend.TimeSeries;
 
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.CloseClickEvent;
 import com.smartgwt.client.widgets.events.CloseClickHandler;
 import com.smartgwt.client.widgets.events.ResizedEvent;
 import com.smartgwt.client.widgets.events.ResizedHandler;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.Layout;
+import com.smartgwt.client.widgets.layout.VLayout;
 
-public class SesCommunicator extends Window {
-	
+public class CreateEventAbonnementWindow extends Window {
+
     private static final String COMPONENT_ID = "sesCommunicator";
-    
+
     private static int WIDTH = 950;
-    
-    private static int HEIGHT = 550; 
 
-    private static SesCommunicator instance;
+    private static int HEIGHT = 550;
 
-    private static SesCommunicatorController controller;
-    
-	private Layout loginLayout;
-	
-	private SimpleRuleForTimeSeriesLayout createEventLayout;
+    private static CreateEventAbonnementWindow instance;
 
-    public static SesCommunicator getInst() {
+    private static CreateEventAbonnementController controller;
+
+    public static CreateEventAbonnementWindow getInst() {
         if (instance == null) {
-        	controller = new SesCommunicatorController();
-            instance = new SesCommunicator(controller);
+            controller = new CreateEventAbonnementController();
+            instance = new CreateEventAbonnementWindow(controller);
         }
         return instance;
     }
 
-    private SesCommunicator(SesCommunicatorController controller) {
-    	controller.setSesCommunicator(this);
+    private CreateEventAbonnementWindow(CreateEventAbonnementController controller) {
+        controller.setSesCommunicator(this);
         initializeWindow();
         initializeContent();
         addCloseClickHandler(new CloseClickHandler() {
             public void onCloseClick(CloseClickEvent event) {
-            	closeSesCommunicator();
+                closeSesCommunicator();
             }
         });
     }
 
-	private void initializeWindow() {
-		setID(COMPONENT_ID);
-		setShowModalMask(true);
+    private void initializeWindow() {
+        setID(COMPONENT_ID);
+        setShowModalMask(true);
         setIsModal(true);
         setCanDragResize(true);
         setShowMaximizeButton(true);
@@ -84,53 +83,49 @@ public class SesCommunicator extends Window {
         setHeight(HEIGHT);
         centerInPage();
         addResizedHandler(new ResizedHandler() {
-			@Override
-			public void onResized(ResizedEvent event) {
-				WIDTH = SesCommunicator.this.getWidth();
-				HEIGHT = SesCommunicator.this.getHeight();
-			}
-		});
+            @Override
+            public void onResized(ResizedEvent event) {
+                WIDTH = CreateEventAbonnementWindow.this.getWidth();
+                HEIGHT = CreateEventAbonnementWindow.this.getHeight();
+            }
+        });
     }
-	
-	@Override
-	public void show() {
-		super.show();
-		// TODO check the login state of the user and show the corresponding layout
-		boolean notLoggedIn = false;
-		if (notLoggedIn) {
-			loginLayout.show();
-			createEventLayout.hide();
-		} else {
-			loginLayout.hide();
-			createEventLayout.setTimeSeries(controller.getTimeSeries());
-			createEventLayout.show();
-		}
-		setTitle(i18n.sesCommunicatorTitle());
-	}
+
+    @Override
+    public void show() {
+        setTitle(i18n.sesCommunicatorTitle());
+        super.show();
+    }
 
     private void initializeContent() {
-    	// login layout
-    	if (loginLayout == null) {
-    		loginLayout = new LoginLayout();
-    		addItem(loginLayout);
-    	}
-    	// create event layout
-    	if (createEventLayout == null) {
-    		createEventLayout = new SimpleRuleForTimeSeriesLayout();
-	    	addItem(createEventLayout);
-		}
-	}
+        Layout content = new HLayout();
+        content.setStylePrimaryName("n52_sensorweb_client_create_abo_window_content");
+        content.addMember(new CreateAbonnementForm(controller));
+        content.addMember(createContextWindowHelp());
+        addItem(content);
+    }
+
+    private Canvas createContextWindowHelp() {
+        Layout content = new VLayout();
+        content.setStylePrimaryName("n52_sensorweb_client_create_abo_context_help");
+        
+        // TODO Auto-generated method stub
+        return null;
+        
+    }
+
     
-	private void closeSesCommunicator() {
-		hide();
-	}
+
+    private void closeSesCommunicator() {
+        hide();
+    }
 
     public String getId() {
         return COMPONENT_ID;
     }
 
-	public void setTimeseriesID(String timeseriesID) {
-		controller.setTimeseriesByID(timeseriesID);
-	}
+    public void setTimeseries(TimeSeries timeseries) {
+        controller.setTimeseries(timeseries);
+    }
 
 }

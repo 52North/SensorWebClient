@@ -9,7 +9,7 @@
          </generator>
       </id>
       <property name="name" type="string"/>
-      <many-to-one name="sensor" lazy="false" column="sensor_id" class="Sensor"/>
+      <many-to-one name="sensor" lazy="false" column="sensor_id" class="SensorToFeed"/>
       <set name="observedProperties">
         <key column="offering_id"/>
         <one-to-many class="ObservedProperty"/>

@@ -11,7 +11,7 @@
       <property name="url" type="string"></property>
       <set name="sensors">
          <key column="sos_id"/>
-         <one-to-many class="Sensor"/>
+         <one-to-many class="SensorToFeed"/>
       </set>
    </class>
 </hibernate-mapping>
