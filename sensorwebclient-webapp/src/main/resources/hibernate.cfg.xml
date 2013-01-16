@@ -8,6 +8,8 @@
 		<property name="connection.username">${ses.database.user}</property>
 		<property name="connection.password">${ses.database.password}</property>
 		<property name="hibernate.hbm2ddl.auto">${ses.database.hibernate.hbm2ddl.auto}</property>
+        <property name="hibernate.format_sql">false</property>
+        <property name="hibernate.show_sql">false</property>
 
 		<property name="connection.driver_class">org.postgresql.Driver</property>
 		<property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
@@ -19,17 +21,17 @@
 		<!-- <property name="hibernate.cache.use_second_level_cache">true</property> -->
 		
         <!-- ses-client database mapping files -->
-		<mapping resource="org/n52/shared/serializable/pojos/User.hbm.xml" />
-		<mapping resource="org/n52/shared/serializable/pojos/Subscription.hbm.xml" />
-		<mapping resource="org/n52/shared/serializable/pojos/Sensor.hbm.xml" />
-		<mapping resource="org/n52/shared/serializable/pojos/ComplexRule.hbm.xml" />
-		<mapping resource="org/n52/shared/serializable/pojos/BasicRule.hbm.xml" />
-		<mapping resource="org/n52/shared/serializable/pojos/ListOfUses.hbm.xml" />
+		<mapping resource="org/n52/ses/server/hbm/client/User.hbm.xml" />
+		<mapping resource="org/n52/ses/server/hbm/client/Subscription.hbm.xml" />
+		<mapping resource="org/n52/ses/server/hbm/client/Sensor.hbm.xml" />
+		<mapping resource="org/n52/ses/server/hbm/client/ComplexRule.hbm.xml" />
+		<mapping resource="org/n52/ses/server/hbm/client/BasicRule.hbm.xml" />
+		<mapping resource="org/n52/ses/server/hbm/client/ListOfUses.hbm.xml" />
 
         <!-- feeder database mapping files -->
-		<mapping resource="org/n52/sos/feeder/hibernate/SOS.hbm.xml" />
-		<mapping resource="org/n52/sos/feeder/hibernate/Sensor.hbm.xml" />
-		<mapping resource="org/n52/sos/feeder/hibernate/Offering.hbm.xml" />
-		<mapping resource="org/n52/sos/feeder/hibernate/ObservedProperty.hbm.xml" />
+		<mapping resource="org/n52/ses/server/hbm/feeder/SOS.hbm.xml" />
+		<mapping resource="org/n52/ses/server/hbm/feeder/Sensor.hbm.xml" />
+		<mapping resource="org/n52/ses/server/hbm/feeder/Offering.hbm.xml" />
+		<mapping resource="org/n52/ses/server/hbm/feeder/ObservedProperty.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>
