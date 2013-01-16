@@ -18,7 +18,6 @@
 	<modules>
 		<module>sensorwebclient-api</module>
 		<module>sensorwebclient-ext</module>
-		<module>sensorwebclient-ses-feeder</module>
 		<module>sensorwebclient-ses-rpc</module>
 		<module>sensorwebclient-ses-server</module>
 		<module>sensorwebclient-ses-shared</module>
@@ -54,11 +53,6 @@
 			<dependency>
 				<groupId>org.n52.sensorweb</groupId>
 				<artifactId>sensorwebclient-sos-rpc</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.n52.sensorweb</groupId>
-				<artifactId>sensorwebclient-ses-feeder</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
