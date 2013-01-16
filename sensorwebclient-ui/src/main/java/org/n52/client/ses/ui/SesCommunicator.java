@@ -27,14 +27,13 @@ package org.n52.client.ses.ui;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
 import org.n52.client.ses.ui.layout.LoginLayout;
+import org.n52.client.ses.ui.layout.SimpleRuleForTimeSeriesLayout;
 
-import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.CloseClickEvent;
 import com.smartgwt.client.widgets.events.CloseClickHandler;
 import com.smartgwt.client.widgets.events.ResizedEvent;
 import com.smartgwt.client.widgets.events.ResizedHandler;
-import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.Layout;
 
 public class SesCommunicator extends Window {
@@ -51,9 +50,7 @@ public class SesCommunicator extends Window {
     
 	private Layout loginLayout;
 	
-	private Layout createEventLayout;
-
-	private String timeseriesID;
+	private SimpleRuleForTimeSeriesLayout createEventLayout;
 
     public static SesCommunicator getInst() {
         if (instance == null) {
@@ -105,21 +102,21 @@ public class SesCommunicator extends Window {
 			createEventLayout.hide();
 		} else {
 			loginLayout.hide();
+			createEventLayout.setTimeSeries(controller.getTimeSeries());
 			createEventLayout.show();
 		}
-		setTitle(i18n.sesCommunicatorTitle() + this.timeseriesID);
+		setTitle(i18n.sesCommunicatorTitle());
 	}
 
     private void initializeContent() {
     	// login layout
     	if (loginLayout == null) {
-    		loginLayout = new LoginLayout(null);
+    		loginLayout = new LoginLayout();
     		addItem(loginLayout);
     	}
     	// create event layout
     	if (createEventLayout == null) {
-    		createEventLayout = new HLayout();
-    		createEventLayout.addMember(new Label("Logged in"));
+    		createEventLayout = new SimpleRuleForTimeSeriesLayout();
 	    	addItem(createEventLayout);
 		}
 	}
@@ -133,7 +130,7 @@ public class SesCommunicator extends Window {
     }
 
 	public void setTimeseriesID(String timeseriesID) {
-		this.timeseriesID = timeseriesID;
+		controller.setTimeseriesByID(timeseriesID);
 	}
 
 }

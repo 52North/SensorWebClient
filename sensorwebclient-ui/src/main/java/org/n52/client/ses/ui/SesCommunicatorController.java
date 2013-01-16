@@ -24,10 +24,15 @@
 
 package org.n52.client.ses.ui;
 
+import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
+import org.n52.client.sos.legend.TimeSeries;
+
 
 class SesCommunicatorController {
 
     private SesCommunicator sesCommunicator;
+    
+    private TimeSeries timeseries;
 
     public SesCommunicatorController() {
     }
@@ -35,5 +40,14 @@ class SesCommunicatorController {
     void setSesCommunicator(SesCommunicator sesCommunicator) {
         this.sesCommunicator = sesCommunicator;
     }
+    
+	public void setTimeseriesByID(String timeseriesID) {
+    	this.timeseries = DataStoreTimeSeriesImpl.getInst()
+				.getDataItem(timeseriesID);
+	}
+
+	public TimeSeries getTimeSeries() {
+		return this.timeseries;
+	}
 
 }

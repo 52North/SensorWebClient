@@ -416,3 +416,10 @@ div .n52_sensorweb_client_options_button img {
   width: 950px;
   height: 550px;
 }
+td.52n_simpleRuleTable_left_column {
+  float: left;
+}
+td.52n_simpleRuleTable_right_column {
+  float: left;
+  width: 300px;
+}

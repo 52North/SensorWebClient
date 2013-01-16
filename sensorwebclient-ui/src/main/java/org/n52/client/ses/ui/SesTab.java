@@ -130,7 +130,7 @@ public class SesTab extends DataPanelTab {
         this.layout.setTabIndex(-1);
         this.layout.setCanAcceptDrop(true);
 
-        this.loginLayout = new LoginLayout(this);
+        this.loginLayout = new LoginLayout();
         this.loginLayout.setCanAcceptDrop(true);
 
         this.registerLayout = new RegisterLayout();

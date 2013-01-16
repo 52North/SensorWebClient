@@ -29,7 +29,6 @@ import org.n52.client.bus.EventBus;
 import org.n52.client.ses.ctrl.DataControlsSes;
 import org.n52.client.ses.event.LoginEvent;
 import org.n52.client.ses.ui.Layout;
-import org.n52.client.ses.ui.SesTab;
 
 import com.smartgwt.client.widgets.form.fields.ButtonItem;
 import com.smartgwt.client.widgets.form.fields.PasswordItem;
@@ -57,11 +56,8 @@ public class LoginLayout extends Layout {
 
     /**
      * Instantiates a new login layout.
-     * 
-     * @param tab
-     *            the tab
      */
-    public LoginLayout(SesTab tab) {
+    public LoginLayout() {
         super(i18n.login());
         init();
     }
@@ -70,13 +66,6 @@ public class LoginLayout extends Layout {
      * Inits the layout.
      */
     private void init() {
-//        DataSource dataSource = new DataSource();
-
-//        DataSourceTextField nameField = new DataSourceTextField("userName", "Benutzername", 100, true);
-//        DataSourcePasswordField passwordField = new DataSourcePasswordField("password", "Password", 20, false);
-
-//        dataSource.setFields(nameField, passwordField);
-//        this.form.setDataSource(dataSource);
 
         // NameItem
         this.nameItem = new TextItem();
@@ -118,11 +107,6 @@ public class LoginLayout extends Layout {
             }
         });
 
-        // MatchesFieldValidator matchesValidator = new MatchesFieldValidator();
-        // matchesValidator.setOtherField("password");
-        // matchesValidator.setErrorMessage("Passwords do not match");
-        // passwordItem2.setValidators(matchesValidator);
-
         this.form.setFields(this.headerItem, this.nameItem, this.passwordItem, validateItem);
 
         addMember(this.form);
@@ -132,12 +116,6 @@ public class LoginLayout extends Layout {
         String name = LoginLayout.this.nameItem.getValue().toString();
         Object o = LoginLayout.this.passwordItem.getValue();
 
-//        if (o != null) {
-//        password = o.toString();
-
-//        } else {
-//            password = "";
-//        }
         EventBus.getMainEventBus().fireEvent(new LoginEvent(name, DataControlsSes.createMD5(o.toString())));
         
         // clear fields
