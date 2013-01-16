@@ -35,6 +35,10 @@
 			<artifactId>sensorwebclient-ses-server</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy</artifactId>
 			<scope>runtime</scope>
@@ -50,7 +54,7 @@
 				<directory>src/main/resources</directory>
 				<includes>
 					<include>logback.xml</include>
-                    <include>logback-test.xml</include>
+					<include>logback-test.xml</include>
 					<include>hibernate.cfg.xml</include>
 				</includes>
 				<filtering>true</filtering>

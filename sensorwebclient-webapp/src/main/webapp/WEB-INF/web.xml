@@ -2,17 +2,6 @@
 <web-app>
 	<display-name>${project.artifactId} (SVN r${svn.info.revision}, built on ${timestamp})</display-name>
 
-	<filter>
-		<filter-name>gwtCacheControlFilter</filter-name>
-		<filter-class>
-			org.n52.server.filter.GWTCacheControlFilter
-		</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>gwtCacheControlFilter</filter-name>
-		<url-pattern>/client/*</url-pattern>
-	</filter-mapping>
-
 	<servlet>
 		<servlet-name>ConfigurationContext</servlet-name>
 		<servlet-class>

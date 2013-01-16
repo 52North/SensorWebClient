@@ -48,7 +48,7 @@ class CreateEventAbonnementController {
     }
 
     public TimeSeries getTimeSeries() {
-        return this.timeseries;
+        return timeseries;
     }
 
     public void setAbonnementName(String currentAbonnementName) {
@@ -63,6 +63,9 @@ class CreateEventAbonnementController {
      * @return an abonnement name suggestion for current timeseries.
      */
     public String createSuggestedAbonnementName() {
+        if (timeseries == null) {
+            return "";
+        }
         StringBuilder sb = new StringBuilder();
         sb.append(timeseries.getProcedureId());
         // TODO adjust suggested name

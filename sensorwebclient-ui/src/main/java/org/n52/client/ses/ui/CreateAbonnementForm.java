@@ -14,7 +14,7 @@ public class CreateAbonnementForm extends DynamicForm {
     private final CreateEventAbonnementController controller;
 
     public CreateAbonnementForm(final CreateEventAbonnementController controller) {
-        this.setStylePrimaryName("n52_sensorweb_client_create_abo_form");
+        this.setStyleName("n52_sensorweb_client_create_abo_form");
         this.controller = controller;
         
         setFields(createAbonnementNameTextItem());
@@ -30,7 +30,7 @@ public class CreateAbonnementForm extends DynamicForm {
         nameItem.setTitle(i18n.aboName());
         nameItem.setRequired(true);
         nameItem.setSelectOnFocus(true);
-        nameItem.setLength(100);
+//        nameItem.setLength(100);
         nameItem.setValue(controller.createSuggestedAbonnementName());
         nameItem.addKeyPressHandler(new KeyPressHandler() {
             public void onKeyPress(KeyPressEvent event) {
@@ -42,9 +42,4 @@ public class CreateAbonnementForm extends DynamicForm {
         return nameItem;
     }
     
-    private Canvas createSelectPredefinedAbonnementCanvas() {
-        return new SelectPredefinedAboCanvas(controller);
-    }
-    
-
 }

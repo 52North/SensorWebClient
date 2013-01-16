@@ -23,72 +23,19 @@
  */
 package org.n52.client.ses.ui;
 
-import java.util.Set;
-
-import org.n52.client.sos.legend.TimeSeries;
-import org.n52.shared.serializable.pojos.ReferenceValue;
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
-
 import com.google.gwt.user.client.ui.FlexTable;
-import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
-import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.layout.Layout;
 
 public class SelectPredefinedAboCanvas extends Layout {
 
     private CreateEventAbonnementController controller;
     
-	private FlexTable entries;
-	
     private RadioGroupItem operatorRadioGroup;
 
-    private TextItem value;
-
     public SelectPredefinedAboCanvas(CreateEventAbonnementController controller) {
-        this.setStylePrimaryName("n52_sensorweb_client_abo_selection");
+        this.setStylePrimaryName("n52_sensorweb_client_create_abo_selection");
         this.controller = controller;
-    	this.entries = new FlexTable();
-    	addMember(this.entries);
     }
     
-	public void setTimeSeries() {
-        TimeSeries timeSeries = controller.getTimeSeries();
-		this.entries.removeAllRows();
-		
-		addRow("Datenanbieter",timeSeries.getSosUrl());
-		addRow("Station", timeSeries.getStationName());
-		addRow("Parameter", timeSeries.getProperties().getPhenomenon().getLabel());
-		
-		this.value = new TextItem();
-		addRow("Operator", this.value);
-		addRow("Wert", "");
-		addRow("Maßeinheit", timeSeries.getUnitOfMeasure());
-
-		addRefValueTable(timeSeries);
-	}
-
-	private void addRow(String label, FormItem item) {
-		
-	}
-
-	private void addRow(String label, String value) {
-		int row = this.entries.getRowCount();
-		entries.setText(row, 0, label);
-		entries.getFlexCellFormatter().setStyleName(row, 0, "52n_simpleRuleTable_left_column");
-		entries.setText(row, 1, value);
-		entries.getFlexCellFormatter().setStyleName(row, 1, "52n_simpleRuleTable_right_column");
-	}
-	
-	private void addRefValueTable(TimeSeries timeSeries) {
-		TimeSeriesProperties properties = timeSeries.getProperties();
-		Set<String> refValues = properties.getrefValues();
-		if (refValues != null && refValues.size() > 0) {
-			for (String refValueStr : refValues) {
-				ReferenceValue refValue = properties.getRefValue(refValueStr);
-				addRow(refValue.getID(), refValue.getValue()+"");
-			}
-		}
-	}
-
 }

@@ -141,8 +141,6 @@ body {
 }
 .n52_sensorweb_client_interactionmenuHeader {
   background-color: #96c2c8;
-  /*@text-color-font;*/
-
   font-size: 12px;
   font-weight: bold;
 }
@@ -152,7 +150,7 @@ body {
 }
 .n52_sensorweb_client_exportEntry:HOVER {
   cursor: pointer;
-  background-color: #3E818A;
+  background-color: #3f8566;
 }
 /* Styling for the sensor info table */
 table.sensorInfo {
@@ -160,13 +158,15 @@ table.sensorInfo {
 }
 tr.sensorInfo:nth-child(2n) {
   background-color: #96c2c8;
-  /*#99ff99;*/
-
 }
 tr.sensorInfo:hover {
-  background-color: #3E818A;
-  /*@text-color-font;*/
-
+  background-color: #3f8566;
+}
+table.n52_sensorweb_client_create_abo_metadata_table tr:hover {
+  background-color: #3f8566;
+}
+table.n52_sensorweb_client_create_abo_metadata_table tr:nth-child(2n) {
+  background-color: #96c2c8;
 }
 .n52_sensorweb_client_headerContainer {
   width: 100%;
@@ -415,11 +415,4 @@ div .n52_sensorweb_client_options_button img {
 .n52_sensorweb_client_modalWindow {
   width: 950px;
   height: 550px;
-}
-td.52n_simpleRuleTable_left_column {
-  float: left;
-}
-td.52n_simpleRuleTable_right_column {
-  float: left;
-  width: 300px;
 }

@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 
 public class SesSensorServiceImpl implements SesSensorService {
     
-    private static final Logger LOG = LoggerFactory.getLogger(SesSensorServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SesSensorServiceImpl.class);
 
     private static SesParser parser;
 
@@ -54,12 +54,12 @@ public class SesSensorServiceImpl implements SesSensorService {
         
         // XXX refactor
         
-        LOG.debug("add SES sensors to DB");
         ArrayList<String> sensors = getParser().getRegisteredSensors();
         for (int i = 0; i < sensors.size(); i++) {
             if (!HibernateUtil.existsSensor(sensors.get(i))) {
                 Sensor sensor = new Sensor(sensors.get(i), true, 0);
                 if (sensor != null) {
+                    LOGGER.debug("Persist sensor to to feed: {}", sensor.getSensorID());
                     HibernateUtil.addSensor(sensor);
                 }
             }
@@ -76,12 +76,12 @@ public class SesSensorServiceImpl implements SesSensorService {
     @Override
     public SesClientResponse getAllSensors() throws Exception {
         try {
-            LOG.debug("get registered sensors from DB");
+            LOGGER.debug("get registered sensors from DB");
             List<Sensor> sensors = HibernateUtil.getSensors();
             return new SesClientResponse(SesClientResponse.types.REGISTERED_SENSORS, sensors);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
@@ -89,9 +89,9 @@ public class SesSensorServiceImpl implements SesSensorService {
     @Override
     public void updateSensor(String sensorID, boolean newStatus) throws Exception {
         try {
-            LOG.debug("updateSensor: " + sensorID + " . New status: activated = " + newStatus);
+            LOGGER.debug("updateSensor: " + sensorID + " . New status: activated = " + newStatus);
             if (!HibernateUtil.updateSensor(sensorID, newStatus)) {
-                LOG.error("Update sensor failed!");
+                LOGGER.error("Update sensor failed!");
                 throw new Exception("Update sensor failed!");
             }
             
@@ -109,7 +109,7 @@ public class SesSensorServiceImpl implements SesSensorService {
             }
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
@@ -117,7 +117,7 @@ public class SesSensorServiceImpl implements SesSensorService {
     @Override
     public SesClientResponse getStations() throws Exception {
         try {
-            LOG.debug("getStations");
+            LOGGER.debug("getStations");
             ArrayList<String> finalList = new ArrayList<String>();
             HashSet<String> h = new HashSet<String>();
             
@@ -136,7 +136,7 @@ public class SesSensorServiceImpl implements SesSensorService {
             return new SesClientResponse(SesClientResponse.types.STATIONS, finalList);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
@@ -144,7 +144,7 @@ public class SesSensorServiceImpl implements SesSensorService {
     @Override
     public SesClientResponse getPhenomena(String station) throws Exception {
         try {
-            LOG.debug("getPhenomena for station: " + station);
+            LOGGER.debug("getPhenomena for station: " + station);
             ArrayList<String> finalList = new ArrayList<String>();
             ArrayList<String> unit = new ArrayList<String>();
             
@@ -156,7 +156,7 @@ public class SesSensorServiceImpl implements SesSensorService {
                 // get the unit of measurement
                 unit.add(getParser().getUnit(sensor.getSensorID()));
                 for (int i = 0; i < phenomena.size(); i++) {
-                    LOG.debug(phenomena.get(i));
+                    LOGGER.debug(phenomena.get(i));
                     finalList.add(phenomena.get(i)); 
                 }
             }
@@ -165,7 +165,7 @@ public class SesSensorServiceImpl implements SesSensorService {
             return new SesClientResponse(SesClientResponse.types.PHENOMENA, finalList, unit);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
@@ -173,14 +173,14 @@ public class SesSensorServiceImpl implements SesSensorService {
     @Override
     public SesClientResponse deleteSensor(String sensorID) throws Exception {
         try {
-            LOG.debug("delete sensor: " + sensorID);
+            LOGGER.debug("delete sensor: " + sensorID);
             if (HibernateUtil.deleteSensorByID(sensorID)) {
                 return new SesClientResponse(SesClientResponse.types.DELETE_SENSOR_OK);
             }
             throw new Exception("delete sensor" + ": " + sensorID + " " + "failed");
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }

@@ -62,7 +62,6 @@ public class CreateEventAbonnementWindow extends Window {
     private CreateEventAbonnementWindow(CreateEventAbonnementController controller) {
         controller.setSesCommunicator(this);
         initializeWindow();
-        initializeContent();
         addCloseClickHandler(new CloseClickHandler() {
             public void onCloseClick(CloseClickEvent event) {
                 closeSesCommunicator();
@@ -93,24 +92,38 @@ public class CreateEventAbonnementWindow extends Window {
 
     @Override
     public void show() {
-        setTitle(i18n.sesCommunicatorTitle());
+        clear();
         super.show();
+        
+        // TODO add login functionality
+        
+        setTitle(i18n.sesCommunicatorTitle());
+        initializeContent();
     }
 
     private void initializeContent() {
         Layout content = new HLayout();
-        content.setStylePrimaryName("n52_sensorweb_client_create_abo_window_content");
-        content.addMember(new CreateAbonnementForm(controller));
-        content.addMember(createContextWindowHelp());
+        content.setStyleName("n52_sensorweb_client_create_abo_window_content");
+        content.addMember(createNewEventAbonnementCanvas());
+//        content.addMember(createContextWindowHelp());
         addItem(content);
+    }
+
+    private Canvas createNewEventAbonnementCanvas() {
+        Layout content = new VLayout();
+        content.setStyleName("n52_sensorweb_client_create_abo_form_content");
+        content.addMember(new CreateAbonnementForm(controller));
+        content.addMember(new TimeSeriesMetadataTable(controller));
+        content.addMember(new SelectPredefinedAboCanvas(controller));
+        return content;
     }
 
     private Canvas createContextWindowHelp() {
         Layout content = new VLayout();
-        content.setStylePrimaryName("n52_sensorweb_client_create_abo_context_help");
+        content.setStyleName("n52_sensorweb_client_create_abo_context_help");
         
         // TODO Auto-generated method stub
-        return null;
+        return content;
         
     }
 

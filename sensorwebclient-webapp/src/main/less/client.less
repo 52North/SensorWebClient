@@ -36,7 +36,6 @@ body {
 
 
 .n52_sensorweb_client_main {
-//    margin: -8px;
     width: 100%;
     height: 100%;
     overflow: hidden;
@@ -150,7 +149,7 @@ body {
 }
 
 .n52_sensorweb_client_interactionmenuHeader {
-	background-color: @border-color-layout; /*@text-color-font;*/
+	background-color: @border-color-layout;
 	font-size: 12px;
 	font-weight: bold;
 }
@@ -162,7 +161,7 @@ body {
 
 .n52_sensorweb_client_exportEntry:HOVER {
 	cursor: pointer;
-	background-color: #3E818A;
+	background-color: @bg-color-hover;
 }
 
 /* Styling for the sensor info table */
@@ -171,9 +170,9 @@ table.sensorInfo {
 }
 
 tr.sensorInfo:nth-child(2n) {
-	background-color: @border-color-layout; /*#99ff99;*/
+	background-color: @border-color-layout; 
 }
 
 tr.sensorInfo:hover {
-	background-color: #3E818A; /*@text-color-font;*/
+	background-color: @bg-color-hover;
 }
