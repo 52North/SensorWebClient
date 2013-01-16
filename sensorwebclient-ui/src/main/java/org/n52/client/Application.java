@@ -44,6 +44,7 @@ import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ctrl.RequestManager;
 import org.n52.client.ctrl.TimeManager;
 import org.n52.client.ses.ctrl.SesController;
+import org.n52.client.ses.util.SesUtil;
 import org.n52.client.sos.ctrl.DataManagerSosImpl;
 import org.n52.client.sos.ctrl.SOSController;
 import org.n52.client.sos.event.DatesChangedEvent;
@@ -97,7 +98,7 @@ public final class Application {
         // init handlers before throwing events
         DataManagerSosImpl.getInst();
         new SOSController();
-        if (PropertiesManager.getInstance().getTabsFromPropertiesFile().contains("SesTab")) {
+        if (SesUtil.isSesActiv()) {
             new SesController();
         }
         View.getInstance();

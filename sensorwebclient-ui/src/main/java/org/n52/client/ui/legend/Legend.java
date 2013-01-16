@@ -31,6 +31,7 @@ import java.util.Iterator;
 
 import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.n52.client.ctrl.PropertiesManager;
+import org.n52.client.ses.util.SesUtil;
 import org.n52.client.sos.event.data.ExportEvent.ExportType;
 import org.n52.client.sos.ui.StationSelector;
 import org.n52.client.ui.Impressum;
@@ -297,7 +298,7 @@ public class Legend extends VLayout {
         exportLoadingSpinner.setWidth("2%");
         menuStack.addMember(addTS);
         menuStack.addMember(space);
-        if (PropertiesManager.getInstance().getTabsFromPropertiesFile().contains("SesTab")) {
+        if (SesUtil.isSesActiv()) {
         	addTS.setWidth("38%");
             eesTabButton.setWidth("35%");
             sesTabButton.setWidth("35%");
