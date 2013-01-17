@@ -257,7 +257,7 @@ public class SesUtil {
 
             return true;
         } catch (OXFException e) {
-            LOGGER.trace("SES (\"" + Config.sesEndpoint + "\") is not available!");
+            LOGGER.trace("SES  is not available: {}", Config.sesEndpoint);
             return false;
         } catch (ExceptionReport e) {
             LOGGER.error("Could not connect due to server error.", e);

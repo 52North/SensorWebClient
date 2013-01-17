@@ -23,19 +23,30 @@
  */
 package org.n52.client.ses.ui;
 
-import com.google.gwt.user.client.ui.FlexTable;
-import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
-import com.smartgwt.client.widgets.layout.Layout;
+import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
-public class SelectPredefinedAboCanvas extends Layout {
+import org.n52.client.ses.i18n.SesStringsAccessor;
+
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
+
+public class SelectPredefinedAboForm extends DynamicForm {
 
     private CreateEventAbonnementController controller;
     
-    private RadioGroupItem operatorRadioGroup;
-
-    public SelectPredefinedAboCanvas(CreateEventAbonnementController controller) {
+    public SelectPredefinedAboForm(CreateEventAbonnementController controller) {
         this.setStylePrimaryName("n52_sensorweb_client_create_abo_selection");
         this.controller = controller;
+        setFields(createPredefinedEventSelectionItem());
     }
-    
+
+    private RadioGroupItem createPredefinedEventSelectionItem() {
+        RadioGroupItem radioGroupItem = new RadioGroupItem();  
+        radioGroupItem.setTitle("Radio Group");
+        radioGroupItem.setValueMap("Event 1", "Event 2");  
+        // TODO Auto-generated method stub
+        return radioGroupItem;
+        
+    }
+
 }

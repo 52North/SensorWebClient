@@ -137,10 +137,6 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
                 if (successfull) {
                     LOGGER.debug("register user: " + user.getName() + " to WNS");
                     try {
-                     // register to WNS
-                        if (user.getHandyNr() != null && !user.getHandyNr().equals("")) {
-                            user.setWnsSmsId(WnsUtil.sendToWNSSMS(user.getName(), String.valueOf(user.getHandyNr())));
-                        }
                         user.setWnsEmailId(WnsUtil.sendToWNSMail(user.getName(), user.geteMail()));
 
                         // add WNS IDs to user data

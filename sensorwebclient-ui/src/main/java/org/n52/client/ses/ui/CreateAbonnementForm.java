@@ -3,7 +3,6 @@ package org.n52.client.ses.ui;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
-import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.events.KeyPressEvent;
@@ -16,21 +15,18 @@ public class CreateAbonnementForm extends DynamicForm {
     public CreateAbonnementForm(final CreateEventAbonnementController controller) {
         this.setStyleName("n52_sensorweb_client_create_abo_form");
         this.controller = controller;
-        
-        setFields(createAbonnementNameTextItem());
-        
-        // TODO Auto-generated constructor stub
-
+        setFields(createAbonnementNameItem());
     }
     
-
-    private TextItem createAbonnementNameTextItem() {
+    private TextItem createAbonnementNameItem() {
         final TextItem nameItem = new TextItem();
+        nameItem.setTextBoxStyle("n52_sensorweb_client_abo_name_textbox");
         nameItem.setName("AbonnementName");
         nameItem.setTitle(i18n.aboName());
-        nameItem.setRequired(true);
         nameItem.setSelectOnFocus(true);
-//        nameItem.setLength(100);
+        nameItem.setRequired(true);
+        nameItem.setLength(300);
+        nameItem.setWidth("*"); // fill form column
         nameItem.setValue(controller.createSuggestedAbonnementName());
         nameItem.addKeyPressHandler(new KeyPressHandler() {
             public void onKeyPress(KeyPressEvent event) {
@@ -38,8 +34,7 @@ public class CreateAbonnementForm extends DynamicForm {
                 controller.setAbonnementName(currentAbonnementName);
             }
         });
-        
         return nameItem;
     }
-    
+
 }

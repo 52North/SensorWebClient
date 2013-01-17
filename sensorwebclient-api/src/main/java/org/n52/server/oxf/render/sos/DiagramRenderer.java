@@ -272,7 +272,7 @@ public class DiagramRenderer {
 			}
 
             double[] bounds = referenceBounds.get(phenomenonId);
-            for (String string : prop.getrefValues()) {
+            for (String string : prop.getReferenceValues()) {
                 if (prop.getRefValue(string).show()) {
                     Double value = prop.getRefValue(string).getValue();
                     if (value <= bounds[0]) {
@@ -295,7 +295,7 @@ public class DiagramRenderer {
             prop.setAxisData(axis);
             this.axisMapping.put(prop.getTsID(), axis);
 
-            for (String string : prop.getrefValues()) {
+            for (String string : prop.getReferenceValues()) {
                 if (prop.getRefValue(string).show()) {
                 	referenceMarkers.add(new ValueMarker(prop.getRefValue(string).getValue(), Color.decode(prop
                             .getRefValue(string).getColor()), new BasicStroke(1.0f, BasicStroke.CAP_ROUND,

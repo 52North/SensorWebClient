@@ -394,8 +394,16 @@ public interface I18N extends Constants {
     
     String ruleNotFound();
     
-    String sesCommunicatorTitle();
+    String createAboWindowTitle();
 
     String aboName();
+
+    String timeseriesMetadataTable();
+
+    String station();
+
+    String provider();
+
+    String selectPredefinedEventForSubscription();
     
 }

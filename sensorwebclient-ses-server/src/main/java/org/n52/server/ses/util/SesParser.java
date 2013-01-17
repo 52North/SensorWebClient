@@ -23,8 +23,11 @@
  */
 package org.n52.server.ses.util;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -36,6 +39,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
@@ -155,7 +161,7 @@ public class SesParser {
         ArrayList<String> sensors = new ArrayList<String>();
 
         String SensorID = "SensorID";
-
+        
         try {
             SESAdapter adapter = new SESAdapter(serviceVersion);
 
@@ -169,6 +175,16 @@ public class SesParser {
             // build document
             DocumentBuilderFactory docFac = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFac.newDocumentBuilder();
+            
+//            StringBuilder sb = new StringBuilder();
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(opResult.getIncomingResultAsStream()));
+//            String line = null;
+//            while ((line = reader.readLine()) != null) {
+//                sb.append(line);
+//            }
+//            
+//            LOGGER.debug(sb.toString());
+            
             Document doc = docBuilder.parse(opResult.getIncomingResultAsStream());
 
             //parse <SensorID>

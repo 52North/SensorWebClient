@@ -581,7 +581,7 @@ public class TimeSeriesProperties implements Serializable {
 	 * 
 	 * @return the ref values
 	 */
-	public Set<String> getrefValues() {
+	public Set<String> getReferenceValues() {
 		return this.refvalues.keySet();
 	}
 

@@ -189,11 +189,6 @@ public class SesUserServiceImpl implements SesUserService {
             if (HibernateUtil.existsEMail(user.geteMail())) {
                 return new SesClientResponse(SesClientResponse.types.REGSITER_EMAIL);
             }
-            if ( !user.getHandyNr().equals("")) {
-                if (HibernateUtil.existsHandy(user.getHandyNr())) {
-                    return new SesClientResponse(SesClientResponse.types.REGISTER_HANDY);
-                }
-            }
 
             // generate new userID
             String userRegisterID = UUID.randomUUID().toString();
@@ -468,23 +463,6 @@ public class SesUserServiceImpl implements SesUserService {
                 if (!LOG.isDebugEnabled()) {
                     WnsUtil.updateToWNSMail(oldUser.getWnsEmailId(), newUser.geteMail(), oldUser.geteMail());
                     LOG.info("Update eMail of user " + oldUser.getName() + " in WNS");
-                }
-            }
-            // check Handy
-            if ( !oldUser.getHandyNr().equals(newUser.getHandyNr())) {
-                // mobile number exists
-                if (HibernateUtil.existsHandy(newUser.getHandyNr())) {
-                    return new SesClientResponse(SesClientResponse.types.REGISTER_HANDY);
-                }
-
-                // phone number set at first time --> register the number in WNS
-                if (oldUser.getHandyNr().equals("")) {
-                    newHandy = WnsUtil.sendToWNSSMS(newUser.getName(), String.valueOf(newUser.getHandyNr()));
-                }
-                else {
-                    // update phone number in WNS
-                    WnsUtil.updateToWNSSMS(oldUser.getWnsSmsId(), newUser.getHandyNr(), oldUser.getHandyNr());
-                    LOG.info("Update handy number of user " + oldUser.getName() + " in WNS");
                 }
             }
             // check user name

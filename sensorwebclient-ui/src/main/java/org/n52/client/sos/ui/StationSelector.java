@@ -230,7 +230,7 @@ public class StationSelector extends Window {
 		buttons.setAutoHeight();
 		buttons.setAlign(Alignment.RIGHT);
 		informationFieldSpinner = createLoadingSpinner();
-		buttons.addMember(createLoadingSpinner());
+		buttons.addMember(informationFieldSpinner);
 		buttons.addMember(createAddTimeSeriesButton());
 		buttons.addMember(createCancelButton());
 		layout.addMember(buttons);
@@ -242,7 +242,27 @@ public class StationSelector extends Window {
 		infoWindow.hide();
 		return infoWindow;
 	}
-	
+
+    private Canvas createInformationFieldForSelectedProcedure() {
+        VLayout layout = new VLayout();
+        procedureDetailsHTMLPane = new HTMLPane();
+        phenomenonInfoLabel = new Label();
+        phenomenonInfoLabel.setAutoHeight();
+        stationInfoLabel = new Label();
+        stationInfoLabel.setAutoHeight();
+        layout.addMember(phenomenonInfoLabel);
+        layout.addMember(stationInfoLabel);
+        layout.addMember(procedureDetailsHTMLPane);
+        return layout;
+    }
+
+    private Canvas createLoadingSpinner() {
+        String imgURL = "../img/loader_wide.gif";
+        LoadingSpinner loader = new LoadingSpinner(imgURL, 43, 11);
+        loader.setPadding(7);
+        return loader;
+    }
+
 	private void setInfoWindowPosition() {
 		infoWindow.setTop(HEIGHT - infoWindow.getHeight() - 35);
 		infoWindow.setLeft(2);
@@ -279,19 +299,6 @@ public class StationSelector extends Window {
 		return radioGroup;
 	}
 
-	private Canvas createInformationFieldForSelectedProcedure() {
-		VLayout layout = new VLayout();
-		procedureDetailsHTMLPane = new HTMLPane();
-		phenomenonInfoLabel = new Label();
-		phenomenonInfoLabel.setAutoHeight();
-		stationInfoLabel = new Label();
-		stationInfoLabel.setAutoHeight();
-		layout.addMember(phenomenonInfoLabel);
-		layout.addMember(stationInfoLabel);
-		layout.addMember(procedureDetailsHTMLPane);
-		return layout;
-	}
-
 	private SmallButton createAddTimeSeriesButton() {
         Img img = new Img("../img/icons/acc.png");
         String normalTooltip = i18n.addNewTimeseries();
@@ -320,13 +327,6 @@ public class StationSelector extends Window {
         });
         return cancelSelectionButton;
     }
-
-	private Canvas createLoadingSpinner() {
-		String imgURL = "../img/loader_wide.gif";
-		LoadingSpinner loader = new LoadingSpinner(imgURL, 43, 11);
-        loader.setPadding(7);
-        return loader;
-	}
 
 	private void loadTimeSeries() {
 		final SOSMetadata metadata = controller.getCurrentMetadata();

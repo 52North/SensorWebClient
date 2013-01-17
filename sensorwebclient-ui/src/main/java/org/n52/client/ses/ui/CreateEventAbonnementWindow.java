@@ -24,17 +24,23 @@
 
 package org.n52.client.ses.ui;
 
+import static com.smartgwt.client.types.Alignment.RIGHT;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
+import org.n52.client.ses.i18n.SesStringsAccessor;
 import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.ui.ApplyCancelButtonLayout;
 
+import com.google.gwt.core.shared.GWT;
+import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Window;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.events.CloseClickEvent;
 import com.smartgwt.client.widgets.events.CloseClickHandler;
 import com.smartgwt.client.widgets.events.ResizedEvent;
 import com.smartgwt.client.widgets.events.ResizedHandler;
-import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -51,6 +57,8 @@ public class CreateEventAbonnementWindow extends Window {
 
     private static CreateEventAbonnementController controller;
 
+    private Layout content;
+
     public static CreateEventAbonnementWindow getInst() {
         if (instance == null) {
             controller = new CreateEventAbonnementController();
@@ -64,7 +72,7 @@ public class CreateEventAbonnementWindow extends Window {
         initializeWindow();
         addCloseClickHandler(new CloseClickHandler() {
             public void onCloseClick(CloseClickEvent event) {
-                closeSesCommunicator();
+                hide();
             }
         });
     }
@@ -77,7 +85,7 @@ public class CreateEventAbonnementWindow extends Window {
         setShowMaximizeButton(true);
         setShowMinimizeButton(false);
         setMargin(10);
-        setTitle(i18n.sesCommunicatorTitle());
+        setTitle(i18n.createAboWindowTitle());
         setWidth(WIDTH);
         setHeight(HEIGHT);
         centerInPage();
@@ -89,32 +97,30 @@ public class CreateEventAbonnementWindow extends Window {
             }
         });
     }
-
+    
     @Override
     public void show() {
-        clear();
-        super.show();
-        
-        // TODO add login functionality
-        
-        setTitle(i18n.sesCommunicatorTitle());
         initializeContent();
+        super.show();
     }
 
     private void initializeContent() {
-        Layout content = new HLayout();
-        content.setStyleName("n52_sensorweb_client_create_abo_window_content");
-        content.addMember(createNewEventAbonnementCanvas());
-//        content.addMember(createContextWindowHelp());
-        addItem(content);
+        if (content == null) {
+            content = new HLayout();
+            content.setStyleName("n52_sensorweb_client_create_abo_window_content");
+            content.addMember(createNewEventAbonnementCanvas());
+            content.addMember(createContextWindowHelp());
+            content.addMember(createApplyCancelCanvas());
+            addItem(content);
+        }
     }
 
     private Canvas createNewEventAbonnementCanvas() {
         Layout content = new VLayout();
         content.setStyleName("n52_sensorweb_client_create_abo_form_content");
         content.addMember(new CreateAbonnementForm(controller));
+        content.addMember(new SelectPredefinedAboForm(controller));
         content.addMember(new TimeSeriesMetadataTable(controller));
-        content.addMember(new SelectPredefinedAboCanvas(controller));
         return content;
     }
 
@@ -127,11 +133,44 @@ public class CreateEventAbonnementWindow extends Window {
         
     }
 
-    
 
-    private void closeSesCommunicator() {
-        hide();
+    private Canvas createApplyCancelCanvas() {
+        ApplyCancelButtonLayout applyCancel = new ApplyCancelButtonLayout();
+        applyCancel.setAlign(RIGHT);
+        String apply = i18n.create();
+        String applyLong = i18n.create();
+        ClickHandler applyHandler = new ClickHandler() {
+            
+            @Override
+            public void onClick(ClickEvent event) {
+                
+                GWT.log("applied");
+                // TODO Auto-generated method stub
+                
+            }
+        };
+        
+        String cancel = i18n.create();
+        String cancelLong = i18n.create();
+        ClickHandler cancelHandler = new ClickHandler() {
+            
+            @Override
+            public void onClick(ClickEvent event) {
+                
+                GWT.log("cancelled");
+                // TODO Auto-generated method stub
+                
+            }
+        };
+        
+        applyCancel.createApplyButton(apply, applyLong, applyHandler);
+        applyCancel.createCancelButton(cancel, cancelLong, cancelHandler);
+        
+        // TODO Auto-generated method stub
+        return applyCancel;
+        
     }
+    
 
     public String getId() {
         return COMPONENT_ID;

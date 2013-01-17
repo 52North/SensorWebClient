@@ -135,8 +135,6 @@ body {
   background-color: #FFFFFF;
   border: 3px solid;
   border-color: #96c2c8;
-  /*@text-color-font;*/
-
   border-radius: 2px;
 }
 .n52_sensorweb_client_interactionmenuHeader {
@@ -162,11 +160,34 @@ tr.sensorInfo:nth-child(2n) {
 tr.sensorInfo:hover {
   background-color: #3f8566;
 }
-table.n52_sensorweb_client_create_abo_metadata_table tr:hover {
-  background-color: #3f8566;
+.n52_sensorweb_client_create_abo_form_content {
+  float: left;
+  margin: 1em;
+}
+.n52_sensorweb_client_create_abo_form_content .formTitle,
+.n52_sensorweb_client_create_abo_form_content .formTitleFocused {
+  white-space: nowrap;
+  margin-bottom: 1em;
+}
+.n52_sensorweb_client_abo_name_textbox {
+  width: 100%;
+}
+table.n52_sensorweb_client_create_abo_metadata_table {
+  margin: 1em;
+  width: 100%;
 }
 table.n52_sensorweb_client_create_abo_metadata_table tr:nth-child(2n) {
   background-color: #96c2c8;
+}
+/*
+table.n52_sensorweb_client_create_abo_metadata_table tr:hover {
+    background-color: @bg-color-hover;
+}
+*/
+.n52_sensorweb_client_create_abo_context_help {
+  float: right;
+  border-left: #ffb;
+  width: 150px;
 }
 .n52_sensorweb_client_headerContainer {
   width: 100%;
@@ -232,6 +253,7 @@ div .n52_sensorweb_client_imprint_content {
   margin-left: 2px;
   margin-right: 2px;
   border-radius: 2px;
+  overflow: scroll;
 }
 .n52_sensorweb_client_legendEntryHeader {
   background-color: #ffffff;

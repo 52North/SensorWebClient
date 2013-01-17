@@ -63,7 +63,7 @@ public class WnsUtil {
 	            
 	            return true;
 	        } catch (Exception e) {
-        		LOGGER.trace("WNS is not available");
+        		LOGGER.trace("WNS is not available: {}", Config.wns);
 	            if (connect != null) {
 	            	connect.disconnect();
 				}
@@ -103,6 +103,7 @@ public class WnsUtil {
             // WNS UserID filtern
             UserID = sb.toString().split("UserID");
             result = UserID[1].substring(1, UserID[1].length() - 2);
+            
             LOGGER.debug("WNS_USER_ID: {}", result);
             return result;
         } finally {
@@ -144,78 +145,6 @@ public class WnsUtil {
         }
     }
 
-    /**
-     * Update Phone number of subscribed user with the wnsID
-     * 
-     * @param wnsID
-     * @param handy
-     * @param oldHandy
-     * @throws Exception
-     */
-    public static void updateToWNSSMS(String wnsID, String handy, String oldHandy) throws Exception {
-        URL url;
-        StringBuffer sb = new StringBuffer();
-
-        url = new URL(Config.wns);
-        HttpURLConnection connect = (HttpURLConnection) url.openConnection();
-        connect.setRequestProperty("Content-Type", "text/xml");
-        connect.setRequestMethod("POST");
-        connect.setDoOutput(true);
-        connect.setDoInput(true);
-        PrintWriter pw = new PrintWriter(connect.getOutputStream());
-        pw.write(createUpdateSingleUserSMSRequest(wnsID, handy, oldHandy));
-        pw.close();
-        BufferedReader in = new BufferedReader(new InputStreamReader(connect.getInputStream()));
-        try {
-            while (in.ready()) {
-                sb.append(in.readLine() + "\n");
-            }
-            LOGGER.trace(sb.toString());
-        } finally {
-            in.close();
-            connect.disconnect();
-        }
-    }
-
-    /**
-     * Send SMS to user
-     * 
-     * @param userName
-     * @param handy
-     * @return {@link String}
-     * @throws Exception
-     */
-    public static String sendToWNSSMS(String userName, String handy) throws Exception {
-        URL url;
-        String[] UserID = null;
-        StringBuffer sb = new StringBuffer();
-        String result;
-
-        url = new URL(Config.wns);
-        HttpURLConnection connect = (HttpURLConnection) url.openConnection();
-        connect.setRequestProperty("Content-Type", "text/xml");
-        connect.setRequestMethod("POST");
-        connect.setDoOutput(true);
-        connect.setDoInput(true);
-        PrintWriter pw = new PrintWriter(connect.getOutputStream());
-        pw.write(createNewUserSMSRequest(userName, handy));
-        pw.close();
-        BufferedReader in = new BufferedReader(new InputStreamReader(connect.getInputStream()));
-        // Antwort merken
-        try {
-            while (in.ready()) {
-                sb.append(in.readLine() + "\n");
-            }
-            // WNS UserID filtern
-            UserID = sb.toString().split("UserID");
-            result = UserID[1].substring(1, UserID[1].length() - 2);
-            LOGGER.debug("WNS_USER_ID: {}", result);
-            return result;
-        } finally {
-            in.close();
-            connect.disconnect();
-        }
-    }
 
     /**
      * Unregister user with given userID
@@ -268,8 +197,6 @@ public class WnsUtil {
 
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         sb.append("<Register xmlns=\"http://www.opengis.net/wns/0.0\"\n");
-        sb.append("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
-        sb.append("xsi:schemaLocation=\"http://www.opengis.net/wns/0.0 ../wns.xsd\"\n");
         sb.append("service=\"WNS\" version=\"1.0.0\">\n");
         sb.append("<SingleUser>\n");
         sb.append("<Name>" + userName + "</Name>\n");
@@ -285,34 +212,6 @@ public class WnsUtil {
         return WNSrequest;
     }
 
-    /**
-     * 
-     * @param userName
-     * @param handy
-     * @return {@link String}
-     */
-    private static String createNewUserSMSRequest(String userName, String handy) {
-        StringBuffer sb = new StringBuffer();
-        String WNSrequest = null;
-
-        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        sb.append("<Register xmlns=\"http://www.opengis.net/wns/0.0\"\n");
-        sb.append("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
-        sb.append("xsi:schemaLocation=\"http://www.opengis.net/wns/0.0 ../wns.xsd\"\n");
-        sb.append("service=\"WNS\" version=\"1.0.0\">\n");
-        sb.append("<SingleUser>\n");
-        sb.append("<Name>" + userName + "</Name>\n");
-        sb.append("<CommunicationProtocol>\n");
-        sb.append("<SMS>" + handy + "</SMS>\n");
-        sb.append("</CommunicationProtocol>\n");
-        sb.append("</SingleUser>\n");
-        sb.append("</Register>");
-
-        WNSrequest = sb.toString();
-        
-    	LOGGER.trace("\n * * * Beginn Request * * * \n" + WNSrequest + "\n * * * Ende Request * * * \n");
-        return WNSrequest;
-    }
 
     /**
      * 
@@ -325,8 +224,6 @@ public class WnsUtil {
 
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         sb.append("<Unregister xmlns=\"http://www.opengis.net/wns/0.0\"\n");
-        sb.append("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
-        sb.append("xsi:schemaLocation=\"http://www.opengis.net/wns/0.0 ../wns.xsd\"\n");
         sb.append("service=\"WNS\" version=\"1.0.0\">\n");
         sb.append("<ID>" + userID + "</ID>\n");
         sb.append("</Unregister>");
@@ -349,9 +246,7 @@ public class WnsUtil {
 
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         sb.append("<UpdateSingleUserRegistration xmlns=\"http://www.opengis.net/wns/0.0\"\n");
-        sb.append("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ");
-        sb.append("xsi:schemaLocation=\"http://www.opengis.net/wns/0.0\n");
-        sb.append("../wns.xsd\" service=\"WNS\" version=\"1.0.0\">\n");
+        sb.append("service=\"WNS\" version=\"1.0.0\">\n");
         sb.append("<UserID>" + wnsID + "</UserID>\n");
         sb.append("<addCommunicationProtocol>\n");
         sb.append("<Email>" + mail + "</Email>\n");
@@ -367,45 +262,12 @@ public class WnsUtil {
         return WNSrequest;
     }
 
-    /**
-     * @param wnsID
-     * @param handy
-     * @param oldHandy
-     * @return
-     */
-    private static String createUpdateSingleUserSMSRequest(String wnsID, String handy, String oldHandy) {
-        StringBuffer sb = new StringBuffer();
-        String WNSrequest = null;
-
-        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        sb.append("<UpdateSingleUserRegistration xmlns=\"http://www.opengis.net/wns/0.0\"\n");
-        sb.append("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
-        sb.append("xsi:schemaLocation=\"http://www.opengis.net/wns/0.0\"\n");
-        sb.append("../wns.xsd\" service=\"WNS\" version=\"1.0.0\">\n");
-        sb.append("<UserID>" + wnsID + "</UserID>\n");
-        sb.append("<addCommunicationProtocol>\n");
-        sb.append("<SMS>" + handy + "</SMS>\n");
-        sb.append("</addCommunicationProtocol>\n");
-        sb.append("<removeCommunicationProtocol>\n");
-        sb.append("<SMS>" + oldHandy + "</SMS>\n");
-        sb.append("</removeCommunicationProtocol>\n");
-        sb.append("</UpdateSingleUserRegistration>\n");
-
-        WNSrequest = sb.toString();
-        
-    	LOGGER.trace("\n * * * Beginn Request * * * \n" + WNSrequest + "\n * * * Ende Request * * * \n");
-        return WNSrequest;
-
-    }
-    
     private static String createCapabilitiesRequest(){
         StringBuffer sb = new StringBuffer();
         String WNSrequest = null;
         
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         sb.append("<GetCapabilities xmlns=\"http://www.opengis.net/wns/0.0\"\n");
-        sb.append("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
-        sb.append("xsi:schemaLocation=\"http://www.opengis.net/wns/0.0 ../wnsGetCapabilities.xsd\"\n");
         sb.append("service=\"WNS\"/>");
         
         WNSrequest = sb.toString();

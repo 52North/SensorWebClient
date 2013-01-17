@@ -354,6 +354,7 @@ public class User implements Serializable {
      * 
      * @return the handy nr
      */
+    @Deprecated
     public String getHandyNr() {
         return this.handyNr;
     }
@@ -364,6 +365,7 @@ public class User implements Serializable {
      * @param handyNr
      *            the new handy nr
      */
+    @Deprecated
     public void setHandyNr(String handyNr) {
         this.handyNr = handyNr;
     }

@@ -171,7 +171,6 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 	private DateTimeFormat formatter = DateTimeFormat.getFormat("dd.MM.yyyy HH:mm");
 
 	public LegendEntryTimeSeries(TimeSeries ts, String width, String height) {
-
 		this.width = width;
 		this.height = height;
 		this.timeseriesID = ts.getId();
@@ -642,7 +641,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 				+ getStationName(this.getTimeSeries()));
 
 		Set<String> values = this.getTimeSeries().getProperties()
-				.getrefValues();
+				.getReferenceValues();
 
 		if (!this.didUpdateRefVals) {
 			if (values.size() != 0) {

@@ -234,9 +234,6 @@ public class SESInitializationServlet extends HttpServlet {
 
                             try {
                                 user.setWnsEmailId(WnsUtil.sendToWNSMail(user.getName(), user.geteMail()));
-                                user.setWnsSmsId(WnsUtil.sendToWNSSMS(user.getName(), String
-                                        .valueOf(user.getHandyNr())));
-
                                 HibernateUtil.addUser(new User(user));
                             } catch (Exception e) {
                                 LOGGER.debug("WNS is not available.",e);
