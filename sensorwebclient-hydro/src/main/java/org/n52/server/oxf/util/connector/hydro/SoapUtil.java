@@ -23,6 +23,7 @@
  */
 package org.n52.server.oxf.util.connector.hydro;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import javax.xml.namespace.QName;
@@ -80,13 +81,14 @@ public class SoapUtil {
      *         not be found.
      * @throws XmlException
      *         if parsing to XML fails
+     * @throws IOException 
      */
-    public static XmlObject readBodyNodeFrom(EnvelopeDocument envelope, String nodeName) throws XmlException {
+    public static XmlObject readBodyNodeFrom(EnvelopeDocument envelope, String nodeName) throws XmlException, IOException {
         Body soapBody = envelope.getEnvelope().getBody();
         if (nodeName == null) {
 //            XmlCursor bodyCursor = soapBody.newCursor();
 //            return bodyCursor.toFirstChild() ? bodyCursor.getObject() : null;
-        	return XmlObject.Factory.parse(soapBody.getDomNode().getFirstChild());
+        	return XmlObject.Factory.parse(soapBody.newInputStream());
         }
         return getXmlFromDomNode(soapBody, nodeName);
     }
