@@ -321,20 +321,20 @@ public class SesRulesServiceImpl implements SesRuleService {
                 }
             }
             switch (type) {
-            case SUMME_ZEIT:
+            case SUM_OVER_TIME:
                 basicRule = BasicRule_3_Builder.create_BR_3(rule);
                 break;
-            case TENDENZ_ANZAHL:
+            case TENDENCY_OVER_COUNT:
                 basicRule = BasicRule_1_Builder.create_BR_1(rule);
                 break;
-            case TENDENZ_ZEIT:
+            case TENDENCY_OVER_TIME:
                 basicRule = BasicRule_2_Builder.create_BR_2(rule);
                 break;
-            case UEBER_UNTERSCHREITUNG:
+            case OVER_UNDERSHOOT:
                 BasicRule_4_Builder ruleGenerator = new BasicRule_4_Builder();
                 basicRule = ruleGenerator.create(rule);
                 break;
-            case AUSFALL:
+            case SENSOR_LOSS:
                 basicRule = BasicRule_5_Builder.create_BR_5(rule);
                 break;
             }
