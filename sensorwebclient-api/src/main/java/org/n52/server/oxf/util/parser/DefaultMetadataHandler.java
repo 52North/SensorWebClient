@@ -26,6 +26,9 @@ package org.n52.server.oxf.util.parser;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.n52.server.oxf.util.ConfigurationContext.SERVER_TIMEOUT;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER;
+import static org.n52.oxf.sos.adapter.SOSAdapter.GET_FEATURE_OF_INTEREST;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -44,6 +47,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeoutException;
 
+import net.opengis.gml.x32.FeaturePropertyType;
+import net.opengis.sampling.x20.SFSamplingFeatureDocument;
+import net.opengis.sampling.x20.SFSamplingFeatureType;
+import net.opengis.sos.x20.GetFeatureOfInterestResponseDocument;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.oxf.OXFException;
@@ -142,12 +149,12 @@ public class DefaultMetadataHandler extends MetadataHandler {
             String[] foiArray = new String[]{};
             if (SosUtil.isVersion100(sosVersion)) {
                 foiArray = offering.getFeatureOfInterest();
-                offeringFoiMap.put(offeringID, foiArray);
-            } else if (SosUtil.isVersion100(sosVersion)) {
-                
-                //TODO retrieve fois via GetFOI + procedure + bbox
-                
+            } else if (SosUtil.isVersion200(sosVersion)) {
+            	for (String procedure : procArray) {
+            		foiArray = getFoisByProcedure(adapter, sosUrl, sosVersion, procedure).toArray(foiArray);
+				}
             }
+            offeringFoiMap.put(offeringID, foiArray);
 
             // iterate over fois to delete double entries for the request
             for (int j = 0; j < foiArray.length; j++) {
@@ -434,5 +441,44 @@ public class DefaultMetadataHandler extends MetadataHandler {
             }
         }
     }
+    
+	protected Collection<String> getFoisByProcedure(SOSAdapter adapter,
+			String sosUrl, String sosVersion, String procedure)
+			throws OXFException {
+		ArrayList<String> fois = new ArrayList<String>();
+		try {
+			ParameterContainer container = new ParameterContainer();
+			container.addParameterShell(GET_FOI_SERVICE_PARAMETER, "SOS");
+			container.addParameterShell(GET_FOI_VERSION_PARAMETER, sosVersion);
+			container.addParameterShell("procedure", procedure);
+			Operation operation = new Operation(GET_FEATURE_OF_INTEREST,
+					sosUrl, sosUrl);
+			OperationResult result = adapter.doOperation(operation, container);
+			XmlObject foiResponse = XmlObject.Factory.parse(result
+					.getIncomingResultAsStream());
+			if (foiResponse instanceof GetFeatureOfInterestResponseDocument) {
+				GetFeatureOfInterestResponseDocument foiResDoc = (GetFeatureOfInterestResponseDocument) foiResponse;
+				for (FeaturePropertyType featurePropertyType : foiResDoc
+						.getGetFeatureOfInterestResponse()
+						.getFeatureMemberArray()) {
+					SFSamplingFeatureDocument samplingFeature = SFSamplingFeatureDocument.Factory
+							.parse(featurePropertyType.xmlText());
+					SFSamplingFeatureType sfSamplingFeature = samplingFeature
+							.getSFSamplingFeature();
+					fois.add(sfSamplingFeature.getIdentifier()
+							.getStringValue());
+				}
+			} else {
+				throw new OXFException("No valid GetFeatureOfInterestREsponse");
+			}
+		} catch (Exception e) {
+			LOGGER.error("Error while send GetFeatureOfInterest: "
+					+ e.getCause());
+			throw new OXFException(e);
+
+		}
+		return fois;
+	}
+
     
 }
