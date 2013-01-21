@@ -54,6 +54,7 @@ import net.opengis.sensorML.x101.SensorMLDocument;
 import net.opengis.sensorML.x101.SensorMLDocument.SensorML;
 import net.opengis.sensorML.x101.SensorMLDocument.SensorML.Member;
 import net.opengis.sensorML.x101.impl.ProcessModelTypeImpl;
+import net.opengis.sensorML.x101.impl.SystemDocumentImpl;
 import net.opengis.swe.x101.AnyScalarPropertyType;
 import net.opengis.swe.x101.DataComponentPropertyType;
 import net.opengis.swe.x101.DataRecordType;
@@ -73,6 +74,7 @@ import org.n52.oxf.OXFException;
 import org.n52.oxf.util.IOHelper;
 import org.n52.oxf.util.JavaHelper;
 import org.n52.oxf.xml.NcNameResolver;
+import org.n52.oxf.xmlbeans.parser.XMLBeansParser;
 import org.n52.oxf.xmlbeans.parser.XMLHandlingException;
 import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.crs.AReferencingHelper;
@@ -215,13 +217,15 @@ public class DescribeSensorParser {
 
     private String getUomByProcessModelTypeImpl(String phenomenonID, ProcessModelTypeImpl processModel) {
         String uom = "";
-        OutputList outputList = processModel.getOutputs().getOutputList();
-        IoComponentPropertyType[] outputArray = outputList.getOutputArray();
-        for (IoComponentPropertyType output : outputArray) {
-            if (output.getQuantity().getDefinition().equals(phenomenonID)) {
-                uom = output.getQuantity().getUom().getCode();
-            }
-        }
+        if (processModel.getOutputs() != null) {
+			OutputList outputList = processModel.getOutputs().getOutputList();
+			IoComponentPropertyType[] outputArray = outputList.getOutputArray();
+			for (IoComponentPropertyType output : outputArray) {
+				if (output.getQuantity().getDefinition().equals(phenomenonID)) {
+					uom = output.getQuantity().getUom().getCode();
+				}
+			}
+		}
         return uom;
     }
 
@@ -667,9 +671,15 @@ public class DescribeSensorParser {
                             cursor.setTextValue(NcNameResolver.fixNcName(gmlId));
                         }
                     }
-
-                    smlDoc = SensorMLDocument.Factory.parse(dataDescription.newInputStream());
-//                    member.set(XMLBeansParser.parse());
+                    XmlObject object = XmlObject.Factory.parse(dataDescription.xmlText());
+                    if (object instanceof SystemDocumentImpl) {
+                    	smlDoc = SensorMLDocument.Factory.newInstance();
+                    	Member member = smlDoc.addNewSensorML().addNewMember();
+                    	member.set(XMLBeansParser.parse(object.newInputStream()));
+                    } else {
+                    	smlDoc = SensorMLDocument.Factory.parse(dataDescription.newInputStream());
+                    }
+                    
                     break;
                 }
             }
