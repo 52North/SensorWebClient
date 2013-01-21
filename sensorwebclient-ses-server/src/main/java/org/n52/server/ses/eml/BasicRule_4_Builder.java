@@ -224,32 +224,32 @@ public class BasicRule_4_Builder {
                 Node filterNode2 = null;
 
                 // first filter
-                if (rule.getrOperatorIndex() == Rule.LESSTHAN_OPERATOR) {
+                if (rule.getrOperatorIndex() == Rule.LESS_THAN) {
                     filterNode = doc.createElement("fes:PropertyIsLessThan");
-                } else if (rule.getrOperatorIndex() == Rule.GREATERTHAN_OPERATOR) {
+                } else if (rule.getrOperatorIndex() == Rule.GREATER_THAN) {
                     filterNode = doc.createElement("fes:PropertyIsGreaterThan");
-                } else if (rule.getrOperatorIndex() == Rule.EQUALTO_OPERATOR) {
+                } else if (rule.getrOperatorIndex() == Rule.EQUAL_TO) {
                     filterNode = doc.createElement("fes:PropertyIsEqualTo");
-                } else if (rule.getrOperatorIndex() == Rule.GREATERTHANOREQUALTO_OPERATOR) {
+                } else if (rule.getrOperatorIndex() == Rule.GREATER_THAN_OR_EQUAL_TO) {
                     filterNode = doc.createElement("fes:PropertyIsGreaterThanOrEqualTo");
-                } else if (rule.getrOperatorIndex() == Rule.LESSTHANOREQUALTO_OPERATOR) {
+                } else if (rule.getrOperatorIndex() == Rule.LESS_THAN_OR_EQUAL_TO) {
                     filterNode = doc.createElement("fes:PropertyIsLessThanOrEqualTo");
-                } else if (rule.getrOperatorIndex() == Rule.NOTEQUALTO_OPERATOR) {
+                } else if (rule.getrOperatorIndex() == Rule.NOT_EQUAL_TO) {
                     filterNode = doc.createElement("fes:PropertyIsNotEqualTo");
                 }
 
                 // second filter
-                if (rule.getcOperatorIndex() == Rule.LESSTHAN_OPERATOR) {
+                if (rule.getcOperatorIndex() == Rule.LESS_THAN) {
                     filterNode2 = doc.createElement("fes:PropertyIsLessThan");
-                } else if (rule.getcOperatorIndex() == Rule.GREATERTHAN_OPERATOR) {
+                } else if (rule.getcOperatorIndex() == Rule.GREATER_THAN) {
                     filterNode2 = doc.createElement("fes:PropertyIsGreaterThan");
-                } else if (rule.getcOperatorIndex() == Rule.EQUALTO_OPERATOR) {
+                } else if (rule.getcOperatorIndex() == Rule.EQUAL_TO) {
                     filterNode2 = doc.createElement("fes:PropertyIsEqualTo");
-                } else if (rule.getcOperatorIndex() == Rule.GREATERTHANOREQUALTO_OPERATOR) {
+                } else if (rule.getcOperatorIndex() == Rule.GREATER_THAN_OR_EQUAL_TO) {
                     filterNode2 = doc.createElement("fes:PropertyIsGreaterThanOrEqualTo");
-                } else if (rule.getcOperatorIndex() == Rule.LESSTHANOREQUALTO_OPERATOR) {
+                } else if (rule.getcOperatorIndex() == Rule.LESS_THAN_OR_EQUAL_TO) {
                     filterNode2 = doc.createElement("fes:PropertyIsLessThanOrEqualTo");
-                } else if (rule.getcOperatorIndex() == Rule.NOTEQUALTO_OPERATOR) {
+                } else if (rule.getcOperatorIndex() == Rule.NOT_EQUAL_TO) {
                     filterNode2 = doc.createElement("fes:PropertyIsNotEqualTo");
                 }
 
@@ -340,17 +340,17 @@ public class BasicRule_4_Builder {
             
             // rOperatorIndex: first filter
             if (property.equals("fes:PropertyIsLessThan")) {
-                rule.setrOperatorIndex(Rule.LESSTHAN_OPERATOR);
+                rule.setrOperatorIndex(Rule.LESS_THAN);
             } else if (property.equals("fes:PropertyIsGreaterThan")) {
-                rule.setrOperatorIndex(Rule.GREATERTHAN_OPERATOR);
+                rule.setrOperatorIndex(Rule.GREATER_THAN);
             } else if (property.equals("fes:PropertyIsEqualTo")) {
-                rule.setrOperatorIndex(Rule.EQUALTO_OPERATOR);
+                rule.setrOperatorIndex(Rule.EQUAL_TO);
             } else if (property.equals("fes:PropertyIsGreaterThanOrEqualTo")) {
-                rule.setrOperatorIndex(Rule.GREATERTHANOREQUALTO_OPERATOR);
+                rule.setrOperatorIndex(Rule.GREATER_THAN_OR_EQUAL_TO);
             } else if (property.equals("fes:PropertyIsLessThanOrEqualTo")) {
-                rule.setrOperatorIndex(Rule.LESSTHANOREQUALTO_OPERATOR);
+                rule.setrOperatorIndex(Rule.LESS_THAN_OR_EQUAL_TO);
             } else if (property.equals("fes:PropertyIsNotEqualTo")) {
-                rule.setrOperatorIndex(Rule.NOTEQUALTO_OPERATOR);
+                rule.setrOperatorIndex(Rule.NOT_EQUAL_TO);
             }
             
             filterNode = filterList.item(1);
@@ -358,17 +358,17 @@ public class BasicRule_4_Builder {
             
             // cOperatorIndex: senond filter
             if (property.equals("fes:PropertyIsLessThan")) {
-                rule.setcOperatorIndex(Rule.LESSTHAN_OPERATOR);
+                rule.setcOperatorIndex(Rule.LESS_THAN);
             } else if (property.equals("fes:PropertyIsGreaterThan")) {
-                rule.setcOperatorIndex(Rule.GREATERTHAN_OPERATOR);
+                rule.setcOperatorIndex(Rule.GREATER_THAN);
             } else if (property.equals("fes:PropertyIsEqualTo")) {
-                rule.setcOperatorIndex(Rule.EQUALTO_OPERATOR);
+                rule.setcOperatorIndex(Rule.EQUAL_TO);
             } else if (property.equals("fes:PropertyIsGreaterThanOrEqualTo")) {
-                rule.setcOperatorIndex(Rule.GREATERTHANOREQUALTO_OPERATOR);
+                rule.setcOperatorIndex(Rule.GREATER_THAN_OR_EQUAL_TO);
             } else if (property.equals("fes:PropertyIsLessThanOrEqualTo")) {
-                rule.setcOperatorIndex(Rule.LESSTHANOREQUALTO_OPERATOR);
+                rule.setcOperatorIndex(Rule.LESS_THAN_OR_EQUAL_TO);
             } else if (property.equals("fes:PropertyIsNotEqualTo")) {
-                rule.setcOperatorIndex(Rule.NOTEQUALTO_OPERATOR);
+                rule.setcOperatorIndex(Rule.NOT_EQUAL_TO);
             }
             
             NodeList literalList = doc.getElementsByTagName(this.fesLiteral);
@@ -396,7 +396,7 @@ public class BasicRule_4_Builder {
             }
             
             // set rule Type
-            rule.setRuleType(SimpleRuleType.UEBER_UNTERSCHREITUNG);
+            rule.setRuleType(SimpleRuleType.OVER_UNDERSHOOT);
 
         } catch (Exception e) {
             LOGGER.error("Error parsing EML rule", e);

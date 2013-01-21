@@ -287,7 +287,7 @@ public class BasicRule_5_Builder {
             rule.setrTimeUnit(temp.substring(temp.length()-1));
             
             // set rule type
-            rule.setRuleType(SimpleRuleType.AUSFALL);
+            rule.setRuleType(SimpleRuleType.SENSOR_LOSS);
 
         } catch (Exception e) {
             LOGGER.error("Error parsing EML rule", e);
