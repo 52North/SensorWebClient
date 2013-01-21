@@ -36,10 +36,10 @@ import java.util.TreeMap;
 import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.n52.client.bus.EventBus;
 import org.n52.client.sos.event.data.NewTimeSeriesEvent;
+import org.n52.client.ui.ApplyCancelButtonLayout;
 import org.n52.client.ui.InteractionWindow;
 import org.n52.client.ui.LoadingSpinner;
 import org.n52.client.ui.Toaster;
-import org.n52.client.ui.btn.SmallButton;
 import org.n52.client.ui.map.InfoMarker;
 import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
 import org.n52.shared.serializable.pojos.sos.Offering;
@@ -93,8 +93,6 @@ public class StationSelector extends Window {
 
 	private HTMLPane procedureDetailsHTMLPane;
 
-	private SmallButton confirmSelectionButton;
-	
 	private Label showSelectionMenuButton;
 	
 	private InteractionWindow selectionMenu;
@@ -105,7 +103,7 @@ public class StationSelector extends Window {
 	
 	private Img stationLoadingSpinner;
 	
-	private Canvas informationFieldSpinner;
+    private ApplyCancelButtonLayout applyCancel;
 	
     public static StationSelector getInst() {
         if (instance == null) {
@@ -229,11 +227,9 @@ public class StationSelector extends Window {
 		HLayout buttons = new HLayout();
 		buttons.setAutoHeight();
 		buttons.setAlign(Alignment.RIGHT);
-		informationFieldSpinner = createLoadingSpinner();
-		buttons.addMember(informationFieldSpinner);
-		buttons.addMember(createAddTimeSeriesButton());
-		buttons.addMember(createCancelButton());
-		layout.addMember(buttons);
+        buttons.addMember(createApplyCancelCanvas());
+        layout.addMember(buttons);
+		
 		infoWindow = new InteractionWindow(layout);
 		infoWindow.setZIndex(1000000);
 		infoWindow.setWidth(300);
@@ -242,6 +238,38 @@ public class StationSelector extends Window {
 		infoWindow.hide();
 		return infoWindow;
 	}
+	
+	private ApplyCancelButtonLayout createApplyCancelCanvas() {
+        if (applyCancel == null) {
+            applyCancel = new ApplyCancelButtonLayout();
+            applyCancel.createApplyButton(i18n.addNewTimeseries(), i18n.addNewTimeseriesExt(), createApplyHandler());
+            applyCancel.createCancelButton(i18n.cancel(), i18n.cancel(), createCancelHandler());
+            applyCancel.setStyleName("n52_sensorweb_client_create_abo_applycancel");
+            applyCancel.setAlign(Alignment.RIGHT);
+        }
+        return applyCancel;
+    }
+	
+	private ClickHandler createApplyHandler() {
+        return new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                StationSelector.this.loadTimeSeries();
+                closeStationpicker();
+            }
+        };
+    }
+
+    private ClickHandler createCancelHandler() {
+        return new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                controller.clearMarkerSelection();
+                clearProcedureDetails();
+                hideInfoWindow();
+            }
+        };
+    }
 
     private Canvas createInformationFieldForSelectedProcedure() {
         VLayout layout = new VLayout();
@@ -299,35 +327,6 @@ public class StationSelector extends Window {
 		return radioGroup;
 	}
 
-	private SmallButton createAddTimeSeriesButton() {
-        Img img = new Img("../img/icons/acc.png");
-        String normalTooltip = i18n.addNewTimeseries();
-        String extendedTooltip = i18n.addNewTimeseriesExt();
-        confirmSelectionButton = new SmallButton(img, normalTooltip, extendedTooltip);
-        confirmSelectionButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent evt) {
-                StationSelector.this.loadTimeSeries();
-                closeStationpicker();
-            }
-        });
-        return confirmSelectionButton;
-	}
-	
-	private SmallButton createCancelButton() {
-		Img img = new Img("../img/icons/del.png");
-        String normalTooltip = i18n.cancel();
-        String extendedTooltip = i18n.cancel();
-        SmallButton cancelSelectionButton = new SmallButton(img, normalTooltip, extendedTooltip);
-        cancelSelectionButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-            	controller.clearMarkerSelection();
-            	clearProcedureDetails();
-            	hideInfoWindow();
-            }
-        });
-        return cancelSelectionButton;
-    }
-
 	private void loadTimeSeries() {
 		final SOSMetadata metadata = controller.getCurrentMetadata();
         final String selectedServiceURL = controller.getSelectedServiceURL();
@@ -363,7 +362,7 @@ public class StationSelector extends Window {
 	public void updateProcedureDetailsURL(String url) {
 		procedureDetailsHTMLPane.setContentsURL(url);
 		procedureDetailsHTMLPane.show();
-		informationFieldSpinner.hide();
+		applyCancel.finishLoading();
 	}
 	
 	public void clearProcedureDetails() {
@@ -410,7 +409,7 @@ public class StationSelector extends Window {
 		updateInfoLabels();
 		infoWindow.setWindowTitle(infoMarker.getStation().getProcedure());
 		infoWindow.show();
-		informationFieldSpinner.show();
+		applyCancel.setLoading();
 	}
 	
 	public void hideInfoWindow() {

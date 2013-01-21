@@ -40,28 +40,28 @@ public class RulesUtil {
         boolean result = false;
         
         switch(op1){
-        case Rule.EQUALTO_OPERATOR:
-            if (op2 == Rule.NOTEQUALTO_OPERATOR) result = true; 
+        case Rule.EQUAL_TO:
+            if (op2 == Rule.NOT_EQUAL_TO) result = true; 
             break;
             
-        case Rule.NOTEQUALTO_OPERATOR:
-            if (op2 == Rule.EQUALTO_OPERATOR) result = true;
+        case Rule.NOT_EQUAL_TO:
+            if (op2 == Rule.EQUAL_TO) result = true;
             break;
             
-        case Rule.GREATERTHAN_OPERATOR:
-            if (op2 == Rule.LESSTHANOREQUALTO_OPERATOR) result = true;
+        case Rule.GREATER_THAN:
+            if (op2 == Rule.LESS_THAN_OR_EQUAL_TO) result = true;
             break;
             
-        case Rule.LESSTHAN_OPERATOR:
-            if (op2 == Rule.GREATERTHANOREQUALTO_OPERATOR) result = true;
+        case Rule.LESS_THAN:
+            if (op2 == Rule.GREATER_THAN_OR_EQUAL_TO) result = true;
             break;
             
-        case Rule.GREATERTHANOREQUALTO_OPERATOR:
-            if (op2 == Rule.LESSTHAN_OPERATOR) result = true;
+        case Rule.GREATER_THAN_OR_EQUAL_TO:
+            if (op2 == Rule.LESS_THAN) result = true;
             break;
             
-        case Rule.LESSTHANOREQUALTO_OPERATOR:
-            if (op2 == Rule.GREATERTHAN_OPERATOR) result = true;
+        case Rule.LESS_THAN_OR_EQUAL_TO:
+            if (op2 == Rule.GREATER_THAN) result = true;
             break;
         }
         

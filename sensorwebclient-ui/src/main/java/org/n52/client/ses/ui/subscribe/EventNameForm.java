@@ -1,5 +1,5 @@
 
-package org.n52.client.ses.ui;
+package org.n52.client.ses.ui.subscribe;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
@@ -8,11 +8,11 @@ import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.events.KeyPressEvent;
 import com.smartgwt.client.widgets.form.fields.events.KeyPressHandler;
 
-public class CreateAbonnementForm extends DynamicForm {
+public class EventNameForm extends DynamicForm {
 
-    private final CreateEventAbonnementController controller;
+    private final EventSubscriptionController controller;
 
-    public CreateAbonnementForm(final CreateEventAbonnementController controller) {
+    public EventNameForm(final EventSubscriptionController controller) {
         this.setStyleName("n52_sensorweb_client_create_abo_form");
         this.controller = controller;
         setFields(createAbonnementNameItem());

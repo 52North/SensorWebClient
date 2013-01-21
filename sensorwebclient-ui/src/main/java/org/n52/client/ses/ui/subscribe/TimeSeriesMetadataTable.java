@@ -1,4 +1,4 @@
-package org.n52.client.ses.ui;
+package org.n52.client.ses.ui.subscribe;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
@@ -9,15 +9,16 @@ import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.TimeSeriesProperties;
 
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public class TimeSeriesMetadataTable extends VLayout {
 
-    private CreateEventAbonnementController controller;
+    private EventSubscriptionController controller;
     
     private FlexTable metadataTable = new FlexTable();
 
-    public TimeSeriesMetadataTable(CreateEventAbonnementController controller) {
+    public TimeSeriesMetadataTable(EventSubscriptionController controller) {
         metadataTable.setStyleName("n52_sensorweb_client_create_abo_metadata_table");
         this.controller = controller;
         initializeUserInterface();
@@ -26,8 +27,8 @@ public class TimeSeriesMetadataTable extends VLayout {
     private void initializeUserInterface() {
         setIsGroup(true);
         setGroupTitle(i18n.timeseriesMetadataTable());
+        addMember(new ScrollPanel(metadataTable));
         updateTimeSeriesMetadata();
-        addMember(metadataTable);
     }
 
     public void updateTimeSeriesMetadata() {

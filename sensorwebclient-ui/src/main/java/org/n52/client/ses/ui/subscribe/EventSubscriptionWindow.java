@@ -22,12 +22,10 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.client.ses.ui;
+package org.n52.client.ses.ui.subscribe;
 
-import static com.smartgwt.client.types.Alignment.RIGHT;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
-import org.n52.client.ses.i18n.SesStringsAccessor;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.ui.ApplyCancelButtonLayout;
 
@@ -45,30 +43,32 @@ import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
-public class CreateEventAbonnementWindow extends Window {
+public class EventSubscriptionWindow extends Window {
 
-    private static final String COMPONENT_ID = "sesCommunicator";
+    private static final String COMPONENT_ID = "eventSubscriptionWindow";
 
     private static int WIDTH = 950;
 
     private static int HEIGHT = 550;
 
-    private static CreateEventAbonnementWindow instance;
+    private static EventSubscriptionController controller;
 
-    private static CreateEventAbonnementController controller;
+    private static EventSubscriptionWindow instance;
+
+    private Layout ruleTemplateEditCanvas;
 
     private Layout content;
 
-    public static CreateEventAbonnementWindow getInst() {
+    public static EventSubscriptionWindow getInst() {
         if (instance == null) {
-            controller = new CreateEventAbonnementController();
-            instance = new CreateEventAbonnementWindow(controller);
+            controller = new EventSubscriptionController();
+            instance = new EventSubscriptionWindow(controller);
         }
         return instance;
     }
 
-    private CreateEventAbonnementWindow(CreateEventAbonnementController controller) {
-        controller.setSesCommunicator(this);
+    private EventSubscriptionWindow(EventSubscriptionController controller) {
+        controller.setEventSubscription(this);
         initializeWindow();
         addCloseClickHandler(new CloseClickHandler() {
             public void onCloseClick(CloseClickEvent event) {
@@ -92,8 +92,8 @@ public class CreateEventAbonnementWindow extends Window {
         addResizedHandler(new ResizedHandler() {
             @Override
             public void onResized(ResizedEvent event) {
-                WIDTH = CreateEventAbonnementWindow.this.getWidth();
-                HEIGHT = CreateEventAbonnementWindow.this.getHeight();
+                WIDTH = EventSubscriptionWindow.this.getWidth();
+                HEIGHT = EventSubscriptionWindow.this.getHeight();
             }
         });
     }
@@ -110,37 +110,40 @@ public class CreateEventAbonnementWindow extends Window {
             content.setStyleName("n52_sensorweb_client_create_abo_window_content");
             content.addMember(createNewEventAbonnementCanvas());
             content.addMember(createContextWindowHelp());
-            content.addMember(createApplyCancelCanvas());
             addItem(content);
         }
     }
 
     private Canvas createNewEventAbonnementCanvas() {
-        Layout content = new VLayout();
-        content.setStyleName("n52_sensorweb_client_create_abo_form_content");
-        content.addMember(new CreateAbonnementForm(controller));
-        content.addMember(new SelectPredefinedAboForm(controller));
-        content.addMember(new TimeSeriesMetadataTable(controller));
-        return content;
+        Layout subscriptionContent = new VLayout();
+        subscriptionContent.setStyleName("n52_sensorweb_client_create_abo_form_content");
+        subscriptionContent.addMember(new EventNameForm(controller));
+        subscriptionContent.addMember(new SelectSubscriptionForm(controller));
+        subscriptionContent.addMember(createRuleTemplateEditorCanvas());
+        subscriptionContent.addMember(new TimeSeriesMetadataTable(controller));
+        subscriptionContent.addMember(createApplyCancelCanvas());
+        return subscriptionContent;
     }
 
-    private Canvas createContextWindowHelp() {
-        Layout content = new VLayout();
-        content.setStyleName("n52_sensorweb_client_create_abo_context_help");
-        
-        // TODO Auto-generated method stub
-        return content;
-        
+    private Canvas createRuleTemplateEditorCanvas() {
+        if (ruleTemplateEditCanvas == null) {
+            ruleTemplateEditCanvas = new VLayout();
+            ruleTemplateEditCanvas.setStyleName("n52_sensorweb_client_edit_create_abo_edit");
+        }
+        return ruleTemplateEditCanvas;
     }
-
 
     private Canvas createApplyCancelCanvas() {
         ApplyCancelButtonLayout applyCancel = new ApplyCancelButtonLayout();
-        applyCancel.setAlign(RIGHT);
-        String apply = i18n.create();
-        String applyLong = i18n.create();
-        ClickHandler applyHandler = new ClickHandler() {
-            
+        applyCancel.setStyleName("n52_sensorweb_client_create_abo_applycancel");
+        applyCancel.createApplyButton(i18n.create(), i18n.create(), createApplyHandler());
+        applyCancel.createCancelButton(i18n.cancel(), i18n.cancel(), createCancelHandler());
+        applyCancel.setAlign(Alignment.RIGHT);
+        return applyCancel;
+    }
+
+    private ClickHandler createApplyHandler() {
+        return new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 
@@ -149,28 +152,25 @@ public class CreateEventAbonnementWindow extends Window {
                 
             }
         };
-        
-        String cancel = i18n.create();
-        String cancelLong = i18n.create();
-        ClickHandler cancelHandler = new ClickHandler() {
-            
+    }
+
+    private ClickHandler createCancelHandler() {
+        return new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                
-                GWT.log("cancelled");
-                // TODO Auto-generated method stub
-                
+                EventSubscriptionWindow.this.hide();
             }
         };
-        
-        applyCancel.createApplyButton(apply, applyLong, applyHandler);
-        applyCancel.createCancelButton(cancel, cancelLong, cancelHandler);
-        
-        // TODO Auto-generated method stub
-        return applyCancel;
-        
     }
-    
+
+    private Canvas createContextWindowHelp() {
+        Layout contextHelpContent = new VLayout();
+        contextHelpContent.setStyleName("n52_sensorweb_client_create_abo_context_help");
+            
+            // TODO Auto-generated method stub
+        return contextHelpContent;
+    }
+
 
     public String getId() {
         return COMPONENT_ID;
@@ -178,6 +178,16 @@ public class CreateEventAbonnementWindow extends Window {
 
     public void setTimeseries(TimeSeries timeseries) {
         controller.setTimeseries(timeseries);
+    }
+
+    public void updateRuleEditCanvas(RuleTemplate template) {
+        for (Canvas canvas : ruleTemplateEditCanvas.getMembers()) {
+            canvas.removeFromParent();
+            canvas.destroy();
+        }
+        Canvas ruleEditCanvas = template.createEditCanvas();
+        ruleTemplateEditCanvas.addMember(ruleEditCanvas);
+        ruleTemplateEditCanvas.redraw();
     }
 
 }

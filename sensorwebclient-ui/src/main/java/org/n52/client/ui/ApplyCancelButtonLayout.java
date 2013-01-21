@@ -9,7 +9,7 @@ import com.smartgwt.client.widgets.layout.HLayout;
 
 public class ApplyCancelButtonLayout extends HLayout {
     
-    private Canvas informationFieldSpinner;
+    private Canvas loadingSpinner;
     
     private String applyImg = "../img/icons/acc.png";
     
@@ -19,8 +19,8 @@ public class ApplyCancelButtonLayout extends HLayout {
     
     public ApplyCancelButtonLayout() {
         setAutoHeight();
-        informationFieldSpinner = createLoadingSpinner();
-        addMember(informationFieldSpinner);
+        loadingSpinner = createLoadingSpinner();
+        addMember(loadingSpinner);
     }
 
     private Canvas createLoadingSpinner() {
@@ -43,5 +43,13 @@ public class ApplyCancelButtonLayout extends HLayout {
 
     private Canvas createSmallButton(String img, String tooltip, String longTooltip) {
         return new SmallButton(new Img(img), tooltip, longTooltip);
+    }
+    
+    public void setLoading() {
+        loadingSpinner.show();
+    }
+    
+    public void finishLoading() {
+        loadingSpinner.hide();
     }
 }

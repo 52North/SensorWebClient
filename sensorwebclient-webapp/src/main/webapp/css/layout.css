@@ -170,11 +170,14 @@ tr.sensorInfo:hover {
   margin-bottom: 1em;
 }
 .n52_sensorweb_client_abo_name_textbox {
-  width: 100%;
+  height: auto;
+}
+.n52_sensorweb_client_create_abo_selection {
+  margin-bottom: 1em;
 }
 table.n52_sensorweb_client_create_abo_metadata_table {
-  margin: 1em;
-  width: 100%;
+  margin: 1em 0em 1em 0em;
+  height: 100px;
 }
 table.n52_sensorweb_client_create_abo_metadata_table tr:nth-child(2n) {
   background-color: #96c2c8;
@@ -187,7 +190,10 @@ table.n52_sensorweb_client_create_abo_metadata_table tr:hover {
 .n52_sensorweb_client_create_abo_context_help {
   float: right;
   border-left: #ffb;
-  width: 150px;
+}
+.n52_sensorweb_client_create_abo_applycancel {
+  margin-bottom: 1em;
+  align: right;
 }
 .n52_sensorweb_client_headerContainer {
   width: 100%;

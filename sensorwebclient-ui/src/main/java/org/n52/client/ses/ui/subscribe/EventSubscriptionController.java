@@ -22,25 +22,22 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.client.ses.ui;
-
-import java.util.Date;
+package org.n52.client.ses.ui.subscribe;
 
 import org.n52.client.sos.legend.TimeSeries;
 
-class CreateEventAbonnementController {
+class EventSubscriptionController {
 
-    private CreateEventAbonnementWindow sesCommunicator;
+    private EventSubscriptionWindow eventSubscriptionWindow;
 
     private TimeSeries timeseries;
 
     private String abonnementName;
 
-    public CreateEventAbonnementController() {
-    }
+    private RuleTemplate selectedRuleTemplate;
 
-    void setSesCommunicator(CreateEventAbonnementWindow sesCommunicator) {
-        this.sesCommunicator = sesCommunicator;
+    void setEventSubscription(EventSubscriptionWindow eventSubsciptionWindow) {
+        this.eventSubscriptionWindow = eventSubsciptionWindow;
     }
 
     public void setTimeseries(TimeSeries timeseries) {
@@ -72,4 +69,12 @@ class CreateEventAbonnementController {
         return sb.toString();
     }
 
+    public void setSelectedRuleTemplate(RuleTemplate template) {
+        selectedRuleTemplate = template;
+        eventSubscriptionWindow.updateRuleEditCanvas(template);
+        
+        // TODO create abo subscription editor and set it in window
+        
+    }
+    
 }

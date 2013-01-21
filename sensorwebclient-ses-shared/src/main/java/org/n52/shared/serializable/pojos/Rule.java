@@ -28,38 +28,20 @@ import java.io.Serializable;
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 
 public class Rule implements Serializable {
-
+    
     private static final long serialVersionUID = -1913430711568432313L;
 
-    /**
-     * greater than operator
-     */
-    public static final int GREATERTHAN_OPERATOR = 2;
+    public static final int EQUAL_TO = 0;
+
+    public static final int NOT_EQUAL_TO = 1;
     
-    /**
-     * less than operator
-     */
-    public static final int LESSTHAN_OPERATOR = 3;
+    public static final int GREATER_THAN = 2;
     
-    /**
-     * greater than or equal to operator
-     */
-    public static final int GREATERTHANOREQUALTO_OPERATOR = 4;
+    public static final int LESS_THAN = 3;
     
-    /**
-     * less than or equal to operator
-     */
-    public static final int LESSTHANOREQUALTO_OPERATOR = 5;
+    public static final int GREATER_THAN_OR_EQUAL_TO = 4;
     
-    /**
-     * equal to operator
-     */
-    public static final int EQUALTO_OPERATOR = 0;
-    
-    /**
-     * not equal to Operator
-     */
-    public static final int NOTEQUALTO_OPERATOR = 1;
+    public static final int LESS_THAN_OR_EQUAL_TO = 5;
     
     /** The rule type. */
     private SimpleRuleType ruleType;
@@ -116,100 +98,32 @@ public class Rule implements Serializable {
     private String rTimeUnit;
     private String cTimeUnit;
 
-    /**
-     * Instantiates a new rule.
-     */
     public Rule() {
         //
     }
-
+    
     /**
      * Instantiates a new rule.
-     * 
-     * @param ruleType
-     *            the rule type
-     * @param title
-     *            the title
-     * @param station
-     *            the station
-     * @param phenomenon
-     *            the phenomenon
-     * @param notificationType
-     *            the notification type
-     * @param description
-     *            the description
-     * @param publish
-     *            the publish
-     * @param enterEqualsExitCondition
-     *            the enter equals exit condition
-     * @param rOperatorIndex
-     *            the r operator index
-     * @param rValue
-     *            the r value
-     * @param rUnit
-     *            the r unit
-     * @param cOperatorIndex
-     *            the c operator index
-     * @param cValue
-     *            the c value
-     * @param cUnit
-     *            the c unit
-     * @param userID 
      */
     public Rule(SimpleRuleType ruleType, String title, String station, String phenomenon,
             String notificationType, String description, boolean publish, boolean enterEqualsExitCondition,
             int rOperatorIndex, String rValue, String rUnit, int cOperatorIndex, String cValue, String cUnit, int userID) {
-
-        this.ruleType = ruleType;
-        this.title = title;
-        this.station = station;
-        this.phenomenon = phenomenon;
-        this.notificationType = notificationType;
-        this.description = description;
-        this.publish = publish;
-        this.enterEqualsExitCondition = enterEqualsExitCondition;
+        this(ruleType, title, station, phenomenon, notificationType, description, publish, enterEqualsExitCondition, userID);
         this.rOperatorIndex = rOperatorIndex;
         this.rValue = rValue;
         this.rUnit = rUnit;
         this.cOperatorIndex = cOperatorIndex;
         this.cValue = cValue;
         this.cUnit = cUnit;
-        this.userID = userID;
     }
 
     /**
      * BasicRule_1: Tendenz_Anzahl
-     * 
-     * @param ruleType
-     * @param title
-     * @param station
-     * @param phenomenon
-     * @param notificationType
-     * @param description
-     * @param publish
-     * @param enterEqualsExitCondition
-     * @param rOperatorIndex
-     * @param rValue
-     * @param rUnit
-     * @param cOperatorIndex
-     * @param cValue
-     * @param cUnit
-     * @param userID
-     * @param count
-     * @param cCount
      */
     public Rule(SimpleRuleType ruleType, String title, String station, String phenomenon,
             String notificationType, String description, boolean publish, boolean enterEqualsExitCondition,
             int rOperatorIndex, String rValue, String rUnit,int cOperatorIndex, String cValue, String cUnit, int userID, String count, String cCount) {
-
-        this.ruleType = ruleType;
-        this.title = title;
-        this.station = station;
-        this.phenomenon = phenomenon;
-        this.notificationType = notificationType;
-        this.description = description;
-        this.publish = publish;
-        this.enterEqualsExitCondition = enterEqualsExitCondition;
+        this(ruleType, title, station, phenomenon, notificationType, description, publish, enterEqualsExitCondition, userID);
         this.rOperatorIndex = rOperatorIndex;
         this.rValue = rValue;
         this.rUnit = rUnit;
@@ -218,52 +132,31 @@ public class Rule implements Serializable {
         this.cUnit = cUnit;
         this.userID = userID;
         this.count = count;
+        
+        // XXX refactor: above is redundant
+        
         this.cCount = cCount;
     }
 
     /**
      * BasicRule_2: Tendenz_Zeit
      * 
-     * @param ruleType
-     * @param title
-     * @param station
-     * @param phenomenon
-     * @param notificationType
-     * @param description
-     * @param publish
-     * @param enterEqualsExitCondition
-     * @param rOperatorIndex
-     * @param rValue
-     * @param rUnit
-     * @param cOperatorIndex
-     * @param cValue
-     * @param cUnit
-     * @param userID
-     * @param rTime
-     * @param rTimeUnit
-     * @param cTime
-     * @param cTimeUnit
      */
     public Rule(SimpleRuleType ruleType, String title, String station, String phenomenon,
             String notificationType, String description, boolean publish, boolean enterEqualsExitCondition,
             int rOperatorIndex, String rValue, String rUnit,int cOperatorIndex, String cValue, String cUnit, int userID,
             String rTime, String rTimeUnit, String cTime, String cTimeUnit) {
-
-        this.ruleType = ruleType;
-        this.title = title;
-        this.station = station;
-        this.phenomenon = phenomenon;
-        this.notificationType = notificationType;
-        this.description = description;
-        this.publish = publish;
-        this.enterEqualsExitCondition = enterEqualsExitCondition;
+        this(ruleType, title, station, phenomenon, notificationType, description, publish, enterEqualsExitCondition, userID);
+        
         this.rOperatorIndex = rOperatorIndex;
         this.rValue = rValue;
         this.rUnit = rUnit;
         this.cOperatorIndex = cOperatorIndex;
         this.cValue = cValue;
         this.cUnit = cUnit;
-        this.userID = userID;
+        
+        // XXX refactor: above is redundant
+
         this.rTime = rTime;
         this.rTimeUnit = rTimeUnit;
         this.cTime = cTime;
@@ -272,21 +165,16 @@ public class Rule implements Serializable {
 
     /**
      * BasicRule_5: Ausfall
-     * 
-     * @param ruleType
-     * @param title
-     * @param station
-     * @param phenomenon
-     * @param notificationType
-     * @param description
-     * @param publish
-     * @param enterEqualsExitCondition
-     * @param userID
-     * @param rTime
-     * @param rTimeUnit
      */
     public Rule(SimpleRuleType ruleType, String title, String station, String phenomenon, String notificationType, String description, 
             boolean publish, boolean enterEqualsExitCondition, int userID, String rTime, String rTimeUnit) {
+        this(ruleType, title, station, phenomenon, notificationType, description, publish, enterEqualsExitCondition, userID);
+        this.rTime = rTime;
+        this.rTimeUnit = rTimeUnit;
+    }
+    
+    public Rule(SimpleRuleType ruleType, String title, String station, String phenomenon, String notificationType, String description, 
+            boolean publish, boolean enterEqualsExitCondition, int userID) {
         this.ruleType = ruleType;
         this.title = title;
         this.station = station;
@@ -296,8 +184,6 @@ public class Rule implements Serializable {
         this.publish = publish;
         this.enterEqualsExitCondition = enterEqualsExitCondition;
         this.userID = userID;
-        this.rTime = rTime;
-        this.rTimeUnit = rTimeUnit;
     }
 
     /**

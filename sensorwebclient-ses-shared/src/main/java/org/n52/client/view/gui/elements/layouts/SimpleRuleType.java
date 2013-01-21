@@ -21,23 +21,38 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
+
 package org.n52.client.view.gui.elements.layouts;
+
+import org.junit.Test.None;
 
 /**
  * The Enum ruleTypes.
  */
 public enum SimpleRuleType {
 
-    /** Trend over Time. */
-    TENDENZ_ZEIT,
-    /** Trend over Count */
-    TENDENZ_ANZAHL,
-    /** Overshoot and Undershoot */
-    UEBER_UNTERSCHREITUNG,
-    /** Sum over Time */
-    SUMME_ZEIT,
-    /** No rule is selected */
-    NONE,
-    /** Sensor failure */
-    AUSFALL
+    TENDENCY_OVER_TIME, TENDENCY_OVER_COUNT, OVER_UNDERSHOOT, SUM_OVER_TIME, SENSOR_LOSS, NONE;
+
+    /**
+     * @return the rule's name as lower case.
+     */
+    @Override
+    public String toString() {
+        return name().toLowerCase();
+    }
+    
+    /**
+     * @param name
+     *        the type's name (case-insensitive).
+     * @return the enumeration type matching the given name, or {@link SimpleRuleType#NONE} if no type
+     *         matches.
+     */
+    public static SimpleRuleType getTypeFor(String name) {
+        for (SimpleRuleType type : values()) {
+            if (type.name().equalsIgnoreCase(name)) {
+                return type;
+            }
+        }
+        return NONE;
+    }
 }
