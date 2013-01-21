@@ -204,7 +204,7 @@ public class SESInitializationServlet extends HttpServlet {
 
                     // create default admin on start
                     UserDTO admin =
-                            SesUserServiceImpl.createUserDTO(new User("admin", "Admin", createMD5("admin"),
+                            SesUserServiceImpl.createUserDTO(new User("admin", "Admin", SesUtil.createMD5("admin"),
                                     Config.SENDER_ADDRESS, "", UserRole.ADMIN, true));
                     admin.setRegisterID(UUID.randomUUID().toString());
 
@@ -227,7 +227,7 @@ public class SESInitializationServlet extends HttpServlet {
                     // in debug-mode. check if default user already exists
                     if (Log.isDebugEnabled()) {
                         UserDTO user =
-                            SesUserServiceImpl.createUserDTO(new User("user", "User", createMD5("user"),
+                            SesUserServiceImpl.createUserDTO(new User("user", "User", SesUtil.createMD5("user"),
                                     "52n.development@googlemail.com", "+456", UserRole.USER, true));
                         if (!HibernateUtil.existsUserName(user.getUserName())) {
                             user.setRegisterID(UUID.randomUUID().toString());
@@ -261,24 +261,4 @@ public class SESInitializationServlet extends HttpServlet {
         super.destroy();
     }
 
-    /**
-     * create MD5 hash to code the password
-     */
-    public static String createMD5(String password) {
-        StringBuffer buffer = new StringBuffer();
-        try {
-            MessageDigest md5 = MessageDigest.getInstance("MD5");
-            md5.reset();
-            md5.update(password.getBytes());
-
-            byte[] result = md5.digest();
-
-            for (int i = 0; i < result.length; i++) {
-                buffer.append(Integer.toHexString(0xFF & result[i]));
-            }
-        } catch (NoSuchAlgorithmException e) {
-            LOGGER.error("Unkown MD5 algorithm.", e);
-        }
-        return buffer.toString();
-    }
 }

@@ -37,7 +37,6 @@ import java.util.UUID;
 
 import org.n52.client.service.SesUserService;
 import org.n52.server.ses.Config;
-import org.n52.server.ses.SESInitializationServlet;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.mail.MailSender;
 import org.n52.server.ses.util.SesUtil;
@@ -288,7 +287,7 @@ public class SesUserServiceImpl implements SesUserService {
             }
             // generate new password
             String newPassword = Long.toHexString(Double.doubleToLongBits(Math.random()));
-            String md5Password = SESInitializationServlet.createMD5(newPassword);
+            String md5Password = SesUtil.createMD5(newPassword);
             user.setPassword(md5Password);
             user.setPasswordChanged(true);
 

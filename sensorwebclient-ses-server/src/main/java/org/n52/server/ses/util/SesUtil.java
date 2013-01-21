@@ -25,6 +25,8 @@ package org.n52.server.ses.util;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -352,5 +354,26 @@ public class SesUtil {
         ArrayList<String> finalList = new ArrayList<String>(stationIDList);
         
         return finalList;
+    }
+    
+    /**
+     * create MD5 hash to code the password
+     */
+    public static String createMD5(String password) {
+        StringBuffer buffer = new StringBuffer();
+        try {
+            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            md5.reset();
+            md5.update(password.getBytes());
+
+            byte[] result = md5.digest();
+
+            for (int i = 0; i < result.length; i++) {
+                buffer.append(Integer.toHexString(0xFF & result[i]));
+            }
+        } catch (NoSuchAlgorithmException e) {
+            LOGGER.error("Unkown MD5 algorithm.", e);
+        }
+        return buffer.toString();
     }
 }
