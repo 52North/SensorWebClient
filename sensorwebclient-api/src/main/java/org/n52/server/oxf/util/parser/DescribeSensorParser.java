@@ -636,6 +636,9 @@ public class DescribeSensorParser {
             if (output.isSetObservableProperty()) {
                 phenomenons.add(output.getObservableProperty().getDefinition());
             }
+            else if (output.getAbstractDataArray1() != null) {
+            	phenomenons.add(output.getAbstractDataArray1().getDefinition());
+            }
             else if (output.isSetQuantity()) {
                 phenomenons.add(output.getQuantity().getDefinition());
             }
