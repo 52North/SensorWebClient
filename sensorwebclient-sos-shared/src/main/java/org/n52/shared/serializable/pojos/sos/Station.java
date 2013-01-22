@@ -112,7 +112,7 @@ public class Station implements Serializable {
     public boolean hasAllEntries() {
         // XXX remove when Station refactoring is complete
         if (this.srs == null || this.feature == null || this.offering == null || this.phenomenon == null
-                || this.procedure == null) {
+                || this.procedure == null || this.location == null) {
             return false;
         }
         return true;

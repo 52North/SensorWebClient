@@ -178,7 +178,9 @@ public class StationSelectorMap extends OpenLayersMapWrapper {
     public void updateStations(final SOSMetadata metadata) {
         clearMap();
         for (Station station : metadata.getStations()) {
-            addStationToMap(station);
+        	if (station.hasAllEntries()) {
+        		addStationToMap(station);
+			}
         }
     }
 
