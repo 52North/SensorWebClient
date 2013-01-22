@@ -164,10 +164,10 @@ tr.sensorInfo:hover {
   float: left;
   margin: 1em;
 }
-.n52_sensorweb_client_create_abo_form_content .formTitle,
-.n52_sensorweb_client_create_abo_form_content .formTitleFocused {
+.n52_sensorweb_client_create_abo_eventname {
   white-space: nowrap;
   margin-bottom: 1em;
+  width: 100%;
 }
 .n52_sensorweb_client_abo_name_textbox {
   height: auto;
@@ -175,9 +175,14 @@ tr.sensorInfo:hover {
 .n52_sensorweb_client_create_abo_selection {
   margin-bottom: 1em;
 }
+.n52_sensorweb_client_create_abo_metadata {
+  margin-bottom: 1em;
+  width: 100%;
+}
 table.n52_sensorweb_client_create_abo_metadata_table {
   margin: 1em 0em 1em 0em;
   height: 100px;
+  width: 100%;
 }
 table.n52_sensorweb_client_create_abo_metadata_table tr:nth-child(2n) {
   background-color: #96c2c8;

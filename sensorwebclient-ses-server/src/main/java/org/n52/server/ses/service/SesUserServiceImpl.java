@@ -39,7 +39,7 @@ import org.n52.client.service.SesUserService;
 import org.n52.server.ses.Config;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.mail.MailSender;
-import org.n52.server.ses.util.SesUtil;
+import org.n52.server.ses.util.SesServerUtil;
 import org.n52.server.ses.util.WnsUtil;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.serializable.pojos.BasicRule;
@@ -287,7 +287,7 @@ public class SesUserServiceImpl implements SesUserService {
             }
             // generate new password
             String newPassword = Long.toHexString(Double.doubleToLongBits(Math.random()));
-            String md5Password = SesUtil.createMD5(newPassword);
+            String md5Password = SesServerUtil.createMD5(newPassword);
             user.setPassword(md5Password);
             user.setPasswordChanged(true);
 
@@ -351,7 +351,7 @@ public class SesUserServiceImpl implements SesUserService {
                     // delete from DB
                     HibernateUtil.deleteSubscription(subscriptionID, String.valueOf(userID));
                     // delete from SES
-                    SesUtil.unSubscribe(Config.serviceVersion, Config.sesEndpoint, subscriptionID);
+                    SesServerUtil.unSubscribe(Config.serviceVersion, Config.sesEndpoint, subscriptionID);
                 }
             }
             catch (Exception e) {

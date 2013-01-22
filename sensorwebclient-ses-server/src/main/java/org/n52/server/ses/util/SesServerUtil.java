@@ -58,9 +58,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class SesUtil {
+public class SesServerUtil {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(SesUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SesServerUtil.class);
 
     /**
      * @param serviceVersion

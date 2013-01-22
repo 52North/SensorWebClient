@@ -140,7 +140,11 @@ public interface I18N extends Constants {
     String trendOverTime();
 
     String trendOverCount();
+    
+    String overshoot();
 
+    String undershoot();
+    
     String overUnderShoot();
 
     String sumOverCountMeasurements();

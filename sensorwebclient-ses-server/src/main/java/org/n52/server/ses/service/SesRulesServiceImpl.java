@@ -43,7 +43,7 @@ import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.util.FeederCommunicator;
 import org.n52.server.ses.util.RulesUtil;
 import org.n52.server.ses.util.SearchUtil;
-import org.n52.server.ses.util.SesUtil;
+import org.n52.server.ses.util.SesServerUtil;
 import org.n52.shared.Constants;
 import org.n52.shared.LogicalOperator;
 import org.n52.shared.responses.SesClientResponse;
@@ -163,8 +163,8 @@ public class SesRulesServiceImpl implements SesRuleService {
                         try {
                             // subscribe to SES
                             OperationResult opResult =
-                                SesUtil.subscribe(Config.serviceVersion, Config.sesEndpoint, Config.consumerReference, content);
-                            museResource = SesUtil.getSubscriptionIDfromSES(opResult);
+                                SesServerUtil.subscribe(Config.serviceVersion, Config.sesEndpoint, Config.consumerReference, content);
+                            museResource = SesServerUtil.getSubscriptionIDfromSES(opResult);
                             if ((museResource == null) || (museResource.equals(""))) {
                                 throw new IllegalArgumentException("Illegal Muse resource");
                             }
@@ -185,7 +185,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                         
                         // set sensor status to used
                         LOG.debug("set sensor to used");
-                        ArrayList<String> stationIDList = SesUtil.getSensorIDsFromEML(content);
+                        ArrayList<String> stationIDList = SesServerUtil.getSensorIDsFromEML(content);
                         
                         // check if sensor is allready in feeder DB. If yes --> no new request to feeder
                         try {
@@ -250,7 +250,7 @@ public class SesRulesServiceImpl implements SesRuleService {
             try {
                 // unsubscribe from SES
                 LOG.debug("unsubscribe from SES: " + museID);
-                SesUtil.unSubscribe(Config.serviceVersion, Config.sesEndpoint, museID);
+                SesServerUtil.unSubscribe(Config.serviceVersion, Config.sesEndpoint, museID);
             } catch (Exception e) {
                 LOG.error("Failed to unsubscribe", e);
                 return new SesClientResponse(SesClientResponse.types.ERROR_UNSUBSCRIBE_SES);
@@ -259,7 +259,7 @@ public class SesRulesServiceImpl implements SesRuleService {
             try {
                 //TODO what happens if inUse is < 0??
                 // remove unused sensor from feeder
-                ArrayList<String> sensorIDs = SesUtil.getSensorIDsFromEML(ruleAsEML);
+                ArrayList<String> sensorIDs = SesServerUtil.getSensorIDsFromEML(ruleAsEML);
                 String sensorID;
                 for (int i = 0; i < sensorIDs.size(); i++) {
                     sensorID = sensorIDs.get(i);
@@ -377,7 +377,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                             try {
                                 // unsubscribe from SES
                                 LOG.debug("unsubscribe from SES: " + subscription.getSubscriptionID());
-                                SesUtil.unSubscribe(Config.serviceVersion, Config.sesEndpoint, subscription.getSubscriptionID());
+                                SesServerUtil.unSubscribe(Config.serviceVersion, Config.sesEndpoint, subscription.getSubscriptionID());
                                 subscribe(String.valueOf(rule.getUserID()), rule.getTitle(), subscription.getMedium(), subscription.getFormat());
                             } catch (Exception e) {
                                 LOG.error("Could not unsubscribe from SES", e);
@@ -775,7 +775,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                 
                 // set sensors
                 String sensors = "";
-                ArrayList<String> sensorsList = SesUtil.getSensorIDsFromEML(finalComplexRule.getEml());
+                ArrayList<String> sensorsList = SesServerUtil.getSensorIDsFromEML(finalComplexRule.getEml());
                 
                 for (int i = 0; i < sensorsList.size(); i++) {
                     sensors = sensors + sensorsList.get(i);
@@ -785,7 +785,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                 
                 // set Phenomenona
                 String phenomena = "";
-                ArrayList<String> phenomenaList = SesUtil.getPhenomenaFromEML(finalComplexRule.getEml());
+                ArrayList<String> phenomenaList = SesServerUtil.getPhenomenaFromEML(finalComplexRule.getEml());
                
                 for (int i = 0; i < phenomenaList.size(); i++) {
                     phenomena = phenomena + phenomenaList.get(i);
@@ -824,7 +824,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                             try {
                                 // unsubscribe from SES
                                 LOG.debug("unsubscribe from SES: " + subscription.getSubscriptionID());
-                                SesUtil.unSubscribe(Config.serviceVersion, Config.sesEndpoint, subscription.getSubscriptionID());
+                                SesServerUtil.unSubscribe(Config.serviceVersion, Config.sesEndpoint, subscription.getSubscriptionID());
                                 subscribe(String.valueOf(rule.getUserID()), rule.getTitle(), subscription.getMedium(), subscription.getFormat());
                             } catch (Exception e) {
                                 LOG.error("Error occured while unsubscribing a rule from SES: " + e.getMessage(), e);

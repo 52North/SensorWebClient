@@ -37,7 +37,7 @@ import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ctrl.TimeManager;
 import org.n52.client.ses.ui.subscribe.EventSubscriptionWindow;
-import org.n52.client.ses.util.SesUtil;
+import org.n52.client.ses.util.SesClientUtil;
 import org.n52.client.sos.ctrl.SOSController;
 import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
 import org.n52.client.sos.event.ChangeTimeSeriesStyleEvent;
@@ -356,7 +356,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		createColorChangeButton();
 		tools.addMember(this.titleCol);
 		
-		if (SesUtil.isSesActiv()) {
+		if (SesClientUtil.isSesActiv()) {
 			createSesCommunicatorButton();
 			tools.addMember(this.sesComButton);
 		}
@@ -1082,7 +1082,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.infoButton.hide();
 		this.deleteButton.hide();
 		this.legendEntryFoot.hide();
-		if (SesUtil.isSesActiv()) {
+		if (SesClientUtil.isSesActiv()) {
 			this.sesComButton.hide();
 		}
 	}
@@ -1091,7 +1091,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.infoButton.show();
 		this.deleteButton.show();
 		this.legendEntryFoot.show();
-		if (SesUtil.isSesActiv()) {
+		if (SesClientUtil.isSesActiv()) {
 			this.sesComButton.show();
 		}
 	}

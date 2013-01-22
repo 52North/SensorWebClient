@@ -30,7 +30,7 @@ import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 import java.util.Date;
 
 import org.n52.client.ctrl.TimeManager;
-import org.n52.client.ses.util.SesUtil;
+import org.n52.client.ses.util.SesClientUtil;
 import org.n52.client.sos.ctrl.DataManagerSosImpl;
 import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
 import org.n52.client.sos.legend.TimeSeries;
@@ -89,7 +89,7 @@ public class Header extends HLayout {
         linkLayout.addMember(getSeparator());
         linkLayout.addMember(getAddBookmarkLink());
         linkLayout.addMember(getSeparator());
-        if (SesUtil.isSesActiv()) {
+        if (SesClientUtil.isSesActiv()) {
         	linkLayout.addMember(getAdminLink());
         	linkLayout.addMember(getSeparator());
         }

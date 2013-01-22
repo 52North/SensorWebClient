@@ -47,6 +47,26 @@ class EventSubscriptionController {
     public TimeSeries getTimeSeries() {
         return timeseries;
     }
+    
+    public String getServiceUrl() {
+        return timeseries.getSosUrl();
+    }
+    
+    public String getOffering() {
+        return timeseries.getOfferingId();
+    }
+    
+    public String getPhenomenon() {
+        return timeseries.getPhenomenonId();
+    }
+    
+    public String getProcedure() {
+        return timeseries.getProcedureId();
+    }
+    
+    public String getFeatureOfInterest() {
+        return timeseries.getFeatureId();
+    }
 
     public void setAbonnementName(String currentAbonnementName) {
         this.abonnementName = currentAbonnementName;

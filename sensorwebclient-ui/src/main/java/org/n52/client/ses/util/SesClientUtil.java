@@ -26,7 +26,7 @@ package org.n52.client.ses.util;
 
 import org.n52.client.ctrl.PropertiesManager;
 
-public class SesUtil {
+public class SesClientUtil {
 	
 	public static boolean isSesActiv() {
     	return PropertiesManager.getInstance().getTabsFromPropertiesFile().contains("SesTab");

@@ -32,7 +32,7 @@ import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ses.i18n.SesStringsAccessor;
 import org.n52.client.ses.ui.SesTab;
-import org.n52.client.ses.util.SesUtil;
+import org.n52.client.ses.util.SesClientUtil;
 import org.n52.client.sos.event.TabSelectedEvent;
 import org.n52.client.sos.i18n.SosStringsAccessor;
 import org.n52.client.sos.ui.EESTab;
@@ -100,7 +100,7 @@ public class View {
         // TODO change tabs to widgets
         eesTab = new EESTab("ees", i18n.diagram());
         registerTabWidget(eesTab);
-        if (SesUtil.isSesActiv()) {
+        if (SesClientUtil.isSesActiv()) {
         	sesTab = new SesTab("SES", "SES");
         	registerTabWidget(sesTab);
         }

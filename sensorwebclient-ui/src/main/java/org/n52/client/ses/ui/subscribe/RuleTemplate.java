@@ -19,4 +19,25 @@ public abstract class RuleTemplate {
     public abstract SimpleRuleType getRuleType();
 
     public abstract Canvas createEditCanvas();
+    
+    protected String getServiceUrl() {
+        return controller.getServiceUrl();
+    }
+    
+    protected String getOffering() {
+        return controller.getOffering();
+    }
+
+    protected String getPhenomenon() {
+        return controller.getPhenomenon();
+    }
+    
+    protected String getProcedure() {
+        return controller.getProcedure();
+    }
+
+    protected String getFeatureOfInterest() {
+        return controller.getFeatureOfInterest();
+    }
+    
 }

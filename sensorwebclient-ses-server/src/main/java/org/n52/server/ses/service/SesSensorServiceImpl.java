@@ -33,7 +33,7 @@ import org.n52.server.ses.Config;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.mail.MailSender;
 import org.n52.server.ses.util.SesParser;
-import org.n52.server.ses.util.SesUtil;
+import org.n52.server.ses.util.SesServerUtil;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.serializable.pojos.Sensor;
 import org.n52.shared.serializable.pojos.User;
@@ -98,7 +98,7 @@ public class SesSensorServiceImpl implements SesSensorService {
             if (!newStatus) {
                 // sensor was deactivated
                 // inform all subscriber
-                ArrayList<User> userList = SesUtil.getUserBySensorID(sensorID);
+                ArrayList<User> userList = SesServerUtil.getUserBySensorID(sensorID);
                 
                 // iterate over the user
                 for (int i = 0; i < userList.size(); i++) {

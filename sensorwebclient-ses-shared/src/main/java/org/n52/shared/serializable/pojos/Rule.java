@@ -343,7 +343,7 @@ public class Rule implements Serializable {
      * 
      * @return the r operator index
      */
-    public int getrOperatorIndex() {
+    public int getRuleOperatorIndex() {
         return this.rOperatorIndex;
     }
 
@@ -362,7 +362,7 @@ public class Rule implements Serializable {
      * 
      * @return the r value
      */
-    public String getrValue() {
+    public String getRuleValue() {
         return this.rValue;
     }
 
@@ -381,7 +381,7 @@ public class Rule implements Serializable {
      * 
      * @return the r unit
      */
-    public String getrUnit() {
+    public String getRuleUnit() {
         return this.rUnit;
     }
 
@@ -400,7 +400,7 @@ public class Rule implements Serializable {
      * 
      * @return the c operator index
      */
-    public int getcOperatorIndex() {
+    public int getConditionOperatorIndex() {
         return this.cOperatorIndex;
     }
 
@@ -419,7 +419,7 @@ public class Rule implements Serializable {
      * 
      * @return the c value
      */
-    public String getcValue() {
+    public String getConditionValue() {
         return this.cValue;
     }
 
@@ -438,7 +438,7 @@ public class Rule implements Serializable {
      * 
      * @return the c unit
      */
-    public String getcUnit() {
+    public String getConditionUnit() {
         return this.cUnit;
     }
 
@@ -497,7 +497,7 @@ public class Rule implements Serializable {
     /**
      * @return rTime
      */
-    public String getrTime() {
+    public String getRuleTime() {
         return this.rTime;
     }
 

@@ -36,7 +36,7 @@ import org.n52.server.ses.eml.Meta_Builder;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.service.SesSensorServiceImpl;
 import org.n52.server.ses.service.SesUserServiceImpl;
-import org.n52.server.ses.util.SesUtil;
+import org.n52.server.ses.util.SesServerUtil;
 import org.n52.server.ses.util.WnsUtil;
 import org.n52.shared.serializable.pojos.BasicRule;
 import org.n52.shared.serializable.pojos.User;
@@ -125,7 +125,7 @@ public class SESInitializationServlet extends HttpServlet {
                     try {
                         // check if SES is available
                         if (!SESInitializationServlet.SESavailable) {
-                            SESInitializationServlet.SESavailable = SesUtil.isAvailable();
+                            SESInitializationServlet.SESavailable = SesServerUtil.isAvailable();
                             LOGGER.trace("SES (\"" + Config.sesEndpoint + "\") is available = " + SESInitializationServlet.SESavailable);
                         }
 
@@ -204,7 +204,7 @@ public class SESInitializationServlet extends HttpServlet {
 
                     // create default admin on start
                     UserDTO admin =
-                            SesUserServiceImpl.createUserDTO(new User("admin", "Admin", SesUtil.createMD5("admin"),
+                            SesUserServiceImpl.createUserDTO(new User("admin", "Admin", SesServerUtil.createMD5("admin"),
                                     Config.SENDER_ADDRESS, "", UserRole.ADMIN, true));
                     admin.setRegisterID(UUID.randomUUID().toString());
 
@@ -227,7 +227,7 @@ public class SESInitializationServlet extends HttpServlet {
                     // in debug-mode. check if default user already exists
                     if (Log.isDebugEnabled()) {
                         UserDTO user =
-                            SesUserServiceImpl.createUserDTO(new User("user", "User", SesUtil.createMD5("user"),
+                            SesUserServiceImpl.createUserDTO(new User("user", "User", SesServerUtil.createMD5("user"),
                                     "52n.development@googlemail.com", "+456", UserRole.USER, true));
                         if (!HibernateUtil.existsUserName(user.getUserName())) {
                             user.setRegisterID(UUID.randomUUID().toString());

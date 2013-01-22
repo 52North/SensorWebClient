@@ -187,7 +187,7 @@ public class BasicRule_5_Builder {
             // set UserParameterValue
             NodeList userParameterValueList = fstElement.getElementsByTagName(userParameterValue);
             Node userParameterValueNode = userParameterValueList.item(2);
-            userParameterValueNode.setTextContent("PT" + rule.getrTime() + rule.getrTimeUnit());
+            userParameterValueNode.setTextContent("PT" + rule.getRuleTime() + rule.getrTimeUnit());
         }
 
         // parse <ComplexPatterns>

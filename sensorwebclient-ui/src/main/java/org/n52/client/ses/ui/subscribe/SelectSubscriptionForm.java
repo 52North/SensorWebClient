@@ -80,6 +80,8 @@ public class SelectSubscriptionForm extends DynamicForm {
     private LinkedHashMap<String, String> createSelectionValueMap() {
         LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();
         valueMap.put(OVER_UNDERSHOOT.name(), i18n.overUnderShoot());
+        // TODO differentiate between over-/undershoot avoids adding operator to ui
+//        valueMap.put(OVER_UNDERSHOOT.name(), i18n.undershoot());
         valueMap.put(SENSOR_LOSS.name(), i18n.sensorFailure());
         return valueMap;
     }

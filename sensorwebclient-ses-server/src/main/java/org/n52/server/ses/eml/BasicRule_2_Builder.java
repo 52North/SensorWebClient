@@ -185,7 +185,7 @@ public class BasicRule_2_Builder {
             NodeList durationList = fstElement.getElementsByTagName(duration);
             if (durationList.getLength() != 0) {
                 Node durationNode = durationList.item(0);
-                durationNode.setTextContent("PT" + rule.getrTime() + rule.getrTimeUnit());
+                durationNode.setTextContent("PT" + rule.getRuleTime() + rule.getrTimeUnit());
             }
 
             // set propertyRestrictions
@@ -199,7 +199,7 @@ public class BasicRule_2_Builder {
             if (i == 1) {
                 NodeList userParameterValueList = fstElement.getElementsByTagName(userParameterValue);
                 Node userParameterValueNode = userParameterValueList.item(2);
-                userParameterValueNode.setTextContent("PT" + rule.getrTime() + rule.getrTimeUnit());
+                userParameterValueNode.setTextContent("PT" + rule.getRuleTime() + rule.getrTimeUnit());
             }
 
         }
@@ -261,32 +261,32 @@ public class BasicRule_2_Builder {
                 Node filterNode2 = null;
 
                 // first filter
-                if (rule.getrOperatorIndex() == Rule.LESS_THAN) {
+                if (rule.getRuleOperatorIndex() == Rule.LESS_THAN) {
                     filterNode = doc.createElement("fes:PropertyIsLessThan");
-                } else if (rule.getrOperatorIndex() == Rule.GREATER_THAN) {
+                } else if (rule.getRuleOperatorIndex() == Rule.GREATER_THAN) {
                     filterNode = doc.createElement("fes:PropertyIsGreaterThan");
-                } else if (rule.getrOperatorIndex() == Rule.EQUAL_TO) {
+                } else if (rule.getRuleOperatorIndex() == Rule.EQUAL_TO) {
                     filterNode = doc.createElement("fes:PropertyIsEqualTo");
-                } else if (rule.getrOperatorIndex() == Rule.GREATER_THAN_OR_EQUAL_TO) {
+                } else if (rule.getRuleOperatorIndex() == Rule.GREATER_THAN_OR_EQUAL_TO) {
                     filterNode = doc.createElement("fes:PropertyIsGreaterThanOrEqualTo");
-                } else if (rule.getrOperatorIndex() == Rule.LESS_THAN_OR_EQUAL_TO) {
+                } else if (rule.getRuleOperatorIndex() == Rule.LESS_THAN_OR_EQUAL_TO) {
                     filterNode = doc.createElement("fes:PropertyIsLessThanOrEqualTo");
-                } else if (rule.getrOperatorIndex() == Rule.NOT_EQUAL_TO) {
+                } else if (rule.getRuleOperatorIndex() == Rule.NOT_EQUAL_TO) {
                     filterNode = doc.createElement("fes:PropertyIsNotEqualTo");
                 }
 
                 // second filter
-                if (rule.getcOperatorIndex() == Rule.LESS_THAN) {
+                if (rule.getConditionOperatorIndex() == Rule.LESS_THAN) {
                     filterNode2 = doc.createElement("fes:PropertyIsLessThan");
-                } else if (rule.getcOperatorIndex() == Rule.GREATER_THAN) {
+                } else if (rule.getConditionOperatorIndex() == Rule.GREATER_THAN) {
                     filterNode2 = doc.createElement("fes:PropertyIsGreaterThan");
-                } else if (rule.getcOperatorIndex() == Rule.EQUAL_TO) {
+                } else if (rule.getConditionOperatorIndex() == Rule.EQUAL_TO) {
                     filterNode2 = doc.createElement("fes:PropertyIsEqualTo");
-                } else if (rule.getcOperatorIndex() == Rule.GREATER_THAN_OR_EQUAL_TO) {
+                } else if (rule.getConditionOperatorIndex() == Rule.GREATER_THAN_OR_EQUAL_TO) {
                     filterNode2 = doc.createElement("fes:PropertyIsGreaterThanOrEqualTo");
-                } else if (rule.getcOperatorIndex() == Rule.LESS_THAN_OR_EQUAL_TO) {
+                } else if (rule.getConditionOperatorIndex() == Rule.LESS_THAN_OR_EQUAL_TO) {
                     filterNode2 = doc.createElement("fes:PropertyIsLessThanOrEqualTo");
-                } else if (rule.getcOperatorIndex() == Rule.NOT_EQUAL_TO) {
+                } else if (rule.getConditionOperatorIndex() == Rule.NOT_EQUAL_TO) {
                     filterNode2 = doc.createElement("fes:PropertyIsNotEqualTo");
                 }
 
@@ -295,8 +295,8 @@ public class BasicRule_2_Builder {
 
                 // Unit Conversion
                 SESUnitConverter converter = new SESUnitConverter();
-                Object[] resultrUnit = converter.convert(rule.getrUnit(), Double.valueOf(rule.getrValue()));
-                Object[] resultcUnit = converter.convert(rule.getcUnit(), Double.valueOf(rule.getcValue()));
+                Object[] resultrUnit = converter.convert(rule.getRuleUnit(), Double.valueOf(rule.getRuleValue()));
+                Object[] resultcUnit = converter.convert(rule.getConditionUnit(), Double.valueOf(rule.getConditionValue()));
 
                 Node fesLiteralNode = doc.createElement(fesLiteral);
 
@@ -416,7 +416,7 @@ public class BasicRule_2_Builder {
             rule.setcUnit("m");
 
             // exit condition != enter condition?
-            if (RulesUtil.reverseOperator(rule.getrOperatorIndex(), rule.getcOperatorIndex()) && rule.getrValue().equals(rule.getcValue())) {
+            if (RulesUtil.reverseOperator(rule.getRuleOperatorIndex(), rule.getConditionOperatorIndex()) && rule.getRuleValue().equals(rule.getConditionValue())) {
                 rule.setEnterEqualsExitCondition(true);
             } else {
                 rule.setEnterEqualsExitCondition(false);

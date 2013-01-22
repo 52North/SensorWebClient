@@ -24,7 +24,6 @@
 
 package org.n52.client.view.gui.elements.layouts;
 
-import org.junit.Test.None;
 
 /**
  * The Enum ruleTypes.
