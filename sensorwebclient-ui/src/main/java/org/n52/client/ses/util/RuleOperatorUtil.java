@@ -7,9 +7,9 @@ import java.util.Map;
 
 public class RuleOperatorUtil {
 
-    private static LinkedHashMap<String, String> ruleOperators;
+    private static LinkedHashMap<String, String> ruleOperators = createRuleOperatorsMap();
     
-    {
+    private static LinkedHashMap<String, String> createRuleOperatorsMap() {
         Map<String, String> operatorHashMap = new HashMap<String, String>();
         operatorHashMap.put("=", "=");
         operatorHashMap.put("<>", "<>");
@@ -18,7 +18,7 @@ public class RuleOperatorUtil {
         operatorHashMap.put(">=", ">=");
         operatorHashMap.put("<=", "<=");
         Map<String, String> unmodifiableMap = Collections.unmodifiableMap(operatorHashMap);
-        ruleOperators = new LinkedHashMap<String, String>(unmodifiableMap);
+        return new LinkedHashMap<String, String>(unmodifiableMap);
     }
     
     public static LinkedHashMap<String, String> getRuleOperators() {
@@ -78,5 +78,10 @@ public class RuleOperatorUtil {
         }
         
         return inverseOperator;
+    }
+    
+    public static int getIndexOfInverseOperator(int operatorIndex) {
+        String operator = getOperatorFrom(operatorIndex);
+        return getOperatorIndex(getInverseOperator(operator));
     }
 }

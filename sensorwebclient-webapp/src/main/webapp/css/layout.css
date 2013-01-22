@@ -175,6 +175,9 @@ tr.sensorInfo:hover {
 .n52_sensorweb_client_create_abo_selection {
   margin-bottom: 1em;
 }
+.n52_sensorweb_client_create_abo_template_overundershootcondition {
+  height: 75px;
+}
 .n52_sensorweb_client_create_abo_metadata {
   margin-bottom: 1em;
   width: 100%;

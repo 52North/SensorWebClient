@@ -24,13 +24,13 @@
 
 package org.n52.client.ses.ui.subscribe;
 
+import static com.smartgwt.client.types.Alignment.RIGHT;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.ui.ApplyCancelButtonLayout;
 
 import com.google.gwt.core.shared.GWT;
-import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -49,7 +49,7 @@ public class EventSubscriptionWindow extends Window {
 
     private static int WIDTH = 950;
 
-    private static int HEIGHT = 550;
+    private static int HEIGHT = 500;
 
     private static EventSubscriptionController controller;
 
@@ -68,6 +68,7 @@ public class EventSubscriptionWindow extends Window {
     }
 
     private EventSubscriptionWindow(EventSubscriptionController controller) {
+        setStyleName("n52_sensorweb_client_event_subscription_window");
         controller.setEventSubscription(this);
         initializeWindow();
         addCloseClickHandler(new CloseClickHandler() {
@@ -148,7 +149,7 @@ public class EventSubscriptionWindow extends Window {
         applyCancel.setStyleName("n52_sensorweb_client_create_abo_applycancel");
         applyCancel.createApplyButton(i18n.create(), i18n.create(), createApplyHandler());
         applyCancel.createCancelButton(i18n.cancel(), i18n.cancel(), createCancelHandler());
-        applyCancel.setAlign(Alignment.RIGHT);
+        applyCancel.setAlign(RIGHT);
         return applyCancel;
     }
 

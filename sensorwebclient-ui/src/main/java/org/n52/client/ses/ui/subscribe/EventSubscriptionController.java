@@ -25,6 +25,7 @@
 package org.n52.client.ses.ui.subscribe;
 
 import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 
 class EventSubscriptionController {
 
@@ -35,6 +36,10 @@ class EventSubscriptionController {
     private String abonnementName;
 
     private RuleTemplate selectedRuleTemplate;
+
+    private OverUndershootSelectionData overUndershootEntryConditions;
+
+    private OverUndershootSelectionData overUndershootExitConditions;
 
     void setEventSubscription(EventSubscriptionWindow eventSubsciptionWindow) {
         this.eventSubscriptionWindow = eventSubsciptionWindow;
@@ -95,6 +100,24 @@ class EventSubscriptionController {
         
         // TODO create abo subscription editor and set it in window
         
+    }
+    
+    public SimpleRuleType getSelectedRuleTemplate() {
+        return selectedRuleTemplate.getRuleType();
+    }
+
+    public OverUndershootSelectionData getOverUndershootEntryConditions() {
+        if (overUndershootEntryConditions == null) {
+            return new OverUndershootSelectionData();
+        }
+        return overUndershootEntryConditions;
+    }
+
+    public OverUndershootSelectionData getOverUndershootExitConditions() {
+        if (overUndershootExitConditions == null) {
+            return new OverUndershootSelectionData();
+        }
+        return overUndershootExitConditions;
     }
     
 }

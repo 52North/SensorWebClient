@@ -23,10 +23,12 @@
  */
 package org.n52.client.ses.ui.layout;
 
+import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ID;
 import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ROLE;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.Layout.Layouts.EDIT_RULES;
 import static org.n52.client.ses.ui.Layout.Layouts.RULELIST;
+import static org.n52.client.ses.util.RuleOperatorUtil.getIndexOfInverseOperator;
 import static org.n52.client.ses.util.RuleOperatorUtil.getInverseOperator;
 import static org.n52.client.ses.util.RuleOperatorUtil.getOperatorFrom;
 import static org.n52.client.ses.util.RuleOperatorUtil.getOperatorIndex;
@@ -492,10 +494,10 @@ public class CreateSimpleRuleLayout extends Layout {
                         .setNotificationType(notificationType)
                         .setDescription(description)
                         .setPublish(publish)
-                        .setCondition(enterConditionIsSameAsExitCondition)
+                        .setEnterIsSameAsExitCondition(enterConditionIsSameAsExitCondition)
                         .setCookie(cookieAsInt)
-                        .setRTime(rTime)
-                        .setRTimeUnit(rTimeUnit)
+                        .setEntryTime(rTime)
+                        .setEntryTimeUnit(rTimeUnit)
                         .build();
         
         EventBus.getMainEventBus().fireEvent(new CreateSimpleRuleEvent(rule, this.edit, this.oldRuleName));
@@ -510,31 +512,30 @@ public class CreateSimpleRuleLayout extends Layout {
         
         int operatorIndexCond = 0;
         
-        String rValue = this.entryValueItem.getValueAsString();
-        String rUnit = this.entryValueUnitItem.getValueAsString();
-        String cValue;
-        String cUnit;
+        String entryValue = this.entryValueItem.getValueAsString();
+        String entryUnit = this.entryValueUnitItem.getValueAsString();
+        String exitValue;
+        String exitUnit;
         
-        String rCount = this.countItem.getValueAsString();
+        String entryCount = this.countItem.getValueAsString();
         
         if (this.enterConditionIsSameExitConditionRadioGroup.getValue().toString().equals(i18n.no())) {
             // enter condition != exit condition
             operatorIndexCond = getOperatorIndex(this.exitOperatorItem.getValueAsString());
-            cValue = this.entryValueConditionItem.getValueAsString();
-            cUnit = this.entryValueUnitConditionItem.getValueAsString();
+            exitValue = this.entryValueConditionItem.getValueAsString();
+            exitUnit = this.entryValueUnitConditionItem.getValueAsString();
             this.enterConditionIsSameAsExitCondition = false;
 
         } else {
-            operatorIndexCond = createCounterOperator(operatorIndex);
-            cValue = rValue;
-            cUnit = rUnit;
+            operatorIndexCond = getIndexOfInverseOperator(operatorIndex);
+            exitValue = entryValue;
+            exitUnit = entryUnit;
             this.enterConditionIsSameAsExitCondition = true;
         }
         Rule rule =
-                new Rule(this.ruleTyp, this.name, this.station, this.phenomenon, this.notificationType,
-                        this.description, this.publish, this.enterConditionIsSameAsExitCondition, operatorIndex, rValue, rUnit,
-                        operatorIndexCond, cValue, cUnit, Integer.parseInt(Cookies
-                                .getCookie(SesRequestManager.COOKIE_USER_ID)), rCount, null, null, null);
+                new Rule(ruleTyp, name, station, phenomenon, notificationType,
+                        description, publish, enterConditionIsSameAsExitCondition, operatorIndex, entryValue, entryUnit,
+                        operatorIndexCond, exitValue, exitUnit, Integer.parseInt(Cookies.getCookie(COOKIE_USER_ID)), entryCount, null, null, null);
 
         EventBus.getMainEventBus().fireEvent(new CreateSimpleRuleEvent(rule, this.edit, this.oldRuleName));
         
@@ -569,7 +570,7 @@ public class CreateSimpleRuleLayout extends Layout {
             cTimeUnit = this.exitTimeUnitItem.getValueAsString();
 
         } else {
-            operatorIndexCond = createCounterOperator(operatorIndex);
+            operatorIndexCond = getIndexOfInverseOperator(operatorIndex);
             cValue = rValue;
             cUnit = rUnit;
             this.enterConditionIsSameAsExitCondition = true;
@@ -611,7 +612,7 @@ public class CreateSimpleRuleLayout extends Layout {
             countCondValue = this.countConditionItem.getValueAsString();
 
         } else {
-            operatorIndexCond = createCounterOperator(rOperatorIndex);
+            operatorIndexCond = getIndexOfInverseOperator(rOperatorIndex);
             cValue = rValue;
             cUnit = rUnit;
             this.enterConditionIsSameAsExitCondition = true;
@@ -627,16 +628,16 @@ public class CreateSimpleRuleLayout extends Layout {
                         .setNotificationType(notificationType)
                         .setDescription(description)
                         .setPublish(publish)
-                        .setCondition(enterConditionIsSameAsExitCondition)
-                        .setROperatorIndex(rOperatorIndex)
-                        .setRValue(rValue)
-                        .setRUnit(rUnit)
-                        .setCOperatorIndex(operatorIndexCond)
-                        .setCValue(cValue)
-                        .setCUnit(cUnit)
+                        .setEnterIsSameAsExitCondition(enterConditionIsSameAsExitCondition)
+                        .setEntryOperatorIndex(rOperatorIndex)
+                        .setEntryValue(rValue)
+                        .setEntryUnit(rUnit)
+                        .setExitOperatorIndex(operatorIndexCond)
+                        .setExitValue(cValue)
+                        .setExitUnit(cUnit)
                         .setCookie(cookieAsInt)
-                        .setCount(countValue)
-                        .setCCount(countCondValue)
+                        .setExitCount(countValue)
+                        .setEntryCount(countCondValue)
                         .build();
         
         EventBus.getMainEventBus().fireEvent(new CreateSimpleRuleEvent(rule, this.edit, this.oldRuleName));
@@ -648,31 +649,30 @@ public class CreateSimpleRuleLayout extends Layout {
      */
     private void createOverUnderShootRule() {
 
-        int operatorIndex = getOperatorIndex(this.entryOperatorItem.getValueAsString());
+        int entryOperatorIndex = getOperatorIndex(entryOperatorItem.getValueAsString());
+        int exitOperatorIndex = 0;
         
-        int cOperatorIndex = 0;
-        
-        String rValue = this.entryValueItem.getValueAsString();
-        String rUnit = this.entryValueUnitItem.getValueAsString();
+        String entryValue = entryValueItem.getValueAsString();
+        String entryUnit = entryValueUnitItem.getValueAsString();
 
-        String cValue;
-        String cUnit;
+        String exitValue;
+        String exitUnit;
 
-        if (this.enterConditionIsSameExitConditionRadioGroup.getValue().toString().equals(i18n.no())) {
+        if (enterConditionIsSameExitConditionRadioGroup.getValue().toString().equals(i18n.no())) {
             // enter condition != exit condition
-            cOperatorIndex = getOperatorIndex(this.exitOperatorItem.getValueAsString());
+            exitOperatorIndex = getOperatorIndex(this.exitOperatorItem.getValueAsString());
             
-            cValue = this.entryValueConditionItem.getValueAsString();
-            cUnit = this.entryValueUnitConditionItem.getValueAsString();
-            this.enterConditionIsSameAsExitCondition = false;
+            exitValue = entryValueConditionItem.getValueAsString();
+            exitUnit = entryValueUnitConditionItem.getValueAsString();
+            enterConditionIsSameAsExitCondition = false;
         } else {
-            cOperatorIndex = createCounterOperator(operatorIndex);
-            cValue = rValue;
-            cUnit = rUnit;
-            this.enterConditionIsSameAsExitCondition = true;
+            exitOperatorIndex = getIndexOfInverseOperator(entryOperatorIndex);
+            exitValue = entryValue;
+            exitUnit = entryUnit;
+            enterConditionIsSameAsExitCondition = true;
         }
 
-        int cookieAsInt = Integer.parseInt(Cookies.getCookie(SesRequestManager.COOKIE_USER_ID));
+        int cookieAsInt = Integer.parseInt(Cookies.getCookie(COOKIE_USER_ID));
         Rule rule = RuleBuilder.aRule()
                         .setRuleType(ruleTyp)
                         .setTitle(name)
@@ -681,13 +681,13 @@ public class CreateSimpleRuleLayout extends Layout {
                         .setNotificationType(notificationType)
                         .setDescription(description)
                         .setPublish(publish)
-                        .setCondition(enterConditionIsSameAsExitCondition)
-                        .setROperatorIndex(operatorIndex)
-                        .setRValue(rValue)
-                        .setRUnit(rUnit)
-                        .setCOperatorIndex(cOperatorIndex)
-                        .setCValue(cValue)
-                        .setCUnit(cUnit)
+                        .setEnterIsSameAsExitCondition(enterConditionIsSameAsExitCondition)
+                        .setEntryOperatorIndex(entryOperatorIndex)
+                        .setEntryValue(entryValue)
+                        .setEntryUnit(entryUnit)
+                        .setExitOperatorIndex(exitOperatorIndex)
+                        .setExitValue(exitValue)
+                        .setExitUnit(exitUnit)
                         .setCookie(cookieAsInt)
                         .build();
         
@@ -699,28 +699,7 @@ public class CreateSimpleRuleLayout extends Layout {
         EventBus.getMainEventBus().fireEvent(new CreateSimpleRuleEvent(rule, this.edit, this.oldRuleName));
     }
 
-    /**
-     * @param operatorIndex
-     * @return
-     */
-    private int createCounterOperator(int operatorIndex) {
-        switch (operatorIndex) {
-        case Rule.EQUAL_TO:
-            return Rule.NOT_EQUAL_TO;
-        case Rule.NOT_EQUAL_TO:
-            return Rule.EQUAL_TO;
-        case Rule.GREATER_THAN:
-            return Rule.LESS_THAN_OR_EQUAL_TO;
-        case Rule.LESS_THAN:
-            return Rule.GREATER_THAN_OR_EQUAL_TO;
-        case Rule.GREATER_THAN_OR_EQUAL_TO:
-            return Rule.LESS_THAN;
-        case Rule.LESS_THAN_OR_EQUAL_TO:
-            return Rule.GREATER_THAN;
-        default:
-            return 0;
-        }
-    }
+    
 
     /**
      * Fill station listbob with stations
@@ -777,7 +756,7 @@ public class CreateSimpleRuleLayout extends Layout {
             setEntryValueItem();
             setEntryValueUnitItem();
             
-            entryConditionItemsForm.setFields(this.entryOperatorItem, this.entryValueItem, this.entryValueUnitItem);
+            entryConditionItemsForm.setFields(entryOperatorItem, entryValueItem, entryValueUnitItem);
             enterConditionIsSameExitConditionRadioGroup.show();
             entryConditionItemsForm.redraw();
         } else if (selectedRuleType == TENDENCY_OVER_TIME) {
@@ -1298,10 +1277,6 @@ public class CreateSimpleRuleLayout extends Layout {
         this.exitOperatorItem.setDefaultValue(defaultValue);
     }
     
-    /**
-     * 
-     * @param units
-     */
     public void setUnit(ArrayList<String> units){
         for (int i = 0; i < units.size(); i++) {
             this.unitHashMap.put(units.get(i), units.get(i));

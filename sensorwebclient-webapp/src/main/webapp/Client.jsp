@@ -25,7 +25,7 @@
 	<div id="loadingWrapper">
 		<div id="spacer"></div>
 		<div class="loadingIndicator">
-			<img src="img/loader.gif" width="32" height="32" style="margin-right: 8px; float: left; vertical-align: top;" />
+			<img src="img/loader.gif" width="32" height="32" style="margin-right: 8px; float: left; vertical-align: middle;" />
 			<div id="operator">52&deg;North</div>
 			<span id="loadingMsg">Loading ${application.title}</span>
 		</div>

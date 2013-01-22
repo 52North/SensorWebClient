@@ -12,19 +12,19 @@ public class RuleBuilder {
     private String description;
     private boolean publish;
     private boolean enterEqualsExit;
-    private int rOperatorIndex;
-    private int cOperatorIndex;
-    private String rValue;
-    private String rUnit;
-    private String cValue;
-    private String cUnit;
+    private int entryOperatorIndex;
+    private int exitOperatorIndex;
+    private String entryValue;
+    private String entryUnit;
+    private String exitValue;
+    private String exitUnit;
     private int cookieAsInt;
-    private String count;
-    private String cCount;
-    private String rTime;
-    private String rTimeUnit;
-    private String cTime;
-    private String cTimeUnit;
+    private String entrycount;
+    private String exitCount;
+    private String entryTime;
+    private String entryTimeUnit;
+    private String exitTime;
+    private String exitTimeUnit;
 
     public static RuleBuilder aRule() {
         return new RuleBuilder();
@@ -69,48 +69,48 @@ public class RuleBuilder {
         return this;
     }
 
-    public RuleBuilder setCondition(boolean condition) {
+    public RuleBuilder setEnterIsSameAsExitCondition(boolean condition) {
         this.enterEqualsExit = condition;
         return this;
     }
 
-    public RuleBuilder setROperatorIndex(int rOperatorIndex) {
-        this.rOperatorIndex = rOperatorIndex;
+    public RuleBuilder setEntryOperatorIndex(int entryOperatorIndex) {
+        this.entryOperatorIndex = entryOperatorIndex;
         return this;
     }
     
-    public RuleBuilder setCOperatorIndex(int cOperatorIndex) {
-        this.cOperatorIndex = cOperatorIndex;
+    public RuleBuilder setExitOperatorIndex(int exitOperatorIndex) {
+        this.exitOperatorIndex = exitOperatorIndex;
         return this;
     }
 
-    public RuleBuilder setRValue(String rValue) {
-        this.rValue = rValue;
+    public RuleBuilder setEntryValue(String entryValue) {
+        this.entryValue = entryValue;
         return this;
     }
 
-    public RuleBuilder setRUnit(String rUnit) {
-        this.rUnit = rUnit;
+    public RuleBuilder setEntryUnit(String entryUnit) {
+        this.entryUnit = entryUnit;
         return this;
     }
 
-    public RuleBuilder setCValue(String cValue) {
-        this.cValue = cValue;
+    public RuleBuilder setExitValue(String exitValue) {
+        this.exitValue = exitValue;
         return this;
     }
 
-    public RuleBuilder setCUnit(String cUnit) {
-        this.cUnit = cUnit;
+    public RuleBuilder setExitUnit(String exitUnit) {
+        this.exitUnit = exitUnit;
         return this;
     }
     
-    public RuleBuilder setCCount(String count) {
-        this.count = count;
+    public RuleBuilder setEntryCount(String entryCount) {
+        this.entrycount = entryCount;
         return this;
     }
     
-    public RuleBuilder setCount(String cCount) {
-        this.cCount = cCount;
+    public RuleBuilder setExitCount(String exitCount) {
+        this.exitCount = exitCount;
         return this;
     }
 
@@ -119,46 +119,46 @@ public class RuleBuilder {
         return this;
     }
     
-    public RuleBuilder setRTime(String rTime) {
-        this.rTime = rTime;
+    public RuleBuilder setEntryTime(String entryTime) {
+        this.entryTime = entryTime;
         return this;
     }
     
-    public RuleBuilder setRTimeUnit(String rtimeUnit) {
-        this.rTimeUnit = rtimeUnit;
+    public RuleBuilder setEntryTimeUnit(String entryTimeUnit) {
+        this.entryTimeUnit = entryTimeUnit;
         return this;
     }
     
-    public RuleBuilder setCTime(String cTime) {
-        this.cTime = cTime;
+    public RuleBuilder setExitTime(String exitTime) {
+        this.exitTime = exitTime;
         return this;
     }
   
-    public RuleBuilder setCTimeUnit(String ctimeUnit) {
-        this.cTimeUnit = ctimeUnit;
+    public RuleBuilder setExitTimeUnit(String exitTimeUnit) {
+        this.exitTimeUnit = exitTimeUnit;
         return this;
     }
 
     public Rule build() {
         Rule rule = new Rule();
-        rule.setExitCount(cCount);
-        rule.setExitOperatorIndex(cOperatorIndex);
-        rule.setCount(count);
-        rule.setExitTime(cTime);
-        rule.setExitTimeUnit(cTimeUnit);
-        rule.setExitUnit(cUnit);
-        rule.setExitValue(cValue);
+        rule.setExitCount(exitCount);
+        rule.setExitOperatorIndex(exitOperatorIndex);
+        rule.setCount(entrycount);
+        rule.setExitTime(exitTime);
+        rule.setExitTimeUnit(exitTimeUnit);
+        rule.setExitUnit(exitUnit);
+        rule.setExitValue(exitValue);
         rule.setDescription(description);
         rule.setEnterEqualsExitCondition(enterEqualsExit);
         rule.setNotificationType(notificationType);
         rule.setPhenomenon(phenomenon);
         rule.setPublish(publish);
-        rule.setEntryOperatorIndex(rOperatorIndex);
-        rule.setrTime(rTime);
-        rule.setrTimeUnit(rTimeUnit);
+        rule.setEntryOperatorIndex(entryOperatorIndex);
+        rule.setrTime(entryTime);
+        rule.setrTimeUnit(entryTimeUnit);
         rule.setRuleType(ruleType);
-        rule.setEntryUnit(rUnit);
-        rule.setEntryValue(rValue);
+        rule.setEntryUnit(entryUnit);
+        rule.setEntryValue(entryValue);
         rule.setStation(station);
         rule.setTitle(title);
         rule.setUserID(cookieAsInt);
