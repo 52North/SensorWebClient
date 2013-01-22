@@ -20,6 +20,7 @@ public class TimeSeriesMetadataTable extends VLayout {
 
     public TimeSeriesMetadataTable(EventSubscriptionController controller) {
         metadataTable.setStyleName("n52_sensorweb_client_create_abo_metadata_table");
+        setStyleName("n52_sensorweb_client_create_abo_metadata");
         this.controller = controller;
         initializeUserInterface();
     }

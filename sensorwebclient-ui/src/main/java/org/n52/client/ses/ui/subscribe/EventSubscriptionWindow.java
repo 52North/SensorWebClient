@@ -118,17 +118,27 @@ public class EventSubscriptionWindow extends Window {
         Layout subscriptionContent = new VLayout();
         subscriptionContent.setStyleName("n52_sensorweb_client_create_abo_form_content");
         subscriptionContent.addMember(new EventNameForm(controller));
-        subscriptionContent.addMember(new SelectSubscriptionForm(controller));
-        subscriptionContent.addMember(createRuleTemplateEditorCanvas());
+        subscriptionContent.addMember(createRuleTemplateSelectionCanvas());
         subscriptionContent.addMember(new TimeSeriesMetadataTable(controller));
         subscriptionContent.addMember(createApplyCancelCanvas());
         return subscriptionContent;
     }
 
-    private Canvas createRuleTemplateEditorCanvas() {
+    private Canvas createRuleTemplateSelectionCanvas() {
+        Layout selectionCanvas = new VLayout();
+        SelectSubscriptionForm selectionRadioForm = new SelectSubscriptionForm(controller);
+        RuleTemplate template = selectionRadioForm.getDefaultRuleTemplate();
+        Canvas ruleTemplateEditCanvas = createRuleTemplateEditorCanvas(template);
+        selectionCanvas.addMember(selectionRadioForm);
+        selectionCanvas.addMember(ruleTemplateEditCanvas);
+        return selectionCanvas;
+    }
+
+    private Canvas createRuleTemplateEditorCanvas(RuleTemplate template) {
         if (ruleTemplateEditCanvas == null) {
             ruleTemplateEditCanvas = new VLayout();
             ruleTemplateEditCanvas.setStyleName("n52_sensorweb_client_edit_create_abo_edit");
+            ruleTemplateEditCanvas.addMember(template.createEditCanvas());
         }
         return ruleTemplateEditCanvas;
     }

@@ -13,7 +13,7 @@ public class EventNameForm extends DynamicForm {
     private final EventSubscriptionController controller;
 
     public EventNameForm(final EventSubscriptionController controller) {
-        this.setStyleName("n52_sensorweb_client_create_abo_form");
+        this.setStyleName("n52_sensorweb_client_create_abo_eventname");
         this.controller = controller;
         setFields(createAbonnementNameItem());
     }

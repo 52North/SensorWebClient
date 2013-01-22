@@ -40,6 +40,8 @@ import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
 
 public class SelectSubscriptionForm extends DynamicForm {
 
+    private final static SimpleRuleType DEFAULT_RULE_TEMPLATE = OVER_UNDERSHOOT;
+
     private final EventSubscriptionController controller;
     
     public SelectSubscriptionForm(final EventSubscriptionController controller) {
@@ -52,33 +54,27 @@ public class SelectSubscriptionForm extends DynamicForm {
     private RadioGroupItem createPredefinedEventSelectionItem() {
         RadioGroupItem radioGroupItem = new RadioGroupItem();
         radioGroupItem.setTitle(i18n.selectPredefinedEventForSubscription());
-        radioGroupItem.addChangedHandler(createSelectionChangeHandler());
+        radioGroupItem.addChangedHandler(createSelectionChangedHandler());
         radioGroupItem.setValueMap(createSelectionValueMap());
-        
-        // TODO set first value so that event is triggered.
-        radioGroupItem.setDefaultValue(OVER_UNDERSHOOT.name());
+        radioGroupItem.setDefaultValue(DEFAULT_RULE_TEMPLATE.name());
         return radioGroupItem;
     }
 
-    private ChangedHandler createSelectionChangeHandler() {
+    private ChangedHandler createSelectionChangedHandler() {
         return new ChangedHandler() {
             @Override
             public void onChanged(ChangedEvent event) {
                 RadioGroupItem item = (RadioGroupItem) event.getItem();
                 String value = (String) item.getValue();
-                SimpleRuleType template = SimpleRuleType.getTypeFor(value);
-                GWT.log("Rule template selected: " + template);
-                if (template == NONE) {
-                    GWT.log("Unknown template selected!");
-                } else if (template == OVER_UNDERSHOOT) {
-                    controller.setSelectedRuleTemplate(createOverUndershootRuleTemplate());
-                } else if (template == SENSOR_LOSS) {
-                    controller.setSelectedRuleTemplate(createSensorLossRuleTemplate());
-                } else {
-                    GWT.log("Unsupported template selected!");
-                }
+                final SimpleRuleType template = SimpleRuleType.getTypeFor(value);
+                SelectSubscriptionForm.this.handleRuleTemplateSelection(template);
             }
         };
+    }
+    
+    private void handleRuleTemplateSelection(final SimpleRuleType templateType) {
+        GWT.log("Rule template selected: " + templateType);
+        controller.setSelectedRuleTemplate(createRuleTemplateFor(templateType));
     }
 
     private LinkedHashMap<String, String> createSelectionValueMap() {
@@ -88,6 +84,24 @@ public class SelectSubscriptionForm extends DynamicForm {
         return valueMap;
     }
     
+    RuleTemplate getDefaultRuleTemplate() {
+        return createRuleTemplateFor(DEFAULT_RULE_TEMPLATE);
+    }
+    
+    private RuleTemplate createRuleTemplateFor(SimpleRuleType template) {
+        if (template == NONE) {
+            GWT.log("Unknown template selected!");
+            return null;
+        } else if (template == OVER_UNDERSHOOT) {
+            return createOverUndershootRuleTemplate();
+        } else if (template == SENSOR_LOSS) {
+            return createSensorLossRuleTemplate();
+        } else {
+            GWT.log("Unsupported template selected!");
+            return null;
+        }
+    }
+
     private RuleTemplate createOverUndershootRuleTemplate() {
         return new OverUndershootRuleTemplate(controller);
     }
