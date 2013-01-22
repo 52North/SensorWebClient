@@ -27,9 +27,9 @@ package org.n52.client.ses.util;
 import org.n52.client.ctrl.PropertiesManager;
 
 public class SesClientUtil {
-	
-	public static boolean isSesActiv() {
+    
+	public static boolean isSesEnabled() {
     	return PropertiesManager.getInstance().getTabsFromPropertiesFile().contains("SesTab");
 	}
-
+	
 }

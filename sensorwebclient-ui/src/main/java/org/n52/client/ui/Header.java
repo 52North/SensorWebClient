@@ -89,7 +89,7 @@ public class Header extends HLayout {
         linkLayout.addMember(getSeparator());
         linkLayout.addMember(getAddBookmarkLink());
         linkLayout.addMember(getSeparator());
-        if (SesClientUtil.isSesActiv()) {
+        if (SesClientUtil.isSesEnabled()) {
         	linkLayout.addMember(getAdminLink());
         	linkLayout.addMember(getSeparator());
         }

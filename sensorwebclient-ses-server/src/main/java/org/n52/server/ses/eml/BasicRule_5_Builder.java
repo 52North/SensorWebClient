@@ -181,13 +181,13 @@ public class BasicRule_5_Builder {
             NodeList eventCountList = fstElement.getElementsByTagName(eventCount);
             if (eventCountList.getLength() != 0) {
                 Node eventCountNode = eventCountList.item(0);
-                eventCountNode.setTextContent(rule.getCount());
+                eventCountNode.setTextContent(rule.getEntryCount());
             }
 
             // set UserParameterValue
             NodeList userParameterValueList = fstElement.getElementsByTagName(userParameterValue);
             Node userParameterValueNode = userParameterValueList.item(2);
-            userParameterValueNode.setTextContent("PT" + rule.getRuleTime() + rule.getrTimeUnit());
+            userParameterValueNode.setTextContent("PT" + rule.getEntryTime() + rule.getEntryTimeUnit());
         }
 
         // parse <ComplexPatterns>

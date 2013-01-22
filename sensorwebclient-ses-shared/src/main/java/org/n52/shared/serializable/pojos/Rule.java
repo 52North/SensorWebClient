@@ -43,60 +43,44 @@ public class Rule implements Serializable {
     
     public static final int LESS_THAN_OR_EQUAL_TO = 5;
     
-    /** The rule type. */
     private SimpleRuleType ruleType;
 
-    /** The title. */
     private String title;
 
-    /** The station. */
     private String station;
 
-    /** The phenomenon. */
     private String phenomenon;
 
-    /** The notification type. */
     private String notificationType;
 
-    /** The description. */
     private String description;
 
-    /** The publish. */
     private boolean publish;
 
-    /** The enter equals exit condition. */
     private boolean enterEqualsExitCondition;
 
-    /** The r operator index. */
-    private int rOperatorIndex;
+    private int entryOperatorIndex;
 
-    /** The r value. */
-    private String rValue;
+    private String entryValue;
 
-    /** The r unit. */
-    private String rUnit;
+    private String entryUnit;
 
-    /** The c operator index. */
-    private int cOperatorIndex;
+    private int exitOperatorIndex;
 
-    /** The c value. */
-    private String cValue;
+    private String exitValue;
 
-    /** The c unit. */
-    private String cUnit;
+    private String exitUnit;
 
-    /** The user id. */
     private int userID;
 
-    /** The count. */
-    private String count;
+    private String entryCount;
 
-    private String cCount;
+    private String exitCount;
 
-    private String rTime;
-    private String cTime;
-    private String rTimeUnit;
-    private String cTimeUnit;
+    private String entryTime;
+    private String exitTime;
+    private String entryTimeUnit;
+    private String exitTimeUnit;
 
     public Rule() {
         //
@@ -107,14 +91,14 @@ public class Rule implements Serializable {
      */
     public Rule(SimpleRuleType ruleType, String title, String station, String phenomenon,
             String notificationType, String description, boolean publish, boolean enterEqualsExitCondition,
-            int rOperatorIndex, String rValue, String rUnit, int cOperatorIndex, String cValue, String cUnit, int userID) {
+            int entryOperatorIndex, String entryValue, String entryUnit, int exitOperatorIndex, String exitValue, String exitUnit, int userID) {
         this(ruleType, title, station, phenomenon, notificationType, description, publish, enterEqualsExitCondition, userID);
-        this.rOperatorIndex = rOperatorIndex;
-        this.rValue = rValue;
-        this.rUnit = rUnit;
-        this.cOperatorIndex = cOperatorIndex;
-        this.cValue = cValue;
-        this.cUnit = cUnit;
+        this.entryOperatorIndex = entryOperatorIndex;
+        this.entryValue = entryValue;
+        this.entryUnit = entryUnit;
+        this.exitOperatorIndex = exitOperatorIndex;
+        this.exitValue = exitValue;
+        this.exitUnit = exitUnit;
     }
 
     /**
@@ -122,20 +106,20 @@ public class Rule implements Serializable {
      */
     public Rule(SimpleRuleType ruleType, String title, String station, String phenomenon,
             String notificationType, String description, boolean publish, boolean enterEqualsExitCondition,
-            int rOperatorIndex, String rValue, String rUnit,int cOperatorIndex, String cValue, String cUnit, int userID, String count, String cCount) {
+            int entryOperatorIndex, String entryValue, String entryUnit,int exitOperatorIndex, String exitValue, String exitUnit, int userID, String count, String exitCount) {
         this(ruleType, title, station, phenomenon, notificationType, description, publish, enterEqualsExitCondition, userID);
-        this.rOperatorIndex = rOperatorIndex;
-        this.rValue = rValue;
-        this.rUnit = rUnit;
-        this.cOperatorIndex = cOperatorIndex;
-        this.cValue = cValue;
-        this.cUnit = cUnit;
+        this.entryOperatorIndex = entryOperatorIndex;
+        this.entryValue = entryValue;
+        this.entryUnit = entryUnit;
+        this.exitOperatorIndex = exitOperatorIndex;
+        this.exitValue = exitValue;
+        this.exitUnit = exitUnit;
         this.userID = userID;
-        this.count = count;
+        this.entryCount = count;
         
         // XXX refactor: above is redundant
         
-        this.cCount = cCount;
+        this.exitCount = exitCount;
     }
 
     /**
@@ -144,33 +128,33 @@ public class Rule implements Serializable {
      */
     public Rule(SimpleRuleType ruleType, String title, String station, String phenomenon,
             String notificationType, String description, boolean publish, boolean enterEqualsExitCondition,
-            int rOperatorIndex, String rValue, String rUnit,int cOperatorIndex, String cValue, String cUnit, int userID,
-            String rTime, String rTimeUnit, String cTime, String cTimeUnit) {
+            int entryOperatorIndex, String entryValue, String entryUnit,int exitOperatorIndex, String exitValue, String exitUnit, int userID,
+            String entryTime, String entryTimeUnit, String exitTime, String exitTimeUnit) {
         this(ruleType, title, station, phenomenon, notificationType, description, publish, enterEqualsExitCondition, userID);
         
-        this.rOperatorIndex = rOperatorIndex;
-        this.rValue = rValue;
-        this.rUnit = rUnit;
-        this.cOperatorIndex = cOperatorIndex;
-        this.cValue = cValue;
-        this.cUnit = cUnit;
+        this.entryOperatorIndex = entryOperatorIndex;
+        this.entryValue = entryValue;
+        this.entryUnit = entryUnit;
+        this.exitOperatorIndex = exitOperatorIndex;
+        this.exitValue = exitValue;
+        this.exitUnit = exitUnit;
         
         // XXX refactor: above is redundant
 
-        this.rTime = rTime;
-        this.rTimeUnit = rTimeUnit;
-        this.cTime = cTime;
-        this.cTimeUnit = cTimeUnit;
+        this.entryTime = entryTime;
+        this.entryTimeUnit = entryTimeUnit;
+        this.exitTime = exitTime;
+        this.exitTimeUnit = exitTimeUnit;
     }
 
     /**
      * BasicRule_5: Ausfall
      */
     public Rule(SimpleRuleType ruleType, String title, String station, String phenomenon, String notificationType, String description, 
-            boolean publish, boolean enterEqualsExitCondition, int userID, String rTime, String rTimeUnit) {
+            boolean publish, boolean enterEqualsExitCondition, int userID, String entryTime, String entryTimeUnit) {
         this(ruleType, title, station, phenomenon, notificationType, description, publish, enterEqualsExitCondition, userID);
-        this.rTime = rTime;
-        this.rTimeUnit = rTimeUnit;
+        this.entryTime = entryTime;
+        this.entryTimeUnit = entryTimeUnit;
     }
     
     public Rule(SimpleRuleType ruleType, String title, String station, String phenomenon, String notificationType, String description, 
@@ -186,367 +170,171 @@ public class Rule implements Serializable {
         this.userID = userID;
     }
 
-    /**
-     * Gets the rule type.
-     * 
-     * @return the rule type
-     */
     public SimpleRuleType getRuleType() {
         return this.ruleType;
     }
 
-    /**
-     * Sets the rule type.
-     * 
-     * @param ruleType
-     *            the new rule type
-     */
     public void setRuleType(SimpleRuleType ruleType) {
         this.ruleType = ruleType;
     }
 
-    /**
-     * Gets the title.
-     * 
-     * @return the title
-     */
     public String getTitle() {
         return this.title;
     }
 
-    /**
-     * Sets the title.
-     * 
-     * @param title
-     *            the new title
-     */
     public void setTitle(String title) {
         this.title = title;
     }
 
-    /**
-     * Gets the station.
-     * 
-     * @return the station
-     */
     public String getStation() {
         return this.station;
     }
 
-    /**
-     * Sets the station.
-     * 
-     * @param station
-     *            the new station
-     */
     public void setStation(String station) {
         this.station = station;
     }
 
-    /**
-     * Gets the phenomenon.
-     * 
-     * @return the phenomenon
-     */
     public String getPhenomenon() {
         return this.phenomenon;
     }
 
-    /**
-     * Sets the phenomenon.
-     * 
-     * @param phenomenon
-     *            the new phenomenon
-     */
     public void setPhenomenon(String phenomenon) {
         this.phenomenon = phenomenon;
     }
 
-    /**
-     * Gets the notification type.
-     * 
-     * @return the notification type
-     */
     public String getNotificationType() {
         return this.notificationType;
     }
 
-    /**
-     * Sets the notification type.
-     * 
-     * @param notificationType
-     *            the new notification type
-     */
     public void setNotificationType(String notificationType) {
         this.notificationType = notificationType;
     }
 
-    /**
-     * Gets the description.
-     * 
-     * @return the description
-     */
     public String getDescription() {
         return this.description;
     }
 
-    /**
-     * Sets the description.
-     * 
-     * @param description
-     *            the new description
-     */
     public void setDescription(String description) {
         this.description = description;
     }
 
-    /**
-     * Checks if is publish.
-     * 
-     * @return true, if is publish
-     */
     public boolean isPublish() {
         return this.publish;
     }
 
-    /**
-     * Sets the publish.
-     * 
-     * @param publish
-     *            the new publish
-     */
     public void setPublish(boolean publish) {
         this.publish = publish;
     }
 
-    /**
-     * Checks if is enter equals exit condition.
-     * 
-     * @return true, if is enter equals exit condition
-     */
     public boolean isEnterEqualsExitCondition() {
         return this.enterEqualsExitCondition;
     }
 
-    /**
-     * Sets the enter equals exit condition.
-     * 
-     * @param enterEqualsExitCondition
-     *            the new enter equals exit condition
-     */
     public void setEnterEqualsExitCondition(boolean enterEqualsExitCondition) {
         this.enterEqualsExitCondition = enterEqualsExitCondition;
     }
 
-    /**
-     * Gets the r operator index.
-     * 
-     * @return the r operator index
-     */
-    public int getRuleOperatorIndex() {
-        return this.rOperatorIndex;
+    public int getEntryOperatorIndex() {
+        return this.entryOperatorIndex;
     }
 
-    /**
-     * Sets the r operator index.
-     * 
-     * @param rOperatorIndex
-     *            the new r operator index
-     */
-    public void setrOperatorIndex(int rOperatorIndex) {
-        this.rOperatorIndex = rOperatorIndex;
+    public void setEntryOperatorIndex(int entryOperatorIndex) {
+        this.entryOperatorIndex = entryOperatorIndex;
     }
 
-    /**
-     * Gets the r value.
-     * 
-     * @return the r value
-     */
-    public String getRuleValue() {
-        return this.rValue;
+    public String getEntryValue() {
+        return this.entryValue;
     }
 
-    /**
-     * Sets the r value.
-     * 
-     * @param rValue
-     *            the new r value
-     */
-    public void setrValue(String rValue) {
-        this.rValue = rValue;
+    public void setEntryValue(String entryValue) {
+        this.entryValue = entryValue;
     }
 
-    /**
-     * Gets the r unit.
-     * 
-     * @return the r unit
-     */
-    public String getRuleUnit() {
-        return this.rUnit;
+    public String getEntryUnit() {
+        return this.entryUnit;
     }
 
-    /**
-     * Sets the r unit.
-     * 
-     * @param rUnit
-     *            the new r unit
-     */
-    public void setrUnit(String rUnit) {
-        this.rUnit = rUnit;
+    public void setEntryUnit(String entryUnit) {
+        this.entryUnit = entryUnit;
     }
 
-    /**
-     * Gets the c operator index.
-     * 
-     * @return the c operator index
-     */
-    public int getConditionOperatorIndex() {
-        return this.cOperatorIndex;
+    public int getExitOperatorIndex() {
+        return this.exitOperatorIndex;
     }
 
-    /**
-     * Sets the c operator index.
-     * 
-     * @param cOperatorIndex
-     *            the new c operator index
-     */
-    public void setcOperatorIndex(int cOperatorIndex) {
-        this.cOperatorIndex = cOperatorIndex;
+    public void setExitOperatorIndex(int exitOperatorIndex) {
+        this.exitOperatorIndex = exitOperatorIndex;
     }
 
-    /**
-     * Gets the c value.
-     * 
-     * @return the c value
-     */
-    public String getConditionValue() {
-        return this.cValue;
+    public String getExitValue() {
+        return this.exitValue;
     }
 
-    /**
-     * Sets the c value.
-     * 
-     * @param cValue
-     *            the new c value
-     */
-    public void setcValue(String cValue) {
-        this.cValue = cValue;
+    public void setExitValue(String exitValue) {
+        this.exitValue = exitValue;
     }
 
-    /**
-     * Gets the c unit.
-     * 
-     * @return the c unit
-     */
-    public String getConditionUnit() {
-        return this.cUnit;
+    public String getExitUnit() {
+        return this.exitUnit;
     }
 
-    /**
-     * Sets the c unit.
-     * 
-     * @param cUnit
-     *            the new c unit
-     */
-    public void setcUnit(String cUnit) {
-        this.cUnit = cUnit;
+    public void setExitUnit(String exitUnit) {
+        this.exitUnit = exitUnit;
     }
 
-    /**
-     * @return userID
-     */
     public int getUserID() {
         return this.userID;
     }
 
-    /**
-     * @param userID
-     */
     public void setUserID(int userID) {
         this.userID = userID;
     }
 
-    /**
-     * @return count
-     */
-    public String getCount() {
-        return this.count;
+    public String getEntryCount() {
+        return this.entryCount;
     }
 
-    /**
-     * @param count
-     */
-    public void setCount(String count) {
-        this.count = count;
+    public void setCount(String entryCount) {
+        this.entryCount = entryCount;
     }
 
-    /**
-     * @return cCount
-     */
-    public String getcCount() {
-        return this.cCount;
+    public String getExitCount() {
+        return this.exitCount;
     }
 
-    /**
-     * @param cCount
-     */
-    public void setcCount(String cCount) {
-        this.cCount = cCount;
+    public void setExitCount(String exitCount) {
+        this.exitCount = exitCount;
     }
 
-    /**
-     * @return rTime
-     */
-    public String getRuleTime() {
-        return this.rTime;
+    public String getEntryTime() {
+        return this.entryTime;
     }
 
-    /**
-     * @param rTime
-     */
-    public void setrTime(String rTime) {
-        this.rTime = rTime;
+    public void setrTime(String entryTime) {
+        this.entryTime = entryTime;
     }
 
-    /**
-     * @return cTime
-     */
-    public String getcTime() {
-        return this.cTime;
+    public String getExitTime() {
+        return this.exitTime;
     }
 
-    /**
-     * @param cTime
-     */
-    public void setcTime(String cTime) {
-        this.cTime = cTime;
+    public void setExitTime(String ExitTime) {
+        this.exitTime = ExitTime;
     }
 
-    /**
-     * @return rTimeUnit
-     */
-    public String getrTimeUnit() {
-        return this.rTimeUnit;
+    public String getEntryTimeUnit() {
+        return this.entryTimeUnit;
     }
 
-    /**
-     * @param rTimeUnit
-     */
-    public void setrTimeUnit(String rTimeUnit) {
-        this.rTimeUnit = rTimeUnit;
+    public void setrTimeUnit(String entryTimeUnit) {
+        this.entryTimeUnit = entryTimeUnit;
     }
 
-    /**
-     * @return cTimeUnit
-     */
-    public String getcTimeUnit() {
-        return this.cTimeUnit;
+    public String getExitTimeUnit() {
+        return this.exitTimeUnit;
     }
 
-    /**
-     * @param cTimeUnit
-     */
-    public void setcTimeUnit(String cTimeUnit) {
-        this.cTimeUnit = cTimeUnit;
+    public void setExitTimeUnit(String exitTimeUnit) {
+        this.exitTimeUnit = exitTimeUnit;
     }
 }

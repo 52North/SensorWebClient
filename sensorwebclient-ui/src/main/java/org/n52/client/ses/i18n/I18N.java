@@ -105,6 +105,10 @@ public interface I18N extends Constants {
 
     String publish();
 
+    String enterCondition();
+    
+    String exitCondition();
+    
     String enterExitCondition();
 
     String create();

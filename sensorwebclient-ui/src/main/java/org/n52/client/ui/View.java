@@ -100,7 +100,7 @@ public class View {
         // TODO change tabs to widgets
         eesTab = new EESTab("ees", i18n.diagram());
         registerTabWidget(eesTab);
-        if (SesClientUtil.isSesActiv()) {
+        if (SesClientUtil.isSesEnabled()) {
         	sesTab = new SesTab("SES", "SES");
         	registerTabWidget(sesTab);
         }

@@ -297,7 +297,7 @@ public class Legend extends VLayout {
         exportLoadingSpinner.setWidth("2%");
         menuStack.addMember(addTS);
         menuStack.addMember(space);
-        if (SesClientUtil.isSesActiv()) {
+        if (SesClientUtil.isSesEnabled()) {
         	addTS.setWidth("38%");
             eesTabButton.setWidth("35%");
             sesTabButton.setWidth("35%");

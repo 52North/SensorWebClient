@@ -23,7 +23,14 @@
  */
 package org.n52.client.ses.ui.layout;
 
+import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ROLE;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.client.ses.ui.Layout.Layouts.EDIT_RULES;
+import static org.n52.client.ses.ui.Layout.Layouts.RULELIST;
+import static org.n52.client.ses.util.RuleOperatorUtil.getInverseOperator;
+import static org.n52.client.ses.util.RuleOperatorUtil.getOperatorFrom;
+import static org.n52.client.ses.util.RuleOperatorUtil.getOperatorIndex;
+import static org.n52.client.ses.util.RuleOperatorUtil.getRuleOperators;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.OVER_UNDERSHOOT;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.SENSOR_LOSS;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.SUM_OVER_TIME;
@@ -73,7 +80,7 @@ import com.smartgwt.client.widgets.layout.VLayout;
 public class CreateSimpleRuleLayout extends Layout {
 
     /** The selected type. */
-    private SimpleRuleType selectedType;
+    private SimpleRuleType selectedRuleType;
 
     private int selectItemWidth = 250;
     
@@ -92,7 +99,7 @@ public class CreateSimpleRuleLayout extends Layout {
     private RadioGroupItem publishRadioGroup;
 
     /** The condition radio group. */
-    private RadioGroupItem conditionRadioGroup;
+    private RadioGroupItem enterConditionIsSameExitConditionRadioGroup;
 
     /** The create or edit button */
     private ButtonItem createButtonItem;
@@ -122,7 +129,7 @@ public class CreateSimpleRuleLayout extends Layout {
     private boolean publish;
 
     /** The condition. */
-    private boolean condition;
+    private boolean enterConditionIsSameAsExitCondition;
 
     private boolean edit = false;
     
@@ -134,29 +141,28 @@ public class CreateSimpleRuleLayout extends Layout {
     private SelectItem ruleTypeItem;
     
     // dynamic rule elements
-    private TextItem ruleValueItem;
+    private TextItem entryValueItem;
     private TextItem countItem;
-    private TextItem timeItem;
-    private TextItem ruleValueConditionItem;
-    private TextItem countCondItem;
-    private TextItem conditionTimeItem;
+    private TextItem entryTimeItem;
+    private TextItem entryValueConditionItem;
+    private TextItem countConditionItem;
+    private TextItem exitTimeItem;
     
-    private SelectItem operatorRuleItem;
-    private SelectItem operatorConditionItem;
-    private SelectItem ruleValueUnitItem;
-    private SelectItem ruleValueUnitConditionItem;
-    private SelectItem timeUnitItem;
-    private SelectItem conditionTimeUnitItem;
+    private SelectItem entryOperatorItem;
+    private SelectItem exitOperatorItem;
+    private SelectItem entryValueUnitItem;
+    private SelectItem entryValueUnitConditionItem;
+    private SelectItem entryTimeUnitItem;
+    private SelectItem exitTimeUnitItem;
     
-    private DynamicForm ruleElementsForm;
-    private DynamicForm ruleElementsConditionForm;
+    private DynamicForm entryConditionItemsForm;
+    private DynamicForm exitConditionItemsForm;
     private DynamicForm ruleForm;
     
     // hash maps for the selectItems
     private LinkedHashMap<String, String> sensorsHashMap = new LinkedHashMap<String, String>();
     private LinkedHashMap<String, String> phenomenaHashMap = new LinkedHashMap<String, String>();
     private LinkedHashMap<String, String> ruleTypesHashMap = new LinkedHashMap<String, String>();
-    private LinkedHashMap<String, String> operatorHashMap = new LinkedHashMap<String, String>();
     private LinkedHashMap<String, String> unitHashMap = new LinkedHashMap<String, String>();
     private LinkedHashMap<String, String> timeUnitHashMap = new LinkedHashMap<String, String>();
     
@@ -221,15 +227,15 @@ public class CreateSimpleRuleLayout extends Layout {
         this.publishRadioGroup.setValueMap(i18n.yes(), i18n.no());
         this.publishRadioGroup.setDefaultValue(i18n.yes());
 
-        this.conditionRadioGroup = new RadioGroupItem("condition", i18n.enterExitCondition());
-        this.conditionRadioGroup.setValueMap(i18n.yes(), i18n.no());
-        this.conditionRadioGroup.setDefaultValue(i18n.yes());
-        this.conditionRadioGroup.addChangedHandler(new ChangedHandler() {
+        this.enterConditionIsSameExitConditionRadioGroup = new RadioGroupItem("condition", i18n.enterExitCondition());
+        this.enterConditionIsSameExitConditionRadioGroup.setValueMap(i18n.yes(), i18n.no());
+        this.enterConditionIsSameExitConditionRadioGroup.setDefaultValue(i18n.yes());
+        this.enterConditionIsSameExitConditionRadioGroup.addChangedHandler(new ChangedHandler() {
             public void onChanged(ChangedEvent event) {
                 if (event.getValue().toString().equals(i18n.no())) {
                     setRuleConditionFields();
                 } else {
-                    CreateSimpleRuleLayout.this.ruleElementsConditionForm.setFields();
+                    CreateSimpleRuleLayout.this.exitConditionItemsForm.setFields();
                 }
             }
         });
@@ -238,7 +244,7 @@ public class CreateSimpleRuleLayout extends Layout {
         DynamicForm radioForm = new DynamicForm();
         DynamicForm radioForm2 = new DynamicForm();
         
-        radioForm.setItems(this.conditionRadioGroup);
+        radioForm.setItems(this.enterConditionIsSameExitConditionRadioGroup);
         radioForm2.setItems(this.publishRadioGroup);
 
         // form3
@@ -263,11 +269,11 @@ public class CreateSimpleRuleLayout extends Layout {
         this.cancelButton.setVisible(false);
         this.cancelButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                String role = Cookies.getCookie(SesRequestManager.COOKIE_USER_ROLE);
+                String role = Cookies.getCookie(COOKIE_USER_ROLE);
                 if (role.equals("ADMIN")) {
-                    EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.RULELIST));
+                    EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(RULELIST));
                 } else {
-                    EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.EDIT_RULES));
+                    EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(EDIT_RULES));
                 }
             }
         });
@@ -278,22 +284,22 @@ public class CreateSimpleRuleLayout extends Layout {
         this.ruleForm.setNumCols(6);
         SpacerItem spacerItem = new SpacerItem();
         spacerItem.setWidth(100);
-        this.ruleForm.setFields(spacerItem, this.sensorItem, this.phenomenonItem, this.ruleTypeItem);
+        this.ruleForm.setFields(spacerItem, sensorItem, phenomenonItem, ruleTypeItem);
         
         // Dynamic Forms
-        this.ruleElementsForm = new DynamicForm();
-        this.ruleElementsForm.setFixedColWidths(true);
-        this.ruleElementsForm.setNumCols(5);
-        this.ruleElementsForm.setWidth("30%");
+        this.entryConditionItemsForm = new DynamicForm();
+        this.entryConditionItemsForm.setFixedColWidths(true);
+        this.entryConditionItemsForm.setNumCols(5);
+        this.entryConditionItemsForm.setWidth("30%");
         
-        this.ruleElementsConditionForm = new DynamicForm();
-        this.ruleElementsConditionForm.setFixedColWidths(true);
-        this.ruleElementsConditionForm.setNumCols(5);
-        this.ruleElementsConditionForm.setWidth("30%");
+        this.exitConditionItemsForm = new DynamicForm();
+        this.exitConditionItemsForm.setFixedColWidths(true);
+        this.exitConditionItemsForm.setNumCols(5);
+        this.exitConditionItemsForm.setWidth("30%");
         
         VLayout v = new VLayout();
-        v.addMember(this.ruleElementsForm);
-        v.addMember(this.ruleElementsConditionForm);
+        v.addMember(entryConditionItemsForm);
+        v.addMember(exitConditionItemsForm);
         
         HLayout ruleLayout = new HLayout();
         ruleLayout.setHeight(40);
@@ -342,82 +348,82 @@ public class CreateSimpleRuleLayout extends Layout {
             return false;
         }
         // check ruleType
-        if (this.selectedType == SimpleRuleType.NONE) {
+        if (this.selectedRuleType == SimpleRuleType.NONE) {
             SC.say(i18n.chooseRuleType());
             return false;
         }
         // check trend over time
-        if (this.selectedType == SimpleRuleType.TENDENCY_OVER_TIME) {
+        if (this.selectedRuleType == SimpleRuleType.TENDENCY_OVER_TIME) {
             // check time and unit
-            if (this.timeItem.getValue() == null || this.timeUnitItem.getValue() == null) {
+            if (this.entryTimeItem.getValue() == null || this.entryTimeUnitItem.getValue() == null) {
                 SC.say(i18n.indicateTimeUnit());
                 return false;
             }
             // check value and unit
-            if (this.ruleValueItem.getValue() == null || this.ruleValueUnitItem.getValue() == null) {
+            if (this.entryValueItem.getValue() == null || this.entryValueUnitItem.getValue() == null) {
                 SC.say(i18n.indicateValueUnit());
                 return false;
             }
             // check condition
-            if (this.conditionRadioGroup.getValue().toString().equals(i18n.no())) {
+            if (this.enterConditionIsSameExitConditionRadioGroup.getValue().toString().equals(i18n.no())) {
                 // check condition time and value
-                if (this.conditionTimeItem.getValue() == null || this.conditionTimeUnitItem.getValue() == null) {
+                if (this.exitTimeItem.getValue() == null || this.exitTimeUnitItem.getValue() == null) {
                     SC.say(i18n.indicateConditionTimeUnit());
                     return false;
                 }
                 // check condition value and unit
-                if (this.ruleValueConditionItem.getValue() == null || this.ruleValueUnitConditionItem.getValue() == null) {
+                if (this.entryValueConditionItem.getValue() == null || this.entryValueUnitConditionItem.getValue() == null) {
                     SC.say(i18n.indicateConditionValueUnit());
                     return false;
                 }
             }
         }
         // check trend over count
-        if (this.selectedType == SimpleRuleType.TENDENCY_OVER_COUNT) {
+        if (this.selectedRuleType == SimpleRuleType.TENDENCY_OVER_COUNT) {
             // check count
             if (this.countItem.getValue() == null) {
                 SC.say(i18n.indicateCount());
                 return false;
             }
             // check value and unit
-            if (this.ruleValueItem.getValue() == null || this.ruleValueUnitItem.getValue() == null) {
+            if (this.entryValueItem.getValue() == null || this.entryValueUnitItem.getValue() == null) {
                 SC.say(i18n.indicateValueUnit());
                 return false;
             }
             // check condition
-            if (this.conditionRadioGroup.getValue().toString().equals(i18n.no())) {
+            if (this.enterConditionIsSameExitConditionRadioGroup.getValue().toString().equals(i18n.no())) {
                 // check condition count
-                if (this.countCondItem.getValue() == null) {
+                if (this.countConditionItem.getValue() == null) {
                     SC.say(i18n.indicateConditionCount());
                     return false;
                 }
                 // check condition value and unit
-                if (this.ruleValueConditionItem.getValue() == null || this.ruleValueUnitConditionItem.getValue() == null) {
+                if (this.entryValueConditionItem.getValue() == null || this.entryValueUnitConditionItem.getValue() == null) {
                     SC.say(i18n.indicateConditionValueUnit());
                     return false;
                 }
             }
         }
         // check over- undershoot
-        if (this.selectedType == SimpleRuleType.OVER_UNDERSHOOT) {
+        if (this.selectedRuleType == SimpleRuleType.OVER_UNDERSHOOT) {
             // check value and unit
-            if (this.ruleValueItem.getValue() == null || this.ruleValueUnitItem.getValue() == null) {
+            if (this.entryValueItem.getValue() == null || this.entryValueUnitItem.getValue() == null) {
                 SC.say(i18n.indicateValueUnit());
                 return false;
             }
             // check condition
-            if (this.conditionRadioGroup.getValue().toString().equals(i18n.no())) {
+            if (this.enterConditionIsSameExitConditionRadioGroup.getValue().toString().equals(i18n.no())) {
                 // check condition value and unit
-                if (this.ruleValueConditionItem.getValue() == null || this.ruleValueUnitConditionItem.getValue() == null) {
+                if (this.entryValueConditionItem.getValue() == null || this.entryValueUnitConditionItem.getValue() == null) {
                     SC.say(i18n.indicateConditionValueUnit());
                     return false;
                 }
             }
         }
         // check sum over time
-        if (this.selectedType == SimpleRuleType.SUM_OVER_TIME) {
+        if (this.selectedRuleType == SimpleRuleType.SUM_OVER_TIME) {
             // check value and unit
-            if (this.ruleValueItem.getValue() == null || this.ruleValueUnitItem.getValue() == null) {
+            if (this.entryValueItem.getValue() == null || this.entryValueUnitItem.getValue() == null) {
                 SC.say(i18n.indicateValueUnit());
                 return false;
             }
@@ -428,9 +434,9 @@ public class CreateSimpleRuleLayout extends Layout {
             }
         }
         // sensor failure
-        if (this.selectedType == SimpleRuleType.SENSOR_LOSS) {
+        if (this.selectedRuleType == SimpleRuleType.SENSOR_LOSS) {
             // check time and unit
-            if (this.timeItem.getValue() == null || this.timeUnitItem.getValue() == null) {
+            if (this.entryTimeItem.getValue() == null || this.entryTimeUnitItem.getValue() == null) {
                 SC.say(i18n.indicateTimeUnit());
                 return false;
             }
@@ -446,12 +452,12 @@ public class CreateSimpleRuleLayout extends Layout {
         this.station = this.sensorItem.getValueAsString();
         this.phenomenon = this.phenomenonItem.getValueAsString();
 
-        this.ruleTyp = this.selectedType;
+        this.ruleTyp = this.selectedRuleType;
 
         this.description = (String) this.descriptionItem.getValue();
 
         this.publish = false;
-        this.condition = false;
+        this.enterConditionIsSameAsExitCondition = false;
 
         if (this.publishRadioGroup.getValue().toString().equals(i18n.yes())) {
             this.publish = true;
@@ -474,8 +480,8 @@ public class CreateSimpleRuleLayout extends Layout {
      * Sensor failure
      */
     private void createAusfallRule() {
-        String rTime = this.timeItem.getValueAsString();
-        String rTimeUnit = this.timeUnitItem.getValueAsString();
+        String rTime = this.entryTimeItem.getValueAsString();
+        String rTimeUnit = this.entryTimeUnitItem.getValueAsString();
         
         int cookieAsInt = Integer.parseInt(Cookies.getCookie(SesRequestManager.COOKIE_USER_ID));
         Rule rule = RuleBuilder.aRule()
@@ -486,7 +492,7 @@ public class CreateSimpleRuleLayout extends Layout {
                         .setNotificationType(notificationType)
                         .setDescription(description)
                         .setPublish(publish)
-                        .setCondition(condition)
+                        .setCondition(enterConditionIsSameAsExitCondition)
                         .setCookie(cookieAsInt)
                         .setRTime(rTime)
                         .setRTimeUnit(rTimeUnit)
@@ -500,33 +506,33 @@ public class CreateSimpleRuleLayout extends Layout {
      * Sum over Time
      */
     private void createSummeZeitRule() {
-        int operatorIndex = getOperatorIndex(this.operatorRuleItem.getValueAsString());
+        int operatorIndex = getOperatorIndex(this.entryOperatorItem.getValueAsString());
         
         int operatorIndexCond = 0;
         
-        String rValue = this.ruleValueItem.getValueAsString();
-        String rUnit = this.ruleValueUnitItem.getValueAsString();
+        String rValue = this.entryValueItem.getValueAsString();
+        String rUnit = this.entryValueUnitItem.getValueAsString();
         String cValue;
         String cUnit;
         
         String rCount = this.countItem.getValueAsString();
         
-        if (this.conditionRadioGroup.getValue().toString().equals(i18n.no())) {
+        if (this.enterConditionIsSameExitConditionRadioGroup.getValue().toString().equals(i18n.no())) {
             // enter condition != exit condition
-            operatorIndexCond = getOperatorIndex(this.operatorConditionItem.getValueAsString());
-            cValue = this.ruleValueConditionItem.getValueAsString();
-            cUnit = this.ruleValueUnitConditionItem.getValueAsString();
-            this.condition = false;
+            operatorIndexCond = getOperatorIndex(this.exitOperatorItem.getValueAsString());
+            cValue = this.entryValueConditionItem.getValueAsString();
+            cUnit = this.entryValueUnitConditionItem.getValueAsString();
+            this.enterConditionIsSameAsExitCondition = false;
 
         } else {
             operatorIndexCond = createCounterOperator(operatorIndex);
             cValue = rValue;
             cUnit = rUnit;
-            this.condition = true;
+            this.enterConditionIsSameAsExitCondition = true;
         }
         Rule rule =
                 new Rule(this.ruleTyp, this.name, this.station, this.phenomenon, this.notificationType,
-                        this.description, this.publish, this.condition, operatorIndex, rValue, rUnit,
+                        this.description, this.publish, this.enterConditionIsSameAsExitCondition, operatorIndex, rValue, rUnit,
                         operatorIndexCond, cValue, cUnit, Integer.parseInt(Cookies
                                 .getCookie(SesRequestManager.COOKIE_USER_ID)), rCount, null, null, null);
 
@@ -538,41 +544,41 @@ public class CreateSimpleRuleLayout extends Layout {
      * Trend over Time
      */
     private void createTendenzZeitRule() {
-        int operatorIndex = getOperatorIndex(this.operatorRuleItem.getValueAsString());
+        int operatorIndex = getOperatorIndex(this.entryOperatorItem.getValueAsString());
         
         int operatorIndexCond = 0;
 
-        String rValue = this.ruleValueItem.getValueAsString();
-        String rUnit = this.ruleValueUnitItem.getValueAsString();
+        String rValue = this.entryValueItem.getValueAsString();
+        String rUnit = this.entryValueUnitItem.getValueAsString();
         String cValue;
         String cUnit;
 
-        String rTime = this.timeItem.getValueAsString();
-        String rTimeUnit = this.timeUnitItem.getValueAsString();
+        String rTime = this.entryTimeItem.getValueAsString();
+        String rTimeUnit = this.entryTimeUnitItem.getValueAsString();
         String cTime;
         String cTimeUnit;
 
-        if (this.conditionRadioGroup.getValue().toString().equals(i18n.no())) {
+        if (this.enterConditionIsSameExitConditionRadioGroup.getValue().toString().equals(i18n.no())) {
             // enter condition != exit condition
-            operatorIndexCond = getOperatorIndex(this.operatorConditionItem.getValueAsString());
+            operatorIndexCond = getOperatorIndex(this.exitOperatorItem.getValueAsString());
             
-            cValue = this.ruleValueConditionItem.getValueAsString();
-            cUnit = this.ruleValueUnitConditionItem.getValueAsString();
-            this.condition = false;
-            cTime = this.conditionTimeItem.getValueAsString();
-            cTimeUnit = this.conditionTimeUnitItem.getValueAsString();
+            cValue = this.entryValueConditionItem.getValueAsString();
+            cUnit = this.entryValueUnitConditionItem.getValueAsString();
+            this.enterConditionIsSameAsExitCondition = false;
+            cTime = this.exitTimeItem.getValueAsString();
+            cTimeUnit = this.exitTimeUnitItem.getValueAsString();
 
         } else {
             operatorIndexCond = createCounterOperator(operatorIndex);
             cValue = rValue;
             cUnit = rUnit;
-            this.condition = true;
+            this.enterConditionIsSameAsExitCondition = true;
             cTime = rTime;
             cTimeUnit = rTimeUnit;
         }
         Rule rule =
                 new Rule(this.ruleTyp, this.name, this.station, this.phenomenon, this.notificationType,
-                        this.description, this.publish, this.condition, operatorIndex, rValue, rUnit,
+                        this.description, this.publish, this.enterConditionIsSameAsExitCondition, operatorIndex, rValue, rUnit,
                         operatorIndexCond, cValue, cUnit, Integer.parseInt(Cookies
                                 .getCookie(SesRequestManager.COOKIE_USER_ID)), rTime, rTimeUnit, cTime, cTimeUnit);
 
@@ -583,32 +589,32 @@ public class CreateSimpleRuleLayout extends Layout {
      * Trend over Count
      */
     private void createTendenzAnzahlRule() {
-        int rOperatorIndex = getOperatorIndex(this.operatorRuleItem.getValueAsString());
+        int rOperatorIndex = getOperatorIndex(this.entryOperatorItem.getValueAsString());
         
         int operatorIndexCond = 0;
 
-        String rValue = this.ruleValueItem.getValueAsString();
-        String rUnit = this.ruleValueUnitItem.getValueAsString();
+        String rValue = this.entryValueItem.getValueAsString();
+        String rUnit = this.entryValueUnitItem.getValueAsString();
         String cValue;
         String cUnit;
 
         String countValue = this.countItem.getValueAsString();
         String countCondValue;
 
-        if (this.conditionRadioGroup.getValue().toString().equals(i18n.no())) {
+        if (this.enterConditionIsSameExitConditionRadioGroup.getValue().toString().equals(i18n.no())) {
             // enter condition != exit condition
-            operatorIndexCond = getOperatorIndex(this.operatorConditionItem.getValueAsString());
+            operatorIndexCond = getOperatorIndex(this.exitOperatorItem.getValueAsString());
             
-            cValue = this.ruleValueConditionItem.getValueAsString();
-            cUnit = this.ruleValueUnitConditionItem.getValueAsString();
-            this.condition = false;
-            countCondValue = this.countCondItem.getValueAsString();
+            cValue = this.entryValueConditionItem.getValueAsString();
+            cUnit = this.entryValueUnitConditionItem.getValueAsString();
+            this.enterConditionIsSameAsExitCondition = false;
+            countCondValue = this.countConditionItem.getValueAsString();
 
         } else {
             operatorIndexCond = createCounterOperator(rOperatorIndex);
             cValue = rValue;
             cUnit = rUnit;
-            this.condition = true;
+            this.enterConditionIsSameAsExitCondition = true;
             countCondValue = countValue;
         }
 
@@ -621,7 +627,7 @@ public class CreateSimpleRuleLayout extends Layout {
                         .setNotificationType(notificationType)
                         .setDescription(description)
                         .setPublish(publish)
-                        .setCondition(condition)
+                        .setCondition(enterConditionIsSameAsExitCondition)
                         .setROperatorIndex(rOperatorIndex)
                         .setRValue(rValue)
                         .setRUnit(rUnit)
@@ -642,28 +648,28 @@ public class CreateSimpleRuleLayout extends Layout {
      */
     private void createOverUnderShootRule() {
 
-        int operatorIndex = getOperatorIndex(this.operatorRuleItem.getValueAsString());
+        int operatorIndex = getOperatorIndex(this.entryOperatorItem.getValueAsString());
         
         int cOperatorIndex = 0;
         
-        String rValue = this.ruleValueItem.getValueAsString();
-        String rUnit = this.ruleValueUnitItem.getValueAsString();
+        String rValue = this.entryValueItem.getValueAsString();
+        String rUnit = this.entryValueUnitItem.getValueAsString();
 
         String cValue;
         String cUnit;
 
-        if (this.conditionRadioGroup.getValue().toString().equals(i18n.no())) {
+        if (this.enterConditionIsSameExitConditionRadioGroup.getValue().toString().equals(i18n.no())) {
             // enter condition != exit condition
-            cOperatorIndex = getOperatorIndex(this.operatorConditionItem.getValueAsString());
+            cOperatorIndex = getOperatorIndex(this.exitOperatorItem.getValueAsString());
             
-            cValue = this.ruleValueConditionItem.getValueAsString();
-            cUnit = this.ruleValueUnitConditionItem.getValueAsString();
-            this.condition = false;
+            cValue = this.entryValueConditionItem.getValueAsString();
+            cUnit = this.entryValueUnitConditionItem.getValueAsString();
+            this.enterConditionIsSameAsExitCondition = false;
         } else {
             cOperatorIndex = createCounterOperator(operatorIndex);
             cValue = rValue;
             cUnit = rUnit;
-            this.condition = true;
+            this.enterConditionIsSameAsExitCondition = true;
         }
 
         int cookieAsInt = Integer.parseInt(Cookies.getCookie(SesRequestManager.COOKIE_USER_ID));
@@ -675,7 +681,7 @@ public class CreateSimpleRuleLayout extends Layout {
                         .setNotificationType(notificationType)
                         .setDescription(description)
                         .setPublish(publish)
-                        .setCondition(condition)
+                        .setCondition(enterConditionIsSameAsExitCondition)
                         .setROperatorIndex(operatorIndex)
                         .setRValue(rValue)
                         .setRUnit(rUnit)
@@ -755,68 +761,68 @@ public class CreateSimpleRuleLayout extends Layout {
     private void setRuleFileds() {
 
         // set conditionRadio to "yes"
-        this.conditionRadioGroup.setValue("yes");
+        enterConditionIsSameExitConditionRadioGroup.setValue("yes");
         // clear condition field
-        this.ruleElementsConditionForm.setFields();
+        exitConditionItemsForm.setFields();
 
         // delete all elements from condition layout
-        if (this.selectedType == null) {
-            this.ruleElementsConditionForm.setFields();
-            this.conditionRadioGroup.show();
-            this.ruleElementsForm.redraw();
-        } else if (this.selectedType == SimpleRuleType.OVER_UNDERSHOOT) {
+        if (selectedRuleType == null) {
+            exitConditionItemsForm.setFields();
+            enterConditionIsSameExitConditionRadioGroup.show();
+            entryConditionItemsForm.redraw();
+        } else if (selectedRuleType == OVER_UNDERSHOOT) {
             // add elements to form
             
-            setOperatorRuleItem();
-            setRuleValueItem();
-            setRuleValueUnitItem();
+            setEntryOperatorRuleItem();
+            setEntryValueItem();
+            setEntryValueUnitItem();
             
-            this.ruleElementsForm.setFields(this.operatorRuleItem, this.ruleValueItem, this.ruleValueUnitItem);
-            this.conditionRadioGroup.show();
-            this.ruleElementsForm.redraw();
-        } else if (this.selectedType == SimpleRuleType.TENDENCY_OVER_TIME) {
+            entryConditionItemsForm.setFields(this.entryOperatorItem, this.entryValueItem, this.entryValueUnitItem);
+            enterConditionIsSameExitConditionRadioGroup.show();
+            entryConditionItemsForm.redraw();
+        } else if (selectedRuleType == TENDENCY_OVER_TIME) {
             // add elements to form
             
-            setTimeItem();
-            setTimeUnitItem();
-            setOperatorRuleItem();
-            setRuleValueItem();
-            setRuleValueUnitItem();
+            setEntryTimeItem();
+            setEntryTimeUnitItem();
+            setEntryOperatorRuleItem();
+            setEntryValueItem();
+            setEntryValueUnitItem();
             
-            this.ruleElementsForm.setFields(this.timeItem, this.timeUnitItem, this.operatorRuleItem, this.ruleValueItem, this.ruleValueUnitItem);
-            this.conditionRadioGroup.show();
-            this.ruleElementsForm.redraw();
-        } else if (this.selectedType == SimpleRuleType.TENDENCY_OVER_COUNT) {
+            entryConditionItemsForm.setFields(entryTimeItem, entryTimeUnitItem, entryOperatorItem, entryValueItem, entryValueUnitItem);
+            enterConditionIsSameExitConditionRadioGroup.show();
+            entryConditionItemsForm.redraw();
+        } else if (selectedRuleType == TENDENCY_OVER_COUNT) {
             // add elements to form
             
             setCountItem();
-            setOperatorRuleItem();
-            setRuleValueItem();
-            setRuleValueUnitItem();
+            setEntryOperatorRuleItem();
+            setEntryValueItem();
+            setEntryValueUnitItem();
             
-            this.ruleElementsForm.setFields(this.countItem, this.operatorRuleItem, this.ruleValueItem, this.ruleValueUnitItem);
-            this.conditionRadioGroup.show();
-            this.ruleElementsForm.redraw();
-        }else if (this.selectedType == SimpleRuleType.SUM_OVER_TIME) {
+            entryConditionItemsForm.setFields(countItem, entryOperatorItem, entryValueItem, entryValueUnitItem);
+            enterConditionIsSameExitConditionRadioGroup.show();
+            entryConditionItemsForm.redraw();
+        }else if (selectedRuleType == SUM_OVER_TIME) {
             // add elements to form
             
-            setOperatorRuleItem();
-            setRuleValueItem();
-            setRuleValueUnitItem();
+            setEntryOperatorRuleItem();
+            setEntryValueItem();
+            setEntryValueUnitItem();
             setCountItem();
             
-            this.ruleElementsForm.setFields(this.countItem, this.operatorRuleItem, this.ruleValueItem, this.ruleValueUnitItem);
-            this.conditionRadioGroup.hide();
-            this.ruleElementsForm.redraw();
-        }else if (this.selectedType == SimpleRuleType.SENSOR_LOSS) {
+            entryConditionItemsForm.setFields(countItem, entryOperatorItem, entryValueItem, entryValueUnitItem);
+            enterConditionIsSameExitConditionRadioGroup.hide();
+            entryConditionItemsForm.redraw();
+        }else if (selectedRuleType == SENSOR_LOSS) {
             // add elements to form
             
-            setTimeItem();
-            setTimeUnitItem();
+            setEntryTimeItem();
+            setEntryTimeUnitItem();
             
-            this.ruleElementsForm.setFields(this.timeItem, this.timeUnitItem);
-            this.conditionRadioGroup.hide();
-            this.ruleElementsForm.redraw();
+            entryConditionItemsForm.setFields(entryTimeItem, entryTimeUnitItem);
+            enterConditionIsSameExitConditionRadioGroup.hide();
+            entryConditionItemsForm.redraw();
         }
     }
 
@@ -828,38 +834,38 @@ public class CreateSimpleRuleLayout extends Layout {
      */
     private void setRuleConditionFields() {
 
-        if (this.selectedType == SimpleRuleType.OVER_UNDERSHOOT) {
+        if (selectedRuleType == OVER_UNDERSHOOT) {
             // add elements to layout
-            setOperatorConditionItem();
-            setRuleValueConditionItem();
-            setRuleValueUnitConditionItem();
+            setExitOperatorItem();
+            setEntryValueConditionItem();
+            setEntryValueUnitConditionItem();
             
-            this.ruleElementsConditionForm.setFields(this.operatorConditionItem, this.ruleValueConditionItem, this.ruleValueUnitConditionItem);
-            this.ruleElementsConditionForm.redraw();
+            exitConditionItemsForm.setFields(exitOperatorItem, entryValueConditionItem, entryValueUnitConditionItem);
+            exitConditionItemsForm.redraw();
 
-        } else if (this.selectedType == SimpleRuleType.SUM_OVER_TIME) {
+        } else if (selectedRuleType == SUM_OVER_TIME) {
             //
-        } else if (this.selectedType == SimpleRuleType.TENDENCY_OVER_COUNT) {
+        } else if (selectedRuleType == TENDENCY_OVER_COUNT) {
             // add elements to layout
             
             setCountConditionItem();
-            setOperatorConditionItem();
-            setRuleValueConditionItem();
-            setRuleValueUnitConditionItem();
+            setExitOperatorItem();
+            setEntryValueConditionItem();
+            setEntryValueUnitConditionItem();
             
-            this.ruleElementsConditionForm.setFields(this.countCondItem, this.operatorConditionItem, this.ruleValueConditionItem, this.ruleValueUnitConditionItem);
-            this.ruleElementsConditionForm.redraw();
-        } else if (this.selectedType == SimpleRuleType.TENDENCY_OVER_TIME) {
+            exitConditionItemsForm.setFields(countConditionItem, exitOperatorItem, entryValueConditionItem, entryValueUnitConditionItem);
+            exitConditionItemsForm.redraw();
+        } else if (selectedRuleType == TENDENCY_OVER_TIME) {
             // add elements to layout
             
-            setConditionTimeItem();
-            setConditionTimeUnitItem();
-            setOperatorConditionItem();
-            setRuleValueConditionItem();
-            setRuleValueUnitConditionItem();
+            setExitTimeItem();
+            setExitTimeUnitItem();
+            setExitOperatorItem();
+            setEntryValueConditionItem();
+            setEntryValueUnitConditionItem();
             
-            this.ruleElementsConditionForm.setFields(this.conditionTimeItem, this.conditionTimeUnitItem, this.operatorConditionItem, this.ruleValueConditionItem, this.ruleValueUnitConditionItem);
-            this.ruleElementsConditionForm.redraw();
+            exitConditionItemsForm.setFields(exitTimeItem, exitTimeUnitItem, exitOperatorItem, entryValueConditionItem, entryValueUnitConditionItem);
+            exitConditionItemsForm.redraw();
         }
     }
 
@@ -884,8 +890,8 @@ public class CreateSimpleRuleLayout extends Layout {
         this.nameItem.clearValue();
 
         // set selectedType to nothing
-        this.selectedType = SimpleRuleType.NONE;
-        this.conditionRadioGroup.setValue(i18n.yes());
+        this.selectedRuleType = SimpleRuleType.NONE;
+        this.enterConditionIsSameExitConditionRadioGroup.setValue(i18n.yes());
 
         // clear first three list boxes
         this.station = null;
@@ -902,19 +908,19 @@ public class CreateSimpleRuleLayout extends Layout {
             this.ruleTypeItem.clearValue();
             this.ruleTypeItem.setValueMap(this.ruleTypesHashMap);
         }
-        if (this.operatorRuleItem != null) {
-            this.operatorRuleItem.setValueMap(this.operatorHashMap);
+        if (this.entryOperatorItem != null) {
+            this.entryOperatorItem.setValueMap(getRuleOperators());
         }
-        if (this.operatorConditionItem != null) {
-            this.operatorConditionItem.setValueMap(this.operatorHashMap);
+        if (this.exitOperatorItem != null) {
+            this.exitOperatorItem.setValueMap(getRuleOperators());
         }
         
         this.phenomenonItem.setDisabled(true);
         this.ruleTypeItem.setDisabled(true);
         
         // clear 
-        this.ruleElementsForm.setFields();
-        this.ruleElementsConditionForm.setFields();
+        this.entryConditionItemsForm.setFields();
+        this.exitConditionItemsForm.setFields();
 
     }
 
@@ -953,17 +959,17 @@ public class CreateSimpleRuleLayout extends Layout {
                 String value = event.getValue().toString();
 
                 if (value.equals(i18n.overUnderShoot())) {
-                    CreateSimpleRuleLayout.this.selectedType = SimpleRuleType.OVER_UNDERSHOOT;
+                    CreateSimpleRuleLayout.this.selectedRuleType = OVER_UNDERSHOOT;
                 } else if (value.equals(i18n.trendOverTime())) {
-                    CreateSimpleRuleLayout.this.selectedType = SimpleRuleType.TENDENCY_OVER_TIME;
+                    CreateSimpleRuleLayout.this.selectedRuleType = TENDENCY_OVER_TIME;
                 } else if (value.equals(i18n.trendOverCount())) {
-                    CreateSimpleRuleLayout.this.selectedType = SimpleRuleType.TENDENCY_OVER_COUNT;
+                    CreateSimpleRuleLayout.this.selectedRuleType = TENDENCY_OVER_COUNT;
                 } else if (value.equals(i18n.sumOverCountMeasurements())) {
-                    CreateSimpleRuleLayout.this.selectedType = SimpleRuleType.SUM_OVER_TIME;
+                    CreateSimpleRuleLayout.this.selectedRuleType = SUM_OVER_TIME;
                 } else if (value.equals(i18n.sensorFailure())) {
-                    CreateSimpleRuleLayout.this.selectedType = SimpleRuleType.SENSOR_LOSS;
+                    CreateSimpleRuleLayout.this.selectedRuleType = SENSOR_LOSS;
                 } else {
-                    CreateSimpleRuleLayout.this.selectedType = null;
+                    CreateSimpleRuleLayout.this.selectedRuleType = null;
                 }
                 setRuleFileds();
             }
@@ -1006,152 +1012,125 @@ public class CreateSimpleRuleLayout extends Layout {
         ruleTypeItem.setDisabled(false);
         
         // ruleType
-        selectedType = rule.getRuleType();
-        if (selectedType.equals(TENDENCY_OVER_TIME)) {
+        selectedRuleType = rule.getRuleType();
+        if (selectedRuleType.equals(TENDENCY_OVER_TIME)) {
             ruleTypeItem.setValue(i18n.trendOverTime());
         }
-        if (selectedType.equals(TENDENCY_OVER_COUNT)) {
+        if (selectedRuleType.equals(TENDENCY_OVER_COUNT)) {
             ruleTypeItem.setValue(i18n.trendOverCount());
         }
-        if (selectedType.equals(OVER_UNDERSHOOT)) {
+        if (selectedRuleType.equals(OVER_UNDERSHOOT)) {
             ruleTypeItem.setValue(i18n.overUnderShoot());
         }
-        if (selectedType.equals(SUM_OVER_TIME)) {
+        if (selectedRuleType.equals(SUM_OVER_TIME)) {
             ruleTypeItem.setValue(i18n.sumOverCountMeasurements());
         }
-        if (selectedType.equals(SENSOR_LOSS)) {
+        if (selectedRuleType.equals(SENSOR_LOSS)) {
             ruleTypeItem.setValue(i18n.sensorFailure());
         }
-        
-        String ruleCondition = "";
-        if (rule.getRuleOperatorIndex() == 0) {
-            ruleCondition = "=";
-        } else if (rule.getRuleOperatorIndex() == 1) {
-            ruleCondition = "<>";
-        } else if (rule.getRuleOperatorIndex() == 2) {
-            ruleCondition = ">";
-        } else if (rule.getRuleOperatorIndex() == 3) {
-            ruleCondition = "&lt;";
-        } else if (rule.getRuleOperatorIndex() == 4) {
-            ruleCondition = ">=";
-        } else if (rule.getRuleOperatorIndex() == 5) {
-            ruleCondition = "<=";
-        }
-        
-        String conditionOperator = "";
-        if (rule.getConditionOperatorIndex() == 0) {
-            conditionOperator = "=";
-        } else if (rule.getConditionOperatorIndex() == 1) {
-            conditionOperator = "<>";
-        } else if (rule.getConditionOperatorIndex() == 2) {
-            conditionOperator = ">";
-        } else if (rule.getConditionOperatorIndex() == 3) {
-            conditionOperator = "&lt;";
-        } else if (rule.getConditionOperatorIndex() == 4) {
-            conditionOperator = ">=";
-        } else if (rule.getConditionOperatorIndex() == 5) {
-            conditionOperator = "<=";
-        }
+
+        String entryOperator = getOperatorFrom(rule.getEntryOperatorIndex());
+        String exitOperator = getOperatorFrom(rule.getExitOperatorIndex());
         
         // set condition radio group
         if (rule.isEnterEqualsExitCondition()) {
-            condition = true;
-            conditionRadioGroup.setValue(i18n.yes());
+            enterConditionIsSameAsExitCondition = true;
+            enterConditionIsSameExitConditionRadioGroup.setValue(i18n.yes());
         } else {
-            condition = false;
-            conditionRadioGroup.setValue(i18n.no());
+            enterConditionIsSameAsExitCondition = false;
+            enterConditionIsSameExitConditionRadioGroup.setValue(i18n.no());
             
-            setRuleValueConditionItem();
-            setRuleValueUnitConditionItem();
+            setEntryValueConditionItem();
+            setEntryValueUnitConditionItem();
             
-            ruleValueConditionItem.setValue(rule.getConditionValue());
-            ruleValueUnitConditionItem.setValue(rule.getConditionUnit());
+            entryValueConditionItem.setValue(rule.getExitValue());
+            entryValueUnitConditionItem.setValue(rule.getExitUnit());
         }
         
         if (rule.getRuleType().equals(OVER_UNDERSHOOT)) {
-            setRuleValueItem();
-            setRuleValueUnitItem();
-            setOperatorRuleItem();
+            setEntryValueItem();
+            setEntryValueUnitItem();
+            setEntryOperatorRuleItem();
             
-            ruleValueItem.setValue(rule.getRuleValue());
-            ruleValueUnitItem.setValue(rule.getRuleUnit());
-            operatorRuleItem.setValue(ruleCondition);
-            ruleElementsForm.setFields(operatorRuleItem, ruleValueItem, ruleValueUnitItem);
+            entryValueItem.setValue(rule.getEntryValue());
+            entryValueUnitItem.setValue(rule.getEntryUnit());
+            entryOperatorItem.setValue(entryOperator);
+            entryConditionItemsForm.setFields(entryOperatorItem, entryValueItem, entryValueUnitItem);
             
             if (!rule.isEnterEqualsExitCondition()) {
-                setOperatorConditionItem();
-                this.operatorConditionItem.setValue(conditionOperator);
+                setExitOperatorItem();
+                exitOperatorItem.setValue(exitOperator);
                 
-                this.ruleElementsConditionForm.setFields(operatorConditionItem, ruleValueConditionItem, ruleValueUnitConditionItem);
+                exitConditionItemsForm.setFields(exitOperatorItem, entryValueConditionItem, entryValueUnitConditionItem);
             }
         } else if (rule.getRuleType().equals(TENDENCY_OVER_TIME)) {
-            setTimeItem();
-            setTimeUnitItem();
-            setOperatorRuleItem();
-            setRuleValueItem();
-            setRuleValueUnitItem();
+            setEntryTimeItem();
+            setEntryTimeUnitItem();
+            setEntryOperatorRuleItem();
+            setEntryValueItem();
+            setEntryValueUnitItem();
             
-            timeItem.setValue(rule.getRuleTime());
-            timeUnitItem.setValue(rule.getrTimeUnit());
-            operatorRuleItem.setValue(ruleCondition);
-            ruleValueItem.setValue(rule.getRuleValue());
-            ruleValueUnitItem.setValue(rule.getRuleUnit());
+            entryTimeItem.setValue(rule.getEntryTime());
+            entryTimeUnitItem.setValue(rule.getEntryTimeUnit());
+            entryOperatorItem.setValue(entryOperator);
+            entryValueItem.setValue(rule.getEntryValue());
+            entryValueUnitItem.setValue(rule.getEntryUnit());
             
-            ruleElementsForm.setFields(timeItem, timeUnitItem, operatorRuleItem, ruleValueItem, ruleValueUnitItem);
+            entryConditionItemsForm.setFields(entryTimeItem, entryTimeUnitItem, entryOperatorItem, entryValueItem, entryValueUnitItem);
            
             if (!rule.isEnterEqualsExitCondition()) {
-                setOperatorConditionItem();
-                setConditionTimeItem();
-                setConditionTimeUnitItem();
+                setExitOperatorItem();
+                setExitTimeItem();
+                setExitTimeUnitItem();
                 
-                operatorConditionItem.setValue(conditionOperator);
-                conditionTimeItem.setValue(rule.getcTime());
-                conditionTimeUnitItem.setValue(rule.getcTimeUnit());
+                exitOperatorItem.setValue(exitOperator);
+                exitTimeItem.setValue(rule.getExitTime());
+                exitTimeUnitItem.setValue(rule.getExitTimeUnit());
                 
-                ruleElementsConditionForm.setFields(conditionTimeItem, conditionTimeUnitItem, operatorConditionItem, ruleValueConditionItem, ruleValueUnitConditionItem);
+                exitConditionItemsForm.setFields(exitTimeItem, exitTimeUnitItem, exitOperatorItem, entryValueConditionItem, entryValueUnitConditionItem);
             }
         } else if (rule.getRuleType().equals(TENDENCY_OVER_COUNT)) {
             setCountItem();
-            setOperatorRuleItem();
-            setRuleValueItem();
-            setRuleValueUnitItem();
+            setEntryOperatorRuleItem();
+            setEntryValueItem();
+            setEntryValueUnitItem();
             
-            this.countItem.setValue(rule.getCount());
-            this.operatorRuleItem.setValue(ruleCondition);
-            this.ruleValueItem.setValue(rule.getRuleValue());
-            this.ruleValueUnitItem.setValue(rule.getRuleUnit());
+            this.countItem.setValue(rule.getEntryCount());
+            this.entryOperatorItem.setValue(entryOperator);
+            this.entryValueItem.setValue(rule.getEntryValue());
+            this.entryValueUnitItem.setValue(rule.getEntryUnit());
             
-            this.ruleElementsForm.setFields(countItem, operatorRuleItem, ruleValueItem, ruleValueUnitItem);
+            this.entryConditionItemsForm.setFields(countItem, entryOperatorItem, entryValueItem, entryValueUnitItem);
             
             if (!rule.isEnterEqualsExitCondition()) {
-                setOperatorConditionItem();
+                setExitOperatorItem();
                 setCountConditionItem();
                 
-                operatorConditionItem.setValue(conditionOperator);
-                countCondItem.setValue(rule.getCount());
+                exitOperatorItem.setValue(exitOperator);
+                countConditionItem.setValue(rule.getEntryCount());
                 
-                ruleElementsConditionForm.setFields(countCondItem, operatorConditionItem, ruleValueConditionItem, ruleValueUnitConditionItem);
+                exitConditionItemsForm.setFields(countConditionItem, exitOperatorItem, entryValueConditionItem, entryValueUnitConditionItem);
             }
         } else if (rule.getRuleType().equals(SUM_OVER_TIME)) {
-            setOperatorRuleItem();
-            setRuleValueItem();
-            setRuleValueUnitItem();
+            setEntryOperatorRuleItem();
+            setEntryValueItem();
+            setEntryValueUnitItem();
             setCountItem();
             
-            operatorRuleItem.setValue(ruleCondition);
-            ruleValueItem.setValue(rule.getRuleValue());
-            ruleValueUnitItem.setValue(rule.getRuleUnit());
-            countItem.setValue(rule.getRuleTime());
+            entryOperatorItem.setValue(entryOperator);
+            entryValueItem.setValue(rule.getEntryValue());
+            entryValueUnitItem.setValue(rule.getEntryUnit());
+            countItem.setValue(rule.getEntryTime());
             
-            ruleElementsForm.setFields(countItem, operatorRuleItem, ruleValueItem, ruleValueUnitItem);
+            entryConditionItemsForm.setFields(countItem, entryOperatorItem, entryValueItem, entryValueUnitItem);
         } else if (rule.getRuleType().equals(SENSOR_LOSS)) {
-            setTimeItem();
-            setTimeUnitItem();
+            setEntryTimeItem();
+            setEntryTimeUnitItem();
             
-            timeItem.setValue(rule.getRuleTime());
-            timeUnitItem.setValue(rule.getrTimeUnit());
+            entryTimeItem.setValue(rule.getEntryTime());
+            entryTimeUnitItem.setValue(rule.getEntryTimeUnit());
             
-            ruleElementsForm.setFields(timeItem, timeUnitItem);
+            entryConditionItemsForm.setFields(entryTimeItem, entryTimeUnitItem);
         }
     }
 
@@ -1173,39 +1152,31 @@ public class CreateSimpleRuleLayout extends Layout {
         this.ruleTypesHashMap.put(i18n.sumOverCountMeasurements(), i18n.sumOverCountMeasurements());
         this.ruleTypesHashMap.put(i18n.sensorFailure(), i18n.sensorFailure());
 
-        // set operators
-        this.operatorHashMap.put("=", "=");
-        this.operatorHashMap.put("<>", "<>");
-        this.operatorHashMap.put(">", ">");
-        this.operatorHashMap.put("&lt;", "&lt;");
-        this.operatorHashMap.put(">=", ">=");
-        this.operatorHashMap.put("<=", "<=");
-        
         // set time units
         this.timeUnitHashMap.put("S", "S");
         this.timeUnitHashMap.put("M", "M");
         this.timeUnitHashMap.put("H", "H");
     }
 
-    private void setRuleValueItem() {
-        this.ruleValueItem = new TextItem();
-        this.ruleValueItem.setWidth(this.ruleItemWidth);
-        this.ruleValueItem.setTitle(i18n.value());
-        this.ruleValueItem.setTitleOrientation(TitleOrientation.TOP);
-        this.ruleValueItem.setKeyPressFilter("[0-9]");
+    private void setEntryValueItem() {
+        this.entryValueItem = new TextItem();
+        this.entryValueItem.setWidth(this.ruleItemWidth);
+        this.entryValueItem.setTitle(i18n.value());
+        this.entryValueItem.setTitleOrientation(TitleOrientation.TOP);
+        this.entryValueItem.setKeyPressFilter("[0-9]");
     }
 
-    private void setRuleValueUnitItem() {
-        this.ruleValueUnitItem = new SelectItem();
-        this.ruleValueUnitItem.setWidth(this.ruleItemWidth);
-        this.ruleValueUnitItem.setTitle(i18n.unit());
-        this.ruleValueUnitItem.setTitleOrientation(TitleOrientation.TOP);
-        this.ruleValueUnitItem.setValueMap(this.unitHashMap);
-        this.ruleValueUnitItem.setTextAlign(Alignment.CENTER);
+    private void setEntryValueUnitItem() {
+        this.entryValueUnitItem = new SelectItem();
+        this.entryValueUnitItem.setWidth(this.ruleItemWidth);
+        this.entryValueUnitItem.setTitle(i18n.unit());
+        this.entryValueUnitItem.setTitleOrientation(TitleOrientation.TOP);
+        this.entryValueUnitItem.setValueMap(this.unitHashMap);
+        this.entryValueUnitItem.setTextAlign(Alignment.CENTER);
         
         ArrayList<String> list = new ArrayList<String>(this.unitHashMap.values());
         if (list.size() != 0) {
-            this.ruleValueUnitItem.setDefaultValue(list.get(0));
+            this.entryValueUnitItem.setDefaultValue(list.get(0));
         }
     }
 
@@ -1217,114 +1188,114 @@ public class CreateSimpleRuleLayout extends Layout {
         this.countItem.setKeyPressFilter("[0-9]");
     }
 
-    private void setTimeItem() {
-        this.timeItem = new TextItem();
-        this.timeItem.setWidth(this.ruleItemWidth);
-        this.timeItem.setTitle("<nobr>" + i18n.timeValue() + "</nobr>");
-        this.timeItem.setTitleOrientation(TitleOrientation.TOP);
-        this.timeItem.setKeyPressFilter("[0-9]");
+    private void setEntryTimeItem() {
+        this.entryTimeItem = new TextItem();
+        this.entryTimeItem.setWidth(this.ruleItemWidth);
+        this.entryTimeItem.setTitle("<nobr>" + i18n.timeValue() + "</nobr>");
+        this.entryTimeItem.setTitleOrientation(TitleOrientation.TOP);
+        this.entryTimeItem.setKeyPressFilter("[0-9]");
     }
 
-    private void setTimeUnitItem() {
-        this.timeUnitItem = new SelectItem();
-        this.timeUnitItem.setWidth(this.ruleItemWidth);
-        this.timeUnitItem.setTitle(i18n.timeUnit());
-        this.timeUnitItem.setTitleOrientation(TitleOrientation.TOP);
-        this.timeUnitItem.setTooltip("<nobr>" + i18n.unitsTime() + "</nobr>");
-        this.timeUnitItem.setValueMap(this.timeUnitHashMap);
-        this.timeUnitItem.setDefaultValue("H");
-        this.timeUnitItem.setTextAlign(Alignment.CENTER);
+    private void setEntryTimeUnitItem() {
+        this.entryTimeUnitItem = new SelectItem();
+        this.entryTimeUnitItem.setWidth(this.ruleItemWidth);
+        this.entryTimeUnitItem.setTitle(i18n.timeUnit());
+        this.entryTimeUnitItem.setTitleOrientation(TitleOrientation.TOP);
+        this.entryTimeUnitItem.setTooltip("<nobr>" + i18n.unitsTime() + "</nobr>");
+        this.entryTimeUnitItem.setValueMap(this.timeUnitHashMap);
+        this.entryTimeUnitItem.setDefaultValue("H");
+        this.entryTimeUnitItem.setTextAlign(Alignment.CENTER);
     }
 
-    private void setRuleValueConditionItem() {
-        this.ruleValueConditionItem = new TextItem();
-        this.ruleValueConditionItem.setWidth(this.ruleItemWidth);
-        this.ruleValueConditionItem.setTitle(i18n.value());
-        this.ruleValueConditionItem.setTitleOrientation(TitleOrientation.TOP);
-        this.ruleValueConditionItem.setKeyPressFilter("[0-9]");
+    private void setEntryValueConditionItem() {
+        this.entryValueConditionItem = new TextItem();
+        this.entryValueConditionItem.setWidth(this.ruleItemWidth);
+        this.entryValueConditionItem.setTitle(i18n.value());
+        this.entryValueConditionItem.setTitleOrientation(TitleOrientation.TOP);
+        this.entryValueConditionItem.setKeyPressFilter("[0-9]");
     }
 
-    private void setRuleValueUnitConditionItem() {
-        this.ruleValueUnitConditionItem = new SelectItem();
-        this.ruleValueUnitConditionItem.setWidth(this.ruleItemWidth);
-        this.ruleValueUnitConditionItem.setTitle(i18n.unit());
-        this.ruleValueUnitConditionItem.setTitleOrientation(TitleOrientation.TOP);
-        this.ruleValueUnitConditionItem.setValueMap(this.unitHashMap);
-        this.ruleValueUnitConditionItem.setTextAlign(Alignment.CENTER);
+    private void setEntryValueUnitConditionItem() {
+        this.entryValueUnitConditionItem = new SelectItem();
+        this.entryValueUnitConditionItem.setWidth(this.ruleItemWidth);
+        this.entryValueUnitConditionItem.setTitle(i18n.unit());
+        this.entryValueUnitConditionItem.setTitleOrientation(TitleOrientation.TOP);
+        this.entryValueUnitConditionItem.setValueMap(this.unitHashMap);
+        this.entryValueUnitConditionItem.setTextAlign(Alignment.CENTER);
         
         ArrayList<String> list = new ArrayList<String>(this.unitHashMap.values());
         if (list.size() != 0) {
-            this.ruleValueUnitConditionItem.setDefaultValue(list.get(0));
+            this.entryValueUnitConditionItem.setDefaultValue(list.get(0));
         }
     }
 
     private void setCountConditionItem() {
-        this.countCondItem = new TextItem();
-        this.countCondItem.setWidth(this.ruleItemWidth);
-        this.countCondItem.setTitle(i18n.count());
-        this.countCondItem.setTitleOrientation(TitleOrientation.TOP);
-        this.countCondItem.setKeyPressFilter("[0-9]");
+        this.countConditionItem = new TextItem();
+        this.countConditionItem.setWidth(this.ruleItemWidth);
+        this.countConditionItem.setTitle(i18n.count());
+        this.countConditionItem.setTitleOrientation(TitleOrientation.TOP);
+        this.countConditionItem.setKeyPressFilter("[0-9]");
     }
 
-    private void setConditionTimeItem() {
-        this.conditionTimeItem = new TextItem();
-        this.conditionTimeItem.setWidth(this.ruleItemWidth);
-        this.conditionTimeItem.setTitle("<nobr>" + i18n.timeValue() + "</nobr>");
-        this.conditionTimeItem.setTitleOrientation(TitleOrientation.TOP);
-        this.conditionTimeItem.setKeyPressFilter("[0-9]");
+    private void setExitTimeItem() {
+        this.exitTimeItem = new TextItem();
+        this.exitTimeItem.setWidth(this.ruleItemWidth);
+        this.exitTimeItem.setTitle("<nobr>" + i18n.timeValue() + "</nobr>");
+        this.exitTimeItem.setTitleOrientation(TitleOrientation.TOP);
+        this.exitTimeItem.setKeyPressFilter("[0-9]");
     }
 
-    private void setConditionTimeUnitItem() {
-        this.conditionTimeUnitItem = new SelectItem();
-        this.conditionTimeUnitItem.setWidth(this.ruleItemWidth);
-        this.conditionTimeUnitItem.setTitle(i18n.timeUnit());
-        this.conditionTimeUnitItem.setTitleOrientation(TitleOrientation.TOP);
-        this.conditionTimeUnitItem.setTooltip("<nobr>" + i18n.unitsTime() + "</nobr>");
-        this.conditionTimeUnitItem.setValueMap(this.timeUnitHashMap);
-        this.conditionTimeUnitItem.setDefaultValue("H");
-        this.conditionTimeUnitItem.setTextAlign(Alignment.CENTER);
+    private void setExitTimeUnitItem() {
+        this.exitTimeUnitItem = new SelectItem();
+        this.exitTimeUnitItem.setWidth(this.ruleItemWidth);
+        this.exitTimeUnitItem.setTitle(i18n.timeUnit());
+        this.exitTimeUnitItem.setTitleOrientation(TitleOrientation.TOP);
+        this.exitTimeUnitItem.setTooltip("<nobr>" + i18n.unitsTime() + "</nobr>");
+        this.exitTimeUnitItem.setValueMap(this.timeUnitHashMap);
+        this.exitTimeUnitItem.setDefaultValue("H");
+        this.exitTimeUnitItem.setTextAlign(Alignment.CENTER);
     }
 
-    private void setOperatorRuleItem() {
-        this.operatorRuleItem = new SelectItem();
-        this.operatorRuleItem.setWidth(this.ruleItemWidth);
-        this.operatorRuleItem.setTitle(i18n.operator());
-        this.operatorRuleItem.setTitleOrientation(TitleOrientation.TOP);
-        this.operatorRuleItem.setValueMap(this.operatorHashMap);
-        this.operatorRuleItem.setDefaultValue(">");
-        this.operatorRuleItem.setTextAlign(Alignment.CENTER);
-        this.operatorRuleItem.addChangedHandler(new ChangedHandler() {
+    private void setEntryOperatorRuleItem() {
+        this.entryOperatorItem = new SelectItem();
+        this.entryOperatorItem.setWidth(this.ruleItemWidth);
+        this.entryOperatorItem.setTitle(i18n.operator());
+        this.entryOperatorItem.setTitleOrientation(TitleOrientation.TOP);
+        this.entryOperatorItem.setValueMap(getRuleOperators());
+        this.entryOperatorItem.setDefaultValue(">");
+        this.entryOperatorItem.setTextAlign(Alignment.CENTER);
+        this.entryOperatorItem.addChangedHandler(new ChangedHandler() {
             public void onChanged(ChangedEvent event) {
-                if (operatorConditionItem != null) {
-                    operatorConditionItem.setValue(getInverseOperator((String)event.getValue()));
+                if (exitOperatorItem != null) {
+                    exitOperatorItem.setValue(getInverseOperator((String)event.getValue()));
                 }
             }
         });
     }
 
-    private void setOperatorConditionItem() {
-        this.operatorConditionItem = new SelectItem();
-        this.operatorConditionItem.setWidth(this.ruleItemWidth);
-        this.operatorConditionItem.setTitle(i18n.operator());
-        this.operatorConditionItem.setTitleOrientation(TitleOrientation.TOP);
-        this.operatorConditionItem.setValueMap(this.operatorHashMap);
-        this.operatorConditionItem.setTextAlign(Alignment.CENTER);
+    private void setExitOperatorItem() {
+        this.exitOperatorItem = new SelectItem();
+        this.exitOperatorItem.setWidth(this.ruleItemWidth);
+        this.exitOperatorItem.setTitle(i18n.operator());
+        this.exitOperatorItem.setTitleOrientation(TitleOrientation.TOP);
+        this.exitOperatorItem.setValueMap(getRuleOperators());
+        this.exitOperatorItem.setTextAlign(Alignment.CENTER);
         
         String defaultValue = "";
-        if (this.operatorRuleItem.getValueAsString().equals("=")) {
+        if (this.entryOperatorItem.getValueAsString().equals("=")) {
             defaultValue = "<>";
-        } else if (this.operatorRuleItem.getValueAsString().equals("<>")) {
+        } else if (this.entryOperatorItem.getValueAsString().equals("<>")) {
             defaultValue = "=";
-        } else if (this.operatorRuleItem.getValueAsString().equals(">")) {
+        } else if (this.entryOperatorItem.getValueAsString().equals(">")) {
             defaultValue = "<=";
-        } else if (this.operatorRuleItem.getValueAsString().equals("&lt;")) {
+        } else if (this.entryOperatorItem.getValueAsString().equals("&lt;")) {
             defaultValue = ">=";
-        } else if (this.operatorRuleItem.getValueAsString().equals(">=")) {
+        } else if (this.entryOperatorItem.getValueAsString().equals(">=")) {
             defaultValue = "<";
-        } else if (this.operatorRuleItem.getValueAsString().equals("<=")) {
+        } else if (this.entryOperatorItem.getValueAsString().equals("<=")) {
             defaultValue = ">";
         }
-        this.operatorConditionItem.setDefaultValue(defaultValue);
+        this.exitOperatorItem.setDefaultValue(defaultValue);
     }
     
     /**
@@ -1337,41 +1308,5 @@ public class CreateSimpleRuleLayout extends Layout {
         }
     }
     
-    private int getOperatorIndex(String operator){
-        int operatorIndex = 0;
-        if (operator.equals("=")) {
-            operatorIndex = 0;
-        } else if (operator.equals("<>")) {
-            operatorIndex = 1;
-        } else if (operator.equals(">")) {
-            operatorIndex = 2;
-        } else if (operator.equals("&lt;")) {
-            operatorIndex = 3;
-        } else if (operator.equals(">=")) {
-            operatorIndex = 4;
-        } else if (operator.equals("<=")) {
-            operatorIndex = 5;
-        }
-        
-        return operatorIndex;
-    }
     
-    private String getInverseOperator(String operator){
-        String inverseOperator = "";
-        if (operator.equals("=")) {
-            inverseOperator = "<>";
-        } else if (operator.equals("<>")) {
-            inverseOperator = "=";
-        } else if (operator.equals(">")) {
-            inverseOperator = "<=";
-        } else if (operator.equals("&lt;")) {
-            inverseOperator = ">=";
-        } else if (operator.equals(">=")) {
-            inverseOperator = "&lt;";
-        } else if (operator.equals("<=")) {
-            inverseOperator = ">";
-        }
-        
-        return inverseOperator;
-    }
 }

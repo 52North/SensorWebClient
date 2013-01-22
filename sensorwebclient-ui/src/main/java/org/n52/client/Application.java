@@ -98,7 +98,7 @@ public final class Application {
         // init handlers before throwing events
         DataManagerSosImpl.getInst();
         new SOSController();
-        if (SesClientUtil.isSesActiv()) {
+        if (SesClientUtil.isSesEnabled()) {
             new SesController();
         }
         View.getInstance();

@@ -356,7 +356,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		createColorChangeButton();
 		tools.addMember(this.titleCol);
 		
-		if (SesClientUtil.isSesActiv()) {
+		if (SesClientUtil.isSesEnabled()) {
 			createSesCommunicatorButton();
 			tools.addMember(this.sesComButton);
 		}
@@ -1082,7 +1082,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.infoButton.hide();
 		this.deleteButton.hide();
 		this.legendEntryFoot.hide();
-		if (SesClientUtil.isSesActiv()) {
+		if (SesClientUtil.isSesEnabled()) {
 			this.sesComButton.hide();
 		}
 	}
@@ -1091,7 +1091,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.infoButton.show();
 		this.deleteButton.show();
 		this.legendEntryFoot.show();
-		if (SesClientUtil.isSesActiv()) {
+		if (SesClientUtil.isSesEnabled()) {
 			this.sesComButton.show();
 		}
 	}

@@ -141,24 +141,24 @@ public class RuleBuilder {
 
     public Rule build() {
         Rule rule = new Rule();
-        rule.setcCount(cCount);
-        rule.setcOperatorIndex(cOperatorIndex);
+        rule.setExitCount(cCount);
+        rule.setExitOperatorIndex(cOperatorIndex);
         rule.setCount(count);
-        rule.setcTime(cTime);
-        rule.setcTimeUnit(cTimeUnit);
-        rule.setcUnit(cUnit);
-        rule.setcValue(cValue);
+        rule.setExitTime(cTime);
+        rule.setExitTimeUnit(cTimeUnit);
+        rule.setExitUnit(cUnit);
+        rule.setExitValue(cValue);
         rule.setDescription(description);
         rule.setEnterEqualsExitCondition(enterEqualsExit);
         rule.setNotificationType(notificationType);
         rule.setPhenomenon(phenomenon);
         rule.setPublish(publish);
-        rule.setrOperatorIndex(rOperatorIndex);
+        rule.setEntryOperatorIndex(rOperatorIndex);
         rule.setrTime(rTime);
         rule.setrTimeUnit(rTimeUnit);
         rule.setRuleType(ruleType);
-        rule.setrUnit(rUnit);
-        rule.setrValue(rValue);
+        rule.setEntryUnit(rUnit);
+        rule.setEntryValue(rValue);
         rule.setStation(station);
         rule.setTitle(title);
         rule.setUserID(cookieAsInt);
