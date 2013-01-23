@@ -27,7 +27,6 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.n52.server.oxf.util.ConfigurationContext.SERVER_TIMEOUT;
 
 import java.io.ByteArrayInputStream;
-import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
