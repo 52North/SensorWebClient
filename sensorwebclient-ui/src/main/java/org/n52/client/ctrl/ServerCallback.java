@@ -38,6 +38,7 @@ public abstract class ServerCallback<T> implements AsyncCallback<T> {
     
     public abstract void onSuccess(T result);
 
+    @Override
     public void onFailure(Throwable caught) {
         requestMgr.removeRequest();
         ExceptionHandler.handleException(new RequestFailedException(errorMsg, caught));
