@@ -24,13 +24,18 @@
 
 package org.n52.client.ses.ui.subscribe;
 
+import static com.google.gwt.user.client.Cookies.getCookie;
 import static com.smartgwt.client.types.Alignment.RIGHT;
+import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ID;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
+import org.n52.client.bus.EventBus;
+import org.n52.client.ses.event.CreateSimpleRuleEvent;
+import org.n52.client.ses.event.SubscribeEvent;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.ui.ApplyCancelButtonLayout;
+import org.n52.shared.serializable.pojos.Rule;
 
-import com.google.gwt.core.shared.GWT;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -160,10 +165,15 @@ public class EventSubscriptionWindow extends Window {
         return new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+                Rule rule = controller.createSimpleRuleFromSelection();
+                CreateSimpleRuleEvent createEvt = new CreateSimpleRuleEvent(rule, false, "");
+                EventBus.getMainEventBus().fireEvent(createEvt);
                 
-                GWT.log("applied");
-                // TODO Auto-generated method stub
-                
+                // TODO we directly want to subscribe => make asynchronous event
+                String ruleName = rule.getTitle();
+                String cookie = getCookie(COOKIE_USER_ID);
+                SubscribeEvent subscribeEvt = new SubscribeEvent(cookie, ruleName, "email", "text");
+                EventBus.getMainEventBus().fireEvent(subscribeEvt);
             }
         };
     }
@@ -182,6 +192,7 @@ public class EventSubscriptionWindow extends Window {
         contextHelpContent.setStyleName("n52_sensorweb_client_create_abo_context_help");
             
             // TODO Auto-generated method stub
+        
         return contextHelpContent;
     }
 

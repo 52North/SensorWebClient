@@ -171,12 +171,19 @@ tr.sensorInfo:hover {
 }
 .n52_sensorweb_client_abo_name_textbox {
   height: auto;
+  overflow: hidden;
 }
 .n52_sensorweb_client_create_abo_selection {
   margin-bottom: 1em;
 }
+.n52_sensorweb_client_edit_create_abo_edit {
+  height: 100px;
+}
 .n52_sensorweb_client_create_abo_template_overundershootcondition {
-  height: 75px;
+  margin-bottom: 1em;
+}
+.n52_sensorweb_client_create_abo_template_sensorlosscondition {
+  margin-bottom: 1em;
 }
 .n52_sensorweb_client_create_abo_metadata {
   margin-bottom: 1em;

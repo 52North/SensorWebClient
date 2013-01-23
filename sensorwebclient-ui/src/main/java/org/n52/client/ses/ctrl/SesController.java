@@ -21,6 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
+
 package org.n52.client.ses.ctrl;
 
 import org.n52.client.bus.EventBus;
@@ -105,14 +106,38 @@ public class SesController extends ServiceController {
         return this.rm;
     }
 
-    private class SesControllerEventBroker implements RegisterUserEventHandler, LoginEventHandler, NewPasswordEventHandler,
-    LogoutEventHandler, GetSingleUserEventHandler, DeleteUserEventHandler, UpdateUserEventHandler,
-    SubscribeEventHandler, CreateSimpleRuleEventHandler, GetAllUsersEventHandler, GetStationsEventHandler,
-    GetPhenomenaEventHandler, GetAllOwnRulesEventHandler, GetAllOtherRulesEventHandler,
-    GetRegisteredSensorsEventHandler, UpdateSensorEventHandler, PublishRuleEventHandler, GetAllRulesEventHandler,
-    DeleteRuleEventHandler, DeleteSensorEventHandler, EditRuleEventHandler, GetAllPublishedRulesEventHandler, 
-    UnsubscribeEventHandler, RuleNameExistsEventHandler, CreateComplexRuleEventHandler, GetUserSubscriptionsEventHandler,
-    DeleteProfileEventHandler, GetTermsofUseEventHandler, SearchEventHandler, CopyEventHandler, GetDataEventHandler{
+    private class SesControllerEventBroker implements
+            RegisterUserEventHandler,
+            LoginEventHandler,
+            NewPasswordEventHandler,
+            LogoutEventHandler,
+            GetSingleUserEventHandler,
+            DeleteUserEventHandler,
+            UpdateUserEventHandler,
+            SubscribeEventHandler,
+            CreateSimpleRuleEventHandler,
+            GetAllUsersEventHandler,
+            GetStationsEventHandler,
+            GetPhenomenaEventHandler,
+            GetAllOwnRulesEventHandler,
+            GetAllOtherRulesEventHandler,
+            GetRegisteredSensorsEventHandler,
+            UpdateSensorEventHandler,
+            PublishRuleEventHandler,
+            GetAllRulesEventHandler,
+            DeleteRuleEventHandler,
+            DeleteSensorEventHandler,
+            EditRuleEventHandler,
+            GetAllPublishedRulesEventHandler,
+            UnsubscribeEventHandler,
+            RuleNameExistsEventHandler,
+            CreateComplexRuleEventHandler,
+            GetUserSubscriptionsEventHandler,
+            DeleteProfileEventHandler,
+            GetTermsofUseEventHandler,
+            SearchEventHandler,
+            CopyEventHandler,
+            GetDataEventHandler {
 
         public SesControllerEventBroker() {
             EventBus.getMainEventBus().addHandler(RegisterUserEvent.TYPE, this);
@@ -217,21 +242,21 @@ public class SesController extends ServiceController {
         }
 
         public void onGet(GetAllRulesEvent evt) {
-            SesController.this.getRm().getAllRules(); 
+            SesController.this.getRm().getAllRules();
         }
 
         public void onDeleteRule(DeleteRuleEvent evt) {
             SesController.this.getRm().deleteRule(evt.getRuleName(), evt.getRole());
         }
-        
+
         public void onDeleteSensor(DeleteSensorEvent evt) {
             SesController.this.getRm().deleteSensor(evt.getSensorID());
         }
-        
+
         public void onGet(EditRuleEvent evt) {
             SesController.this.getRm().getEditRule(evt.getRuleName());
         }
-        
+
         public void onGet(GetAllPublishedRulesEvent evt) {
             SesController.this.getRm().getAllPublishedRules(evt.getOperator());
         }
@@ -258,7 +283,7 @@ public class SesController extends ServiceController {
 
         public void onGet(GetTermsOfUseEvent evt) {
             SesController.this.getRm().getTermsOfUse(evt.getLanguage());
-            
+
         }
 
         public void onSearch(SearchEvent evt) {
@@ -270,7 +295,7 @@ public class SesController extends ServiceController {
         }
 
         public void onGetData(GetDataEvent evt) {
-            SesController.this.getRm().getData(); 
+            SesController.this.getRm().getData();
         }
     }
 }
