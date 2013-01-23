@@ -23,8 +23,6 @@
  */
 package org.n52.server.ses;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
@@ -33,6 +31,8 @@ import javax.swing.JOptionPane;
 
 import org.jfree.util.Log;
 import org.n52.server.ses.eml.Meta_Builder;
+import org.n52.server.ses.feeder.FeederConfig;
+import org.n52.server.ses.feeder.SosSesFeeder;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.service.SesSensorServiceImpl;
 import org.n52.server.ses.service.SesUserServiceImpl;
@@ -68,16 +68,19 @@ public class SESInitializationServlet extends HttpServlet {
         try {
             LOGGER.debug("Initialize " + getClass().getName() +" Servlet for SES Client");
 
-            Config.init(this.getServletContext().getRealPath("/"));
-            Config.USER_NAME = this.getServletContext().getInitParameter("MAIL_USERNAME");
-            Config.PASSWORD = this.getServletContext().getInitParameter("MAIL_PASSWORD");
-            Config.SENDER_ADDRESS = this.getServletContext().getInitParameter("MAIL_SENDER_ADDRESS");
-            Config.SMTP_HOST = this.getServletContext().getInitParameter("MAIL_SMTP_HOST");
-            Config.STARTTLS_ENABLE = this.getServletContext().getInitParameter("MAIL_STARTTLS_ENABLE");
-            Config.PORT = this.getServletContext().getInitParameter("MAIL_PORT");
-            Config.AUTH = this.getServletContext().getInitParameter("MAIL_AUTH");
-            Config.SSL_ENABLE = this.getServletContext().getInitParameter("MAIL_SSL_ENABLE");
+            SesConfig.init(this.getServletContext().getRealPath("/"));
+            SesConfig.USER_NAME = this.getServletContext().getInitParameter("MAIL_USERNAME");
+            SesConfig.PASSWORD = this.getServletContext().getInitParameter("MAIL_PASSWORD");
+            SesConfig.SENDER_ADDRESS = this.getServletContext().getInitParameter("MAIL_SENDER_ADDRESS");
+            SesConfig.SMTP_HOST = this.getServletContext().getInitParameter("MAIL_SMTP_HOST");
+            SesConfig.STARTTLS_ENABLE = this.getServletContext().getInitParameter("MAIL_STARTTLS_ENABLE");
+            SesConfig.PORT = this.getServletContext().getInitParameter("MAIL_PORT");
+            SesConfig.AUTH = this.getServletContext().getInitParameter("MAIL_AUTH");
+            SesConfig.SSL_ENABLE = this.getServletContext().getInitParameter("MAIL_SSL_ENABLE");
 
+            // initialize feeder
+            SosSesFeeder.getInst();
+            
             LOGGER.info("ckeck availability of SES and WNS");
             Thread t = new Thread(new Runnable() {
                 public void run() {
@@ -126,13 +129,13 @@ public class SESInitializationServlet extends HttpServlet {
                         // check if SES is available
                         if (!SESInitializationServlet.SESavailable) {
                             SESInitializationServlet.SESavailable = SesServerUtil.isAvailable();
-                            LOGGER.trace("SES (\"" + Config.sesEndpoint + "\") is available = " + SESInitializationServlet.SESavailable);
+                            LOGGER.trace("SES (\"" + SesConfig.sesEndpoint + "\") is available = " + SESInitializationServlet.SESavailable);
                         }
 
                         // check if WNS is available
                         if (!SESInitializationServlet.WNSavailable) {
                             SESInitializationServlet.WNSavailable = WnsUtil.isAvailable();
-                            LOGGER.trace("WNS (\"" + Config.wns + "\") is available = " + SESInitializationServlet.WNSavailable);
+                            LOGGER.trace("WNS (\"" + SesConfig.wns + "\") is available = " + SESInitializationServlet.WNSavailable);
                         }
                         // check all 20 seconds
                         Thread.yield();
@@ -181,7 +184,7 @@ public class SESInitializationServlet extends HttpServlet {
         } catch (Exception e) {
             LOGGER.error("Template validation failed! Please change the templates and restart the application", e);
             SESInitializationServlet.initialized = false;
-            JOptionPane.showMessageDialog(null, Config.adminMessage);
+            JOptionPane.showMessageDialog(null, SesConfig.adminMessage);
         }
 
     }
@@ -205,7 +208,7 @@ public class SESInitializationServlet extends HttpServlet {
                     // create default admin on start
                     UserDTO admin =
                             SesUserServiceImpl.createUserDTO(new User("admin", "Admin", SesServerUtil.createMD5("admin"),
-                                    Config.SENDER_ADDRESS, "", UserRole.ADMIN, true));
+                                    SesConfig.SENDER_ADDRESS, "", UserRole.ADMIN, true));
                     admin.setRegisterID(UUID.randomUUID().toString());
 
                     // check if default admin already exists

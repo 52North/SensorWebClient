@@ -26,7 +26,7 @@ import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-import org.n52.server.ses.feeder.Configuration;
+import org.n52.server.ses.feeder.FeederConfig;
 import org.n52.server.ses.feeder.connector.SESConnector;
 import org.n52.server.ses.feeder.connector.SOSConnector;
 import org.n52.server.ses.feeder.hibernate.InitSessionFactory;
@@ -115,7 +115,7 @@ public class FeedObservationThread extends Thread {
                 if (startUpdate == null) {
                     // create start timestamp for feeding observations
                     Calendar firstUpdateTime = new GregorianCalendar();
-                    firstUpdateTime.add(Calendar.MILLISECOND, -Configuration.getInstance().getStartTimestamp());
+                    firstUpdateTime.add(Calendar.MILLISECOND, -FeederConfig.getInstance().getStartTimestamp());
                     startUpdate = firstUpdateTime;
                     log.debug("Start Time generated for first feeding of " + sensor.getProcedure() +": "+ startUpdate.getTimeInMillis());
                     // FIXME save to database the new defined start time for this sensor
@@ -229,7 +229,7 @@ public class FeedObservationThread extends Thread {
         String[] blocks = values.split(blockSeperator);
         StringBuffer newValues = new StringBuffer();
         try {
-            List<String> noDatas = Configuration.getInstance().getNoDatas();
+            List<String> noDatas = FeederConfig.getInstance().getNoDatas();
             for (String block : blocks) {
                 String[] value = block.split(tokenSeparator);
                 // check if noData values matching
@@ -269,7 +269,7 @@ public class FeedObservationThread extends Thread {
         long updateInterval = 0;
         try {
 
-            updateInterval = Configuration.getInstance().getUpdateInterval();
+            updateInterval = FeederConfig.getInstance().getUpdateInterval();
             XmlCursor cResult = observation.getResult().newCursor();
             cResult.toChild(new QName("http://www.opengis.net/swe/1.0.1", "DataArray"));
             DataArrayDocument dataArrayDoc = null;
@@ -313,8 +313,8 @@ public class FeedObservationThread extends Thread {
                 updateInterval = dateTimeLast.getMillis() - dateTimeFirst.getMillis();
             }
 
-            if (updateInterval <= Configuration.getInstance().getUpdateInterval()) {
-                return Configuration.getInstance().getUpdateInterval();
+            if (updateInterval <= FeederConfig.getInstance().getUpdateInterval()) {
+                return FeederConfig.getInstance().getUpdateInterval();
             }
         } catch (IllegalStateException e) {
             log.debug("Configuration is not available (anymore).", e);

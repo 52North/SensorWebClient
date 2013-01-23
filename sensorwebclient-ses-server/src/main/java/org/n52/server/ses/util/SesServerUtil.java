@@ -42,7 +42,7 @@ import org.n52.oxf.ows.ExceptionReport;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.ses.adapter.ISESRequestBuilder;
 import org.n52.oxf.ses.adapter.SESAdapter;
-import org.n52.server.ses.Config;
+import org.n52.server.ses.SesConfig;
 import org.n52.server.ses.eml.Constants;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.shared.serializable.pojos.BasicRule;
@@ -247,19 +247,19 @@ public class SesServerUtil {
      * a response from the SES. The content of the response is not checked here.
      */
     public static boolean isAvailable(){
-        SESAdapter adapter = new SESAdapter(Config.serviceVersion);
+        SESAdapter adapter = new SESAdapter(SesConfig.serviceVersion);
 
         // getCapabilities
-        Operation op = new Operation(SESAdapter.GET_CAPABILITIES, Config.sesEndpoint + "?", Config.sesEndpoint);
+        Operation op = new Operation(SESAdapter.GET_CAPABILITIES, SesConfig.sesEndpoint + "?", SesConfig.sesEndpoint);
 
         try {
             ParameterContainer parameter = new ParameterContainer();
-            parameter.addParameterShell(ISESRequestBuilder.GET_CAPABILITIES_SES_URL, Config.sesEndpoint);
+            parameter.addParameterShell(ISESRequestBuilder.GET_CAPABILITIES_SES_URL, SesConfig.sesEndpoint);
             OperationResult opResult = adapter.doOperation(op, parameter);
 
             return true;
         } catch (OXFException e) {
-            LOGGER.trace("SES  is not available: {}", Config.sesEndpoint);
+            LOGGER.trace("SES  is not available: {}", SesConfig.sesEndpoint);
             return false;
         } catch (ExceptionReport e) {
             LOGGER.error("Could not connect due to server error.", e);

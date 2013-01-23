@@ -29,7 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.n52.client.service.SesSensorService;
-import org.n52.server.ses.Config;
+import org.n52.server.ses.SesConfig;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.mail.MailSender;
 import org.n52.server.ses.util.SesParser;
@@ -68,7 +68,7 @@ public class SesSensorServiceImpl implements SesSensorService {
 
     private static SesParser getParser(){
         if (SesSensorServiceImpl.parser == null) {
-            return new SesParser(Config.serviceVersion, Config.sesEndpoint);
+            return new SesParser(SesConfig.serviceVersion, SesConfig.sesEndpoint);
         }
         return parser;
     }

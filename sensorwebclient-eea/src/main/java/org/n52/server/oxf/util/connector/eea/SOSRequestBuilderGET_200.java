@@ -76,7 +76,7 @@ public class SOSRequestBuilderGET_200 implements ISOSRequestBuilder {
 	}
 
 	private ITime getSpecifiedTime(ParameterContainer parameters) {
-	    Object tempFilter = parameters.getParameterShellWithServiceSidedName("eventTime").getSpecifiedValue();
+	    Object tempFilter = parameters.getParameterShellWithServiceSidedName(GET_OBSERVATION_TEMPORAL_FILTER_PARAMETER).getSpecifiedValue();
         if (tempFilter instanceof ITime) {
             return (ITime) tempFilter;
         } else {
@@ -151,7 +151,8 @@ public class SOSRequestBuilderGET_200 implements ISOSRequestBuilder {
         StringBuilder request = new StringBuilder("service=SOS&");
         request.append("version=").append(encode(sosVersion)).append("&");
         request.append("procedure=").append(encode(procedure)).append("&");
-        request.append("spatialFilter=").append(encode(bbox)).append("&");
+        // TODO check this, spatial filter works with EEA-SOS, but not with the SYKE-SOS
+//        request.append("spatialFilter=").append(encode(bbox)).append("&");
         request.append("observedProperty=").append(encode(phenomenon)).append("&");
         request.append("request=GetFeatureOfInterest&");
         return request.append("f=xml").toString();

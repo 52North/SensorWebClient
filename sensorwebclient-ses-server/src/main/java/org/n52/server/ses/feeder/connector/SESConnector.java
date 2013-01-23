@@ -38,7 +38,7 @@ import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.ows.ExceptionReport;
 import org.n52.oxf.ows.ServiceDescriptor;
 import org.n52.oxf.ows.capabilities.Operation;
-import org.n52.server.ses.feeder.Configuration;
+import org.n52.server.ses.feeder.FeederConfig;
 import org.n52.server.ses.feeder.SosSesFeeder;
 import org.n52.server.ses.feeder.util.SESAdapter_01;
 import org.n52.server.ses.feeder.util.SESRequestBuilder_01;
@@ -76,10 +76,10 @@ public class SESConnector {
     public SESConnector() {
         this.sesAdapter = new SESAdapter_01();
         try {
-            this.topic = Configuration.getInstance().getSesDefaultTopic();
-            this.dialect = Configuration.getInstance().getSesDefaultTopicDialect();
-            this.sesUrl = Configuration.getInstance().getSesUrl()
-                    + Configuration.getInstance().getSesBasicPortType();
+            this.topic = FeederConfig.getInstance().getSesDefaultTopic();
+            this.dialect = FeederConfig.getInstance().getSesDefaultTopicDialect();
+            this.sesUrl = FeederConfig.getInstance().getSesUrl()
+                    + FeederConfig.getInstance().getSesBasicPortType();
         }
         catch (IllegalStateException e) {
             e.printStackTrace();
@@ -127,10 +127,10 @@ public class SESConnector {
 
         try {
 
-            String defaultTopicDialect = Configuration.getInstance().getSesDefaultTopicDialect();
-            String defaultTopic = Configuration.getInstance().getSesDefaultTopic();
-            String lifetime = Configuration.getInstance().getSesLifetimeDuration();
-            String localEndpoint = Configuration.getInstance().getSesEndpoint();
+            String defaultTopicDialect = FeederConfig.getInstance().getSesDefaultTopicDialect();
+            String defaultTopic = FeederConfig.getInstance().getSesDefaultTopic();
+            String lifetime = FeederConfig.getInstance().getSesLifetimeDuration();
+            String localEndpoint = FeederConfig.getInstance().getSesEndpoint();
             String sensorMLString = sensorML.toString();
             parameter.addParameterShell(REGISTER_PUBLISHER_SES_URL, this.sesUrl);
             parameter.addParameterShell(REGISTER_PUBLISHER_SENSORML, sensorMLString);
@@ -323,7 +323,7 @@ public class SESConnector {
                 StringTokenizer valuesTokenizer = new StringTokenizer(valuesString, ";");
                 // If only the latest observation is wished, find youngest
                 // observation.
-                if (Configuration.getInstance().isOnlyYoungestName()) {
+                if (FeederConfig.getInstance().isOnlyYoungestName()) {
                     DateTime youngest = new DateTime(0);
                     String youngestValues = "";
                     DateTimeFormatter fmt = ISODateTimeFormat.dateTime();

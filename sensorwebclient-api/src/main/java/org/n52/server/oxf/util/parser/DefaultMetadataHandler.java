@@ -432,6 +432,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
      *        the stations containing metadata
      */
     private static void removeIncompleteStations(SOSMetadata metadata) {
+    	// TODO check why the stations are not really removed (Belgium-SOS)
         Collection<Station> stations = metadata.getStations();
         Iterator<Station> iterator = stations.iterator();
         while (iterator.hasNext()) {

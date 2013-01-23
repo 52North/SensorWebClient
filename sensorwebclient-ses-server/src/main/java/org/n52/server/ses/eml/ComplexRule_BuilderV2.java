@@ -37,7 +37,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.n52.server.ses.Config;
+import org.n52.server.ses.SesConfig;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.shared.serializable.pojos.BasicRule;
 import org.n52.shared.serializable.pojos.ComplexRule;
@@ -206,7 +206,7 @@ public class ComplexRule_BuilderV2 {
             }
 
             // add logicalPatterns: logicalCount = (ruleNames.size()*2)-2
-            URL logicalURL = new URL(Config.resLocation_logical);
+            URL logicalURL = new URL(SesConfig.resLocation_logical);
             int logicalCount = (ruleNames.size()*2)-2;
             for (int i = 0; i < logicalCount; i++) {
                 Document logDoc = docBuilder.parse(logicalURL.openStream());
@@ -219,7 +219,7 @@ public class ComplexRule_BuilderV2 {
             }
 
             // add one structuralPattern
-            URL structuralURL = new URL(Config.resLocation_structural);
+            URL structuralURL = new URL(SesConfig.resLocation_structural);
             Document structDoc = docBuilder.parse(structuralURL.openStream());
             NodeList complexPatternsList2 = structDoc.getElementsByTagName(Constants.complexPattern);
             for (int j = 0; j < complexPatternsList2.getLength(); j++) {

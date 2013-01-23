@@ -33,7 +33,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.n52.server.ses.Config;
+import org.n52.server.ses.SesConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,10 +45,10 @@ public class MailSender {
         LOGGER.debug("send register mail to: " + address);
 
         String link = "?user=" + id;
-        String tempText_de = Config.mailTextRegister_de.replace("_NAME_", userName);
-        String tempText_en = Config.mailTextRegister_en.replace("_NAME_", userName);
+        String tempText_de = SesConfig.mailTextRegister_de.replace("_NAME_", userName);
+        String tempText_en = SesConfig.mailTextRegister_en.replace("_NAME_", userName);
         
-        String text = tempText_en + "\n" + tempText_de + "\n" + Config.URL + link;
+        String text = tempText_en + "\n" + tempText_de + "\n" + SesConfig.URL + link;
 
         Session session = Session.getDefaultInstance(getProperties(), getMailAuthenticator());
 
@@ -57,11 +57,11 @@ public class MailSender {
             Message msg = new MimeMessage(session);
 
             // set sender and receiver
-            msg.setFrom(new InternetAddress(Config.SENDER_ADDRESS));
+            msg.setFrom(new InternetAddress(SesConfig.SENDER_ADDRESS));
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(address, false));
 
             // set subject to mail
-            msg.setSubject(Config.mailSubjectRegister_en + "/" + Config.mailSubjectRegister_de);
+            msg.setSubject(SesConfig.mailSubjectRegister_en + "/" + SesConfig.mailSubjectRegister_de);
             msg.setText(text);
             msg.setSentDate(new Date());
 
@@ -76,8 +76,8 @@ public class MailSender {
     public static void sendPasswordMail(String address, String newPassword) {
         LOGGER.debug("send new password to: " + address);
 
-        final String text = Config.mailTextPassword_en + ": " + "\n\n" +
-        Config.mailTextPassword_de + ": " + "\n\n" + newPassword;
+        final String text = SesConfig.mailTextPassword_en + ": " + "\n\n" +
+        SesConfig.mailTextPassword_de + ": " + "\n\n" + newPassword;
 
         Session session = Session.getDefaultInstance(getProperties(), getMailAuthenticator());
 
@@ -86,11 +86,11 @@ public class MailSender {
             Message msg = new MimeMessage(session);
 
             // set sender and receiver
-            msg.setFrom(new InternetAddress(Config.SENDER_ADDRESS));
+            msg.setFrom(new InternetAddress(SesConfig.SENDER_ADDRESS));
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(address, false));
 
             // set subject to mail
-            msg.setSubject(Config.mailSubjectPassword_en + "/" + Config.mailSubjectPassword_de);
+            msg.setSubject(SesConfig.mailSubjectPassword_en + "/" + SesConfig.mailSubjectPassword_de);
             msg.setText(text);
             msg.setSentDate(new Date());
 
@@ -106,8 +106,8 @@ public class MailSender {
         LOGGER.debug("send delete profile mail to: " + address);
 
         String link = "?delete=" + userID;
-        String text = Config.mailDeleteProfile_en + ": " + "\n\n" +
-        Config.mailDeleteProfile_de + ": " + "\n\n" + Config.URL + link;
+        String text = SesConfig.mailDeleteProfile_en + ": " + "\n\n" +
+        SesConfig.mailDeleteProfile_de + ": " + "\n\n" + SesConfig.URL + link;
 
         Session session = Session.getDefaultInstance(getProperties(), getMailAuthenticator());
 
@@ -116,11 +116,11 @@ public class MailSender {
             Message msg = new MimeMessage(session);
 
             // set sender and receiver
-            msg.setFrom(new InternetAddress(Config.SENDER_ADDRESS));
+            msg.setFrom(new InternetAddress(SesConfig.SENDER_ADDRESS));
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(address, false));
 
             // set subject
-            msg.setSubject(Config.mailSubjectDeleteProfile_en + "/" + Config.mailSubjectDeleteProfile_de);
+            msg.setSubject(SesConfig.mailSubjectDeleteProfile_en + "/" + SesConfig.mailSubjectDeleteProfile_de);
             msg.setText(text);
             msg.setSentDate(new Date());
 
@@ -138,8 +138,8 @@ public class MailSender {
         LOGGER.debug("send email validation mail to: " + address);
 
         String link = "?validate=" + userID;
-        String text = Config.mailTextValidation_en + ": " + "\n" +
-        Config.mailTextValidation_de + ": " + "\n" + Config.URL + link;
+        String text = SesConfig.mailTextValidation_en + ": " + "\n" +
+        SesConfig.mailTextValidation_de + ": " + "\n" + SesConfig.URL + link;
 
         Session session = Session.getDefaultInstance(getProperties(), getMailAuthenticator());
 
@@ -148,11 +148,11 @@ public class MailSender {
             Message msg = new MimeMessage(session);
 
             // set sender and receiver
-            msg.setFrom(new InternetAddress(Config.SENDER_ADDRESS));
+            msg.setFrom(new InternetAddress(SesConfig.SENDER_ADDRESS));
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(address, false));
 
             // set subject
-            msg.setSubject(Config.mailSubjectValidation_en + "/" + Config.mailSubjectValidation_de);
+            msg.setSubject(SesConfig.mailSubjectValidation_en + "/" + SesConfig.mailSubjectValidation_de);
             msg.setText(text);
             msg.setSentDate(new Date());
 
@@ -169,8 +169,8 @@ public class MailSender {
     public static boolean sendSensorDeactivatedMail(String address, String sensorID) {
         LOGGER.debug("send email validation mail to: " + address);
 
-        String text = Config.mailSubjectSensor_en + ": " + "\n" +
-        Config.mailSubjectSensor_de + ": " + "\n\n" +
+        String text = SesConfig.mailSubjectSensor_en + ": " + "\n" +
+        SesConfig.mailSubjectSensor_de + ": " + "\n\n" +
         sensorID;
 
         Session session = Session.getDefaultInstance(getProperties(), getMailAuthenticator());
@@ -180,11 +180,11 @@ public class MailSender {
             Message msg = new MimeMessage(session);
 
             // set sender and receiver
-            msg.setFrom(new InternetAddress(Config.SENDER_ADDRESS));
+            msg.setFrom(new InternetAddress(SesConfig.SENDER_ADDRESS));
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(address, false));
 
             // set subject
-            msg.setSubject(Config.mailSubjectSensor_en + "/" + Config.mailSubjectSensor_de);
+            msg.setSubject(SesConfig.mailSubjectSensor_en + "/" + SesConfig.mailSubjectSensor_de);
             msg.setText(text);
             msg.setSentDate(new Date());
 
@@ -201,21 +201,21 @@ public class MailSender {
     private static Properties getProperties() {
         Properties properties = new Properties();
 
-        properties.put("mail.smtp.starttls.enable", Config.STARTTLS_ENABLE);
-        properties.put("mail.smtp.host", Config.SMTP_HOST);
-        properties.put("mail.smtp.user", Config.USER_NAME);
-        properties.put("mail.smtp.password", Config.PASSWORD);
-        properties.put("mail.smtp.port", Config.PORT); 
-        properties.put("mail.smtp.auth", Config.AUTH); 
-        properties.put("mail.smtp.ssl.enable", Config.SSL_ENABLE);
+        properties.put("mail.smtp.starttls.enable", SesConfig.STARTTLS_ENABLE);
+        properties.put("mail.smtp.host", SesConfig.SMTP_HOST);
+        properties.put("mail.smtp.user", SesConfig.USER_NAME);
+        properties.put("mail.smtp.password", SesConfig.PASSWORD);
+        properties.put("mail.smtp.port", SesConfig.PORT); 
+        properties.put("mail.smtp.auth", SesConfig.AUTH); 
+        properties.put("mail.smtp.ssl.enable", SesConfig.SSL_ENABLE);
 
         return properties;
     }
 
     private static MailAuthenticator getMailAuthenticator() {
         // http://javamail.kenai.com/nonav/javadocs/javax/mail/Session.html#getDefaultInstance%28java.util.Properties,%20javax.mail.Authenticator%29
-        if (Boolean.parseBoolean(Config.AUTH)) {
-            return new MailAuthenticator(Config.USER_NAME, Config.PASSWORD);
+        if (Boolean.parseBoolean(SesConfig.AUTH)) {
+            return new MailAuthenticator(SesConfig.USER_NAME, SesConfig.PASSWORD);
         }
         return null;
     }

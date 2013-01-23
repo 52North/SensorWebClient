@@ -37,7 +37,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
-import org.n52.server.ses.Config;
+import org.n52.server.ses.SesConfig;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.util.RulesUtil;
 import org.n52.server.ses.util.SESUnitConverter;
@@ -154,7 +154,7 @@ public class BasicRule_2_Builder {
         patternReferenceText.add(complexPatternID.get(2));
 
         // build document
-        URL url = new URL(Config.resLocation_2);
+        URL url = new URL(SesConfig.resLocation_2);
 
         // build document
         DocumentBuilderFactory docFac = DocumentBuilderFactory.newInstance();

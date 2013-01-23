@@ -37,7 +37,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.n52.server.ses.Config;
+import org.n52.server.ses.SesConfig;
 import org.n52.shared.serializable.pojos.BasicRule;
 import org.n52.shared.serializable.pojos.User;
 import org.slf4j.Logger;
@@ -86,7 +86,7 @@ public class Meta_Builder {
         }
 
         // location of the meta file
-        URL metaURL = new URL(Config.resLocation_meta_text);
+        URL metaURL = new URL(SesConfig.resLocation_meta_text);
 
         // create document
         DocumentBuilderFactory docFac = DocumentBuilderFactory.newInstance();
@@ -152,7 +152,7 @@ public class Meta_Builder {
         }
 
         // location of the meta file
-        URL metaURL = new URL(Config.resLocation_meta_text);
+        URL metaURL = new URL(SesConfig.resLocation_meta_text);
 
         // message with place holders
         String message =
@@ -227,9 +227,9 @@ public class Meta_Builder {
         URL metaURL = null;
 
         if (format.equals("XML")) {
-            metaURL = new URL(Config.resLocation_meta_XML);
+            metaURL = new URL(SesConfig.resLocation_meta_XML);
         } else if (format.equals("EML")) {
-            metaURL = new URL(Config.resLocation_meta_EML);
+            metaURL = new URL(SesConfig.resLocation_meta_EML);
         }
 
         // build meta document

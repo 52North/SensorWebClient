@@ -36,7 +36,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
-import org.n52.server.ses.Config;
+import org.n52.server.ses.SesConfig;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.util.RulesUtil;
 import org.n52.server.ses.util.SESUnitConverter;
@@ -151,7 +151,7 @@ public class BasicRule_4_Builder {
 
         try {
         	// URL adress of the BR_4.xml file
-            URL url = new URL(Config.resLocation_4);
+            URL url = new URL(SesConfig.resLocation_4);
 
             // build document
             DocumentBuilderFactory docFac = DocumentBuilderFactory.newInstance();

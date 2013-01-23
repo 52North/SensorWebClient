@@ -29,7 +29,7 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.n52.server.ses.Config;
+import org.n52.server.ses.SesConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +47,7 @@ public class WnsUtil {
 	        HttpURLConnection connect = null;
 
 	        try {
-	            URL url = new URL(Config.wns);
+	            URL url = new URL(SesConfig.wns);
 	            connect = (HttpURLConnection) url.openConnection();
 	            connect.setRequestProperty("Content-Type", "text/xml");
 	            connect.setRequestMethod("POST");
@@ -63,7 +63,7 @@ public class WnsUtil {
 	            
 	            return true;
 	        } catch (Exception e) {
-        		LOGGER.trace("WNS is not available: {}", Config.wns);
+        		LOGGER.trace("WNS is not available: {}", SesConfig.wns);
 	            if (connect != null) {
 	            	connect.disconnect();
 				}
@@ -85,7 +85,7 @@ public class WnsUtil {
         StringBuffer sb = new StringBuffer();
         String result;
 
-        url = new URL(Config.wns);
+        url = new URL(SesConfig.wns);
         HttpURLConnection connect = (HttpURLConnection) url.openConnection();
         connect.setRequestProperty("Content-Type", "text/xml");
         connect.setRequestMethod("POST");
@@ -124,7 +124,7 @@ public class WnsUtil {
         URL url;
         StringBuffer sb = new StringBuffer();
 
-        url = new URL(Config.wns);
+        url = new URL(SesConfig.wns);
         HttpURLConnection connect = (HttpURLConnection) url.openConnection();
         connect.setRequestProperty("Content-Type", "text/xml");
         connect.setRequestMethod("POST");
@@ -158,7 +158,7 @@ public class WnsUtil {
         StringBuffer sb = new StringBuffer();
         String result;
 
-        url = new URL(Config.wns);
+        url = new URL(SesConfig.wns);
         HttpURLConnection connect = (HttpURLConnection) url.openConnection();
         connect.setRequestProperty("Content-Type", "text/xml");
         connect.setRequestMethod("POST");

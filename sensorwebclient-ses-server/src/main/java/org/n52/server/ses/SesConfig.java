@@ -31,9 +31,9 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Config {
+public class SesConfig {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SesConfig.class);
 
     public static boolean initialized = false;
 
@@ -154,7 +154,7 @@ public class Config {
      */
     public synchronized static void init(String realPath){
         LOGGER.debug("init");
-        Config.propertiesLocation = realPath + "properties/ses-client.properties";
+        SesConfig.propertiesLocation = realPath + "properties/ses-client.properties";
         if (!initialized) {
             try {
                 LOGGER.info("## Loading properties ##");

@@ -51,10 +51,10 @@ public class SensorTimerTaskServlet extends HttpServlet {
 
             t = new Timer();
             Date d = new Date();
-            t.scheduleAtFixedRate(new GetSensorsTimerTask(), d, Config.sensorUpdateRate);
+            t.scheduleAtFixedRate(new GetSensorsTimerTask(), d, SesConfig.sensorUpdateRate);
 
             t2 = new Timer();
-            t2.scheduleAtFixedRate(new DeleteUnregisteredUserTimerTask(), d, Config.deleteUserInterval);  
+            t2.scheduleAtFixedRate(new DeleteUnregisteredUserTimerTask(), d, SesConfig.deleteUserInterval);  
     }
     
     @Override

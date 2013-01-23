@@ -30,7 +30,7 @@ import java.util.List;
 import org.n52.client.service.SesRuleService;
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 import org.n52.oxf.adapter.OperationResult;
-import org.n52.server.ses.Config;
+import org.n52.server.ses.SesConfig;
 import org.n52.server.ses.eml.BasicRule_1_Builder;
 import org.n52.server.ses.eml.BasicRule_2_Builder;
 import org.n52.server.ses.eml.BasicRule_3_Builder;
@@ -39,8 +39,8 @@ import org.n52.server.ses.eml.BasicRule_5_Builder;
 import org.n52.server.ses.eml.ComplexRule_Builder;
 import org.n52.server.ses.eml.ComplexRule_BuilderV2;
 import org.n52.server.ses.eml.Meta_Builder;
+import org.n52.server.ses.feeder.SosSesFeeder;
 import org.n52.server.ses.hibernate.HibernateUtil;
-import org.n52.server.ses.util.FeederCommunicator;
 import org.n52.server.ses.util.RulesUtil;
 import org.n52.server.ses.util.SearchUtil;
 import org.n52.server.ses.util.SesServerUtil;
@@ -63,7 +63,7 @@ import org.slf4j.LoggerFactory;
 public class SesRulesServiceImpl implements SesRuleService {
     
     private static final Logger LOG = LoggerFactory.getLogger(SesRulesServiceImpl.class);
-
+    
     @Override
     public SesClientResponse subscribe(String userID, String ruleName, String medium, String eml) throws Exception {
         try {
@@ -163,7 +163,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                         try {
                             // subscribe to SES
                             OperationResult opResult =
-                                SesServerUtil.subscribe(Config.serviceVersion, Config.sesEndpoint, Config.consumerReference, content);
+                                SesServerUtil.subscribe(SesConfig.serviceVersion, SesConfig.sesEndpoint, SesConfig.consumerReference, content);
                             museResource = SesServerUtil.getSubscriptionIDfromSES(opResult);
                             if ((museResource == null) || (museResource.equals(""))) {
                                 throw new IllegalArgumentException("Illegal Muse resource");
@@ -191,9 +191,8 @@ public class SesRulesServiceImpl implements SesRuleService {
                         try {
                             for (int j = 0; j < stationIDList.size(); j++) {
                                 if (HibernateUtil.getSensorByID(stationIDList.get(j)).getInUse() == 0) {
-                                    LOG.debug("FeederCommunicator: " + FeederCommunicator.class);
                                     LOG.debug("Station ID: " + stationIDList.get(j));
-                                    FeederCommunicator.addUsedSensor(stationIDList.get(j));
+                                    SosSesFeeder.getInst().addUsedSensor(stationIDList.get(j));
                                 }
                             }
                         } catch (Exception e) {
@@ -250,7 +249,7 @@ public class SesRulesServiceImpl implements SesRuleService {
             try {
                 // unsubscribe from SES
                 LOG.debug("unsubscribe from SES: " + museID);
-                SesServerUtil.unSubscribe(Config.serviceVersion, Config.sesEndpoint, museID);
+                SesServerUtil.unSubscribe(SesConfig.serviceVersion, SesConfig.sesEndpoint, museID);
             } catch (Exception e) {
                 LOG.error("Failed to unsubscribe", e);
                 return new SesClientResponse(SesClientResponse.types.ERROR_UNSUBSCRIBE_SES);
@@ -269,7 +268,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                     
                     if (HibernateUtil.getSensorByID(sensorID).getInUse() == 0) {
                         LOG.debug("remove sensor from used list");
-                        FeederCommunicator.removeUsedSensor(sensorID);
+                        SosSesFeeder.getInst().removeUsedSensor(sensorID);
                     }
                 }
             } catch (Exception e) {
@@ -377,7 +376,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                             try {
                                 // unsubscribe from SES
                                 LOG.debug("unsubscribe from SES: " + subscription.getSubscriptionID());
-                                SesServerUtil.unSubscribe(Config.serviceVersion, Config.sesEndpoint, subscription.getSubscriptionID());
+                                SesServerUtil.unSubscribe(SesConfig.serviceVersion, SesConfig.sesEndpoint, subscription.getSubscriptionID());
                                 subscribe(String.valueOf(rule.getUserID()), rule.getTitle(), subscription.getMedium(), subscription.getFormat());
                             } catch (Exception e) {
                                 LOG.error("Could not unsubscribe from SES", e);
@@ -824,7 +823,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                             try {
                                 // unsubscribe from SES
                                 LOG.debug("unsubscribe from SES: " + subscription.getSubscriptionID());
-                                SesServerUtil.unSubscribe(Config.serviceVersion, Config.sesEndpoint, subscription.getSubscriptionID());
+                                SesServerUtil.unSubscribe(SesConfig.serviceVersion, SesConfig.sesEndpoint, subscription.getSubscriptionID());
                                 subscribe(String.valueOf(rule.getUserID()), rule.getTitle(), subscription.getMedium(), subscription.getFormat());
                             } catch (Exception e) {
                                 LOG.error("Error occured while unsubscribing a rule from SES: " + e.getMessage(), e);

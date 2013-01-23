@@ -36,7 +36,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.n52.client.service.SesUserService;
-import org.n52.server.ses.Config;
+import org.n52.server.ses.SesConfig;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.mail.MailSender;
 import org.n52.server.ses.util.SesServerUtil;
@@ -153,7 +153,7 @@ public class SesUserServiceImpl implements SesUserService {
     public synchronized static void deleteUnregisteredUser() {
         // XXX refactor
         LOG.debug("delete all unregistered user");
-        LOG.debug("Timeinterval in milliseconds: " + Config.deleteUserInterval);
+        LOG.debug("Timeinterval in milliseconds: " + SesConfig.deleteUserInterval);
         List<User> users = HibernateUtil.deleteUnregisteredUser();
 
         for (int i = 0; i < users.size(); i++) {
@@ -162,7 +162,7 @@ public class SesUserServiceImpl implements SesUserService {
             Date date = new Date(user.getDate().toGMTString());
             Date currentDate = new Date(new Date().toGMTString());
             long difference = currentDate.getTime() - date.getTime();
-            if (difference >= Config.deleteUserInterval) {
+            if (difference >= SesConfig.deleteUserInterval) {
                 LOG.debug("user " + user.getName() + " has not verrified his registration since " + difference
                         / (1000 * 60 * 60) + " hours!");
                 // delete user
@@ -351,7 +351,7 @@ public class SesUserServiceImpl implements SesUserService {
                     // delete from DB
                     HibernateUtil.deleteSubscription(subscriptionID, String.valueOf(userID));
                     // delete from SES
-                    SesServerUtil.unSubscribe(Config.serviceVersion, Config.sesEndpoint, subscriptionID);
+                    SesServerUtil.unSubscribe(SesConfig.serviceVersion, SesConfig.sesEndpoint, subscriptionID);
                 }
             }
             catch (Exception e) {
@@ -563,10 +563,10 @@ public class SesUserServiceImpl implements SesUserService {
             String termsOfUsePath = "";
 
             if (language.equals("en")) {
-                termsOfUsePath = Config.path + "/properties/termsOfUse_en.txt";
+                termsOfUsePath = SesConfig.path + "/properties/termsOfUse_en.txt";
             }
             else if (language.equals("de")) {
-                termsOfUsePath = Config.path + "/properties/termsOfUse_de.txt";
+                termsOfUsePath = SesConfig.path + "/properties/termsOfUse_de.txt";
             }
 
             File file = new File(termsOfUsePath);
@@ -590,7 +590,7 @@ public class SesUserServiceImpl implements SesUserService {
     public SesClientResponse getData() throws Exception {
         try {
             // build path of the webapp root
-            URL url = new URL(Config.URL);
+            URL url = new URL(SesConfig.URL);
             String path = url.getPath();
 
             String webAppName = path.substring(1, path.length());
@@ -602,12 +602,12 @@ public class SesUserServiceImpl implements SesUserService {
             // fill arrayList with data
             ArrayList<Object> dataList = new ArrayList<Object>();
             dataList.add(finalPath);
-            dataList.add(Config.warnUserLongNotification);
-            dataList.add(Config.minimumPasswordLength);
-            dataList.add(Config.availableWNSmedia);
-            dataList.add(Config.defaultMedium);
-            dataList.add(Config.availableFormats);
-            dataList.add(Config.defaultFormat);
+            dataList.add(SesConfig.warnUserLongNotification);
+            dataList.add(SesConfig.minimumPasswordLength);
+            dataList.add(SesConfig.availableWNSmedia);
+            dataList.add(SesConfig.defaultMedium);
+            dataList.add(SesConfig.availableFormats);
+            dataList.add(SesConfig.defaultFormat);
 
             return new SesClientResponse(SesClientResponse.types.DATA, dataList);
         }

@@ -37,7 +37,7 @@ import org.n52.oxf.ows.ServiceDescriptor;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.oxf.sos.capabilities.SOSContents;
-import org.n52.server.ses.feeder.Configuration;
+import org.n52.server.ses.feeder.FeederConfig;
 import org.n52.server.ses.feeder.util.IOHelper;
 import org.n52.server.ses.feeder.util.SOSAdapter_01;
 import org.n52.server.util.TimeUtil;
@@ -70,7 +70,7 @@ public class SOSConnector {
     public SOSConnector(String sosURL) {
         try {
             this.sosURL = sosURL;
-            this.serviceVersion = Configuration.getInstance().getSosVersion();
+            this.serviceVersion = FeederConfig.getInstance().getSosVersion();
             this.sosAdapter = new SOSAdapter_01(this.serviceVersion);
         }
         catch (IllegalStateException e) {

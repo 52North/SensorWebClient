@@ -37,7 +37,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.n52.server.ses.Config;
+import org.n52.server.ses.SesConfig;
 import org.n52.shared.serializable.pojos.BasicRule;
 import org.n52.shared.serializable.pojos.ComplexRule;
 import org.n52.shared.serializable.pojos.ComplexRuleData;
@@ -131,8 +131,8 @@ public class ComplexRule_Builder {
             BufferedReader reader2 = new BufferedReader(new StringReader(emlList.get(1)));
             
             // URLs of patterns with logical and structural operators
-            URL logicalURL = new URL(Config.resLocation_logical);
-            URL structuralURL = new URL(Config.resLocation_structural);
+            URL logicalURL = new URL(SesConfig.resLocation_logical);
+            URL structuralURL = new URL(SesConfig.resLocation_structural);
 
             // DocumentBuilder
             DocumentBuilderFactory docFac = DocumentBuilderFactory.newInstance();

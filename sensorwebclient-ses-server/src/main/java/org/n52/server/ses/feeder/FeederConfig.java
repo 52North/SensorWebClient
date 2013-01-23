@@ -1,30 +1,34 @@
 
 package org.n52.server.ses.feeder;
 
-import static org.n52.server.ses.feeder.Configuration.ConfigurationKeys.KEY_CAPABILITIES_TASK_PERIOD;
-import static org.n52.server.ses.feeder.Configuration.ConfigurationKeys.KEY_MAXIMUM_NUMBER_PROCEDURES;
-import static org.n52.server.ses.feeder.Configuration.ConfigurationKeys.KEY_NODATAS;
-import static org.n52.server.ses.feeder.Configuration.ConfigurationKeys.KEY_OBSERVATIONS_TASK_PERIOD;
-import static org.n52.server.ses.feeder.Configuration.ConfigurationKeys.KEY_ONLY_YOUNGEST_OBSERVATION;
-import static org.n52.server.ses.feeder.Configuration.ConfigurationKeys.KEY_PROCEDURE_NAME_CONSTRAINTS;
-import static org.n52.server.ses.feeder.Configuration.ConfigurationKeys.KEY_PROHIBIT_PROCEDURE_NAMES;
-import static org.n52.server.ses.feeder.Configuration.ConfigurationKeys.KEY_SES_BASIC_PORT_TYPE_PATH;
-import static org.n52.server.ses.feeder.Configuration.ConfigurationKeys.KEY_SES_DEFAULT_TOPIC;
-import static org.n52.server.ses.feeder.Configuration.ConfigurationKeys.KEY_SES_DEFAULT_TOPIC_DIALECT;
-import static org.n52.server.ses.feeder.Configuration.ConfigurationKeys.KEY_SES_ENDPOINT;
-import static org.n52.server.ses.feeder.Configuration.ConfigurationKeys.KEY_SES_LIFETIME_DURATION;
-import static org.n52.server.ses.feeder.Configuration.ConfigurationKeys.KEY_SES_URL;
-import static org.n52.server.ses.feeder.Configuration.ConfigurationKeys.KEY_SOS_VERSION;
-import static org.n52.server.ses.feeder.Configuration.ConfigurationKeys.KEY_START_TIMESTAMP;
-import static org.n52.server.ses.feeder.Configuration.ConfigurationKeys.KEY_UPDATE_OBSERVATION_PERIOD;
+import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_CAPABILITIES_TASK_PERIOD;
+import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_MAXIMUM_NUMBER_PROCEDURES;
+import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_NODATAS;
+import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_OBSERVATIONS_TASK_PERIOD;
+import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_ONLY_YOUNGEST_OBSERVATION;
+import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_PROCEDURE_NAME_CONSTRAINTS;
+import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_PROHIBIT_PROCEDURE_NAMES;
+import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SES_BASIC_PORT_TYPE_PATH;
+import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SES_DEFAULT_TOPIC;
+import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SES_DEFAULT_TOPIC_DIALECT;
+import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SES_ENDPOINT;
+import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SES_LIFETIME_DURATION;
+import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SES_URL;
+import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SOS_VERSION;
+import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_START_TIMESTAMP;
+import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_UPDATE_OBSERVATION_PERIOD;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 import org.apache.avalon.framework.availability.UnavailableException;
+import org.apache.fop.fo.expr.PropertyException;
+import org.n52.server.oxf.util.properties.GeneralizationConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,11 +37,13 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Jan Schulte
  */
-public class Configuration {
+public class FeederConfig {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Configuration.class);
-
-    private static Configuration instance;
+    private static final Logger LOGGER = LoggerFactory.getLogger(FeederConfig.class);
+    
+    private static FeederConfig instance;
+    
+    private static final String CONFIG_FILE = "/feeder-properties.xml";
 
     private Properties props;
 
@@ -83,10 +89,11 @@ public class Configuration {
      *        InputStream for the configuration file of the servlet.
      * @throws IOException
      *         Signals that an I/O exception has occurred.
+     * @throws PropertyException 
      */
-    private Configuration(InputStream is) throws IOException {
-        this.props = new Properties();
-        this.props.loadFromXML(is);
+    private FeederConfig() {
+    	LOGGER.debug("Initialize " + getClass().getName());
+    	loadProperties();
 
         // Capabilities Task Period
         try {
@@ -248,32 +255,26 @@ public class Configuration {
         LOGGER.info("######################################################################");
     }
 
-    /**
+    private void loadProperties() {
+		try {
+			this.props = new Properties();
+			URL classFolder = GeneralizationConfiguration.class.getResource(CONFIG_FILE);
+			File configFile = new File(classFolder.toURI());
+			this.props.loadFromXML(new FileInputStream(configFile));
+		} catch (Exception e) {
+			LOGGER.error("Could not find configuration file", e);
+		}
+	}
+
+	/**
      * Gets the single instance of Configuration.
      * 
      * @return The instance of the Configuration class
      * @throws UnavailableException
      */
-    public static Configuration getInstance() throws IllegalStateException {
+    public static FeederConfig getInstance() throws IllegalStateException {
         if (instance == null) {
-            throw new IllegalStateException("Configuration is not available (anymore.)");
-        }
-        return instance;
-    }
-
-    /**
-     * Instance.
-     * 
-     * @param is
-     *        InputStream for the configuration file of the servlet.
-     * @return The instance of the Configuration class.
-     * @throws IOException
-     *         Signals that an I/O exception has occurred.
-     */
-    public static Configuration instance(InputStream is) throws IOException {
-        LOGGER.trace("instance()");
-        if (instance == null) {
-            instance = new Configuration(is);
+        	instance = new FeederConfig();
         }
         return instance;
     }
@@ -406,9 +407,7 @@ public class Configuration {
     }
 
     class ConfigurationKeys {
-        /**
-         * Key for the period to start to collect the sensorML documents in milliseconds.
-         */
+        /** Key for the period to start to collect the sensorML documents in milliseconds. */
         static final String KEY_CAPABILITIES_TASK_PERIOD = "capabilities_task_period";
 
         /** Key for the period to collect the new observations in milliseconds. */

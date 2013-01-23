@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 import org.n52.oxf.ows.ServiceDescriptor;
 import org.n52.oxf.ows.capabilities.Contents;
 import org.n52.oxf.sos.capabilities.ObservationOffering;
-import org.n52.server.ses.feeder.Configuration;
+import org.n52.server.ses.feeder.FeederConfig;
 import org.n52.server.ses.feeder.connector.SESConnector;
 import org.n52.server.ses.feeder.connector.SOSConnector;
 import org.n52.server.ses.feeder.hibernate.ObservedProperty;
@@ -52,14 +52,14 @@ public class DescriptionTask extends TimerTask {
             log.info("############ Do Description task #############");
 
             // Maximum number of feeding procedures
-            int maxNumProcedures = Configuration.getInstance().getMaxNumProc();
+            int maxNumProcedures = FeederConfig.getInstance().getMaxNumProc();
             log.debug("MaxNumberProcedures: " + maxNumProcedures);
 
             // constraints for the procedures
-            List<String> constraints = Configuration.getInstance().getProcedureNameConstraints();
+            List<String> constraints = FeederConfig.getInstance().getProcedureNameConstraints();
 
             // prohibit procedure names
-            List<String> prohibits = Configuration.getInstance().getProhibitProcedureNames();
+            List<String> prohibits = FeederConfig.getInstance().getProhibitProcedureNames();
 
             // load SOSes of database
             List<SOS> SOSes = DatabaseAccess.loadSOS();
@@ -171,7 +171,7 @@ public class DescriptionTask extends TimerTask {
                                         sensor.setProcedure(procedure);
                                         sensor.setLastUpdate(null);
                                         sensor.setUsed(false);
-                                        sensor.setUpdateInterval(Configuration.getInstance().getUpdateInterval());
+                                        sensor.setUpdateInterval(FeederConfig.getInstance().getUpdateInterval());
                                         Offering offering = new Offering();
                                         offering.setName(obsOff.getIdentifier());
                                         Set<ObservedProperty> obsProps = new HashSet<ObservedProperty>();
