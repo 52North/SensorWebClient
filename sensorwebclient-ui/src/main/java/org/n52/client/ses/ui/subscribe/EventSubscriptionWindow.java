@@ -49,7 +49,7 @@ public class EventSubscriptionWindow extends Window {
 
     private static int WIDTH = 950;
 
-    private static int HEIGHT = 500;
+    private static int HEIGHT = 550;
 
     private static EventSubscriptionController controller;
 
@@ -59,15 +59,16 @@ public class EventSubscriptionWindow extends Window {
 
     private Layout content;
 
-    public static EventSubscriptionWindow getInst() {
+    public static EventSubscriptionWindow getInst(TimeSeries dataItem) {
         if (instance == null) {
             controller = new EventSubscriptionController();
             instance = new EventSubscriptionWindow(controller);
         }
+        controller.setTimeseries(dataItem);
         return instance;
     }
 
-    private EventSubscriptionWindow(EventSubscriptionController controller) {
+    public EventSubscriptionWindow(EventSubscriptionController controller) {
         setStyleName("n52_sensorweb_client_event_subscription_window");
         controller.setEventSubscription(this);
         initializeWindow();
@@ -101,18 +102,20 @@ public class EventSubscriptionWindow extends Window {
     
     @Override
     public void show() {
-        initializeContent();
         super.show();
+        if (content != null) {
+            removeItem(content);
+        }
+        initializeContent();
+        redraw();
     }
 
     private void initializeContent() {
-        if (content == null) {
-            content = new HLayout();
-            content.setStyleName("n52_sensorweb_client_create_abo_window_content");
-            content.addMember(createNewEventAbonnementCanvas());
-            content.addMember(createContextWindowHelp());
-            addItem(content);
-        }
+        content = new HLayout();
+        content.setStyleName("n52_sensorweb_client_create_abo_window_content");
+        content.addMember(createNewEventAbonnementCanvas());
+        content.addMember(createContextWindowHelp());
+        addItem(content);
     }
 
     private Canvas createNewEventAbonnementCanvas() {
@@ -120,8 +123,8 @@ public class EventSubscriptionWindow extends Window {
         subscriptionContent.setStyleName("n52_sensorweb_client_create_abo_form_content");
         subscriptionContent.addMember(new EventNameForm(controller));
         subscriptionContent.addMember(createRuleTemplateSelectionCanvas());
-        subscriptionContent.addMember(new TimeSeriesMetadataTable(controller));
         subscriptionContent.addMember(createApplyCancelCanvas());
+        subscriptionContent.addMember(new TimeSeriesMetadataTable(controller));
         return subscriptionContent;
     }
 

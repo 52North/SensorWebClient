@@ -88,7 +88,7 @@ public class CreateSimpleRuleLayout extends Layout {
     
     private int selectItemWidth2 = 200;
     
-    private int ruleItemWidth = 60;
+    private int entryItemWidth = 60;
     
     // further elements
     /** The title item. */
@@ -1139,7 +1139,7 @@ public class CreateSimpleRuleLayout extends Layout {
 
     private void setEntryValueItem() {
         this.entryValueItem = new TextItem();
-        this.entryValueItem.setWidth(this.ruleItemWidth);
+        this.entryValueItem.setWidth(this.entryItemWidth);
         this.entryValueItem.setTitle(i18n.value());
         this.entryValueItem.setTitleOrientation(TitleOrientation.TOP);
         this.entryValueItem.setKeyPressFilter("[0-9]");
@@ -1147,7 +1147,7 @@ public class CreateSimpleRuleLayout extends Layout {
 
     private void setEntryValueUnitItem() {
         this.entryValueUnitItem = new SelectItem();
-        this.entryValueUnitItem.setWidth(this.ruleItemWidth);
+        this.entryValueUnitItem.setWidth(this.entryItemWidth);
         this.entryValueUnitItem.setTitle(i18n.unit());
         this.entryValueUnitItem.setTitleOrientation(TitleOrientation.TOP);
         this.entryValueUnitItem.setValueMap(this.unitHashMap);
@@ -1161,7 +1161,7 @@ public class CreateSimpleRuleLayout extends Layout {
 
     private void setCountItem() {
         this.countItem = new TextItem();
-        this.countItem.setWidth(this.ruleItemWidth);
+        this.countItem.setWidth(this.entryItemWidth);
         this.countItem.setTitle(i18n.count());
         this.countItem.setTitleOrientation(TitleOrientation.TOP);
         this.countItem.setKeyPressFilter("[0-9]");
@@ -1169,7 +1169,7 @@ public class CreateSimpleRuleLayout extends Layout {
 
     private void setEntryTimeItem() {
         this.entryTimeItem = new TextItem();
-        this.entryTimeItem.setWidth(this.ruleItemWidth);
+        this.entryTimeItem.setWidth(this.entryItemWidth);
         this.entryTimeItem.setTitle("<nobr>" + i18n.timeValue() + "</nobr>");
         this.entryTimeItem.setTitleOrientation(TitleOrientation.TOP);
         this.entryTimeItem.setKeyPressFilter("[0-9]");
@@ -1177,7 +1177,7 @@ public class CreateSimpleRuleLayout extends Layout {
 
     private void setEntryTimeUnitItem() {
         this.entryTimeUnitItem = new SelectItem();
-        this.entryTimeUnitItem.setWidth(this.ruleItemWidth);
+        this.entryTimeUnitItem.setWidth(this.entryItemWidth);
         this.entryTimeUnitItem.setTitle(i18n.timeUnit());
         this.entryTimeUnitItem.setTitleOrientation(TitleOrientation.TOP);
         this.entryTimeUnitItem.setTooltip("<nobr>" + i18n.unitsTime() + "</nobr>");
@@ -1188,7 +1188,7 @@ public class CreateSimpleRuleLayout extends Layout {
 
     private void setEntryValueConditionItem() {
         this.entryValueConditionItem = new TextItem();
-        this.entryValueConditionItem.setWidth(this.ruleItemWidth);
+        this.entryValueConditionItem.setWidth(this.entryItemWidth);
         this.entryValueConditionItem.setTitle(i18n.value());
         this.entryValueConditionItem.setTitleOrientation(TitleOrientation.TOP);
         this.entryValueConditionItem.setKeyPressFilter("[0-9]");
@@ -1196,7 +1196,7 @@ public class CreateSimpleRuleLayout extends Layout {
 
     private void setEntryValueUnitConditionItem() {
         this.entryValueUnitConditionItem = new SelectItem();
-        this.entryValueUnitConditionItem.setWidth(this.ruleItemWidth);
+        this.entryValueUnitConditionItem.setWidth(this.entryItemWidth);
         this.entryValueUnitConditionItem.setTitle(i18n.unit());
         this.entryValueUnitConditionItem.setTitleOrientation(TitleOrientation.TOP);
         this.entryValueUnitConditionItem.setValueMap(this.unitHashMap);
@@ -1210,7 +1210,7 @@ public class CreateSimpleRuleLayout extends Layout {
 
     private void setCountConditionItem() {
         this.countConditionItem = new TextItem();
-        this.countConditionItem.setWidth(this.ruleItemWidth);
+        this.countConditionItem.setWidth(this.entryItemWidth);
         this.countConditionItem.setTitle(i18n.count());
         this.countConditionItem.setTitleOrientation(TitleOrientation.TOP);
         this.countConditionItem.setKeyPressFilter("[0-9]");
@@ -1218,7 +1218,7 @@ public class CreateSimpleRuleLayout extends Layout {
 
     private void setExitTimeItem() {
         this.exitTimeItem = new TextItem();
-        this.exitTimeItem.setWidth(this.ruleItemWidth);
+        this.exitTimeItem.setWidth(this.entryItemWidth);
         this.exitTimeItem.setTitle("<nobr>" + i18n.timeValue() + "</nobr>");
         this.exitTimeItem.setTitleOrientation(TitleOrientation.TOP);
         this.exitTimeItem.setKeyPressFilter("[0-9]");
@@ -1226,7 +1226,7 @@ public class CreateSimpleRuleLayout extends Layout {
 
     private void setExitTimeUnitItem() {
         this.exitTimeUnitItem = new SelectItem();
-        this.exitTimeUnitItem.setWidth(this.ruleItemWidth);
+        this.exitTimeUnitItem.setWidth(this.entryItemWidth);
         this.exitTimeUnitItem.setTitle(i18n.timeUnit());
         this.exitTimeUnitItem.setTitleOrientation(TitleOrientation.TOP);
         this.exitTimeUnitItem.setTooltip("<nobr>" + i18n.unitsTime() + "</nobr>");
@@ -1237,7 +1237,7 @@ public class CreateSimpleRuleLayout extends Layout {
 
     private void setEntryOperatorRuleItem() {
         this.entryOperatorItem = new SelectItem();
-        this.entryOperatorItem.setWidth(this.ruleItemWidth);
+        this.entryOperatorItem.setWidth(this.entryItemWidth);
         this.entryOperatorItem.setTitle(i18n.operator());
         this.entryOperatorItem.setTitleOrientation(TitleOrientation.TOP);
         this.entryOperatorItem.setValueMap(getRuleOperators());
@@ -1254,7 +1254,7 @@ public class CreateSimpleRuleLayout extends Layout {
 
     private void setExitOperatorItem() {
         this.exitOperatorItem = new SelectItem();
-        this.exitOperatorItem.setWidth(this.ruleItemWidth);
+        this.exitOperatorItem.setWidth(this.entryItemWidth);
         this.exitOperatorItem.setTitle(i18n.operator());
         this.exitOperatorItem.setTitleOrientation(TitleOrientation.TOP);
         this.exitOperatorItem.setValueMap(getRuleOperators());

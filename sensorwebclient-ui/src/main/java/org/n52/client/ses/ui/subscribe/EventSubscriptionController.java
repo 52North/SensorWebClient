@@ -40,6 +40,8 @@ class EventSubscriptionController {
     private OverUndershootSelectionData overUndershootEntryConditions;
 
     private OverUndershootSelectionData overUndershootExitConditions;
+    
+    private SensorLossSelectionData sensorLossConditions;
 
     void setEventSubscription(EventSubscriptionWindow eventSubsciptionWindow) {
         this.eventSubscriptionWindow = eventSubsciptionWindow;
@@ -107,17 +109,21 @@ class EventSubscriptionController {
     }
 
     public OverUndershootSelectionData getOverUndershootEntryConditions() {
-        if (overUndershootEntryConditions == null) {
-            return new OverUndershootSelectionData();
-        }
-        return overUndershootEntryConditions;
+        return (overUndershootEntryConditions == null)
+                ? new OverUndershootSelectionData()
+                : overUndershootEntryConditions;
     }
 
     public OverUndershootSelectionData getOverUndershootExitConditions() {
-        if (overUndershootExitConditions == null) {
-            return new OverUndershootSelectionData();
-        }
-        return overUndershootExitConditions;
+        return (overUndershootExitConditions == null)
+                ? new OverUndershootSelectionData()
+                : overUndershootExitConditions;
+    }
+    
+    public SensorLossSelectionData getSensorLossConditions() {
+        return (sensorLossConditions == null) 
+                ? new SensorLossSelectionData()
+                : sensorLossConditions;
     }
     
 }

@@ -23,9 +23,6 @@ public class EventNameForm extends DynamicForm {
         nameItem.setTextBoxStyle("n52_sensorweb_client_abo_name_textbox");
         nameItem.setName("AbonnementName");
         nameItem.setTitle(i18n.aboName());
-        nameItem.setSelectOnFocus(true);
-        nameItem.setRequired(true);
-        nameItem.setLength(300);
         nameItem.setWidth("*"); // fill form column
         nameItem.setValue(controller.createSuggestedAbonnementName());
         nameItem.addKeyPressHandler(new KeyPressHandler() {

@@ -1,5 +1,6 @@
 package org.n52.client.ses.ui.subscribe;
 
+import static com.smartgwt.client.types.Alignment.CENTER;
 import static com.smartgwt.client.types.TitleOrientation.TOP;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.util.RuleOperatorUtil.getInverseOperator;
@@ -9,24 +10,22 @@ import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.OVER_UNDER
 import static org.n52.shared.serializable.pojos.Rule.GREATER_THAN;
 import static org.n52.shared.serializable.pojos.Rule.LESS_THAN_OR_EQUAL_TO;
 
-import org.n52.client.ses.util.RuleOperatorUtil;
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 
 import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.Label;
-import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
+import com.smartgwt.client.widgets.form.fields.StaticTextItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
 import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
-import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.Layout;
-import com.smartgwt.client.widgets.layout.LayoutSpacer;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public class OverUndershootRuleTemplate extends RuleTemplate {
     
-    private SelectItem exitOperatorSelectItem;
+    private SelectItem exitOperatorItem;
+    private SelectItem exitUnitItem;
+    private TextItem exitValueItem;
 
     public OverUndershootRuleTemplate(final EventSubscriptionController controller) {
         super(controller);
@@ -40,32 +39,30 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
     @Override
     public Canvas createEditCanvas() {
         Layout layout = new VLayout();
-        layout.addMember(createEntryConditionEditCanvas());
-        layout.addMember(createExitConditionEditCanvas());
+        layout.setStyleName("n52_sensorweb_client_create_abo_template_overundershootcondition");
+        layout.addMember(alignVerticalCenter(createEntryConditionEditCanvas()));
+        layout.addMember(alignVerticalCenter(createExitConditionEditCanvas()));
         return layout;
     }
 
     private Canvas createEntryConditionEditCanvas() {
-        Layout layout = new HLayout();
-        layout.setStyleName("n52_sensorweb_client_create_abo_template_overundershootcondition");
-        layout.addMember(createVerticalCenteredLabel(i18n.enterCondition()));
-        layout.addMember(createEntryConditionOperatorsCanvas());
-        return layout;
+        StaticTextItem labelItem = createLabelItem(i18n.enterCondition());
+        
+        SelectItem entryOperatorItem = createOperatorItem(GREATER_THAN);
+        entryOperatorItem.addChangedHandler(createEntryOperatorChangedHandler());
+        entryOperatorItem.setWidth(EDIT_ITEMS_WIDTH);
+
+        TextItem entryValueItem = createValueItem();
+        entryValueItem.addChangedHandler(createEntryValueChangedHandler());
+        entryValueItem.setWidth(EDIT_ITEMS_WIDTH);
+        
+        SelectItem entryUnitItem = createUnitsItem();
+        entryUnitItem.addChangedHandler(createEntryUnitChangedHandler());
+        entryUnitItem.setWidth(EDIT_ITEMS_WIDTH);
+        
+        return assembleEditConditionForm(labelItem, entryOperatorItem, entryValueItem, entryUnitItem);
     }
 
-    private Canvas createEntryConditionOperatorsCanvas() {
-        SelectItem entryOperatorSelectItem = createOperatorItem(GREATER_THAN);
-        entryOperatorSelectItem.addChangedHandler(createEntryOperatorChangedHandler());
-
-        TextItem valueItem = createValueItem();
-        valueItem.addChangedHandler(createEntryValueChangedHandler());
-        // TODO add unit field
-
-        DynamicForm form = new DynamicForm();
-        form.setFields(entryOperatorSelectItem, valueItem);
-        return alignVerticalCenter(form);
-    }
-    
     private ChangedHandler createEntryOperatorChangedHandler() {
         return new ChangedHandler() {
             @Override
@@ -73,7 +70,7 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
                 SelectItem selectItem = (SelectItem) event.getSource();
                 String operator = selectItem.getValueAsString();
                 controller.getOverUndershootEntryConditions().setOperator(operator);
-                exitOperatorSelectItem.setValue(getInverseOperator(operator));
+                exitOperatorItem.setValue(getInverseOperator(operator));
             }
         };
     }
@@ -85,29 +82,39 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
                 TextItem valueItem = (TextItem) event.getSource();
                 String value = valueItem.getValueAsString();
                 controller.getOverUndershootEntryConditions().setValue(value);
+                exitValueItem.setValue(value);
+            }
+        };
+    }
+
+    private ChangedHandler createEntryUnitChangedHandler() {
+        return new ChangedHandler() {
+            @Override
+            public void onChanged(ChangedEvent event) {
+                SelectItem valueItem = (SelectItem) event.getSource();
+                String unit = valueItem.getValueAsString();
+                controller.getOverUndershootEntryConditions().setUnit(unit);
+                exitUnitItem.setValue(unit);
             }
         };
     }
 
     private Canvas createExitConditionEditCanvas() {
-        Layout layout = new HLayout();
-        layout.setStyleName("n52_sensorweb_client_create_abo_template_overundershootcondition");
-        layout.addMember(createVerticalCenteredLabel(i18n.exitCondition()));
-        layout.addMember(createExitConditionOperatorsCanvas());
-        return layout;
-    }
+        StaticTextItem labelItem = createLabelItem(i18n.exitCondition());
+        
+        exitOperatorItem = createOperatorItem(LESS_THAN_OR_EQUAL_TO);
+        exitOperatorItem.addChangedHandler(createExitOperatorChangedHandler());
+        exitOperatorItem.setWidth(EDIT_ITEMS_WIDTH);
 
-    private Canvas createExitConditionOperatorsCanvas() {
-        exitOperatorSelectItem = createOperatorItem(LESS_THAN_OR_EQUAL_TO);
-        exitOperatorSelectItem.addChangedHandler(createExitOperatorChangedHandler());
+        exitValueItem = createValueItem();
+        exitValueItem.addChangedHandler(createExitValueChangedHandler());
+        exitValueItem.setWidth(EDIT_ITEMS_WIDTH);
 
-        TextItem valueItem = createValueItem();
-        valueItem.addChangedHandler(createExitValueChangedHandler());
-        // TODO add unit field
-
-        DynamicForm form = new DynamicForm();
-        form.setFields(exitOperatorSelectItem, valueItem);
-        return alignVerticalCenter(form);
+        exitUnitItem = createUnitsItem();
+        exitUnitItem.addChangedHandler(createExitUnitChangedHandler());
+        exitUnitItem.setWidth(EDIT_ITEMS_WIDTH);
+        
+        return assembleEditConditionForm(labelItem, exitOperatorItem, exitValueItem, exitUnitItem);
     }
 
     private ChangedHandler createExitOperatorChangedHandler() {
@@ -120,7 +127,6 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
             }
         };
     }
-    
 
     private ChangedHandler createExitValueChangedHandler() {
         return new ChangedHandler() {
@@ -132,37 +138,30 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
             }
         };
     }
-
-    private Canvas createVerticalCenteredLabel(String labelText) {
-        return alignVerticalCenter(new Label(labelText));
-    }
     
-    private Canvas alignVerticalCenter(Canvas canvasToAlign) {
-        VLayout layout = new VLayout();
-        layout.addMember(new LayoutSpacer());
-        layout.addMember(canvasToAlign);
-        layout.addMember(new LayoutSpacer());
-        return layout;
+    private ChangedHandler createExitUnitChangedHandler() {
+        return new ChangedHandler() {
+            @Override
+            public void onChanged(ChangedEvent event) {
+                SelectItem valueItem = (SelectItem) event.getSource();
+                String unit = valueItem.getValueAsString();
+                controller.getOverUndershootExitConditions().setUnit(unit);
+            }
+        };
     }
 
     private SelectItem createOperatorItem(int operatorIndex) {
-        SelectItem entryOperator = new SelectItem();
-        entryOperator.setTitle(i18n.operator());
-        entryOperator.setTitleOrientation(TOP);
-        entryOperator.setValueMap(getRuleOperators());
+        SelectItem operatorItem = new SelectItem();
+        operatorItem.setTitle(i18n.operator());
+        operatorItem.setTitleOrientation(TOP);
+        operatorItem.setTextAlign(CENTER);
+        
+        operatorItem.setValueMap(getRuleOperators());
         String operator = getOperatorFrom(operatorIndex);
         if (getRuleOperators().containsKey(operator)) {
-            entryOperator.setDefaultValue(operator);
+            operatorItem.setDefaultValue(operator);
         }
-        return entryOperator;
-    }
-
-    private TextItem createValueItem() {
-        TextItem valueItem = new TextItem();
-        valueItem.setTitle(i18n.value());
-        valueItem.setTitleOrientation(TOP);
-        valueItem.setKeyPressFilter("[0-9]");
-        return valueItem;
+        return operatorItem;
     }
 
 }
