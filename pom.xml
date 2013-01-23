@@ -708,6 +708,26 @@
 				<config.logger.level.server>DEBUG</config.logger.level.server>
 				<config.logger.consoleappender.level>DEBUG</config.logger.consoleappender.level>
 				<config.logger.fileappender.level>WARN</config.logger.fileappender.level>
+				
+				<feeder.capabilities.task.period>86400</feeder.capabilities.task.period>
+				<feeder.observation.task.period>60</feeder.observation.task.period>
+				<feeder.update.observation.period>120</feeder.update.observation.period>
+				<feeder.maximum.number.procedures>10</feeder.maximum.number.procedures>
+				<feeder.procedure.name.constraints>Wasserstand</feeder.procedure.name.constraints>
+				<feeder.prohibit.procedure.name>general</feeder.prohibit.procedure.name>
+				<feeder.no.data>-999999999</feeder.no.data>
+				<feeder.sos.version>1.0.0</feeder.sos.version>
+				<feeder.start.timestamp>900</feeder.start.timestamp>
+				<feeder.sleep.time.observation>5000</feeder.sleep.time.observation>
+				<feeder.only.youngest.observation>true</feeder.only.youngest.observation>
+				
+				<feeder.ses.url>http://localhost:8080/SES-2010/services</feeder.ses.url>
+				<feeder.ses.basic.port.type.path>/SesPortType</feeder.ses.basic.port.type.path>
+				<feeder.ses.version>0.0.0</feeder.ses.version>
+				<feeder.ses.default.topic.dialect>http://docs.oasis-open.org/wsn/t-1/TopicExpression/Simple</feeder.ses.default.topic.dialect>
+				<feeder.ses.default.topic>ses:Measurements</feeder.ses.default.topic>
+				<feeder.ses.register.publisher.lifetime>2999-12-31T23:59:59+00:00</feeder.ses.register.publisher.lifetime>
+				<feeder.ses.register.publisher.endpoint>http://localhost:8080</feeder.ses.register.publisher.endpoint>
 			</properties>
 		</profile>
 		<profile>
