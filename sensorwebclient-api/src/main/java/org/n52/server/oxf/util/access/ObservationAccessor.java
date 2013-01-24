@@ -76,40 +76,46 @@ public class ObservationAccessor {
      */
     public Map<String, OXFFeatureCollection> sendRequests(List<RequestConfig> requests) throws AccessException {
 
-        try {
-            Map<String, OXFFeatureCollection> entireCollMap = new HashMap<String, OXFFeatureCollection>();
-            for (RequestConfig request : requests) {
-                String sosUrl = request.getSosURL();
-                SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosUrl);
-                String sosVersion = metadata.getSosVersion();
-                boolean waterML = metadata.isWaterML();
+        Map<String, OXFFeatureCollection> entireCollMap = new HashMap<String, OXFFeatureCollection>();
+        for (RequestConfig request : requests) {
 
-                ParameterContainer paramters = createParameterContainer(request, sosVersion, waterML);
-                Operation operation = new Operation(SOSAdapter.GET_OBSERVATION, sosUrl + "?", sosUrl);
-                SOSAdapter adapter = SosAdapterFactory.createSosAdapter(metadata);
-                OperationAccessor callable = new OperationAccessor(adapter, operation, paramters);
-                FutureTask<OperationResult> task = new FutureTask<OperationResult>(callable);
-                AccessorThreadPool.execute(task);
-
-                OXFFeatureCollection featureColl = null;
-                OperationResult opResult = task.get(SERVER_TIMEOUT, MILLISECONDS);
-                SOSObservationStore featureStore = new SOSObservationStore(opResult);
-                featureColl = featureStore.unmarshalFeatures();
-                // put the received observations into the observationCollMap:
-                String key = request.getOfferingID() + "@" + sosUrl;
-                if (featureColl != null) {
-                    LOGGER.debug("Received " + featureColl.size() + " observations for " + key + " (WaterML format: "
-                            + waterML + ")");
-                    if (entireCollMap.containsKey(key)) {
-                        OXFFeatureCollection existingFeatureColl = entireCollMap.get(key);
-                        existingFeatureColl.add(featureColl.toList());
-                    }
-                    else {
-                        entireCollMap.put(key, featureColl);
-                    }
+            String sosUrl = request.getSosURL();
+            String key = createObservationCollectionKey(request, sosUrl);
+            OXFFeatureCollection featureColl = sendRequest(request);
+            if (featureColl != null) {
+                if (entireCollMap.containsKey(key)) {
+                    OXFFeatureCollection existingFeatureColl = entireCollMap.get(key);
+                    existingFeatureColl.add(featureColl.toList());
+                }
+                else {
+                    entireCollMap.put(key, featureColl);
                 }
             }
-            return entireCollMap;
+        }
+        return entireCollMap;
+    }
+    
+    public OXFFeatureCollection sendRequest(RequestConfig request) throws AccessException {
+        try {
+            String sosUrl = request.getSosURL();
+            SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosUrl);
+            String sosVersion = metadata.getSosVersion();
+            boolean waterML = metadata.isWaterML();
+
+            ParameterContainer paramters = createParameterContainer(request, sosVersion, waterML);
+            Operation operation = new Operation(SOSAdapter.GET_OBSERVATION, sosUrl + "?", sosUrl);
+            SOSAdapter adapter = SosAdapterFactory.createSosAdapter(metadata);
+            OperationAccessor callable = new OperationAccessor(adapter, operation, paramters);
+            FutureTask<OperationResult> task = new FutureTask<OperationResult>(callable);
+            AccessorThreadPool.execute(task);
+
+            OperationResult opResult = task.get(SERVER_TIMEOUT, MILLISECONDS);
+            SOSObservationStore featureStore = new SOSObservationStore(opResult);
+
+            String key = createObservationCollectionKey(request, sosUrl);
+            OXFFeatureCollection featureColl = featureStore.unmarshalFeatures();
+            LOGGER.debug("Received " + featureColl.size() + " observations for " + key + " (WaterML format: " + waterML + ")");
+            return featureColl;
         }
         catch (OXFException e) {
             throw new AccessException("Could not process observations.", e);
@@ -123,6 +129,10 @@ public class ObservationAccessor {
         catch (ExecutionException e) {
             throw new AccessException("Could not execute GetObservation request.", e.getCause());
         }
+    }
+
+    private String createObservationCollectionKey(RequestConfig request, String sosUrl) {
+        return request.getOfferingID() + "@" + sosUrl;
     }
 
     /**
