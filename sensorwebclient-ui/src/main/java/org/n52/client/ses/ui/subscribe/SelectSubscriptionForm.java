@@ -40,8 +40,6 @@ import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
 
 public class SelectSubscriptionForm extends DynamicForm {
 
-    private final static SimpleRuleType DEFAULT_RULE_TEMPLATE = OVER_UNDERSHOOT;
-
     private final EventSubscriptionController controller;
     
     public SelectSubscriptionForm(final EventSubscriptionController controller) {
@@ -56,7 +54,7 @@ public class SelectSubscriptionForm extends DynamicForm {
         radioGroupItem.setTitle(i18n.selectPredefinedEventForSubscription());
         radioGroupItem.addChangedHandler(createSelectionChangedHandler());
         radioGroupItem.setValueMap(createSelectionValueMap());
-        radioGroupItem.setDefaultValue(DEFAULT_RULE_TEMPLATE.name());
+        radioGroupItem.setDefaultValue(controller.getDefaultTemplate().name());
         return radioGroupItem;
     }
 
@@ -87,7 +85,7 @@ public class SelectSubscriptionForm extends DynamicForm {
     }
     
     RuleTemplate getDefaultRuleTemplate() {
-        return createRuleTemplateFor(DEFAULT_RULE_TEMPLATE);
+        return createRuleTemplateFor(controller.getDefaultTemplate());
     }
     
     private RuleTemplate createRuleTemplateFor(SimpleRuleType template) {

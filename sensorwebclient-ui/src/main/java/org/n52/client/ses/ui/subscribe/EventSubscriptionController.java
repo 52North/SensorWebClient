@@ -39,6 +39,8 @@ import org.n52.shared.serializable.pojos.RuleBuilder;
 
 class EventSubscriptionController {
 
+    private final static SimpleRuleType DEFAULT_RULE_TEMPLATE = OVER_UNDERSHOOT;
+
     private EventSubscriptionWindow eventSubscriptionWindow;
 
     private EventNameForm eventNameForm;
@@ -124,7 +126,9 @@ class EventSubscriptionController {
     }
     
     public SimpleRuleType getSelectedRuleTemplate() {
-        return selectedRuleTemplate.getRuleType();
+        return selectedRuleTemplate == null 
+                    ? DEFAULT_RULE_TEMPLATE
+                    : selectedRuleTemplate.getRuleType();
     }
 
     public OverUndershootSelectionData getOverUndershootEntryConditions() {
@@ -202,5 +206,8 @@ class EventSubscriptionController {
         return metadata;
     }
 
+    SimpleRuleType getDefaultTemplate() {
+        return DEFAULT_RULE_TEMPLATE;
+    }
     
 }

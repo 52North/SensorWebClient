@@ -28,12 +28,14 @@ import static com.google.gwt.user.client.Cookies.getCookie;
 import static com.smartgwt.client.types.Alignment.RIGHT;
 import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ID;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.OVER_UNDERSHOOT;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.event.CreateSimpleRuleEvent;
 import org.n52.client.ses.event.SubscribeEvent;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.ui.ApplyCancelButtonLayout;
+import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 import org.n52.shared.serializable.pojos.Rule;
 
 import com.smartgwt.client.widgets.Canvas;
@@ -44,6 +46,8 @@ import com.smartgwt.client.widgets.events.CloseClickEvent;
 import com.smartgwt.client.widgets.events.CloseClickHandler;
 import com.smartgwt.client.widgets.events.ResizedEvent;
 import com.smartgwt.client.widgets.events.ResizedHandler;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.StaticTextItem;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -126,11 +130,25 @@ public class EventSubscriptionWindow extends Window {
     private Canvas createNewEventAbonnementCanvas() {
         Layout subscriptionContent = new VLayout();
         subscriptionContent.setStyleName("n52_sensorweb_client_create_abo_form_content");
+        subscriptionContent.addMember(createStationInfo());
         subscriptionContent.addMember(createRuleTemplateSelectionCanvas());
         subscriptionContent.addMember(new EventNameForm(controller));
         subscriptionContent.addMember(createApplyCancelCanvas());
         subscriptionContent.addMember(new TimeSeriesMetadataTable(controller));
         return subscriptionContent;
+    }
+
+    private Canvas createStationInfo() {
+        TimeSeries timeSeries = controller.getTimeSeries();
+        StaticTextItem stationName = new StaticTextItem();
+        stationName.setTitle(i18n.station());
+        stationName.setValue(timeSeries.getStationName());
+        StaticTextItem parameter = new StaticTextItem();
+        parameter.setTitle(i18n.phenomenon());
+        parameter.setValue(timeSeries.getPhenomenonId());
+        DynamicForm form = new DynamicForm();
+        form.setFields(stationName, parameter);
+        return form;
     }
 
     private Canvas createRuleTemplateSelectionCanvas() {
