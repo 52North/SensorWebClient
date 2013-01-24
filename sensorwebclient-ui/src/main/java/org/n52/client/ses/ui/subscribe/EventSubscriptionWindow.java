@@ -126,8 +126,8 @@ public class EventSubscriptionWindow extends Window {
     private Canvas createNewEventAbonnementCanvas() {
         Layout subscriptionContent = new VLayout();
         subscriptionContent.setStyleName("n52_sensorweb_client_create_abo_form_content");
-        subscriptionContent.addMember(new EventNameForm(controller));
         subscriptionContent.addMember(createRuleTemplateSelectionCanvas());
+        subscriptionContent.addMember(new EventNameForm(controller));
         subscriptionContent.addMember(createApplyCancelCanvas());
         subscriptionContent.addMember(new TimeSeriesMetadataTable(controller));
         return subscriptionContent;

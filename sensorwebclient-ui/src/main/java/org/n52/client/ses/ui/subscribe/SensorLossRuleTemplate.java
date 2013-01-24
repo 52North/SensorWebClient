@@ -36,16 +36,16 @@ public class SensorLossRuleTemplate extends RuleTemplate {
 
     private Canvas createEditConditionCanvas() {
         StaticTextItem label = createLabelItem(i18n.sensorFailure());
+
+        SelectItem unitItem = createUnitsItem();
+        unitItem.addChangedHandler(createEntryUnitChangedHandler());
+        unitItem.setWidth(EDIT_ITEMS_WIDTH);
         
         TextItem valueItem = createValueItem();
         valueItem.addChangedHandler(createValueChangedHandler());
         valueItem.setWidth(EDIT_ITEMS_WIDTH);
         
-        SelectItem unitItem = createUnitsItem();
-        unitItem.addChangedHandler(createEntryUnitChangedHandler());
-        unitItem.setWidth(EDIT_ITEMS_WIDTH);
-        
-        return assembleEditConditionForm(label, valueItem, unitItem);
+        return assembleEditConditionForm(label, unitItem, valueItem);
     }
 
     private ChangedHandler createValueChangedHandler() {

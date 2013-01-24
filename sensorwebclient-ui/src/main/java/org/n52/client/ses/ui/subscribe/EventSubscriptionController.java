@@ -41,9 +41,11 @@ class EventSubscriptionController {
 
     private EventSubscriptionWindow eventSubscriptionWindow;
 
+    private EventNameForm eventNameForm;
+
     private TimeSeries timeseries;
 
-    private String abonnementName;
+    private String selectedAbonnementName;
 
     private RuleTemplate selectedRuleTemplate;
 
@@ -55,6 +57,10 @@ class EventSubscriptionController {
 
     void setEventSubscription(EventSubscriptionWindow eventSubsciptionWindow) {
         this.eventSubscriptionWindow = eventSubsciptionWindow;
+    }
+    
+    void setEventNameForm(EventNameForm eventNameForm) {
+        this.eventNameForm = eventNameForm;
     }
 
     public void setTimeseries(TimeSeries timeseries) {
@@ -85,12 +91,12 @@ class EventSubscriptionController {
         return timeseries.getFeatureId();
     }
 
-    public void setAbonnementName(String currentAbonnementName) {
-        this.abonnementName = currentAbonnementName;
+    public void setSelectedAbonnementName(String currentAbonnementName) {
+        this.selectedAbonnementName = currentAbonnementName;
     }
     
-    public String getAbonnementName() {
-        return abonnementName;
+    public String getSelectedAbonnementName() {
+        return selectedAbonnementName;
     }
 
     /**
@@ -100,17 +106,21 @@ class EventSubscriptionController {
         if (timeseries == null) {
             return "";
         }
+
         StringBuilder sb = new StringBuilder();
         sb.append(timeseries.getProcedureId());
-        
-        // TODO adjust suggested name
-        
+        if (getSelectedRuleTemplate() == OVER_UNDERSHOOT) {
+            sb.append("_").append(OVER_UNDERSHOOT.toString());
+        } else if (getSelectedRuleTemplate() == SENSOR_LOSS) {
+            sb.append("_").append(SENSOR_LOSS.toString());
+        }
         return sb.toString();
     }
 
     public void setSelectedRuleTemplate(RuleTemplate template) {
         selectedRuleTemplate = template;
         eventSubscriptionWindow.updateRuleEditCanvas(template);
+        eventNameForm.updateSuggestedAbonnementName(createSuggestedAbonnementName());
     }
     
     public SimpleRuleType getSelectedRuleTemplate() {
@@ -146,7 +156,7 @@ class EventSubscriptionController {
     }
 
     private Rule createOverUndershootRule() {
-        final String subscriptionName = abonnementName;
+        final String subscriptionName = selectedAbonnementName;
         final OverUndershootSelectionData entryConditions = overUndershootEntryConditions;
         final OverUndershootSelectionData exitConditions = overUndershootExitConditions;
         return RuleBuilder.aRule()
@@ -167,7 +177,7 @@ class EventSubscriptionController {
     }
 
     private Rule createSensorLossRule() {
-        final String subscriptionName = abonnementName;
+        final String subscriptionName = selectedAbonnementName;
         final SensorLossSelectionData condition = sensorLossConditions;
         return RuleBuilder.aRule()
                 .setTitle(subscriptionName)
