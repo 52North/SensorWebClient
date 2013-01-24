@@ -111,8 +111,7 @@ public abstract class RuleTemplate {
     protected StaticTextItem createLabelItem(String labelText) {
         StaticTextItem labelItem = new StaticTextItem();
         labelItem.setTitle(labelText);
-//        labelItem.setColSpan(0);
-        labelItem.setWidth(1);
+        labelItem.setValue("");
         return labelItem;
     }
     

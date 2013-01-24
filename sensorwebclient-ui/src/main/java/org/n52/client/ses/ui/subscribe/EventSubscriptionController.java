@@ -110,7 +110,7 @@ class EventSubscriptionController {
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append(timeseries.getProcedureId());
+        sb.append(timeseries.getStationName());
         if (getSelectedRuleTemplate() == OVER_UNDERSHOOT) {
             sb.append("_").append(OVER_UNDERSHOOT.toString());
         } else if (getSelectedRuleTemplate() == SENSOR_LOSS) {

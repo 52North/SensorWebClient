@@ -28,14 +28,12 @@ import static com.google.gwt.user.client.Cookies.getCookie;
 import static com.smartgwt.client.types.Alignment.RIGHT;
 import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ID;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
-import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.OVER_UNDERSHOOT;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.event.CreateSimpleRuleEvent;
 import org.n52.client.ses.event.SubscribeEvent;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.ui.ApplyCancelButtonLayout;
-import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 import org.n52.shared.serializable.pojos.Rule;
 
 import com.smartgwt.client.widgets.Canvas;
@@ -147,6 +145,7 @@ public class EventSubscriptionWindow extends Window {
         parameter.setTitle(i18n.phenomenon());
         parameter.setValue(timeSeries.getPhenomenonId());
         DynamicForm form = new DynamicForm();
+        form.setStyleName("n52_sensorweb_client_create_abo_info");
         form.setFields(stationName, parameter);
         return form;
     }

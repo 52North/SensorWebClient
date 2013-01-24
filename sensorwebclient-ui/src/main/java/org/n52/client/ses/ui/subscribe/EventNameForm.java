@@ -33,7 +33,6 @@ public class EventNameForm extends DynamicForm {
         
         aboNameItem = new TextItem();
         aboNameItem.setTextBoxStyle("n52_sensorweb_client_abo_name_textbox");
-        aboNameItem.setName("AbonnementName");
         aboNameItem.setTitle(i18n.aboName());
         aboNameItem.setWidth("*"); // fill form column
         aboNameItem.setValue(controller.createSuggestedAbonnementName());

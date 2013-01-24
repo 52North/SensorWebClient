@@ -56,12 +56,15 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
         entryValueItem.addChangedHandler(createEntryValueChangedHandler());
         entryValueItem.setWidth(EDIT_ITEMS_WIDTH);
         
-        SelectItem entryUnitItem = createUnitsItem();
-        entryUnitItem.addChangedHandler(createEntryUnitChangedHandler());
+//        SelectItem entryUnitItem = createUnitsItem();
+//        entryUnitItem.addChangedHandler(createEntryUnitChangedHandler());
+//        entryUnitItem.setWidth(EDIT_ITEMS_WIDTH);
+        StaticTextItem entryUnitItem = createStaticUnitItem();
         entryUnitItem.setWidth(EDIT_ITEMS_WIDTH);
         
         return assembleEditConditionForm(labelItem, entryOperatorItem, entryValueItem, entryUnitItem);
     }
+
 
     private ChangedHandler createEntryOperatorChangedHandler() {
         return new ChangedHandler() {
@@ -85,6 +88,17 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
                 exitValueItem.setValue(value);
             }
         };
+    }
+    
+
+    private StaticTextItem createStaticUnitItem() {
+        StaticTextItem unitItem = new StaticTextItem();
+        unitItem.setTitle(i18n.unit());
+        unitItem.setTitleOrientation(TOP);
+        String unitOfMeasure = controller.getTimeSeries().getUnitOfMeasure();
+        controller.getOverUndershootEntryConditions().setUnit(unitOfMeasure);
+        unitItem.setValue(unitOfMeasure);
+        return unitItem;
     }
 
     private ChangedHandler createEntryUnitChangedHandler() {
@@ -110,8 +124,10 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
         exitValueItem.addChangedHandler(createExitValueChangedHandler());
         exitValueItem.setWidth(EDIT_ITEMS_WIDTH);
 
-        exitUnitItem = createUnitsItem();
-        exitUnitItem.addChangedHandler(createExitUnitChangedHandler());
+//        exitUnitItem = createUnitsItem();
+//        exitUnitItem.addChangedHandler(createExitUnitChangedHandler());
+//        exitUnitItem.setWidth(EDIT_ITEMS_WIDTH);
+        StaticTextItem exitUnitItem = createStaticUnitItem();
         exitUnitItem.setWidth(EDIT_ITEMS_WIDTH);
         
         return assembleEditConditionForm(labelItem, exitOperatorItem, exitValueItem, exitUnitItem);

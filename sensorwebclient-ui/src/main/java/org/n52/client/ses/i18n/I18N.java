@@ -413,5 +413,11 @@ public interface I18N extends Constants {
     String provider();
 
     String selectPredefinedEventForSubscription();
+
+    String seconds();
+
+    String minutes();
+
+    String hours();
     
 }
