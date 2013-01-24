@@ -236,6 +236,14 @@ public class TimeSeriesProperties implements Serializable {
 	public void setSosUrl(String sosUrl) {
 		this.sosUrl = sosUrl;
 	}
+	
+	public void setStation(Station station) {
+	    this.station = station;
+	}
+	
+	public Station getStation() {
+	    return station;
+	}
 
 	public void setOff(Offering off) {
 		this.off = off;
@@ -274,19 +282,6 @@ public class TimeSeriesProperties implements Serializable {
 	
 	public String getLanguage() {
 	    return this.language;
-	}
-
-	/**
-	 * Gets the srs.
-	 * 
-	 * @return the srs
-	 */
-	public String getSrs() {
-		return this.station.getSrs();
-	}
-
-	public void setSrs(String srs) {
-		this.station.setSrs(srs);
 	}
 
 	/**
@@ -514,6 +509,19 @@ public class TimeSeriesProperties implements Serializable {
 	public double getLon() {
 		return this.station.getLon();
 	}
+
+    /**
+     * Gets the srs.
+     * 
+     * @return the srs
+     */
+    public String getSrs() {
+        return this.station.getSrs();
+    }
+
+    public void setSrs(String srs) {
+        this.station.setSrs(srs);
+    }
 
 	/**
 	 * Sets the opacity.

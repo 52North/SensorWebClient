@@ -33,7 +33,6 @@ import org.n52.client.ctrl.Controller;
 import org.n52.client.ctrl.ExceptionHandler;
 import org.n52.client.ctrl.GUIException;
 import org.n52.client.ses.event.ChangeLayoutEvent;
-import org.n52.client.ses.event.EditSimpleRuleEvent;
 import org.n52.client.ses.event.GetAllOtherRulesEvent;
 import org.n52.client.ses.event.GetAllOwnRulesEvent;
 import org.n52.client.ses.event.GetAllPublishedRulesEvent;
@@ -47,13 +46,12 @@ import org.n52.client.ses.event.SetRoleEvent;
 import org.n52.client.ses.event.ShowAllUserEvent;
 import org.n52.client.ses.event.UpdateProfileEvent;
 import org.n52.client.ses.event.handler.ChangeLayoutEventHandler;
-import org.n52.client.ses.event.handler.EditSimpleRuleEventHandler;
 import org.n52.client.ses.event.handler.InformUserEventHandler;
 import org.n52.client.ses.event.handler.SetRoleEventHandler;
 import org.n52.client.ses.event.handler.ShowAllUserEventHandler;
 import org.n52.client.ses.event.handler.UpdateProfileEventHandler;
-import org.n52.client.ses.ui.SesTab;
 import org.n52.client.ses.ui.Layout.Layouts;
+import org.n52.client.ses.ui.SesTab;
 import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
 import org.n52.client.sos.event.TabSelectedEvent;
 import org.n52.client.sos.event.TimeSeriesChangedEvent;
@@ -89,8 +87,8 @@ public class SesTabController extends Controller<SesTab> {
     }
 
     private class SesTabEventBroker extends ATabEventBroker implements ChangeLayoutEventHandler, SetRoleEventHandler,
-            UpdateProfileEventHandler, ShowAllUserEventHandler, InformUserEventHandler, EditSimpleRuleEventHandler, TimeSeriesChangedEventHandler, 
-            TabSelectedEventHandler {
+            UpdateProfileEventHandler, ShowAllUserEventHandler, InformUserEventHandler, TimeSeriesChangedEventHandler, 
+            TabSelectedEventHandler /*, EditSimpleRuleEventHandler*/ {
 
         public SesTabEventBroker() {
             EventBus.getMainEventBus().addHandler(ChangeLayoutEvent.TYPE, this);
@@ -98,7 +96,7 @@ public class SesTabController extends Controller<SesTab> {
             EventBus.getMainEventBus().addHandler(UpdateProfileEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(ShowAllUserEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(InformUserEvent.TYPE, this);
-            EventBus.getMainEventBus().addHandler(EditSimpleRuleEvent.TYPE, this);
+//            EventBus.getMainEventBus().addHandler(EditSimpleRuleEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(TimeSeriesChangedEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(TabSelectedEvent.TYPE, this);
         }
@@ -120,9 +118,10 @@ public class SesTabController extends Controller<SesTab> {
                 getDataControls().highlightSelectedButton(getDataControls().getEditProfileButton());
                 EventBus.getMainEventBus().fireEvent(
                         new GetSingleUserEvent(Cookies.getCookie(SesRequestManager.COOKIE_USER_ID)));
-            } else if (layout == Layouts.CREATE_SIMPLE) {
-                getDataControls().highlightSelectedButton(getDataControls().getCreateSimpleRuleButton());
-                getTab().getSimpleRuleLayout().clearFields();
+                // TODO remove dead code
+//            } else if (layout == Layouts.CREATE_SIMPLE) {
+//                getDataControls().highlightSelectedButton(getDataControls().getCreateSimpleRuleButton());
+//                getTab().getSimpleRuleLayout().clearFields();
             } else if (layout == Layouts.ABOS) {
                 getDataControls().highlightSelectedButton(getDataControls().getAboRuleButton());
                 EventBus.getMainEventBus().fireEvent(
@@ -235,6 +234,7 @@ public class SesTabController extends Controller<SesTab> {
             case LOGIN_LOCKED:
                 SC.say(i18n.accountLocked());
                 break;
+                // TODO remove dead code
             // case NEW_PASSWORD_NAME:
             // getTab().getForgorPasswordLayout().getNameItem().setErrorFormatter(new
             // FormItemErrorFormatter() {
@@ -255,13 +255,14 @@ public class SesTabController extends Controller<SesTab> {
             // }
             // });
             // break;
-            case STATIONS:
-                getTab().getSimpleRuleLayout().setStationsToList(evt.getResponse().getList());
-                break;
-            case PHENOMENA:
-                getTab().getSimpleRuleLayout().setPhenomenonToList(evt.getResponse().getList());
-                getTab().getSimpleRuleLayout().setUnit(evt.getResponse().getComplexList());
-                break;
+                // TODO remove dead code
+//            case STATIONS:
+//                getTab().getSimpleRuleLayout().setStationsToList(evt.getResponse().getList());
+//                break;
+//            case PHENOMENA:
+//                getTab().getSimpleRuleLayout().setPhenomenonToList(evt.getResponse().getList());
+//                getTab().getSimpleRuleLayout().setUnit(evt.getResponse().getComplexList());
+//                break;
             case OWN_RULES:
                 getTab().getRuleLayout().setDataOwnRules(evt.getResponse().getList(),
                         evt.getResponse().getComplexList());
@@ -287,13 +288,14 @@ public class SesTabController extends Controller<SesTab> {
             case ALL_PUBLISHED_RULES:
                 getTab().getComplexLayout().setRules(evt.getResponse().getList());
                 break;
-            case RULE_NAME_EXISTS:
-                getTab().getSimpleRuleLayout().getTitleItem().setErrorFormatter(new FormItemErrorFormatter() {
-                    public String getErrorHTML(String[] errors) {
-                        return "<img src='../img/icons/exclamation.png' alt='rule name allready exists' title='rule name allready exists'/>";
-                    }
-                });
-                break;
+                // TODO remove dead code
+//            case RULE_NAME_EXISTS:
+//                getTab().getSimpleRuleLayout().getTitleItem().setErrorFormatter(new FormItemErrorFormatter() {
+//                    public String getErrorHTML(String[] errors) {
+//                        return "<img src='../img/icons/exclamation.png' alt='rule name allready exists' title='rule name allready exists'/>";
+//                    }
+//                });
+//                break;
             case USER_SUBSCRIPTIONS:
                 getTab().getUserSubscriptionsLayout().setData(evt.getResponse().getList(),
                         evt.getResponse().getComplexList());
@@ -307,9 +309,10 @@ public class SesTabController extends Controller<SesTab> {
             }
         }
 
-        public void onUpdate(EditSimpleRuleEvent evt) {
-            getTab().getSimpleRuleLayout().setEditRule(evt.getBasicRule());
-        }
+        // TODO remove dead code
+//        public void onUpdate(EditSimpleRuleEvent evt) {
+//            getTab().getSimpleRuleLayout().setEditRule(evt.getBasicRule());
+//        }
 
         private void setUserLoggedInAsText() {
             // get user name from coockie
@@ -324,7 +327,8 @@ public class SesTabController extends Controller<SesTab> {
                 getTab().getRuleLayout().getUserNameLabel().setText(text);
                 getTab().getComplexLayout().getUserNameLabel().setText(text);
                 getTab().getEditProfileLayout().getUserNameLabel().setText(text);
-                getTab().getSimpleRuleLayout().getUserNameLabel().setText(text);
+                // TODO remove dead code
+//                getTab().getSimpleRuleLayout().getUserNameLabel().setText(text);
                 getTab().getAllRulesLayout().getUserNameLabel().setText(text);
                 getTab().getAllSensorsLayout().getUserNameLabel().setText(text);
                 getTab().getEditRulesLayout().getUserNameLabel().setText(text);

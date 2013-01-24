@@ -36,6 +36,7 @@ import org.n52.client.util.ClientUtils;
 import org.n52.shared.serializable.pojos.Axis;
 import org.n52.shared.serializable.pojos.TimeSeriesProperties;
 import org.n52.shared.serializable.pojos.sos.Procedure;
+import org.n52.shared.serializable.pojos.sos.Station;
 
 public class TimeSeries implements LegendData {
 
@@ -262,6 +263,14 @@ public class TimeSeries implements LegendData {
 	public double getLon() {
 		return properties.getLon();
 	}
+	
+	public void setStation(Station station) {
+	    properties.setStation(station);
+	}
+	
+	public Station getStation() {
+	    return properties.getStation();
+	}
 
 	public void setStationName(String name) {
 		this.properties.setStationName(name);
@@ -274,7 +283,6 @@ public class TimeSeries implements LegendData {
 
 	public void setLineStyle(String lineStyle) {
 		this.properties.setLineStyle(lineStyle);
-
 	}
 
 	public String getLineStyle() {

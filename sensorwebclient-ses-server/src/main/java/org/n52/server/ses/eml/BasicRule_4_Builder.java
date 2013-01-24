@@ -207,12 +207,12 @@ public class BasicRule_4_Builder {
             Node n1 = propertyRestrictionsList.item(0);
             n1.setTextContent(rule.getPhenomenon());
             Node n2 = propertyRestrictionsList.item(1);
-            n2.setTextContent(rule.getStation());
+            n2.setTextContent(rule.getProcedure());
 
             Node n4 = propertyRestrictionsList.item(2);
             n4.setTextContent(rule.getPhenomenon());
             Node n5 = propertyRestrictionsList.item(3);
-            n5.setTextContent(rule.getStation());
+            n5.setTextContent(rule.getProcedure());
 
             // fes:Filter
             NodeList filterList = doc.getElementsByTagName(this.fesFilter);
@@ -332,7 +332,7 @@ public class BasicRule_4_Builder {
 
             // get station
             Node n2 = propertyRestrictionsList.item(1);
-            rule.setStation(n2.getTextContent());
+            rule.setProcedure(n2.getTextContent());
 
             NodeList filterList = doc.getElementsByTagName(this.fesFilter);
             Node filterNode = filterList.item(0);

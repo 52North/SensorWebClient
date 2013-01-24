@@ -315,8 +315,8 @@ public class SesRulesServiceImpl implements SesRuleService {
             // get sensorID
             List<Sensor> list = HibernateUtil.getActiveSensors();
             for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).getSensorID().contains(rule.getStation())) {
-                    rule.setStation(list.get(i).getSensorID());
+                if (list.get(i).getSensorID().contains(rule.getProcedure())) {
+                    rule.setProcedure(list.get(i).getSensorID());
                 }
             }
             switch (type) {
@@ -339,7 +339,7 @@ public class SesRulesServiceImpl implements SesRuleService {
             }
 
             if (basicRule != null) {
-                basicRule.setSensor(rule.getStation());
+                basicRule.setSensor(rule.getProcedure());
                 basicRule.setPhenomenon(rule.getPhenomenon());
                 
                 LOG.debug(basicRule.getEml());

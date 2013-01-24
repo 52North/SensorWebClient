@@ -175,7 +175,7 @@ public class BasicRule_5_Builder {
             Node value_1 = propertyRestrictiosnList.item(0);
             value_1.setTextContent(rule.getPhenomenon());
             Node value_2 = propertyRestrictiosnList.item(1);
-            value_2.setTextContent(rule.getStation());
+            value_2.setTextContent(rule.getProcedure());
 
             // set EventCount
             NodeList eventCountList = fstElement.getElementsByTagName(eventCount);
@@ -273,7 +273,7 @@ public class BasicRule_5_Builder {
 
             // get station
             Node value_2 = propertyRestrictiosnList.item(1);
-            rule.setStation(value_2.getTextContent());
+            rule.setProcedure(value_2.getTextContent());
 
             NodeList userParameterValueList = doc.getElementsByTagName(userParameterValue);
             Node userParameterValueNode = userParameterValueList.item(2);

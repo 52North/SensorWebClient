@@ -47,7 +47,9 @@ public class Rule implements Serializable {
 
     private String title;
 
-    private String station;
+    private FeedingMetadata feedingMetadata;
+    
+    private String procedure;
 
     private String phenomenon;
 
@@ -89,10 +91,10 @@ public class Rule implements Serializable {
     /**
      * Instantiates a new rule.
      */
-    public Rule(SimpleRuleType ruleType, String title, String station, String phenomenon,
+    public Rule(SimpleRuleType ruleType, String title, FeedingMetadata feedingMetadata,
             String notificationType, String description, boolean publish, boolean enterEqualsExitCondition,
             int entryOperatorIndex, String entryValue, String entryUnit, int exitOperatorIndex, String exitValue, String exitUnit, int userID) {
-        this(ruleType, title, station, phenomenon, notificationType, description, publish, enterEqualsExitCondition, userID);
+        this(ruleType, title, feedingMetadata, notificationType, description, publish, enterEqualsExitCondition, userID);
         this.entryOperatorIndex = entryOperatorIndex;
         this.entryValue = entryValue;
         this.entryUnit = entryUnit;
@@ -104,10 +106,10 @@ public class Rule implements Serializable {
     /**
      * BasicRule_1: Tendenz_Anzahl
      */
-    public Rule(SimpleRuleType ruleType, String title, String station, String phenomenon,
+    public Rule(SimpleRuleType ruleType, String title, FeedingMetadata feedingMetadata,
             String notificationType, String description, boolean publish, boolean enterEqualsExitCondition,
             int entryOperatorIndex, String entryValue, String entryUnit,int exitOperatorIndex, String exitValue, String exitUnit, int userID, String count, String exitCount) {
-        this(ruleType, title, station, phenomenon, notificationType, description, publish, enterEqualsExitCondition, userID);
+        this(ruleType, title, feedingMetadata, notificationType, description, publish, enterEqualsExitCondition, userID);
         this.entryOperatorIndex = entryOperatorIndex;
         this.entryValue = entryValue;
         this.entryUnit = entryUnit;
@@ -126,11 +128,11 @@ public class Rule implements Serializable {
      * BasicRule_2: Tendenz_Zeit
      * 
      */
-    public Rule(SimpleRuleType ruleType, String title, String station, String phenomenon,
+    public Rule(SimpleRuleType ruleType, String title, FeedingMetadata feedingMetadata,
             String notificationType, String description, boolean publish, boolean enterEqualsExitCondition,
             int entryOperatorIndex, String entryValue, String entryUnit,int exitOperatorIndex, String exitValue, String exitUnit, int userID,
             String entryTime, String entryTimeUnit, String exitTime, String exitTimeUnit) {
-        this(ruleType, title, station, phenomenon, notificationType, description, publish, enterEqualsExitCondition, userID);
+        this(ruleType, title, feedingMetadata, notificationType, description, publish, enterEqualsExitCondition, userID);
         
         this.entryOperatorIndex = entryOperatorIndex;
         this.entryValue = entryValue;
@@ -150,19 +152,18 @@ public class Rule implements Serializable {
     /**
      * BasicRule_5: Ausfall
      */
-    public Rule(SimpleRuleType ruleType, String title, String station, String phenomenon, String notificationType, String description, 
+    public Rule(SimpleRuleType ruleType, String title, FeedingMetadata feedingMetadata, String notificationType, String description, 
             boolean publish, boolean enterEqualsExitCondition, int userID, String entryTime, String entryTimeUnit) {
-        this(ruleType, title, station, phenomenon, notificationType, description, publish, enterEqualsExitCondition, userID);
+        this(ruleType, title, feedingMetadata, notificationType, description, publish, enterEqualsExitCondition, userID);
         this.entryTime = entryTime;
         this.entryTimeUnit = entryTimeUnit;
     }
     
-    public Rule(SimpleRuleType ruleType, String title, String station, String phenomenon, String notificationType, String description, 
+    public Rule(SimpleRuleType ruleType, String title, FeedingMetadata feedingMetadata, String notificationType, String description, 
             boolean publish, boolean enterEqualsExitCondition, int userID) {
         this.ruleType = ruleType;
         this.title = title;
-        this.station = station;
-        this.phenomenon = phenomenon;
+        this.feedingMetadata = feedingMetadata;
         this.notificationType = notificationType;
         this.description = description;
         this.publish = publish;
@@ -186,20 +187,45 @@ public class Rule implements Serializable {
         this.title = title;
     }
 
-    public String getStation() {
-        return this.station;
+    /**
+     * @deprecated use {@link #getFeedingMetadata()}
+     */
+    @Deprecated
+    public String getProcedure() {
+        return procedure;
     }
 
-    public void setStation(String station) {
-        this.station = station;
+    /**
+     * @deprecated use {@link #setFeedingMetadata(FeedingMetadata)}
+     */
+    @Deprecated
+    public void setProcedure(String procedure) {
+        this.procedure = procedure;
     }
 
+    
+    /**
+     * @deprecated use {@link #getFeedingMetadata()}
+     */
+    @Deprecated
     public String getPhenomenon() {
-        return this.phenomenon;
+        return phenomenon;
     }
 
+    /**
+     * @deprecated use {@link #getFeedingMetadata()}
+     */
+    @Deprecated
     public void setPhenomenon(String phenomenon) {
         this.phenomenon = phenomenon;
+    }
+
+    public FeedingMetadata getFeedingMetadata() {
+        return feedingMetadata;
+    }
+
+    public void setFeedingMetadata(FeedingMetadata feedingMetadata) {
+        this.feedingMetadata = feedingMetadata;
     }
 
     public String getNotificationType() {

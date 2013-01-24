@@ -6,8 +6,6 @@ public class RuleBuilder {
 
     private SimpleRuleType ruleType;
     private String title;
-    private String station;
-    private String phenomenon;
     private String notificationType;
     private String description;
     private boolean publish;
@@ -25,6 +23,11 @@ public class RuleBuilder {
     private String entryTimeUnit;
     private String exitTime;
     private String exitTimeUnit;
+    private FeedingMetadata feedingMetadata;
+    @Deprecated
+    private String procedure;
+    @Deprecated
+    private String phenomenon;
 
     public static RuleBuilder aRule() {
         return new RuleBuilder();
@@ -40,18 +43,7 @@ public class RuleBuilder {
         this.title = title;
         return this;
     }
-
-    public RuleBuilder setStation(String station) {
-        this.station = station;
-        return this;
-    }
-
-    public RuleBuilder setPhenomenon(String phenomenon) {
-        this.phenomenon = phenomenon;
-        return this;
-        
-    }
-
+    
     public RuleBuilder setNotificationType(String notificationType) {
         this.notificationType = notificationType;
         return this;
@@ -139,6 +131,11 @@ public class RuleBuilder {
         return this;
     }
 
+    public RuleBuilder setFeedingMetadata(FeedingMetadata feedingMetadata) {
+        this.feedingMetadata = feedingMetadata;
+        return this;
+    }
+
     public Rule build() {
         Rule rule = new Rule();
         rule.setExitCount(exitCount);
@@ -151,19 +148,30 @@ public class RuleBuilder {
         rule.setDescription(description);
         rule.setEnterEqualsExitCondition(enterEqualsExit);
         rule.setNotificationType(notificationType);
-        rule.setPhenomenon(phenomenon);
         rule.setPublish(publish);
+        rule.setFeedingMetadata(feedingMetadata);
         rule.setEntryOperatorIndex(entryOperatorIndex);
         rule.setrTime(entryTime);
         rule.setrTimeUnit(entryTimeUnit);
         rule.setRuleType(ruleType);
         rule.setEntryUnit(entryUnit);
         rule.setEntryValue(entryValue);
-        rule.setStation(station);
         rule.setTitle(title);
         rule.setUserID(cookieAsInt);
+        rule.setProcedure(procedure);
+        rule.setPhenomenon(phenomenon);
         return rule;
     }
+
+    @Deprecated
+    public RuleBuilder setProcedure(String procedure) {
+        this.procedure = procedure;
+        return this;
+    }
     
-    
+    @Deprecated
+    public RuleBuilder setPhenomenon(String phenomeon) {
+        this.phenomenon = phenomeon;
+        return this;
+    }
 }

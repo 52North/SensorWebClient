@@ -23,6 +23,8 @@
  */
 package org.n52.client.ses.ui.layout;
 
+import static com.google.gwt.user.client.Cookies.getCookie;
+import static java.lang.Integer.parseInt;
 import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ID;
 import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ROLE;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
@@ -113,7 +115,7 @@ public class CreateSimpleRuleLayout extends Layout {
     private String name;
 
     /** The station. */
-    private String station;
+    private String procedure;
 
     /** The phenomenon. */
     private String phenomenon;
@@ -138,7 +140,7 @@ public class CreateSimpleRuleLayout extends Layout {
     private String oldRuleName = "";
     
     // first three combo boxes
-    private ComboBoxItem sensorItem;
+    private ComboBoxItem procedureItem;
     private SelectItem phenomenonItem;
     private SelectItem ruleTypeItem;
     
@@ -286,7 +288,7 @@ public class CreateSimpleRuleLayout extends Layout {
         this.ruleForm.setNumCols(6);
         SpacerItem spacerItem = new SpacerItem();
         spacerItem.setWidth(100);
-        this.ruleForm.setFields(spacerItem, sensorItem, phenomenonItem, ruleTypeItem);
+        this.ruleForm.setFields(spacerItem, procedureItem, phenomenonItem, ruleTypeItem);
         
         // Dynamic Forms
         this.entryConditionItemsForm = new DynamicForm();
@@ -338,7 +340,7 @@ public class CreateSimpleRuleLayout extends Layout {
         }
         
         // check station
-        String station = this.sensorItem.getValueAsString();
+        String station = this.procedureItem.getValueAsString();
         if (station == null || station.equals("")) {
             SC.say(i18n.chooseStation());
             return false;
@@ -451,7 +453,7 @@ public class CreateSimpleRuleLayout extends Layout {
      */
     private void createBasicRule() {
         this.name = (String) this.nameItem.getValue();
-        this.station = this.sensorItem.getValueAsString();
+        this.procedure = this.procedureItem.getValueAsString();
         this.phenomenon = this.phenomenonItem.getValueAsString();
 
         this.ruleTyp = this.selectedRuleType;
@@ -489,7 +491,7 @@ public class CreateSimpleRuleLayout extends Layout {
         Rule rule = RuleBuilder.aRule()
                         .setRuleType(ruleTyp)
                         .setTitle(name)
-                        .setStation(station)
+                        .setProcedure(procedure)
                         .setPhenomenon(phenomenon)
                         .setNotificationType(notificationType)
                         .setDescription(description)
@@ -508,9 +510,9 @@ public class CreateSimpleRuleLayout extends Layout {
      * Sum over Time
      */
     private void createSummeZeitRule() {
-        int operatorIndex = getOperatorIndex(this.entryOperatorItem.getValueAsString());
+        int entryOperatorIndex = getOperatorIndex(this.entryOperatorItem.getValueAsString());
         
-        int operatorIndexCond = 0;
+        int exitOperatorIndex = 0;
         
         String entryValue = this.entryValueItem.getValueAsString();
         String entryUnit = this.entryValueUnitItem.getValueAsString();
@@ -521,21 +523,35 @@ public class CreateSimpleRuleLayout extends Layout {
         
         if (this.enterConditionIsSameExitConditionRadioGroup.getValue().toString().equals(i18n.no())) {
             // enter condition != exit condition
-            operatorIndexCond = getOperatorIndex(this.exitOperatorItem.getValueAsString());
+            exitOperatorIndex = getOperatorIndex(this.exitOperatorItem.getValueAsString());
             exitValue = this.entryValueConditionItem.getValueAsString();
             exitUnit = this.entryValueUnitConditionItem.getValueAsString();
             this.enterConditionIsSameAsExitCondition = false;
 
         } else {
-            operatorIndexCond = getIndexOfInverseOperator(operatorIndex);
+            exitOperatorIndex = getIndexOfInverseOperator(entryOperatorIndex);
             exitValue = entryValue;
             exitUnit = entryUnit;
             this.enterConditionIsSameAsExitCondition = true;
         }
-        Rule rule =
-                new Rule(ruleTyp, name, station, phenomenon, notificationType,
-                        description, publish, enterConditionIsSameAsExitCondition, operatorIndex, entryValue, entryUnit,
-                        operatorIndexCond, exitValue, exitUnit, Integer.parseInt(Cookies.getCookie(COOKIE_USER_ID)), entryCount, null, null, null);
+        Rule rule = RuleBuilder.aRule()
+                        .setRuleType(ruleTyp)
+                        .setTitle(name)
+                        .setProcedure(procedure)
+                        .setPhenomenon(phenomenon)
+                        .setNotificationType(notificationType)
+                        .setDescription(description)
+                        .setPublish(publish)
+                        .setEnterIsSameAsExitCondition(enterConditionIsSameAsExitCondition)
+                        .setEntryOperatorIndex(entryOperatorIndex)
+                        .setEntryValue(entryValue)
+                        .setEntryUnit(entryUnit)
+                        .setExitOperatorIndex(exitOperatorIndex)
+                        .setExitValue(exitValue)
+                        .setExitUnit(exitUnit)
+                        .setCookie(parseInt(getCookie(COOKIE_USER_ID)))
+                        .setEntryCount(entryCount)
+                        .build();
 
         EventBus.getMainEventBus().fireEvent(new CreateSimpleRuleEvent(rule, this.edit, this.oldRuleName));
         
@@ -545,43 +561,56 @@ public class CreateSimpleRuleLayout extends Layout {
      * Trend over Time
      */
     private void createTendenzZeitRule() {
-        int operatorIndex = getOperatorIndex(this.entryOperatorItem.getValueAsString());
+        int entryOperatorIndex = getOperatorIndex(this.entryOperatorItem.getValueAsString());
         
-        int operatorIndexCond = 0;
+        int exitOperatorIndex = 0;
 
-        String rValue = this.entryValueItem.getValueAsString();
-        String rUnit = this.entryValueUnitItem.getValueAsString();
-        String cValue;
-        String cUnit;
+        String entryValue = this.entryValueItem.getValueAsString();
+        String entryUnit = this.entryValueUnitItem.getValueAsString();
+        String exitValue;
+        String exitUnit;
 
-        String rTime = this.entryTimeItem.getValueAsString();
-        String rTimeUnit = this.entryTimeUnitItem.getValueAsString();
-        String cTime;
-        String cTimeUnit;
+        String entryTime = this.entryTimeItem.getValueAsString();
+        String entryTimeUnit = this.entryTimeUnitItem.getValueAsString();
+        String exitTime;
+        String exitTimeUnit;
 
         if (this.enterConditionIsSameExitConditionRadioGroup.getValue().toString().equals(i18n.no())) {
             // enter condition != exit condition
-            operatorIndexCond = getOperatorIndex(this.exitOperatorItem.getValueAsString());
+            exitOperatorIndex = getOperatorIndex(this.exitOperatorItem.getValueAsString());
             
-            cValue = this.entryValueConditionItem.getValueAsString();
-            cUnit = this.entryValueUnitConditionItem.getValueAsString();
+            exitValue = this.entryValueConditionItem.getValueAsString();
+            exitUnit = this.entryValueUnitConditionItem.getValueAsString();
             this.enterConditionIsSameAsExitCondition = false;
-            cTime = this.exitTimeItem.getValueAsString();
-            cTimeUnit = this.exitTimeUnitItem.getValueAsString();
+            exitTime = this.exitTimeItem.getValueAsString();
+            exitTimeUnit = this.exitTimeUnitItem.getValueAsString();
 
         } else {
-            operatorIndexCond = getIndexOfInverseOperator(operatorIndex);
-            cValue = rValue;
-            cUnit = rUnit;
+            exitOperatorIndex = getIndexOfInverseOperator(entryOperatorIndex);
+            exitValue = entryValue;
+            exitUnit = entryUnit;
             this.enterConditionIsSameAsExitCondition = true;
-            cTime = rTime;
-            cTimeUnit = rTimeUnit;
+            exitTime = entryTime;
+            exitTimeUnit = entryTimeUnit;
         }
-        Rule rule =
-                new Rule(this.ruleTyp, this.name, this.station, this.phenomenon, this.notificationType,
-                        this.description, this.publish, this.enterConditionIsSameAsExitCondition, operatorIndex, rValue, rUnit,
-                        operatorIndexCond, cValue, cUnit, Integer.parseInt(Cookies
-                                .getCookie(SesRequestManager.COOKIE_USER_ID)), rTime, rTimeUnit, cTime, cTimeUnit);
+        Rule rule = RuleBuilder.aRule()
+                        .setRuleType(ruleTyp)
+                        .setTitle(name)
+                        .setProcedure(procedure)
+                        .setPhenomenon(phenomenon)
+                        .setNotificationType(notificationType)
+                        .setDescription(description)
+                        .setPublish(publish)
+                        .setEnterIsSameAsExitCondition(enterConditionIsSameAsExitCondition)
+                        .setEntryOperatorIndex(entryOperatorIndex)
+                        .setEntryValue(entryValue)
+                        .setEntryUnit(entryUnit)
+                        .setCookie(parseInt(getCookie(SesRequestManager.COOKIE_USER_ID)))
+                        .setEntryTime(entryTime)
+                        .setEntryTimeUnit(entryTimeUnit)
+                        .setExitTime(exitTime)
+                        .setExitTimeUnit(exitTimeUnit)
+                        .build();
 
         EventBus.getMainEventBus().fireEvent(new CreateSimpleRuleEvent(rule, this.edit, this.oldRuleName));
     }
@@ -623,7 +652,7 @@ public class CreateSimpleRuleLayout extends Layout {
         Rule rule = RuleBuilder.aRule()
                         .setRuleType(ruleTyp)
                         .setTitle(name)
-                        .setStation(station)
+                        .setProcedure(procedure)
                         .setPhenomenon(phenomenon)
                         .setNotificationType(notificationType)
                         .setDescription(description)
@@ -676,7 +705,7 @@ public class CreateSimpleRuleLayout extends Layout {
         Rule rule = RuleBuilder.aRule()
                         .setRuleType(ruleTyp)
                         .setTitle(name)
-                        .setStation(station)
+                        .setProcedure(procedure)
                         .setPhenomenon(phenomenon)
                         .setNotificationType(notificationType)
                         .setDescription(description)
@@ -711,8 +740,8 @@ public class CreateSimpleRuleLayout extends Layout {
         for (int i = 0; i < stations.size(); i++) {
            this.sensorsHashMap.put(stations.get(i), stations.get(i));
         }
-        this.sensorItem.clearValue();
-        this.sensorItem.setValueMap(this.sensorsHashMap);
+        this.procedureItem.clearValue();
+        this.procedureItem.setValueMap(this.sensorsHashMap);
     }
 
     /**
@@ -873,8 +902,8 @@ public class CreateSimpleRuleLayout extends Layout {
         this.enterConditionIsSameExitConditionRadioGroup.setValue(i18n.yes());
 
         // clear first three list boxes
-        this.station = null;
-        this.sensorItem.clearValue();
+        this.procedure = null;
+        this.procedureItem.clearValue();
         this.phenomenonItem.clearValue();
 
         // clear description field
@@ -908,10 +937,10 @@ public class CreateSimpleRuleLayout extends Layout {
      */
     private void initComboBoxes() {
         
-        this.sensorItem = new ComboBoxItem("sensors", i18n.sensor());
-        this.sensorItem.setWidth(this.selectItemWidth);
-        this.sensorItem.setTitleOrientation(TitleOrientation.TOP);
-        this.sensorItem.addChangedHandler(new ChangedHandler() {
+        this.procedureItem = new ComboBoxItem("sensors", i18n.sensor());
+        this.procedureItem.setWidth(this.selectItemWidth);
+        this.procedureItem.setTitleOrientation(TitleOrientation.TOP);
+        this.procedureItem.addChangedHandler(new ChangedHandler() {
             public void onChanged(ChangedEvent event) {
                 String station = event.getValue().toString();
                 phenomenonItem.setDisabled(false);
@@ -980,11 +1009,11 @@ public class CreateSimpleRuleLayout extends Layout {
         nameItem.setValue(rule.getTitle());
         descriptionItem.setValue(rule.getDescription());
         phenomenon = rule.getPhenomenon();
-        station = rule.getStation();
-        sensorItem.setValue(station);
+        procedure = rule.getProcedure();
+        procedureItem.setValue(procedure);
         
         // get Phenomena
-        EventBus.getMainEventBus().fireEvent(new GetPhenomenaEvent(station));
+        EventBus.getMainEventBus().fireEvent(new GetPhenomenaEvent(procedure));
         
         // enable fields
         phenomenonItem.setDisabled(false);

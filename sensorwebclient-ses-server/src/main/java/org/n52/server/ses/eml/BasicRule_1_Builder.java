@@ -154,7 +154,7 @@ public class BasicRule_1_Builder {
             Node value_1 = propertyRestrictiosnList.item(0);
             value_1.setTextContent(rule.getPhenomenon());
             Node value_2 = propertyRestrictiosnList.item(1);
-            value_2.setTextContent(rule.getStation());
+            value_2.setTextContent(rule.getProcedure());
 
             // set EventCount. This count represents the last measurements
             NodeList eventCountList = fstElement.getElementsByTagName(Constants.eventCount);
@@ -329,7 +329,7 @@ public class BasicRule_1_Builder {
 
             // get station
             Node value_2 = propertyRestrictiosnList.item(1);
-            rule.setStation(value_2.getTextContent());
+            rule.setProcedure(value_2.getTextContent());
 
             // get filter operator
             NodeList filterList = doc.getElementsByTagName(Constants.fesFilter);

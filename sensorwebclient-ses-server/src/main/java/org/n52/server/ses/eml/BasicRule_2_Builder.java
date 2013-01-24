@@ -193,7 +193,7 @@ public class BasicRule_2_Builder {
             Node value_1 = propertyRestrictiosnList.item(0);
             value_1.setTextContent(rule.getPhenomenon());
             Node value_2 = propertyRestrictiosnList.item(1);
-            value_2.setTextContent(rule.getStation());
+            value_2.setTextContent(rule.getProcedure());
 
             // set UserParameterValue
             if (i == 1) {
@@ -358,7 +358,7 @@ public class BasicRule_2_Builder {
 
             // get station
             Node value_2 = propertyRestrictiosnList.item(1);
-            rule.setStation(value_2.getTextContent());
+            rule.setProcedure(value_2.getTextContent());
 
             NodeList filterList = doc.getElementsByTagName(fesFilter);
             Node filterNode = filterList.item(0);

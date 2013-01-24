@@ -31,15 +31,11 @@ import static org.n52.client.ses.util.RuleOperatorUtil.getOperatorIndex;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.OVER_UNDERSHOOT;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.SENSOR_LOSS;
 
-import org.n52.client.ses.util.RuleOperatorUtil;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
+import org.n52.shared.serializable.pojos.FeedingMetadata;
 import org.n52.shared.serializable.pojos.Rule;
 import org.n52.shared.serializable.pojos.RuleBuilder;
-
-import com.google.gwt.user.client.Cookies;
-
-import ch.qos.logback.classic.pattern.Abbreviator;
 
 class EventSubscriptionController {
 
@@ -106,16 +102,15 @@ class EventSubscriptionController {
         }
         StringBuilder sb = new StringBuilder();
         sb.append(timeseries.getProcedureId());
+        
         // TODO adjust suggested name
+        
         return sb.toString();
     }
 
     public void setSelectedRuleTemplate(RuleTemplate template) {
         selectedRuleTemplate = template;
         eventSubscriptionWindow.updateRuleEditCanvas(template);
-        
-        // TODO create abo subscription editor and set it in window
-        
     }
     
     public SimpleRuleType getSelectedRuleTemplate() {
@@ -152,16 +147,14 @@ class EventSubscriptionController {
 
     private Rule createOverUndershootRule() {
         final String subscriptionName = abonnementName;
-        final TimeSeries selectedTimeseries = timeseries;
         final OverUndershootSelectionData entryConditions = overUndershootEntryConditions;
         final OverUndershootSelectionData exitConditions = overUndershootExitConditions;
         return RuleBuilder.aRule()
                 .setTitle(subscriptionName)
                 .setRuleType(OVER_UNDERSHOOT)
                 .setCookie(parseInt(getCookie(COOKIE_USER_ID)))
-                .setStation(selectedTimeseries.getStationName())
-                .setPhenomenon(selectedTimeseries.getPhenomenonId())
                 .setDescription("Auto-Generated Rule from Template.")
+                .setFeedingMetadata(createFeedingMetadataFrom())
                 .setEntryOperatorIndex(getOperatorIndex(entryConditions.getOperator()))
                 .setEntryValue(entryConditions.getValue())
                 .setEntryUnit(entryConditions.getUnit())
@@ -175,19 +168,29 @@ class EventSubscriptionController {
 
     private Rule createSensorLossRule() {
         final String subscriptionName = abonnementName;
-        final TimeSeries selectedTimeseries = timeseries;
         final SensorLossSelectionData condition = sensorLossConditions;
         return RuleBuilder.aRule()
                 .setTitle(subscriptionName)
                 .setRuleType(OVER_UNDERSHOOT)
                 .setCookie(parseInt(getCookie(COOKIE_USER_ID)))
-                .setStation(selectedTimeseries.getStationName())
-                .setPhenomenon(selectedTimeseries.getPhenomenonId())
                 .setDescription("Auto-Generated Rule from Template.")
+                .setFeedingMetadata(createFeedingMetadataFrom())
                 .setEntryTime(condition.getValue())
                 .setEntryTimeUnit(condition.getUnit())
                 .setPublish(false)
                 .build();
     }
+    
+    private FeedingMetadata createFeedingMetadataFrom() {
+        final TimeSeries timeseries = this.timeseries;
+        FeedingMetadata metadata = new FeedingMetadata();
+        metadata.setServiceUrl(timeseries.getSosUrl());
+        metadata.setOffering(timeseries.getOfferingId());
+        metadata.setProcedure(timeseries.getFeatureId());
+        metadata.setPhenomenon(timeseries.getPhenomenonId());
+        metadata.setFeatureOfInterest(timeseries.getFeatureId());
+        return metadata;
+    }
+
     
 }

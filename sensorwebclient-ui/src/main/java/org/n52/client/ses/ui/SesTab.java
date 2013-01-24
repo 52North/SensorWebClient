@@ -78,8 +78,9 @@ public class SesTab extends DataPanelTab {
     /** The edit profile layout. */
     private EditProfileLayout editProfileLayout;
 
-    /** The simple rule layout. */
-    private CreateSimpleRuleLayout simpleRuleLayout;
+    // TODO remove dead code
+//    /** The simple rule layout. */
+//    private CreateSimpleRuleLayout simpleRuleLayout;
 
     /** The all rules layout. */
     private AllRulesLayout allRulesLayout;
@@ -151,8 +152,8 @@ public class SesTab extends DataPanelTab {
         this.editProfileLayout = new EditProfileLayout();
         this.editProfileLayout.setCanAcceptDrop(true);
 
-        this.simpleRuleLayout = new CreateSimpleRuleLayout();
-        this.simpleRuleLayout.setCanAcceptDrop(true);
+//        this.simpleRuleLayout = new CreateSimpleRuleLayout();
+//        this.simpleRuleLayout.setCanAcceptDrop(true);
 
         this.allRulesLayout = new AllRulesLayout();
         this.allRulesLayout.setCanAcceptDrop(true);
@@ -222,9 +223,10 @@ public class SesTab extends DataPanelTab {
             this.layout.setMembers(this.editProfileLayout);
             break;
 
-        case CREATE_SIMPLE:
-            this.layout.setMembers(this.simpleRuleLayout);
-            break;
+            // TODO remove dead code
+//        case CREATE_SIMPLE:
+//            this.layout.setMembers(this.simpleRuleLayout);
+//            break;
 
         case EDIT_SIMPLE:
             break;
@@ -302,12 +304,13 @@ public class SesTab extends DataPanelTab {
         return this.forgorPasswordLayout;
     }
 
-    /**
-     * @return {@link CreateSimpleRuleLayout}
-     */
-    public CreateSimpleRuleLayout getSimpleRuleLayout() {
-        return this.simpleRuleLayout;
-    }
+    // TODO remove dead code
+//    /**
+//     * @return {@link CreateSimpleRuleLayout}
+//     */
+//    public CreateSimpleRuleLayout getSimpleRuleLayout() {
+//        return this.simpleRuleLayout;
+//    }
 
     /**
      * @return {@link UserRuleLayout}
