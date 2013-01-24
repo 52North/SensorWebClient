@@ -35,12 +35,18 @@ import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.ows.ExceptionReport;
 import org.n52.oxf.ows.ServiceDescriptor;
 import org.n52.oxf.ows.capabilities.Operation;
+import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
+import org.n52.oxf.sos.adapter.SOSAdapter;
 import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.oxf.sos.capabilities.SOSContents;
+import org.n52.oxf.sos.util.SosUtil;
+import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.ses.feeder.FeederConfig;
 import org.n52.server.ses.feeder.util.IOHelper;
 import org.n52.server.ses.feeder.util.SOSAdapter_01;
+import org.n52.server.util.SosAdapterFactory;
 import org.n52.server.util.TimeUtil;
+import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -165,6 +171,13 @@ public class SOSConnector {
      */
     public ObservationCollectionDocument getObservation(String procedure, String offering, Calendar lastUpdate,
             String[] observedProperties) throws Exception {
+        
+        SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosURL);
+        SOSAdapter adapter = SosAdapterFactory.createSosAdapter(metadata);
+        
+        // TODO replace old mechanism with the use of the adapter
+        
+        
         // create request
         GetObservationDocument getObsDoc = GetObservationDocument.Factory.newInstance();
         GetObservation getObs = getObsDoc.addNewGetObservation();
