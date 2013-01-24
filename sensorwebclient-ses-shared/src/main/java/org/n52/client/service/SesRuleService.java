@@ -30,34 +30,34 @@ import org.n52.shared.serializable.pojos.Rule;
 
 public interface SesRuleService {
 
-    public abstract SesClientResponse subscribe(String userID, String ruleName, String medium, String eml) throws Exception;
+    public SesClientResponse subscribe(String userID, String ruleName, String medium, String eml) throws Exception;
 
-    public abstract SesClientResponse unSubscribe(String ruleName, String userID, String medium, String format) throws Exception;
+    public SesClientResponse unSubscribe(String ruleName, String userID, String medium, String format) throws Exception;
 
-    public abstract SesClientResponse createBasicRule(Rule rule, boolean edit, String oldRuleName) throws Exception;
+    public SesClientResponse createBasicRule(Rule rule, boolean edit, String oldRuleName) throws Exception;
 
-    public abstract SesClientResponse getAllOwnRules(String id, boolean edit) throws Exception;
+    public SesClientResponse getAllOwnRules(String id, boolean edit) throws Exception;
 
-    public abstract SesClientResponse getAllOtherRules(String id, boolean edit) throws Exception;
+    public SesClientResponse getAllOtherRules(String id, boolean edit) throws Exception;
 
-    public abstract SesClientResponse publishRule(String ruleName, boolean value, String role) throws Exception;
+    public SesClientResponse publishRule(String ruleName, boolean value, String role) throws Exception;
 
-    public abstract SesClientResponse getAllRules() throws Exception;
+    public SesClientResponse getAllRules() throws Exception;
 
-    public abstract SesClientResponse deleteRule(String ruleName) throws Exception;
+    public SesClientResponse deleteRule(String ruleName) throws Exception;
 
-    public abstract SesClientResponse getRuleForEditing(String ruleName) throws Exception;
+    public SesClientResponse getRuleForEditing(String ruleName) throws Exception;
 
-    public abstract SesClientResponse getAllPublishedRules(String userID, int operator) throws Exception;
+    public SesClientResponse getAllPublishedRules(String userID, int operator) throws Exception;
 
-    public abstract SesClientResponse ruleNameExists(String ruleName) throws Exception;
+    public SesClientResponse ruleNameExists(String ruleName) throws Exception;
 
-    public abstract SesClientResponse createComplexRule(ComplexRuleData rule, boolean edit, String oldRuleName) throws Exception;
+    public SesClientResponse createComplexRule(ComplexRuleData rule, boolean edit, String oldRuleName) throws Exception;
 
-    public abstract SesClientResponse getUserSubscriptions(String userID) throws Exception;
+    public SesClientResponse getUserSubscriptions(String userID) throws Exception;
 
-    public abstract SesClientResponse search(String text, int criterion, String userID) throws Exception;
+    public SesClientResponse search(String text, int criterion, String userID) throws Exception;
 
-    public abstract SesClientResponse copy(String userID, String ruleName) throws Exception;
+    public SesClientResponse copy(String userID, String ruleName) throws Exception;
 
 }
