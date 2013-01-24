@@ -24,9 +24,7 @@
 
 package org.n52.client.ses.ui.subscribe;
 
-import static com.google.gwt.user.client.Cookies.getCookie;
 import static java.lang.Integer.parseInt;
-import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ID;
 import static org.n52.client.ses.util.RuleOperatorUtil.getOperatorIndex;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.OVER_UNDERSHOOT;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.SENSOR_LOSS;
@@ -110,7 +108,7 @@ class EventSubscriptionController {
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append(timeseries.getStationName());
+        sb.append(timeseries.getTimeSeriesLabel());
         if (getSelectedRuleTemplate() == OVER_UNDERSHOOT) {
             sb.append("_").append(OVER_UNDERSHOOT.toString());
         } else if (getSelectedRuleTemplate() == SENSOR_LOSS) {
@@ -132,21 +130,24 @@ class EventSubscriptionController {
     }
 
     public OverUndershootSelectionData getOverUndershootEntryConditions() {
-        return (overUndershootEntryConditions == null)
-                ? new OverUndershootSelectionData()
-                : overUndershootEntryConditions;
+        if (overUndershootEntryConditions == null) {
+            overUndershootEntryConditions = new OverUndershootSelectionData();
+        }
+        return overUndershootEntryConditions;
     }
 
     public OverUndershootSelectionData getOverUndershootExitConditions() {
-        return (overUndershootExitConditions == null)
-                ? new OverUndershootSelectionData()
-                : overUndershootExitConditions;
+        if (overUndershootExitConditions == null) {
+            overUndershootExitConditions = new OverUndershootSelectionData();
+        }
+        return overUndershootExitConditions;
     }
     
     public SensorLossSelectionData getSensorLossConditions() {
-        return (sensorLossConditions == null) 
-                ? new SensorLossSelectionData()
-                : sensorLossConditions;
+        if (sensorLossConditions == null) {
+            sensorLossConditions = new SensorLossSelectionData();
+        }
+        return sensorLossConditions;
     }
 
     public Rule createSimpleRuleFromSelection() {
@@ -163,10 +164,11 @@ class EventSubscriptionController {
         final String subscriptionName = selectedAbonnementName;
         final OverUndershootSelectionData entryConditions = overUndershootEntryConditions;
         final OverUndershootSelectionData exitConditions = overUndershootExitConditions;
+        final String userCookie = eventSubscriptionWindow.getUserCookie();
         return RuleBuilder.aRule()
                 .setTitle(subscriptionName)
                 .setRuleType(OVER_UNDERSHOOT)
-                .setCookie(parseInt(getCookie(COOKIE_USER_ID)))
+                .setCookie(parseInt(userCookie))
                 .setDescription("Auto-Generated Rule from Template.")
                 .setFeedingMetadata(createFeedingMetadataFrom())
                 .setEntryOperatorIndex(getOperatorIndex(entryConditions.getOperator()))
@@ -183,10 +185,11 @@ class EventSubscriptionController {
     private Rule createSensorLossRule() {
         final String subscriptionName = selectedAbonnementName;
         final SensorLossSelectionData condition = sensorLossConditions;
+        final String userCookie = eventSubscriptionWindow.getUserCookie();
         return RuleBuilder.aRule()
                 .setTitle(subscriptionName)
                 .setRuleType(OVER_UNDERSHOOT)
-                .setCookie(parseInt(getCookie(COOKIE_USER_ID)))
+                .setCookie(parseInt(userCookie))
                 .setDescription("Auto-Generated Rule from Template.")
                 .setFeedingMetadata(createFeedingMetadataFrom())
                 .setEntryTime(condition.getValue())

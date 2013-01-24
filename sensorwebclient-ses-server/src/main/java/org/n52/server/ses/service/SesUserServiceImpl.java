@@ -211,7 +211,7 @@ public class SesUserServiceImpl implements SesUserService {
     @Override
     public SesClientResponse login(String userName, String password) throws Exception {
         try {
-            LOG.debug("login");
+            LOG.debug("login user '{}'.", userName);
             // get user from DB
             User u = HibernateUtil.getUserByName(userName);
             UserDTO user = createUserDTO(u);

@@ -48,7 +48,8 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
     private Canvas createEntryConditionEditCanvas() {
         StaticTextItem labelItem = createLabelItem(i18n.enterCondition());
         
-        SelectItem entryOperatorItem = createOperatorItem(GREATER_THAN);
+        OverUndershootSelectionData data = controller.getOverUndershootEntryConditions();
+        SelectItem entryOperatorItem = createOperatorItem(data, GREATER_THAN);
         entryOperatorItem.addChangedHandler(createEntryOperatorChangedHandler());
         entryOperatorItem.setWidth(EDIT_ITEMS_WIDTH);
 
@@ -115,8 +116,9 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
 
     private Canvas createExitConditionEditCanvas() {
         StaticTextItem labelItem = createLabelItem(i18n.exitCondition());
-        
-        exitOperatorItem = createOperatorItem(LESS_THAN_OR_EQUAL_TO);
+
+        OverUndershootSelectionData data = controller.getOverUndershootExitConditions();
+        exitOperatorItem = createOperatorItem(data, LESS_THAN_OR_EQUAL_TO);
         exitOperatorItem.addChangedHandler(createExitOperatorChangedHandler());
         exitOperatorItem.setWidth(EDIT_ITEMS_WIDTH);
 
@@ -166,7 +168,7 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
         };
     }
 
-    private SelectItem createOperatorItem(int operatorIndex) {
+    private SelectItem createOperatorItem(OverUndershootSelectionData data, int operatorIndex) {
         SelectItem operatorItem = new SelectItem();
         operatorItem.setTitle(i18n.operator());
         operatorItem.setTitleOrientation(TOP);
@@ -176,6 +178,7 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
         String operator = getOperatorFrom(operatorIndex);
         if (getRuleOperators().containsKey(operator)) {
             operatorItem.setDefaultValue(operator);
+            data.setOperator(operator);
         }
         return operatorItem;
     }

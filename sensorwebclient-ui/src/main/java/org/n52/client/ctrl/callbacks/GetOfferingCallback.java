@@ -27,11 +27,9 @@ import org.n52.client.ctrl.RequestManager;
 import org.n52.client.ctrl.ServerCallback;
 import org.n52.shared.responses.GetOfferingResponse;
 
-public abstract class GetOfferingCallback extends
-		ServerCallback<GetOfferingResponse> {
+public abstract class GetOfferingCallback extends ServerCallback<GetOfferingResponse> {
 
-	public GetOfferingCallback(RequestManager requestMgr,
-			String errorMsg) {
+	public GetOfferingCallback(RequestManager requestMgr, String errorMsg) {
 		super(requestMgr, errorMsg);
 	}
 

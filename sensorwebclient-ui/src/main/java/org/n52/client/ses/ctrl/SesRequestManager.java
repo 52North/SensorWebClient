@@ -24,6 +24,8 @@
 package org.n52.client.ses.ctrl;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.shared.responses.SesClientResponse.types.EDIT_SIMPLE_RULE;
+import static org.n52.shared.responses.SesClientResponse.types.RULE_NAME_NOT_EXISTS;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,6 +33,8 @@ import java.util.List;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.RequestManager;
+import org.n52.client.ctrl.ServerCallback;
+import org.n52.client.ses.ctrl.callbacks.CreateSimpleRuleCallback;
 import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.EditSimpleRuleEvent;
 import org.n52.client.ses.event.GetAllOtherRulesEvent;
@@ -40,6 +44,7 @@ import org.n52.client.ses.event.GetAllUsersEvent;
 import org.n52.client.ses.event.GetUserSubscriptionsEvent;
 import org.n52.client.ses.event.InformUserEvent;
 import org.n52.client.ses.event.LogoutEvent;
+import org.n52.client.ses.event.RuleCreatedEvent;
 import org.n52.client.ses.event.SetRoleEvent;
 import org.n52.client.ses.event.ShowAllUserEvent;
 import org.n52.client.ses.event.UpdateProfileEvent;
@@ -349,7 +354,7 @@ public class SesRequestManager extends RequestManager {
                 
                 switch (type) {
                 case OK:
-                    String message = i18n.subscribeRequest1();
+                    String message = i18n.subscribeSuccessful1();
                     String[] formats = format.split("_");
                     String[] media = medium.split("_");
                     String finalFormat = "";
@@ -366,7 +371,7 @@ public class SesRequestManager extends RequestManager {
                     finalMedium = finalMedium.trim();
                     
                     message = message.replace("_R_", ruleName).replace("_M_", finalMedium).replace("_F_", finalFormat);
-                    String finalMessage = message + "\n" + i18n.subscribeRequest2();
+                    String finalMessage = message + "\n" + i18n.subscribeSuccessful2();
                     SC.say(finalMessage);
                     
                     EventBus.getMainEventBus().fireEvent(new GetAllOwnRulesEvent(userID, false));
@@ -403,37 +408,49 @@ public class SesRequestManager extends RequestManager {
      * @param oldRuleName 
      */
     public void createBasicRule(Rule rule, boolean edit, String oldRuleName) {
-        AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
-            public void onFailure(Throwable arg0) {
-                Toaster.getInstance().addErrorMessage(i18n.failedCreateBR());
-            }
-
+        
+        ServerCallback<SesClientResponse> callback = new CreateSimpleRuleCallback(this, "Could not create rule.") {
+            @Override
             public void onSuccess(SesClientResponse result) {
-                if (result.getType().equals(types.RULE_NAME_NOT_EXISTS)) {
-                    SC.say(i18n.creationSuccessful());
-                    if ((Cookies.getCookie(SesRequestManager.COOKIE_USER_ROLE)).equals("USER")) {
-                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.ABOS));
-                    } else {
-                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.RULELIST));
-                    }
-                } else if (result.getType().equals(types.RULE_NAME_EXISTS)) {
-                    SC.say(i18n.ruleExists());
-                } else if (result.getType().equals(types.EDIT_SIMPLE_RULE)) {
-                    if ((Cookies.getCookie(SesRequestManager.COOKIE_USER_ROLE)).equals("USER")) {
-                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.EDIT_RULES));
-                    } else {
-                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.RULELIST));
-                    }
+                
+                if (result.getType() == RULE_NAME_NOT_EXISTS) {
+                    Rule basicRule = result.getBasicRule();
+                    EventBus.getMainEventBus().fireEvent(new RuleCreatedEvent(basicRule));
+                } else {
+                    // TODO handle more result types
+                    SC.say(i18n.creatingRuleWasUnsuccessful());
                 }
             }
         };
+        
+        // TODO remove dead code
+//        AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
+//            public void onFailure(Throwable arg0) {
+//                Toaster.getInstance().addErrorMessage(i18n.failedCreateBR());
+//            }
+//
+//            public void onSuccess(SesClientResponse result) {
+//                if (result.getType().equals(types.RULE_NAME_NOT_EXISTS)) {
+//                    SC.say(i18n.creationSuccessful());
+//                    if ((Cookies.getCookie(SesRequestManager.COOKIE_USER_ROLE)).equals("USER")) {
+//                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.ABOS));
+//                    } else {
+//                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.RULELIST));
+//                    }
+//                } else if (result.getType().equals(types.RULE_NAME_EXISTS)) {
+//                    SC.say(i18n.ruleExists());
+//                } else if (result.getType().equals(types.EDIT_SIMPLE_RULE)) {
+//                    if ((Cookies.getCookie(SesRequestManager.COOKIE_USER_ROLE)).equals("USER")) {
+//                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.EDIT_RULES));
+//                    } else {
+//                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.RULELIST));
+//                    }
+//                }
+//            }
+//        };
         this.sesRulesService.createBasicRule(rule, edit, oldRuleName, callback);
     }
 
-    /**
-     * Creates the basic rule.
-     * 
-     */
     public void getAllUsers() {
         AsyncCallback<List<UserDTO>> callback = new AsyncCallback<List<UserDTO>>() {
             public void onFailure(Throwable arg0) {

@@ -256,8 +256,8 @@ public interface I18N extends Constants {
     String failedSES();
     String failedSensorToUsed();
     String failedAddSensorToFeeder();
-    String subscribeRequest1();
-    String subscribeRequest2();
+    String subscribeSuccessful1();
+    String subscribeSuccessful2();
     String failedUnsubscribe();
     String failedDeleteSubscription();
     String failedDeleteRule();
@@ -419,5 +419,7 @@ public interface I18N extends Constants {
     String minutes();
 
     String hours();
+
+    String creatingRuleWasUnsuccessful();
     
 }

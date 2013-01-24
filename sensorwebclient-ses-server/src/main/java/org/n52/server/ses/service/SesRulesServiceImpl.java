@@ -301,12 +301,11 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse createBasicRule(Rule rule, boolean edit, String oldRuleName) throws Exception {
         try {
-            if ((HibernateUtil.existsBasicRuleName(rule.getTitle()) && !edit) || HibernateUtil.existsComplexRuleName(rule.getTitle())) {
-                // rule exists and edit is false
-                LOG.debug("Rule already exists: " + rule.getTitle());
+            LOG.debug("createBasicRule: " + rule.getTitle());
+            if (exists(rule) && !edit) {
+                LOG.debug("Cannot create rule: Rule '{}' already exists!", rule.getTitle());
                 return new SesClientResponse(types.RULE_NAME_EXISTS);
             } 
-            LOG.debug("createBasicRule: " + rule.getTitle());
 
             // rule type of the new rule
             SimpleRuleType type = rule.getRuleType();
@@ -401,6 +400,10 @@ public class SesRulesServiceImpl implements SesRuleService {
             LOG.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
+    }
+
+    boolean exists(Rule rule) {
+        return HibernateUtil.existsBasicRuleName(rule.getTitle()) || HibernateUtil.existsComplexRuleName(rule.getTitle());
     }
 
     @Override
@@ -711,7 +714,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse ruleNameExists(String ruleName) throws Exception {
         try {
-            LOG.debug("check wheter rule name: " + ruleName + " exists");
+            LOG.debug("check whether rule name '{}' exists.", ruleName);
             if (HibernateUtil.existsBasicRuleName(ruleName) || HibernateUtil.existsComplexRuleName(ruleName)) {
                 return new SesClientResponse(SesClientResponse.types.RULE_NAME_EXISTS);
             }

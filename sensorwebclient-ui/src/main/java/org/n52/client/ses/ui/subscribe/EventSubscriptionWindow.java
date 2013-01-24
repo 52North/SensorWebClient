@@ -26,16 +26,24 @@ package org.n52.client.ses.ui.subscribe;
 
 import static com.google.gwt.user.client.Cookies.getCookie;
 import static com.smartgwt.client.types.Alignment.RIGHT;
+import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ID;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.shared.serializable.pojos.UserRole.LOGOUT;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.event.CreateSimpleRuleEvent;
+import org.n52.client.ses.event.RuleCreatedEvent;
+import org.n52.client.ses.event.SetRoleEvent;
 import org.n52.client.ses.event.SubscribeEvent;
+import org.n52.client.ses.event.handler.RuleCreatedEventHandler;
+import org.n52.client.ses.event.handler.SetRoleEventHandler;
+import org.n52.client.ses.ui.layout.LoginLayout;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.ui.ApplyCancelButtonLayout;
 import org.n52.shared.serializable.pojos.Rule;
 
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -53,11 +61,11 @@ import com.smartgwt.client.widgets.layout.VLayout;
 public class EventSubscriptionWindow extends Window {
 
     private static final String COMPONENT_ID = "eventSubscriptionWindow";
-
+    
     private static int WIDTH = 950;
 
     private static int HEIGHT = 550;
-
+    
     private static EventSubscriptionController controller;
 
     private static EventSubscriptionWindow instance;
@@ -70,6 +78,7 @@ public class EventSubscriptionWindow extends Window {
         if (instance == null) {
             controller = new EventSubscriptionController();
             instance = new EventSubscriptionWindow(controller);
+            new EventSubsriptionWindowEventBroker(instance);
         }
         controller.setTimeseries(dataItem);
         return instance;
@@ -113,8 +122,17 @@ public class EventSubscriptionWindow extends Window {
         if (content != null) {
             removeItem(content);
         }
-        initializeContent();
+        if (notLoggedIn()) {
+            content = new LoginLayout();
+            addItem(content);
+        } else {
+            initializeContent();
+        }
         redraw();
+    }
+
+    private boolean notLoggedIn() {
+        return getUserCookie() == null;
     }
 
     private void initializeContent() {
@@ -184,17 +202,12 @@ public class EventSubscriptionWindow extends Window {
             public void onClick(ClickEvent event) {
                 Rule rule = controller.createSimpleRuleFromSelection();
                 CreateSimpleRuleEvent createEvt = new CreateSimpleRuleEvent(rule, false, "");
-                EventBus.getMainEventBus().fireEvent(createEvt);
-                
-                // TODO we directly want to subscribe => make asynchronous event
-                String ruleName = rule.getTitle();
-                String cookie = getCookie(COOKIE_USER_ID);
-                SubscribeEvent subscribeEvt = new SubscribeEvent(cookie, ruleName, "email", "text");
-                EventBus.getMainEventBus().fireEvent(subscribeEvt);
+                EventBus.getMainEventBus().fireEvent(createEvt); // broker handles auto-subscribe
+                EventSubscriptionWindow.this.hide();
             }
         };
     }
-
+    
     private ClickHandler createCancelHandler() {
         return new ClickHandler() {
             @Override
@@ -230,6 +243,47 @@ public class EventSubscriptionWindow extends Window {
         Canvas ruleEditCanvas = template.createEditCanvas();
         ruleTemplateEditCanvas.addMember(ruleEditCanvas);
         ruleTemplateEditCanvas.redraw();
+    }
+    
+    private static class EventSubsriptionWindowEventBroker implements RuleCreatedEventHandler, SetRoleEventHandler {
+
+        private final EventSubscriptionWindow window;
+
+        public EventSubsriptionWindowEventBroker(EventSubscriptionWindow window) {
+            getMainEventBus().addHandler(RuleCreatedEvent.TYPE, this);
+            getMainEventBus().addHandler(SetRoleEvent.TYPE, this);
+            this.window = window;
+        }
+        
+        @Override
+        public void onRuleCreated(RuleCreatedEvent evt) {
+            Rule createdRule = evt.getCreatedRule();
+            String ruleName = createdRule.getTitle();
+            String cookie = getCookie(COOKIE_USER_ID);
+            getMainEventBus().fireEvent(new SubscribeEvent(cookie, ruleName, "email", "text"));
+        }
+
+        @Override
+        public void onChangeRole(SetRoleEvent evt) {
+            if (evt.getRole() == LOGOUT) {
+                return;
+            }
+            if (window.isVisible()) {
+                reinitializeWindow();
+            }
+        }
+
+        private void reinitializeWindow() {
+            if (window.notLoggedIn()) {
+                SC.say(i18n.failedLogin());
+            } else {
+                window.show();
+            }
+        }
+    }
+
+    public String getUserCookie() {
+        return getCookie(COOKIE_USER_ID);
     }
 
 }

@@ -59,6 +59,7 @@ public class LoginLayout extends Layout {
      */
     public LoginLayout() {
         super(i18n.login());
+        setStyleName("n52_sensorweb_client_login_content");
         init();
     }
 
@@ -118,7 +119,6 @@ public class LoginLayout extends Layout {
 
         EventBus.getMainEventBus().fireEvent(new LoginEvent(name, DataControlsSes.createMD5(o.toString())));
         
-        // clear fields
         clearFields();
     }
 
