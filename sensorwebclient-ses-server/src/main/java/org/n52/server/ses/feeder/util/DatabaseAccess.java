@@ -1,12 +1,13 @@
 package org.n52.server.ses.feeder.util;
 
+import static org.n52.server.ses.hibernate.HibernateUtil.getSessionFactory;
+
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
-import org.n52.server.ses.feeder.hibernate.InitSessionFactory;
 import org.n52.server.ses.feeder.hibernate.SensorToFeed;
 import org.n52.shared.serializable.pojos.FeedingMetadata;
 import org.slf4j.Logger;
@@ -88,7 +89,7 @@ public class DatabaseAccess {
 //    }
 
 	public static synchronized boolean isSensorRegistered(FeedingMetadata feedingMetadata) {
-		Session session = InitSessionFactory.getInstance().getCurrentSession();
+		Session session = getSessionFactory().getCurrentSession();
 		Transaction transaction = session.beginTransaction();
 		boolean registered = false;
 		List<SensorToFeed> sensors = getSensorsMatchedFeedingMetadata(feedingMetadata, session);
@@ -100,7 +101,7 @@ public class DatabaseAccess {
 	}
 
 	public static synchronized void registerSensor(SensorToFeed sensor) {
-		Session session = InitSessionFactory.getInstance().getCurrentSession();
+		Session session = getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
         session.saveOrUpdate(sensor);
         transaction.commit();
@@ -232,7 +233,7 @@ public class DatabaseAccess {
 	 * @return the used sensors
 	 */
 	public static synchronized List<SensorToFeed> getUsedSensors() {
-		Session session = InitSessionFactory.getInstance().getCurrentSession();
+		Session session = getSessionFactory().getCurrentSession();
 		Transaction transaction = session.beginTransaction();
 		Criteria criteria = session.createCriteria(SensorToFeed.class);
 		List<SensorToFeed> sensors = criteria.add(Restrictions.gt("usedCounter", 0l)).list();
@@ -241,14 +242,14 @@ public class DatabaseAccess {
 	}
 
 	public static synchronized void saveSensor(SensorToFeed sensor) {
-			Session session = InitSessionFactory.getInstance().getCurrentSession();
+			Session session = getSessionFactory().getCurrentSession();
 		    Transaction transaction = session.beginTransaction();
 		    session.saveOrUpdate(sensor);
 		    transaction.commit();
 		}
 
 	private static void changeCounter(FeedingMetadata feedingMetadata, int changeBy) {
-		Session session = InitSessionFactory.getInstance().getCurrentSession();
+		Session session = getSessionFactory().getCurrentSession();
 		Transaction transaction = session.beginTransaction();
 		List<SensorToFeed> sensors = getSensorsMatchedFeedingMetadata(feedingMetadata, session);
 		for (SensorToFeed sensor : sensors) {

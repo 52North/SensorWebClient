@@ -12,11 +12,11 @@ import net.opengis.sensorML.x101.SensorMLDocument;
 import org.n52.oxf.ows.ExceptionReport;
 import org.n52.server.ses.feeder.connector.SESConnector;
 import org.n52.server.ses.feeder.connector.SOSConnector;
-import org.n52.server.ses.feeder.hibernate.InitSessionFactory;
 import org.n52.server.ses.feeder.hibernate.SensorToFeed;
 import org.n52.server.ses.feeder.task.DescriptionTask;
 import org.n52.server.ses.feeder.task.ObservationsTask;
 import org.n52.server.ses.feeder.util.DatabaseAccess;
+import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.shared.serializable.pojos.FeedingMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,14 +91,13 @@ public class SosSesFeeder {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e1) {
-                	LOGGER.error("Error during destroy of SosSesFeeder servlet: " + e1.getLocalizedMessage(),e1);
-                    e1.printStackTrace();
+                	LOGGER.error("Error during destroy of SosSesFeeder servlet.", e1);
                 }
             } 
             
             stopFeeding();
             
-            InitSessionFactory.getInstance().close();
+            HibernateUtil.getSessionFactory().close();
 
             // This manually deregisters JDBC driver, which prevents Tomcat 7 from complaining about memory leaks wrto this class
             Enumeration<Driver> drivers = DriverManager.getDrivers();

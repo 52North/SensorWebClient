@@ -103,8 +103,7 @@ public class ObservationsTask extends TimerTask {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
-                log.error("Error during stop of observations threads: " + e.getLocalizedMessage(),e);
+                log.error("Error during stop of observations threads.", e);
             }
         }
         log.info("############## Observation task stopped ##############.");

@@ -57,7 +57,7 @@ import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
 public class SESConnector {
 
     /** The logger. */
-    private static final Logger log = LoggerFactory.getLogger(SESConnector.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SESConnector.class);
 
     /** The ses adapter. */
     private SESAdapter sesAdapter;
@@ -82,8 +82,7 @@ public class SESConnector {
             this.sesUrl = SesConfig.sesEndpoint;
         }
         catch (IllegalStateException e) {
-            e.printStackTrace();
-            log.debug("Configuration is not available (anymore).");
+            LOGGER.debug("Configuration is not available (anymore).", e);
         }
     }
 
@@ -93,21 +92,20 @@ public class SESConnector {
      * @return true - if service is running
      */
     public boolean initService() {
-        log.trace("initService()");
+        LOGGER.trace("initService()");
 
         try {
-            ServiceDescriptor desc = this.sesAdapter.initService(this.sesUrl);
-            log.trace(desc.toXML());
+            ServiceDescriptor desc = this.sesAdapter.initService(sesUrl);
+            LOGGER.trace(desc.toXML());
         }
         catch (ExceptionReport e) {
-            log.error("SES not accessible");
+            LOGGER.error("SES not accessible.", e);
             return false;
         }
         catch (OXFException e) {
-            log.error(String.format("SES '%s' not accessible.", this.sesUrl));
+            LOGGER.error("SES '{}' not accessible.", sesUrl, e);
             return false;
         }
-        log.info("SES accessible");
         return true;
     }
 
@@ -120,7 +118,7 @@ public class SESConnector {
      * @throws ExceptionReport 
      */
     public String registerPublisher(SensorMLDocument sensorML) throws ExceptionReport {
-        log.trace("registerPublisher");
+        LOGGER.trace("registerPublisher");
 
         ParameterContainer parameter = new ParameterContainer();
 
@@ -147,7 +145,7 @@ public class SESConnector {
             XmlObject response = this.sesAdapter.handle(REGISTER_PUBLISHER,
                                                         opRes.getIncomingResultAsStream());
 
-            log.debug("RegisterPublisher response: \n" + response);
+            LOGGER.debug("RegisterPublisher response: \n" + response);
             String tmp = response.toString();
             String sesID = tmp.substring(tmp.indexOf('>', tmp.indexOf("ResourceId")) + 1,
                                          tmp.indexOf('<', tmp.indexOf("ResourceId")));
@@ -155,11 +153,10 @@ public class SESConnector {
             return sesID;
         }
         catch (OXFException e) {
-            log.error("Error while sending registerPublisher request to SES: " + e.getMessage());
+            LOGGER.error("Error while sending registerPublisher request to SES.", e);
         }
         catch (IllegalStateException e) {
-            e.printStackTrace();
-            log.debug("Configuration is not available (anymore).");
+            LOGGER.debug("Configuration is not available (anymore).", e);
         }
         return null;
     }
@@ -174,7 +171,7 @@ public class SESConnector {
      * @throws ExceptionReport 
      */
     public boolean publishObservation(ObservationPropertyType obsPropType) throws OXFException, ExceptionReport {
-        log.trace("publishObservation()");
+        LOGGER.trace("publishObservation()");
 
         String observationXML = obsPropType.xmlText();
         String[] observations;
@@ -184,7 +181,7 @@ public class SESConnector {
             observations = splitObservations(observationXML);
         }
         catch (Exception e1) {
-            log.error("Error while splitting observations. Send observations in one request.");
+            LOGGER.error("Error while splitting observations. Send observations in one request.");
             createAndSendRequest(observationXML);
             return true;
         }
@@ -215,23 +212,23 @@ public class SESConnector {
             parameter.addParameterShell(NOTIFY_TOPIC_DIALECT, dialect);
             parameter.addParameterShell(NOTIFY_XML_MESSAGE, observationXML);
 
-            log.debug("Notify request: \n" + new SESRequestBuilder_00().buildNotifyRequest(parameter));
+            LOGGER.trace("Notify request: \n" + new SESRequestBuilder_00().buildNotifyRequest(parameter));
 
             OperationResult doOperation = this.sesAdapter.doOperation(new Operation(NOTIFY, this.sesUrl + "?", this.sesUrl), parameter);
             try {
-				log.debug("Notify response: \n" + XmlObject.Factory.parse(doOperation.getIncomingResultAsStream()));
+				LOGGER.trace("Notify response: \n" + XmlObject.Factory.parse(doOperation.getIncomingResultAsStream()));
 			} catch (XmlException e) {
-				e.printStackTrace();
+				LOGGER.warn("Could not parse notify response.", e);
 			} catch (IOException e) {
-				e.printStackTrace();
+                LOGGER.warn("Could not read notify response.", e);
 			}
 
         }
         catch (OXFException e) {
-            log.error("Error while sending notify message to SES: " + e.getMessage());
+            LOGGER.error("Error while sending notify message to SES.", e);
         }
         catch (NullPointerException e) {
-            log.debug("Response of notify is null");
+            LOGGER.debug("Response of notify is null.", e);
         }
     }
 
@@ -263,105 +260,99 @@ public class SESConnector {
                     String[] sensors = capDoc.getCapabilities().getContents().getRegisteredSensors().getSensorIDArray();
                     for (int i = 0; i < sensors.length; i++) {
                         registeredSensors.add(sensors[i]);
-                        log.debug("Sensor is in the SES: " + sensors[i]);
+                        LOGGER.debug("Sensor is in the SES: " + sensors[i]);
                     }
                 }
             }
             else {
-                log.error("Get no valid capabilities!");
+                LOGGER.error("Get no valid capabilities!");
                 registeredSensors = null;
-                log.debug(result.xmlText());
+                LOGGER.debug(result.xmlText());
             }
         }
         catch (OXFException e) {
-            log.error("Error while init SES: " + e.getMessage());
+            LOGGER.error("Error while init SES.", e);
         }
         catch (XmlException e) {
-            log.error("Error while init SES: " + e.getMessage());
+            LOGGER.error("Error while init SES.", e);
         }
         catch (IOException e) {
-            log.error("Error while init SES: " + e.getMessage());
+            LOGGER.error("Error while init SES.", e);
         }
         return registeredSensors;
     }
 
-    private String[] splitObservations(String inputObservation) throws Exception {
+    private String[] splitObservations(String inputObservation) {
 
-        try {
-            // Determining how many observations are contained in the observation collection
-            Pattern countPattern = Pattern.compile("<swe:value>(.*?)</swe:value>");
-            Matcher countMatcher = countPattern.matcher(inputObservation);
-            String countString = null;
-            if (countMatcher.find()) {
-                countString = countMatcher.group(1).trim();
-            }
-            int observationCount = Integer.parseInt(countString);
+        // Determining how many observations are contained in the observation collection
+        Pattern countPattern = Pattern.compile("<swe:value>(.*?)</swe:value>");
+        Matcher countMatcher = countPattern.matcher(inputObservation);
+        String countString = null;
+        if (countMatcher.find()) {
+            countString = countMatcher.group(1).trim();
+        }
+        int observationCount = Integer.parseInt(countString);
 
-            // This array will contain one observation string for each observation of the observation
-            // collection
-            String[] outputStrings;
+        // This array will contain one observation string for each observation of the observation
+        // collection
+        String[] outputStrings;
 
-            // If the observation collection contains only one value it can be directly returned
-            if (observationCount == 1) {
-                outputStrings = new String[]{inputObservation};
-            }
-
-            // If the observation collection contains more than one value it must be split
-            else {
-
-                // Extracting the values that are contained in the observation collection and creating a
-                // StringTokenizer that allows to access the values
-                Pattern valuesPattern = Pattern.compile("<swe:values>(.*?)</swe:values>");
-                Matcher valuesMatcher = valuesPattern.matcher(inputObservation);
-                String valuesString = null;
-                if (valuesMatcher.find()) {
-                    valuesString = valuesMatcher.group(1).trim();
-                }
-                
-                // Read the id of the observation collection
-                Pattern idPattern =
-                        Pattern.compile("ObservationCollection gml:id=\"(.*?)\"(.*?)xsi:schemaLocation=");
-                Matcher idMatcher = idPattern.matcher(inputObservation);
-                String idString = "";
-                if (idMatcher.find()) {
-                    idString = idMatcher.group(1).trim();
-                }
-                
-                StringTokenizer valuesTokenizer = new StringTokenizer(valuesString, ";");
-                // If only the latest observation is wished, find youngest
-                // observation.
-                if (FeederConfig.getInstance().isOnlyYoungestName()) {
-                    DateTime youngest = new DateTime(0);
-                    String youngestValues = "";
-                    DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
-                    while (valuesTokenizer.hasMoreElements()) {
-                        String valueString = (String) valuesTokenizer.nextElement();
-                        DateTime time = fmt.parseDateTime(valueString.split(",")[0]);
-                        if (time.isAfter(youngest.getMillis())) {
-                            youngest = time;
-                            youngestValues = valueString;
-                        }
-                    }
-                    outputStrings = new String[]{createSingleObservationString(inputObservation, youngestValues)};
-                } else {
-                    outputStrings = new String[observationCount];
-
-                    for (int i = 0; i < observationCount; i++) {
-                        
-                        // Add the extracted observation to an array containing
-                        // all extracted observations
-                        outputStrings[i] = createSingleObservationString(inputObservation, valuesTokenizer.nextToken());
-                    }
-                }
-
-            }
-            // Returning the extracted observations
-            return outputStrings;
+        // If the observation collection contains only one value it can be directly returned
+        if (observationCount == 1) {
+            outputStrings = new String[]{inputObservation};
         }
 
-        catch (Exception e) {
-            throw e;
+        // If the observation collection contains more than one value it must be split
+        else {
+
+            // Extracting the values that are contained in the observation collection and creating a
+            // StringTokenizer that allows to access the values
+            Pattern valuesPattern = Pattern.compile("<swe:values>(.*?)</swe:values>");
+            Matcher valuesMatcher = valuesPattern.matcher(inputObservation);
+            String valuesString = null;
+            if (valuesMatcher.find()) {
+                valuesString = valuesMatcher.group(1).trim();
+            }
+            
+            // Read the id of the observation collection
+            Pattern idPattern =
+                    Pattern.compile("ObservationCollection gml:id=\"(.*?)\"(.*?)xsi:schemaLocation=");
+            Matcher idMatcher = idPattern.matcher(inputObservation);
+            String idString = "";
+            if (idMatcher.find()) {
+                idString = idMatcher.group(1).trim();
+            }
+            
+            StringTokenizer valuesTokenizer = new StringTokenizer(valuesString, ";");
+            // If only the latest observation is wished, find youngest
+            // observation.
+            if (FeederConfig.getInstance().isOnlyYoungestName()) {
+                DateTime youngest = new DateTime(0);
+                String youngestValues = "";
+                DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
+                while (valuesTokenizer.hasMoreElements()) {
+                    String valueString = (String) valuesTokenizer.nextElement();
+                    DateTime time = fmt.parseDateTime(valueString.split(",")[0]);
+                    if (time.isAfter(youngest.getMillis())) {
+                        youngest = time;
+                        youngestValues = valueString;
+                    }
+                }
+                outputStrings = new String[]{createSingleObservationString(inputObservation, youngestValues)};
+            } else {
+                outputStrings = new String[observationCount];
+
+                for (int i = 0; i < observationCount; i++) {
+                    
+                    // Add the extracted observation to an array containing
+                    // all extracted observations
+                    outputStrings[i] = createSingleObservationString(inputObservation, valuesTokenizer.nextToken());
+                }
+            }
+
         }
+        // Returning the extracted observations
+        return outputStrings;
     }
 
     private String createSingleObservationString(String observation, String individualValuesString) {
