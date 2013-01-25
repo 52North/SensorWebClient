@@ -21,17 +21,14 @@ import net.opengis.swe.x101.TimeObjectPropertyType;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.n52.server.ses.feeder.FeederConfig;
 import org.n52.server.ses.feeder.connector.SESConnector;
 import org.n52.server.ses.feeder.connector.SOSConnector;
-import org.n52.server.ses.feeder.hibernate.InitSessionFactory;
-import org.n52.server.ses.feeder.hibernate.Offering;
 import org.n52.server.ses.feeder.hibernate.SensorToFeed;
+import org.n52.server.ses.feeder.util.DatabaseAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +97,7 @@ public class FeedObservationThread extends Thread {
                     log.debug("Start Observation thread for Sensor: " + this.sensor.getProcedure());
                 }
 
-                SOSConnector sosCon = new SOSConnector(this.sensor.getSos().getUrl());
+                SOSConnector sosCon = new SOSConnector(this.sensor.getServiceURL());
                 sesCon = new SESConnector();
 
                 // do an observation request to sos for the sensor
@@ -116,8 +113,8 @@ public class FeedObservationThread extends Thread {
                     // create start timestamp for feeding observations
                     Calendar firstUpdateTime = new GregorianCalendar();
                     firstUpdateTime.add(Calendar.MILLISECOND, -FeederConfig.getInstance().getStartTimestamp());
-                    startUpdate = firstUpdateTime;
-                    log.debug("Start Time generated for first feeding of " + sensor.getProcedure() +": "+ startUpdate.getTimeInMillis());
+                    sensor.setLastUpdate(firstUpdateTime);
+                    log.debug("Start Time generated for first feeding of " + sensor.getProcedure() +": "+ sensor.getLastUpdate().getTimeInMillis());
                     // FIXME save to database the new defined start time for this sensor
                     /*
                      * The problem is here to not have a start time that's increasing if the observations are not reguarly inserted into the SOS
@@ -130,42 +127,33 @@ public class FeedObservationThread extends Thread {
                      * }
                      */
                 }
-                for (Offering offering : this.sensor.getOfferings()) {
-                    ObservationCollectionDocument obsCollDoc =
-                            sosCon.getObservation(this.sensor.getProcedure(), offering.getName(), startUpdate,
-                                    offering.getObsPropAsStringArray());
-                    ObservationPropertyType[] memberArray = obsCollDoc.getObservationCollection().getMemberArray();
-                    //
-                    // tell the others, that we are trying to feed observations
-                    //
-                    boolean addResult = this.currentlyFeedingSensors.add(this.sensor.getProcedure());
-                    if (log.isDebugEnabled()) {
-                        log.debug("Added sensor \"" + this.sensor.getProcedure() + "\" to feeding list? " + addResult);
-                    }
-                    for (ObservationPropertyType obsPropType : memberArray) {
-                        //
-                        // start feeding
-                        //
-                        ObservationType observation = obsPropType.getObservation();
-                        if (observation != null
-                                && observation.getProcedure().getHref().equals(this.sensor.getProcedure())) {
-                            endUpdate = getLastUpdateTime(observation.getSamplingTime());
-                            this.sensor.setUpdateInterval(getUpdateInterval(observation, startUpdate));
-                            log.info(this.sensor.getProcedure() + " from " + startUpdate.getTime() + " to "
-                                    + endUpdate.getTime() + " for " + offering.getName());
-                            // create a Notify Message to the SES
-                            obsPropType = checkObservations(obsPropType);
-                            if (!(obsPropType == null) && !sesCon.isClosed()) {
-                                sesCon.publishObservation(obsPropType);
-                                log.info(this.sensor.getProcedure() + " with " + offering + " added to SES");
-                            } else {
-                                log.info(String.format("No data received for procedure '%s'.", this.sensor.getProcedure()));
-                            }
-                        } else {
-                            log.info("No new Observations for " + this.sensor.getProcedure());
-                        }
-                    }
-                }
+                
+				ObservationCollectionDocument obsCollDoc = sosCon.getObservation(sensor);
+				ObservationPropertyType[] memberArray = obsCollDoc.getObservationCollection().getMemberArray();
+				// tell the others, that we are trying to feed observations
+				boolean addResult = this.currentlyFeedingSensors.add(this.sensor.getProcedure());
+				if (log.isDebugEnabled()) {
+					log.debug("Added sensor \"" + this.sensor.getProcedure() + "\" to feeding list? " + addResult);
+				}
+				for (ObservationPropertyType obsPropType : memberArray) {
+					// start feeding
+					ObservationType observation = obsPropType.getObservation();
+					if (observation != null && observation.getProcedure().getHref().equals(this.sensor.getProcedure())) {
+						endUpdate = getLastUpdateTime(observation.getSamplingTime());
+						this.sensor.setUpdateInterval(getUpdateInterval(observation, startUpdate));
+						log.info(this.sensor.getProcedure() + " from " + startUpdate.getTime() + " to " + endUpdate.getTime() + " for " + sensor.getOffering()); 
+						// create a Notify Message to the SES
+						obsPropType = checkObservations(obsPropType);
+						if (!(obsPropType == null) && !sesCon.isClosed()) {
+							sesCon.publishObservation(obsPropType);
+							log.info(this.sensor.getProcedure() + " with " + sensor.getOffering() + " added to SES");
+						} else {
+							log.info(String.format("No data received for procedure '%s'.", this.sensor.getProcedure()));
+						}
+					} else {
+						log.info("No new Observations for "	+ this.sensor.getProcedure());
+					}
+				}
                 if (endUpdate != null) {
                     // to prevent receiving observation two times
                     log.debug("End Time before adding for " + sensor.getProcedure() +": "+ endUpdate.getTimeInMillis());
@@ -173,11 +161,7 @@ public class FeedObservationThread extends Thread {
                     log.debug("End Time after adding for " + sensor.getProcedure() +": "+ endUpdate.getTimeInMillis());
                     this.sensor.setLastUpdate(endUpdate);
                 }
-                Session session = InitSessionFactory.getInstance().getCurrentSession();
-                Transaction transaction = session.beginTransaction();
-                session.saveOrUpdate(this.sensor);
-                transaction.commit(); // TODO close session after committing transaction
-
+                DatabaseAccess.saveSensor(this.sensor);
             } catch (IllegalStateException e) {
                 log.warn("Failed to create SOS/SES Connection.", e);
                 return; // maybe shutdown .. try again

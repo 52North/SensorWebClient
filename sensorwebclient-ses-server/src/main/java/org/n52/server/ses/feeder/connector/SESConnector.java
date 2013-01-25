@@ -38,10 +38,11 @@ import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.ows.ExceptionReport;
 import org.n52.oxf.ows.ServiceDescriptor;
 import org.n52.oxf.ows.capabilities.Operation;
+import org.n52.oxf.ses.adapter.SESAdapter;
+import org.n52.oxf.ses.adapter.SESRequestBuilder_00;
+import org.n52.server.ses.SesConfig;
 import org.n52.server.ses.feeder.FeederConfig;
 import org.n52.server.ses.feeder.SosSesFeeder;
-import org.n52.server.ses.feeder.util.SESAdapter_01;
-import org.n52.server.ses.feeder.util.SESRequestBuilder_01;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3.x2003.x05.soapEnvelope.Body;
@@ -59,7 +60,7 @@ public class SESConnector {
     private static final Logger log = LoggerFactory.getLogger(SESConnector.class);
 
     /** The ses adapter. */
-    private SESAdapter_01 sesAdapter;
+    private SESAdapter sesAdapter;
 
     /** The ses url. */
     private String sesUrl;
@@ -74,12 +75,11 @@ public class SESConnector {
      * Instantiates a new SESConnector.
      */
     public SESConnector() {
-        this.sesAdapter = new SESAdapter_01();
+        this.sesAdapter = new SESAdapter();
         try {
             this.topic = FeederConfig.getInstance().getSesDefaultTopic();
             this.dialect = FeederConfig.getInstance().getSesDefaultTopicDialect();
-            this.sesUrl = FeederConfig.getInstance().getSesUrl()
-                    + FeederConfig.getInstance().getSesBasicPortType();
+            this.sesUrl = SesConfig.sesEndpoint;
         }
         catch (IllegalStateException e) {
             e.printStackTrace();
@@ -97,7 +97,7 @@ public class SESConnector {
 
         try {
             ServiceDescriptor desc = this.sesAdapter.initService(this.sesUrl);
-            log.info(desc.toXML());
+            log.trace(desc.toXML());
         }
         catch (ExceptionReport e) {
             log.error("SES not accessible");
@@ -117,8 +117,9 @@ public class SESConnector {
      * @param sensorML
      *        The sensorML document
      * @return The ID given by the SES
+     * @throws ExceptionReport 
      */
-    public String registerPublisher(SensorMLDocument sensorML) {
+    public String registerPublisher(SensorMLDocument sensorML) throws ExceptionReport {
         log.trace("registerPublisher");
 
         ParameterContainer parameter = new ParameterContainer();
@@ -138,9 +139,6 @@ public class SESConnector {
             parameter.addParameterShell(REGISTER_PUBLISHER_TOPIC, defaultTopic);
             parameter.addParameterShell(REGISTER_PUBLISHER_LIFETIME_DURATION, lifetime);
             parameter.addParameterShell(REGISTER_PUBLISHER_FROM, localEndpoint);
-
-            log.debug("RegisterPublisher request: \n"
-                    + new SESRequestBuilder_01().buildRegisterPublisherRequest(parameter));
 
             opRes = this.sesAdapter.doOperation(new Operation(REGISTER_PUBLISHER,
                                                               this.sesUrl + "?",
@@ -173,8 +171,9 @@ public class SESConnector {
      *        The given Observation
      * @return true - when sending successful
      * @throws OXFException 
+     * @throws ExceptionReport 
      */
-    public boolean publishObservation(ObservationPropertyType obsPropType) throws OXFException {
+    public boolean publishObservation(ObservationPropertyType obsPropType) throws OXFException, ExceptionReport {
         log.trace("publishObservation()");
 
         String observationXML = obsPropType.xmlText();
@@ -208,7 +207,7 @@ public class SESConnector {
         return false;
     }
 
-    private void createAndSendRequest(String observationXML) {
+    private void createAndSendRequest(String observationXML) throws ExceptionReport {
         ParameterContainer parameter = new ParameterContainer();
         try {
             parameter.addParameterShell(NOTIFY_SES_URL, sesUrl);
@@ -216,9 +215,16 @@ public class SESConnector {
             parameter.addParameterShell(NOTIFY_TOPIC_DIALECT, dialect);
             parameter.addParameterShell(NOTIFY_XML_MESSAGE, observationXML);
 
-            log.debug("Notify request: \n" + new SESRequestBuilder_01().buildNotifyRequest(parameter));
+            log.debug("Notify request: \n" + new SESRequestBuilder_00().buildNotifyRequest(parameter));
 
-            this.sesAdapter.doOperation(new Operation(NOTIFY, this.sesUrl + "?", this.sesUrl), parameter);
+            OperationResult doOperation = this.sesAdapter.doOperation(new Operation(NOTIFY, this.sesUrl + "?", this.sesUrl), parameter);
+            try {
+				log.debug("Notify response: \n" + XmlObject.Factory.parse(doOperation.getIncomingResultAsStream()));
+			} catch (XmlException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
         }
         catch (OXFException e) {
@@ -233,8 +239,9 @@ public class SESConnector {
      * Gets the content lists.
      * 
      * @return the content lists
+     * @throws ExceptionReport 
      */
-    public List<String> getContentLists() {
+    public List<String> getContentLists() throws ExceptionReport {
         ArrayList<String> registeredSensors = new ArrayList<String>();
 
         ParameterContainer parameter = new ParameterContainer();

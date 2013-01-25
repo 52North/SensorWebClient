@@ -7,10 +7,17 @@ import java.util.Enumeration;
 import java.util.Timer;
 import java.util.Vector;
 
+import net.opengis.sensorML.x101.SensorMLDocument;
+
+import org.n52.oxf.ows.ExceptionReport;
+import org.n52.server.ses.feeder.connector.SESConnector;
+import org.n52.server.ses.feeder.connector.SOSConnector;
 import org.n52.server.ses.feeder.hibernate.InitSessionFactory;
+import org.n52.server.ses.feeder.hibernate.SensorToFeed;
 import org.n52.server.ses.feeder.task.DescriptionTask;
 import org.n52.server.ses.feeder.task.ObservationsTask;
 import org.n52.server.ses.feeder.util.DatabaseAccess;
+import org.n52.shared.serializable.pojos.FeedingMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +71,7 @@ public class SosSesFeeder {
     
     private void startFeeding() {
         LOGGER.info("Start feeding registered timeseries to SES.");
-        this.timer.schedule(this.descTask, 1, FeederConfig.getInstance().getCapTime());
+//        this.timer.schedule(this.descTask, 1, FeederConfig.getInstance().getCapTime());
         this.timer.schedule(this.obsTask, FeederConfig.getInstance().getObsTime(), FeederConfig.getInstance().getObsTime());
     }
     
@@ -116,11 +123,43 @@ public class SosSesFeeder {
         this.timer.cancel();
     }
     
-    public void addUsedSensor(String sensorID) {
-    	DatabaseAccess.saveSensorUsage(sensorID, true);
+    public void enableSensorForFeeding(FeedingMetadata feedingMetadata) {
+    	// check if sensor already registered 
+    	boolean sensorRegistered = DatabaseAccess.isSensorRegistered(feedingMetadata);
+    	if (!sensorRegistered) {
+    		// get sensorML document from SOS
+    		try {
+				SOSConnector sosConn = new SOSConnector(feedingMetadata.getServiceUrl());
+				SensorMLDocument sensorML = sosConn.getSensorML(feedingMetadata.getProcedure());
+				// send sensorML document to SES
+				SESConnector sesConn = new SESConnector();
+				String sesID = sesConn.registerPublisher(sensorML);
+				// save in database
+				DatabaseAccess.registerSensor(createSensorToFeed(feedingMetadata, sesID));
+			} catch (ExceptionReport e) {
+				LOGGER.error("Error while register sensor in SES, ", e);
+			}
+    	} else {
+    		DatabaseAccess.increaseSensorUse(feedingMetadata);
+    	}
     }
     
-    public void removeUsedSensor(String sensorID) {
-    	DatabaseAccess.saveSensorUsage(sensorID, false);
+    public void disableSensorForFeeding(FeedingMetadata feedingMetadata) {
+    	// decrease counter for sensor
+    	DatabaseAccess.decreaseSensorUse(feedingMetadata);
     }
+
+	private SensorToFeed createSensorToFeed(FeedingMetadata feedingMetadata, String sesID) {
+		SensorToFeed sensor = new SensorToFeed();
+	    sensor.setOffering(feedingMetadata.getOffering());
+	    sensor.setPhenomenon(feedingMetadata.getPhenomenon());
+	    sensor.setProcedure(feedingMetadata.getProcedure());
+	    sensor.setFeatureOfInterest(feedingMetadata.getFeatureOfInterest());
+	    sensor.setLastUpdate(null);
+	    sensor.setServiceURL(feedingMetadata.getServiceUrl());
+	    sensor.setSesId(sesID);
+	    sensor.setUpdateInterval(FeederConfig.getInstance().getUpdateInterval());
+	    sensor.setUsedCounter(0);
+		return sensor;
+	}
 }

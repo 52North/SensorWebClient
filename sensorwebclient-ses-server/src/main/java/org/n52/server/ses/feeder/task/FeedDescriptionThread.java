@@ -72,53 +72,53 @@ public class FeedDescriptionThread extends Thread {
      */
     @Override
     public void run() {
-        if (isRunning()) {
-            // check if sensor procedure and related sos exists in
-            // log.debug("FeedDescriptionThread#run()");
-            boolean exists = DatabaseAccess.existsProcedureSOS(this.sensor.getProcedure(), this.sos.getUrl());
-
-            if (exists) {
-                // send Describe Sensor for procedure in the SOS
-                log.debug("Run Thread for procedure: " + this.sensor.getProcedure());
-                SensorMLDocument sensorML = null;
-                sensorML = this.sosCon.getSensorML(this.sensor.getProcedure());
-                if (sensorML == null) {
-                    log.error("Get no SensorML-Document for procedure " + this.sensor.getProcedure());
-                } else {
-                    log.debug("SensorML: " + sensorML);
-                    // get observedProperty
-                    ArrayList<String> obsPropsSensorML = getObservedProperties(sensorML);
-                    // check if the observedProperties of the sensor contains in
-                    // the
-                    // list of observedPropertys of the sensorML-Document
-                    for (Offering offering : this.sensor.getOfferings()) {
-                        Set<ObservedProperty> obsPropsTemp = new HashSet<ObservedProperty>();
-                        for (ObservedProperty obsProp : offering.getObservedProperties()) {
-                            if (obsPropsSensorML.contains(obsProp.getName())) {
-                                obsPropsTemp.add(obsProp);
-                            }
-                        }
-                        offering.setObservedProperties(obsPropsTemp);
-                    }
-                    String sesId = null;
-                    try {
-                        sesId = this.sesCon.registerPublisher(sensorML);
-                        if (sesId == null) {
-                            log.error("Get no resource ID for procedure " + this.sensor.getProcedure() + " from SES");
-                        } else {
-                            log.info("Sensor '" + this.sensor.getProcedure() + "' add to SES with ID: " + sesId);
-                            this.sensor.setSesId(sesId);
-                            DatabaseAccess.saveState(this.sos, this.sensor);
-                        }
-                    } catch (Exception e) {
-                        log.error("Error while sending Sensor '" + this.sensor.getProcedure() + "' to SES");
-                    }
-                }
-            } else {
-                log.debug("Sensor " + this.sensor.getProcedure() + " in SOS " + this.sos.getUrl()
-                        + " already exists in Database!");
-            }
-        }
+//        if (isRunning()) {
+//            // check if sensor procedure and related sos exists in
+//            // log.debug("FeedDescriptionThread#run()");
+//            boolean exists = DatabaseAccess.existsProcedureSOS(this.sensor.getProcedure(), this.sos.getUrl());
+//
+//            if (exists) {
+//                // send Describe Sensor for procedure in the SOS
+//                log.trace("Run Thread for procedure: " + this.sensor.getProcedure());
+//                SensorMLDocument sensorML = null;
+//                sensorML = this.sosCon.getSensorML(this.sensor.getProcedure());
+//                if (sensorML == null) {
+//                    log.error("Get no SensorML-Document for procedure " + this.sensor.getProcedure());
+//                } else {
+//                    log.trace("SensorML: " + sensorML);
+//                    // get observedProperty
+//                    ArrayList<String> obsPropsSensorML = getObservedProperties(sensorML);
+//                    // check if the observedProperties of the sensor contains in
+//                    // the
+//                    // list of observedPropertys of the sensorML-Document
+//                    for (Offering offering : this.sensor.getOfferings()) {
+//                        Set<ObservedProperty> obsPropsTemp = new HashSet<ObservedProperty>();
+//                        for (ObservedProperty obsProp : offering.getObservedProperties()) {
+//                            if (obsPropsSensorML.contains(obsProp.getName())) {
+//                                obsPropsTemp.add(obsProp);
+//                            }
+//                        }
+//                        offering.setObservedProperties(obsPropsTemp);
+//                    }
+//                    String sesId = null;
+//                    try {
+//                        sesId = this.sesCon.registerPublisher(sensorML); // TODO SensorMLDoc or SensorML
+//                        if (sesId == null) {
+//                            log.error("Get no resource ID for procedure " + this.sensor.getProcedure() + " from SES");
+//                        } else {
+//                            log.info("Sensor '" + this.sensor.getProcedure() + "' add to SES with ID: " + sesId);
+//                            this.sensor.setSesId(sesId);
+//                            DatabaseAccess.saveState(this.sos, this.sensor);
+//                        }
+//                    } catch (Exception e) {
+//                        log.error("Error while sending Sensor '" + this.sensor.getProcedure() + "' to SES");
+//                    }
+//                }
+//            } else {
+//                log.debug("Sensor " + this.sensor.getProcedure() + " in SOS " + this.sos.getUrl()
+//                        + " already exists in Database!");
+//            }
+//        }
     }
 
     /**

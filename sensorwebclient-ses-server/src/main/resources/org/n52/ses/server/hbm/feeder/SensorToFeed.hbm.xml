@@ -9,14 +9,13 @@
          </generator>
       </id>
       <property name="procedure" type="string"/>
-      <set name="offerings">
-        <key column="sensor_id"/>
-        <one-to-many class="Offering"/>
-      </set>
+      <property name="offering" type="string"/>
+      <property name="phenomenon" type="string"/>
+      <property name="featureOfInterest" type="string"/>
+      <property name="serviceURL" type="string"/>
       <property name="sesId" type="string"/>
       <property name="lastUpdate" type="calendar"/>
-      <property name="used" type="boolean"/>
+      <property name="usedCounter" type="long"/>
       <property name="updateInterval" type="long"/>
-      <many-to-one name="sos" lazy="false" column="sos_id" class="SOS"/>
    </class>
 </hibernate-mapping>

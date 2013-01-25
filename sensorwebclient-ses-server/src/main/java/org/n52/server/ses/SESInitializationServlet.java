@@ -31,7 +31,6 @@ import javax.swing.JOptionPane;
 
 import org.jfree.util.Log;
 import org.n52.server.ses.eml.Meta_Builder;
-import org.n52.server.ses.feeder.FeederConfig;
 import org.n52.server.ses.feeder.SosSesFeeder;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.service.SesSensorServiceImpl;

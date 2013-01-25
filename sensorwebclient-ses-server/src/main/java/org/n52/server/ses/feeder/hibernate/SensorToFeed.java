@@ -3,7 +3,6 @@ package org.n52.server.ses.feeder.hibernate;
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Calendar;
-import java.util.Set;
 
 /**
  * The sensor class handles the sensor objects in the database.
@@ -13,31 +12,67 @@ import java.util.Set;
 @SuppressWarnings("serial")
 public class SensorToFeed implements Serializable {
 
-    /** The id. */
     private Integer id;
 
-    /** The procedure. */
     private String procedure;
 
-    /** The offering. */
-    private Set<Offering> offerings;
+    private String offering;
 
-    /** The ses id. */
+    private String phenomenon;
+    
+    private String featureOfInterest;
+    
+    private String serviceURL;
+    
     private String sesId;
 
-    /** The last update. */
     private Calendar lastUpdate;
 
-    /** The used. */
-    private boolean used;
+    private long usedCounter;
 
-    /** The update interval. */
     private long updateInterval;
 
-    /** The sos. */
-    private SOS sos;
+    public String getOffering() {
+		return offering;
+	}
 
-    /**
+	public void setOffering(String offering) {
+		this.offering = offering;
+	}
+
+	public String getPhenomenon() {
+		return phenomenon;
+	}
+
+	public void setPhenomenon(String phenomenon) {
+		this.phenomenon = phenomenon;
+	}
+
+	public String getFeatureOfInterest() {
+		return featureOfInterest;
+	}
+
+	public void setFeatureOfInterest(String featureOfInterest) {
+		this.featureOfInterest = featureOfInterest;
+	}
+
+	public String getServiceURL() {
+		return serviceURL;
+	}
+
+	public void setServiceURL(String serviceURL) {
+		this.serviceURL = serviceURL;
+	}
+
+	public long getUsedCounter() {
+		return usedCounter;
+	}
+
+	public void setUsedCounter(long usedCounter) {
+		this.usedCounter = usedCounter;
+	}
+
+	/**
      * Gets the id.
      *
      * @return the database id
@@ -110,24 +145,6 @@ public class SensorToFeed implements Serializable {
     }
 
     /**
-     * Checks if is used.
-     *
-     * @return the used
-     */
-    public boolean isUsed() {
-        return this.used;
-    }
-
-    /**
-     * Sets the used.
-     *
-     * @param used the used to set
-     */
-    public void setUsed(boolean used) {
-        this.used = used;
-    }
-
-    /**
      * Sets the update interval.
      *
      * @param updateInterval the updateInterval to set
@@ -145,46 +162,9 @@ public class SensorToFeed implements Serializable {
         return this.updateInterval;
     }
 
-    /**
-     * @param offerings the offerings to set
-     */
-    public void setOfferings(Set<Offering> offerings) {
-        this.offerings = offerings;
-    }
-
-    /**
-     * @return the offerings
-     */
-    public Set<Offering> getOfferings() {
-        return this.offerings;
-    }
-
-    /**
-     * Sets the sos.
-     *
-     * @param sos the sos to set
-     */
-    public void setSos(SOS sos) {
-        this.sos = sos;
-    }
-
-    /**
-     * Gets the sos.
-     *
-     * @return the sos
-     */
-    public SOS getSos() {
-        return this.sos;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return MessageFormat.format("Sensor: id={0}, procedure={1}, offerings={2}", new Object[] { this.id, 
-                this.procedure, this.offerings });
+                this.procedure, this.offering });
     }
 }

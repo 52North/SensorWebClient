@@ -7,26 +7,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
-import net.opengis.gml.TimePeriodType;
-import net.opengis.gml.TimePositionType;
-import net.opengis.ogc.BinaryTemporalOpType;
 import net.opengis.om.x10.ObservationCollectionDocument;
 import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.ows.x11.ExceptionType;
 import net.opengis.sensorML.x101.SensorMLDocument;
 import net.opengis.sos.x10.DescribeSensorDocument;
 import net.opengis.sos.x10.DescribeSensorDocument.DescribeSensor;
-import net.opengis.sos.x10.GetObservationDocument;
-import net.opengis.sos.x10.GetObservationDocument.GetObservation;
-import net.opengis.sos.x10.GetObservationDocument.GetObservation.EventTime;
 
-import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.oxf.OXFException;
@@ -34,16 +24,18 @@ import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.ows.ExceptionReport;
 import org.n52.oxf.ows.ServiceDescriptor;
+import org.n52.oxf.ows.capabilities.ITime;
 import org.n52.oxf.ows.capabilities.Operation;
-import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.sos.adapter.SOSAdapter;
 import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.oxf.sos.capabilities.SOSContents;
-import org.n52.oxf.sos.util.SosUtil;
+import org.n52.oxf.valueDomains.time.TimeFactory;
 import org.n52.server.oxf.util.ConfigurationContext;
+import org.n52.server.oxf.util.access.ObservationAccessor;
+import org.n52.server.oxf.util.generator.RequestConfig;
 import org.n52.server.ses.feeder.FeederConfig;
+import org.n52.server.ses.feeder.hibernate.SensorToFeed;
 import org.n52.server.ses.feeder.util.IOHelper;
-import org.n52.server.ses.feeder.util.SOSAdapter_01;
 import org.n52.server.util.SosAdapterFactory;
 import org.n52.server.util.TimeUtil;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -64,7 +56,7 @@ public class SOSConnector {
 
     private String serviceVersion;
 
-    private SOSAdapter_01 sosAdapter;
+    private SOSAdapter sosAdapter;
 
     private ServiceDescriptor desc;
 
@@ -77,7 +69,8 @@ public class SOSConnector {
         try {
             this.sosURL = sosURL;
             this.serviceVersion = FeederConfig.getInstance().getSosVersion();
-            this.sosAdapter = new SOSAdapter_01(this.serviceVersion);
+            SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosURL);
+            this.sosAdapter = SosAdapterFactory.createSosAdapter(metadata);
         }
         catch (IllegalStateException e) {
             LOGGER.debug("Configuration is not available (anymore).",e);
@@ -98,7 +91,7 @@ public class SOSConnector {
             LOGGER.debug("GetCapabilitiesRequest to " + this.sosURL + ":\n"
                     + this.sosAdapter.getRequestBuilder().buildGetCapabilitiesRequest(paramCon));
 
-            Operation getCapOperation = new Operation(SOSAdapter_01.GET_CAPABILITIES, this.sosURL + "?", this.sosURL);
+            Operation getCapOperation = new Operation(SOSAdapter.GET_CAPABILITIES, this.sosURL + "?", this.sosURL);
             OperationResult opResult = this.sosAdapter.doOperation(getCapOperation, paramCon);
             this.desc = this.sosAdapter.initService(opResult);
         } catch (ExceptionReport e) {
@@ -133,6 +126,7 @@ public class SOSConnector {
      * @return The SensorMLDocument
      */
     public SensorMLDocument getSensorML(String procedure){
+    	// TODO use sosAdapter to send request. 
         // create request
         DescribeSensorDocument descSensDoc = DescribeSensorDocument.Factory.newInstance();
         DescribeSensor descSens = descSensDoc.addNewDescribeSensor();
@@ -169,66 +163,77 @@ public class SOSConnector {
      * @return An observationCollection for the parameters
      * @throws Exception the exception
      */
-    public ObservationCollectionDocument getObservation(String procedure, String offering, Calendar lastUpdate,
-            String[] observedProperties) throws Exception {
+    public ObservationCollectionDocument getObservation(SensorToFeed sensor) throws Exception {
         
-        SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosURL);
-        SOSAdapter adapter = SosAdapterFactory.createSosAdapter(metadata);
-        
-        // TODO replace old mechanism with the use of the adapter
-        
-        
-        // create request
-        GetObservationDocument getObsDoc = GetObservationDocument.Factory.newInstance();
-        GetObservation getObs = getObsDoc.addNewGetObservation();
-        // set version
-        getObs.setVersion(serviceVersion);
-        // set serviceType
-        getObs.setService("SOS");
-        // set Offering
-        getObs.setOffering(offering);
-        // set time
-        EventTime eventTime = getObs.addNewEventTime();
-        BinaryTemporalOpType binTempOp = BinaryTemporalOpType.Factory.newInstance();
-
-        XmlCursor cursor = binTempOp.newCursor();
-        cursor.toChild(new QName("http://www.opengis.net/ogc", "PropertyName"));
-        cursor.setTextValue("urn:ogc:data:time:iso8601");
-
-        SimpleDateFormat ISO8601FORMAT = TimeUtil.createIso8601Formatter();
-        TimePeriodType timePeriod = TimePeriodType.Factory.newInstance();
-
-        TimePositionType beginPosition = timePeriod.addNewBeginPosition();
-        beginPosition.setStringValue(ISO8601FORMAT.format(lastUpdate.getTime()));
-
-        TimePositionType endPosition = timePeriod.addNewEndPosition();
-        Date date = new Date();
-        endPosition.setStringValue(ISO8601FORMAT.format(date));
-        LOGGER.debug("Update Time for " + procedure +": "+ date.getTime());
-
-        binTempOp.setTimeObject(timePeriod);
-        eventTime.setTemporalOps(binTempOp);
-
-        // rename elements
-        cursor = eventTime.newCursor();
-        cursor.toChild(new QName("http://www.opengis.net/ogc", "temporalOps"));
-        cursor.setName(new QName("http://www.opengis.net/ogc", "TM_During"));
-
-        cursor.toChild(new QName("http://www.opengis.net/gml", "_TimeObject"));
-        cursor.setName(new QName("http://www.opengis.net/gml", "TimePeriod"));
-
-        getObs.setProcedureArray(new String[] { procedure });
-        getObs.setObservedPropertyArray(observedProperties);
-        getObs.setResponseFormat("text/xml;subtype=\"om/1.0.0\"");
-
-        // send request
-        XmlObject response = null;
-        LOGGER.debug("GetObservation Request: " + getObsDoc);
-        try {
-            response = sendRequest(getObsDoc);
-        } catch (IOException e) {
-            LOGGER.error("Error while sending getObservation request: " + e.getMessage());
-        }
+    	ObservationAccessor obsAccessor = new ObservationAccessor();
+    	List<String> fois = new ArrayList<String>();
+    	fois.add(sensor.getFeatureOfInterest());
+    	List<String> phenoms = new ArrayList<String>();
+    	phenoms.add(sensor.getPhenomenon());
+		List<String> procedures = new ArrayList<String>();
+		procedures.add(sensor.getProcedure());
+		
+		SimpleDateFormat ISO8601FORMAT = TimeUtil.createIso8601Formatter();
+        String begin = ISO8601FORMAT.format(sensor.getLastUpdate().getTime());
+        String end = ISO8601FORMAT.format(new Date());
+		ITime time = TimeFactory.createTime(begin + "/" + end);
+		RequestConfig request = new RequestConfig(sensor.getServiceURL(), sensor.getOffering(), fois, phenoms, procedures, time);
+		OperationResult operationResult = obsAccessor.sendRequest(request);
+		XmlObject response = XmlObject.Factory.parse(operationResult.getIncomingResultAsStream());
+		
+//    	// create request
+//        GetObservationDocument getObsDoc = GetObservationDocument.Factory.newInstance();
+//        GetObservation getObs = getObsDoc.addNewGetObservation();
+//        // set version
+//        getObs.setVersion(serviceVersion);
+//        // set serviceType
+//        getObs.setService("SOS");
+//        // set Offering
+//        getObs.setOffering(offering);
+//        // set time
+//        EventTime eventTime = getObs.addNewEventTime();
+//        BinaryTemporalOpType binTempOp = BinaryTemporalOpType.Factory.newInstance();
+//
+//        XmlCursor cursor = binTempOp.newCursor();
+//        cursor.toChild(new QName("http://www.opengis.net/ogc", "PropertyName"));
+//        cursor.setTextValue("urn:ogc:data:time:iso8601");
+//
+//        SimpleDateFormat ISO8601FORMAT = TimeUtil.createIso8601Formatter();
+//        TimePeriodType timePeriod = TimePeriodType.Factory.newInstance();
+//
+//        TimePositionType beginPosition = timePeriod.addNewBeginPosition();
+//        beginPosition.setStringValue(ISO8601FORMAT.format(lastUpdate.getTime()));
+//
+//        TimePositionType endPosition = timePeriod.addNewEndPosition();
+//        Date date = new Date();
+//        endPosition.setStringValue(ISO8601FORMAT.format(date));
+//        LOGGER.debug("Update Time for " + procedure +": "+ date.getTime());
+//
+//        binTempOp.setTimeObject(timePeriod);
+//        eventTime.setTemporalOps(binTempOp);
+//
+//        // rename elements
+//        cursor = eventTime.newCursor();
+//        cursor.toChild(new QName("http://www.opengis.net/ogc", "temporalOps"));
+//        cursor.setName(new QName("http://www.opengis.net/ogc", "TM_During"));
+//
+//        cursor.toChild(new QName("http://www.opengis.net/gml", "_TimeObject"));
+//        cursor.setName(new QName("http://www.opengis.net/gml", "TimePeriod"));
+//
+//        getObs.setProcedureArray(new String[] { procedure });
+//        getObs.setObservedPropertyArray(new String[] {phenomenon});
+//        getObs.setResponseFormat("text/xml;subtype=\"om/1.0.0\"");
+//
+//        // send request
+//        XmlObject response = null;
+//        LOGGER.debug("GetObservation Request: " + getObsDoc);
+//        try {
+//            response = sendRequest(getObsDoc);
+//        } catch (IOException e) {
+//            LOGGER.error("Error while sending getObservation request: " + e.getMessage());
+//        }
+		
+		
         LOGGER.debug("GetObservation Response: " + response);
         // parse request to ObservationCollectionDocument
         if (response instanceof ObservationCollectionDocument) {

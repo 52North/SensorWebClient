@@ -8,12 +8,10 @@ import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_OBSER
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_ONLY_YOUNGEST_OBSERVATION;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_PROCEDURE_NAME_CONSTRAINTS;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_PROHIBIT_PROCEDURE_NAMES;
-import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SES_BASIC_PORT_TYPE_PATH;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SES_DEFAULT_TOPIC;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SES_DEFAULT_TOPIC_DIALECT;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SES_ENDPOINT;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SES_LIFETIME_DURATION;
-import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SES_URL;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SOS_VERSION;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_START_TIMESTAMP;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_UPDATE_OBSERVATION_PERIOD;
@@ -69,10 +67,6 @@ public class FeederConfig {
     private String sosVersion;
 
     private int maxNumProc;
-
-    private String sesUrl;
-
-    private String sesBasicPortType;
 
     private String sesDefaultTopicDialect;
 
@@ -191,21 +185,6 @@ public class FeederConfig {
             this.prohibitProcedureNames.add(tmp);
         }
 
-        // SES URL
-        this.sesUrl = getValue(KEY_SES_URL);
-        if (this.sesUrl == null) {
-            this.sesUrl = "http://localhost:8080/SES-2010/services";
-            LOGGER.warn("Missing Parameter: " + KEY_SES_URL + ". Default value is now " + this.sesUrl);
-        }
-
-        // SES basic port type path
-        this.sesBasicPortType = getValue(KEY_SES_BASIC_PORT_TYPE_PATH);
-        if (this.sesBasicPortType == null) {
-            this.sesBasicPortType = "/SesPortType";
-            LOGGER.warn("Missing Parameter: " + KEY_SES_BASIC_PORT_TYPE_PATH + ". Default value is now "
-                    + this.sesBasicPortType);
-        }
-
         // SES default topic dialect
         this.sesDefaultTopicDialect = getValue(KEY_SES_DEFAULT_TOPIC_DIALECT);
         if (this.sesDefaultTopicDialect == null) {
@@ -250,9 +229,7 @@ public class FeederConfig {
         // only youngest observation
         this.onlyYoungestName = Boolean.parseBoolean(getValue(KEY_ONLY_YOUNGEST_OBSERVATION));
 
-        LOGGER.info("######################################################################");
-        LOGGER.info("######################  Configuration loaded   #######################");
-        LOGGER.info("######################################################################");
+        LOGGER.debug("Configuration loaded");
     }
 
     private void loadProperties() {
@@ -348,20 +325,6 @@ public class FeederConfig {
      */
     public int getMaxNumProc() {
         return this.maxNumProc;
-    }
-
-    /**
-     * @return the sesUrl
-     */
-    public String getSesUrl() {
-        return this.sesUrl;
-    }
-
-    /**
-     * @return the sesBasicPortType
-     */
-    public String getSesBasicPortType() {
-        return this.sesBasicPortType;
     }
 
     /**

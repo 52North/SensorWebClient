@@ -680,7 +680,6 @@
 					CUSTOMIZE PROPERTIES AND TRIGGER MAVEN BUILD WITH `mvn install -Penv-dev'. -->
 
 				<wns.service.url>http://localhost/52nWNS/wns</wns.service.url>
-				<sos.feeder.url>http://localhost/52n-sensorweb-sos-ses-feeder/SosSesFeeder</sos.feeder.url>
 				<ses.service.url>http://localhost/SES-2010/services/SesPortType</ses.service.url>
 				<ses.client.user.service.url>http://localhost/sensorwebclient-webapp/client/SesUserService</ses.client.user.service.url>
 				<ses.response.delegate.url>http://localhost/SES-WNS-Translator/Translator_Servlet</ses.response.delegate.url>
@@ -721,8 +720,6 @@
 				<feeder.sleep.time.observation>5000</feeder.sleep.time.observation>
 				<feeder.only.youngest.observation>true</feeder.only.youngest.observation>
 				
-				<feeder.ses.url>http://localhost:8080/SES-2010/services</feeder.ses.url>
-				<feeder.ses.basic.port.type.path>/SesPortType</feeder.ses.basic.port.type.path>
 				<feeder.ses.version>0.0.0</feeder.ses.version>
 				<feeder.ses.default.topic.dialect>http://docs.oasis-open.org/wsn/t-1/TopicExpression/Simple</feeder.ses.default.topic.dialect>
 				<feeder.ses.default.topic>ses:Measurements</feeder.ses.default.topic>
@@ -829,7 +826,7 @@
 		<gwt.version>2.5.0</gwt.version>
 		<smartgwt.version>3.0</smartgwt.version>
 		<geotools.version>8.2</geotools.version>
-		<oxf.version>2.0.0-alpha.1</oxf.version>
+		<oxf.version>2.0.0-alpha.2-SNAPSHOT</oxf.version>
 		<hibernate.version>3.5.0-Final</hibernate.version>
 		<n52.xml.commons.version>1.1.3</n52.xml.commons.version>
 		<org.springframework.version>3.2.0.RELEASE</org.springframework.version>

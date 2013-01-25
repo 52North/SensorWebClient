@@ -5,8 +5,6 @@
 	<!-- URL to the SES and some other configurations for the SES -->
 	<entry key="ses_url">${feeder.ses.url}</entry>
 	
-	<entry key="ses_version">${feeder.ses.version}</entry>
-	
 	<!-- Supported sos version -->
 	<entry key="sos_version">${feeder.sos.version}</entry>
 	
@@ -27,7 +25,6 @@
 		        ADVANCED CONFIGURATION PARAMETERS
 	     ################################################## -->
 	     
-	<entry key="ses_basic_port_type_path">${feeder.ses.basic.port.type.path}</entry>
 	<entry key="ses_default_topic_dialect">${feeder.ses.default.topic.dialect}</entry>
 	<entry key="ses_register_publisher_lifetime">${feeder.ses.register.publisher.lifetime}</entry>
 	<entry key="ses_register_publisher_endpoint">${feeder.ses.register.publisher.endpoint}</entry>

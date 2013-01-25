@@ -46,8 +46,6 @@ public class SesConfig {
     /** The ses-wns translator endpoint -->consumerReference*/
     public static String consumerReference;
 
-    public static String feeder;
-
     public static boolean warnUserLongNotification;
     
     public static int minimumPasswordLength;
@@ -169,7 +167,6 @@ public class SesConfig {
                 serviceVersion = properties.getProperty("serviceVersion");
                 wns = properties.getProperty("wns");
                 consumerReference = properties.getProperty("consumerReference");
-                feeder = properties.getProperty("feeder");
                 warnUserLongNotification  = Boolean.valueOf(properties.getProperty("warnUserLongNotification"));
                 minimumPasswordLength = Integer.valueOf(properties.getProperty("minimumPasswordLength"));
                 

@@ -40,6 +40,18 @@ public class ObservationsTask extends TimerTask {
 
     @Override
     public void run() {
+    	/////// TODO remove this tests
+//    	SosSesFeeder feeder = SosSesFeeder.getInst();
+//    	FeedingMetadata feedingMetadata = new FeedingMetadata();
+//    	feedingMetadata.setFeatureOfInterest("Konstanz_0906");
+//    	feedingMetadata.setOffering("WASSERSTAND_ROHDATEN");
+//    	feedingMetadata.setPhenomenon("Wasserstand");
+//    	feedingMetadata.setProcedure("Wasserstand-Konstanz_0906");
+//    	feedingMetadata.setServiceUrl("http://pegelonline.wsv.de/webservices/gis/gdi-sos");
+//    	
+//    	feeder.enableSensorForFeeding(feedingMetadata);
+    	/////
+    	
         log.info("Currenty feeded sensors: " + currentyFeededSensors.size());
         isActive = true;
         try {

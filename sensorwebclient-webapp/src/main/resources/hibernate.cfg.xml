@@ -29,9 +29,9 @@
 		<mapping resource="org/n52/ses/server/hbm/client/ListOfUses.hbm.xml" />
 
         <!-- feeder database mapping files -->
-		<mapping resource="org/n52/ses/server/hbm/feeder/SOS.hbm.xml" />
+		<!-- <mapping resource="org/n52/ses/server/hbm/feeder/SOS.hbm.xml" /> -->
 		<mapping resource="org/n52/ses/server/hbm/feeder/SensorToFeed.hbm.xml" />
-		<mapping resource="org/n52/ses/server/hbm/feeder/Offering.hbm.xml" />
-		<mapping resource="org/n52/ses/server/hbm/feeder/ObservedProperty.hbm.xml" />
+		<!-- <mapping resource="org/n52/ses/server/hbm/feeder/Offering.hbm.xml" />
+		<mapping resource="org/n52/ses/server/hbm/feeder/ObservedProperty.hbm.xml" /> -->
 	</session-factory>
 </hibernate-configuration>

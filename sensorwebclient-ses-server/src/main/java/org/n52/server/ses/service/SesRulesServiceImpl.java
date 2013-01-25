@@ -39,7 +39,6 @@ import org.n52.server.ses.eml.BasicRule_5_Builder;
 import org.n52.server.ses.eml.ComplexRule_Builder;
 import org.n52.server.ses.eml.ComplexRule_BuilderV2;
 import org.n52.server.ses.eml.Meta_Builder;
-import org.n52.server.ses.feeder.SosSesFeeder;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.util.RulesUtil;
 import org.n52.server.ses.util.SearchUtil;
@@ -192,7 +191,8 @@ public class SesRulesServiceImpl implements SesRuleService {
                             for (int j = 0; j < stationIDList.size(); j++) {
                                 if (HibernateUtil.getSensorByID(stationIDList.get(j)).getInUse() == 0) {
                                     LOG.debug("Station ID: " + stationIDList.get(j));
-                                    SosSesFeeder.getInst().addUsedSensor(stationIDList.get(j));
+                                    // TODO change subscribe interface
+//                                    SosSesFeeder.getInst().addUsedSensor(stationIDList.get(j));
                                 }
                             }
                         } catch (Exception e) {
@@ -268,7 +268,8 @@ public class SesRulesServiceImpl implements SesRuleService {
                     
                     if (HibernateUtil.getSensorByID(sensorID).getInUse() == 0) {
                         LOG.debug("remove sensor from used list");
-                        SosSesFeeder.getInst().removeUsedSensor(sensorID);
+                     // TODO change unsubscribe interface
+//                        SosSesFeeder.getInst().removeUsedSensor(sensorID);
                     }
                 }
             } catch (Exception e) {
