@@ -28,7 +28,6 @@
 		<module>xml-pdf-format</module>
 		<!-- <module>restful-timeseries-webapp</module> -->
 		<module>sensorwebclient-webapp</module>
-		<module>sensorwebclient-hydro</module>
 	</modules>
 
 	<dependencyManagement>
