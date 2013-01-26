@@ -679,7 +679,7 @@
 					CUSTOMIZE PROPERTIES AND TRIGGER MAVEN BUILD WITH `mvn install -Penv-dev'. -->
 
 				<wns.service.url>http://localhost/52nWNS/wns</wns.service.url>
-				<ses.service.url>http://localhost/SES-2010/services/SesPortType</ses.service.url>
+				<ses.service.url>http://localhost/52n-ses-1.1.0/services/Broker</ses.service.url>
 				<ses.client.user.service.url>http://localhost/sensorwebclient-webapp/client/SesUserService</ses.client.user.service.url>
 				<ses.response.delegate.url>http://localhost/SES-WNS-Translator/Translator_Servlet</ses.response.delegate.url>
 				<ses.eml.resources.url>http://localhost/sensorwebclient-webapp/eml/</ses.eml.resources.url>
@@ -699,7 +699,7 @@
 
 				<application.title>Sensor Web Client</application.title>
 
-				<config.logger.fileappender.filepath>${catalina.home:${user.home}/52n-logs}/${project.artifactId}-${project.version}</config.logger.fileappender.filepath>
+				<config.logger.fileappender.filepath>${catalina.home:-${user.home}}/logs/${project.artifactId}-${project.version}</config.logger.fileappender.filepath>
 				<config.logger.level>DEBUG</config.logger.level>
 				<config.logger.level.oxf>WARN</config.logger.level.oxf>
 				<config.logger.level.client>DEBUG</config.logger.level.client>
