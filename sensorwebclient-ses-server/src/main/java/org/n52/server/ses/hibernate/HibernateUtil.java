@@ -34,7 +34,7 @@ import org.hibernate.criterion.Restrictions;
 import org.n52.shared.serializable.pojos.BasicRule;
 import org.n52.shared.serializable.pojos.ComplexRule;
 import org.n52.shared.serializable.pojos.Subscription;
-import org.n52.shared.serializable.pojos.TimeseriesToFeed;
+import org.n52.shared.serializable.pojos.TimeseriesFeed;
 import org.n52.shared.serializable.pojos.User;
 import org.n52.shared.serializable.pojos.UserRole;
 import org.slf4j.Logger;
@@ -394,57 +394,53 @@ public class HibernateUtil {
         return rules;
     }
 
-    public static void addSensor(TimeseriesToFeed sensor) {
+    @SuppressWarnings("unchecked")
+    public static List<TimeseriesFeed> getTimeseriesFeeds() {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        session.saveOrUpdate(sensor);
+        Criteria crit = session.createCriteria(TimeseriesFeed.class);
+        List<TimeseriesFeed> timeseriesFeeds = crit.list();
         session.getTransaction().commit();
+        return timeseriesFeeds;
     }
 
     @SuppressWarnings("unchecked")
-    public static List<TimeseriesToFeed> getTimeseriesToFeed() {
+    public static TimeseriesFeed getTimeseriesFeedsById(String timeseriesFeedId) {
+        
+        // TODO use timeseriesfeed ID
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        Criteria crit = session.createCriteria(TimeseriesToFeed.class);
-        List<TimeseriesToFeed> sensors = crit.list();
-        session.getTransaction().commit();
-        return sensors;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static TimeseriesToFeed getSensorByID(String sensorID) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        session.beginTransaction();
-        Criteria crit = session.createCriteria(TimeseriesToFeed.class);
-        // TODO add timeseries ID
-        List<TimeseriesToFeed> sensors = crit.add(Restrictions.eq("sensorID", sensorID)).list();
+        Criteria crit = session.createCriteria(TimeseriesFeed.class);
+        List<TimeseriesFeed> timeseriesFeeds = crit.add(Restrictions.eq("sensorID", timeseriesFeedId)).list();
         session.getTransaction().commit();
 
-        if (sensors.size() != 0) {
-            return sensors.get(0);
+        if (timeseriesFeeds.size() != 0) {
+            return timeseriesFeeds.get(0);
         }
         return null;
     }
 
     @SuppressWarnings("unchecked")
-    public static List<TimeseriesToFeed> getActiveTimeseriesToFeed() {
+    public static List<TimeseriesFeed> getActiveTimeseriesFeeds() {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        Criteria crit = session.createCriteria(TimeseriesToFeed.class);
-        List<TimeseriesToFeed> timeseriesToFeed = crit.add(Restrictions.eq("active", true)).list();
+        Criteria crit = session.createCriteria(TimeseriesFeed.class);
+        List<TimeseriesFeed> timeseriesFeeds = crit.add(Restrictions.eq("active", true)).list();
         session.getTransaction().commit();
-        return timeseriesToFeed;
+        return timeseriesFeeds;
     }
 
     @SuppressWarnings("unchecked")
-    public static boolean updateSensorToFeed(String feedingId, boolean newStatus) {
+    public static boolean updateTimeseriesFeed(String timeseriesFeedId, boolean newStatus) {
+        
+        // TODO use timeseries feed ID
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        Criteria crit = session.createCriteria(TimeseriesToFeed.class);
-        List<TimeseriesToFeed> sensors = crit.add(Restrictions.eq("sensorID", feedingId)).list();
+        Criteria crit = session.createCriteria(TimeseriesFeed.class);
+        List<TimeseriesFeed> sensors = crit.add(Restrictions.eq("sensorID", timeseriesFeedId)).list();
 
         if (sensors.size() == 1) {
-            TimeseriesToFeed sensor = sensors.get(0);
+            TimeseriesFeed sensor = sensors.get(0);
             sensor.setActive(newStatus);
             session.saveOrUpdate(sensor);
             session.getTransaction().commit();
@@ -542,11 +538,11 @@ public class HibernateUtil {
     public static boolean updateSensorCount(String sensorID, boolean newStatus) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        Criteria crit = session.createCriteria(TimeseriesToFeed.class);
-        List<TimeseriesToFeed> sensors = crit.add(Restrictions.eq("sensorID", sensorID)).list();
+        Criteria crit = session.createCriteria(TimeseriesFeed.class);
+        List<TimeseriesFeed> sensors = crit.add(Restrictions.eq("sensorID", sensorID)).list();
 
         if (sensors.size() == 1) {
-            TimeseriesToFeed sensor = sensors.get(0);
+            TimeseriesFeed sensor = sensors.get(0);
             if (newStatus) {
                 // increment count
                 sensor.setInUse(sensor.getInUse() + 1);
@@ -593,14 +589,16 @@ public class HibernateUtil {
     
 
     @SuppressWarnings("unchecked")
-    public static boolean deleteSensorByID(String sensorID) {
+    public static boolean deleteTimeseriesFeed(String sensorID) {
+        
+        // TODO delete with timeseries feed ID
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        Criteria crit = session.createCriteria(TimeseriesToFeed.class);
-        List<TimeseriesToFeed> sensors = crit.add(Restrictions.eq("sensorID", sensorID)).list();
+        Criteria crit = session.createCriteria(TimeseriesFeed.class);
+        List<TimeseriesFeed> sensors = crit.add(Restrictions.eq("sensorID", sensorID)).list();
 
         if (sensors.size() == 1) {
-            TimeseriesToFeed sensor = sensors.get(0);
+            TimeseriesFeed sensor = sensors.get(0);
             if (sensor.getInUse() > 0) {
                 return false;
             }
@@ -756,16 +754,15 @@ public class HibernateUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static boolean existsTimeseriesToFeed(String sensorID) {
+    public static boolean existsTimeseriesFeed(String timeseriesFeedId) {
+        
+        // TODO use timeseriesfeed ID
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        Criteria crit = session.createCriteria(TimeseriesToFeed.class);
-        List<TimeseriesToFeed> sensors = crit.add(Restrictions.eq("sensorID", sensorID)).list();
+        Criteria crit = session.createCriteria(TimeseriesFeed.class);
+        List<TimeseriesFeed> timeseriesFeeds = crit.add(Restrictions.eq("sensorID", timeseriesFeedId)).list();
         session.getTransaction().commit();
-        if (sensors.size() != 0) {
-            return true;
-        }
-        return false;
+        return timeseriesFeeds.size() != 0;
     }
 
     @SuppressWarnings("unchecked")

@@ -29,7 +29,7 @@ import org.n52.server.ses.feeder.connector.SESConnector;
 import org.n52.server.ses.feeder.connector.SOSConnector;
 import org.n52.server.ses.feeder.util.DatabaseAccess;
 import org.n52.shared.serializable.pojos.FeedingMetadata;
-import org.n52.shared.serializable.pojos.TimeseriesToFeed;
+import org.n52.shared.serializable.pojos.TimeseriesFeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,11 +43,9 @@ import org.slf4j.LoggerFactory;
  */
 public class FeedObservationThread extends Thread {
 
-    /** The Constant log. */
-    private static final Logger log = LoggerFactory.getLogger(FeedObservationThread.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FeedObservationThread.class);
 
-    /** The sensor. */
-    private TimeseriesToFeed sensor;
+    private TimeseriesFeed timeseriesFeed;
 
     private boolean running = true;
     
@@ -55,57 +53,40 @@ public class FeedObservationThread extends Thread {
 
     private Vector<String> currentlyFeedingSensors;
 
-    /**
-     * @return the running
-     */
+    public FeedObservationThread(TimeseriesFeed timeseriesFeed, Vector<String> v) {
+        super("sensorId_" + timeseriesFeed.getId()); // TODO choose better name
+        this.timeseriesFeed = timeseriesFeed;
+        this.currentlyFeedingSensors = v;
+    }
+
     public boolean isRunning() {
         return this.running;
     }
 
-    /**
-     * @param running
-     *            the running to set
-     */
     public void setRunning(boolean running) {
         this.running = running;
     }
 
     /**
-     * Instantiates a new feed observation thread.
-     * 
-     * @param sensor
-     *            The sensor for the observation collection is done.
-     * @param minDelay
-     */
-    public FeedObservationThread(TimeseriesToFeed sensor, Vector<String> v) {
-        super("sensorId_" + sensor.getId());
-        this.sensor = sensor;
-        this.currentlyFeedingSensors = v;
-    }
-
-    /**
-     * Starts the thread and collects the observation an sends it to the SES.
-     * 
-     * @see java.lang.Thread#run()
+     * Collects and sends observation to the SES.
      */
     @Override
     public void run() {
-        // init SOS connection
 
-        FeedingMetadata metadata = sensor.getFeedingMetadata();
         if (isRunning()) {
+            FeedingMetadata metadata = timeseriesFeed.getFeedingMetadata();
             try {
-                if (log.isDebugEnabled()) {
-                    log.debug("Start Observation thread for Sensor: " + metadata.getProcedure());
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Start Observation thread for Sensor: " + metadata.getProcedure());
                 }
 
                 SOSConnector sosCon = new SOSConnector(metadata.getServiceUrl());
                 sesCon = new SESConnector();
 
                 // do an observation request to sos for the sensor
-                Calendar startUpdate = this.sensor.getLastUpdate();
-                if(log.isDebugEnabled()) {
-                	log.debug("Start Time of Database for " + 
+                Calendar startUpdate = this.timeseriesFeed.getLastUpdate();
+                if(LOGGER.isDebugEnabled()) {
+                	LOGGER.debug("Start Time of Database for " + 
                 			metadata.getProcedure() + ": " + 
                 			(startUpdate!=null?startUpdate.getTimeInMillis():
                 				"not defined => first time feeded") );
@@ -115,8 +96,8 @@ public class FeedObservationThread extends Thread {
                     // create start timestamp for feeding observations
                     Calendar firstUpdateTime = new GregorianCalendar();
                     firstUpdateTime.add(Calendar.MILLISECOND, -FeederConfig.getInstance().getStartTimestamp());
-                    sensor.setLastUpdate(firstUpdateTime);
-                    log.debug("Start Time generated for first feeding of " + metadata.getProcedure() +": "+ sensor.getLastUpdate().getTimeInMillis());
+                    timeseriesFeed.setLastUpdate(firstUpdateTime);
+                    LOGGER.debug("Start Time generated for first feeding of " + metadata.getProcedure() +": "+ timeseriesFeed.getLastUpdate().getTimeInMillis());
                     // FIXME save to database the new defined start time for this sensor
                     /*
                      * The problem is here to not have a start time that's increasing if the observations are not reguarly inserted into the SOS
@@ -130,49 +111,49 @@ public class FeedObservationThread extends Thread {
                      */
                 }
                 
-				ObservationCollectionDocument obsCollDoc = sosCon.getObservation(sensor);
+				ObservationCollectionDocument obsCollDoc = sosCon.getObservation(timeseriesFeed);
 				ObservationPropertyType[] memberArray = obsCollDoc.getObservationCollection().getMemberArray();
 				// tell the others, that we are trying to feed observations
 				boolean addResult = this.currentlyFeedingSensors.add(metadata.getProcedure());
-				if (log.isDebugEnabled()) {
-					log.debug("Added sensor \"" + metadata.getProcedure() + "\" to feeding list? " + addResult);
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("Added sensor \"" + metadata.getProcedure() + "\" to feeding list? " + addResult);
 				}
 				for (ObservationPropertyType obsPropType : memberArray) {
 					// start feeding
 					ObservationType observation = obsPropType.getObservation();
 					if (observation != null && observation.getProcedure().getHref().equals(metadata.getProcedure())) {
 						endUpdate = getLastUpdateTime(observation.getSamplingTime());
-						this.sensor.setUpdateInterval(getUpdateInterval(observation, startUpdate));
-						log.info(metadata.getProcedure() + " from " + startUpdate.getTime() + " to " + endUpdate.getTime() + " for " + metadata.getOffering()); 
+						this.timeseriesFeed.setUpdateInterval(getUpdateInterval(observation, startUpdate));
+						LOGGER.info(metadata.getProcedure() + " from " + startUpdate.getTime() + " to " + endUpdate.getTime() + " for " + metadata.getOffering()); 
 						// create a Notify Message to the SES
 						obsPropType = checkObservations(obsPropType);
 						if (!(obsPropType == null) && !sesCon.isClosed()) {
 							sesCon.publishObservation(obsPropType);
-							log.info(metadata.getProcedure() + " with " + metadata.getOffering() + " added to SES");
+							LOGGER.info(metadata.getProcedure() + " with " + metadata.getOffering() + " added to SES");
 						} else {
-							log.info(String.format("No data received for procedure '%s'.", metadata.getProcedure()));
+							LOGGER.info(String.format("No data received for procedure '%s'.", metadata.getProcedure()));
 						}
 					} else {
-						log.info("No new Observations for "	+ metadata.getProcedure());
+						LOGGER.info("No new Observations for "	+ metadata.getProcedure());
 					}
 				}
                 if (endUpdate != null) {
                     // to prevent receiving observation two times
-                    log.debug("End Time before adding for " + metadata.getProcedure() +": "+ endUpdate.getTimeInMillis());
+                    LOGGER.debug("End Time before adding for " + metadata.getProcedure() +": "+ endUpdate.getTimeInMillis());
                     endUpdate.add(Calendar.MILLISECOND, 1);
-                    log.debug("End Time after adding for " + metadata.getProcedure() +": "+ endUpdate.getTimeInMillis());
-                    this.sensor.setLastUpdate(endUpdate);
+                    LOGGER.debug("End Time after adding for " + metadata.getProcedure() +": "+ endUpdate.getTimeInMillis());
+                    this.timeseriesFeed.setLastUpdate(endUpdate);
                 }
-                DatabaseAccess.saveSensor(this.sensor);
+                DatabaseAccess.saveTimeseriesFeed(this.timeseriesFeed);
             } catch (IllegalStateException e) {
-                log.warn("Failed to create SOS/SES Connection.", e);
+                LOGGER.warn("Failed to create SOS/SES Connection.", e);
                 return; // maybe shutdown .. try again
             } catch (InterruptedException e) {
-                log.trace(e.getMessage(), e);
+                LOGGER.trace(e.getMessage(), e);
             } catch (HibernateException e) {
-                log.warn("Datebase problem has occured: " + e.getMessage(), e);
+                LOGGER.warn("Datebase problem has occured: " + e.getMessage(), e);
             } catch (Exception e) {
-                log.warn("Could not request and publish Observation to SES: " + e.getMessage(), e);
+                LOGGER.warn("Could not request and publish Observation to SES: " + e.getMessage(), e);
             } finally {
                 //
                 // Feeding finished or failed because of exception
@@ -182,21 +163,14 @@ public class FeedObservationThread extends Thread {
                 // the list
                 //
                 boolean removeResult = this.currentlyFeedingSensors.removeElement(metadata.getProcedure());
-                if (log.isDebugEnabled()) {
-                    log.debug("removed sensor \"" + metadata.getProcedure() + "\" from currently feeding list? "
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("removed sensor \"" + metadata.getProcedure() + "\" from currently feeding list? "
                             + removeResult);
                 }
             }
         }
     }
 
-    /**
-     * Check observations.
-     * 
-     * @param obsPropType
-     *            the obs prop type
-     * @return the observation property type
-     */
     private ObservationPropertyType checkObservations(ObservationPropertyType obsPropType) {
         // zum tag hin navigieren
         XmlCursor cResult = obsPropType.getObservation().getResult().newCursor();
@@ -205,7 +179,7 @@ public class FeedObservationThread extends Thread {
         try {
             dataArrayDoc = DataArrayDocument.Factory.parse(cResult.getDomNode());
         } catch (XmlException e) {
-            log.error(e.getMessage());
+            LOGGER.error(e.getMessage());
         }
         TextBlock textBlock = dataArrayDoc.getDataArray1().getEncoding().getTextBlock();
         String tokenSeparator = textBlock.getTokenSeparator();
@@ -231,7 +205,7 @@ public class FeedObservationThread extends Thread {
                 }
             }
         } catch (IllegalStateException e) {
-            log.debug("Configuration not available (anymore).", e);
+            LOGGER.debug("Configuration not available (anymore).", e);
         }
 
         if (newValues.toString().equals("")) {
@@ -242,15 +216,6 @@ public class FeedObservationThread extends Thread {
         return obsPropType;
     }
 
-    /**
-     * Gets the update interval.
-     * 
-     * @param observation
-     *            the observation
-     * @param newestUpdate
-     *            the newest update
-     * @return the update interval
-     */
     private long getUpdateInterval(ObservationType observation, Calendar newestUpdate) {
         long updateInterval = 0;
         try {
@@ -262,7 +227,7 @@ public class FeedObservationThread extends Thread {
             try {
                 dataArrayDoc = DataArrayDocument.Factory.parse(cResult.getDomNode());
             } catch (XmlException e) {
-                log.error("Error when parsing DataArray: " + e.getMessage());
+                LOGGER.error("Error when parsing DataArray: " + e.getMessage());
             }
             // get Seperators
             TextBlock textBlock = dataArrayDoc.getDataArray1().getEncoding().getTextBlock();
@@ -287,7 +252,7 @@ public class FeedObservationThread extends Thread {
                     }
                     latest = temp;
                 } catch (Exception e) {
-                    log.error("Error when parsing Date: " + e.getMessage(), e);
+                    LOGGER.error("Error when parsing Date: " + e.getMessage(), e);
                 }
             }
 
@@ -303,19 +268,12 @@ public class FeedObservationThread extends Thread {
                 return FeederConfig.getInstance().getUpdateInterval();
             }
         } catch (IllegalStateException e) {
-            log.debug("Configuration is not available (anymore).", e);
+            LOGGER.debug("Configuration is not available (anymore).", e);
         }
 
         return updateInterval;
     }
 
-    /**
-     * Gets the last update time.
-     * 
-     * @param samplingTime
-     *            the sampling time
-     * @return the last update time
-     */
     private Calendar getLastUpdateTime(TimeObjectPropertyType samplingTime) {
         AbstractTimeObjectType timeObject = samplingTime.getTimeObject();
         TimePeriodType timePeriod = (TimePeriodType) timeObject;
@@ -325,7 +283,7 @@ public class FeedObservationThread extends Thread {
             DateTime dateTime = fmt.parseDateTime(timePeriod.getEndPosition().getStringValue());
             date = dateTime.toDate();
         } catch (Exception e) {
-            log.error("Error when parsing Date: " + e.getMessage(), e);
+            LOGGER.error("Error when parsing Date: " + e.getMessage(), e);
         }
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);

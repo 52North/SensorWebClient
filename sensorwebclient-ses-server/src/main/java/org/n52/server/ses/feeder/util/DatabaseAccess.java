@@ -9,7 +9,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.n52.shared.serializable.pojos.FeedingMetadata;
-import org.n52.shared.serializable.pojos.TimeseriesToFeed;
+import org.n52.shared.serializable.pojos.TimeseriesFeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,22 +88,22 @@ public class DatabaseAccess {
 //        return check;
 //    }
 
-	public static synchronized boolean isSensorRegistered(FeedingMetadata feedingMetadata) {
+	public static synchronized boolean isKnownTimeseriesFeed(FeedingMetadata feedingMetadata) {
 		Session session = getSessionFactory().getCurrentSession();
 		Transaction transaction = session.beginTransaction();
-		boolean registered = false;
-		List<TimeseriesToFeed> sensors = getSensorsMatchedFeedingMetadata(feedingMetadata, session);
-		if (sensors.size() > 0) {
-			registered = true;
+		boolean isKnownTimeseriesFeed = false;
+		List<TimeseriesFeed> timeseriesFeeds = findTimeseriesFeedsWith(feedingMetadata, session);
+		if (timeseriesFeeds.size() > 0) {
+			isKnownTimeseriesFeed = true;
 		}
         transaction.commit();
-        return registered;
+        return isKnownTimeseriesFeed;
 	}
 
-	public static synchronized void registerSensor(TimeseriesToFeed sensor) {
+	public static synchronized void saveTimeseriesFeed(TimeseriesFeed timeseriesFeed) {
 		Session session = getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
-        session.saveOrUpdate(sensor);
+        session.saveOrUpdate(timeseriesFeed);
         transaction.commit();
 	}
 
@@ -227,32 +227,20 @@ public class DatabaseAccess {
 	//        return SOSes;
 	//    }
 	
-	/**
-	 * Gets the used sensors.
-	 * 
-	 * @return the used sensors
-	 */
-	public static synchronized List<TimeseriesToFeed> getUsedSensors() {
+	public static synchronized List<TimeseriesFeed> getUsedTimeseriesFeeds() {
 		Session session = getSessionFactory().getCurrentSession();
 		Transaction transaction = session.beginTransaction();
-		Criteria criteria = session.createCriteria(TimeseriesToFeed.class);
-		List<TimeseriesToFeed> sensors = criteria.add(Restrictions.gt("usedCounter", 0l)).list();
+		Criteria criteria = session.createCriteria(TimeseriesFeed.class);
+		List<TimeseriesFeed> timeseriesFeeds = criteria.add(Restrictions.gt("usedCounter", 0L)).list();
 		transaction.commit();
-		return sensors;
+		return timeseriesFeeds;
 	}
-
-	public static synchronized void saveSensor(TimeseriesToFeed sensor) {
-			Session session = getSessionFactory().getCurrentSession();
-		    Transaction transaction = session.beginTransaction();
-		    session.saveOrUpdate(sensor);
-		    transaction.commit();
-		}
 
 	private static void changeCounter(FeedingMetadata feedingMetadata, int changeBy) {
 		Session session = getSessionFactory().getCurrentSession();
 		Transaction transaction = session.beginTransaction();
-		List<TimeseriesToFeed> sensors = getSensorsMatchedFeedingMetadata(feedingMetadata, session);
-		for (TimeseriesToFeed sensor : sensors) {
+		List<TimeseriesFeed> timeseriesFeed = findTimeseriesFeedsWith(feedingMetadata, session);
+		for (TimeseriesFeed sensor : timeseriesFeed) {
 			sensor.setUsedCounter(sensor.getUsedCounter() + changeBy);
 			session.saveOrUpdate(sensor);
 		}
@@ -260,16 +248,15 @@ public class DatabaseAccess {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static List<TimeseriesToFeed> getSensorsMatchedFeedingMetadata(
-			FeedingMetadata feedingMetadata, Session session) {
-		Criteria criteria = session.createCriteria(TimeseriesToFeed.class);
-		List<TimeseriesToFeed> sensors = criteria
+	private static List<TimeseriesFeed> findTimeseriesFeedsWith(FeedingMetadata feedingMetadata, Session session) {
+		Criteria criteria = session.createCriteria(TimeseriesFeed.class);
+		List<TimeseriesFeed> timeseriesFeeds = criteria
+                .add(Restrictions.eq("serviceUrl", feedingMetadata.getServiceUrl()))
+                .add(Restrictions.eq("phenomenon", feedingMetadata.getPhenomenon()))
 				.add(Restrictions.eq("procedure", feedingMetadata.getProcedure()))
 				.add(Restrictions.eq("offering", feedingMetadata.getOffering()))
-				.add(Restrictions.eq("phenomenon", feedingMetadata.getPhenomenon()))
 				.add(Restrictions.eq("featureOfInterest", feedingMetadata.getFeatureOfInterest()))
-				.add(Restrictions.eq("serviceURL", feedingMetadata.getServiceUrl()))
 				.list();
-		return sensors;
+		return timeseriesFeeds;
 	}
 }

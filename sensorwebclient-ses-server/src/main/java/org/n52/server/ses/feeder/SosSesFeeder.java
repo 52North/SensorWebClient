@@ -16,7 +16,7 @@ import org.n52.server.ses.feeder.task.ObservationsTask;
 import org.n52.server.ses.feeder.util.DatabaseAccess;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.shared.serializable.pojos.FeedingMetadata;
-import org.n52.shared.serializable.pojos.TimeseriesToFeed;
+import org.n52.shared.serializable.pojos.TimeseriesFeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,7 +115,7 @@ public class SosSesFeeder {
     
     public void enableSensorForFeeding(FeedingMetadata feedingMetadata) {
     	// check if sensor already registered 
-    	boolean sensorRegistered = DatabaseAccess.isSensorRegistered(feedingMetadata);
+    	boolean sensorRegistered = DatabaseAccess.isKnownTimeseriesFeed(feedingMetadata);
     	if (!sensorRegistered) {
     		// get sensorML document from SOS
     		try {
@@ -130,7 +130,7 @@ public class SosSesFeeder {
 				SESConnector sesConn = new SESConnector();
 				String sesID = sesConn.registerPublisher(sensorML);
 				// save in database
-				DatabaseAccess.registerSensor(createSensorToFeed(feedingMetadata, sesID));
+				DatabaseAccess.saveTimeseriesFeed(createTimeseriesFeed(feedingMetadata, sesID));
 			} catch (ExceptionReport e) {
 				LOGGER.error("Error while register sensor in SES, ", e);
 			}
@@ -144,13 +144,13 @@ public class SosSesFeeder {
     	DatabaseAccess.decreaseSensorUse(feedingMetadata);
     }
 
-	private TimeseriesToFeed createSensorToFeed(FeedingMetadata feedingMetadata, String sesID) {
-		TimeseriesToFeed sensor = new TimeseriesToFeed();
-	    sensor.setFeedingMetadata(feedingMetadata);
-	    sensor.setLastUpdate(null);
-	    sensor.setSesId(sesID);
-	    sensor.setUpdateInterval(FeederConfig.getInstance().getUpdateInterval());
-	    sensor.setUsedCounter(0);
-		return sensor;
+	private TimeseriesFeed createTimeseriesFeed(FeedingMetadata feedingMetadata, String sesID) {
+		TimeseriesFeed timeseriesFeed = new TimeseriesFeed();
+	    timeseriesFeed.setFeedingMetadata(feedingMetadata);
+	    timeseriesFeed.setLastUpdate(null);
+	    timeseriesFeed.setSesId(sesID);
+	    timeseriesFeed.setUpdateInterval(FeederConfig.getInstance().getUpdateInterval());
+	    timeseriesFeed.setUsedCounter(0);
+		return timeseriesFeed;
 	}
 }

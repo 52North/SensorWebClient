@@ -54,8 +54,8 @@ public class RpcSesTimeseriesToFeedServlet extends RemoteServiceServlet implemen
         return service.getTimeseriesFeeds();
     }    
     @Override
-    public void updateTimeseriesFeed(String sensorID, boolean newStatus) throws Exception {
-        service.updateTimeseriesFeed(sensorID, newStatus);
+    public void updateTimeseriesFeed(String timeseriesFeedId, boolean newStatus) throws Exception {
+        service.updateTimeseriesFeed(timeseriesFeedId, newStatus);
     }
 
     @Override
@@ -69,8 +69,8 @@ public class RpcSesTimeseriesToFeedServlet extends RemoteServiceServlet implemen
     }
 
     @Override
-    public SesClientResponse deleteSensor(String sensorID) throws Exception {
-        return service.deleteSensor(sensorID);
+    public SesClientResponse deleteTimeseriesFeed(String sensorID) throws Exception {
+        return service.deleteTimeseriesFeed(sensorID);
     }
 
 }

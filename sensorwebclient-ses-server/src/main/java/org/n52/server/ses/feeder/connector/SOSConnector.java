@@ -38,7 +38,7 @@ import org.n52.server.ses.feeder.util.IOHelper;
 import org.n52.server.util.SosAdapterFactory;
 import org.n52.server.util.TimeUtil;
 import org.n52.shared.serializable.pojos.FeedingMetadata;
-import org.n52.shared.serializable.pojos.TimeseriesToFeed;
+import org.n52.shared.serializable.pojos.TimeseriesFeed;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,87 +154,24 @@ public class SOSConnector {
         return null;
     }
 
-    /**
-     * Request a Observation by given parameters.
-     *
-     * @param procedure The procedure of the sensor
-     * @param offering The offering
-     * @param lastUpdate The last update of the observations
-     * @param set The observed property
-     * @return An observationCollection for the parameters
-     * @throws Exception the exception
-     */
-    public ObservationCollectionDocument getObservation(TimeseriesToFeed sensor) throws Exception {
+    public ObservationCollectionDocument getObservation(TimeseriesFeed timeseriesFeed) throws Exception {
         
     	ObservationAccessor obsAccessor = new ObservationAccessor();
     	List<String> fois = new ArrayList<String>();
-    	FeedingMetadata metadata = sensor.getFeedingMetadata();
+    	FeedingMetadata metadata = timeseriesFeed.getFeedingMetadata();
     	fois.add(metadata.getFeatureOfInterest());
     	List<String> phenoms = new ArrayList<String>();
     	phenoms.add(metadata.getPhenomenon());
 		List<String> procedures = new ArrayList<String>();
 		procedures.add(metadata.getProcedure());
 		
-		SimpleDateFormat ISO8601FORMAT = TimeUtil.createIso8601Formatter();
-        String begin = ISO8601FORMAT.format(sensor.getLastUpdate().getTime());
-        String end = ISO8601FORMAT.format(new Date());
+		SimpleDateFormat timeFormat = TimeUtil.createIso8601Formatter();
+        String begin = timeFormat.format(timeseriesFeed.getLastUpdate().getTime());
+        String end = timeFormat.format(new Date());
 		ITime time = TimeFactory.createTime(begin + "/" + end);
 		RequestConfig request = new RequestConfig(metadata.getServiceUrl(), metadata.getOffering(), fois, phenoms, procedures, time);
 		OperationResult operationResult = obsAccessor.sendRequest(request);
 		XmlObject response = XmlObject.Factory.parse(operationResult.getIncomingResultAsStream());
-		
-//    	// create request
-//        GetObservationDocument getObsDoc = GetObservationDocument.Factory.newInstance();
-//        GetObservation getObs = getObsDoc.addNewGetObservation();
-//        // set version
-//        getObs.setVersion(serviceVersion);
-//        // set serviceType
-//        getObs.setService("SOS");
-//        // set Offering
-//        getObs.setOffering(offering);
-//        // set time
-//        EventTime eventTime = getObs.addNewEventTime();
-//        BinaryTemporalOpType binTempOp = BinaryTemporalOpType.Factory.newInstance();
-//
-//        XmlCursor cursor = binTempOp.newCursor();
-//        cursor.toChild(new QName("http://www.opengis.net/ogc", "PropertyName"));
-//        cursor.setTextValue("urn:ogc:data:time:iso8601");
-//
-//        SimpleDateFormat ISO8601FORMAT = TimeUtil.createIso8601Formatter();
-//        TimePeriodType timePeriod = TimePeriodType.Factory.newInstance();
-//
-//        TimePositionType beginPosition = timePeriod.addNewBeginPosition();
-//        beginPosition.setStringValue(ISO8601FORMAT.format(lastUpdate.getTime()));
-//
-//        TimePositionType endPosition = timePeriod.addNewEndPosition();
-//        Date date = new Date();
-//        endPosition.setStringValue(ISO8601FORMAT.format(date));
-//        LOGGER.debug("Update Time for " + procedure +": "+ date.getTime());
-//
-//        binTempOp.setTimeObject(timePeriod);
-//        eventTime.setTemporalOps(binTempOp);
-//
-//        // rename elements
-//        cursor = eventTime.newCursor();
-//        cursor.toChild(new QName("http://www.opengis.net/ogc", "temporalOps"));
-//        cursor.setName(new QName("http://www.opengis.net/ogc", "TM_During"));
-//
-//        cursor.toChild(new QName("http://www.opengis.net/gml", "_TimeObject"));
-//        cursor.setName(new QName("http://www.opengis.net/gml", "TimePeriod"));
-//
-//        getObs.setProcedureArray(new String[] { procedure });
-//        getObs.setObservedPropertyArray(new String[] {phenomenon});
-//        getObs.setResponseFormat("text/xml;subtype=\"om/1.0.0\"");
-//
-//        // send request
-//        XmlObject response = null;
-//        LOGGER.debug("GetObservation Request: " + getObsDoc);
-//        try {
-//            response = sendRequest(getObsDoc);
-//        } catch (IOException e) {
-//            LOGGER.error("Error while sending getObservation request: " + e.getMessage());
-//        }
-		
 		
         LOGGER.debug("GetObservation Response: " + response);
         // parse request to ObservationCollectionDocument

@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 
 import org.n52.server.ses.feeder.util.DatabaseAccess;
 import org.n52.shared.serializable.pojos.FeedingMetadata;
-import org.n52.shared.serializable.pojos.TimeseriesToFeed;
+import org.n52.shared.serializable.pojos.TimeseriesFeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,12 +22,11 @@ import org.slf4j.LoggerFactory;
  */
 public class ObservationsTask extends TimerTask {
 
-    /** The Constant log. */
-    private static final Logger log = LoggerFactory.getLogger(ObservationsTask.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ObservationsTask.class);
 
     private ExecutorService executor = Executors.newFixedThreadPool(1);
     
-    private boolean isActive;
+    private boolean active;
 
     private Vector<String> currentlyFeededTimeseries;
 
@@ -49,24 +48,17 @@ public class ObservationsTask extends TimerTask {
 //    	feeder.enableSensorForFeeding(feedingMetadata);
     	/////
     	
-        log.info("Currenty feeded sensors: " + currentlyFeededTimeseries.size());
-        isActive = true;
+        LOGGER.info("Currenty feeded sensors: " + currentlyFeededTimeseries.size());
+        active = true;
         try {
-            log.info("############## Prepare Observations task ################");
-            List<TimeseriesToFeed> sensors = DatabaseAccess.getUsedSensors();
-            log.info("Number of GetObservations: " + sensors.size());
-            long time = System.currentTimeMillis();
-            for (TimeseriesToFeed sensor : sensors) {
-                if (sensor.getLastUpdate() == null
-                        || (time - sensor.getUpdateInterval() > sensor.getLastUpdate().getTimeInMillis())) {
-                    // 
-                    // start only threads for sensors which are currently not
-                    // feeding
-                    //
-                    FeedingMetadata metadata = sensor.getFeedingMetadata();
+            LOGGER.debug("############## Prepare Observations task ################");
+            List<TimeseriesFeed> timeseriesFeeds = DatabaseAccess.getUsedTimeseriesFeeds();
+            LOGGER.debug("Number of Feeds: " + timeseriesFeeds.size());
+            for (TimeseriesFeed timeseriesFeed : timeseriesFeeds) {
+                if (shallFeed(timeseriesFeed)) {
+                    FeedingMetadata metadata = timeseriesFeed.getFeedingMetadata();
                     if (!this.currentlyFeededTimeseries.contains(metadata)) {
-                        FeedObservationThread obsThread =
-                                new FeedObservationThread(sensor, this.currentlyFeededTimeseries);
+                        FeedObservationThread obsThread = new FeedObservationThread(timeseriesFeed, currentlyFeededTimeseries);
                         if (!executor.isShutdown()) {
                             executor.execute(obsThread);
                         }
@@ -74,22 +66,30 @@ public class ObservationsTask extends TimerTask {
                 }
             }
         } catch (NumberFormatException e) {
-            log.error("Could not parse 'KEY_OBSERVATIONS_TASK_PERIOD'.", e);
+            LOGGER.error("Could not parse 'KEY_OBSERVATIONS_TASK_PERIOD'.", e);
         } catch (IllegalStateException e) {
-            log.debug("Configuration is not available (anymore).", e);
+            LOGGER.debug("Configuration is not available (anymore).", e);
         }
         finally {
-        	isActive = false;
+        	active = false;
         }
     }
-    /*
-     * Why do we use here our own method and in DescriptionTask override the 
-     * TimerTask.cancel() method?
-     */
+
+    boolean shallFeed(TimeseriesFeed timeseriesFeed) {
+        boolean noUpdateYet = timeseriesFeed.getLastUpdate() == null;
+        return noUpdateYet || isThresholdExceeded(timeseriesFeed);
+    }
+
+    boolean isThresholdExceeded(TimeseriesFeed timeseriesFeed) {
+        long now = System.currentTimeMillis();
+        long lastUpdate = timeseriesFeed.getLastUpdate().getTimeInMillis();
+        return now - timeseriesFeed.getUpdateInterval() > lastUpdate;
+    }
+    
     public void stopObservationFeeds() {
-        log.info("############## Stop Observations task ################");
+        LOGGER.info("############## Stop Observations task ################");
         List<Runnable> threads = executor.shutdownNow();
-        log.debug("Threads aktiv: " + threads.size());
+        LOGGER.debug("Threads aktiv: " + threads.size());
         for (Runnable runnable : threads) {
             FeedObservationThread thread = (FeedObservationThread) runnable;
             if (thread != null) {
@@ -97,21 +97,18 @@ public class ObservationsTask extends TimerTask {
             }
         }
         while (!executor.isTerminated()) {
-            log.debug("Wait while ObservationThreads are finished");
+            LOGGER.debug("Wait while ObservationThreads are finished");
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                log.error("Error during stop of observations threads.", e);
+                LOGGER.error("Error during stop of observations threads.", e);
             }
         }
-        log.info("############## Observation task stopped ##############.");
+        LOGGER.info("############## Observation task stopped ##############.");
     }
 
-    /**
-     * @return the isActive
-     */
     public boolean isActive() {
-        return isActive;
+        return active;
     }
 
 }

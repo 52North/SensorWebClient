@@ -3,7 +3,7 @@ package org.n52.shared.serializable.pojos;
 import java.io.Serializable;
 import java.util.Calendar;
 
-public class TimeseriesToFeed implements Serializable {
+public class TimeseriesFeed implements Serializable {
 
     private static final long serialVersionUID = 8770405020547586667L;
 
@@ -24,7 +24,7 @@ public class TimeseriesToFeed implements Serializable {
 
     private int inUse;
     
-    public TimeseriesToFeed() {
+    public TimeseriesFeed() {
         // for serialization
     }
 

@@ -52,42 +52,16 @@ import org.n52.shared.responses.SesClientResponse;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-/**
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- *
- */
 public interface RpcSesTimeseriesToFeedServiceAsync {
 
-    /**
-     * @param callback
-     */
     void getTimeseriesFeeds(AsyncCallback<SesClientResponse> callback);
 
-    /**
-     * @param sensorID
-     * @param newStatus
-     * @param callback
-     */
-    void updateSensor(String sensorID, boolean newStatus, AsyncCallback<Void> callback);
+    void updateTimeseriesFeed(String timeseriesFeedId, boolean active, AsyncCallback<Void> callback);
 
-    /**
-     * 
-     * @param callback
-     */
     void getStations(AsyncCallback<SesClientResponse> callback);
 
-    /**
-     * 
-     * @param sensor
-     * @param callback
-     */
     void getPhenomena(String sensor, AsyncCallback<SesClientResponse> callback);
 
-    /**
-     * 
-     * @param sensorID
-     * @param callback
-     */
-    void deleteSensor(String sensorID, AsyncCallback<SesClientResponse> callback);
+    void deleteTimeseriesFeed(String sensorID, AsyncCallback<SesClientResponse> callback);
 
 }

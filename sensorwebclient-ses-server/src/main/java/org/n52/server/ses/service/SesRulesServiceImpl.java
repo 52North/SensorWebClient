@@ -56,7 +56,7 @@ import org.n52.shared.serializable.pojos.ComplexRuleData;
 import org.n52.shared.serializable.pojos.FeedingMetadata;
 import org.n52.shared.serializable.pojos.Rule;
 import org.n52.shared.serializable.pojos.Subscription;
-import org.n52.shared.serializable.pojos.TimeseriesToFeed;
+import org.n52.shared.serializable.pojos.TimeseriesFeed;
 import org.n52.shared.serializable.pojos.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -192,7 +192,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                         // check if sensor is allready in feeder DB. If yes --> no new request to feeder
                         try {
                             for (int j = 0; j < stationIDList.size(); j++) {
-                                if (HibernateUtil.getSensorByID(stationIDList.get(j)).getInUse() == 0) {
+                                if (HibernateUtil.getTimeseriesFeedsById(stationIDList.get(j)).getInUse() == 0) {
                                     LOG.debug("Station ID: " + stationIDList.get(j));
                                     // TODO change subscribe interface
 //                                    SosSesFeeder.getInst().addUsedSensor(stationIDList.get(j));
@@ -269,7 +269,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                     // decrement usedCount
                     HibernateUtil.updateSensorCount(sensorID, false);
                     
-                    if (HibernateUtil.getSensorByID(sensorID).getInUse() == 0) {
+                    if (HibernateUtil.getTimeseriesFeedsById(sensorID).getInUse() == 0) {
                         LOG.debug("remove sensor from used list");
                      // TODO change unsubscribe interface
 //                        SosSesFeeder.getInst().removeUsedSensor(sensorID);
@@ -312,10 +312,10 @@ public class SesRulesServiceImpl implements SesRuleService {
             } 
 
             FeedingMetadata metadata = rule.getFeedingMetadata();
-            List<TimeseriesToFeed> timeseriesToFeed = HibernateUtil.getActiveTimeseriesToFeed();
-            for (TimeseriesToFeed toFeed : timeseriesToFeed) {
-                if (timeseriesToFeed.contains(metadata)) {
-                    FeedingMetadata feedingMetadata = toFeed.getFeedingMetadata();
+            List<TimeseriesFeed> timeseriesFeeds = HibernateUtil.getActiveTimeseriesFeeds();
+            for (TimeseriesFeed timeseriesFeed : timeseriesFeeds) {
+                if (timeseriesFeeds.contains(metadata)) {
+                    FeedingMetadata feedingMetadata = timeseriesFeed.getFeedingMetadata();
                     metadata.setProcedure(feedingMetadata.getProcedure());
                 }
             }

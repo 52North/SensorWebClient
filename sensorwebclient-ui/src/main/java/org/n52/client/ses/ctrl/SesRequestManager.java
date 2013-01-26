@@ -68,29 +68,18 @@ import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.util.SC;
 
-/**
- * The Class SesRequestManager.
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- */
 public class SesRequestManager extends RequestManager {
 
-    /** The ses user service. */
     private RpcSesUserServiceAsync sesUserService;
 
-    /** The ses rules service. */
     private RpcSesRuleServiceAsync sesRulesService;
 
-    /** The ses service service. */
     private RpcSesTimeseriesToFeedServiceAsync sesTimeseriesService;
 
-    /** The Constant COOKIE_USER_ID. */
     public static final String COOKIE_USER_ID = "SES_Client_UserID";
 
-    /** The Constant COOKIE_USER_ROLE. */
     public static final String COOKIE_USER_ROLE = "SES_Client_UserRole";
     
-    /** The Constant COOKIE_USER_NAME. */
     public static final String COOKIE_USER_NAME = "SES_Client_UserName";
 
     public SesRequestManager() {
@@ -229,12 +218,6 @@ public class SesRequestManager extends RequestManager {
         this.sesUserService.logout(callback);
     }
 
-    /**
-     * Get user with specified ID.
-     * 
-     * @param parameterId
-     *            the parameterId
-     */
     public void getUser(String id) {
         AsyncCallback<UserDTO> callback = new AsyncCallback<UserDTO>() {
             public void onFailure(Throwable arg0) {
@@ -248,12 +231,6 @@ public class SesRequestManager extends RequestManager {
         this.sesUserService.getUser(id, callback);
     }
 
-    /**
-     * Delete user with specified ID.
-     * 
-     * @param parameterId
-     *            the parameterId
-     */
     public void deleteUser(String id) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
@@ -275,13 +252,6 @@ public class SesRequestManager extends RequestManager {
         this.sesUserService.deleteUser(id, callback);
     }
 
-    /**
-     * Update user.
-     * 
-     * @param user
-     *            the user
-     * @param userID 
-     */
     public void updateUser(UserDTO user, String userID) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
@@ -314,15 +284,6 @@ public class SesRequestManager extends RequestManager {
         this.sesUserService.updateUser(user, userID, callback);
     }
 
-    /**
-     * Subscribe.
-     * @param userID 
-     * 
-     * @param ruleName
-     *            the rule name
-     * @param medium           
-     * @param format 
-     */
     public void subscribe(final String userID, final String ruleName, final String medium, final String format) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
@@ -379,14 +340,6 @@ public class SesRequestManager extends RequestManager {
         this.sesRulesService.subscribe(userID, ruleName, medium, format, callback);
     }
 
-    /**
-     * Creates the basic rule.
-     * 
-     * @param rule
-     *            the rule
-     * @param edit 
-     * @param oldRuleName 
-     */
     public void createBasicRule(Rule rule, boolean edit, String oldRuleName) {
         
         ServerCallback<SesClientResponse> callback = new CreateSimpleRuleCallback(this, "Could not create rule.") {
@@ -444,9 +397,6 @@ public class SesRequestManager extends RequestManager {
         this.sesUserService.getAllUsers(callback);
     }
 
-    /**
-     * 
-     */
     public void getStations() {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
@@ -460,10 +410,6 @@ public class SesRequestManager extends RequestManager {
         this.sesTimeseriesService.getStations(callback);
     }
 
-    /**
-     * @param sensor 
-     * 
-     */
     public void getPhenomena(String sensor) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
@@ -477,11 +423,6 @@ public class SesRequestManager extends RequestManager {
         this.sesTimeseriesService.getPhenomena(sensor, callback);
     }
 
-    /**
-     * @param parameterId 
-     * @param edit 
-     * 
-     */
     public void getAllOwnRules(String id, boolean edit) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
@@ -495,10 +436,6 @@ public class SesRequestManager extends RequestManager {
         this.sesRulesService.getAllOwnRules(id, edit, callback);
     }
 
-    /**
-     * @param parameterId
-     * @param edit 
-     */
     public void getAllOtherRules(String id, boolean edit) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
@@ -525,11 +462,7 @@ public class SesRequestManager extends RequestManager {
         this.sesTimeseriesService.getTimeseriesFeeds(callback);
     }
 
-    /**
-     * @param parameterId
-     * @param status
-     */
-    public void upateSensor(String id, boolean status) {
+    public void upateTimeseriesFeed(String timeseriesFeedId, boolean active) {
         AsyncCallback<Void> callback = new AsyncCallback<Void>() {
             public void onFailure(Throwable arg0) {
                 Toaster.getInstance().addErrorMessage(arg0.getMessage());
@@ -539,14 +472,9 @@ public class SesRequestManager extends RequestManager {
                 SC.say(i18n.updateSuccessful());
             }
         };
-        this.sesTimeseriesService.updateSensor(id, status, callback);
+        this.sesTimeseriesService.updateTimeseriesFeed(timeseriesFeedId, active, callback);
     }
 
-    /**
-     * @param ruleName
-     * @param value
-     * @param role 
-     */
     public void publishRule(String ruleName, boolean value, String role) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
@@ -566,9 +494,6 @@ public class SesRequestManager extends RequestManager {
         this.sesRulesService.publishRule(ruleName, value, role, callback);
     }
 
-    /**
-     * 
-     */
     public void getAllRules() {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
@@ -582,10 +507,6 @@ public class SesRequestManager extends RequestManager {
         this.sesRulesService.getAllRules(callback);
     }
 
-    /**
-     * @param ruleName
-     * @param role 
-     */
     public void deleteRule(String ruleName, final String role) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
@@ -608,10 +529,7 @@ public class SesRequestManager extends RequestManager {
         this.sesRulesService.deleteRule(ruleName, callback);  
     }
 
-    /**
-     * @param sensorID
-     */
-    public void deleteSensor(String sensorID) {
+    public void deleteTimeseriesFeed(String timeseriesFeed) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
                 Toaster.getInstance().addErrorMessage(arg0.getMessage());
@@ -622,12 +540,9 @@ public class SesRequestManager extends RequestManager {
                 EventBus.getMainEventBus().fireEvent(new GetAllRulesEvent());
             }
         };
-        this.sesTimeseriesService.deleteSensor(sensorID, callback); 
+        this.sesTimeseriesService.deleteTimeseriesFeed(timeseriesFeed, callback); 
     }
 
-    /**
-     * @param ruleName
-     */
     public void getEditRule(String ruleName) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             
@@ -649,10 +564,6 @@ public class SesRequestManager extends RequestManager {
         
     }
     
-    /**
-     * @param operator 
-     * 
-     */
     public void getAllPublishedRules(int operator) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
@@ -666,12 +577,6 @@ public class SesRequestManager extends RequestManager {
         this.sesRulesService.getAllPublishedRules(Cookies.getCookie(SesRequestManager.COOKIE_USER_ID), operator, callback);
     }
 
-    /**
-     * @param ruleName
-     * @param userID 
-     * @param medium 
-     * @param format 
-     */
     public void unsubscribe(String ruleName, final String userID, String medium, String format) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
@@ -715,11 +620,6 @@ public class SesRequestManager extends RequestManager {
         this.sesRulesService.ruleNameExists(ruleName, callback); 
     }
 
-    /**
-     * @param rule
-     * @param edit 
-     * @param oldName 
-     */
     public void createComplexRule(ComplexRuleData rule, boolean edit, String oldName) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
@@ -748,9 +648,6 @@ public class SesRequestManager extends RequestManager {
         this.sesRulesService.createComplexRule(rule, edit, oldName, callback);
     }
 
-    /**
-     * @param userID
-     */
     public void getUserSubscriptions(String userID) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
@@ -764,9 +661,6 @@ public class SesRequestManager extends RequestManager {
         this.sesRulesService.getUserSubscriptions(userID, callback);
     }
 
-    /**
-     * @param parameterId
-     */
     public void deleteProfile(String id) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
@@ -780,10 +674,6 @@ public class SesRequestManager extends RequestManager {
         this.sesUserService.deleteProfile(id, callback);
     }
 
-    /**
-     * @param language 
-     * 
-     */
     public void getTermsOfUse(String language) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
@@ -797,11 +687,6 @@ public class SesRequestManager extends RequestManager {
         this.sesUserService.getTermsOfUse(language, callback); 
     }
 
-    /**
-     * @param text
-     * @param criterion
-     * @param userID 
-     */
     public void search(String text, int criterion, String userID) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
@@ -815,11 +700,6 @@ public class SesRequestManager extends RequestManager {
         this.sesRulesService.search(text, criterion, userID, callback);  
     }
     
-    /**
-     * 
-     * @param userID
-     * @param ruleName
-     */
     public void copy(final String userID, String ruleName) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
@@ -837,9 +717,6 @@ public class SesRequestManager extends RequestManager {
         this.sesRulesService.copy(userID, ruleName, callback);  
     }
 
-    /**
-     * 
-     */
     public void getData() {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {

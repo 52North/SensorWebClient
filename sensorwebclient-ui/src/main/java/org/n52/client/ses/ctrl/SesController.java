@@ -234,7 +234,7 @@ public class SesController extends ServiceController {
         }
 
         public void onUpdateSensor(UpdateSensorEvent evt) {
-            SesController.this.getRm().upateSensor(evt.getId(), evt.isStatus());
+            SesController.this.getRm().upateTimeseriesFeed(evt.getId(), evt.isStatus());
         }
 
         public void onPublish(PublishRuleEvent evt) {
@@ -250,7 +250,7 @@ public class SesController extends ServiceController {
         }
 
         public void onDeleteSensor(DeleteSensorEvent evt) {
-            SesController.this.getRm().deleteSensor(evt.getSensorID());
+            SesController.this.getRm().deleteTimeseriesFeed(evt.getSensorID());
         }
 
         public void onGet(EditRuleEvent evt) {

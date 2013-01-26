@@ -36,7 +36,7 @@ import org.n52.server.ses.util.SesParser;
 import org.n52.server.ses.util.SesServerUtil;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.serializable.pojos.FeedingMetadata;
-import org.n52.shared.serializable.pojos.TimeseriesToFeed;
+import org.n52.shared.serializable.pojos.TimeseriesFeed;
 import org.n52.shared.serializable.pojos.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,9 +57,9 @@ public class SesTimeseriesFeedServiceImpl implements SesTimeseriesFeedService {
     @Override
     public SesClientResponse getTimeseriesFeeds() throws Exception {
         try {
-            LOGGER.debug("get registered sensors from DB");
-            List<TimeseriesToFeed> sensors = HibernateUtil.getTimeseriesToFeed();
-            return new SesClientResponse(SesClientResponse.types.REGISTERED_SENSORS, sensors);
+            LOGGER.debug("get registered timeseriesFeeds from DB");
+            List<TimeseriesFeed> timeseriesFeeds = HibernateUtil.getTimeseriesFeeds();
+            return new SesClientResponse(SesClientResponse.types.REGISTERED_TIMESERIES_FEEDS, timeseriesFeeds);
         }
         catch (Exception e) {
             LOGGER.error("Exception occured on server side.", e);
@@ -68,24 +68,24 @@ public class SesTimeseriesFeedServiceImpl implements SesTimeseriesFeedService {
     }
 
     @Override
-    public void updateTimeseriesFeed(String sensorID, boolean newStatus) throws Exception {
+    public void updateTimeseriesFeed(String timeseriesFeedId, boolean active) throws Exception {
         try {
-            LOGGER.debug("updateSensor: " + sensorID + " . New status: activated = " + newStatus);
-            if (!HibernateUtil.updateSensorToFeed(sensorID, newStatus)) {
+            LOGGER.debug("updateTimeseriesFeed: {}, Active: {}", timeseriesFeedId, active);
+            if (!HibernateUtil.updateTimeseriesFeed(timeseriesFeedId, active)) {
                 LOGGER.error("Update sensor failed!");
                 throw new Exception("Update sensor failed!");
             }
             
-            if (!newStatus) {
+            if (!active) {
                 // sensor was deactivated
                 // inform all subscriber
-                ArrayList<User> userList = SesServerUtil.getUserBySensorID(sensorID);
+                ArrayList<User> userList = SesServerUtil.getUserBySensorID(timeseriesFeedId);
                 
                 // iterate over the user
                 for (int i = 0; i < userList.size(); i++) {
                     User user = userList.get(i);
                     // inform user
-                    MailSender.sendSensorDeactivatedMail(user.geteMail(), sensorID);
+                    MailSender.sendSensorDeactivatedMail(user.geteMail(), timeseriesFeedId);
                 }
             }
         }
@@ -103,9 +103,9 @@ public class SesTimeseriesFeedServiceImpl implements SesTimeseriesFeedService {
             HashSet<FeedingMetadata> uniqueFeedingMetadataList = new HashSet<FeedingMetadata>();
             
             // DB request
-            List<TimeseriesToFeed> timeseriesToFeed = HibernateUtil.getActiveTimeseriesToFeed();
-            for (TimeseriesToFeed toFeed : timeseriesToFeed) {
-                uniqueFeedingMetadataList.add(toFeed.getFeedingMetadata());
+            List<TimeseriesFeed> timeseriesFeeds = HibernateUtil.getActiveTimeseriesFeeds();
+            for (TimeseriesFeed timeseriesFeed : timeseriesFeeds) {
+                uniqueFeedingMetadataList.add(timeseriesFeed.getFeedingMetadata());
             }
             
             finalList.addAll(uniqueFeedingMetadataList);
@@ -128,16 +128,19 @@ public class SesTimeseriesFeedServiceImpl implements SesTimeseriesFeedService {
             ArrayList<String> finalList = new ArrayList<String>();
             ArrayList<String> unit = new ArrayList<String>();
             
-            TimeseriesToFeed timeseriesToFeed = HibernateUtil.getSensorByID(station);
-            if (timeseriesToFeed != null) {
-                FeedingMetadata metadata = timeseriesToFeed.getFeedingMetadata();
-                
+
+            // TODO use unique timeseries-ID for SES
+            TimeseriesFeed timeseriesFeed = HibernateUtil.getTimeseriesFeedsById(station);
+            if (timeseriesFeed != null) {
+                FeedingMetadata metadata = timeseriesFeed.getFeedingMetadata();
+
                 // TODO use unique timeseries-ID for SES
                 String mappedFeedingId = metadata.getProcedure();
                 
-                
                 ArrayList<String> phenomena = getParser().getPhenomena(mappedFeedingId);
+                
                 // TODO get the unit of measurement from internal/mapped id
+                
                 unit.add(getParser().getUnit(mappedFeedingId));
                 for (int i = 0; i < phenomena.size(); i++) {
                     LOGGER.debug(phenomena.get(i));
@@ -155,10 +158,10 @@ public class SesTimeseriesFeedServiceImpl implements SesTimeseriesFeedService {
     }
 
     @Override
-    public SesClientResponse deleteSensor(String sensorID) throws Exception {
+    public SesClientResponse deleteTimeseriesFeed(String sensorID) throws Exception {
         try {
             LOGGER.debug("delete sensor: " + sensorID);
-            if (HibernateUtil.deleteSensorByID(sensorID)) {
+            if (HibernateUtil.deleteTimeseriesFeed(sensorID)) {
                 return new SesClientResponse(SesClientResponse.types.DELETE_SENSOR_OK);
             }
             throw new Exception("delete sensor" + ": " + sensorID + " " + "failed");
