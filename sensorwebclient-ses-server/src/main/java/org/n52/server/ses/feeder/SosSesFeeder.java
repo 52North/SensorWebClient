@@ -12,12 +12,11 @@ import net.opengis.sensorML.x101.SensorMLDocument;
 import org.n52.oxf.ows.ExceptionReport;
 import org.n52.server.ses.feeder.connector.SESConnector;
 import org.n52.server.ses.feeder.connector.SOSConnector;
-import org.n52.server.ses.feeder.hibernate.SensorToFeed;
-import org.n52.server.ses.feeder.task.DescriptionTask;
 import org.n52.server.ses.feeder.task.ObservationsTask;
 import org.n52.server.ses.feeder.util.DatabaseAccess;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.shared.serializable.pojos.FeedingMetadata;
+import org.n52.shared.serializable.pojos.TimeseriesToFeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,8 +25,6 @@ public class SosSesFeeder {
     private static final Logger LOGGER = LoggerFactory.getLogger(SosSesFeeder.class);
     
     private ObservationsTask obsTask;
-    
-    private DescriptionTask descTask;
     
     private static SosSesFeeder instance;
     
@@ -56,7 +53,6 @@ public class SosSesFeeder {
 
         // start description timer task
         this.obsTask = new ObservationsTask(CURRENTLY_FEEDED_SENSORS);
-        this.descTask = new DescriptionTask();
         
         // start the tasks
         startFeeding();
@@ -71,7 +67,6 @@ public class SosSesFeeder {
     
     private void startFeeding() {
         LOGGER.info("Start feeding registered timeseries to SES.");
-//        this.timer.schedule(this.descTask, 1, FeederConfig.getInstance().getCapTime());
         this.timer.schedule(this.obsTask, FeederConfig.getInstance().getObsTime(), FeederConfig.getInstance().getObsTime());
     }
     
@@ -80,13 +75,9 @@ public class SosSesFeeder {
         try {
         	// FIXME should be removed during code review before next release
             active = false;
-            // stop descTask
-            this.descTask.cancel();
-            // stop obsTask
             this.obsTask.stopObservationFeeds();
             // wait until ObsTask is finished
-            while (this.descTask.isActive() || this.obsTask.isActive()) {
-                LOGGER.debug("DescriptionTask is active : " + descTask.isActive());
+            while (this.obsTask.isActive()) {
                 LOGGER.debug("ObservationTask is active : " + obsTask.isActive());
                 try {
                     Thread.sleep(1000);
@@ -129,7 +120,12 @@ public class SosSesFeeder {
     		// get sensorML document from SOS
     		try {
 				SOSConnector sosConn = new SOSConnector(feedingMetadata.getServiceUrl());
+				
+				
 				SensorMLDocument sensorML = sosConn.getSensorML(feedingMetadata.getProcedure());
+				
+				// TODO generate unique id (e.g. from FeedingMetadata) and exchange sensorML id
+				
 				// send sensorML document to SES
 				SESConnector sesConn = new SESConnector();
 				String sesID = sesConn.registerPublisher(sensorML);
@@ -148,14 +144,10 @@ public class SosSesFeeder {
     	DatabaseAccess.decreaseSensorUse(feedingMetadata);
     }
 
-	private SensorToFeed createSensorToFeed(FeedingMetadata feedingMetadata, String sesID) {
-		SensorToFeed sensor = new SensorToFeed();
-	    sensor.setOffering(feedingMetadata.getOffering());
-	    sensor.setPhenomenon(feedingMetadata.getPhenomenon());
-	    sensor.setProcedure(feedingMetadata.getProcedure());
-	    sensor.setFeatureOfInterest(feedingMetadata.getFeatureOfInterest());
+	private TimeseriesToFeed createSensorToFeed(FeedingMetadata feedingMetadata, String sesID) {
+		TimeseriesToFeed sensor = new TimeseriesToFeed();
+	    sensor.setFeedingMetadata(feedingMetadata);
 	    sensor.setLastUpdate(null);
-	    sensor.setServiceURL(feedingMetadata.getServiceUrl());
 	    sensor.setSesId(sesID);
 	    sensor.setUpdateInterval(FeederConfig.getInstance().getUpdateInterval());
 	    sensor.setUsedCounter(0);

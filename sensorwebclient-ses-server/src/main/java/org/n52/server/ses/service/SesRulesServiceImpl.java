@@ -23,12 +23,13 @@
  */
 package org.n52.server.ses.service;
 
+import static org.n52.shared.responses.SesClientResponse.types.RULE_NAME_EXISTS;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 import org.n52.client.service.SesRuleService;
-import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.server.ses.SesConfig;
 import org.n52.server.ses.eml.BasicRule_1_Builder;
@@ -52,9 +53,10 @@ import org.n52.shared.serializable.pojos.BasicRuleDTO;
 import org.n52.shared.serializable.pojos.ComplexRule;
 import org.n52.shared.serializable.pojos.ComplexRuleDTO;
 import org.n52.shared.serializable.pojos.ComplexRuleData;
+import org.n52.shared.serializable.pojos.FeedingMetadata;
 import org.n52.shared.serializable.pojos.Rule;
-import org.n52.shared.serializable.pojos.Sensor;
 import org.n52.shared.serializable.pojos.Subscription;
+import org.n52.shared.serializable.pojos.TimeseriesToFeed;
 import org.n52.shared.serializable.pojos.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +76,7 @@ public class SesRulesServiceImpl implements SesRuleService {
             ComplexRule complexRule = HibernateUtil.getComplexRuleByName(ruleName);
             
             // get user from DBs
-            User user = HibernateUtil.getUserByID(Integer.valueOf(userID));
+            User user = HibernateUtil.getUserBy(Integer.valueOf(userID));
             
             // subscribe basic rules from other user
             if (basicRule != null && basicRule.getOwnerID() != Integer.valueOf(userID)) {
@@ -138,7 +140,8 @@ public class SesRulesServiceImpl implements SesRuleService {
                                 // other rule types
                             } else {
                                 if (formats[i].equals("Text")) {
-                                    meta = Meta_Builder.createTextFailureMeta(user, basicRule, media[k], basicRule.getSensor()); 
+                                    FeedingMetadata metadata = basicRule.getFeedingMetadata();
+                                    meta = Meta_Builder.createTextFailureMeta(user, basicRule, media[k], metadata.getProcedure()); 
                                 } else {
                                     meta = Meta_Builder.createXMLMeta(user, basicRule.getName(), media[k], formats[i]);
                                 }
@@ -175,10 +178,10 @@ public class SesRulesServiceImpl implements SesRuleService {
                         // save subscription in DB
                         LOG.debug("save subscription to DB: " + museResource);
                         if (basicRule != null) {
-                            HibernateUtil.addSubscription(new Subscription(Integer.valueOf(userID), basicRule.getBasicRuleID(), museResource, media[k], formats[i]));
+                            HibernateUtil.saveSubscription(new Subscription(Integer.valueOf(userID), basicRule.getBasicRuleID(), museResource, media[k], formats[i]));
                             HibernateUtil.updateBasicRuleSubscribtion(basicRule.getName(), true);
                         } else if (complexRule != null) {
-                            HibernateUtil.addSubscription(new Subscription(Integer.valueOf(userID), complexRule.getComplexRuleID(), museResource, media[k], formats[i]));
+                            HibernateUtil.saveSubscription(new Subscription(Integer.valueOf(userID), complexRule.getComplexRuleID(), museResource, media[k], formats[i]));
                             HibernateUtil.updateComplexRuleSubscribtion(complexRule.getName(), true);
                         }
                         
@@ -305,21 +308,20 @@ public class SesRulesServiceImpl implements SesRuleService {
             LOG.debug("createBasicRule: " + rule.getTitle());
             if (exists(rule) && !edit) {
                 LOG.debug("Cannot create rule: Rule '{}' already exists!", rule.getTitle());
-                return new SesClientResponse(types.RULE_NAME_EXISTS);
+                return new SesClientResponse(RULE_NAME_EXISTS);
             } 
 
-            // rule type of the new rule
-            SimpleRuleType type = rule.getRuleType();
-            BasicRule basicRule = null;
-
-            // get sensorID
-            List<Sensor> list = HibernateUtil.getActiveSensors();
-            for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).getSensorID().contains(rule.getProcedure())) {
-                    rule.setProcedure(list.get(i).getSensorID());
+            FeedingMetadata metadata = rule.getFeedingMetadata();
+            List<TimeseriesToFeed> timeseriesToFeed = HibernateUtil.getActiveTimeseriesToFeed();
+            for (TimeseriesToFeed toFeed : timeseriesToFeed) {
+                if (timeseriesToFeed.contains(metadata)) {
+                    FeedingMetadata feedingMetadata = toFeed.getFeedingMetadata();
+                    metadata.setProcedure(feedingMetadata.getProcedure());
                 }
             }
-            switch (type) {
+
+            BasicRule basicRule = null;
+            switch (rule.getRuleType()) {
             case SUM_OVER_TIME:
                 basicRule = BasicRule_3_Builder.create_BR_3(rule);
                 break;
@@ -339,8 +341,7 @@ public class SesRulesServiceImpl implements SesRuleService {
             }
 
             if (basicRule != null) {
-                basicRule.setSensor(rule.getProcedure());
-                basicRule.setPhenomenon(rule.getPhenomenon());
+                basicRule.setFeedingMetadata(rule.getFeedingMetadata());
                 
                 LOG.debug(basicRule.getEml());
                 
@@ -356,7 +357,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                         // delete old rule
                         HibernateUtil.deleteRule(oldRuleName);
                         // save new
-                        HibernateUtil.addBasicRule(basicRule);
+                        HibernateUtil.saveBasicRule(basicRule);
                         
                         return new SesClientResponse(types.EDIT_SIMPLE_RULE);
                     }
@@ -367,7 +368,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                         // delete old rule
                         HibernateUtil.deleteRule(oldRuleName);
                         // save new
-                        HibernateUtil.addBasicRule(basicRule);
+                        HibernateUtil.saveBasicRule(basicRule);
                         
                         // iterate over all subscriptions of this rule
                         // unsubscribe old rule and subscribe the edited rule
@@ -387,13 +388,13 @@ public class SesRulesServiceImpl implements SesRuleService {
                         // delete old rule
                         HibernateUtil.deleteRule(oldRuleName);
                         // save new
-                        HibernateUtil.addBasicRule(basicRule);
+                        HibernateUtil.saveBasicRule(basicRule);
                     }
 
                     return new SesClientResponse(types.EDIT_SIMPLE_RULE);
                 }
                 LOG.debug("save basicRule to DB");
-                HibernateUtil.addBasicRule(basicRule);
+                HibernateUtil.saveBasicRule(basicRule);
             }
             return new SesClientResponse(types.RULE_NAME_NOT_EXISTS);
         }
@@ -418,8 +419,8 @@ public class SesRulesServiceImpl implements SesRuleService {
             List<ComplexRule> complexList;
 
             // get rules from DB
-            basicList = HibernateUtil.getAllOwnBasicRules(id);
-            complexList = HibernateUtil.getAllOwnComplexRules(id);
+            basicList = HibernateUtil.getAllBasicRulesBy(id);
+            complexList = HibernateUtil.getAllComplexRulesBy(id);
 
             // basic rules
             for (int i = 0; i < basicList.size(); i++) {
@@ -479,7 +480,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                 BasicRule rule = basicList.get(i);
 
                 // show only published rules
-                if (rule.isRelease()) {
+                if (rule.isPublished()) {
 
                     // check if user subscribed this rule
                     if (HibernateUtil.isSubscribed(id, rule.getBasicRuleID())) {
@@ -496,7 +497,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                 ComplexRule rule = complexList.get(i);
 
                 // show only published rules
-                if (rule.isRelease()) {
+                if (rule.isPublished()) {
 
                     // check if user subscribed this rule
                     if (HibernateUtil.isSubscribed(id, rule.getComplexRuleID())) {
@@ -557,13 +558,13 @@ public class SesRulesServiceImpl implements SesRuleService {
             
             for (int i = 0; i < basicList.size(); i++) {
                 basicDTO = SesUserServiceImpl.createBasicRuleDTO(basicList.get(i));
-                basicDTO.setOwnerName(HibernateUtil.getUserByID(basicDTO.getOwnerID()).getUserName());
+                basicDTO.setOwnerName(HibernateUtil.getUserBy(basicDTO.getOwnerID()).getUserName());
                 finalBasicList.add(basicDTO);
             }
             
             for (int i = 0; i < complexList.size(); i++) {
                 complexDTO = SesUserServiceImpl.createComplexRuleDTO(complexList.get(i));
-                complexDTO.setOwnerName(HibernateUtil.getUserByID(complexDTO.getOwnerID()).getUserName());
+                complexDTO.setOwnerName(HibernateUtil.getUserBy(complexDTO.getOwnerID()).getUserName());
                 finalComplexList.add(complexDTO);
             }
             
@@ -617,26 +618,26 @@ public class SesRulesServiceImpl implements SesRuleService {
             if (basicRule != null) {
                 // check the ruletype
                 if (basicRule.getType().equals("BR1")) {
-                    rule = BasicRule_1_Builder.getRuleByEML(basicRule.getEml());
+                    rule = BasicRule_1_Builder.createRuleBy(basicRule);
                 } else if (basicRule.getType().equals("BR2")) {
-                    rule = BasicRule_2_Builder.getRuleByEML(basicRule.getEml());
+                    rule = BasicRule_2_Builder.getRuleByEML(basicRule);
                 } else if (basicRule.getType().equals("BR3")) {
-                    rule = BasicRule_3_Builder.getRuleByEml(basicRule.getEml());
+                    rule = BasicRule_3_Builder.getRuleByEml(basicRule);
                 } else if (basicRule.getType().equals("BR4")) {
-                    rule = new BasicRule_4_Builder().getRuleByEML(basicRule.getEml());
+                    rule = new BasicRule_4_Builder().getRuleByEML(basicRule);
                 } else if (basicRule.getType().equals("BR5")) {
-                    rule = BasicRule_5_Builder.getRuleByEML(basicRule.getEml());
+                    rule = BasicRule_5_Builder.getRuleByEML(basicRule);
                 }
                 rule.setTitle(basicRule.getName());
                 rule.setDescription(basicRule.getDescription());
-                rule.setPublish(basicRule.isRelease());
+                rule.setPublish(basicRule.isPublished());
                 return new SesClientResponse(SesClientResponse.types.EDIT_SIMPLE_RULE, rule);
             }
             if (complexRule != null) {
                 rule = new Rule();
                 rule.setTitle(complexRule.getName());
                 rule.setDescription(complexRule.getDescription());
-                rule.setPublish(complexRule.isRelease());
+                rule.setPublish(complexRule.isPublished());
                 
                 // tree representation of a complex rule
                 String tree = complexRule.getTree();
@@ -680,14 +681,14 @@ public class SesRulesServiceImpl implements SesRuleService {
             // 2 = other
             // 3 = both
             if (operator == 1) {
-                basicRuleList.addAll(HibernateUtil.getAllOwnBasicRules(userID));
-                complexRuleList.addAll(HibernateUtil.getAllOwnComplexRules(userID));
+                basicRuleList.addAll(HibernateUtil.getAllBasicRulesBy(userID));
+                complexRuleList.addAll(HibernateUtil.getAllComplexRulesBy(userID));
             } else if (operator == 2) {
                 basicRuleList.addAll(HibernateUtil.getAllOtherPublishedBasicRules(userID));
                 complexRuleList.addAll(HibernateUtil.getAllOtherPublishedComplexRules(userID));
             } else if (operator == 3) {
-                basicRuleList.addAll(HibernateUtil.getAllOwnBasicRules(userID));
-                complexRuleList.addAll(HibernateUtil.getAllOwnComplexRules(userID));
+                basicRuleList.addAll(HibernateUtil.getAllBasicRulesBy(userID));
+                complexRuleList.addAll(HibernateUtil.getAllComplexRulesBy(userID));
                 basicRuleList.addAll(HibernateUtil.getAllPublishedBR());
                 complexRuleList.addAll(HibernateUtil.getAllPublishedCR());
             }
@@ -914,7 +915,7 @@ public class SesRulesServiceImpl implements SesRuleService {
             BasicRule basicRule = HibernateUtil.getBasicRuleByName(ruleName);
             ComplexRule complexRule = HibernateUtil.getComplexRuleByName(ruleName);
             
-            User user = HibernateUtil.getUserByID(Integer.valueOf(userID));
+            User user = HibernateUtil.getUserBy(Integer.valueOf(userID));
             
             String newRuleName = "";
             
@@ -928,7 +929,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                 
                 basicRule.setName(newRuleName);
                 basicRule.setOwnerID(Integer.valueOf(userID));
-                HibernateUtil.addCopiedBasicRule(basicRule);
+                HibernateUtil.saveCopiedBasicRule(basicRule);
             }
             
             if (complexRule != null) {
@@ -941,7 +942,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                 
                 complexRule.setName(newRuleName);
                 complexRule.setOwnerID(Integer.valueOf(userID));
-                HibernateUtil.addCopiedComplexRule(complexRule);
+                HibernateUtil.saveCopiedComplexRule(complexRule);
             }
             return new SesClientResponse(SesClientResponse.types.OK);
         }

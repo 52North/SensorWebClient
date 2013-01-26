@@ -230,7 +230,7 @@ public class SesController extends ServiceController {
         }
 
         public void onGet(GetRegisteredSensorsEvent evt) {
-            SesController.this.getRm().getRegisteredSensors();
+            SesController.this.getRm().getRegisteredTimeseriesFeeds();
         }
 
         public void onUpdateSensor(UpdateSensorEvent evt) {

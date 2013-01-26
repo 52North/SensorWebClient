@@ -37,7 +37,7 @@ public class ComplexRule implements Serializable {
 
     private String description;
 
-    private boolean release;
+    private boolean published;
 
     private int ownerID;
     
@@ -55,18 +55,12 @@ public class ComplexRule implements Serializable {
     
     private String phenomenon;
 
-    /**
-     * Instantiates a new complex rule by a given complexRuleDTO
-     * 
-     * @param complexRuleDTO
-     *            the complex Rule as DTO
-     */
     public ComplexRule(ComplexRuleDTO complexRuleDTO) {
         this.complexRuleID = complexRuleDTO.getId();
         this.name = complexRuleDTO.getName();
         this.ruleType = complexRuleDTO.getRuleType();
         this.description = complexRuleDTO.getDescription();
-        this.release = complexRuleDTO.isRelease();
+        this.published = complexRuleDTO.isRelease();
         this.ownerID = complexRuleDTO.getOwnerID();
         this.eml = complexRuleDTO.getEml();
         this.subscribed = complexRuleDTO.isSubscribed();
@@ -77,29 +71,11 @@ public class ComplexRule implements Serializable {
         this.phenomenon  =complexRuleDTO.getPhenomenon();
     }
 
-    /**
-     * Instantiates a new complex rule.
-     * 
-     * @param name
-     *            the name
-     * @param ruleType
-     *            the rule type
-     * @param description
-     *            the description
-     * @param release
-     *            the release
-     * @param ownerID
-     *            the ownerID
-     * @param eml 
-     * @param subscribed 
-     * @param medium 
-     * @param format 
-     */
     public ComplexRule(String name, String ruleType, String description, boolean release, int ownerID, String eml, boolean subscribed, String medium, String format, String tree) {
         this.name = name;
         this.ruleType = ruleType;
         this.description = description;
-        this.release = release;
+        this.published = release;
         this.ownerID = ownerID;
         this.eml = eml;
         this.subscribed = subscribed;
@@ -108,194 +84,94 @@ public class ComplexRule implements Serializable {
         this.tree = tree;
     }
 
-    /**
-     * Instantiates a new complex rule.
-     */
     public ComplexRule() {
-        // basic constructor is needed
+        // for serialization
     }
 
-    /**
-     * Gets the id.
-     * 
-     * @return the id
-     */
     public int getComplexRuleID() {
         return this.complexRuleID;
     }
 
-    /**
-     * Sets the id.
-     * 
-     * @param id
-     *            the new id
-     */
     public void setComplexRuleID(int id) {
         this.complexRuleID = id;
     }
 
-    /**
-     * Gets the name.
-     * 
-     * @return the name
-     */
     public String getName() {
         return this.name;
     }
 
-    /**
-     * Sets the name.
-     * 
-     * @param name
-     *            the new name
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * Gets the rule type.
-     * 
-     * @return the rule type
-     */
     public String getRuleType() {
         return this.ruleType;
     }
 
-    /**
-     * Sets the rule type.
-     * 
-     * @param ruleType
-     *            the new rule type
-     */
     public void setRuleType(String ruleType) {
         this.ruleType = ruleType;
     }
 
-    /**
-     * Gets the description.
-     * 
-     * @return the description
-     */
     public String getDescription() {
         return this.description;
     }
 
-    /**
-     * Sets the description.
-     * 
-     * @param description
-     *            the new description
-     */
     public void setDescription(String description) {
         this.description = description;
     }
 
-    /**
-     * Gets the ownerID.
-     * 
-     * @return the ownerID
-     */
     public int getOwnerID() {
         return this.ownerID;
     }
 
-    /**
-     * Sets the ownerID.
-     * 
-     * @param ownerID
-     *            the new ownerID
-     */
     public void setOwnerID(int ownerID) {
         this.ownerID = ownerID;
     }
 
-    /**
-     * Checks if is release.
-     * 
-     * @return true, if is release
-     */
-    public boolean isRelease() {
-        return this.release;
+    public boolean isPublished() {
+        return this.published;
     }
 
-    /**
-     * Sets the release.
-     * 
-     * @param release
-     *            the new release
-     */
-    public void setRelease(boolean release) {
-        this.release = release;
+    public void setPublished(boolean published) {
+        this.published = published;
     }
 
-    /**
-     * @return eml
-     */
     public String getEml() {
         return this.eml;
     }
 
-    /**
-     * @param eml
-     */
     public void setEml(String eml) {
         this.eml = eml;
     }
 
-    /**
-     * @return isSubscribed
-     */
     public boolean isSubscribed() {
         return this.subscribed;
     }
 
-    /**
-     * @param subscribed
-     */
     public void setSubscribed(boolean subscribed) {
         this.subscribed = subscribed;
     }
     
-    /**
-     * 
-     * @return medium
-     */
     public String getMedium() {
         return this.medium;
     }
 
-    /**
-     * @param medium
-     */
     public void setMedium(String medium) {
         this.medium = medium;
     }
 
-    /**
-     * @return format
-     */
     public String getFormat() {
         return this.format;
     }
 
-    /**
-     * @param format
-     */
     public void setFormat(String format) {
         this.format = format;
     }
 
-    /**
-     * @return tree
-     */
     public String getTree() {
         return this.tree;
     }
 
-    /**
-     * @param tree
-     */
     public void setTree(String tree) {
         this.tree = tree;
     }

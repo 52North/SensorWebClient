@@ -25,50 +25,52 @@ package org.n52.server.service.rpc;
 
 import javax.servlet.ServletException;
 
-import org.n52.client.service.SesSensorService;
-import org.n52.server.ses.service.SesSensorServiceImpl;
+import org.n52.client.service.SesTimeseriesFeedService;
+import org.n52.server.ses.service.SesTimeseriesFeedServiceImpl;
 import org.n52.shared.responses.SesClientResponse;
-import org.n52.shared.service.rpc.RpcSesSensorService;
+import org.n52.shared.service.rpc.RpcSesTimeseriesToFeedService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-public class RpcSesSensorServlet extends RemoteServiceServlet implements RpcSesSensorService {
+public class RpcSesTimeseriesToFeedServlet extends RemoteServiceServlet implements RpcSesTimeseriesToFeedService {
 
     private static final long serialVersionUID = 2842775817858111586L;
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(RpcSesSensorServlet.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RpcSesTimeseriesToFeedServlet.class);
 
-    private SesSensorService service;
+    private SesTimeseriesFeedService service;
 
+    
     @Override
     public void init() throws ServletException {
         LOGGER.debug("Initialize " + getClass().getName() +" Servlet for SES Client");
-        service = new SesSensorServiceImpl();
+        service = new SesTimeseriesFeedServiceImpl();
+    }
+
+    @Override
+    public SesClientResponse getTimeseriesFeeds() throws Exception {
+        return service.getTimeseriesFeeds();
     }    
-    
-    // returns all activated sensors which are stored in the DB of the client
-    public synchronized SesClientResponse getStations() throws Exception {
+    @Override
+    public void updateTimeseriesFeed(String sensorID, boolean newStatus) throws Exception {
+        service.updateTimeseriesFeed(sensorID, newStatus);
+    }
+
+    @Override
+    public SesClientResponse getStations() throws Exception {
         return service.getStations();
     }
 
-    public synchronized SesClientResponse getAllSensors() throws Exception {
-        return service.getAllSensors();
-    }
-    
-    // returns all phenomena of given stationID and the unit of measurements
-    public synchronized SesClientResponse getPhenomena(String station) throws Exception {
-        return service.getPhenomena(station);
+    @Override
+    public SesClientResponse getPhenomena(String sensor) throws Exception {
+        return service.getPhenomena(sensor);
     }
 
-    // activate or deactivate sensors. This function is for admins only
-    public synchronized void updateSensor(String sensorID, boolean newStatus) throws Exception {
-        service.updateSensor(sensorID, newStatus);
-    }
-    
-    // delete sensor from DB
-    public synchronized SesClientResponse deleteSensor(String sensorID) throws Exception {
+    @Override
+    public SesClientResponse deleteSensor(String sensorID) throws Exception {
         return service.deleteSensor(sensorID);
     }
+
 }

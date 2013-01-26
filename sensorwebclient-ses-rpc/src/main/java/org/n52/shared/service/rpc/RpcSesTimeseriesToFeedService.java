@@ -22,19 +22,17 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.client.service;
+package org.n52.shared.service.rpc;
 
-import java.util.List;
+import org.n52.client.service.SesTimeseriesFeedService;
 
-import org.n52.shared.serializable.pojos.TestRecord;
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-public interface SesDataSourceService {
+/**
+ * Utility interface to establish GWT RPC binding.
+ */
+@RemoteServiceRelativePath("SesTimeseriesToFeedService")
+public interface RpcSesTimeseriesToFeedService extends RemoteService, SesTimeseriesFeedService {
 
-    List<TestRecord> fetch () throws Exception;
-
-    TestRecord add (TestRecord record) throws Exception;
-
-    TestRecord update (TestRecord record) throws Exception;
-
-    void remove (TestRecord record) throws Exception;
 }

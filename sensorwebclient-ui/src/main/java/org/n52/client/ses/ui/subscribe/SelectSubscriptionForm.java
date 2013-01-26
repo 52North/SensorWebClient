@@ -44,9 +44,9 @@ public class SelectSubscriptionForm extends DynamicForm {
     
     public SelectSubscriptionForm(final EventSubscriptionController controller) {
         this.setStyleName("n52_sensorweb_client_create_abo_selection");
-        this.controller = controller;
-        
+        this.controller = controller;;
         setFields(createPredefinedEventSelectionItem());
+        controller.setSelectedRuleTemplate(getDefaultRuleTemplate());
     }
 
     private RadioGroupItem createPredefinedEventSelectionItem() {
@@ -72,7 +72,7 @@ public class SelectSubscriptionForm extends DynamicForm {
     
     private void handleRuleTemplateSelection(final SimpleRuleType templateType) {
         GWT.log("Rule template selected: " + templateType);
-        controller.setSelectedRuleTemplate(createRuleTemplateFor(templateType));
+        controller.updateSelectedRuleTemplate(createRuleTemplateFor(templateType));
     }
 
     private LinkedHashMap<String, String> createSelectionValueMap() {

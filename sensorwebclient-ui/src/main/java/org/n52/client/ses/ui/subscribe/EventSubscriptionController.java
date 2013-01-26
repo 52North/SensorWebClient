@@ -99,6 +99,22 @@ class EventSubscriptionController {
         return selectedAbonnementName;
     }
 
+    public boolean isSelectionValid() {
+        // TODO validate template
+        //return selectedRuleTemplate.validateTemplate();
+        return true;
+    }
+    
+    public void setSelectedRuleTemplate(RuleTemplate template) {
+        selectedRuleTemplate = template;
+    }
+    
+    public void updateSelectedRuleTemplate(RuleTemplate template) {
+        setSelectedRuleTemplate(template);
+        eventSubscriptionWindow.updateRuleEditCanvas(template);
+        eventNameForm.updateSuggestedAbonnementName(createSuggestedAbonnementName());
+    }
+    
     /**
      * @return an abonnement name suggestion for current timeseries.
      */
@@ -117,12 +133,6 @@ class EventSubscriptionController {
         return sb.toString();
     }
 
-    public void setSelectedRuleTemplate(RuleTemplate template) {
-        selectedRuleTemplate = template;
-        eventSubscriptionWindow.updateRuleEditCanvas(template);
-        eventNameForm.updateSuggestedAbonnementName(createSuggestedAbonnementName());
-    }
-    
     public SimpleRuleType getSelectedRuleTemplate() {
         return selectedRuleTemplate == null 
                     ? DEFAULT_RULE_TEMPLATE

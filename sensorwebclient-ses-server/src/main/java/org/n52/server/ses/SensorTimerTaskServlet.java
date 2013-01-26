@@ -30,7 +30,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
 import org.n52.server.ses.util.DeleteUnregisteredUserTimerTask;
-import org.n52.server.ses.util.GetSensorsTimerTask;
 
 /**
  * The Class SensorTimerTaskServlet. Timer t1 adds new sensors in a n interval
@@ -42,25 +41,18 @@ public class SensorTimerTaskServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     
-    private static Timer t;
     private static Timer t2;
 
     @Override
     public void init() throws ServletException {
         super.init();
 
-            t = new Timer();
-            Date d = new Date();
-            t.scheduleAtFixedRate(new GetSensorsTimerTask(), d, SesConfig.sensorUpdateRate);
-
             t2 = new Timer();
-            t2.scheduleAtFixedRate(new DeleteUnregisteredUserTimerTask(), d, SesConfig.deleteUserInterval);  
+            t2.scheduleAtFixedRate(new DeleteUnregisteredUserTimerTask(), new Date(), SesConfig.deleteUserInterval);  
     }
     
     @Override
     public void destroy(){
-        t.cancel();
-        t = null;
         t2.cancel();
         t2 = null;
         super.destroy();

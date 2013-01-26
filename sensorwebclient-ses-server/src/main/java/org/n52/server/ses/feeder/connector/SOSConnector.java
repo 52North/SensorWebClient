@@ -34,10 +34,11 @@ import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.access.ObservationAccessor;
 import org.n52.server.oxf.util.generator.RequestConfig;
 import org.n52.server.ses.feeder.FeederConfig;
-import org.n52.server.ses.feeder.hibernate.SensorToFeed;
 import org.n52.server.ses.feeder.util.IOHelper;
 import org.n52.server.util.SosAdapterFactory;
 import org.n52.server.util.TimeUtil;
+import org.n52.shared.serializable.pojos.FeedingMetadata;
+import org.n52.shared.serializable.pojos.TimeseriesToFeed;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -163,21 +164,22 @@ public class SOSConnector {
      * @return An observationCollection for the parameters
      * @throws Exception the exception
      */
-    public ObservationCollectionDocument getObservation(SensorToFeed sensor) throws Exception {
+    public ObservationCollectionDocument getObservation(TimeseriesToFeed sensor) throws Exception {
         
     	ObservationAccessor obsAccessor = new ObservationAccessor();
     	List<String> fois = new ArrayList<String>();
-    	fois.add(sensor.getFeatureOfInterest());
+    	FeedingMetadata metadata = sensor.getFeedingMetadata();
+    	fois.add(metadata.getFeatureOfInterest());
     	List<String> phenoms = new ArrayList<String>();
-    	phenoms.add(sensor.getPhenomenon());
+    	phenoms.add(metadata.getPhenomenon());
 		List<String> procedures = new ArrayList<String>();
-		procedures.add(sensor.getProcedure());
+		procedures.add(metadata.getProcedure());
 		
 		SimpleDateFormat ISO8601FORMAT = TimeUtil.createIso8601Formatter();
         String begin = ISO8601FORMAT.format(sensor.getLastUpdate().getTime());
         String end = ISO8601FORMAT.format(new Date());
 		ITime time = TimeFactory.createTime(begin + "/" + end);
-		RequestConfig request = new RequestConfig(sensor.getServiceURL(), sensor.getOffering(), fois, phenoms, procedures, time);
+		RequestConfig request = new RequestConfig(metadata.getServiceUrl(), metadata.getOffering(), fois, phenoms, procedures, time);
 		OperationResult operationResult = obsAccessor.sendRequest(request);
 		XmlObject response = XmlObject.Factory.parse(operationResult.getIncomingResultAsStream());
 		

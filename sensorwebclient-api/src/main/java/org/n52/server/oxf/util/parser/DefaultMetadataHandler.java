@@ -221,7 +221,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
      * concrete references between each offering, procedure, featureOfInterest and observedProperty (aka
      * phenomenon). <br>
      * <br>
-     * <bf>Note:</bf> to create the associations between these key items the ThinSweClient assumes that the
+     * <bf>Note:</bf> to create the associations between these key items the Sensor Web Client assumes that the
      * selected SOS provides the 52°North discovery profile.
      * 
      * @param sosUrl

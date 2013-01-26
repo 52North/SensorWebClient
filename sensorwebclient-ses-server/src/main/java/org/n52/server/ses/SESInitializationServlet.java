@@ -33,7 +33,7 @@ import org.jfree.util.Log;
 import org.n52.server.ses.eml.Meta_Builder;
 import org.n52.server.ses.feeder.SosSesFeeder;
 import org.n52.server.ses.hibernate.HibernateUtil;
-import org.n52.server.ses.service.SesSensorServiceImpl;
+import org.n52.server.ses.service.SesTimeseriesFeedServiceImpl;
 import org.n52.server.ses.service.SesUserServiceImpl;
 import org.n52.server.ses.util.SesServerUtil;
 import org.n52.server.ses.util.WnsUtil;
@@ -147,9 +147,6 @@ public class SESInitializationServlet extends HttpServlet {
                 // set InitServlet to TRUE
                 SESInitializationServlet.initialized = true;
 
-                // add sensors to database after initialization
-                LOGGER.debug("add Sensors to DB");
-                SesSensorServiceImpl.addSensorsToDB(); // XXX
             }
         });
         checkThread.run();
@@ -218,7 +215,7 @@ public class SESInitializationServlet extends HttpServlet {
 //                            admin.setWnsSmsId(WnsUtil
 //                                    .sendToWNSSMS(admin.getName(), String.valueOf(admin.getHandyNr())));
 
-                            HibernateUtil.addUser(new User(admin));
+                            HibernateUtil.saveUser(new User(admin));
                         } catch (Exception e) {
                             LOGGER.debug("WNS is not available.", e);
                         }
@@ -236,7 +233,7 @@ public class SESInitializationServlet extends HttpServlet {
 
                             try {
                                 user.setWnsEmailId(WnsUtil.sendToWNSMail(user.getName(), user.geteMail()));
-                                HibernateUtil.addUser(new User(user));
+                                HibernateUtil.saveUser(new User(user));
                             } catch (Exception e) {
                                 LOGGER.debug("WNS is not available.",e);
                             }

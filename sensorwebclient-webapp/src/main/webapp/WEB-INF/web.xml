@@ -212,27 +212,15 @@
 		<servlet-class>
 			org.n52.server.ses.SensorTimerTaskServlet
 		</servlet-class>
-		<load-on-startup>5</load-on-startup>
+		<load-on-startup>2</load-on-startup>
 	</servlet>
-	
-	<servlet>
-		<servlet-name>DataSourceService</servlet-name>
-		<servlet-class>
-			org.n52.server.service.rpc.RpcDataSourceServlet
-		</servlet-class>
-		<load-on-startup>6</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>DataSourceService</servlet-name>
-		<url-pattern>/client/DataSourceService</url-pattern>
-	</servlet-mapping>
 	
 	<servlet>
 		<servlet-name>SesRuleService</servlet-name>
 		<servlet-class>
 			org.n52.server.service.rpc.RpcSesRuleServlet
 		</servlet-class>
-		<load-on-startup>3</load-on-startup>
+		<load-on-startup>2</load-on-startup>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>SesRuleService</servlet-name>
@@ -242,13 +230,13 @@
 	<servlet>
 		<servlet-name>SesSensorService</servlet-name>
 		<servlet-class>
-			org.n52.server.service.rpc.RpcSesSensorServlet
+			org.n52.server.service.rpc.RpcSesTimeseriesToFeedServlet
 		</servlet-class>
-		<load-on-startup>4</load-on-startup>
+		<load-on-startup>2</load-on-startup>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>SesSensorService</servlet-name>
-		<url-pattern>/client/SesSensorService</url-pattern>
+		<url-pattern>/client/SesTimeseriesToFeedService</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
@@ -263,20 +251,4 @@
 		<url-pattern>/client/SesUserService</url-pattern>
 	</servlet-mapping>
 	
-<!-- 
-   <servlet>
-        <servlet-name>SosSesFeeder</servlet-name>
-        <servlet-class>org.n52.sos.feeder.baw.SosSesFeeder</servlet-class>
-        <init-param>
-            <param-name>CONFIG_FILE</param-name>
-            <param-value>/WEB-INF/conf/configuration.xml</param-value>
-        </init-param>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>SosSesFeeder</servlet-name>
-        <url-pattern>/SosSesFeeder</url-pattern>
-    </servlet-mapping>
- -->
 </web-app>

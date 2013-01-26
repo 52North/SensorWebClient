@@ -84,45 +84,6 @@ public class SesParser {
         this.sesEndpoint = sesEndpoint;
     }
 
-    /**
-     * This method parses the Capabilities request from SES and returns all registered
-     * station.
-     * 
-     * @return stations
-     */
-    public synchronized ArrayList<String> getStations(){
-        this.stations = new ArrayList<String>();
-
-        this.sensors = getCapabilities(this.serviceVersion, this.sesEndpoint);
-        for (int i = 0; i < this.sensors.size(); i++) {
-            String station = describeSensor(this.sensors.get(i), this.sesEndpoint);
-            if (station != null) {
-                this.stations.add(station);
-            }
-        }
-        return this.stations;
-    }
-
-    /**
-     * 
-     * Get sensors from station names.
-     * 
-     * 
-     * @param station
-     * @return sensors
-     */
-    public synchronized ArrayList<String> getSensor(String station){
-        ArrayList<String> selectedSensors = new ArrayList<String>();
-
-        for (int i = 0; i < this.sensors.size(); i++) {
-            String sensor = parseDescribeSensor_getSensor(this.sensors.get(i), station);
-            if (sensor != null) {
-                selectedSensors.add(sensor);
-            }
-        }
-
-        return selectedSensors;
-    }
 
     /**
      * @param sensor

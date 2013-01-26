@@ -21,6 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
+
 package org.n52.server.ses.hibernate;
 
 import java.util.List;
@@ -32,50 +33,38 @@ import org.hibernate.classic.Session;
 import org.hibernate.criterion.Restrictions;
 import org.n52.shared.serializable.pojos.BasicRule;
 import org.n52.shared.serializable.pojos.ComplexRule;
-import org.n52.shared.serializable.pojos.Sensor;
 import org.n52.shared.serializable.pojos.Subscription;
+import org.n52.shared.serializable.pojos.TimeseriesToFeed;
 import org.n52.shared.serializable.pojos.User;
 import org.n52.shared.serializable.pojos.UserRole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Class HibernateUtil. This class manages all interactions with a database
  * 
- * @author <a href="mailto:j.schulte@52north.de">Jan Schulte</a>
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
+ */
+/**
+ * 
  */
 public class HibernateUtil {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateUtil.class);
 
-    /** The Constant sessionFactory. */
     private static SessionFactory sessionFactory;
 
-    /**
-     * Gets the session factory.
-     * 
-     * @return the session factory
-     */
-    public static SessionFactory getSessionFactory(){
+    public static SessionFactory getSessionFactory() {
         if (sessionFactory == null) {
-            // Create the SessionFactory from hibernate.cfg.xml
             try {
                 sessionFactory = new Configuration().configure().buildSessionFactory();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 LOGGER.error("Initial SessionFactory creation failed.", e);
             }
         }
         return sessionFactory;
     }
 
-    /**
-     * Saves given user in database.
-     * 
-     * @param user
-     *            saved user
-     */
-    public static void addUser(User user) {
+    public static void saveUser(User user) {
         user.setActive(true);
         user.setEmailVerified(true);
         user.setPasswordChanged(false);
@@ -85,13 +74,6 @@ public class HibernateUtil {
         session.getTransaction().commit();
     }
 
-    /**
-     * Check if the Database already contains the given userName.
-     * 
-     * @param userName
-     *            the user name
-     * @return true if username exists
-     */
     public static boolean existsUserName(String userName) {
         boolean userNameExists = false;
         Session session = getSessionFactory().getCurrentSession();
@@ -104,13 +86,6 @@ public class HibernateUtil {
         return userNameExists;
     }
 
-    /**
-     * Check if the Database already contains the given eMail.
-     * 
-     * @param eMail
-     *            the e mail
-     * @return true if eMail exists
-     */
     public static boolean existsEMail(String eMail) {
         boolean eMailExists = false;
         Session session = getSessionFactory().getCurrentSession();
@@ -122,11 +97,8 @@ public class HibernateUtil {
         session.getTransaction().commit();
         return eMailExists;
     }
-    
-    /**
-     * @param handy
-     * @return true if handy exists
-     */
+
+    @Deprecated
     public static boolean existsHandy(String handy) {
         boolean handyExists = false;
         Session session = getSessionFactory().getCurrentSession();
@@ -139,16 +111,8 @@ public class HibernateUtil {
         return handyExists;
     }
 
-    /**
-     * Change user role.
-     * 
-     * @param userID
-     *            the user parameterId
-     * @param role
-     *            the role
-     * @return true, if successful
-     */
-    public static boolean changeUserRole(int userID, UserRole role) {
+    @SuppressWarnings("unchecked")
+    public static boolean updateUserRole(int userID, UserRole role) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
@@ -163,13 +127,8 @@ public class HibernateUtil {
         return true;
     }
 
-    /**
-     * 
-     * @param userID
-     * @param status
-     * @return {@link Boolean}
-     */
-    public static boolean changeUserActivation(int userID, boolean status) {
+    @SuppressWarnings("unchecked")
+    public static boolean updateUserStatus(int userID, boolean active) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
@@ -178,20 +137,14 @@ public class HibernateUtil {
             return false;
         }
         User user = users.get(0);
-        user.setActivated(status);
+        user.setActivated(active);
         session.saveOrUpdate(user);
         session.getTransaction().commit();
         return true;
     }
 
-    /**
-     * Gets the user by parameterId.
-     * 
-     * @param userID
-     *            the user parameterId
-     * @return the user by parameterId
-     */
-    public static User getUserByID(int userID) {
+    @SuppressWarnings("unchecked")
+    public static User getUserBy(int userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
@@ -201,14 +154,8 @@ public class HibernateUtil {
         return user;
     }
 
-    /**
-     * Gets the user by given register ID
-     * 
-     * @param registerID
-     *            the user register ID
-     * @return the user by register ID
-     */
-    public static User getUserByRegisterID(String registerID) {
+    @SuppressWarnings("unchecked")
+    public static User getUserBy(String registerID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
@@ -216,19 +163,14 @@ public class HibernateUtil {
         User user;
         if (users.size() == 1) {
             user = users.get(0);
-        } else {
+        }
+        else {
             user = null;
         }
         session.getTransaction().commit();
         return user;
     }
 
-    /**
-     * Update user.
-     * 
-     * @param user
-     *            the user
-     */
     public static void updateUser(User user) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -236,14 +178,8 @@ public class HibernateUtil {
         session.getTransaction().commit();
     }
 
-    /**
-     * Delete user by parameterId.
-     * 
-     * @param userID
-     *            the user parameterId
-     * @return {@link Boolean}
-     */
-    public static boolean deleteUserByID(int userID) {
+    @SuppressWarnings("unchecked")
+    public static boolean deleteUserBy(int userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
@@ -257,14 +193,8 @@ public class HibernateUtil {
         return false;
     }
 
-    /**
-     * Gets the user by name.
-     * 
-     * @param userName
-     *            the user name
-     * @return the user by name
-     */
-    public static User getUserByName(String userName) {
+    @SuppressWarnings("unchecked")
+    public static User findUserBy(String userName) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
@@ -277,11 +207,7 @@ public class HibernateUtil {
         return user;
     }
 
-    /**
-     * Returns all users of the database
-     * 
-     * @return list of all users
-     */
+    @SuppressWarnings("unchecked")
     public static List<User> getAllUsers() {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -291,50 +217,47 @@ public class HibernateUtil {
         session.getTransaction().commit();
         return users;
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
-    /**
-     * Add a new basic rule to database
-     * 
-     * @param rule
-     *            the rule
-     */
-    public static void addBasicRule(BasicRule rule) {
+    public static void saveBasicRule(BasicRule rule) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         session.saveOrUpdate(rule);
         session.getTransaction().commit();
     }
+
     
     /**
-     * 
-     * @param rule
+     * @deprecated no sharing anymore
      */
-    public static void addCopiedBasicRule(BasicRule rule) {
+    public static void saveCopiedBasicRule(BasicRule rule) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         session.save(rule);
         session.getTransaction().commit();
     }
+
     
     /**
-     * 
-     * @param rule
+     * @deprecated no sharing anymore
      */
-    public static void addCopiedComplexRule(ComplexRule rule) {
+    public static void saveCopiedComplexRule(ComplexRule rule) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         session.save(rule);
         session.getTransaction().commit();
     }
-    
-    /**
-     * Returns a list of all basic rules to a given user parameterId
-     * 
-     * @param userID
-     *            the user parameterId
-     * @return the list of basic rules
-     */
-    public static List<BasicRule> getAllOwnBasicRules(String userID) {
+
+    @SuppressWarnings("unchecked")
+    public static List<BasicRule> getAllBasicRulesBy(String userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(BasicRule.class);
@@ -343,14 +266,8 @@ public class HibernateUtil {
         return rules;
     }
 
-    /**
-     * Returns a list of all complex rules to a given user parameterId
-     * 
-     * @param userID
-     *            the user parameterId
-     * @return the list of complex rules
-     */
-    public static List<ComplexRule> getAllOwnComplexRules(String userID) {
+    @SuppressWarnings("unchecked")
+    public static List<ComplexRule> getAllComplexRulesBy(String userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(ComplexRule.class);
@@ -359,10 +276,7 @@ public class HibernateUtil {
         return rules;
     }
 
-    /**
-     * @param ruleName
-     * @return {@link BasicRule}
-     */
+    @SuppressWarnings("unchecked")
     public static BasicRule getBasicRuleByName(String ruleName) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -375,11 +289,7 @@ public class HibernateUtil {
         return null;
     }
 
-    /**
-     * 
-     * @param ruleName
-     * @return {@link ComplexRule}
-     */
+    @SuppressWarnings("unchecked")
     public static ComplexRule getComplexRuleByName(String ruleName) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -392,20 +302,27 @@ public class HibernateUtil {
         return null;
     }
 
-    /**
-     * @param subscription
-     */
-    public static void addSubscription(Subscription subscription) {
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    public static void saveSubscription(Subscription subscription) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         session.saveOrUpdate(subscription);
         session.getTransaction().commit();
     }
 
-    /**
-     * @param userID
-     * @return {@link List}
-     */
+    @SuppressWarnings("unchecked")
     public static List<BasicRule> getAllOtherBasicRules(String userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -414,39 +331,32 @@ public class HibernateUtil {
         session.getTransaction().commit();
         return rules;
     }
-    
-    /**
-     * @param userID
-     * @return {@link List}
-     */
+
+    @SuppressWarnings("unchecked")
     public static List<BasicRule> getAllOtherPublishedBasicRules(String userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(BasicRule.class);
-        List<BasicRule> rules = crit.add(Restrictions.and(Restrictions.not(Restrictions.eq("ownerID", Integer.valueOf(userID))), Restrictions.eq("release", true))).list();
+        List<BasicRule> rules = crit.add(Restrictions.and(Restrictions.not(Restrictions.eq("ownerID",
+                                                                                           Integer.valueOf(userID))),
+                                                          Restrictions.eq("release", true))).list();
         session.getTransaction().commit();
         return rules;
     }
-    
-    /**
-     * 
-     * @param userID
-     * @return {@link List}
-     */
+
+    @SuppressWarnings("unchecked")
     public static List<ComplexRule> getAllOtherPublishedComplexRules(String userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(ComplexRule.class);
-        List<ComplexRule> rules = crit.add(Restrictions.and(Restrictions.not(Restrictions.eq("ownerID", Integer.valueOf(userID))), Restrictions.eq("release", true))).list();
+        List<ComplexRule> rules = crit.add(Restrictions.and(Restrictions.not(Restrictions.eq("ownerID",
+                                                                                             Integer.valueOf(userID))),
+                                                            Restrictions.eq("published", true))).list();
         session.getTransaction().commit();
         return rules;
     }
-    
-    
-    /**
-     * @param ruleName
-     * @param newStatus
-     */
+
+    @SuppressWarnings("unchecked")
     public static void updateBasicRuleSubscribtion(String ruleName, boolean newStatus) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -459,12 +369,8 @@ public class HibernateUtil {
         }
         session.getTransaction().commit();
     }
-    
-    /**
-     * 
-     * @param ruleName
-     * @param newStatus
-     */
+
+    @SuppressWarnings("unchecked")
     public static void updateComplexRuleSubscribtion(String ruleName, boolean newStatus) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -478,11 +384,7 @@ public class HibernateUtil {
         session.getTransaction().commit();
     }
 
-    /**
-     * 
-     * @param userID
-     * @return {@link List}
-     */
+    @SuppressWarnings("unchecked")
     public static List<ComplexRule> getAllOtherComplexRules(String userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -492,77 +394,58 @@ public class HibernateUtil {
         return rules;
     }
 
-    /**
-     * Adds the sensor.
-     * 
-     * @param sensor
-     *            the sensor
-     */
-    public static void addSensor(Sensor sensor) {
+    public static void addSensor(TimeseriesToFeed sensor) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
         session.saveOrUpdate(sensor);
         session.getTransaction().commit();
     }
 
-    /**
-     * @return {@link List}
-     */
-    public static List<Sensor> getSensors() {
+    @SuppressWarnings("unchecked")
+    public static List<TimeseriesToFeed> getTimeseriesToFeed() {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        Criteria crit = session.createCriteria(Sensor.class);
-        List<Sensor> sensors = crit.list();
+        Criteria crit = session.createCriteria(TimeseriesToFeed.class);
+        List<TimeseriesToFeed> sensors = crit.list();
         session.getTransaction().commit();
-
         return sensors;
     }
-    
-    /**
-     * 
-     * @param sensorID
-     * @return {@link List}
-     */
-    public static Sensor getSensorByID(String sensorID) {
+
+    @SuppressWarnings("unchecked")
+    public static TimeseriesToFeed getSensorByID(String sensorID) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        Criteria crit = session.createCriteria(Sensor.class);
-        List<Sensor> sensors = crit.add(Restrictions.eq("sensorID", sensorID)).list();
+        Criteria crit = session.createCriteria(TimeseriesToFeed.class);
+        // TODO add timeseries ID
+        List<TimeseriesToFeed> sensors = crit.add(Restrictions.eq("sensorID", sensorID)).list();
         session.getTransaction().commit();
-        
+
         if (sensors.size() != 0) {
             return sensors.get(0);
         }
         return null;
     }
 
-    /**
-     * @return {@link List}
-     */
-    public static List<Sensor> getActiveSensors() {
+    @SuppressWarnings("unchecked")
+    public static List<TimeseriesToFeed> getActiveTimeseriesToFeed() {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        Criteria crit = session.createCriteria(Sensor.class);
-        List<Sensor> sensors = crit.add(Restrictions.eq("activated", true)).list();
+        Criteria crit = session.createCriteria(TimeseriesToFeed.class);
+        List<TimeseriesToFeed> timeseriesToFeed = crit.add(Restrictions.eq("active", true)).list();
         session.getTransaction().commit();
-
-        return sensors;
+        return timeseriesToFeed;
     }
 
-    /**
-     * @param sensorID
-     * @param newStatus
-     * @return {@link Boolean}
-     */
-    public static boolean updateSensor(String sensorID, boolean newStatus) {
+    @SuppressWarnings("unchecked")
+    public static boolean updateSensorToFeed(String feedingId, boolean newStatus) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        Criteria crit = session.createCriteria(Sensor.class);
-        List<Sensor> sensors = crit.add(Restrictions.eq("sensorID", sensorID)).list();
+        Criteria crit = session.createCriteria(TimeseriesToFeed.class);
+        List<TimeseriesToFeed> sensors = crit.add(Restrictions.eq("sensorID", feedingId)).list();
 
         if (sensors.size() == 1) {
-            Sensor sensor = sensors.get(0);
-            sensor.setActivated(newStatus);
+            TimeseriesToFeed sensor = sensors.get(0);
+            sensor.setActive(newStatus);
             session.saveOrUpdate(sensor);
             session.getTransaction().commit();
             return true;
@@ -570,11 +453,17 @@ public class HibernateUtil {
         return false;
     }
 
-    /**
-     * @param ruleName
-     * @param value 
-     * @return {@link Boolean}
-     */
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public static boolean publishRule(String ruleName, boolean value) {
         BasicRule basicRule = getBasicRuleByName(ruleName);
         ComplexRule complexRule = getComplexRuleByName(ruleName);
@@ -583,12 +472,13 @@ public class HibernateUtil {
         session.beginTransaction();
 
         if (basicRule != null) {
-            basicRule.setRelease(value);
+            basicRule.setPublished(value);
             session.update(basicRule);
             session.getTransaction().commit();
             return true;
-        } else if (complexRule != null) {
-            complexRule.setRelease(value);
+        }
+        else if (complexRule != null) {
+            complexRule.setPublished(value);
             session.update(complexRule);
             session.getTransaction().commit();
             return true;
@@ -596,9 +486,7 @@ public class HibernateUtil {
         return false;
     }
 
-    /**
-     * @return {@link List}
-     */
+    @SuppressWarnings("unchecked")
     public static List<BasicRule> getAllBasicRules() {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -609,10 +497,7 @@ public class HibernateUtil {
         return rules;
     }
 
-    /**
-     * 
-     * @return {@link List}
-     */
+    @SuppressWarnings("unchecked")
     public static List<ComplexRule> getAllComplexRules() {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -623,45 +508,54 @@ public class HibernateUtil {
         return rules;
     }
 
-    /**
-     * @param ruleID
-     * @param medium 
-     * @param format 
-     * @param userID 
-     * @return {@link String}
-     */
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    @SuppressWarnings("unchecked")
     public static String getSubscriptionID(int ruleID, String medium, String format, int userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(Subscription.class);
-        List<Subscription> museID = crit.add(Restrictions.and(Restrictions.and(Restrictions.eq("ruleID", ruleID), Restrictions.eq("medium", medium)), Restrictions.and(Restrictions.eq("format", format), Restrictions.eq("userID", userID)))).list();
+        List<Subscription> museID = crit.add(Restrictions.and(Restrictions.and(Restrictions.eq("ruleID", ruleID),
+                                                                               Restrictions.eq("medium", medium)),
+                                                              Restrictions.and(Restrictions.eq("format", format),
+                                                                               Restrictions.eq("userID", userID)))).list();
         if (museID.size() == 1) {
             return museID.get(0).getSubscriptionID();
         }
         return null;
     }
 
+    
     /**
-     * @param sensorID
-     * @param newStatus if true --> increment; false = decrement
-     * @return {@link Boolean}
+     * @deprecated no sharing => only one user is using a rule
      */
+    @SuppressWarnings("unchecked")
     public static boolean updateSensorCount(String sensorID, boolean newStatus) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        Criteria crit = session.createCriteria(Sensor.class);
-        List<Sensor> sensors = crit.add(Restrictions.eq("sensorID", sensorID)).list();
+        Criteria crit = session.createCriteria(TimeseriesToFeed.class);
+        List<TimeseriesToFeed> sensors = crit.add(Restrictions.eq("sensorID", sensorID)).list();
 
         if (sensors.size() == 1) {
-            Sensor sensor = sensors.get(0);
+            TimeseriesToFeed sensor = sensors.get(0);
             if (newStatus) {
                 // increment count
-                sensor.setInUse(sensor.getInUse()+1);
-            } else {
-                // decrement count
-                sensor.setInUse(sensor.getInUse()-1);
+                sensor.setInUse(sensor.getInUse() + 1);
             }
-            
+            else {
+                // decrement count
+                sensor.setInUse(sensor.getInUse() - 1);
+            }
+
             session.saveOrUpdate(sensor);
             session.getTransaction().commit();
             return true;
@@ -669,10 +563,6 @@ public class HibernateUtil {
         return false;
     }
 
-    /**
-     * @param ruleName 
-     * @return {@link Boolean}
-     */
     public static boolean deleteRule(String ruleName) {
         BasicRule basicRule = HibernateUtil.getBasicRuleByName(ruleName);
         ComplexRule complexRule = HibernateUtil.getComplexRuleByName(ruleName);
@@ -684,26 +574,33 @@ public class HibernateUtil {
             session.delete(basicRule);
             session.getTransaction().commit();
             return true;
-        } else if (complexRule != null) {
+        }
+        else if (complexRule != null) {
             session.delete(complexRule);
             session.getTransaction().commit();
             return true;
         }
-        return false;  
+        return false;
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
-    /**
-     * @param sensorID
-     * @return {@link Boolean}
-     */
+    @SuppressWarnings("unchecked")
     public static boolean deleteSensorByID(String sensorID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        Criteria crit = session.createCriteria(Sensor.class);
-        List<Sensor> sensors = crit.add(Restrictions.eq("sensorID", sensorID)).list();
+        Criteria crit = session.createCriteria(TimeseriesToFeed.class);
+        List<TimeseriesToFeed> sensors = crit.add(Restrictions.eq("sensorID", sensorID)).list();
 
         if (sensors.size() == 1) {
-            Sensor sensor = sensors.get(0);
+            TimeseriesToFeed sensor = sensors.get(0);
             if (sensor.getInUse() > 0) {
                 return false;
             }
@@ -714,10 +611,7 @@ public class HibernateUtil {
         return false;
     }
 
-    /**
-     * @return {@link List}
-     * 
-     */
+    @SuppressWarnings("unchecked")
     public static List<BasicRule> getAllPublishedBR() {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -727,10 +621,7 @@ public class HibernateUtil {
         return rules;
     }
 
-    /**
-     * @return {@link List}
-     * 
-     */
+    @SuppressWarnings("unchecked")
     public static List<ComplexRule> getAllPublishedCR() {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -740,16 +631,13 @@ public class HibernateUtil {
         return rules;
     }
 
-    /**
-     * @param parameterId
-     * @param ruleID
-     * @return is rule subscribed to user parameterId
-     */
+    @SuppressWarnings("unchecked")
     public static boolean isSubscribed(String id, int ruleID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(Subscription.class);
-        List<Subscription> subscription = crit.add(Restrictions.and(Restrictions.eq("userID", Integer.valueOf(id)), Restrictions.eq("ruleID", ruleID))).list();
+        List<Subscription> subscription = crit.add(Restrictions.and(Restrictions.eq("userID", Integer.valueOf(id)),
+                                                                    Restrictions.eq("ruleID", ruleID))).list();
 
         if (subscription.size() == 1) {
             return true;
@@ -757,16 +645,13 @@ public class HibernateUtil {
         return false;
     }
 
-    /**
-     * @param subscriptionID 
-     * @param userID
-     * @return {@link Boolean}
-     */
+    @SuppressWarnings("unchecked")
     public static boolean deleteSubscription(String subscriptionID, String userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(Subscription.class);
-        List<Subscription> subscriptions = crit.add(Restrictions.and(Restrictions.eq("userID", Integer.valueOf(userID)), Restrictions.eq("subscriptionID", subscriptionID))).list();
+        List<Subscription> subscriptions = crit.add(Restrictions.and(Restrictions.eq("userID", Integer.valueOf(userID)),
+                                                                     Restrictions.eq("subscriptionID", subscriptionID))).list();
 
         if (subscriptions.size() == 1) {
             Subscription subscription = subscriptions.get(0);
@@ -777,10 +662,7 @@ public class HibernateUtil {
         return false;
     }
 
-    /**
-     * @param ruleName
-     * @return {@link Boolean}
-     */
+    @SuppressWarnings("unchecked")
     public static boolean existsBasicRuleName(String ruleName) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -793,11 +675,7 @@ public class HibernateUtil {
         return false;
     }
 
-    /**
-     * 
-     * @param ruleName
-     * @return {@link Boolean}
-     */
+    @SuppressWarnings("unchecked")
     public static boolean existsComplexRuleName(String ruleName) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -810,10 +688,7 @@ public class HibernateUtil {
         return false;
     }
 
-    /**
-     * @param userID
-     * @return {@link Boolean}
-     */
+    @SuppressWarnings("unchecked")
     public static List<Subscription> getUserSubscriptions(String userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -823,12 +698,8 @@ public class HibernateUtil {
 
         return subscriptions;
     }
-    
-    /**
-     * 
-     * @param ruleID
-     * @return {@link List}
-     */
+
+    @SuppressWarnings("unchecked")
     public static List<Subscription> getSubscriptionsFromRuleID(int ruleID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -839,10 +710,7 @@ public class HibernateUtil {
         return subscriptions;
     }
 
-    /**
-     * @param ruleID
-     * @return {@link BasicRule}
-     */
+    @SuppressWarnings("unchecked")
     public static BasicRule getBasicRuleByID(int ruleID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -855,7 +723,8 @@ public class HibernateUtil {
         }
         return null;
     }
-    
+
+    @SuppressWarnings("unchecked")
     public static List<BasicRule> getBasicRulesByID(int ruleID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -865,10 +734,7 @@ public class HibernateUtil {
         return rules;
     }
 
-    /**
-     * @param ruleID
-     * @return {@link ComplexRule}
-     */
+    @SuppressWarnings("unchecked")
     public static ComplexRule getComplexRuleByID(int ruleID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -882,9 +748,6 @@ public class HibernateUtil {
         return null;
     }
 
-    /**
-     * @param complexRule
-     */
     public static void addComplexRule(ComplexRule complexRule) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -892,15 +755,12 @@ public class HibernateUtil {
         session.getTransaction().commit();
     }
 
-    /**
-     * @param sensorID
-     * @return {@link Boolean}
-     */
-    public static boolean existsSensor(String sensorID) {
+    @SuppressWarnings("unchecked")
+    public static boolean existsTimeseriesToFeed(String sensorID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        Criteria crit = session.createCriteria(Sensor.class);
-        List<Sensor> sensors = crit.add(Restrictions.eq("sensorID", sensorID)).list();
+        Criteria crit = session.createCriteria(TimeseriesToFeed.class);
+        List<TimeseriesToFeed> sensors = crit.add(Restrictions.eq("sensorID", sensorID)).list();
         session.getTransaction().commit();
         if (sensors.size() != 0) {
             return true;
@@ -908,11 +768,7 @@ public class HibernateUtil {
         return false;
     }
 
-    /**
-     * 
-     * @param userID
-     * @return List
-     */
+    @SuppressWarnings("unchecked")
     public static List<Subscription> getSubscriptionfromUserID(int userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -922,15 +778,13 @@ public class HibernateUtil {
         return subscriptions;
     }
 
-    /**
-     * @param userID 
-     * @return otherAdminsExists
-     */
+    @SuppressWarnings("unchecked")
     public static boolean otherAdminsExist(int userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
-        List<User> users = crit.add(Restrictions.and(Restrictions.not(Restrictions.eq("parameterId", userID)), Restrictions.eq("role", UserRole.ADMIN))).list();
+        List<User> users = crit.add(Restrictions.and(Restrictions.not(Restrictions.eq("parameterId", userID)),
+                                                     Restrictions.eq("role", UserRole.ADMIN))).list();
 
         if (users.size() >= 1) {
             return true;
@@ -938,22 +792,17 @@ public class HibernateUtil {
         return false;
     }
 
-    /**
-     * @return {@link List}
-     */
+    @SuppressWarnings("unchecked")
     public static List<User> deleteUnregisteredUser() {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
         List<User> users = crit.add(Restrictions.eq("role", UserRole.NOT_REGISTERED_USER)).list();
-        
+
         return users;
     }
-    
-    /**
-     * @param ruleID
-     * @return {@link Boolean}
-     */
+
+    @SuppressWarnings("unchecked")
     public static boolean ruleIsSubscribed(int ruleID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -965,11 +814,8 @@ public class HibernateUtil {
         }
         return false;
     }
-    
-    /**
-     * 
-     * @return {@link List}
-     */
+
+    @SuppressWarnings("unchecked")
     public static List<Subscription> getAllSubscriptions() {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -978,104 +824,78 @@ public class HibernateUtil {
         session.getTransaction().commit();
         return subscriptions;
     }
-    
-    /**
-     * 
-     * @param ruleID 
-     * @param medium
-     * @param format
-     * @param userID 
-     * @return true if such subscription already exists
-     */
-    public static boolean existsSubscription(int ruleID, String medium, String format, int userID){
+
+    @SuppressWarnings("unchecked")
+    public static boolean existsSubscription(int ruleID, String medium, String format, int userID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(Subscription.class);
-        List<Subscription> subscription = crit.add(Restrictions.and(Restrictions.and(Restrictions.eq("ruleID", ruleID), Restrictions.eq("medium", medium)), Restrictions.and(Restrictions.eq("format", format), Restrictions.eq("userID", userID)))).list();
+        List<Subscription> subscription = crit.add(Restrictions.and(Restrictions.and(Restrictions.eq("ruleID", ruleID),
+                                                                                     Restrictions.eq("medium", medium)),
+                                                                    Restrictions.and(Restrictions.eq("format", format),
+                                                                                     Restrictions.eq("userID", userID)))).list();
 
         if (subscription.size() >= 1) {
             return true;
         }
         return false;
     }
-    
-    /**
-     * 
-     * @param ruleID
-     * @return true if other subscriptions of this rule exist
-     */
-    public static boolean existsOtherSubscriptions(int ruleID){
+
+    @SuppressWarnings("unchecked")
+    public static boolean existsOtherSubscriptions(int ruleID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(Subscription.class);
-        List<Subscription> subscription = crit.add((Restrictions.eq("ruleID", ruleID))).list();
+        List<Subscription> subscription = crit.add( (Restrictions.eq("ruleID", ruleID))).list();
 
         if (subscription.size() >= 1) {
             return true;
         }
         return false;
     }
-    
-    /**
-     * 
-     * @param row
-     * @param text
-     * @return {@link List}
-     */
+
+    @SuppressWarnings("unchecked")
     public static List<BasicRule> searchBasic(String row, String text) {
         text = "%" + text + "%";
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(BasicRule.class);
-        List<BasicRule> rules = crit.add(Restrictions.and(Restrictions.eq("release", true), Restrictions.ilike(row, text))).list();
+        List<BasicRule> rules = crit.add(Restrictions.and(Restrictions.eq("release", true),
+                                                          Restrictions.ilike(row, text))).list();
         session.getTransaction().commit();
         return rules;
     }
-    
-    /**
-     * 
-     * @param userID
-     * @param row
-     * @param text
-     * @return {@link List}
-     */
+
+    @SuppressWarnings("unchecked")
     public static List<BasicRule> searchOwnBasic(String userID, String row, String text) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(BasicRule.class);
-        List<BasicRule> rules = crit.add(Restrictions.and(Restrictions.eq("ownerID", Integer.valueOf(userID)), Restrictions.ilike(row, text))).list();
+        List<BasicRule> rules = crit.add(Restrictions.and(Restrictions.eq("ownerID", Integer.valueOf(userID)),
+                                                          Restrictions.ilike(row, text))).list();
         session.getTransaction().commit();
         return rules;
     }
-    
-    /**
-     * 
-     * @param row
-     * @param text
-     * @return {@link List}
-     */
+
+    @SuppressWarnings("unchecked")
     public static List<ComplexRule> searchComplex(String row, String text) {
         text = "%" + text + "%";
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(ComplexRule.class);
-        List<ComplexRule> rules = crit.add(Restrictions.and(Restrictions.eq("release", true), Restrictions.ilike(row, text))).list();
+        List<ComplexRule> rules = crit.add(Restrictions.and(Restrictions.eq("release", true),
+                                                            Restrictions.ilike(row, text))).list();
         session.getTransaction().commit();
         return rules;
     }
-    
-    /**
-     * 
-     * @param userID
-     * @param row
-     * @param text
-     * @return {@link List}
-     */
+
+    @SuppressWarnings("unchecked")
     public static List<ComplexRule> searchOwnComplex(String userID, String row, String text) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(ComplexRule.class);
-        List<ComplexRule> rules = crit.add(Restrictions.and(Restrictions.eq("ownerID", Integer.valueOf(userID)), Restrictions.ilike(row, text))).list();
+        List<ComplexRule> rules = crit.add(Restrictions.and(Restrictions.eq("ownerID", Integer.valueOf(userID)),
+                                                            Restrictions.ilike(row, text))).list();
         session.getTransaction().commit();
         return rules;
     }

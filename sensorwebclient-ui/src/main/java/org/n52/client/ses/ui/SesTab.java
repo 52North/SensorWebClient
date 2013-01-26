@@ -28,14 +28,12 @@ import org.n52.client.ses.ctrl.SesTabController;
 import org.n52.client.ses.ui.Layout.Layouts;
 import org.n52.client.ses.ui.layout.AllRulesLayout;
 import org.n52.client.ses.ui.layout.CreateComplexRuleLayout;
-import org.n52.client.ses.ui.layout.CreateSimpleRuleLayout;
 import org.n52.client.ses.ui.layout.EditProfileLayout;
 import org.n52.client.ses.ui.layout.EditRulesLayout;
 import org.n52.client.ses.ui.layout.ForgotPasswordLayout;
 import org.n52.client.ses.ui.layout.LoginLayout;
 import org.n52.client.ses.ui.layout.RegisterLayout;
 import org.n52.client.ses.ui.layout.SearchLayout;
-import org.n52.client.ses.ui.layout.SensorsLayout;
 import org.n52.client.ses.ui.layout.ShowUserLayout;
 import org.n52.client.ses.ui.layout.UserRuleLayout;
 import org.n52.client.ses.ui.layout.UserSubscriptionsLayout;
@@ -44,73 +42,40 @@ import org.n52.client.ui.DataPanelTab;
 
 import com.smartgwt.client.widgets.layout.VLayout;
 
-/**
- * Representation of the SESTab.
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- */
 public class SesTab extends DataPanelTab {
 
     private String title;
 
     private String id;
 
-    // layouts
     private VLayout layout;
 
     private RegisterLayout registerLayout;
 
-    /** The login layout. */
     private LoginLayout loginLayout;
 
-    /** The forgor password layout. */
     private ForgotPasswordLayout forgorPasswordLayout;
 
-    /** The all user layout. */
     private ShowUserLayout allUserLayout;
 
-    /** The rule layout. */
     private UserRuleLayout ruleLayout;
 
-    /** The complex layout. */
     private CreateComplexRuleLayout complexLayout;
 
-    /** The edit profile layout. */
     private EditProfileLayout editProfileLayout;
 
-    // TODO remove dead code
-//    /** The simple rule layout. */
-//    private CreateSimpleRuleLayout simpleRuleLayout;
-
-    /** The all rules layout. */
     private AllRulesLayout allRulesLayout;
 
-    /** The all sensors layout. */
-    private SensorsLayout allSensorsLayout;
-
-    /** The edit rules layout. */
     private EditRulesLayout editRulesLayout;
     
-    /** The user Subscriptions Layout. */
     private UserSubscriptionsLayout userSubscriptionsLayout;
     
-    /** The Welcome Layout */
     private WelcomeLayout welcomeLayout;
     
-    /** The Search layout */
     private SearchLayout searchLayout;
     
-    /** The controller. */
     private SesTabController controller;
 
-    /**
-     * Instantiates a new ses tab.
-     * 
-     * @param parameterId
-     *            the parameterId
-     * @param title
-     *            the title
-     */
     public SesTab(String id, String title) {
         super("SesTab");
         this.controller = new SesTabController(this);
@@ -120,9 +85,6 @@ public class SesTab extends DataPanelTab {
         init();
     }
 
-    /**
-     * Inits the.
-     */
     private void init() {
         setID(this.id);
         setTitle(this.title);
@@ -157,9 +119,6 @@ public class SesTab extends DataPanelTab {
 
         this.allRulesLayout = new AllRulesLayout();
         this.allRulesLayout.setCanAcceptDrop(true);
-
-        this.allSensorsLayout = new SensorsLayout();
-        this.allSensorsLayout.setCanAcceptDrop(true);
 
         this.editRulesLayout = new EditRulesLayout();
         this.editRulesLayout.setCanAcceptDrop(true);
@@ -205,10 +164,6 @@ public class SesTab extends DataPanelTab {
 
         case USERLIST:
             this.layout.setMembers(this.allUserLayout);
-            break;
-
-        case SENSORLIST:
-            this.layout.setMembers(this.allSensorsLayout);
             break;
 
         case RULELIST:
@@ -317,13 +272,6 @@ public class SesTab extends DataPanelTab {
      */
     public UserRuleLayout getRuleLayout() {
         return this.ruleLayout;
-    }
-
-    /**
-     * @return {@link SensorsLayout}
-     */
-    public SensorsLayout getAllSensorsLayout() {
-        return this.allSensorsLayout;
     }
 
     /**

@@ -182,7 +182,7 @@ public class EventSubscriptionWindow extends Window {
         if (ruleTemplateEditCanvas == null) {
             ruleTemplateEditCanvas = new VLayout();
             ruleTemplateEditCanvas.setStyleName("n52_sensorweb_client_edit_create_abo_edit");
-            ruleTemplateEditCanvas.addMember(template.createEditCanvas());
+            ruleTemplateEditCanvas.addMember(template.getTemplateContent());
         }
         return ruleTemplateEditCanvas;
     }
@@ -200,10 +200,14 @@ public class EventSubscriptionWindow extends Window {
         return new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                Rule rule = controller.createSimpleRuleFromSelection();
-                CreateSimpleRuleEvent createEvt = new CreateSimpleRuleEvent(rule, false, "");
-                EventBus.getMainEventBus().fireEvent(createEvt); // broker handles auto-subscribe
-                EventSubscriptionWindow.this.hide();
+                if (controller.isSelectionValid()) {
+                    Rule rule = controller.createSimpleRuleFromSelection();
+                    CreateSimpleRuleEvent createEvt = new CreateSimpleRuleEvent(rule, false, "");
+                    EventBus.getMainEventBus().fireEvent(createEvt); // broker handles auto-subscribe
+                    EventSubscriptionWindow.this.hide();
+                } else {
+                    // form validation will render error message
+                }
             }
         };
     }
@@ -240,7 +244,7 @@ public class EventSubscriptionWindow extends Window {
             canvas.removeFromParent();
             canvas.destroy();
         }
-        Canvas ruleEditCanvas = template.createEditCanvas();
+        Canvas ruleEditCanvas = template.getTemplateContent();
         ruleTemplateEditCanvas.addMember(ruleEditCanvas);
         ruleTemplateEditCanvas.redraw();
     }

@@ -160,9 +160,15 @@ tr.sensorInfo:nth-child(2n) {
 tr.sensorInfo:hover {
   background-color: #3f8566;
 }
+.n52_sensorweb_client_login_content {
+  margin: 2em;
+}
 .n52_sensorweb_client_create_abo_form_content {
   float: left;
   margin: 1em;
+}
+.n52_sensorweb_client_create_abo_info {
+  margin-bottom: 1em;
 }
 .n52_sensorweb_client_create_abo_eventname {
   white-space: nowrap;

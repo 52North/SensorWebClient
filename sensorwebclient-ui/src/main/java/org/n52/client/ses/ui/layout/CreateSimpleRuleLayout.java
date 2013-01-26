@@ -51,6 +51,7 @@ import org.n52.client.ses.event.CreateSimpleRuleEvent;
 import org.n52.client.ses.event.GetPhenomenaEvent;
 import org.n52.client.ses.ui.Layout;
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
+import org.n52.shared.serializable.pojos.FeedingMetadata;
 import org.n52.shared.serializable.pojos.Rule;
 import org.n52.shared.serializable.pojos.RuleBuilder;
 
@@ -491,8 +492,8 @@ public class CreateSimpleRuleLayout extends Layout {
         Rule rule = RuleBuilder.aRule()
                         .setRuleType(ruleTyp)
                         .setTitle(name)
-                        .setProcedure(procedure)
-                        .setPhenomenon(phenomenon)
+//                        .setProcedure(procedure)
+//                        .setPhenomenon(phenomenon)
                         .setNotificationType(notificationType)
                         .setDescription(description)
                         .setPublish(publish)
@@ -537,8 +538,8 @@ public class CreateSimpleRuleLayout extends Layout {
         Rule rule = RuleBuilder.aRule()
                         .setRuleType(ruleTyp)
                         .setTitle(name)
-                        .setProcedure(procedure)
-                        .setPhenomenon(phenomenon)
+//                        .setProcedure(procedure)
+//                        .setPhenomenon(phenomenon)
                         .setNotificationType(notificationType)
                         .setDescription(description)
                         .setPublish(publish)
@@ -596,8 +597,8 @@ public class CreateSimpleRuleLayout extends Layout {
         Rule rule = RuleBuilder.aRule()
                         .setRuleType(ruleTyp)
                         .setTitle(name)
-                        .setProcedure(procedure)
-                        .setPhenomenon(phenomenon)
+//                        .setProcedure(procedure)
+//                        .setPhenomenon(phenomenon)
                         .setNotificationType(notificationType)
                         .setDescription(description)
                         .setPublish(publish)
@@ -652,8 +653,8 @@ public class CreateSimpleRuleLayout extends Layout {
         Rule rule = RuleBuilder.aRule()
                         .setRuleType(ruleTyp)
                         .setTitle(name)
-                        .setProcedure(procedure)
-                        .setPhenomenon(phenomenon)
+//                        .setProcedure(procedure)
+//                        .setPhenomenon(phenomenon)
                         .setNotificationType(notificationType)
                         .setDescription(description)
                         .setPublish(publish)
@@ -705,8 +706,8 @@ public class CreateSimpleRuleLayout extends Layout {
         Rule rule = RuleBuilder.aRule()
                         .setRuleType(ruleTyp)
                         .setTitle(name)
-                        .setProcedure(procedure)
-                        .setPhenomenon(phenomenon)
+//                        .setProcedure(procedure)
+//                        .setPhenomenon(phenomenon)
                         .setNotificationType(notificationType)
                         .setDescription(description)
                         .setPublish(publish)
@@ -1008,8 +1009,9 @@ public class CreateSimpleRuleLayout extends Layout {
         
         nameItem.setValue(rule.getTitle());
         descriptionItem.setValue(rule.getDescription());
-        phenomenon = rule.getPhenomenon();
-        procedure = rule.getProcedure();
+        FeedingMetadata metadata = rule.getFeedingMetadata();
+        phenomenon = metadata.getPhenomenon();
+        procedure = metadata.getProcedure();
         procedureItem.setValue(procedure);
         
         // get Phenomena

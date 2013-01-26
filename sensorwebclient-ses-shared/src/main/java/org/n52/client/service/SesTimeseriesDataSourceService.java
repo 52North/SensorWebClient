@@ -22,17 +22,19 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.shared.service.rpc;
+package org.n52.client.service;
 
-import org.n52.client.service.SesDataSourceService;
+import java.util.List;
 
-import com.google.gwt.user.client.rpc.RemoteService;
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import org.n52.shared.serializable.pojos.TimeseriesToFeedRecord;
 
-/**
- * Utility interface to establish GWT RPC binding.
- */
-@RemoteServiceRelativePath("SesDataSourceService")
-public interface RpcSesDataSourceService extends RemoteService, SesDataSourceService {
+public interface SesTimeseriesDataSourceService {
 
+    List<TimeseriesToFeedRecord> fetch() throws Exception;
+
+    TimeseriesToFeedRecord add(TimeseriesToFeedRecord record) throws Exception;
+
+    TimeseriesToFeedRecord update(TimeseriesToFeedRecord record) throws Exception;
+
+    void remove(TimeseriesToFeedRecord record) throws Exception;
 }

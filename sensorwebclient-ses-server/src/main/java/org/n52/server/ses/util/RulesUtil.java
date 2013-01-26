@@ -78,7 +78,7 @@ public class RulesUtil {
      */
     public static boolean changesOnlyInDBBasic(BasicRule oldRule, BasicRule newRule){
         if (oldRule.getEml().equals(newRule.getEml())
-                && (!oldRule.getDescription().equals(newRule.getDescription()) || oldRule.isRelease() != newRule.isRelease())) {
+                && (!oldRule.getDescription().equals(newRule.getDescription()) || oldRule.isPublished() != newRule.isPublished())) {
             return true;
         }
         return false;
@@ -94,7 +94,7 @@ public class RulesUtil {
      */
     public static boolean changesOnlyInDBComplex(ComplexRule oldRule, ComplexRule newRule){
         if (oldRule.getEml().equals(newRule.getEml())
-                && (!oldRule.getDescription().equals(newRule.getDescription()) || oldRule.isRelease() != newRule.isRelease())) {
+                && (!oldRule.getDescription().equals(newRule.getDescription()) || oldRule.isPublished() != newRule.isPublished())) {
             return true;
         }
         return false;

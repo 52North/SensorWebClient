@@ -2,14 +2,14 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
 <hibernate-mapping package="org.n52.shared.serializable.pojos">
-  <class name="Subscription" table="sesclient_subscription" >
+  <class name="FeedingMetadata" table="feeding_metadata" >
       <id name="id" column="ID">
          <generator class="native"/>
       </id>
-      <property name="userID" type="integer"/>
-      <property name="ruleID" type="integer"/>
-      <property name="subscriptionID" type="string"/>
-      <property name="medium" type="string"/>
-      <property name="format" type="string"/>
+      <property name="serviceUrl" type="string"/>
+      <property name="procedure" type="string"/>
+      <property name="offering" type="string"/>
+      <property name="phenomenon" type="string"/>
+      <property name="featureOfInterest" type="string"/>
    </class>
 </hibernate-mapping>

@@ -71,9 +71,7 @@ public class BasicRuleDTO implements Serializable {
     /** The ownerName */
     private String ownerName;
     
-    private String sensor;
-    
-    private String phenomenon;
+    private FeedingMetadata feedingMetadata;
 
     /**
      * Instantiates a new basic rule dto.
@@ -116,7 +114,7 @@ public class BasicRuleDTO implements Serializable {
      * @param format 
      */
     public BasicRuleDTO(int id, String name, String ruleType, String type, String description, boolean release,
-            int ownerID, String eml, boolean subscribed, String medium, String format, String sensor, String phenomenon) {
+            int ownerID, String eml, boolean subscribed, String medium, String format, FeedingMetadata feedingMetadata) {
         this.id = id;
         this.name = name;
         this.ruleType = ruleType;
@@ -128,8 +126,7 @@ public class BasicRuleDTO implements Serializable {
         this.subscribed = subscribed;
         this.medium = medium;
         this.format = format;
-        this.sensor = sensor;
-        this.phenomenon = phenomenon;
+        this.feedingMetadata = feedingMetadata;
     }
 
     /**
@@ -333,31 +330,12 @@ public class BasicRuleDTO implements Serializable {
         this.ownerName = ownerName;
     }
 
-    /**
-     * @return sensor
-     */
-    public String getSensor() {
-        return this.sensor;
+    public FeedingMetadata getFeedingMetadata() {
+        return feedingMetadata;
     }
 
-    /**
-     * @param sensor
-     */
-    public void setSensor(String sensor) {
-        this.sensor = sensor;
+    public void setFeedingMetadata(FeedingMetadata feedingMetadata) {
+        this.feedingMetadata = feedingMetadata;
     }
 
-    /**
-     * @return phenomenon
-     */
-    public String getPhenomenon() {
-        return this.phenomenon;
-    }
-
-    /**
-     * @param phenomenon
-     */
-    public void setPhenomenon(String phenomenon) {
-        this.phenomenon = phenomenon;
-    }
 }

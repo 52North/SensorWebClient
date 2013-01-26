@@ -1,5 +1,6 @@
 package org.n52.client.ses.ui.subscribe;
 
+import static com.smartgwt.client.types.TitleOrientation.TOP;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.SENSOR_LOSS;
 
@@ -10,6 +11,8 @@ import java.util.Map;
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.form.fields.StaticTextItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
@@ -20,6 +23,8 @@ import com.smartgwt.client.widgets.layout.VLayout;
 
 
 public class SensorLossRuleTemplate extends RuleTemplate {
+
+    private DynamicForm conditionForm;
 
     public SensorLossRuleTemplate(final EventSubscriptionController controller) {
         super(controller);
@@ -37,6 +42,11 @@ public class SensorLossRuleTemplate extends RuleTemplate {
         layout.addMember(alignVerticalCenter(createEditConditionCanvas()));
         return layout;
     }
+    
+    @Override
+    public boolean validateTemplate() {
+        return conditionForm.validate();
+    }
 
     private Canvas createEditConditionCanvas() {
         StaticTextItem label = createLabelItem(i18n.sensorFailure());
@@ -49,8 +59,12 @@ public class SensorLossRuleTemplate extends RuleTemplate {
         TextItem valueItem = createValueItem();
         valueItem.addChangedHandler(createValueChangedHandler());
         valueItem.setWidth(EDIT_ITEMS_WIDTH);
+        valueItem.setRequired(true);
+//        valueItem.setKeyPressFilter("[0-9]+(\\.|,)[0-9]+");
         
-        return assembleEditConditionForm(label, unitItem, valueItem);
+        FormItem[] formItems = new FormItem[] { label, unitItem, valueItem };
+        conditionForm = assembleEditConditionForm(formItems);
+        return alignVerticalCenter(conditionForm);
     }
 
     private ChangedHandler createEntryUnitChangedHandler() {
@@ -80,6 +94,23 @@ public class SensorLossRuleTemplate extends RuleTemplate {
                 TextItem valueItem = (TextItem) event.getSource();
                 String thresholdValue = valueItem.getValueAsString();
                 controller.getSensorLossConditions().setValue(thresholdValue);
+            }
+        };
+    }
+
+    private SelectItem createUnitsItem() {
+        SelectItem unitSelectItem = new SelectItem();
+        unitSelectItem.setTitle(i18n.unit());
+        unitSelectItem.setTitleOrientation(TOP);
+        unitSelectItem.addChangedHandler(createUnitSelectionChangedHandler());
+        return unitSelectItem;
+    }
+
+    private ChangedHandler createUnitSelectionChangedHandler() {
+        return new ChangedHandler() {
+            @Override
+            public void onChanged(ChangedEvent event) {
+                // TODO Auto-generated method stub
             }
         };
     }

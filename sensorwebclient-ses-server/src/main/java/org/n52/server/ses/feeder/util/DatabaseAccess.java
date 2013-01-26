@@ -8,8 +8,8 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
-import org.n52.server.ses.feeder.hibernate.SensorToFeed;
 import org.n52.shared.serializable.pojos.FeedingMetadata;
+import org.n52.shared.serializable.pojos.TimeseriesToFeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +92,7 @@ public class DatabaseAccess {
 		Session session = getSessionFactory().getCurrentSession();
 		Transaction transaction = session.beginTransaction();
 		boolean registered = false;
-		List<SensorToFeed> sensors = getSensorsMatchedFeedingMetadata(feedingMetadata, session);
+		List<TimeseriesToFeed> sensors = getSensorsMatchedFeedingMetadata(feedingMetadata, session);
 		if (sensors.size() > 0) {
 			registered = true;
 		}
@@ -100,7 +100,7 @@ public class DatabaseAccess {
         return registered;
 	}
 
-	public static synchronized void registerSensor(SensorToFeed sensor) {
+	public static synchronized void registerSensor(TimeseriesToFeed sensor) {
 		Session session = getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
         session.saveOrUpdate(sensor);
@@ -232,16 +232,16 @@ public class DatabaseAccess {
 	 * 
 	 * @return the used sensors
 	 */
-	public static synchronized List<SensorToFeed> getUsedSensors() {
+	public static synchronized List<TimeseriesToFeed> getUsedSensors() {
 		Session session = getSessionFactory().getCurrentSession();
 		Transaction transaction = session.beginTransaction();
-		Criteria criteria = session.createCriteria(SensorToFeed.class);
-		List<SensorToFeed> sensors = criteria.add(Restrictions.gt("usedCounter", 0l)).list();
+		Criteria criteria = session.createCriteria(TimeseriesToFeed.class);
+		List<TimeseriesToFeed> sensors = criteria.add(Restrictions.gt("usedCounter", 0l)).list();
 		transaction.commit();
 		return sensors;
 	}
 
-	public static synchronized void saveSensor(SensorToFeed sensor) {
+	public static synchronized void saveSensor(TimeseriesToFeed sensor) {
 			Session session = getSessionFactory().getCurrentSession();
 		    Transaction transaction = session.beginTransaction();
 		    session.saveOrUpdate(sensor);
@@ -251,8 +251,8 @@ public class DatabaseAccess {
 	private static void changeCounter(FeedingMetadata feedingMetadata, int changeBy) {
 		Session session = getSessionFactory().getCurrentSession();
 		Transaction transaction = session.beginTransaction();
-		List<SensorToFeed> sensors = getSensorsMatchedFeedingMetadata(feedingMetadata, session);
-		for (SensorToFeed sensor : sensors) {
+		List<TimeseriesToFeed> sensors = getSensorsMatchedFeedingMetadata(feedingMetadata, session);
+		for (TimeseriesToFeed sensor : sensors) {
 			sensor.setUsedCounter(sensor.getUsedCounter() + changeBy);
 			session.saveOrUpdate(sensor);
 		}
@@ -260,10 +260,10 @@ public class DatabaseAccess {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static List<SensorToFeed> getSensorsMatchedFeedingMetadata(
+	private static List<TimeseriesToFeed> getSensorsMatchedFeedingMetadata(
 			FeedingMetadata feedingMetadata, Session session) {
-		Criteria criteria = session.createCriteria(SensorToFeed.class);
-		List<SensorToFeed> sensors = criteria
+		Criteria criteria = session.createCriteria(TimeseriesToFeed.class);
+		List<TimeseriesToFeed> sensors = criteria
 				.add(Restrictions.eq("procedure", feedingMetadata.getProcedure()))
 				.add(Restrictions.eq("offering", feedingMetadata.getOffering()))
 				.add(Restrictions.eq("phenomenon", feedingMetadata.getPhenomenon()))

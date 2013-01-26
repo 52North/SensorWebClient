@@ -41,6 +41,7 @@ import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.util.RulesUtil;
 import org.n52.server.ses.util.SESUnitConverter;
 import org.n52.shared.serializable.pojos.BasicRule;
+import org.n52.shared.serializable.pojos.FeedingMetadata;
 import org.n52.shared.serializable.pojos.Rule;
 import org.n52.shared.serializable.pojos.User;
 import org.slf4j.Logger;
@@ -203,16 +204,17 @@ public class BasicRule_4_Builder {
             patternRef4.setTextContent(this.simple2);
 
             // property restrictions
+            FeedingMetadata metadata = rule.getFeedingMetadata();
             NodeList propertyRestrictionsList = doc.getElementsByTagName(this.propertyValue);
             Node n1 = propertyRestrictionsList.item(0);
-            n1.setTextContent(rule.getPhenomenon());
+            n1.setTextContent(metadata.getPhenomenon());
             Node n2 = propertyRestrictionsList.item(1);
-            n2.setTextContent(rule.getProcedure());
+            n2.setTextContent(metadata.getProcedure());
 
             Node n4 = propertyRestrictionsList.item(2);
-            n4.setTextContent(rule.getPhenomenon());
+            n4.setTextContent(metadata.getPhenomenon());
             Node n5 = propertyRestrictionsList.item(3);
-            n5.setTextContent(rule.getProcedure());
+            n5.setTextContent(metadata.getProcedure());
 
             // fes:Filter
             NodeList filterList = doc.getElementsByTagName(this.fesFilter);
@@ -302,7 +304,7 @@ public class BasicRule_4_Builder {
         }
         
         // Get current user. This user is also the owner of the new rule
-        User user = HibernateUtil.getUserByID(rule.getUserID());
+        User user = HibernateUtil.getUserBy(rule.getUserID());
         
         return new BasicRule(rule.getTitle(), "B", "BR4", rule.getDescription(), rule.isPublish(), user.getId(),
                 this.finalEml, false);
@@ -313,26 +315,18 @@ public class BasicRule_4_Builder {
      * This method is used to parse an EML file and return a Rule class with rule specific attributes. 
      * The method is called if user want to edit this rule type.
      * 
-     * @param eml
+     * @param basicRule
      * @return {@link Rule}
      */
-    public Rule getRuleByEML(String eml) {
+    public Rule getRuleByEML(BasicRule basicRule) {
         Rule rule = new Rule();
+        rule.setFeedingMetadata(basicRule.getFeedingMetadata());
 
         try {
-            // build document
+            String eml = basicRule.getEml();
             DocumentBuilderFactory docFac = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFac.newDocumentBuilder();
             Document doc = docBuilder.parse(new ByteArrayInputStream(eml.getBytes()));
-
-            // get phenomenon
-            NodeList propertyRestrictionsList = doc.getElementsByTagName(this.propertyValue);
-            Node n1 = propertyRestrictionsList.item(0);
-            rule.setPhenomenon(n1.getTextContent());
-
-            // get station
-            Node n2 = propertyRestrictionsList.item(1);
-            rule.setProcedure(n2.getTextContent());
 
             NodeList filterList = doc.getElementsByTagName(this.fesFilter);
             Node filterNode = filterList.item(0);

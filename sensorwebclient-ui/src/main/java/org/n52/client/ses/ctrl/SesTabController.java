@@ -118,19 +118,12 @@ public class SesTabController extends Controller<SesTab> {
                 getDataControls().highlightSelectedButton(getDataControls().getEditProfileButton());
                 EventBus.getMainEventBus().fireEvent(
                         new GetSingleUserEvent(Cookies.getCookie(SesRequestManager.COOKIE_USER_ID)));
-                // TODO remove dead code
-//            } else if (layout == Layouts.CREATE_SIMPLE) {
-//                getDataControls().highlightSelectedButton(getDataControls().getCreateSimpleRuleButton());
-//                getTab().getSimpleRuleLayout().clearFields();
             } else if (layout == Layouts.ABOS) {
                 getDataControls().highlightSelectedButton(getDataControls().getAboRuleButton());
                 EventBus.getMainEventBus().fireEvent(
                         new GetAllOwnRulesEvent(Cookies.getCookie(SesRequestManager.COOKIE_USER_ID), false));
                 EventBus.getMainEventBus().fireEvent(
                         new GetAllOtherRulesEvent(Cookies.getCookie(SesRequestManager.COOKIE_USER_ID), false));
-            } else if (layout == Layouts.SENSORLIST) {
-                getDataControls().highlightSelectedButton(getDataControls().getManageSensorButton());
-                getTab().getAllSensorsLayout().fetchData();
             } else if (layout == Layouts.EDIT_RULES) {
                 getDataControls().highlightSelectedButton(getDataControls().getEditRulesButton());
                 EventBus.getMainEventBus().fireEvent(
@@ -216,7 +209,7 @@ public class SesTabController extends Controller<SesTab> {
                 getTab().getLoginLayout().update();
                 getTab().getLoginLayout().getNameItem().setErrorFormatter(new FormItemErrorFormatter() {
                     public String getErrorHTML(String[] errors) {
-                        return "<img src='../ThinSweClient2.0/img/icons/exclamation.png' alt='invalide name' title='"
+                        return "<img src='../img/icons/exclamation.png' alt='invalide name' title='"
                                 + i18n.invalidName() + "'/>";
                     }
                 });
@@ -226,7 +219,7 @@ public class SesTabController extends Controller<SesTab> {
                 getTab().getLoginLayout().update();
                 getTab().getLoginLayout().getPasswordItem().setErrorFormatter(new FormItemErrorFormatter() {
                     public String getErrorHTML(String[] errors) {
-                        return "<img src='../ThinSweClient2.0/img/icons/exclamation.png' alt='invalide password' title='"
+                        return "<img src='../img/icons/exclamation.png' alt='invalide password' title='"
                                 + i18n.invalidPassword() + "'/>";
                     }
                 });
@@ -270,9 +263,6 @@ public class SesTabController extends Controller<SesTab> {
             case OTHER_RULES:
                 getTab().getRuleLayout().setDataOtherRules(evt.getResponse().getList(),
                         evt.getResponse().getComplexList());
-                break;
-            case REGISTERED_SENSORS:
-                getTab().getAllSensorsLayout().setData(evt.getResponse().getList());
                 break;
             case EDIT_OWN_RULES:
                 getTab().getEditRulesLayout().setOwnData(evt.getResponse().getList(),
@@ -330,7 +320,6 @@ public class SesTabController extends Controller<SesTab> {
                 // TODO remove dead code
 //                getTab().getSimpleRuleLayout().getUserNameLabel().setText(text);
                 getTab().getAllRulesLayout().getUserNameLabel().setText(text);
-                getTab().getAllSensorsLayout().getUserNameLabel().setText(text);
                 getTab().getEditRulesLayout().getUserNameLabel().setText(text);
                 getTab().getUserSubscriptionsLayout().getUserNameLabel().setText(text);
                 getTab().getWelcomeLayout().getUserNameLabel().setText(text);

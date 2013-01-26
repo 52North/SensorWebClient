@@ -24,7 +24,6 @@
 package org.n52.client.ses.ctrl;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
-import static org.n52.shared.responses.SesClientResponse.types.EDIT_SIMPLE_RULE;
 import static org.n52.shared.responses.SesClientResponse.types.RULE_NAME_NOT_EXISTS;
 
 import java.util.ArrayList;
@@ -59,8 +58,8 @@ import org.n52.shared.serializable.pojos.UserDTO;
 import org.n52.shared.serializable.pojos.UserRole;
 import org.n52.shared.service.rpc.RpcSesRuleService;
 import org.n52.shared.service.rpc.RpcSesRuleServiceAsync;
-import org.n52.shared.service.rpc.RpcSesSensorService;
-import org.n52.shared.service.rpc.RpcSesSensorServiceAsync;
+import org.n52.shared.service.rpc.RpcSesTimeseriesToFeedService;
+import org.n52.shared.service.rpc.RpcSesTimeseriesToFeedServiceAsync;
 import org.n52.shared.service.rpc.RpcSesUserService;
 import org.n52.shared.service.rpc.RpcSesUserServiceAsync;
 
@@ -83,7 +82,7 @@ public class SesRequestManager extends RequestManager {
     private RpcSesRuleServiceAsync sesRulesService;
 
     /** The ses service service. */
-    private RpcSesSensorServiceAsync sesSensorsService;
+    private RpcSesTimeseriesToFeedServiceAsync sesTimeseriesService;
 
     /** The Constant COOKIE_USER_ID. */
     public static final String COOKIE_USER_ID = "SES_Client_UserID";
@@ -94,32 +93,13 @@ public class SesRequestManager extends RequestManager {
     /** The Constant COOKIE_USER_NAME. */
     public static final String COOKIE_USER_NAME = "SES_Client_UserName";
 
-    /**
-     * Instantiates a new ses request manager.
-     */
     public SesRequestManager() {
-        init();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.n52.client.model.communication.requestManager.RequestManager#init()
-     */
-    protected void init() {
         this.sesUserService = GWT.create(RpcSesUserService.class);
         this.sesRulesService = GWT.create(RpcSesRuleService.class);
-        this.sesSensorsService = GWT.create(RpcSesSensorService.class);
+        this.sesTimeseriesService = GWT.create(RpcSesTimeseriesToFeedService.class);
     }
 
-    /**
-     * Register user.
-     * 
-     * @param u
-     *            the u
-     */
-    public void registerUser(UserDTO u) {
+    public void registerUser(UserDTO user) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
                 Toaster.getInstance().addErrorMessage(i18n.failedRegistration());
@@ -146,7 +126,7 @@ public class SesRequestManager extends RequestManager {
                 }
             }
         };
-        this.sesUserService.registerUser(u, callback);
+        this.sesUserService.registerUser(user, callback);
     }
 
     /**
@@ -477,7 +457,7 @@ public class SesRequestManager extends RequestManager {
                 EventBus.getMainEventBus().fireEvent(new InformUserEvent(response));
             }
         };
-        this.sesSensorsService.getStations(callback);
+        this.sesTimeseriesService.getStations(callback);
     }
 
     /**
@@ -494,7 +474,7 @@ public class SesRequestManager extends RequestManager {
                 EventBus.getMainEventBus().fireEvent(new InformUserEvent(response));
             }
         };
-        this.sesSensorsService.getPhenomena(sensor, callback);
+        this.sesTimeseriesService.getPhenomena(sensor, callback);
     }
 
     /**
@@ -532,10 +512,7 @@ public class SesRequestManager extends RequestManager {
         this.sesRulesService.getAllOtherRules(id, edit, callback);
     }
 
-    /**
-     * 
-     */
-    public void getRegisteredSensors() {
+    public void getRegisteredTimeseriesFeeds() {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
                 Toaster.getInstance().addErrorMessage(i18n.failedGetAllRegisteredSensors());
@@ -545,7 +522,7 @@ public class SesRequestManager extends RequestManager {
                 EventBus.getMainEventBus().fireEvent(new InformUserEvent(response));
             }
         };
-        this.sesSensorsService.getAllSensors(callback);
+        this.sesTimeseriesService.getTimeseriesFeeds(callback);
     }
 
     /**
@@ -562,7 +539,7 @@ public class SesRequestManager extends RequestManager {
                 SC.say(i18n.updateSuccessful());
             }
         };
-        this.sesSensorsService.updateSensor(id, status, callback);
+        this.sesTimeseriesService.updateSensor(id, status, callback);
     }
 
     /**
@@ -645,7 +622,7 @@ public class SesRequestManager extends RequestManager {
                 EventBus.getMainEventBus().fireEvent(new GetAllRulesEvent());
             }
         };
-        this.sesSensorsService.deleteSensor(sensorID, callback); 
+        this.sesTimeseriesService.deleteSensor(sensorID, callback); 
     }
 
     /**

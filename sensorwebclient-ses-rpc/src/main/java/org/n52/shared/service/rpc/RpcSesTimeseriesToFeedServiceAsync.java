@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 /**********************************************************************************
- Copyright (C) 2011
+ Copyright (C) 2010
  by 52 North Initiative for Geospatial Open Source Software GmbH
 
  Contact: Andreas Wytzisk 
@@ -43,25 +43,51 @@
  program (see gnu-gplv2.txt). If not, write to the Free Software Foundation, Inc., 
  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or visit the Free Software
  Foundation web page, http://www.fsf.org.
- 
- Created on: 20.01.2011
+
+ Created on: 24.08.2010
  *********************************************************************************/
 package org.n52.shared.service.rpc;
 
-import java.util.List;
-
-import org.n52.shared.serializable.pojos.TestRecord;
+import org.n52.shared.responses.SesClientResponse;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface RpcSesDataSourceServiceAsync {
+/**
+ * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
+ *
+ */
+public interface RpcSesTimeseriesToFeedServiceAsync {
 
-    void fetch(AsyncCallback<List<TestRecord>> callback);
+    /**
+     * @param callback
+     */
+    void getTimeseriesFeeds(AsyncCallback<SesClientResponse> callback);
 
-    void add(TestRecord record, AsyncCallback<TestRecord> callback);
+    /**
+     * @param sensorID
+     * @param newStatus
+     * @param callback
+     */
+    void updateSensor(String sensorID, boolean newStatus, AsyncCallback<Void> callback);
 
-    void remove(TestRecord record, AsyncCallback<Void> callback);
+    /**
+     * 
+     * @param callback
+     */
+    void getStations(AsyncCallback<SesClientResponse> callback);
 
-    void update(TestRecord record, AsyncCallback<TestRecord> callback);
+    /**
+     * 
+     * @param sensor
+     * @param callback
+     */
+    void getPhenomena(String sensor, AsyncCallback<SesClientResponse> callback);
+
+    /**
+     * 
+     * @param sensorID
+     * @param callback
+     */
+    void deleteSensor(String sensorID, AsyncCallback<SesClientResponse> callback);
 
 }

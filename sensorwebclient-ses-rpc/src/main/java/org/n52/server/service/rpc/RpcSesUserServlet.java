@@ -77,7 +77,7 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
             // user ID
             String id = registerID.substring(7);
             // user
-            user = HibernateUtil.getUserByRegisterID(id);
+            user = HibernateUtil.getUserBy(id);
             int userID = user.getId();
             try {
                 deleteUser(String.valueOf(userID));
@@ -90,7 +90,7 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
         	// user ID
             String id = registerID.substring(9);
             // user
-            user = HibernateUtil.getUserByRegisterID(id);
+            user = HibernateUtil.getUserBy(id);
             // set the flag "emailVerified" to true
             user.setEmailVerified(true);
             HibernateUtil.updateUser(user);
@@ -112,7 +112,7 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
 
             // user data from DB
             String id = registerID.substring(5);
-            user = HibernateUtil.getUserByRegisterID(id);
+            user = HibernateUtil.getUserBy(id);
 
             // check user role to avoid changing admin role to user
             if (user != null) {

@@ -25,55 +25,46 @@ package org.n52.shared.serializable.pojos;
 
 import java.io.Serializable;
 
-/**
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- *
- */
-public class TestRecord implements Serializable{
+public class TimeseriesToFeedRecord implements Serializable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 4658847230133552081L;
     
-    private String name;
+    private FeedingMetadata metadata;
+    
     private String status;
+    
     private String inUse;
 
-    /**
-     * 
-     */
-    public TestRecord() {
-        // empty constructor
+    public TimeseriesToFeedRecord() {
+        // for serialization
     }
 
-    /**
-     * 
-     * @param name
-     * @param status
-     * @param inUse
-     */
-    public TestRecord(String name, String status, String inUse) {
-        this.name = name;
+    public TimeseriesToFeedRecord(FeedingMetadata metadata, String status, String inUse) {
+        this.metadata = metadata;
         this.status = status;
         this.inUse = inUse;
     }
+    
+    public FeedingMetadata getMetadata() {
+        return metadata;
+    }
 
-    public String getName() {
-        return name;
+    public void setMetadata(FeedingMetadata metadata) {
+        this.metadata = metadata;
     }
-    public void setName(String name) {
-        this.name = name;
-    }
+
     public String getStatus() {
         return status;
     }
+    
     public void setStatus(String status) {
         this.status = status;
     }
+    
     public String getInUse() {
         return inUse;
     }
+    
     public void setInUse(String inUse) {
         this.inUse = inUse;
     }

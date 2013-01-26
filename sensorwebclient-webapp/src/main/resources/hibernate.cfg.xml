@@ -23,15 +23,10 @@
         <!-- ses-client database mapping files -->
 		<mapping resource="org/n52/ses/server/hbm/client/User.hbm.xml" />
 		<mapping resource="org/n52/ses/server/hbm/client/Subscription.hbm.xml" />
-		<mapping resource="org/n52/ses/server/hbm/client/Sensor.hbm.xml" />
 		<mapping resource="org/n52/ses/server/hbm/client/ComplexRule.hbm.xml" />
 		<mapping resource="org/n52/ses/server/hbm/client/BasicRule.hbm.xml" />
 		<mapping resource="org/n52/ses/server/hbm/client/ListOfUses.hbm.xml" />
-
-        <!-- feeder database mapping files -->
-		<!-- <mapping resource="org/n52/ses/server/hbm/feeder/SOS.hbm.xml" /> -->
-		<mapping resource="org/n52/ses/server/hbm/feeder/SensorToFeed.hbm.xml" />
-		<!-- <mapping resource="org/n52/ses/server/hbm/feeder/Offering.hbm.xml" />
-		<mapping resource="org/n52/ses/server/hbm/feeder/ObservedProperty.hbm.xml" /> -->
+		<mapping resource="org/n52/ses/server/hbm/client/TimeseriesToFeed.hbm.xml" />
+        <mapping resource="org/n52/ses/server/hbm/client/FeedingMetadata.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>

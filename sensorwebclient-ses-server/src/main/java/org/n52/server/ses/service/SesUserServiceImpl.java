@@ -112,7 +112,7 @@ public class SesUserServiceImpl implements SesUserService {
                                   complexRule.getName(),
                                   complexRule.getRuleType(),
                                   complexRule.getDescription(),
-                                  complexRule.isRelease(),
+                                  complexRule.isPublished(),
                                   complexRule.getOwnerID(),
                                   complexRule.getEml(),
                                   complexRule.isSubscribed(),
@@ -137,14 +137,13 @@ public class SesUserServiceImpl implements SesUserService {
                                 basicRule.getRuleType(),
                                 basicRule.getType(),
                                 basicRule.getDescription(),
-                                basicRule.isRelease(),
+                                basicRule.isPublished(),
                                 basicRule.getOwnerID(),
                                 basicRule.getEml(),
                                 basicRule.isSubscribed(),
                                 basicRule.getMedium(),
                                 basicRule.getFormat(),
-                                basicRule.getSensor(),
-                                basicRule.getPhenomenon());
+                                basicRule.getFeedingMetadata());
     }
 
     /**
@@ -166,7 +165,7 @@ public class SesUserServiceImpl implements SesUserService {
                 LOG.debug("user " + user.getName() + " has not verrified his registration since " + difference
                         / (1000 * 60 * 60) + " hours!");
                 // delete user
-                HibernateUtil.deleteUserByID(user.getId());
+                HibernateUtil.deleteUserBy(user.getId());
 
                 // add deleted user to list
                 deletedUser.add(user.getUserName());
@@ -195,7 +194,7 @@ public class SesUserServiceImpl implements SesUserService {
             user.setActive(true);
 
             // add user to DB
-            HibernateUtil.addUser(user);
+            HibernateUtil.saveUser(user);
             UserDTO resultUser = createUserDTO(user);
 
             // send registration mail
@@ -213,7 +212,7 @@ public class SesUserServiceImpl implements SesUserService {
         try {
             LOG.debug("login user '{}'.", userName);
             // get user from DB
-            User u = HibernateUtil.getUserByName(userName);
+            User u = HibernateUtil.findUserBy(userName);
             UserDTO user = createUserDTO(u);
             if (user == null) {
                 return new SesClientResponse(SesClientResponse.types.LOGIN_NAME);
@@ -279,7 +278,7 @@ public class SesUserServiceImpl implements SesUserService {
     @Override
     public SesClientResponse newPassword(String userName, String email) throws Exception {
         try {
-            User user = HibernateUtil.getUserByName(userName);
+            User user = HibernateUtil.findUserBy(userName);
 
             // no user founf or the email address is not valid
             if (user == null || !user.geteMail().equals(email)) {
@@ -321,7 +320,7 @@ public class SesUserServiceImpl implements SesUserService {
         try {
             LOG.debug("get user with parameterId=" + id);
             int userID = Integer.valueOf(id);
-            return createUserDTO(HibernateUtil.getUserByID(userID));
+            return createUserDTO(HibernateUtil.getUserBy(userID));
         }
         catch (Exception e) {
             LOG.error("Exception occured on server side.", e);
@@ -334,7 +333,7 @@ public class SesUserServiceImpl implements SesUserService {
         try {
             LOG.debug("delete user");
             int userID = Integer.valueOf(id);
-            User user = HibernateUtil.getUserByID(userID);
+            User user = HibernateUtil.getUserBy(userID);
 
             // avoid deletion of the last admin
             if (user.getRole().equals(UserRole.ADMIN) && !HibernateUtil.otherAdminsExist(userID)) {
@@ -359,13 +358,13 @@ public class SesUserServiceImpl implements SesUserService {
             }
 
             // delete all not published rules
-            List<BasicRule> basicList = HibernateUtil.getAllOwnBasicRules(id);
-            List<ComplexRule> complexList = HibernateUtil.getAllOwnComplexRules(id);
+            List<BasicRule> basicList = HibernateUtil.getAllBasicRulesBy(id);
+            List<ComplexRule> complexList = HibernateUtil.getAllComplexRulesBy(id);
 
             // delete all basic rules
             for (int i = 0; i < basicList.size(); i++) {
                 BasicRule rule = basicList.get(i);
-                if ( !rule.isRelease()) {
+                if ( !rule.isPublished()) {
                     HibernateUtil.deleteRule(rule.getName());
                 }
             }
@@ -373,7 +372,7 @@ public class SesUserServiceImpl implements SesUserService {
             // dele all complex rules
             for (int i = 0; i < complexList.size(); i++) {
                 ComplexRule rule = complexList.get(i);
-                if ( !rule.isRelease()) {
+                if ( !rule.isPublished()) {
                     HibernateUtil.deleteRule(rule.getName());
                 }
             }
@@ -394,7 +393,7 @@ public class SesUserServiceImpl implements SesUserService {
             }
 
             // delete user from DB
-            if ( !HibernateUtil.deleteUserByID(userID)) {
+            if ( !HibernateUtil.deleteUserBy(userID)) {
                 LOG.error("Delete user failed: Unsubscribe user from data base failed!");
                 throw new Exception("Delete user failed: Unsubscribe user from data base failed!");
             }
@@ -414,7 +413,7 @@ public class SesUserServiceImpl implements SesUserService {
             boolean passwordChanged = false;
             String newHandy = null;
 
-            User oldUser = HibernateUtil.getUserByID(newUser.getId());
+            User oldUser = HibernateUtil.getUserBy(newUser.getId());
             newUser.setWnsEmailId(oldUser.getWnsEmailId());
             newUser.setWnsSmsId(oldUser.getWnsSmsId());
             newUser.setRegisterID(oldUser.getRegisterID());
@@ -541,8 +540,8 @@ public class SesUserServiceImpl implements SesUserService {
             LOG.debug("delete profile");
             LOG.debug("set user status to false to avoid logins");
             // get user from DB
-            User user = HibernateUtil.getUserByID(Integer.valueOf(id));
-            HibernateUtil.changeUserActivation(Integer.valueOf(id), false);
+            User user = HibernateUtil.getUserBy(Integer.valueOf(id));
+            HibernateUtil.updateUserStatus(Integer.valueOf(id), false);
 
             // send mail to user
             MailSender.sendDeleteProfileMail(user.geteMail(), user.getRegisterID());

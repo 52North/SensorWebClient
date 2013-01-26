@@ -26,11 +26,12 @@ package org.n52.client.service;
 
 import org.n52.shared.responses.SesClientResponse;
 
-public interface SesSensorService {
+// TODO refactor inteface to handle FeedingMetadata
+public interface SesTimeseriesFeedService {
 
-    public abstract SesClientResponse getAllSensors() throws Exception;
+    public abstract SesClientResponse getTimeseriesFeeds() throws Exception;
 
-    public abstract void updateSensor(String sensorID, boolean newStatus) throws Exception;
+    public abstract void updateTimeseriesFeed(String sensorID, boolean newStatus) throws Exception;
 
     public abstract SesClientResponse getStations() throws Exception;
 

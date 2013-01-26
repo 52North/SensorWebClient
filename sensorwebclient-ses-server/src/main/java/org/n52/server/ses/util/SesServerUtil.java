@@ -295,7 +295,7 @@ public class SesServerUtil {
             // compare sensorIDs
             for (int j = 0; j < sensorIDList.size(); j++) {
                 if (sensorIDList.get(j).equals(sensorID)) {
-                    userList.add(HibernateUtil.getUserByID(subscription.getUserID()));
+                    userList.add(HibernateUtil.getUserBy(subscription.getUserID()));
                 }
             }
         }

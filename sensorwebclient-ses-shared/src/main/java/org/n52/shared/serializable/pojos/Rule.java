@@ -187,38 +187,38 @@ public class Rule implements Serializable {
         this.title = title;
     }
 
-    /**
-     * @deprecated use {@link #getFeedingMetadata()}
-     */
-    @Deprecated
-    public String getProcedure() {
-        return procedure;
-    }
-
-    /**
-     * @deprecated use {@link #setFeedingMetadata(FeedingMetadata)}
-     */
-    @Deprecated
-    public void setProcedure(String procedure) {
-        this.procedure = procedure;
-    }
-
-    
-    /**
-     * @deprecated use {@link #getFeedingMetadata()}
-     */
-    @Deprecated
-    public String getPhenomenon() {
-        return phenomenon;
-    }
-
-    /**
-     * @deprecated use {@link #getFeedingMetadata()}
-     */
-    @Deprecated
-    public void setPhenomenon(String phenomenon) {
-        this.phenomenon = phenomenon;
-    }
+//    /**
+//     * @deprecated use {@link #getFeedingMetadata()}
+//     */
+//    @Deprecated
+//    public String getProcedure() {
+//        return procedure;
+//    }
+//
+//    /**
+//     * @deprecated use {@link #setFeedingMetadata(FeedingMetadata)}
+//     */
+//    @Deprecated
+//    public void setProcedure(String procedure) {
+//        this.procedure = procedure;
+//    }
+//
+//    
+//    /**
+//     * @deprecated use {@link #getFeedingMetadata()}
+//     */
+//    @Deprecated
+//    public String getPhenomenon() {
+//        return phenomenon;
+//    }
+//
+//    /**
+//     * @deprecated use {@link #getFeedingMetadata()}
+//     */
+//    @Deprecated
+//    public void setPhenomenon(String phenomenon) {
+//        this.phenomenon = phenomenon;
+//    }
 
     public FeedingMetadata getFeedingMetadata() {
         return feedingMetadata;

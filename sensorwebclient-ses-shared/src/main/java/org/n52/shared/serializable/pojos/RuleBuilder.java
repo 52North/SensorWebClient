@@ -24,10 +24,6 @@ public class RuleBuilder {
     private String exitTime;
     private String exitTimeUnit;
     private FeedingMetadata feedingMetadata;
-    @Deprecated
-    private String procedure;
-    @Deprecated
-    private String phenomenon;
 
     public static RuleBuilder aRule() {
         return new RuleBuilder();
@@ -158,20 +154,7 @@ public class RuleBuilder {
         rule.setEntryValue(entryValue);
         rule.setTitle(title);
         rule.setUserID(cookieAsInt);
-        rule.setProcedure(procedure);
-        rule.setPhenomenon(phenomenon);
         return rule;
     }
 
-    @Deprecated
-    public RuleBuilder setProcedure(String procedure) {
-        this.procedure = procedure;
-        return this;
-    }
-    
-    @Deprecated
-    public RuleBuilder setPhenomenon(String phenomeon) {
-        this.phenomenon = phenomeon;
-        return this;
-    }
 }

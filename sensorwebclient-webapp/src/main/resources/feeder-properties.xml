@@ -3,7 +3,7 @@
 <properties>
 
 	<!-- URL to the SES and some other configurations for the SES -->
-	<entry key="ses_url">${feeder.ses.url}</entry>
+	<entry key="ses_url">${ses.service.url}</entry>
 	
 	<!-- Supported sos version -->
 	<entry key="sos_version">${feeder.sos.version}</entry>

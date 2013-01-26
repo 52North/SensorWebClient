@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
-"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
 <hibernate-mapping package="org.n52.shared.serializable.pojos">
   <class name="BasicRule" table="sesclient_basic_rule" >
       <id name="basicRuleID" column="ID">
@@ -10,11 +10,10 @@
       <property name="ruleType" type="string"/>
       <property name="type" type="string"/>
       <property name="description" type="text"/>
-      <property name="release" type="boolean"/>
+      <property name="published" type="boolean"/>
       <property name="ownerID" type="integer"/>
       <property name="eml" type="text"/>
       <property name="subscribed" type="boolean"/>
-      <property name="sensor" type="string"/>
-      <property name="phenomenon" type="string"/>
+      <property name="feedingMetadata" type="org.n52.shared.serializable.pojos.FeedingMetadata" />
    </class>
 </hibernate-mapping>

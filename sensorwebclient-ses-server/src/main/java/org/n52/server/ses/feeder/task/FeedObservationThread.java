@@ -27,8 +27,9 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.n52.server.ses.feeder.FeederConfig;
 import org.n52.server.ses.feeder.connector.SESConnector;
 import org.n52.server.ses.feeder.connector.SOSConnector;
-import org.n52.server.ses.feeder.hibernate.SensorToFeed;
 import org.n52.server.ses.feeder.util.DatabaseAccess;
+import org.n52.shared.serializable.pojos.FeedingMetadata;
+import org.n52.shared.serializable.pojos.TimeseriesToFeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,7 @@ public class FeedObservationThread extends Thread {
     private static final Logger log = LoggerFactory.getLogger(FeedObservationThread.class);
 
     /** The sensor. */
-    private SensorToFeed sensor;
+    private TimeseriesToFeed sensor;
 
     private boolean running = true;
     
@@ -76,8 +77,8 @@ public class FeedObservationThread extends Thread {
      *            The sensor for the observation collection is done.
      * @param minDelay
      */
-    public FeedObservationThread(SensorToFeed sensor, Vector<String> v) {
-        super("Observation_" + sensor.getProcedure());
+    public FeedObservationThread(TimeseriesToFeed sensor, Vector<String> v) {
+        super("sensorId_" + sensor.getId());
         this.sensor = sensor;
         this.currentlyFeedingSensors = v;
     }
@@ -91,20 +92,21 @@ public class FeedObservationThread extends Thread {
     public void run() {
         // init SOS connection
 
+        FeedingMetadata metadata = sensor.getFeedingMetadata();
         if (isRunning()) {
             try {
                 if (log.isDebugEnabled()) {
-                    log.debug("Start Observation thread for Sensor: " + this.sensor.getProcedure());
+                    log.debug("Start Observation thread for Sensor: " + metadata.getProcedure());
                 }
 
-                SOSConnector sosCon = new SOSConnector(this.sensor.getServiceURL());
+                SOSConnector sosCon = new SOSConnector(metadata.getServiceUrl());
                 sesCon = new SESConnector();
 
                 // do an observation request to sos for the sensor
                 Calendar startUpdate = this.sensor.getLastUpdate();
                 if(log.isDebugEnabled()) {
                 	log.debug("Start Time of Database for " + 
-                			sensor.getProcedure() + ": " + 
+                			metadata.getProcedure() + ": " + 
                 			(startUpdate!=null?startUpdate.getTimeInMillis():
                 				"not defined => first time feeded") );
                 }
@@ -114,7 +116,7 @@ public class FeedObservationThread extends Thread {
                     Calendar firstUpdateTime = new GregorianCalendar();
                     firstUpdateTime.add(Calendar.MILLISECOND, -FeederConfig.getInstance().getStartTimestamp());
                     sensor.setLastUpdate(firstUpdateTime);
-                    log.debug("Start Time generated for first feeding of " + sensor.getProcedure() +": "+ sensor.getLastUpdate().getTimeInMillis());
+                    log.debug("Start Time generated for first feeding of " + metadata.getProcedure() +": "+ sensor.getLastUpdate().getTimeInMillis());
                     // FIXME save to database the new defined start time for this sensor
                     /*
                      * The problem is here to not have a start time that's increasing if the observations are not reguarly inserted into the SOS
@@ -131,34 +133,34 @@ public class FeedObservationThread extends Thread {
 				ObservationCollectionDocument obsCollDoc = sosCon.getObservation(sensor);
 				ObservationPropertyType[] memberArray = obsCollDoc.getObservationCollection().getMemberArray();
 				// tell the others, that we are trying to feed observations
-				boolean addResult = this.currentlyFeedingSensors.add(this.sensor.getProcedure());
+				boolean addResult = this.currentlyFeedingSensors.add(metadata.getProcedure());
 				if (log.isDebugEnabled()) {
-					log.debug("Added sensor \"" + this.sensor.getProcedure() + "\" to feeding list? " + addResult);
+					log.debug("Added sensor \"" + metadata.getProcedure() + "\" to feeding list? " + addResult);
 				}
 				for (ObservationPropertyType obsPropType : memberArray) {
 					// start feeding
 					ObservationType observation = obsPropType.getObservation();
-					if (observation != null && observation.getProcedure().getHref().equals(this.sensor.getProcedure())) {
+					if (observation != null && observation.getProcedure().getHref().equals(metadata.getProcedure())) {
 						endUpdate = getLastUpdateTime(observation.getSamplingTime());
 						this.sensor.setUpdateInterval(getUpdateInterval(observation, startUpdate));
-						log.info(this.sensor.getProcedure() + " from " + startUpdate.getTime() + " to " + endUpdate.getTime() + " for " + sensor.getOffering()); 
+						log.info(metadata.getProcedure() + " from " + startUpdate.getTime() + " to " + endUpdate.getTime() + " for " + metadata.getOffering()); 
 						// create a Notify Message to the SES
 						obsPropType = checkObservations(obsPropType);
 						if (!(obsPropType == null) && !sesCon.isClosed()) {
 							sesCon.publishObservation(obsPropType);
-							log.info(this.sensor.getProcedure() + " with " + sensor.getOffering() + " added to SES");
+							log.info(metadata.getProcedure() + " with " + metadata.getOffering() + " added to SES");
 						} else {
-							log.info(String.format("No data received for procedure '%s'.", this.sensor.getProcedure()));
+							log.info(String.format("No data received for procedure '%s'.", metadata.getProcedure()));
 						}
 					} else {
-						log.info("No new Observations for "	+ this.sensor.getProcedure());
+						log.info("No new Observations for "	+ metadata.getProcedure());
 					}
 				}
                 if (endUpdate != null) {
                     // to prevent receiving observation two times
-                    log.debug("End Time before adding for " + sensor.getProcedure() +": "+ endUpdate.getTimeInMillis());
+                    log.debug("End Time before adding for " + metadata.getProcedure() +": "+ endUpdate.getTimeInMillis());
                     endUpdate.add(Calendar.MILLISECOND, 1);
-                    log.debug("End Time after adding for " + sensor.getProcedure() +": "+ endUpdate.getTimeInMillis());
+                    log.debug("End Time after adding for " + metadata.getProcedure() +": "+ endUpdate.getTimeInMillis());
                     this.sensor.setLastUpdate(endUpdate);
                 }
                 DatabaseAccess.saveSensor(this.sensor);
@@ -179,9 +181,9 @@ public class FeedObservationThread extends Thread {
                 // remove() returns only true if the element was contained in
                 // the list
                 //
-                boolean removeResult = this.currentlyFeedingSensors.removeElement(this.sensor.getProcedure());
+                boolean removeResult = this.currentlyFeedingSensors.removeElement(metadata.getProcedure());
                 if (log.isDebugEnabled()) {
-                    log.debug("removed sensor \"" + this.sensor.getProcedure() + "\" from currently feeding list? "
+                    log.debug("removed sensor \"" + metadata.getProcedure() + "\" from currently feeding list? "
                             + removeResult);
                 }
             }

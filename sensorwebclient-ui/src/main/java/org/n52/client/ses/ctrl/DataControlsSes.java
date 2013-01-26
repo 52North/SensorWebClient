@@ -289,18 +289,6 @@ public class DataControlsSes extends DataControls {
             }
         });
 
-        // manageSensorButton
-        this.manageSensorButton = new IButton(i18n.sensorManagement());
-        this.manageSensorButton.setWidth(this.buttonWidth);
-        this.manageSensorButton.setShowRollOver(true);
-        this.manageSensorButton.setShowDown(true);
-        this.manageSensorButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.SENSORLIST));
-                highlightSelectedButton(manageSensorButton);
-            }
-        });
-
         // manageRulesButton
         this.manageRulesButton = new IButton(i18n.showAllRules());
         this.manageRulesButton.setWidth(this.buttonWidth);

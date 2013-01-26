@@ -41,6 +41,7 @@ public class SESUnitConverter implements IUnitConverter {
 
 
     private UnitParser parser;
+    
     private Map<String, Unit> unitPhenomenonMap;
 
     /**

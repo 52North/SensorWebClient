@@ -29,317 +29,158 @@ public class BasicRule implements Serializable {
 
     private static final long serialVersionUID = -5628735312144877770L;
 
-    /** The basic rule id. */
     private int basicRuleID;
 
-    /** The name. */
     private String name;
 
-    /** The rule type. */
     private String ruleType;
 
-    /** The type of basic rule */
     private String type;
 
-    /** The description. */
     private String description;
 
-    /** The release. */
-    private boolean release;
+    private boolean published;
 
-    /** The ownerID. */
     private int ownerID;
 
-    /** The eml. */
     private String eml;
 
-    /** The is subscribed. */
     private boolean subscribed;
     
-    /** The medium. */
     private String medium;
     
-    /** The format. */
     private String format;
     
-    private String sensor;
+    private FeedingMetadata feedingMetadata;
     
-    private String phenomenon;
-
-    /**
-     * Instantiates a new basic rule.
-     * 
-     * @param basicRuleDTO
-     *            the basic rule dto
-     */
     public BasicRule(BasicRuleDTO basicRuleDTO) {
         this.basicRuleID = basicRuleDTO.getId();
         this.name = basicRuleDTO.getName();
         this.ruleType = basicRuleDTO.getRuleType();
         this.setType(basicRuleDTO.getType());
         this.description = basicRuleDTO.getDescription();
-        this.release = basicRuleDTO.isRelease();
+        this.published = basicRuleDTO.isRelease();
         this.ownerID = basicRuleDTO.getOwnerID();
         this.eml = basicRuleDTO.getEml();
         this.subscribed = basicRuleDTO.isSubscribed();
         this.medium = basicRuleDTO.getMedium();
         this.format = basicRuleDTO.getFormat();
-        this.sensor = basicRuleDTO.getSensor();
+        
+        // XXX check for inconsistence regarding to missing FOI+offering+serviceUrl
+        this.feedingMetadata = basicRuleDTO.getFeedingMetadata();
         
     }
 
-    /**
-     * Instantiates a new basic rule.
-     * 
-     * @param name
-     *            the name
-     * @param ruleType
-     *            the rule type
-     * @param type
-     *            the type of the basic rule
-     * @param description
-     *            the description
-     * @param release
-     *            the release
-     * @param ownerID
-     *            the owner
-     * @param eml
-     *            the eml
-     * @param subscribed
-     */
     public BasicRule(String name, String ruleType, String type, String description, boolean release, int ownerID,
             String eml, boolean subscribed) {
         this.name = name;
         this.ruleType = ruleType;
         this.type = type;
         this.description = description;
-        this.release = release;
+        this.published = release;
         this.ownerID = ownerID;
         this.eml = eml;
         this.subscribed = subscribed;
     }
 
-    /**
-     * Instantiates a new basic rule.
-     */
     public BasicRule() {
-        // basic constructor is needed
+        // for serialization
     }
 
-    /**
-     * Gets the basic rule id.
-     * 
-     * @return the basic rule id
-     */
     public int getBasicRuleID() {
         return this.basicRuleID;
     }
 
-    /**
-     * Sets the basic rule id.
-     * 
-     * @param id
-     *            the new basic rule id
-     */
     public void setBasicRuleID(int id) {
         this.basicRuleID = id;
     }
 
-    /**
-     * Gets the name.
-     * 
-     * @return the name
-     */
     public String getName() {
         return this.name;
     }
 
-    /**
-     * Sets the name.
-     * 
-     * @param name
-     *            the new name
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * Gets the description.
-     * 
-     * @return the description
-     */
     public String getDescription() {
         return this.description;
     }
 
-    /**
-     * Sets the description.
-     * 
-     * @param description
-     *            the new description
-     */
     public void setDescription(String description) {
         this.description = description;
     }
 
-    /**
-     * Checks if is release.
-     * 
-     * @return true, if is release
-     */
-    public boolean isRelease() {
-        return this.release;
+    public boolean isPublished() {
+        return this.published;
     }
 
-    /**
-     * Sets the release.
-     * 
-     * @param release
-     *            the new release
-     */
-    public void setRelease(boolean release) {
-        this.release = release;
+    public void setPublished(boolean published) {
+        this.published = published;
     }
 
-    /**
-     * Gets the owner.
-     * 
-     * @return the owner
-     */
     public int getOwnerID() {
         return this.ownerID;
     }
 
-    /**
-     * Sets the owner.
-     * 
-     * @param ownerID
-     *            the new owner
-     */
     public void setOwnerID(int ownerID) {
         this.ownerID = ownerID;
     }
 
-    /**
-     * Sets the rule type.
-     * 
-     * @param ruleType
-     *            the new rule type
-     */
     public void setRuleType(String ruleType) {
         this.ruleType = ruleType;
     }
 
-    /**
-     * Gets the rule type.
-     * 
-     * @return the rule type
-     */
     public String getRuleType() {
         return this.ruleType;
     }
 
-    /**
-     * 
-     * @return the eml
-     */
     public String getEml() {
         return this.eml;
     }
 
-    /**
-     * 
-     * @param eml
-     */
     public void setEml(String eml) {
         this.eml = eml;
     }
 
-    /**
-     * @return {@link Boolean}
-     */
     public boolean isSubscribed() {
         return this.subscribed;
     }
 
-    /**
-     * @param subscribed
-     */
     public void setSubscribed(boolean subscribed) {
         this.subscribed = subscribed;
     }
 
-    /**
-     * @param type
-     *            the type to set
-     */
     public void setType(String type) {
         this.type = type;
     }
 
-    /**
-     * @return the type
-     */
     public String getType() {
         return this.type;
     }
 
-    /**
-     * 
-     * @return medium
-     */
     public String getMedium() {
         return this.medium;
     }
 
-    /**
-     * @param medium
-     */
     public void setMedium(String medium) {
         this.medium = medium;
     }
 
-    /**
-     * @return format
-     */
     public String getFormat() {
         return this.format;
     }
 
-    /**
-     * @param format
-     */
     public void setFormat(String format) {
         this.format = format;
     }
 
-    /**
-     * @return sensor
-     */
-    public String getSensor() {
-        return this.sensor;
+    public FeedingMetadata getFeedingMetadata() {
+        return feedingMetadata;
     }
 
-    /**
-     * @param sensor
-     */
-    public void setSensor(String sensor) {
-        this.sensor = sensor;
+    public void setFeedingMetadata(FeedingMetadata feedingMetadata) {
+        this.feedingMetadata = feedingMetadata;
     }
 
-    /**
-     * @return phenomenon
-     */
-    public String getPhenomenon() {
-        return this.phenomenon;
-    }
-
-    /**
-     * @param phenomenon
-     */
-    public void setPhenomenon(String phenomenon) {
-        this.phenomenon = phenomenon;
-    }
-    
 }

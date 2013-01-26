@@ -28,56 +28,37 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-import org.n52.client.service.SesSensorService;
+import org.n52.client.service.SesTimeseriesFeedService;
 import org.n52.server.ses.SesConfig;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.mail.MailSender;
 import org.n52.server.ses.util.SesParser;
 import org.n52.server.ses.util.SesServerUtil;
 import org.n52.shared.responses.SesClientResponse;
-import org.n52.shared.serializable.pojos.Sensor;
+import org.n52.shared.serializable.pojos.FeedingMetadata;
+import org.n52.shared.serializable.pojos.TimeseriesToFeed;
 import org.n52.shared.serializable.pojos.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SesSensorServiceImpl implements SesSensorService {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(SesSensorServiceImpl.class);
+public class SesTimeseriesFeedServiceImpl implements SesTimeseriesFeedService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SesTimeseriesFeedServiceImpl.class);
 
     private static SesParser parser;
 
-    /**
-     * This method adds new sensors to the data base of the client.
-     * Source is the SES with registered sensors. 
-     */
-    public static synchronized void addSensorsToDB(){
-        
-        // XXX refactor
-        
-        ArrayList<String> sensors = getParser().getRegisteredSensors();
-        for (int i = 0; i < sensors.size(); i++) {
-            if (!HibernateUtil.existsSensor(sensors.get(i))) {
-                Sensor sensor = new Sensor(sensors.get(i), true, 0);
-                if (sensor != null) {
-                    LOGGER.debug("Persist sensor to to feed: {}", sensor.getSensorID());
-                    HibernateUtil.addSensor(sensor);
-                }
-            }
-        }
-    }
-
     private static SesParser getParser(){
-        if (SesSensorServiceImpl.parser == null) {
+        if (SesTimeseriesFeedServiceImpl.parser == null) {
             return new SesParser(SesConfig.serviceVersion, SesConfig.sesEndpoint);
         }
         return parser;
     }
-
+    
     @Override
-    public SesClientResponse getAllSensors() throws Exception {
+    public SesClientResponse getTimeseriesFeeds() throws Exception {
         try {
             LOGGER.debug("get registered sensors from DB");
-            List<Sensor> sensors = HibernateUtil.getSensors();
+            List<TimeseriesToFeed> sensors = HibernateUtil.getTimeseriesToFeed();
             return new SesClientResponse(SesClientResponse.types.REGISTERED_SENSORS, sensors);
         }
         catch (Exception e) {
@@ -87,10 +68,10 @@ public class SesSensorServiceImpl implements SesSensorService {
     }
 
     @Override
-    public void updateSensor(String sensorID, boolean newStatus) throws Exception {
+    public void updateTimeseriesFeed(String sensorID, boolean newStatus) throws Exception {
         try {
             LOGGER.debug("updateSensor: " + sensorID + " . New status: activated = " + newStatus);
-            if (!HibernateUtil.updateSensor(sensorID, newStatus)) {
+            if (!HibernateUtil.updateSensorToFeed(sensorID, newStatus)) {
                 LOGGER.error("Update sensor failed!");
                 throw new Exception("Update sensor failed!");
             }
@@ -118,20 +99,19 @@ public class SesSensorServiceImpl implements SesSensorService {
     public SesClientResponse getStations() throws Exception {
         try {
             LOGGER.debug("getStations");
-            ArrayList<String> finalList = new ArrayList<String>();
-            HashSet<String> h = new HashSet<String>();
+            ArrayList<FeedingMetadata> finalList = new ArrayList<FeedingMetadata>();
+            HashSet<FeedingMetadata> uniqueFeedingMetadataList = new HashSet<FeedingMetadata>();
             
             // DB request
-            List<Sensor> sensors = HibernateUtil.getActiveSensors();
-            for (int i = 0; i < sensors.size(); i++) {
-                // HashSet is used to avoid duplicates
-                h.add(sensors.get(i).getSensorID());
+            List<TimeseriesToFeed> timeseriesToFeed = HibernateUtil.getActiveTimeseriesToFeed();
+            for (TimeseriesToFeed toFeed : timeseriesToFeed) {
+                uniqueFeedingMetadataList.add(toFeed.getFeedingMetadata());
             }
             
-            finalList.addAll(h);
+            finalList.addAll(uniqueFeedingMetadataList);
             
-            // sort list
-            Collections.sort(finalList);
+            // TODO make FeedingMetadata comparable
+//            Collections.sort(finalList);
     
             return new SesClientResponse(SesClientResponse.types.STATIONS, finalList);
         }
@@ -148,13 +128,17 @@ public class SesSensorServiceImpl implements SesSensorService {
             ArrayList<String> finalList = new ArrayList<String>();
             ArrayList<String> unit = new ArrayList<String>();
             
-            // get the sensor from DB
-            Sensor sensor = HibernateUtil.getSensorByID(station);
-            if (sensor != null) {
-                // get phenomena
-                ArrayList<String> phenomena = getParser().getPhenomena(sensor.getSensorID());
-                // get the unit of measurement
-                unit.add(getParser().getUnit(sensor.getSensorID()));
+            TimeseriesToFeed timeseriesToFeed = HibernateUtil.getSensorByID(station);
+            if (timeseriesToFeed != null) {
+                FeedingMetadata metadata = timeseriesToFeed.getFeedingMetadata();
+                
+                // TODO use unique timeseries-ID for SES
+                String mappedFeedingId = metadata.getProcedure();
+                
+                
+                ArrayList<String> phenomena = getParser().getPhenomena(mappedFeedingId);
+                // TODO get the unit of measurement from internal/mapped id
+                unit.add(getParser().getUnit(mappedFeedingId));
                 for (int i = 0; i < phenomena.size(); i++) {
                     LOGGER.debug(phenomena.get(i));
                     finalList.add(phenomena.get(i)); 

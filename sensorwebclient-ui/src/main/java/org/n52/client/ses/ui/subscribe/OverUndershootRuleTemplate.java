@@ -13,6 +13,9 @@ import static org.n52.shared.serializable.pojos.Rule.LESS_THAN_OR_EQUAL_TO;
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.FormItemErrorFormatter;
+import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.form.fields.StaticTextItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
@@ -24,8 +27,10 @@ import com.smartgwt.client.widgets.layout.VLayout;
 public class OverUndershootRuleTemplate extends RuleTemplate {
     
     private SelectItem exitOperatorItem;
-    private SelectItem exitUnitItem;
     private TextItem exitValueItem;
+    
+    private DynamicForm entryConditionForm;
+    private DynamicForm exitConditionForm;
 
     public OverUndershootRuleTemplate(final EventSubscriptionController controller) {
         super(controller);
@@ -45,6 +50,11 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
         return layout;
     }
 
+    @Override
+    public boolean validateTemplate() {
+        return entryConditionForm.validate() && exitConditionForm.validate();
+    }
+
     private Canvas createEntryConditionEditCanvas() {
         StaticTextItem labelItem = createLabelItem(i18n.enterCondition());
         
@@ -56,14 +66,14 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
         TextItem entryValueItem = createValueItem();
         entryValueItem.addChangedHandler(createEntryValueChangedHandler());
         entryValueItem.setWidth(EDIT_ITEMS_WIDTH);
+        declareAsRequired(entryValueItem);
         
-//        SelectItem entryUnitItem = createUnitsItem();
-//        entryUnitItem.addChangedHandler(createEntryUnitChangedHandler());
-//        entryUnitItem.setWidth(EDIT_ITEMS_WIDTH);
         StaticTextItem entryUnitItem = createStaticUnitItem();
         entryUnitItem.setWidth(EDIT_ITEMS_WIDTH);
         
-        return assembleEditConditionForm(labelItem, entryOperatorItem, entryValueItem, entryUnitItem);
+        FormItem[] items = new FormItem[] { labelItem, entryOperatorItem, entryValueItem, entryUnitItem };
+        entryConditionForm = assembleEditConditionForm(items);
+        return alignVerticalCenter(entryConditionForm);
     }
 
 
@@ -86,7 +96,10 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
                 TextItem valueItem = (TextItem) event.getSource();
                 String value = valueItem.getValueAsString();
                 controller.getOverUndershootEntryConditions().setValue(value);
+                
                 exitValueItem.setValue(value);
+                // setting exit value does not invoke ChangedHandler :(
+                controller.getOverUndershootExitConditions().setValue(value);
             }
         };
     }
@@ -102,18 +115,6 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
         return unitItem;
     }
 
-    private ChangedHandler createEntryUnitChangedHandler() {
-        return new ChangedHandler() {
-            @Override
-            public void onChanged(ChangedEvent event) {
-                SelectItem valueItem = (SelectItem) event.getSource();
-                String unit = valueItem.getValueAsString();
-                controller.getOverUndershootEntryConditions().setUnit(unit);
-                exitUnitItem.setValue(unit);
-            }
-        };
-    }
-
     private Canvas createExitConditionEditCanvas() {
         StaticTextItem labelItem = createLabelItem(i18n.exitCondition());
 
@@ -125,14 +126,14 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
         exitValueItem = createValueItem();
         exitValueItem.addChangedHandler(createExitValueChangedHandler());
         exitValueItem.setWidth(EDIT_ITEMS_WIDTH);
+        declareAsRequired(exitValueItem);
 
-//        exitUnitItem = createUnitsItem();
-//        exitUnitItem.addChangedHandler(createExitUnitChangedHandler());
-//        exitUnitItem.setWidth(EDIT_ITEMS_WIDTH);
         StaticTextItem exitUnitItem = createStaticUnitItem();
         exitUnitItem.setWidth(EDIT_ITEMS_WIDTH);
         
-        return assembleEditConditionForm(labelItem, exitOperatorItem, exitValueItem, exitUnitItem);
+        FormItem[] items = new FormItem[] { labelItem, exitOperatorItem, exitValueItem, exitUnitItem };
+        exitConditionForm = assembleEditConditionForm(items);
+        return alignVerticalCenter(exitConditionForm);
     }
 
     private ChangedHandler createExitOperatorChangedHandler() {
@@ -157,17 +158,6 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
         };
     }
     
-    private ChangedHandler createExitUnitChangedHandler() {
-        return new ChangedHandler() {
-            @Override
-            public void onChanged(ChangedEvent event) {
-                SelectItem valueItem = (SelectItem) event.getSource();
-                String unit = valueItem.getValueAsString();
-                controller.getOverUndershootExitConditions().setUnit(unit);
-            }
-        };
-    }
-
     private SelectItem createOperatorItem(OverUndershootSelectionData data, int operatorIndex) {
         SelectItem operatorItem = new SelectItem();
         operatorItem.setTitle(i18n.operator());
@@ -181,6 +171,23 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
             data.setOperator(operator);
         }
         return operatorItem;
+    }
+
+    protected SelectItem createUnitsItem() {
+        SelectItem unitSelectItem = new SelectItem();
+        unitSelectItem.setTitle(i18n.unit());
+        unitSelectItem.setTitleOrientation(TOP);
+        unitSelectItem.addChangedHandler(createUnitSelectionChangedHandler());
+        return unitSelectItem;
+    }
+
+    private ChangedHandler createUnitSelectionChangedHandler() {
+        return new ChangedHandler() {
+            @Override
+            public void onChanged(ChangedEvent event) {
+                // TODO Auto-generated method stub
+            }
+        };
     }
 
 }

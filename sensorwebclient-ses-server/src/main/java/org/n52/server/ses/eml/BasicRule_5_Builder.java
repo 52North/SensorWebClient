@@ -40,6 +40,7 @@ import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 import org.n52.server.ses.SesConfig;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.shared.serializable.pojos.BasicRule;
+import org.n52.shared.serializable.pojos.FeedingMetadata;
 import org.n52.shared.serializable.pojos.Rule;
 import org.n52.shared.serializable.pojos.User;
 import org.slf4j.Logger;
@@ -99,7 +100,7 @@ public class BasicRule_5_Builder {
     public static BasicRule create_BR_5(Rule rule) throws Exception {
         
     	// Get current user. This user is also the owner of the new rule
-        User user = HibernateUtil.getUserByID(rule.getUserID());
+        User user = HibernateUtil.getUserBy(rule.getUserID());
 
         String eml;
         String finalEml;
@@ -171,11 +172,12 @@ public class BasicRule_5_Builder {
             .setTextContent(simpleNewEventName.get(i));
 
             // set propertyRestrictions
+            FeedingMetadata metadata = rule.getFeedingMetadata();
             NodeList propertyRestrictiosnList = fstElement.getElementsByTagName(propertyValue);
             Node value_1 = propertyRestrictiosnList.item(0);
-            value_1.setTextContent(rule.getPhenomenon());
+            value_1.setTextContent(metadata.getPhenomenon());
             Node value_2 = propertyRestrictiosnList.item(1);
-            value_2.setTextContent(rule.getProcedure());
+            value_2.setTextContent(metadata.getProcedure());
 
             // set EventCount
             NodeList eventCountList = fstElement.getElementsByTagName(eventCount);
@@ -254,26 +256,18 @@ public class BasicRule_5_Builder {
      * This method is used to parse an EML file and return a Rule class with rule specific attributes. 
      * The method is called if user want to edit this rule type.
      * 
-     * @param eml
+     * @param basicRule
      * @return {@link Rule}
      */
-    public static Rule getRuleByEML(String eml) {
+    public static Rule getRuleByEML(BasicRule basicRule) {
         Rule rule = new Rule();
+        rule.setFeedingMetadata(basicRule.getFeedingMetadata());
 
         try {
-        	// build document
+            String eml = basicRule.getEml();
             DocumentBuilderFactory docFac = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFac.newDocumentBuilder();
             Document doc = docBuilder.parse(new ByteArrayInputStream(eml.getBytes()));
-
-            // get phenomenon
-            NodeList propertyRestrictiosnList = doc.getElementsByTagName(propertyValue);
-            Node value_1 = propertyRestrictiosnList.item(0);
-            rule.setPhenomenon(value_1.getTextContent());
-
-            // get station
-            Node value_2 = propertyRestrictiosnList.item(1);
-            rule.setProcedure(value_2.getTextContent());
 
             NodeList userParameterValueList = doc.getElementsByTagName(userParameterValue);
             Node userParameterValueNode = userParameterValueList.item(2);

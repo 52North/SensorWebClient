@@ -7,8 +7,9 @@ import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.n52.server.ses.feeder.hibernate.SensorToFeed;
 import org.n52.server.ses.feeder.util.DatabaseAccess;
+import org.n52.shared.serializable.pojos.FeedingMetadata;
+import org.n52.shared.serializable.pojos.TimeseriesToFeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,14 +29,10 @@ public class ObservationsTask extends TimerTask {
     
     private boolean isActive;
 
-    /**
-     * Reference to the overall list of currently feeded sensors to prohibit
-     * double feeding
-     */
-    private Vector<String> currentyFeededSensors;
+    private Vector<String> currentlyFeededTimeseries;
 
-    public ObservationsTask(Vector<String> currentlyFeededSensors) {
-        this.currentyFeededSensors = currentlyFeededSensors;
+    public ObservationsTask(Vector<String> currentlyFeededTimeseries) {
+        this.currentlyFeededTimeseries = currentlyFeededTimeseries;
     }
 
     @Override
@@ -52,23 +49,24 @@ public class ObservationsTask extends TimerTask {
 //    	feeder.enableSensorForFeeding(feedingMetadata);
     	/////
     	
-        log.info("Currenty feeded sensors: " + currentyFeededSensors.size());
+        log.info("Currenty feeded sensors: " + currentlyFeededTimeseries.size());
         isActive = true;
         try {
             log.info("############## Prepare Observations task ################");
-            List<SensorToFeed> sensors = DatabaseAccess.getUsedSensors();
+            List<TimeseriesToFeed> sensors = DatabaseAccess.getUsedSensors();
             log.info("Number of GetObservations: " + sensors.size());
             long time = System.currentTimeMillis();
-            for (SensorToFeed sensor : sensors) {
+            for (TimeseriesToFeed sensor : sensors) {
                 if (sensor.getLastUpdate() == null
                         || (time - sensor.getUpdateInterval() > sensor.getLastUpdate().getTimeInMillis())) {
                     // 
                     // start only threads for sensors which are currently not
                     // feeding
                     //
-                    if (!this.currentyFeededSensors.contains(sensor.getProcedure())) {
+                    FeedingMetadata metadata = sensor.getFeedingMetadata();
+                    if (!this.currentlyFeededTimeseries.contains(metadata)) {
                         FeedObservationThread obsThread =
-                                new FeedObservationThread(sensor, this.currentyFeededSensors);
+                                new FeedObservationThread(sensor, this.currentlyFeededTimeseries);
                         if (!executor.isShutdown()) {
                             executor.execute(obsThread);
                         }
