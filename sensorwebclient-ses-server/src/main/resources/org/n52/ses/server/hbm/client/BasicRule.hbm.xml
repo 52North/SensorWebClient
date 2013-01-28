@@ -14,6 +14,6 @@
       <property name="ownerID" type="integer"/>
       <property name="eml" type="text"/>
       <property name="subscribed" type="boolean"/>
-      <property name="feedingMetadata" type="org.n52.shared.serializable.pojos.FeedingMetadata" />
+      <property name="timeseriesMetadata" type="org.n52.shared.serializable.pojos.TimeseriesMetadata" />
    </class>
 </hibernate-mapping>

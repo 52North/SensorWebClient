@@ -23,9 +23,12 @@
  */
 package org.n52.shared.serializable.pojos;
 
+import static org.n52.shared.util.MathSymbolUtil.getInverse;
+
 import java.io.Serializable;
 
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
+import org.n52.shared.util.MathSymbolUtil;
 
 public class Rule implements Serializable {
     
@@ -47,12 +50,8 @@ public class Rule implements Serializable {
 
     private String title;
 
-    private FeedingMetadata feedingMetadata;
+    private TimeseriesMetadata timeseriesMetadata;
     
-    private String procedure;
-
-    private String phenomenon;
-
     private String notificationType;
 
     private String description;
@@ -91,10 +90,10 @@ public class Rule implements Serializable {
     /**
      * Instantiates a new rule.
      */
-    public Rule(SimpleRuleType ruleType, String title, FeedingMetadata feedingMetadata,
+    public Rule(SimpleRuleType ruleType, String title, TimeseriesMetadata timeseriesMetadata,
             String notificationType, String description, boolean publish, boolean enterEqualsExitCondition,
             int entryOperatorIndex, String entryValue, String entryUnit, int exitOperatorIndex, String exitValue, String exitUnit, int userID) {
-        this(ruleType, title, feedingMetadata, notificationType, description, publish, enterEqualsExitCondition, userID);
+        this(ruleType, title, timeseriesMetadata, notificationType, description, publish, enterEqualsExitCondition, userID);
         this.entryOperatorIndex = entryOperatorIndex;
         this.entryValue = entryValue;
         this.entryUnit = entryUnit;
@@ -106,10 +105,10 @@ public class Rule implements Serializable {
     /**
      * BasicRule_1: Tendenz_Anzahl
      */
-    public Rule(SimpleRuleType ruleType, String title, FeedingMetadata feedingMetadata,
+    public Rule(SimpleRuleType ruleType, String title, TimeseriesMetadata timeseriesMetadata,
             String notificationType, String description, boolean publish, boolean enterEqualsExitCondition,
             int entryOperatorIndex, String entryValue, String entryUnit,int exitOperatorIndex, String exitValue, String exitUnit, int userID, String count, String exitCount) {
-        this(ruleType, title, feedingMetadata, notificationType, description, publish, enterEqualsExitCondition, userID);
+        this(ruleType, title, timeseriesMetadata, notificationType, description, publish, enterEqualsExitCondition, userID);
         this.entryOperatorIndex = entryOperatorIndex;
         this.entryValue = entryValue;
         this.entryUnit = entryUnit;
@@ -128,11 +127,11 @@ public class Rule implements Serializable {
      * BasicRule_2: Tendenz_Zeit
      * 
      */
-    public Rule(SimpleRuleType ruleType, String title, FeedingMetadata feedingMetadata,
+    public Rule(SimpleRuleType ruleType, String title, TimeseriesMetadata timeseriesMetadata,
             String notificationType, String description, boolean publish, boolean enterEqualsExitCondition,
             int entryOperatorIndex, String entryValue, String entryUnit,int exitOperatorIndex, String exitValue, String exitUnit, int userID,
             String entryTime, String entryTimeUnit, String exitTime, String exitTimeUnit) {
-        this(ruleType, title, feedingMetadata, notificationType, description, publish, enterEqualsExitCondition, userID);
+        this(ruleType, title, timeseriesMetadata, notificationType, description, publish, enterEqualsExitCondition, userID);
         
         this.entryOperatorIndex = entryOperatorIndex;
         this.entryValue = entryValue;
@@ -152,18 +151,18 @@ public class Rule implements Serializable {
     /**
      * BasicRule_5: Ausfall
      */
-    public Rule(SimpleRuleType ruleType, String title, FeedingMetadata feedingMetadata, String notificationType, String description, 
+    public Rule(SimpleRuleType ruleType, String title, TimeseriesMetadata timeseriesMetadata, String notificationType, String description, 
             boolean publish, boolean enterEqualsExitCondition, int userID, String entryTime, String entryTimeUnit) {
-        this(ruleType, title, feedingMetadata, notificationType, description, publish, enterEqualsExitCondition, userID);
+        this(ruleType, title, timeseriesMetadata, notificationType, description, publish, enterEqualsExitCondition, userID);
         this.entryTime = entryTime;
         this.entryTimeUnit = entryTimeUnit;
     }
     
-    public Rule(SimpleRuleType ruleType, String title, FeedingMetadata feedingMetadata, String notificationType, String description, 
+    public Rule(SimpleRuleType ruleType, String title, TimeseriesMetadata timeseriesMetadata, String notificationType, String description, 
             boolean publish, boolean enterEqualsExitCondition, int userID) {
         this.ruleType = ruleType;
         this.title = title;
-        this.feedingMetadata = feedingMetadata;
+        this.timeseriesMetadata = timeseriesMetadata;
         this.notificationType = notificationType;
         this.description = description;
         this.publish = publish;
@@ -187,45 +186,13 @@ public class Rule implements Serializable {
         this.title = title;
     }
 
-//    /**
-//     * @deprecated use {@link #getFeedingMetadata()}
-//     */
-//    @Deprecated
-//    public String getProcedure() {
-//        return procedure;
-//    }
-//
-//    /**
-//     * @deprecated use {@link #setFeedingMetadata(FeedingMetadata)}
-//     */
-//    @Deprecated
-//    public void setProcedure(String procedure) {
-//        this.procedure = procedure;
-//    }
-//
-//    
-//    /**
-//     * @deprecated use {@link #getFeedingMetadata()}
-//     */
-//    @Deprecated
-//    public String getPhenomenon() {
-//        return phenomenon;
-//    }
-//
-//    /**
-//     * @deprecated use {@link #getFeedingMetadata()}
-//     */
-//    @Deprecated
-//    public void setPhenomenon(String phenomenon) {
-//        this.phenomenon = phenomenon;
-//    }
 
-    public FeedingMetadata getFeedingMetadata() {
-        return feedingMetadata;
+    public TimeseriesMetadata getTimeseriesMetadata() {
+        return timeseriesMetadata;
     }
 
-    public void setFeedingMetadata(FeedingMetadata feedingMetadata) {
-        this.feedingMetadata = feedingMetadata;
+    public void setTimeseriesMetadata(TimeseriesMetadata timeseriesMetadata) {
+        this.timeseriesMetadata = timeseriesMetadata;
     }
 
     public String getNotificationType() {
@@ -363,4 +330,10 @@ public class Rule implements Serializable {
     public void setExitTimeUnit(String exitTimeUnit) {
         this.exitTimeUnit = exitTimeUnit;
     }
+    
+    public boolean determineEqualEntryExitCondition() {
+        return entryOperatorIndex == getInverse(exitOperatorIndex) 
+                && entryValue.equals(exitValue);
+    }
+    
 }

@@ -29,7 +29,7 @@ public class TimeseriesToFeedRecord implements Serializable {
 
     private static final long serialVersionUID = 4658847230133552081L;
     
-    private FeedingMetadata metadata;
+    private TimeseriesMetadata timeseriesMetadata;
     
     private String status;
     
@@ -39,18 +39,18 @@ public class TimeseriesToFeedRecord implements Serializable {
         // for serialization
     }
 
-    public TimeseriesToFeedRecord(FeedingMetadata metadata, String status, String inUse) {
-        this.metadata = metadata;
+    public TimeseriesToFeedRecord(TimeseriesMetadata timeseriesMetadata, String status, String inUse) {
+        this.timeseriesMetadata = timeseriesMetadata;
         this.status = status;
         this.inUse = inUse;
     }
     
-    public FeedingMetadata getMetadata() {
-        return metadata;
+    public TimeseriesMetadata getTimeseriesMetadata() {
+        return timeseriesMetadata;
     }
 
-    public void setMetadata(FeedingMetadata metadata) {
-        this.metadata = metadata;
+    public void setTimeseriesMetadata(TimeseriesMetadata timeseriesMetadata) {
+        this.timeseriesMetadata = timeseriesMetadata;
     }
 
     public String getStatus() {

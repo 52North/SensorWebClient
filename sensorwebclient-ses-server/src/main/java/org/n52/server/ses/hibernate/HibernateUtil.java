@@ -40,12 +40,6 @@ import org.n52.shared.serializable.pojos.UserRole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * 
- */
-/**
- * 
- */
 public class HibernateUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateUtil.class);
@@ -116,7 +110,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
-        List<User> users = crit.add(Restrictions.eq("parameterId", userID)).list();
+        List<User> users = crit.add(Restrictions.eq("id", userID)).list();
         if (users.size() != 1) {
             return false;
         }
@@ -132,7 +126,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
-        List<User> users = crit.add(Restrictions.eq("parameterId", userID)).list();
+        List<User> users = crit.add(Restrictions.eq("id", userID)).list();
         if (users.size() != 1) {
             return false;
         }
@@ -148,7 +142,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
-        List<User> users = crit.add(Restrictions.eq("parameterId", userID)).list();
+        List<User> users = crit.add(Restrictions.eq("id", userID)).list();
         User user = users.get(0);
         session.getTransaction().commit();
         return user;
@@ -183,7 +177,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
-        List<User> users = crit.add(Restrictions.eq("parameterId", userID)).list();
+        List<User> users = crit.add(Restrictions.eq("id", userID)).list();
         if (users.size() == 1) {
             User user = users.get(0);
             session.delete(user);
@@ -212,17 +206,11 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
-        List<User> users = crit.add(Restrictions.eq("activated", true)).list();
+        List<User> users = crit.add(Restrictions.eq("active", true)).list();
 
         session.getTransaction().commit();
         return users;
     }
-    
-    
-    
-    
-    
-    
     
     
     
@@ -339,7 +327,7 @@ public class HibernateUtil {
         Criteria crit = session.createCriteria(BasicRule.class);
         List<BasicRule> rules = crit.add(Restrictions.and(Restrictions.not(Restrictions.eq("ownerID",
                                                                                            Integer.valueOf(userID))),
-                                                          Restrictions.eq("release", true))).list();
+                                                          Restrictions.eq("published", true))).list();
         session.getTransaction().commit();
         return rules;
     }

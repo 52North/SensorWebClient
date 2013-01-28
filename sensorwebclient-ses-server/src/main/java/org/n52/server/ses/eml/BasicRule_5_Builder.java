@@ -21,7 +21,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
+
 package org.n52.server.ses.eml;
+
+import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.SENSOR_LOSS;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
@@ -36,11 +39,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 import org.n52.server.ses.SesConfig;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.shared.serializable.pojos.BasicRule;
-import org.n52.shared.serializable.pojos.FeedingMetadata;
+import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.Rule;
 import org.n52.shared.serializable.pojos.User;
 import org.slf4j.Logger;
@@ -51,7 +53,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class BasicRule_5_Builder {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(BasicRule_5_Builder.class);
 
     // TAG NAMES
@@ -89,17 +91,17 @@ public class BasicRule_5_Builder {
     /**
      * Sensor Failure
      * 
-     * This method builds the rule type "Sensor Failure" by loading and filling a template file.
-     * The location of this file is defined in /properties/ses-client.properties 
-     * in the variable "resLocation". File name must be BR_5.xml.
+     * This method builds the rule type "Sensor Failure" by loading and filling a template file. The location
+     * of this file is defined in /properties/ses-client.properties in the variable "resLocation". File name
+     * must be BR_5.xml.
      * 
      * @param rule
      * @throws Exception
      * @return {@link BasicRule}
      */
     public static BasicRule create_BR_5(Rule rule) throws Exception {
-        
-    	// Get current user. This user is also the owner of the new rule
+
+        // Get current user. This user is also the owner of the new rule
         User user = HibernateUtil.getUserBy(rule.getUserID());
 
         String eml;
@@ -130,14 +132,14 @@ public class BasicRule_5_Builder {
         complexOutputname.add(title + "_no_observation_output");
         complexOutputname.add(title + "_observation_output");
 
-        // This ArrayList defines the references in the PatternReference tags. 
+        // This ArrayList defines the references in the PatternReference tags.
         // The references are ordered from first to the last pattern.
         ArrayList<String> patternReferenceText = new ArrayList<String>();
         patternReferenceText.add(simplePatternID.get(0));
         patternReferenceText.add(simplePatternID.get(0));
         patternReferenceText.add(simplePatternID.get(0));
         patternReferenceText.add(simplePatternID.get(0));
-        
+
         patternReferenceText.add(complexPatternID.get(1));
         patternReferenceText.add(complexPatternID.get(0));
         patternReferenceText.add(complexPatternID.get(0));
@@ -168,11 +170,10 @@ public class BasicRule_5_Builder {
             // set newEventName of SelectFunction
             NodeList selectFunctionList = fstElement.getElementsByTagName(selectFunction);
             Node selectFunctionNode = selectFunctionList.item(0);
-            selectFunctionNode.getAttributes().getNamedItem(newEventName)
-            .setTextContent(simpleNewEventName.get(i));
+            selectFunctionNode.getAttributes().getNamedItem(newEventName).setTextContent(simpleNewEventName.get(i));
 
             // set propertyRestrictions
-            FeedingMetadata metadata = rule.getFeedingMetadata();
+            TimeseriesMetadata metadata = rule.getTimeseriesMetadata();
             NodeList propertyRestrictiosnList = fstElement.getElementsByTagName(propertyValue);
             Node value_1 = propertyRestrictiosnList.item(0);
             value_1.setTextContent(metadata.getPhenomenon());
@@ -205,11 +206,9 @@ public class BasicRule_5_Builder {
             // set newEventName of SelectFunction
             NodeList selectFunctionList = fstElement.getElementsByTagName(selectFunction);
             Node selectFunctionNode = selectFunctionList.item(0);
-            selectFunctionNode.getAttributes().getNamedItem(newEventName).setTextContent(
-                    complexNewEventName.get(i));
+            selectFunctionNode.getAttributes().getNamedItem(newEventName).setTextContent(complexNewEventName.get(i));
             if (selectFunctionNode.getAttributes().getNamedItem(outputName) != null) {
-                selectFunctionNode.getAttributes().getNamedItem(outputName).setTextContent(
-                        complexOutputname.get(i - 2));
+                selectFunctionNode.getAttributes().getNamedItem(outputName).setTextContent(complexOutputname.get(i - 2));
             }
 
             // set PatternReference
@@ -218,8 +217,9 @@ public class BasicRule_5_Builder {
                 Node patterReferenceNode = patterReferenceList.item(j);
                 if (j == 0) {
                     patterReferenceNode.setTextContent(patternReferenceText.get(2 * i));
-                } else {
-                    patterReferenceNode.setTextContent(patternReferenceText.get((2 * i) + 1));
+                }
+                else {
+                    patterReferenceNode.setTextContent(patternReferenceText.get( (2 * i) + 1));
                 }
             }
 
@@ -247,21 +247,27 @@ public class BasicRule_5_Builder {
         finalEml = eml;
         finalEml = finalEml.substring(finalEml.indexOf("<EML"));
 
-        return new BasicRule(rule.getTitle(), "B", "BR5", rule.getDescription(), rule.isPublish(), user.getId(),
-                finalEml, false);
+        return new BasicRule(rule.getTitle(),
+                             "B",
+                             "BR5",
+                             rule.getDescription(),
+                             rule.isPublish(),
+                             user.getId(),
+                             finalEml,
+                             false);
     }
 
     /**
      * 
-     * This method is used to parse an EML file and return a Rule class with rule specific attributes. 
-     * The method is called if user want to edit this rule type.
+     * This method is used to parse an EML file and return a Rule class with rule specific attributes. The
+     * method is called if user want to edit this rule type.
      * 
      * @param basicRule
      * @return {@link Rule}
      */
     public static Rule getRuleByEML(BasicRule basicRule) {
         Rule rule = new Rule();
-        rule.setFeedingMetadata(basicRule.getFeedingMetadata());
+        rule.setTimeseriesMetadata(basicRule.getTimeseriesMetadata());
 
         try {
             String eml = basicRule.getEml();
@@ -273,20 +279,21 @@ public class BasicRule_5_Builder {
             Node userParameterValueNode = userParameterValueList.item(2);
             String temp = userParameterValueNode.getTextContent();
             temp.substring(2);
-            
-            // rTime: time value
-            rule.setrTime(temp.substring(2, temp.length()-1));
-            
-            // rTimeUnit: time unit
-            rule.setrTimeUnit(temp.substring(temp.length()-1));
-            
-            // set rule type
-            rule.setRuleType(SimpleRuleType.SENSOR_LOSS);
 
-        } catch (Exception e) {
+            // rTime: time value
+            rule.setrTime(temp.substring(2, temp.length() - 1));
+
+            // rTimeUnit: time unit
+            rule.setrTimeUnit(temp.substring(temp.length() - 1));
+
+            // set rule type
+            rule.setRuleType(SENSOR_LOSS);
+
+        }
+        catch (Exception e) {
             LOGGER.error("Error parsing EML rule", e);
         }
-        
+
         return rule;
     }
 }

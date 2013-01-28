@@ -2,12 +2,12 @@ package org.n52.shared.serializable.pojos;
 
 import java.io.Serializable;
 
-public class FeedingMetadata implements Serializable {
+public class TimeseriesMetadata implements Serializable {
     
     private static final long serialVersionUID = -2169674834906583384L;
-    
-    private Integer id;
 
+    private Integer id;
+    
     private String serviceUrl;
     
     private String offering;
@@ -18,7 +18,7 @@ public class FeedingMetadata implements Serializable {
     
     private String featureOfInterest;
 
-    public FeedingMetadata() {
+    public TimeseriesMetadata() {
         // for serialization
     }
 
@@ -88,9 +88,9 @@ public class FeedingMetadata implements Serializable {
             return true;
         if (obj == null)
             return false;
-        if ( ! (obj instanceof FeedingMetadata))
+        if ( ! (obj instanceof TimeseriesMetadata))
             return false;
-        FeedingMetadata other = (FeedingMetadata) obj;
+        TimeseriesMetadata other = (TimeseriesMetadata) obj;
         if (featureOfInterest == null) {
             if (other.featureOfInterest != null)
                 return false;

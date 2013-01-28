@@ -23,7 +23,7 @@ public class RuleBuilder {
     private String entryTimeUnit;
     private String exitTime;
     private String exitTimeUnit;
-    private FeedingMetadata feedingMetadata;
+    private TimeseriesMetadata timeseriesMetadata;
 
     public static RuleBuilder aRule() {
         return new RuleBuilder();
@@ -127,8 +127,8 @@ public class RuleBuilder {
         return this;
     }
 
-    public RuleBuilder setFeedingMetadata(FeedingMetadata feedingMetadata) {
-        this.feedingMetadata = feedingMetadata;
+    public RuleBuilder setTimeseriesMetadata(TimeseriesMetadata timeseriesMetadata) {
+        this.timeseriesMetadata = timeseriesMetadata;
         return this;
     }
 
@@ -145,7 +145,7 @@ public class RuleBuilder {
         rule.setEnterEqualsExitCondition(enterEqualsExit);
         rule.setNotificationType(notificationType);
         rule.setPublish(publish);
-        rule.setFeedingMetadata(feedingMetadata);
+        rule.setTimeseriesMetadata(timeseriesMetadata);
         rule.setEntryOperatorIndex(entryOperatorIndex);
         rule.setrTime(entryTime);
         rule.setrTimeUnit(entryTimeUnit);

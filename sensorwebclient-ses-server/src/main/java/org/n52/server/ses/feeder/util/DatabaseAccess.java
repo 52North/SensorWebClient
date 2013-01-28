@@ -8,91 +8,18 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
-import org.n52.shared.serializable.pojos.FeedingMetadata;
+import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.TimeseriesFeed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/**
- * Manages the Database access.
- * 
- * @author Jan Schulte
- * 
- */
 public class DatabaseAccess {
 
     // TODO close sessions after committing transaction 
     
-    /** The Constant log. */
-    private static final Logger log = LoggerFactory.getLogger(DatabaseAccess.class);
-
-    /**
-     * Saves the state of a sensor and the belonging SOS.
-     * 
-     * @param sos
-     *            The SOS to be saved
-     * @param sensor
-     *            The sensor to be saved
-     */
-//    public static synchronized void saveState(SOS sos, SensorToFeed sensor) {
-//        Session session = InitSessionFactory.getInstance().getCurrentSession();
-//        Transaction transaction = session.beginTransaction();
-//        session.saveOrUpdate(sos);
-//        session.saveOrUpdate(sensor);
-//        for (Offering offering : sensor.getOfferings()) {
-//            for (ObservedProperty obsProp : offering.getObservedProperties()) {
-//                session.saveOrUpdate(obsProp);
-//                obsProp.setOffering(offering);
-//            }
-//            session.saveOrUpdate(offering);
-//            offering.setSensor(sensor);
-//        }
-//        sensor.setSos(sos);
-//        sos.getSensors().add(sensor);
-//        transaction.commit();
-//    }
-
-    
-
-//    public static List<SensorToFeed> getAllSensors() {
-//        List<SensorToFeed> sensors = new ArrayList<SensorToFeed>();
-//        Session session = InitSessionFactory.getInstance().getCurrentSession();
-//        Transaction transaction = session.beginTransaction();
-//        Query query = session.createQuery("from SensorToFeed sensor");
-//        // lazy loading
-//        for (Iterator<?> it = query.iterate(); it.hasNext();) {
-//            SensorToFeed sensor = (SensorToFeed) it.next();
-//            sensors.add(sensor);
-//            for (Offering offering : sensor.getOfferings()) {
-//                offering.getObservedProperties().size();
-//            }
-//        }
-//        transaction.commit();
-//        return sensors;
-//    }
-
-//    @SuppressWarnings("unchecked")
-//    public static boolean existsProcedureSOS(String procedure, String sos) {
-//        boolean check = true;
-//        Session session = InitSessionFactory.getInstance().getCurrentSession();
-//        Transaction transaction = session.beginTransaction();
-//        Criteria crit = session.createCriteria(SensorToFeed.class);
-//        List<SensorToFeed> sensors = crit.add(Restrictions.eq("procedure", procedure)).list();
-//        for (SensorToFeed sensor : sensors) {
-//            if (sensor.getSos().getUrl().equals(sos)) {
-//                check = false;
-//                break;
-//            }
-//        }
-//        transaction.commit();
-//        return check;
-//    }
-
-	public static synchronized boolean isKnownTimeseriesFeed(FeedingMetadata feedingMetadata) {
+	public static synchronized boolean isKnownTimeseriesFeed(TimeseriesMetadata timeseriesMetadata) {
 		Session session = getSessionFactory().getCurrentSession();
 		Transaction transaction = session.beginTransaction();
 		boolean isKnownTimeseriesFeed = false;
-		List<TimeseriesFeed> timeseriesFeeds = findTimeseriesFeedsWith(feedingMetadata, session);
+		List<TimeseriesFeed> timeseriesFeeds = findTimeseriesFeedsWith(timeseriesMetadata, session);
 		if (timeseriesFeeds.size() > 0) {
 			isKnownTimeseriesFeed = true;
 		}
@@ -107,126 +34,15 @@ public class DatabaseAccess {
         transaction.commit();
 	}
 
-	public static synchronized void increaseSensorUse(FeedingMetadata feedingMetadata) {
-		changeCounter(feedingMetadata, 1);
+	public static synchronized void increaseSensorUse(TimeseriesMetadata timeseriesMetadata) {
+		changeCounter(timeseriesMetadata, 1);
 	}
 
-	public static synchronized void decreaseSensorUse(FeedingMetadata feedingMetadata) {
-		changeCounter(feedingMetadata, -1);
+	public static synchronized void decreaseSensorUse(TimeseriesMetadata timeseriesMetadata) {
+		changeCounter(timeseriesMetadata, -1);
 	}
 
-	/**
-	     * Saves the state of a sensor and the belonging SOS.
-	     * 
-	     * @param sos
-	     *            The SOS to be saved
-	     * @param sensor
-	     *            The sensor to be saved
-	     */
-	//    public static synchronized void saveState(SOS sos, SensorToFeed sensor) {
-	//        Session session = InitSessionFactory.getInstance().getCurrentSession();
-	//        Transaction transaction = session.beginTransaction();
-	//        session.saveOrUpdate(sos);
-	//        session.saveOrUpdate(sensor);
-	//        for (Offering offering : sensor.getOfferings()) {
-	//            for (ObservedProperty obsProp : offering.getObservedProperties()) {
-	//                session.saveOrUpdate(obsProp);
-	//                obsProp.setOffering(offering);
-	//            }
-	//            session.saveOrUpdate(offering);
-	//            offering.setSensor(sensor);
-	//        }
-	//        sensor.setSos(sos);
-	//        sos.getSensors().add(sensor);
-	//        transaction.commit();
-	//    }
-	
-	    /**
-	     * Saves a new sos in the database.
-	     * 
-	     * @param sosUrl
-	     *            the sos url
-	     */
-	//    public static synchronized void saveNewSOS(String sosUrl) {
-	//        if (sosExists(sosUrl)) {
-	//            Session session = InitSessionFactory.getInstance().getCurrentSession();
-	//            Transaction transaction = session.beginTransaction();
-	//            SOS sos = new SOS();
-	//            sos.setUrl(sosUrl);
-	//            session.saveOrUpdate(sos);
-	//            transaction.commit();
-	//        } else {
-	//            log.debug("SOS already exists in Database");
-	//        }
-	//    }
-	
-	    @SuppressWarnings("unchecked")
-	//    private static boolean sosExists(String sosUrl) {
-	//        boolean check = true;
-	//        Session session = InitSessionFactory.getInstance().getCurrentSession();
-	//        Transaction transaction = session.beginTransaction();
-	//        Criteria crit = session.createCriteria(SOS.class);
-	//        List<SOS> soses = crit.add(Restrictions.eq("url", sosUrl)).list();
-	//        if (soses.size() > 0) {
-	//            check = false;
-	//        }
-	//        transaction.commit();
-	//        return check;
-	//
-	//    }
-	
-	    /**
-	     * Load sensor from database and save with the new usage status.
-	     * <br>
-	     * If set to false, it resets the field the last updated value in database.
-	     * 
-	     * 
-	     * @param id
-	     *            the id
-	     * @param used
-	     *            the used
-	     */
-	//    public static synchronized void saveSensorUsage(String id, boolean used) {
-	//        Session session = InitSessionFactory.getInstance().getCurrentSession();
-	//        Transaction transaction = session.beginTransaction();
-	//        Criteria crit = session.createCriteria(SensorToFeed.class);
-	//        List<?> sensorList = crit.add(Restrictions.eq("procedure", id)).list();
-	//        for (Object object : sensorList) {
-	//            SensorToFeed sensor = (SensorToFeed) object;
-	//            sensor.setUsed(used);
-	//            // if sensor is not used anymore, reset the last update field!
-	//            if(!used) {
-	//            	sensor.setLastUpdate(null);
-	//            }
-	//            session.update(sensor);
-	//        }
-	//        transaction.commit();
-	//    }
-	
-	    /**
-	     * Load list of all SOSes.
-	     * 
-	     * @return the list
-	     */
-	//    public static synchronized List<SOS> loadSOS() {
-	//        List<SOS> SOSes = new ArrayList<SOS>();
-	//        Session session = InitSessionFactory.getInstance().getCurrentSession();
-	//        Transaction transaction = session.beginTransaction();
-	//        Query query = session.createQuery("from SOS sos");
-	//        for (Iterator<?> it = query.iterate(); it.hasNext();) {
-	//            SOS sos = (SOS) it.next();
-	//            log.info("Read SOS out of Database: " + sos.getUrl() + " with " + sos.getSensors().size() + " procedures");
-	//            SOSes.add(sos);
-	//            for (SensorToFeed sensor : sos.getSensors()) {
-	//                for (Offering offering : sensor.getOfferings()) {
-	//                    offering.getObservedProperties().size();
-	//                }
-	//            }
-	//        }
-	//        transaction.commit();
-	//        return SOSes;
-	//    }
-	
+	@SuppressWarnings("unchecked")
 	public static synchronized List<TimeseriesFeed> getUsedTimeseriesFeeds() {
 		Session session = getSessionFactory().getCurrentSession();
 		Transaction transaction = session.beginTransaction();
@@ -236,10 +52,10 @@ public class DatabaseAccess {
 		return timeseriesFeeds;
 	}
 
-	private static void changeCounter(FeedingMetadata feedingMetadata, int changeBy) {
+	private static void changeCounter(TimeseriesMetadata timeseriesMetadata, int changeBy) {
 		Session session = getSessionFactory().getCurrentSession();
 		Transaction transaction = session.beginTransaction();
-		List<TimeseriesFeed> timeseriesFeed = findTimeseriesFeedsWith(feedingMetadata, session);
+		List<TimeseriesFeed> timeseriesFeed = findTimeseriesFeedsWith(timeseriesMetadata, session);
 		for (TimeseriesFeed sensor : timeseriesFeed) {
 			sensor.setUsedCounter(sensor.getUsedCounter() + changeBy);
 			session.saveOrUpdate(sensor);
@@ -248,14 +64,14 @@ public class DatabaseAccess {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static List<TimeseriesFeed> findTimeseriesFeedsWith(FeedingMetadata feedingMetadata, Session session) {
+	private static List<TimeseriesFeed> findTimeseriesFeedsWith(TimeseriesMetadata timeseriesMetadata, Session session) {
 		Criteria criteria = session.createCriteria(TimeseriesFeed.class);
 		List<TimeseriesFeed> timeseriesFeeds = criteria
-                .add(Restrictions.eq("serviceUrl", feedingMetadata.getServiceUrl()))
-                .add(Restrictions.eq("phenomenon", feedingMetadata.getPhenomenon()))
-				.add(Restrictions.eq("procedure", feedingMetadata.getProcedure()))
-				.add(Restrictions.eq("offering", feedingMetadata.getOffering()))
-				.add(Restrictions.eq("featureOfInterest", feedingMetadata.getFeatureOfInterest()))
+                .add(Restrictions.eq("serviceUrl", timeseriesMetadata.getServiceUrl()))
+                .add(Restrictions.eq("phenomenon", timeseriesMetadata.getPhenomenon()))
+				.add(Restrictions.eq("procedure", timeseriesMetadata.getProcedure()))
+				.add(Restrictions.eq("offering", timeseriesMetadata.getOffering()))
+				.add(Restrictions.eq("featureOfInterest", timeseriesMetadata.getFeatureOfInterest()))
 				.list();
 		return timeseriesFeeds;
 	}

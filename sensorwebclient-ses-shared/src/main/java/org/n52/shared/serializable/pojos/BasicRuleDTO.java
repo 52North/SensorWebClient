@@ -71,7 +71,7 @@ public class BasicRuleDTO implements Serializable {
     /** The ownerName */
     private String ownerName;
     
-    private FeedingMetadata feedingMetadata;
+    private TimeseriesMetadata timeseriesMetadata;
 
     /**
      * Instantiates a new basic rule dto.
@@ -114,7 +114,7 @@ public class BasicRuleDTO implements Serializable {
      * @param format 
      */
     public BasicRuleDTO(int id, String name, String ruleType, String type, String description, boolean release,
-            int ownerID, String eml, boolean subscribed, String medium, String format, FeedingMetadata feedingMetadata) {
+            int ownerID, String eml, boolean subscribed, String medium, String format, TimeseriesMetadata timeseriesMetadata) {
         this.id = id;
         this.name = name;
         this.ruleType = ruleType;
@@ -126,7 +126,7 @@ public class BasicRuleDTO implements Serializable {
         this.subscribed = subscribed;
         this.medium = medium;
         this.format = format;
-        this.feedingMetadata = feedingMetadata;
+        this.timeseriesMetadata = timeseriesMetadata;
     }
 
     /**
@@ -330,12 +330,12 @@ public class BasicRuleDTO implements Serializable {
         this.ownerName = ownerName;
     }
 
-    public FeedingMetadata getFeedingMetadata() {
-        return feedingMetadata;
+    public TimeseriesMetadata getTimeseriesMetadata() {
+        return timeseriesMetadata;
     }
 
-    public void setFeedingMetadata(FeedingMetadata feedingMetadata) {
-        this.feedingMetadata = feedingMetadata;
+    public void setTimeseriesMetadata(TimeseriesMetadata timeseriesMetadata) {
+        this.timeseriesMetadata = timeseriesMetadata;
     }
 
 }

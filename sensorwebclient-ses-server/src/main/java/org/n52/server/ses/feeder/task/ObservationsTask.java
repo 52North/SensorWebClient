@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.n52.server.ses.feeder.util.DatabaseAccess;
-import org.n52.shared.serializable.pojos.FeedingMetadata;
+import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.TimeseriesFeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +28,10 @@ public class ObservationsTask extends TimerTask {
     
     private boolean active;
 
-    private Vector<String> currentlyFeededTimeseries;
+    private Vector<String> currentTimeseriesFeed;
 
     public ObservationsTask(Vector<String> currentlyFeededTimeseries) {
-        this.currentlyFeededTimeseries = currentlyFeededTimeseries;
+        this.currentTimeseriesFeed = currentlyFeededTimeseries;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class ObservationsTask extends TimerTask {
 //    	feeder.enableSensorForFeeding(feedingMetadata);
     	/////
     	
-        LOGGER.info("Currenty feeded sensors: " + currentlyFeededTimeseries.size());
+        LOGGER.info("Currenty feeded sensors: " + currentTimeseriesFeed.size());
         active = true;
         try {
             LOGGER.debug("############## Prepare Observations task ################");
@@ -56,9 +56,9 @@ public class ObservationsTask extends TimerTask {
             LOGGER.debug("Number of Feeds: " + timeseriesFeeds.size());
             for (TimeseriesFeed timeseriesFeed : timeseriesFeeds) {
                 if (shallFeed(timeseriesFeed)) {
-                    FeedingMetadata metadata = timeseriesFeed.getFeedingMetadata();
-                    if (!this.currentlyFeededTimeseries.contains(metadata)) {
-                        FeedObservationThread obsThread = new FeedObservationThread(timeseriesFeed, currentlyFeededTimeseries);
+                    TimeseriesMetadata metadata = timeseriesFeed.getTimeseriesMetadata();
+                    if (!this.currentTimeseriesFeed.contains(metadata)) {
+                        FeedObservationThread obsThread = new FeedObservationThread(timeseriesFeed, currentTimeseriesFeed);
                         if (!executor.isShutdown()) {
                             executor.execute(obsThread);
                         }

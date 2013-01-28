@@ -15,7 +15,7 @@ import org.n52.server.ses.feeder.connector.SOSConnector;
 import org.n52.server.ses.feeder.task.ObservationsTask;
 import org.n52.server.ses.feeder.util.DatabaseAccess;
 import org.n52.server.ses.hibernate.HibernateUtil;
-import org.n52.shared.serializable.pojos.FeedingMetadata;
+import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.TimeseriesFeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,7 +113,7 @@ public class SosSesFeeder {
         this.timer.cancel();
     }
     
-    public void enableSensorForFeeding(FeedingMetadata feedingMetadata) {
+    public void enableSensorForFeeding(TimeseriesMetadata feedingMetadata) {
     	// check if sensor already registered 
     	boolean sensorRegistered = DatabaseAccess.isKnownTimeseriesFeed(feedingMetadata);
     	if (!sensorRegistered) {
@@ -139,14 +139,14 @@ public class SosSesFeeder {
     	}
     }
     
-    public void disableSensorForFeeding(FeedingMetadata feedingMetadata) {
+    public void disableSensorForFeeding(TimeseriesMetadata timeseriesMetadata) {
     	// decrease counter for sensor
-    	DatabaseAccess.decreaseSensorUse(feedingMetadata);
+    	DatabaseAccess.decreaseSensorUse(timeseriesMetadata);
     }
 
-	private TimeseriesFeed createTimeseriesFeed(FeedingMetadata feedingMetadata, String sesID) {
+	private TimeseriesFeed createTimeseriesFeed(TimeseriesMetadata timeseriesMetadata, String sesID) {
 		TimeseriesFeed timeseriesFeed = new TimeseriesFeed();
-	    timeseriesFeed.setFeedingMetadata(feedingMetadata);
+	    timeseriesFeed.setTimeseriesMetadata(timeseriesMetadata);
 	    timeseriesFeed.setLastUpdate(null);
 	    timeseriesFeed.setSesId(sesID);
 	    timeseriesFeed.setUpdateInterval(FeederConfig.getInstance().getUpdateInterval());

@@ -23,6 +23,8 @@
  */
 package org.n52.server.ses.eml;
 
+import static org.n52.shared.util.MathSymbolUtil.getSymbolIndexForFilter;
+
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.net.URL;
@@ -38,10 +40,9 @@ import javax.xml.transform.stream.StreamResult;
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 import org.n52.server.ses.SesConfig;
 import org.n52.server.ses.hibernate.HibernateUtil;
-import org.n52.server.ses.util.RulesUtil;
 import org.n52.server.ses.util.SESUnitConverter;
 import org.n52.shared.serializable.pojos.BasicRule;
-import org.n52.shared.serializable.pojos.FeedingMetadata;
+import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.Rule;
 import org.n52.shared.serializable.pojos.User;
 import org.slf4j.Logger;
@@ -204,7 +205,7 @@ public class BasicRule_4_Builder {
             patternRef4.setTextContent(this.simple2);
 
             // property restrictions
-            FeedingMetadata metadata = rule.getFeedingMetadata();
+            TimeseriesMetadata metadata = rule.getTimeseriesMetadata();
             NodeList propertyRestrictionsList = doc.getElementsByTagName(this.propertyValue);
             Node n1 = propertyRestrictionsList.item(0);
             n1.setTextContent(metadata.getPhenomenon());
@@ -260,14 +261,15 @@ public class BasicRule_4_Builder {
 
                 // Unit Conversion
                 SESUnitConverter converter = new SESUnitConverter();
-                Object[] resultrUnit = converter.convert(rule.getEntryUnit(), Double.valueOf(rule.getEntryValue()));
-                Object[] resultcUnit = converter.convert(rule.getExitUnit(), Double.valueOf(rule.getExitValue()));
+//                Object[] resultrUnit = converter.convert(rule.getEntryUnit(), Double.valueOf(rule.getEntryValue()));
+//                Object[] resultcUnit = converter.convert(rule.getExitUnit(), Double.valueOf(rule.getExitValue()));
 
                 Node fesLiteralNode = doc.createElement(this.fesLiteral);
 
                 // add first filter to document
                 if (i == 0) {
-                    fesLiteralNode.setTextContent(resultrUnit[1].toString());
+//                    fesLiteralNode.setTextContent(resultrUnit[1].toString());
+                    fesLiteralNode.setTextContent(rule.getEntryUnit());
 
                     if (filterNode != null) {
                         n.appendChild(filterNode);
@@ -277,7 +279,8 @@ public class BasicRule_4_Builder {
 
                 // add second filter to document
                 } else if (i == 1) {
-                    fesLiteralNode.setTextContent(resultcUnit[1].toString());
+//                    fesLiteralNode.setTextContent(resultcUnit[1].toString());
+                    fesLiteralNode.setTextContent(rule.getExitUnit());
 
                     if (filterNode2 != null) {
                         n.appendChild(filterNode2);
@@ -320,7 +323,7 @@ public class BasicRule_4_Builder {
      */
     public Rule getRuleByEML(BasicRule basicRule) {
         Rule rule = new Rule();
-        rule.setFeedingMetadata(basicRule.getFeedingMetadata());
+        rule.setTimeseriesMetadata(basicRule.getTimeseriesMetadata());
 
         try {
             String eml = basicRule.getEml();
@@ -328,44 +331,18 @@ public class BasicRule_4_Builder {
             DocumentBuilder docBuilder = docFac.newDocumentBuilder();
             Document doc = docBuilder.parse(new ByteArrayInputStream(eml.getBytes()));
 
-            NodeList filterList = doc.getElementsByTagName(this.fesFilter);
-            Node filterNode = filterList.item(0);
-            String property = filterNode.getChildNodes().item(1).getNodeName();
+            NodeList filterList = doc.getElementsByTagName(fesFilter);
+            Node entryOperatorNode = filterList.item(0);
+            String entryFilter = entryOperatorNode.getChildNodes().item(1).getNodeName();
+            rule.setEntryOperatorIndex(getSymbolIndexForFilter(entryFilter));
+
+            Node exitOperatorNode = filterList.item(1);
+            String exitFilter = exitOperatorNode.getChildNodes().item(1).getNodeName();
+            rule.setExitOperatorIndex(getSymbolIndexForFilter(exitFilter));
             
-            // rOperatorIndex: first filter
-            if (property.equals("fes:PropertyIsLessThan")) {
-                rule.setEntryOperatorIndex(Rule.LESS_THAN);
-            } else if (property.equals("fes:PropertyIsGreaterThan")) {
-                rule.setEntryOperatorIndex(Rule.GREATER_THAN);
-            } else if (property.equals("fes:PropertyIsEqualTo")) {
-                rule.setEntryOperatorIndex(Rule.EQUAL_TO);
-            } else if (property.equals("fes:PropertyIsGreaterThanOrEqualTo")) {
-                rule.setEntryOperatorIndex(Rule.GREATER_THAN_OR_EQUAL_TO);
-            } else if (property.equals("fes:PropertyIsLessThanOrEqualTo")) {
-                rule.setEntryOperatorIndex(Rule.LESS_THAN_OR_EQUAL_TO);
-            } else if (property.equals("fes:PropertyIsNotEqualTo")) {
-                rule.setEntryOperatorIndex(Rule.NOT_EQUAL_TO);
-            }
+            rule.setEnterEqualsExitCondition(rule.determineEqualEntryExitCondition());
             
-            filterNode = filterList.item(1);
-            property = filterNode.getChildNodes().item(1).getNodeName();
-            
-            // cOperatorIndex: senond filter
-            if (property.equals("fes:PropertyIsLessThan")) {
-                rule.setExitOperatorIndex(Rule.LESS_THAN);
-            } else if (property.equals("fes:PropertyIsGreaterThan")) {
-                rule.setExitOperatorIndex(Rule.GREATER_THAN);
-            } else if (property.equals("fes:PropertyIsEqualTo")) {
-                rule.setExitOperatorIndex(Rule.EQUAL_TO);
-            } else if (property.equals("fes:PropertyIsGreaterThanOrEqualTo")) {
-                rule.setExitOperatorIndex(Rule.GREATER_THAN_OR_EQUAL_TO);
-            } else if (property.equals("fes:PropertyIsLessThanOrEqualTo")) {
-                rule.setExitOperatorIndex(Rule.LESS_THAN_OR_EQUAL_TO);
-            } else if (property.equals("fes:PropertyIsNotEqualTo")) {
-                rule.setExitOperatorIndex(Rule.NOT_EQUAL_TO);
-            }
-            
-            NodeList literalList = doc.getElementsByTagName(this.fesLiteral);
+            NodeList literalList = doc.getElementsByTagName(Constants.fesLiteral);
             Node literalNode = literalList.item(0);
             
             // rValue: Value
@@ -381,13 +358,6 @@ public class BasicRule_4_Builder {
             
             // cUnit: exit condition value unit. Default value is meter
             rule.setExitUnit("m");
-            
-            // exit condition != enter condition?
-            if (RulesUtil.reverseOperator(rule.getEntryOperatorIndex(), rule.getExitOperatorIndex()) && rule.getEntryValue().equals(rule.getExitValue())) {
-                rule.setEnterEqualsExitCondition(true);
-            } else {
-                rule.setEnterEqualsExitCondition(false);
-            }
             
             // set rule Type
             rule.setRuleType(SimpleRuleType.OVER_UNDERSHOOT);

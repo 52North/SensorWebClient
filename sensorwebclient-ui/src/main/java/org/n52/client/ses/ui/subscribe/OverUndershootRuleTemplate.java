@@ -3,12 +3,12 @@ package org.n52.client.ses.ui.subscribe;
 import static com.smartgwt.client.types.Alignment.CENTER;
 import static com.smartgwt.client.types.TitleOrientation.TOP;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
-import static org.n52.client.ses.util.RuleOperatorUtil.getInverseOperator;
-import static org.n52.client.ses.util.RuleOperatorUtil.getOperatorFrom;
-import static org.n52.client.ses.util.RuleOperatorUtil.getRuleOperators;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.OVER_UNDERSHOOT;
 import static org.n52.shared.serializable.pojos.Rule.GREATER_THAN;
 import static org.n52.shared.serializable.pojos.Rule.LESS_THAN_OR_EQUAL_TO;
+import static org.n52.shared.util.MathSymbolUtil.getInverse;
+import static org.n52.shared.util.MathSymbolUtil.getSymbolForIndex;
+import static org.n52.shared.util.MathSymbolUtil.getMathSymbols;
 
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 
@@ -84,7 +84,7 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
                 SelectItem selectItem = (SelectItem) event.getSource();
                 String operator = selectItem.getValueAsString();
                 controller.getOverUndershootEntryConditions().setOperator(operator);
-                exitOperatorItem.setValue(getInverseOperator(operator));
+                exitOperatorItem.setValue(getInverse(operator));
             }
         };
     }
@@ -164,9 +164,9 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
         operatorItem.setTitleOrientation(TOP);
         operatorItem.setTextAlign(CENTER);
         
-        operatorItem.setValueMap(getRuleOperators());
-        String operator = getOperatorFrom(operatorIndex);
-        if (getRuleOperators().containsKey(operator)) {
+        operatorItem.setValueMap(getMathSymbols());
+        String operator = getSymbolForIndex(operatorIndex);
+        if (getMathSymbols().containsKey(operator)) {
             operatorItem.setDefaultValue(operator);
             data.setOperator(operator);
         }

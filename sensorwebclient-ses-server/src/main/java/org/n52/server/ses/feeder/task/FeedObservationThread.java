@@ -28,7 +28,7 @@ import org.n52.server.ses.feeder.FeederConfig;
 import org.n52.server.ses.feeder.connector.SESConnector;
 import org.n52.server.ses.feeder.connector.SOSConnector;
 import org.n52.server.ses.feeder.util.DatabaseAccess;
-import org.n52.shared.serializable.pojos.FeedingMetadata;
+import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.TimeseriesFeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +74,7 @@ public class FeedObservationThread extends Thread {
     public void run() {
 
         if (isRunning()) {
-            FeedingMetadata metadata = timeseriesFeed.getFeedingMetadata();
+            TimeseriesMetadata metadata = timeseriesFeed.getTimeseriesMetadata();
             try {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Start Observation thread for Sensor: " + metadata.getProcedure());

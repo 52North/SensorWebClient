@@ -35,7 +35,7 @@ import org.n52.server.ses.mail.MailSender;
 import org.n52.server.ses.util.SesParser;
 import org.n52.server.ses.util.SesServerUtil;
 import org.n52.shared.responses.SesClientResponse;
-import org.n52.shared.serializable.pojos.FeedingMetadata;
+import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.TimeseriesFeed;
 import org.n52.shared.serializable.pojos.User;
 import org.slf4j.Logger;
@@ -99,13 +99,13 @@ public class SesTimeseriesFeedServiceImpl implements SesTimeseriesFeedService {
     public SesClientResponse getStations() throws Exception {
         try {
             LOGGER.debug("getStations");
-            ArrayList<FeedingMetadata> finalList = new ArrayList<FeedingMetadata>();
-            HashSet<FeedingMetadata> uniqueFeedingMetadataList = new HashSet<FeedingMetadata>();
+            ArrayList<TimeseriesMetadata> finalList = new ArrayList<TimeseriesMetadata>();
+            HashSet<TimeseriesMetadata> uniqueFeedingMetadataList = new HashSet<TimeseriesMetadata>();
             
             // DB request
             List<TimeseriesFeed> timeseriesFeeds = HibernateUtil.getActiveTimeseriesFeeds();
             for (TimeseriesFeed timeseriesFeed : timeseriesFeeds) {
-                uniqueFeedingMetadataList.add(timeseriesFeed.getFeedingMetadata());
+                uniqueFeedingMetadataList.add(timeseriesFeed.getTimeseriesMetadata());
             }
             
             finalList.addAll(uniqueFeedingMetadataList);
@@ -122,20 +122,17 @@ public class SesTimeseriesFeedServiceImpl implements SesTimeseriesFeedService {
     }
 
     @Override
-    public SesClientResponse getPhenomena(String station) throws Exception {
+    public SesClientResponse getPhenomena(String procedure) throws Exception {
         try {
-            LOGGER.debug("getPhenomena for station: " + station);
+            LOGGER.warn("################# procedure id has become timeseries id!"); // XXX 
+            LOGGER.debug("getPhenomena for procedure: " + procedure);
             ArrayList<String> finalList = new ArrayList<String>();
             ArrayList<String> unit = new ArrayList<String>();
             
 
-            // TODO use unique timeseries-ID for SES
-            TimeseriesFeed timeseriesFeed = HibernateUtil.getTimeseriesFeedsById(station);
+            TimeseriesFeed timeseriesFeed = HibernateUtil.getTimeseriesFeedsById(procedure);
             if (timeseriesFeed != null) {
-                FeedingMetadata metadata = timeseriesFeed.getFeedingMetadata();
-
-                // TODO use unique timeseries-ID for SES
-                String mappedFeedingId = metadata.getProcedure();
+                String mappedFeedingId = timeseriesFeed.getMappedSesId();
                 
                 ArrayList<String> phenomena = getParser().getPhenomena(mappedFeedingId);
                 

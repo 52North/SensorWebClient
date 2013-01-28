@@ -53,7 +53,7 @@ import org.n52.shared.serializable.pojos.BasicRuleDTO;
 import org.n52.shared.serializable.pojos.ComplexRule;
 import org.n52.shared.serializable.pojos.ComplexRuleDTO;
 import org.n52.shared.serializable.pojos.ComplexRuleData;
-import org.n52.shared.serializable.pojos.FeedingMetadata;
+import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.Rule;
 import org.n52.shared.serializable.pojos.Subscription;
 import org.n52.shared.serializable.pojos.TimeseriesFeed;
@@ -140,7 +140,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                                 // other rule types
                             } else {
                                 if (formats[i].equals("Text")) {
-                                    FeedingMetadata metadata = basicRule.getFeedingMetadata();
+                                    TimeseriesMetadata metadata = basicRule.getTimeseriesMetadata();
                                     meta = Meta_Builder.createTextFailureMeta(user, basicRule, media[k], metadata.getProcedure()); 
                                 } else {
                                     meta = Meta_Builder.createXMLMeta(user, basicRule.getName(), media[k], formats[i]);
@@ -311,12 +311,12 @@ public class SesRulesServiceImpl implements SesRuleService {
                 return new SesClientResponse(RULE_NAME_EXISTS);
             } 
 
-            FeedingMetadata metadata = rule.getFeedingMetadata();
+            TimeseriesMetadata metadata = rule.getTimeseriesMetadata();
             List<TimeseriesFeed> timeseriesFeeds = HibernateUtil.getActiveTimeseriesFeeds();
             for (TimeseriesFeed timeseriesFeed : timeseriesFeeds) {
                 if (timeseriesFeeds.contains(metadata)) {
-                    FeedingMetadata feedingMetadata = timeseriesFeed.getFeedingMetadata();
-                    metadata.setProcedure(feedingMetadata.getProcedure());
+                    TimeseriesMetadata timeseriesMetadata = timeseriesFeed.getTimeseriesMetadata();
+                    metadata.setProcedure(timeseriesMetadata.getProcedure());
                 }
             }
 
@@ -341,7 +341,7 @@ public class SesRulesServiceImpl implements SesRuleService {
             }
 
             if (basicRule != null) {
-                basicRule.setFeedingMetadata(rule.getFeedingMetadata());
+                basicRule.setTimeseriesMetadata(rule.getTimeseriesMetadata());
                 
                 LOG.debug(basicRule.getEml());
                 

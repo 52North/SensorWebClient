@@ -37,7 +37,7 @@ import org.n52.server.ses.feeder.FeederConfig;
 import org.n52.server.ses.feeder.util.IOHelper;
 import org.n52.server.util.SosAdapterFactory;
 import org.n52.server.util.TimeUtil;
-import org.n52.shared.serializable.pojos.FeedingMetadata;
+import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.TimeseriesFeed;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
@@ -158,7 +158,7 @@ public class SOSConnector {
         
     	ObservationAccessor obsAccessor = new ObservationAccessor();
     	List<String> fois = new ArrayList<String>();
-    	FeedingMetadata metadata = timeseriesFeed.getFeedingMetadata();
+    	TimeseriesMetadata metadata = timeseriesFeed.getTimeseriesMetadata();
     	fois.add(metadata.getFeatureOfInterest());
     	List<String> phenoms = new ArrayList<String>();
     	phenoms.add(metadata.getPhenomenon());

@@ -51,7 +51,7 @@ public class BasicRule implements Serializable {
     
     private String format;
     
-    private FeedingMetadata feedingMetadata;
+    private TimeseriesMetadata timeseriesMetadata;
     
     public BasicRule(BasicRuleDTO basicRuleDTO) {
         this.basicRuleID = basicRuleDTO.getId();
@@ -67,7 +67,7 @@ public class BasicRule implements Serializable {
         this.format = basicRuleDTO.getFormat();
         
         // XXX check for inconsistence regarding to missing FOI+offering+serviceUrl
-        this.feedingMetadata = basicRuleDTO.getFeedingMetadata();
+        this.timeseriesMetadata = basicRuleDTO.getTimeseriesMetadata();
         
     }
 
@@ -175,12 +175,12 @@ public class BasicRule implements Serializable {
         this.format = format;
     }
 
-    public FeedingMetadata getFeedingMetadata() {
-        return feedingMetadata;
+    public TimeseriesMetadata getTimeseriesMetadata() {
+        return timeseriesMetadata;
     }
 
-    public void setFeedingMetadata(FeedingMetadata feedingMetadata) {
-        this.feedingMetadata = feedingMetadata;
+    public void setTimeseriesMetadata(TimeseriesMetadata timeseriesMetadata) {
+        this.timeseriesMetadata = timeseriesMetadata;
     }
 
 }

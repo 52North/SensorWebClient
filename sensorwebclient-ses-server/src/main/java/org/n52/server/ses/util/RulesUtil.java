@@ -23,45 +23,51 @@
  */
 package org.n52.server.ses.util;
 
+import static org.n52.shared.serializable.pojos.Rule.EQUAL_TO;
+import static org.n52.shared.serializable.pojos.Rule.GREATER_THAN;
+import static org.n52.shared.serializable.pojos.Rule.GREATER_THAN_OR_EQUAL_TO;
+import static org.n52.shared.serializable.pojos.Rule.LESS_THAN;
+import static org.n52.shared.serializable.pojos.Rule.LESS_THAN_OR_EQUAL_TO;
+import static org.n52.shared.serializable.pojos.Rule.NOT_EQUAL_TO;
+
 import org.n52.shared.serializable.pojos.BasicRule;
 import org.n52.shared.serializable.pojos.ComplexRule;
-import org.n52.shared.serializable.pojos.Rule;
 
 public class RulesUtil {
 
     /**
      * 
-     * @param op1
-     * @param op2
+     * @param anOperator
+     * @param anotherOperator
      * @return true if op2 is the reverse operator of op1
      */
-    public static boolean reverseOperator(int op1, int op2){
+    public static boolean isReverseOperators(int anOperator, int anotherOperator){
         
         boolean result = false;
         
-        switch(op1){
-        case Rule.EQUAL_TO:
-            if (op2 == Rule.NOT_EQUAL_TO) result = true; 
+        switch(anOperator){
+        case EQUAL_TO:
+            if (anotherOperator == NOT_EQUAL_TO) result = true; 
             break;
             
-        case Rule.NOT_EQUAL_TO:
-            if (op2 == Rule.EQUAL_TO) result = true;
+        case NOT_EQUAL_TO:
+            if (anotherOperator == EQUAL_TO) result = true;
             break;
             
-        case Rule.GREATER_THAN:
-            if (op2 == Rule.LESS_THAN_OR_EQUAL_TO) result = true;
+        case GREATER_THAN:
+            if (anotherOperator == LESS_THAN_OR_EQUAL_TO) result = true;
             break;
             
-        case Rule.LESS_THAN:
-            if (op2 == Rule.GREATER_THAN_OR_EQUAL_TO) result = true;
+        case LESS_THAN:
+            if (anotherOperator == GREATER_THAN_OR_EQUAL_TO) result = true;
             break;
             
-        case Rule.GREATER_THAN_OR_EQUAL_TO:
-            if (op2 == Rule.LESS_THAN) result = true;
+        case GREATER_THAN_OR_EQUAL_TO:
+            if (anotherOperator == LESS_THAN) result = true;
             break;
             
-        case Rule.LESS_THAN_OR_EQUAL_TO:
-            if (op2 == Rule.GREATER_THAN) result = true;
+        case LESS_THAN_OR_EQUAL_TO:
+            if (anotherOperator == GREATER_THAN) result = true;
             break;
         }
         

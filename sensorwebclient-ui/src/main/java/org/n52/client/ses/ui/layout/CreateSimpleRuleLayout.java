@@ -30,16 +30,16 @@ import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ROLE;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.Layout.Layouts.EDIT_RULES;
 import static org.n52.client.ses.ui.Layout.Layouts.RULELIST;
-import static org.n52.client.ses.util.RuleOperatorUtil.getIndexOfInverseOperator;
-import static org.n52.client.ses.util.RuleOperatorUtil.getInverseOperator;
-import static org.n52.client.ses.util.RuleOperatorUtil.getOperatorFrom;
-import static org.n52.client.ses.util.RuleOperatorUtil.getOperatorIndex;
-import static org.n52.client.ses.util.RuleOperatorUtil.getRuleOperators;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.OVER_UNDERSHOOT;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.SENSOR_LOSS;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.SUM_OVER_TIME;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.TENDENCY_OVER_COUNT;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.TENDENCY_OVER_TIME;
+import static org.n52.shared.util.MathSymbolUtil.getInverse;
+import static org.n52.shared.util.MathSymbolUtil.getInverse;
+import static org.n52.shared.util.MathSymbolUtil.getSymbolForIndex;
+import static org.n52.shared.util.MathSymbolUtil.getIndexFor;
+import static org.n52.shared.util.MathSymbolUtil.getMathSymbols;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -51,7 +51,7 @@ import org.n52.client.ses.event.CreateSimpleRuleEvent;
 import org.n52.client.ses.event.GetPhenomenaEvent;
 import org.n52.client.ses.ui.Layout;
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
-import org.n52.shared.serializable.pojos.FeedingMetadata;
+import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.Rule;
 import org.n52.shared.serializable.pojos.RuleBuilder;
 
@@ -511,7 +511,7 @@ public class CreateSimpleRuleLayout extends Layout {
      * Sum over Time
      */
     private void createSummeZeitRule() {
-        int entryOperatorIndex = getOperatorIndex(this.entryOperatorItem.getValueAsString());
+        int entryOperatorIndex = getIndexFor(this.entryOperatorItem.getValueAsString());
         
         int exitOperatorIndex = 0;
         
@@ -524,13 +524,13 @@ public class CreateSimpleRuleLayout extends Layout {
         
         if (this.enterConditionIsSameExitConditionRadioGroup.getValue().toString().equals(i18n.no())) {
             // enter condition != exit condition
-            exitOperatorIndex = getOperatorIndex(this.exitOperatorItem.getValueAsString());
+            exitOperatorIndex = getIndexFor(this.exitOperatorItem.getValueAsString());
             exitValue = this.entryValueConditionItem.getValueAsString();
             exitUnit = this.entryValueUnitConditionItem.getValueAsString();
             this.enterConditionIsSameAsExitCondition = false;
 
         } else {
-            exitOperatorIndex = getIndexOfInverseOperator(entryOperatorIndex);
+            exitOperatorIndex = getInverse(entryOperatorIndex);
             exitValue = entryValue;
             exitUnit = entryUnit;
             this.enterConditionIsSameAsExitCondition = true;
@@ -562,7 +562,7 @@ public class CreateSimpleRuleLayout extends Layout {
      * Trend over Time
      */
     private void createTendenzZeitRule() {
-        int entryOperatorIndex = getOperatorIndex(this.entryOperatorItem.getValueAsString());
+        int entryOperatorIndex = getIndexFor(this.entryOperatorItem.getValueAsString());
         
         int exitOperatorIndex = 0;
 
@@ -578,7 +578,7 @@ public class CreateSimpleRuleLayout extends Layout {
 
         if (this.enterConditionIsSameExitConditionRadioGroup.getValue().toString().equals(i18n.no())) {
             // enter condition != exit condition
-            exitOperatorIndex = getOperatorIndex(this.exitOperatorItem.getValueAsString());
+            exitOperatorIndex = getIndexFor(this.exitOperatorItem.getValueAsString());
             
             exitValue = this.entryValueConditionItem.getValueAsString();
             exitUnit = this.entryValueUnitConditionItem.getValueAsString();
@@ -587,7 +587,7 @@ public class CreateSimpleRuleLayout extends Layout {
             exitTimeUnit = this.exitTimeUnitItem.getValueAsString();
 
         } else {
-            exitOperatorIndex = getIndexOfInverseOperator(entryOperatorIndex);
+            exitOperatorIndex = getInverse(entryOperatorIndex);
             exitValue = entryValue;
             exitUnit = entryUnit;
             this.enterConditionIsSameAsExitCondition = true;
@@ -620,7 +620,7 @@ public class CreateSimpleRuleLayout extends Layout {
      * Trend over Count
      */
     private void createTendenzAnzahlRule() {
-        int rOperatorIndex = getOperatorIndex(this.entryOperatorItem.getValueAsString());
+        int rOperatorIndex = getIndexFor(this.entryOperatorItem.getValueAsString());
         
         int operatorIndexCond = 0;
 
@@ -634,7 +634,7 @@ public class CreateSimpleRuleLayout extends Layout {
 
         if (this.enterConditionIsSameExitConditionRadioGroup.getValue().toString().equals(i18n.no())) {
             // enter condition != exit condition
-            operatorIndexCond = getOperatorIndex(this.exitOperatorItem.getValueAsString());
+            operatorIndexCond = getIndexFor(this.exitOperatorItem.getValueAsString());
             
             cValue = this.entryValueConditionItem.getValueAsString();
             cUnit = this.entryValueUnitConditionItem.getValueAsString();
@@ -642,7 +642,7 @@ public class CreateSimpleRuleLayout extends Layout {
             countCondValue = this.countConditionItem.getValueAsString();
 
         } else {
-            operatorIndexCond = getIndexOfInverseOperator(rOperatorIndex);
+            operatorIndexCond = getInverse(rOperatorIndex);
             cValue = rValue;
             cUnit = rUnit;
             this.enterConditionIsSameAsExitCondition = true;
@@ -679,7 +679,7 @@ public class CreateSimpleRuleLayout extends Layout {
      */
     private void createOverUnderShootRule() {
 
-        int entryOperatorIndex = getOperatorIndex(entryOperatorItem.getValueAsString());
+        int entryOperatorIndex = getIndexFor(entryOperatorItem.getValueAsString());
         int exitOperatorIndex = 0;
         
         String entryValue = entryValueItem.getValueAsString();
@@ -690,13 +690,13 @@ public class CreateSimpleRuleLayout extends Layout {
 
         if (enterConditionIsSameExitConditionRadioGroup.getValue().toString().equals(i18n.no())) {
             // enter condition != exit condition
-            exitOperatorIndex = getOperatorIndex(this.exitOperatorItem.getValueAsString());
+            exitOperatorIndex = getIndexFor(this.exitOperatorItem.getValueAsString());
             
             exitValue = entryValueConditionItem.getValueAsString();
             exitUnit = entryValueUnitConditionItem.getValueAsString();
             enterConditionIsSameAsExitCondition = false;
         } else {
-            exitOperatorIndex = getIndexOfInverseOperator(entryOperatorIndex);
+            exitOperatorIndex = getInverse(entryOperatorIndex);
             exitValue = entryValue;
             exitUnit = entryUnit;
             enterConditionIsSameAsExitCondition = true;
@@ -918,10 +918,10 @@ public class CreateSimpleRuleLayout extends Layout {
             this.ruleTypeItem.setValueMap(this.ruleTypesHashMap);
         }
         if (this.entryOperatorItem != null) {
-            this.entryOperatorItem.setValueMap(getRuleOperators());
+            this.entryOperatorItem.setValueMap(getMathSymbols());
         }
         if (this.exitOperatorItem != null) {
-            this.exitOperatorItem.setValueMap(getRuleOperators());
+            this.exitOperatorItem.setValueMap(getMathSymbols());
         }
         
         this.phenomenonItem.setDisabled(true);
@@ -1009,7 +1009,7 @@ public class CreateSimpleRuleLayout extends Layout {
         
         nameItem.setValue(rule.getTitle());
         descriptionItem.setValue(rule.getDescription());
-        FeedingMetadata metadata = rule.getFeedingMetadata();
+        TimeseriesMetadata metadata = rule.getTimeseriesMetadata();
         phenomenon = metadata.getPhenomenon();
         procedure = metadata.getProcedure();
         procedureItem.setValue(procedure);
@@ -1039,8 +1039,8 @@ public class CreateSimpleRuleLayout extends Layout {
             ruleTypeItem.setValue(i18n.sensorFailure());
         }
 
-        String entryOperator = getOperatorFrom(rule.getEntryOperatorIndex());
-        String exitOperator = getOperatorFrom(rule.getExitOperatorIndex());
+        String entryOperator = getSymbolForIndex(rule.getEntryOperatorIndex());
+        String exitOperator = getSymbolForIndex(rule.getExitOperatorIndex());
         
         // set condition radio group
         if (rule.isEnterEqualsExitCondition()) {
@@ -1271,13 +1271,13 @@ public class CreateSimpleRuleLayout extends Layout {
         this.entryOperatorItem.setWidth(this.entryItemWidth);
         this.entryOperatorItem.setTitle(i18n.operator());
         this.entryOperatorItem.setTitleOrientation(TitleOrientation.TOP);
-        this.entryOperatorItem.setValueMap(getRuleOperators());
+        this.entryOperatorItem.setValueMap(getMathSymbols());
         this.entryOperatorItem.setDefaultValue(">");
         this.entryOperatorItem.setTextAlign(Alignment.CENTER);
         this.entryOperatorItem.addChangedHandler(new ChangedHandler() {
             public void onChanged(ChangedEvent event) {
                 if (exitOperatorItem != null) {
-                    exitOperatorItem.setValue(getInverseOperator((String)event.getValue()));
+                    exitOperatorItem.setValue(getInverse((String)event.getValue()));
                 }
             }
         });
@@ -1288,7 +1288,7 @@ public class CreateSimpleRuleLayout extends Layout {
         this.exitOperatorItem.setWidth(this.entryItemWidth);
         this.exitOperatorItem.setTitle(i18n.operator());
         this.exitOperatorItem.setTitleOrientation(TitleOrientation.TOP);
-        this.exitOperatorItem.setValueMap(getRuleOperators());
+        this.exitOperatorItem.setValueMap(getMathSymbols());
         this.exitOperatorItem.setTextAlign(Alignment.CENTER);
         
         String defaultValue = "";

@@ -2,20 +2,22 @@ package org.n52.shared.serializable.pojos;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.UUID;
 
 public class TimeseriesFeed implements Serializable {
 
     private static final long serialVersionUID = 8770405020547586667L;
 
+    private String mappedSesId = UUID.randomUUID().toString();
+
     private Integer id;
 
     private String sesId;
 
-    private FeedingMetadata feedingMetadata;
+    private TimeseriesMetadata timeseriesMetadata;
 
     private Calendar lastUpdate;
 
-    @Deprecated
     private long usedCounter;
 
     private long updateInterval;
@@ -28,12 +30,20 @@ public class TimeseriesFeed implements Serializable {
         // for serialization
     }
 
-	public FeedingMetadata getFeedingMetadata() {
-        return feedingMetadata;
+	public TimeseriesMetadata getTimeseriesMetadata() {
+        return timeseriesMetadata;
     }
 
-    public void setFeedingMetadata(FeedingMetadata feedingMetadata) {
-        this.feedingMetadata = feedingMetadata;
+    public void setTimeseriesMetadata(TimeseriesMetadata timeseriesMetadata) {
+        this.timeseriesMetadata = timeseriesMetadata;
+    }
+
+    public String getMappedSesId() {
+        return mappedSesId;
+    }
+
+    void setMappedSesId(String mappedSesId) {
+        this.mappedSesId = mappedSesId;
     }
 
     public Integer getId() {
@@ -52,16 +62,10 @@ public class TimeseriesFeed implements Serializable {
         this.sesId = sesId;
     }
 
-    /**
-     * @deprecated sharing is deprecatedreturn
-     */
     public long getUsedCounter() {
 		return usedCounter;
 	}
 
-    /**
-     * @deprecated sharing is deprecatedreturn
-     */
 	public void setUsedCounter(long usedCounter) {
 		this.usedCounter = usedCounter;
 	}

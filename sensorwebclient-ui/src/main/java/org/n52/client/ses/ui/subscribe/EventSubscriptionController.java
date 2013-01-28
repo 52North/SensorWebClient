@@ -25,13 +25,13 @@
 package org.n52.client.ses.ui.subscribe;
 
 import static java.lang.Integer.parseInt;
-import static org.n52.client.ses.util.RuleOperatorUtil.getOperatorIndex;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.OVER_UNDERSHOOT;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.SENSOR_LOSS;
+import static org.n52.shared.util.MathSymbolUtil.getIndexFor;
 
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
-import org.n52.shared.serializable.pojos.FeedingMetadata;
+import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.Rule;
 import org.n52.shared.serializable.pojos.RuleBuilder;
 
@@ -180,12 +180,12 @@ class EventSubscriptionController {
                 .setRuleType(OVER_UNDERSHOOT)
                 .setCookie(parseInt(userCookie))
                 .setDescription("Auto-Generated Rule from Template.")
-                .setFeedingMetadata(createFeedingMetadataFrom())
-                .setEntryOperatorIndex(getOperatorIndex(entryConditions.getOperator()))
+                .setTimeseriesMetadata(createTimeseriesMetadataFrom())
+                .setEntryOperatorIndex(getIndexFor(entryConditions.getOperator()))
                 .setEntryValue(entryConditions.getValue())
                 .setEntryUnit(entryConditions.getUnit())
                 .setEnterIsSameAsExitCondition(false)
-                .setExitOperatorIndex(getOperatorIndex(exitConditions.getOperator()))
+                .setExitOperatorIndex(getIndexFor(exitConditions.getOperator()))
                 .setExitValue(exitConditions.getValue())
                 .setExitUnit(exitConditions.getUnit())
                 .setPublish(false)
@@ -201,16 +201,16 @@ class EventSubscriptionController {
                 .setRuleType(OVER_UNDERSHOOT)
                 .setCookie(parseInt(userCookie))
                 .setDescription("Auto-Generated Rule from Template.")
-                .setFeedingMetadata(createFeedingMetadataFrom())
+                .setTimeseriesMetadata(createTimeseriesMetadataFrom())
                 .setEntryTime(condition.getValue())
                 .setEntryTimeUnit(condition.getUnit())
                 .setPublish(false)
                 .build();
     }
     
-    private FeedingMetadata createFeedingMetadataFrom() {
+    private TimeseriesMetadata createTimeseriesMetadataFrom() {
         final TimeSeries timeseries = this.timeseries;
-        FeedingMetadata metadata = new FeedingMetadata();
+        TimeseriesMetadata metadata = new TimeseriesMetadata();
         metadata.setServiceUrl(timeseries.getSosUrl());
         metadata.setOffering(timeseries.getOfferingId());
         metadata.setProcedure(timeseries.getFeatureId());

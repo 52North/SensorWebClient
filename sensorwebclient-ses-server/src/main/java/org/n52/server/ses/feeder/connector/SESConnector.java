@@ -51,18 +51,13 @@ import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
 
 /**
  * The SESConnector class manages the communication between the feeder and the SES.
- * 
- * @author Jan Schulte
  */
 public class SESConnector {
 
-    /** The logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(SESConnector.class);
 
-    /** The ses adapter. */
     private SESAdapter sesAdapter;
 
-    /** The ses url. */
     private String sesUrl;
 
     private String topic;
@@ -71,9 +66,6 @@ public class SESConnector {
     
     private boolean closed = false;
 
-    /**
-     * Instantiates a new SESConnector.
-     */
     public SESConnector() {
         this.sesAdapter = new SESAdapter();
         try {
@@ -87,8 +79,6 @@ public class SESConnector {
     }
 
     /**
-     * Initialize the connection to the SES.
-     * 
      * @return true - if service is running
      */
     public boolean initService() {
@@ -356,10 +346,7 @@ public class SESConnector {
     }
 
     private String createSingleObservationString(String observation, String individualValuesString) {
-        
-
-        // This string will contain the next extracted single
-        // observation
+        // This string will contain the next extracted single observation
         String singleObservationString = observation;
 
 //        // Replace the id of the observation collection
@@ -395,16 +382,10 @@ public class SESConnector {
         return singleObservationString;
     }
 
-    /**
-     * @return the closed
-     */
     public boolean isClosed() {
         return closed;
     }
 
-    /**
-     * @param closed the closed to set
-     */
     public void setClosed(boolean closed) {
         this.closed = closed;
     }

@@ -27,6 +27,6 @@
 		<mapping resource="org/n52/ses/server/hbm/client/BasicRule.hbm.xml" />
 		<mapping resource="org/n52/ses/server/hbm/client/ListOfUses.hbm.xml" />
 		<mapping resource="org/n52/ses/server/hbm/client/TimeseriesFeed.hbm.xml" />
-        <mapping resource="org/n52/ses/server/hbm/client/FeedingMetadata.hbm.xml" />
+        <mapping resource="org/n52/ses/server/hbm/client/TimeseriesMetadata.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>

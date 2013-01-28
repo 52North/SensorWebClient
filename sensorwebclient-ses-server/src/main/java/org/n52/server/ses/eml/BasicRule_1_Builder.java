@@ -24,6 +24,8 @@
 package org.n52.server.ses.eml;
 
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.TENDENCY_OVER_COUNT;
+import static org.n52.shared.util.MathSymbolUtil.getFesFilterFor;
+import static org.n52.shared.util.MathSymbolUtil.getSymbolIndexForFilter;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
@@ -38,10 +40,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 import org.n52.server.ses.SesConfig;
 import org.n52.server.ses.hibernate.HibernateUtil;
-import org.n52.server.ses.util.RulesUtil;
 import org.n52.server.ses.util.SESUnitConverter;
 import org.n52.shared.serializable.pojos.BasicRule;
 import org.n52.shared.serializable.pojos.Rule;
@@ -53,10 +53,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-/**
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- * 
- */
 public class BasicRule_1_Builder {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(BasicRule_1_Builder.class);
@@ -154,9 +150,9 @@ public class BasicRule_1_Builder {
             // set propertyRestrictions
             NodeList propertyRestrictiosnList = fstElement.getElementsByTagName(Constants.propertyValue);
             Node value_1 = propertyRestrictiosnList.item(0);
-            value_1.setTextContent(rule.getFeedingMetadata().getPhenomenon());
+            value_1.setTextContent(rule.getTimeseriesMetadata().getPhenomenon());
             Node value_2 = propertyRestrictiosnList.item(1);
-            value_2.setTextContent(rule.getFeedingMetadata().getProcedure());
+            value_2.setTextContent(rule.getTimeseriesMetadata().getProcedure());
 
             // set EventCount. This count represents the last measurements
             NodeList eventCountList = fstElement.getElementsByTagName(Constants.eventCount);
@@ -226,67 +222,40 @@ public class BasicRule_1_Builder {
 
                 Node n = filterList.item(j);
 
-                Node filterNode = null;
-                Node filterNode2 = null;
 
-                // first filter
-                if (rule.getEntryOperatorIndex() == Rule.LESS_THAN) {
-                    filterNode = doc.createElement("fes:PropertyIsLessThan");
-                } else if (rule.getEntryOperatorIndex() == Rule.GREATER_THAN) {
-                    filterNode = doc.createElement("fes:PropertyIsGreaterThan");
-                } else if (rule.getEntryOperatorIndex() == Rule.EQUAL_TO) {
-                    filterNode = doc.createElement("fes:PropertyIsEqualTo");
-                } else if (rule.getEntryOperatorIndex() == Rule.GREATER_THAN_OR_EQUAL_TO) {
-                    filterNode = doc.createElement("fes:PropertyIsGreaterThanOrEqualTo");
-                } else if (rule.getEntryOperatorIndex() == Rule.LESS_THAN_OR_EQUAL_TO) {
-                    filterNode = doc.createElement("fes:PropertyIsLessThanOrEqualTo");
-                } else if (rule.getEntryOperatorIndex() == Rule.NOT_EQUAL_TO) {
-                    filterNode = doc.createElement("fes:PropertyIsNotEqualTo");
-                }
-
-                // second filter
-                if (rule.getExitOperatorIndex() == Rule.LESS_THAN) {
-                    filterNode2 = doc.createElement("fes:PropertyIsLessThan");
-                } else if (rule.getExitOperatorIndex() == Rule.GREATER_THAN) {
-                    filterNode2 = doc.createElement("fes:PropertyIsGreaterThan");
-                } else if (rule.getExitOperatorIndex() == Rule.EQUAL_TO) {
-                    filterNode2 = doc.createElement("fes:PropertyIsEqualTo");
-                } else if (rule.getExitOperatorIndex() == Rule.GREATER_THAN_OR_EQUAL_TO) {
-                    filterNode2 = doc.createElement("fes:PropertyIsGreaterThanOrEqualTo");
-                } else if (rule.getExitOperatorIndex() == Rule.LESS_THAN_OR_EQUAL_TO) {
-                    filterNode2 = doc.createElement("fes:PropertyIsLessThanOrEqualTo");
-                } else if (rule.getExitOperatorIndex() == Rule.NOT_EQUAL_TO) {
-                    filterNode2 = doc.createElement("fes:PropertyIsNotEqualTo");
-                }
+                Node entryFilter = doc.createElement(getFesFilterFor(rule.getEntryOperatorIndex()));
+                Node exitFilter = doc.createElement(getFesFilterFor(rule.getExitOperatorIndex()));
 
                 Node valueReferenceNode = doc.createElement(Constants.valueReference);
                 valueReferenceNode.setTextContent(complexNewEventName.get(0) + "/doubleValue");
 
                 // Unit Conversion
                 SESUnitConverter converter = new SESUnitConverter();
-                Object[] resultrUnit = converter.convert(rule.getEntryUnit(), Double.valueOf(rule.getEntryValue()));
-                Object[] resultcUnit = converter.convert(rule.getExitUnit(), Double.valueOf(rule.getExitValue()));
+//                Object[] resultrUnit = converter.convert(rule.getEntryUnit(), Double.valueOf(rule.getEntryValue()));
+//                Object[] resultcUnit = converter.convert(rule.getExitUnit(), Double.valueOf(rule.getExitValue()));
 
                 Node fesLiteralNode = doc.createElement(Constants.fesLiteral);
 
                 // add first filter to document
                 if ((j == 0) && (i == 0)) {
-                    fesLiteralNode.setTextContent(resultrUnit[1].toString());
+//                    fesLiteralNode.setTextContent(resultrUnit[1].toString());
+                    fesLiteralNode.setTextContent(rule.getEntryUnit());
 
-                    if (filterNode != null) {
-                        n.appendChild(filterNode);
-                        filterNode.appendChild(valueReferenceNode);
-                        filterNode.appendChild(fesLiteralNode);
+                    if (entryFilter != null) {
+                        n.appendChild(entryFilter);
+                        entryFilter.appendChild(valueReferenceNode);
+                        entryFilter.appendChild(fesLiteralNode);
                     }
                     
                 // add second filter to the document
                 } else if ((j == 1) && (i == 0)) {
-                    fesLiteralNode.setTextContent(resultcUnit[1].toString());
+//                    fesLiteralNode.setTextContent(resultcUnit[1].toString());
+                    fesLiteralNode.setTextContent(rule.getExitUnit());
 
-                    if (filterNode2 != null) {
-                        n.appendChild(filterNode2);
-                        filterNode2.appendChild(valueReferenceNode);
-                        filterNode2.appendChild(fesLiteralNode);
+                    if (exitFilter != null) {
+                        n.appendChild(exitFilter);
+                        exitFilter.appendChild(valueReferenceNode);
+                        exitFilter.appendChild(fesLiteralNode);
                     }
                 }
             }
@@ -317,7 +286,7 @@ public class BasicRule_1_Builder {
     	
     	// This class stores all rule attributes whcih should be displayed in the client.
         Rule rule = new Rule();
-        rule.setFeedingMetadata(basicRule.getFeedingMetadata());
+        rule.setTimeseriesMetadata(basicRule.getTimeseriesMetadata());
 
         try {
 
@@ -326,56 +295,20 @@ public class BasicRule_1_Builder {
             DocumentBuilder docBuilder = docFac.newDocumentBuilder();
             Document doc = docBuilder.parse(new ByteArrayInputStream(eml.getBytes()));
 
-            // get filter operator
             NodeList filterList = doc.getElementsByTagName(Constants.fesFilter);
-            Node filterNode = filterList.item(0);
-            String property = filterNode.getChildNodes().item(1).getNodeName();
+            Node entryOperatorNode = filterList.item(0);
+            String entryFilter = entryOperatorNode.getChildNodes().item(1).getNodeName();
+            rule.setEntryOperatorIndex(getSymbolIndexForFilter(entryFilter));
 
-            // first filter operator
-            // rOperatorIndex
-            if (property.equals("fes:PropertyIsLessThan")) {
-                rule.setEntryOperatorIndex(Rule.LESS_THAN);
-            } else if (property.equals("fes:PropertyIsGreaterThan")) {
-                rule.setEntryOperatorIndex(Rule.GREATER_THAN);
-            } else if (property.equals("fes:PropertyIsEqualTo")) {
-                rule.setEntryOperatorIndex(Rule.EQUAL_TO);
-            } else if (property.equals("fes:PropertyIsGreaterThanOrEqualTo")) {
-                rule.setEntryOperatorIndex(Rule.GREATER_THAN_OR_EQUAL_TO);
-            } else if (property.equals("fes:PropertyIsLessThanOrEqualTo")) {
-                rule.setEntryOperatorIndex(Rule.LESS_THAN_OR_EQUAL_TO);
-            } else if (property.equals("fest:PropertyIsNotEqualTo")) {
-                rule.setEntryOperatorIndex(Rule.NOT_EQUAL_TO);
-            }
-
-            // second operator
-            filterNode = filterList.item(1);
-            property = filterNode.getChildNodes().item(1).getNodeName();
-            // cOperatorIndex
-            if (property.equals("fes:PropertyIsLessThan")) {
-                rule.setExitOperatorIndex(Rule.LESS_THAN);
-            } else if (property.equals("fes:PropertyIsGreaterThan")) {
-                rule.setExitOperatorIndex(Rule.GREATER_THAN);
-            } else if (property.equals("fes:PropertyIsEqualTo")) {
-                rule.setExitOperatorIndex(Rule.EQUAL_TO);
-            } else if (property.equals("fes:PropertyIsGreaterThanOrEqualTo")) {
-                rule.setExitOperatorIndex(Rule.GREATER_THAN_OR_EQUAL_TO);
-            } else if (property.equals("fes:PropertyIsLessThanOrEqualTo")) {
-                rule.setExitOperatorIndex(Rule.LESS_THAN_OR_EQUAL_TO);
-            } else if (property.equals("fest:PropertyIsNotEqualTo")) {
-                rule.setExitOperatorIndex(Rule.NOT_EQUAL_TO);
-            }
+            Node exitOperatorNode = filterList.item(1);
+            String exitFilter = exitOperatorNode.getChildNodes().item(1).getNodeName();
+            rule.setExitOperatorIndex(getSymbolIndexForFilter(exitFilter));
+            
+            rule.setEnterEqualsExitCondition(rule.determineEqualEntryExitCondition());
 
             NodeList literalList = doc.getElementsByTagName(Constants.fesLiteral);
             Node literalNode = literalList.item(0);
 
-            // rCount: Event count value
-            NodeList eventCountList = doc.getElementsByTagName(Constants.eventCount);
-            Node eventCountNode = eventCountList.item(0);
-            rule.setCount(eventCountNode.getTextContent());
-
-            // cCount
-            // TODO
-            
             // rValue: Trend value
             rule.setEntryValue(literalNode.getFirstChild().getNodeValue());
 
@@ -390,13 +323,15 @@ public class BasicRule_1_Builder {
             // cUnit: Trend condition value unit. Default unit is meter
             rule.setExitUnit("m");
 
-            // exit condition != enter condition?
-            if (RulesUtil.reverseOperator(rule.getEntryOperatorIndex(), rule.getExitOperatorIndex()) && rule.getEntryValue().equals(rule.getExitValue())) {
-                rule.setEnterEqualsExitCondition(true);
-            } else {
-                rule.setEnterEqualsExitCondition(false);
-            }
 
+            // rCount: Event count value
+            NodeList eventCountList = doc.getElementsByTagName(Constants.eventCount);
+            Node eventCountNode = eventCountList.item(0);
+            rule.setCount(eventCountNode.getTextContent());
+
+            // cCount
+            // TODO
+            
             // set rule type
             rule.setRuleType(TENDENCY_OVER_COUNT);
             

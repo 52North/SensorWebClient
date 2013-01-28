@@ -109,9 +109,6 @@ public class DataControlsSes extends DataControls {
     /** The manage user button. */
     private IButton manageUserButton;
 
-    /** The manage sensor button. */
-    private IButton manageSensorButton;
-
     /** The manage rules button. */
     private IButton manageRulesButton;
 
@@ -369,7 +366,6 @@ public class DataControlsSes extends DataControls {
             this.topLayout.addMember(this.manageRulesButton);
             this.topLayout.addMember(this.searchRulesButton);
 
-            this.bottomLayout.addMember(this.manageSensorButton);
             this.bottomLayout.addMember(this.createComplexRuleButton);
             this.bottomLayout.addMember(this.subscriptionsButton);
             this.bottomLayout.addMember(this.helpButton);
@@ -433,7 +429,6 @@ public class DataControlsSes extends DataControls {
         this.editRulesButton.setSelected(false);
         this.subscriptionsButton.setSelected(false);
         this.manageUserButton.setSelected(false);
-        this.manageSensorButton.setSelected(false);
         this.manageRulesButton.setSelected(false);
         this.searchRulesButton.setSelected(false);
         this.helpButton.setSelected(false);
@@ -579,14 +574,6 @@ public class DataControlsSes extends DataControls {
 
     public void setManageUserButton(IButton manageUserButton) {
         this.manageUserButton = manageUserButton;
-    }
-
-    public IButton getManageSensorButton() {
-        return manageSensorButton;
-    }
-
-    public void setManageSensorButton(IButton manageSensorButton) {
-        this.manageSensorButton = manageSensorButton;
     }
 
     public IButton getManageRulesButton() {

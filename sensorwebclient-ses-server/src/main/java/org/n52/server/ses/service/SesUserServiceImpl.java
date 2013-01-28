@@ -143,7 +143,7 @@ public class SesUserServiceImpl implements SesUserService {
                                 basicRule.isSubscribed(),
                                 basicRule.getMedium(),
                                 basicRule.getFormat(),
-                                basicRule.getFeedingMetadata());
+                                basicRule.getTimeseriesMetadata());
     }
 
     /**
