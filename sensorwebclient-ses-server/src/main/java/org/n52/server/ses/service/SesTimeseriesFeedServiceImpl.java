@@ -100,15 +100,15 @@ public class SesTimeseriesFeedServiceImpl implements SesTimeseriesFeedService {
         try {
             LOGGER.debug("getStations");
             ArrayList<TimeseriesMetadata> finalList = new ArrayList<TimeseriesMetadata>();
-            HashSet<TimeseriesMetadata> uniqueFeedingMetadataList = new HashSet<TimeseriesMetadata>();
+            HashSet<TimeseriesMetadata> timeseriesMetadatas = new HashSet<TimeseriesMetadata>();
             
             // DB request
             List<TimeseriesFeed> timeseriesFeeds = HibernateUtil.getActiveTimeseriesFeeds();
             for (TimeseriesFeed timeseriesFeed : timeseriesFeeds) {
-                uniqueFeedingMetadataList.add(timeseriesFeed.getTimeseriesMetadata());
+                timeseriesMetadatas.add(timeseriesFeed.getTimeseriesMetadata());
             }
             
-            finalList.addAll(uniqueFeedingMetadataList);
+            finalList.addAll(timeseriesMetadatas);
             
             // TODO make FeedingMetadata comparable
 //            Collections.sort(finalList);
@@ -122,27 +122,20 @@ public class SesTimeseriesFeedServiceImpl implements SesTimeseriesFeedService {
     }
 
     @Override
-    public SesClientResponse getPhenomena(String procedure) throws Exception {
+    public SesClientResponse getPhenomena(String timeseriesId) throws Exception {
         try {
-            LOGGER.warn("################# procedure id has become timeseries id!"); // XXX 
-            LOGGER.debug("getPhenomena for procedure: " + procedure);
+            LOGGER.debug("getPhenomena for timeseriesId: " + timeseriesId);
             ArrayList<String> finalList = new ArrayList<String>();
             ArrayList<String> unit = new ArrayList<String>();
-            
 
-            TimeseriesFeed timeseriesFeed = HibernateUtil.getTimeseriesFeedsById(procedure);
-            if (timeseriesFeed != null) {
-                String mappedFeedingId = timeseriesFeed.getMappedSesId();
-                
-                ArrayList<String> phenomena = getParser().getPhenomena(mappedFeedingId);
-                
-                // TODO get the unit of measurement from internal/mapped id
-                
-                unit.add(getParser().getUnit(mappedFeedingId));
-                for (int i = 0; i < phenomena.size(); i++) {
-                    LOGGER.debug(phenomena.get(i));
-                    finalList.add(phenomena.get(i)); 
-                }
+            ArrayList<String> phenomena = getParser().getPhenomena(timeseriesId);
+            
+            // TODO get the unit of measurement from internal/mapped id
+            
+            unit.add(getParser().getUnit(timeseriesId));
+            for (int i = 0; i < phenomena.size(); i++) {
+                LOGGER.debug(phenomena.get(i));
+                finalList.add(phenomena.get(i)); 
             }
             
             Collections.sort(finalList);
@@ -155,13 +148,13 @@ public class SesTimeseriesFeedServiceImpl implements SesTimeseriesFeedService {
     }
 
     @Override
-    public SesClientResponse deleteTimeseriesFeed(String sensorID) throws Exception {
+    public SesClientResponse deleteTimeseriesFeed(String timeseriesId) throws Exception {
         try {
-            LOGGER.debug("delete sensor: " + sensorID);
-            if (HibernateUtil.deleteTimeseriesFeed(sensorID)) {
+            LOGGER.debug("delete timeseries feed: " + timeseriesId);
+            if (HibernateUtil.deleteTimeseriesFeed(timeseriesId)) {
                 return new SesClientResponse(SesClientResponse.types.DELETE_SENSOR_OK);
             }
-            throw new Exception("delete sensor" + ": " + sensorID + " " + "failed");
+            throw new Exception("delete timeseries feed: " + timeseriesId + " " + "failed");
         }
         catch (Exception e) {
             LOGGER.error("Exception occured on server side.", e);

@@ -32,8 +32,16 @@ public interface SesTimeseriesFeedService {
 
     public abstract void updateTimeseriesFeed(String timeseriesFeedId, boolean active) throws Exception;
 
+    /**
+     * @deprecated use {@link #getTimeseriesFeeds()}
+     */
+    @Deprecated
     public abstract SesClientResponse getStations() throws Exception;
 
+    /**
+     * @deprecated use {@link #getTimeseriesFeeds()}
+     */
+    @Deprecated
     public abstract SesClientResponse getPhenomena(String sensor) throws Exception;
 
     public abstract SesClientResponse deleteTimeseriesFeed(String sensorID) throws Exception;

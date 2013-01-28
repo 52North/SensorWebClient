@@ -24,6 +24,8 @@
 
 package org.n52.server.ses.hibernate;
 
+import static org.hibernate.FetchMode.JOIN;
+
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -35,6 +37,7 @@ import org.n52.shared.serializable.pojos.BasicRule;
 import org.n52.shared.serializable.pojos.ComplexRule;
 import org.n52.shared.serializable.pojos.Subscription;
 import org.n52.shared.serializable.pojos.TimeseriesFeed;
+import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.User;
 import org.n52.shared.serializable.pojos.UserRole;
 import org.slf4j.Logger;
@@ -393,15 +396,14 @@ public class HibernateUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static TimeseriesFeed getTimeseriesFeedsById(String timeseriesFeedId) {
-        
-        // TODO use timeseriesfeed ID
+    public static TimeseriesFeed getTimeseriesFeedById(String timeseriesId) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        Criteria crit = session.createCriteria(TimeseriesFeed.class);
-        List<TimeseriesFeed> timeseriesFeeds = crit.add(Restrictions.eq("sensorID", timeseriesFeedId)).list();
+        Criteria crit = session.createCriteria(TimeseriesFeed.class)
+                            .setFetchMode("TimeseriesMetadata", JOIN)
+                            .add(Restrictions.eq("timeseriesId", timeseriesId));
+        List<TimeseriesFeed> timeseriesFeeds = crit.list();
         session.getTransaction().commit();
-
         if (timeseriesFeeds.size() != 0) {
             return timeseriesFeeds.get(0);
         }
@@ -419,13 +421,13 @@ public class HibernateUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static boolean updateTimeseriesFeed(String timeseriesFeedId, boolean newStatus) {
-        
-        // TODO use timeseries feed ID
+    public static boolean updateTimeseriesFeed(String timeseriesId, boolean newStatus) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        Criteria crit = session.createCriteria(TimeseriesFeed.class);
-        List<TimeseriesFeed> sensors = crit.add(Restrictions.eq("sensorID", timeseriesFeedId)).list();
+        Criteria crit = session.createCriteria(TimeseriesFeed.class)
+                            .setFetchMode("TimeseriesMetadata", JOIN)
+                            .add(Restrictions.eq("timeseriesId", timeseriesId));
+        List<TimeseriesFeed> sensors = crit.list();
 
         if (sensors.size() == 1) {
             TimeseriesFeed sensor = sensors.get(0);
@@ -577,13 +579,13 @@ public class HibernateUtil {
     
 
     @SuppressWarnings("unchecked")
-    public static boolean deleteTimeseriesFeed(String sensorID) {
-        
-        // TODO delete with timeseries feed ID
+    public static boolean deleteTimeseriesFeed(String timeseriesId) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        Criteria crit = session.createCriteria(TimeseriesFeed.class);
-        List<TimeseriesFeed> sensors = crit.add(Restrictions.eq("sensorID", sensorID)).list();
+        Criteria crit = session.createCriteria(TimeseriesFeed.class)
+                            .setFetchMode("TimeseriesMetadata", JOIN)
+                            .add(Restrictions.eq("timeseriesId", timeseriesId));
+        List<TimeseriesFeed> sensors = crit.list();
 
         if (sensors.size() == 1) {
             TimeseriesFeed sensor = sensors.get(0);
@@ -602,7 +604,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(BasicRule.class);
-        List<BasicRule> rules = crit.add(Restrictions.eq("release", true)).list();
+        List<BasicRule> rules = crit.add(Restrictions.eq("published", true)).list();
         session.getTransaction().commit();
         return rules;
     }
@@ -612,7 +614,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(ComplexRule.class);
-        List<ComplexRule> rules = crit.add(Restrictions.eq("release", true)).list();
+        List<ComplexRule> rules = crit.add(Restrictions.eq("published", true)).list();
         session.getTransaction().commit();
         return rules;
     }
@@ -701,7 +703,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(BasicRule.class);
-        List<BasicRule> rules = crit.add(Restrictions.eq("parameterId", ruleID)).list();
+        List<BasicRule> rules = crit.add(Restrictions.eq("id", ruleID)).list();
         session.getTransaction().commit();
         if (rules.size() == 1) {
             BasicRule rule = rules.get(0);
@@ -715,7 +717,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(BasicRule.class);
-        List<BasicRule> rules = crit.add(Restrictions.eq("parameterId", ruleID)).list();
+        List<BasicRule> rules = crit.add(Restrictions.eq("id", ruleID)).list();
         session.getTransaction().commit();
         return rules;
     }
@@ -725,7 +727,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(ComplexRule.class);
-        List<ComplexRule> rules = crit.add(Restrictions.eq("parameterId", ruleID)).list();
+        List<ComplexRule> rules = crit.add(Restrictions.eq("id", ruleID)).list();
         session.getTransaction().commit();
         if (rules.size() == 1) {
             ComplexRule rule = rules.get(0);
@@ -742,13 +744,13 @@ public class HibernateUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static boolean existsTimeseriesFeed(String timeseriesFeedId) {
-        
-        // TODO use timeseriesfeed ID
+    public static boolean existsTimeseriesFeed(String timeseriesId) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        Criteria crit = session.createCriteria(TimeseriesFeed.class);
-        List<TimeseriesFeed> timeseriesFeeds = crit.add(Restrictions.eq("sensorID", timeseriesFeedId)).list();
+        Criteria crit = session.createCriteria(TimeseriesFeed.class)
+                            .setFetchMode("TimeseriesMetadata", JOIN)
+                            .add(Restrictions.eq("timeseriesId", timeseriesId));
+        List<TimeseriesFeed> timeseriesFeeds = crit.list();
         session.getTransaction().commit();
         return timeseriesFeeds.size() != 0;
     }
@@ -768,7 +770,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
-        List<User> users = crit.add(Restrictions.and(Restrictions.not(Restrictions.eq("parameterId", userID)),
+        List<User> users = crit.add(Restrictions.and(Restrictions.not(Restrictions.eq("id", userID)),
                                                      Restrictions.eq("role", UserRole.ADMIN))).list();
 
         if (users.size() >= 1) {
@@ -845,7 +847,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(BasicRule.class);
-        List<BasicRule> rules = crit.add(Restrictions.and(Restrictions.eq("release", true),
+        List<BasicRule> rules = crit.add(Restrictions.and(Restrictions.eq("published", true),
                                                           Restrictions.ilike(row, text))).list();
         session.getTransaction().commit();
         return rules;
@@ -868,7 +870,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(ComplexRule.class);
-        List<ComplexRule> rules = crit.add(Restrictions.and(Restrictions.eq("release", true),
+        List<ComplexRule> rules = crit.add(Restrictions.and(Restrictions.eq("published", true),
                                                             Restrictions.ilike(row, text))).list();
         session.getTransaction().commit();
         return rules;
@@ -883,5 +885,18 @@ public class HibernateUtil {
                                                             Restrictions.ilike(row, text))).list();
         session.getTransaction().commit();
         return rules;
+    }
+
+    public static TimeseriesMetadata getTimeseriesMetadata(String timeseriesId) {
+        Session session = getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        TimeseriesMetadata metadata = (TimeseriesMetadata) session
+                                            .createCriteria(TimeseriesMetadata.class)
+                                            .setFetchMode("TimeseriesMetadata", JOIN)
+                                            .add(Restrictions.eq("timeseriesId", timeseriesId))
+                                            .uniqueResult();
+        session.getTransaction().commit();
+        return metadata;
+        
     }
 }

@@ -108,7 +108,7 @@ public class SesUserServiceImpl implements SesUserService {
      */
     public synchronized static ComplexRuleDTO createComplexRuleDTO(ComplexRule complexRule) {
         // XXX refactor
-        return new ComplexRuleDTO(complexRule.getComplexRuleID(),
+        return new ComplexRuleDTO(complexRule.getId(),
                                   complexRule.getName(),
                                   complexRule.getRuleType(),
                                   complexRule.getDescription(),
@@ -132,7 +132,7 @@ public class SesUserServiceImpl implements SesUserService {
      */
     public synchronized static BasicRuleDTO createBasicRuleDTO(BasicRule basicRule) {
         // XXX refactor
-        return new BasicRuleDTO(basicRule.getBasicRuleID(),
+        return new BasicRuleDTO(basicRule.getId(),
                                 basicRule.getName(),
                                 basicRule.getRuleType(),
                                 basicRule.getType(),

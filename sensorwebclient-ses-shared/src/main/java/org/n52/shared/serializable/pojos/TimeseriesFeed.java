@@ -1,14 +1,16 @@
+
 package org.n52.shared.serializable.pojos;
 
 import java.io.Serializable;
 import java.util.Calendar;
-import java.util.UUID;
 
+/**
+ * A {@link TimeseriesFeed} represents a continues data stream of timeseries observation data hold by a
+ * particular SOS which shall be filtered by an SES instance.
+ */
 public class TimeseriesFeed implements Serializable {
 
     private static final long serialVersionUID = 8770405020547586667L;
-
-    private String mappedSesId = UUID.randomUUID().toString();
 
     private Integer id;
 
@@ -25,25 +27,26 @@ public class TimeseriesFeed implements Serializable {
     private boolean active;
 
     private int inUse;
-    
-    public TimeseriesFeed() {
+
+    TimeseriesFeed() {
         // for serialization
     }
 
-	public TimeseriesMetadata getTimeseriesMetadata() {
+    /**
+     * @param timeseriesMetadata
+     *        the timeseries metadata representing a parameter constellation to retrieve observation data from
+     *        a specific SOS instance.
+     */
+    public TimeseriesFeed(TimeseriesMetadata timeseriesMetadata) {
+        this.timeseriesMetadata = timeseriesMetadata;
+    }
+
+    public TimeseriesMetadata getTimeseriesMetadata() {
         return timeseriesMetadata;
     }
 
     public void setTimeseriesMetadata(TimeseriesMetadata timeseriesMetadata) {
         this.timeseriesMetadata = timeseriesMetadata;
-    }
-
-    public String getMappedSesId() {
-        return mappedSesId;
-    }
-
-    void setMappedSesId(String mappedSesId) {
-        this.mappedSesId = mappedSesId;
     }
 
     public Integer getId() {
@@ -63,12 +66,12 @@ public class TimeseriesFeed implements Serializable {
     }
 
     public long getUsedCounter() {
-		return usedCounter;
-	}
+        return usedCounter;
+    }
 
-	public void setUsedCounter(long usedCounter) {
-		this.usedCounter = usedCounter;
-	}
+    public void setUsedCounter(long usedCounter) {
+        this.usedCounter = usedCounter;
+    }
 
     public Calendar getLastUpdate() {
         return this.lastUpdate;

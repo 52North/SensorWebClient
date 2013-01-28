@@ -24,7 +24,7 @@ public class MathSymbolUtil {
         symbolsHashMap.put("=", "=");
         symbolsHashMap.put("<>", "<>");
         symbolsHashMap.put(">", ">");
-        symbolsHashMap.put("&lt;", "&lt;");
+        symbolsHashMap.put("<", "<");
         symbolsHashMap.put(">=", ">=");
         symbolsHashMap.put("<=", "<=");
         Map<String, String> unmodifiableMap = Collections.unmodifiableMap(symbolsHashMap);
@@ -55,7 +55,7 @@ public class MathSymbolUtil {
         else if (symbol.equals(">")) {
             return GREATER_THAN;
         }
-        else if (symbol.equals("&lt;")) {
+        else if (symbol.equals("<")) {
             return LESS_THAN;
         }
         else if (symbol.equals(">=")) {
@@ -92,7 +92,7 @@ public class MathSymbolUtil {
         else if (symbol.equals(">")) {
             return "<=";
         }
-        else if (symbol.equals("&lt;")) {
+        else if (symbol.equals("<")) {
             return ">=";
         }
         else if (symbol.equals(">=")) {
@@ -156,7 +156,7 @@ public class MathSymbolUtil {
             return ">";
         }
         else if (symbolIndex == 3) {
-            return "&lt;";
+            return "<";
         }
         else if (symbolIndex == 4) {
             return ">=";

@@ -40,10 +40,9 @@ import javax.xml.transform.stream.StreamResult;
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 import org.n52.server.ses.SesConfig;
 import org.n52.server.ses.hibernate.HibernateUtil;
-import org.n52.server.ses.util.SESUnitConverter;
 import org.n52.shared.serializable.pojos.BasicRule;
-import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.Rule;
+import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,8 +51,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- * 
+ * Overshoot and Undershoot Rule
  */
 public class BasicRule_4_Builder {
     
@@ -210,12 +208,12 @@ public class BasicRule_4_Builder {
             Node n1 = propertyRestrictionsList.item(0);
             n1.setTextContent(metadata.getPhenomenon());
             Node n2 = propertyRestrictionsList.item(1);
-            n2.setTextContent(metadata.getProcedure());
+            n2.setTextContent(metadata.getGlobalSesId());
 
             Node n4 = propertyRestrictionsList.item(2);
             n4.setTextContent(metadata.getPhenomenon());
             Node n5 = propertyRestrictionsList.item(3);
-            n5.setTextContent(metadata.getProcedure());
+            n5.setTextContent(metadata.getGlobalSesId());
 
             // fes:Filter
             NodeList filterList = doc.getElementsByTagName(this.fesFilter);
@@ -260,7 +258,7 @@ public class BasicRule_4_Builder {
                 valueReferenceNode.setTextContent("input/doubleValue");
 
                 // Unit Conversion
-                SESUnitConverter converter = new SESUnitConverter();
+//                SESUnitConverter converter = new SESUnitConverter();
 //                Object[] resultrUnit = converter.convert(rule.getEntryUnit(), Double.valueOf(rule.getEntryValue()));
 //                Object[] resultcUnit = converter.convert(rule.getExitUnit(), Double.valueOf(rule.getExitValue()));
 
@@ -269,7 +267,7 @@ public class BasicRule_4_Builder {
                 // add first filter to document
                 if (i == 0) {
 //                    fesLiteralNode.setTextContent(resultrUnit[1].toString());
-                    fesLiteralNode.setTextContent(rule.getEntryUnit());
+                    fesLiteralNode.setTextContent(rule.getEntryValue());
 
                     if (filterNode != null) {
                         n.appendChild(filterNode);
@@ -280,7 +278,7 @@ public class BasicRule_4_Builder {
                 // add second filter to document
                 } else if (i == 1) {
 //                    fesLiteralNode.setTextContent(resultcUnit[1].toString());
-                    fesLiteralNode.setTextContent(rule.getExitUnit());
+                    fesLiteralNode.setTextContent(rule.getExitValue());
 
                     if (filterNode2 != null) {
                         n.appendChild(filterNode2);

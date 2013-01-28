@@ -2,18 +2,19 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
 <hibernate-mapping package="org.n52.shared.serializable.pojos">
-  <class name="BasicRule" table="sesclient_basic_rule" >
-      <id name="basicRuleID" column="ID">
-         <generator class="native"/>
-      </id>
-      <property name="name" type="string"/>
-      <property name="ruleType" type="string"/>
-      <property name="type" type="string"/>
-      <property name="description" type="text"/>
-      <property name="published" type="boolean"/>
-      <property name="ownerID" type="integer"/>
-      <property name="eml" type="text"/>
-      <property name="subscribed" type="boolean"/>
-      <property name="timeseriesMetadata" type="org.n52.shared.serializable.pojos.TimeseriesMetadata" />
-   </class>
+	<class name="BasicRule" table="sesclient_basic_rule">
+		<id name="id">
+			<generator class="native" />
+		</id>
+		<property name="name" type="string" />
+		<property name="ruleType" type="string" />
+		<property name="type" type="string" />
+		<property name="description" type="text" />
+		<property name="published" type="boolean" />
+		<property name="ownerID" type="integer" />
+		<property name="eml" type="text" />
+		<property name="subscribed" type="boolean" />
+		<many-to-one name="timeseriesMetadata" cascade="all"
+			class="org.n52.shared.serializable.pojos.TimeseriesMetadata" column="timeseriesMetadata" />
+	</class>
 </hibernate-mapping>

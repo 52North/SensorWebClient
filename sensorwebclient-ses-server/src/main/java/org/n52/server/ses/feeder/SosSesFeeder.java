@@ -67,7 +67,7 @@ public class SosSesFeeder {
     
     private void startFeeding() {
         LOGGER.info("Start feeding registered timeseries to SES.");
-        this.timer.schedule(this.obsTask, FeederConfig.getInstance().getObsTime(), FeederConfig.getInstance().getObsTime());
+        this.timer.schedule(this.obsTask, 2000, FeederConfig.getInstance().getObsTime());
     }
     
     @Override
@@ -113,44 +113,36 @@ public class SosSesFeeder {
         this.timer.cancel();
     }
     
-    public void enableSensorForFeeding(TimeseriesMetadata feedingMetadata) {
+    public void enableTimeseriesForFeeding(TimeseriesFeed timeseriesFeed) {
     	// check if sensor already registered 
-    	boolean sensorRegistered = DatabaseAccess.isKnownTimeseriesFeed(feedingMetadata);
-    	if (!sensorRegistered) {
+        TimeseriesMetadata timeseriesMetadata = timeseriesFeed.getTimeseriesMetadata();
+    	boolean timeseriesIsKnown = DatabaseAccess.isKnownTimeseriesFeed(timeseriesMetadata);
+    	if (!timeseriesIsKnown) {
     		// get sensorML document from SOS
     		try {
-				SOSConnector sosConn = new SOSConnector(feedingMetadata.getServiceUrl());
-				
-				
-				SensorMLDocument sensorML = sosConn.getSensorML(feedingMetadata.getProcedure());
-				
-				// TODO generate unique id (e.g. from FeedingMetadata) and exchange sensorML id
+				SOSConnector sosConn = new SOSConnector(timeseriesMetadata.getServiceUrl());
+				SensorMLDocument sensorML = sosConn.getSensorML(timeseriesMetadata.getProcedure());
 				
 				// send sensorML document to SES
 				SESConnector sesConn = new SESConnector();
+				
+                // TODO generate unique id (e.g. from FeedingMetadata) and exchange sensorML id
+                
 				String sesID = sesConn.registerPublisher(sensorML);
 				// save in database
-				DatabaseAccess.saveTimeseriesFeed(createTimeseriesFeed(feedingMetadata, sesID));
+				timeseriesFeed.setSesId(sesID);
+				DatabaseAccess.saveTimeseriesFeed(timeseriesFeed);
 			} catch (ExceptionReport e) {
 				LOGGER.error("Error while register sensor in SES, ", e);
 			}
     	} else {
-    		DatabaseAccess.increaseSensorUse(feedingMetadata);
+    		DatabaseAccess.increaseSensorUse(timeseriesFeed);
     	}
     }
     
-    public void disableSensorForFeeding(TimeseriesMetadata timeseriesMetadata) {
-    	// decrease counter for sensor
-    	DatabaseAccess.decreaseSensorUse(timeseriesMetadata);
+    public void disableTimeseriesFeed(TimeseriesFeed timeseriesFeed) {
+    	DatabaseAccess.decreaseSensorUse(timeseriesFeed);
     }
 
-	private TimeseriesFeed createTimeseriesFeed(TimeseriesMetadata timeseriesMetadata, String sesID) {
-		TimeseriesFeed timeseriesFeed = new TimeseriesFeed();
-	    timeseriesFeed.setTimeseriesMetadata(timeseriesMetadata);
-	    timeseriesFeed.setLastUpdate(null);
-	    timeseriesFeed.setSesId(sesID);
-	    timeseriesFeed.setUpdateInterval(FeederConfig.getInstance().getUpdateInterval());
-	    timeseriesFeed.setUsedCounter(0);
-		return timeseriesFeed;
-	}
+	
 }

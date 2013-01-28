@@ -130,7 +130,8 @@ class EventSubscriptionController {
         } else if (getSelectedRuleTemplate() == SENSOR_LOSS) {
             sb.append("_").append(SENSOR_LOSS.toString());
         }
-        return sb.toString();
+        selectedAbonnementName = sb.toString().replaceAll("[^0-9 a-z A-Z _]", "_");
+        return selectedAbonnementName;
     }
 
     public SimpleRuleType getSelectedRuleTemplate() {

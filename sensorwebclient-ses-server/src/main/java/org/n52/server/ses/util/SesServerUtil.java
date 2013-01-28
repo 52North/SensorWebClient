@@ -140,13 +140,13 @@ public class SesServerUtil {
      * @return stationID
      * @throws Exception
      */
-    public synchronized static ArrayList<String> getSensorIDsFromEML(String eml) throws Exception {
+    public synchronized static ArrayList<String> getTimeseriesIdsFromEML(String eml) throws Exception {
         final String simplePattern = "SimplePattern";
         final String propertyValue = "value";
         final String propertyName = "name";
-        final String sensorID = "sensorID";
+        final String sensorID = "sensorID"; // matches to timeseriesFeedId
 
-        ArrayList<String> stationIDList = new ArrayList<String>();
+        ArrayList<String> timeseriesFeedIds = new ArrayList<String>();
 
         //build document from eml
         DocumentBuilderFactory docFac = DocumentBuilderFactory.newInstance();
@@ -171,11 +171,10 @@ public class SesServerUtil {
                     NodeList propertyRestrictiosnList = fstElement.getElementsByTagName(propertyValue);
                     if (propertyRestrictiosnList.getLength() != 0) {
                         Node value = propertyRestrictiosnList.item(1);
-                        String station = value.getTextContent();
+                        String timeseriesFeedId = value.getTextContent();
 
-                        // store stations
-                        if ((station != null) && (!station.equals(""))) {
-                            stationIDList.add(station);
+                        if ((timeseriesFeedId != null) && (!timeseriesFeedId.equals(""))) {
+                            timeseriesFeedIds.add(timeseriesFeedId);
                         }
                     } 
                 }
@@ -183,12 +182,12 @@ public class SesServerUtil {
         }
         // remove duplicates
         HashSet<String> hs = new HashSet<String>();
-        hs.addAll(stationIDList);
+        hs.addAll(timeseriesFeedIds);
         
-        stationIDList.clear();
-        stationIDList.addAll(hs);
+        timeseriesFeedIds.clear();
+        timeseriesFeedIds.addAll(hs);
         
-        return stationIDList;
+        return timeseriesFeedIds;
     }
     
     /**

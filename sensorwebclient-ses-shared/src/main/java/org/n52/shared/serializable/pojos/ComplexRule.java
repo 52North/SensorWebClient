@@ -29,7 +29,7 @@ public class ComplexRule implements Serializable {
 
     private static final long serialVersionUID = 7282124349339730944L;
 
-    private int complexRuleID;
+    private int id;
 
     private String name;
 
@@ -56,7 +56,7 @@ public class ComplexRule implements Serializable {
     private String phenomenon;
 
     public ComplexRule(ComplexRuleDTO complexRuleDTO) {
-        this.complexRuleID = complexRuleDTO.getId();
+        this.id = complexRuleDTO.getId();
         this.name = complexRuleDTO.getName();
         this.ruleType = complexRuleDTO.getRuleType();
         this.description = complexRuleDTO.getDescription();
@@ -88,12 +88,12 @@ public class ComplexRule implements Serializable {
         // for serialization
     }
 
-    public int getComplexRuleID() {
-        return this.complexRuleID;
+    public int getId() {
+        return this.id;
     }
 
-    public void setComplexRuleID(int id) {
-        this.complexRuleID = id;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

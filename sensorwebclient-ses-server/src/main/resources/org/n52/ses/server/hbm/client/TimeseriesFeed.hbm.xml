@@ -9,12 +9,11 @@
          </generator>
       </id>
       <property name="sesId" type="string"/>
-      <property name="mappedSesId" type="string"/>
       <property name="lastUpdate" type="calendar"/>
       <property name="updateInterval" type="long"/>
       <property name="usedCounter" type="long"/>
       <property name="active" type="boolean"/>
       <property name="inUse" type="integer"/>
-      <property name="timeseriesMetadata" type="org.n52.shared.serializable.pojos.TimeseriesMetadata" />
+      <one-to-one name="timeseriesMetadata" class="org.n52.shared.serializable.pojos.TimeseriesMetadata" />
    </class>
 </hibernate-mapping>

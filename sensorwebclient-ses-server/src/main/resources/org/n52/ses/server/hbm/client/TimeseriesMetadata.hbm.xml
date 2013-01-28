@@ -11,5 +11,6 @@
       <property name="offering" type="string"/>
       <property name="phenomenon" type="string"/>
       <property name="featureOfInterest" type="string"/>
+      <property name="timeseriesId" type="string"/>
    </class>
 </hibernate-mapping>

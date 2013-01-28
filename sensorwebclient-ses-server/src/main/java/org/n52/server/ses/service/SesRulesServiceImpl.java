@@ -40,6 +40,8 @@ import org.n52.server.ses.eml.BasicRule_5_Builder;
 import org.n52.server.ses.eml.ComplexRule_Builder;
 import org.n52.server.ses.eml.ComplexRule_BuilderV2;
 import org.n52.server.ses.eml.Meta_Builder;
+import org.n52.server.ses.feeder.FeederConfig;
+import org.n52.server.ses.feeder.SosSesFeeder;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.util.RulesUtil;
 import org.n52.server.ses.util.SearchUtil;
@@ -53,10 +55,10 @@ import org.n52.shared.serializable.pojos.BasicRuleDTO;
 import org.n52.shared.serializable.pojos.ComplexRule;
 import org.n52.shared.serializable.pojos.ComplexRuleDTO;
 import org.n52.shared.serializable.pojos.ComplexRuleData;
-import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.Rule;
 import org.n52.shared.serializable.pojos.Subscription;
 import org.n52.shared.serializable.pojos.TimeseriesFeed;
+import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,10 +116,10 @@ public class SesRulesServiceImpl implements SesRuleService {
                 for (int i = 0; i < formats.length; i++) {
                     subscriptionExists = false;
                     
-                    if (basicRule != null && HibernateUtil.existsSubscription(basicRule.getBasicRuleID(), media[k], formats[i], Integer.valueOf(userID))) {
+                    if (basicRule != null && HibernateUtil.existsSubscription(basicRule.getId(), media[k], formats[i], Integer.valueOf(userID))) {
                         subscriptionExists = true;
                         subscriptionsExists = true;
-                    } else if (complexRule != null && HibernateUtil.existsSubscription(complexRule.getComplexRuleID(), media[k], formats[i], Integer.valueOf(userID))) {
+                    } else if (complexRule != null && HibernateUtil.existsSubscription(complexRule.getId(), media[k], formats[i], Integer.valueOf(userID))) {
                         subscriptionExists = true;
                         subscriptionsExists = true;
                     }
@@ -178,24 +180,28 @@ public class SesRulesServiceImpl implements SesRuleService {
                         // save subscription in DB
                         LOG.debug("save subscription to DB: " + museResource);
                         if (basicRule != null) {
-                            HibernateUtil.saveSubscription(new Subscription(Integer.valueOf(userID), basicRule.getBasicRuleID(), museResource, media[k], formats[i]));
+                            HibernateUtil.saveSubscription(new Subscription(Integer.valueOf(userID), basicRule.getId(), museResource, media[k], formats[i]));
                             HibernateUtil.updateBasicRuleSubscribtion(basicRule.getName(), true);
                         } else if (complexRule != null) {
-                            HibernateUtil.saveSubscription(new Subscription(Integer.valueOf(userID), complexRule.getComplexRuleID(), museResource, media[k], formats[i]));
+                            HibernateUtil.saveSubscription(new Subscription(Integer.valueOf(userID), complexRule.getId(), museResource, media[k], formats[i]));
                             HibernateUtil.updateComplexRuleSubscribtion(complexRule.getName(), true);
                         }
                         
                         // set sensor status to used
                         LOG.debug("set sensor to used");
-                        ArrayList<String> stationIDList = SesServerUtil.getSensorIDsFromEML(content);
+                        ArrayList<String> timeseriesIds = SesServerUtil.getTimeseriesIdsFromEML(content);
                         
                         // check if sensor is allready in feeder DB. If yes --> no new request to feeder
                         try {
-                            for (int j = 0; j < stationIDList.size(); j++) {
-                                if (HibernateUtil.getTimeseriesFeedsById(stationIDList.get(j)).getInUse() == 0) {
-                                    LOG.debug("Station ID: " + stationIDList.get(j));
-                                    // TODO change subscribe interface
-//                                    SosSesFeeder.getInst().addUsedSensor(stationIDList.get(j));
+                            for (String timeseriesId : timeseriesIds) {
+                                TimeseriesFeed timeseriesFeed = HibernateUtil.getTimeseriesFeedById(timeseriesId);
+                                if (timeseriesFeed == null) {
+                                    TimeseriesMetadata metadata = HibernateUtil.getTimeseriesMetadata(timeseriesId);
+                                    LOG.debug("Create TimeseriesFeed: " + timeseriesId);
+                                    SosSesFeeder.getInst().enableTimeseriesForFeeding(createTimeseriesFeed(metadata));
+                                } else if (timeseriesFeed.getInUse() == 0) {
+                                    LOG.debug("(Re-)enable TimeseriesFeed: " + timeseriesId);
+                                    SosSesFeeder.getInst().enableTimeseriesForFeeding(timeseriesFeed);
                                 }
                             }
                         } catch (Exception e) {
@@ -205,8 +211,8 @@ public class SesRulesServiceImpl implements SesRuleService {
                         
                         // increment sensor use count
                         try {
-                            for (int j = 0; j < stationIDList.size(); j++) {
-                                HibernateUtil.updateSensorCount(stationIDList.get(j), true);
+                            for (int j = 0; j < timeseriesIds.size(); j++) {
+                                HibernateUtil.updateSensorCount(timeseriesIds.get(j), true);
                             }
                         } catch (Exception e) {
                             LOG.error("Could not update database", e);
@@ -226,6 +232,15 @@ public class SesRulesServiceImpl implements SesRuleService {
             throw e; // last chance to log on server side
         }
     }
+    
+    private TimeseriesFeed createTimeseriesFeed(TimeseriesMetadata timeseriesMetadata) {
+        TimeseriesFeed timeseriesFeed = new TimeseriesFeed(timeseriesMetadata);
+        timeseriesFeed.setUpdateInterval(FeederConfig.getInstance().getUpdateInterval());
+        timeseriesFeed.setLastUpdate(null);
+        timeseriesFeed.setUsedCounter(0);
+        timeseriesFeed.setSesId(null);
+        return timeseriesFeed;
+    }
 
     @Override
     public SesClientResponse unSubscribe(String ruleName, String userID, String medium, String eml) throws Exception {
@@ -242,10 +257,10 @@ public class SesRulesServiceImpl implements SesRuleService {
             // get subscriptionID
             String museID = "";
             if (basicRule != null) {
-                museID = HibernateUtil.getSubscriptionID(basicRule.getBasicRuleID(), medium, eml, Integer.valueOf(userID));
+                museID = HibernateUtil.getSubscriptionID(basicRule.getId(), medium, eml, Integer.valueOf(userID));
                 ruleAsEML = basicRule.getEml();
             } else if (complexRule != null) {
-                museID = HibernateUtil.getSubscriptionID(complexRule.getComplexRuleID(), medium, eml, Integer.valueOf(userID));
+                museID = HibernateUtil.getSubscriptionID(complexRule.getId(), medium, eml, Integer.valueOf(userID));
                 ruleAsEML = complexRule.getEml();
             }
 
@@ -261,19 +276,20 @@ public class SesRulesServiceImpl implements SesRuleService {
             try {
                 //TODO what happens if inUse is < 0??
                 // remove unused sensor from feeder
-                ArrayList<String> sensorIDs = SesServerUtil.getSensorIDsFromEML(ruleAsEML);
-                String sensorID;
-                for (int i = 0; i < sensorIDs.size(); i++) {
-                    sensorID = sensorIDs.get(i);
+                ArrayList<String> timeseriesFeedIds = SesServerUtil.getTimeseriesIdsFromEML(ruleAsEML);
+                for (String timeseriesId : timeseriesFeedIds) {
                     
                     // decrement usedCount
-                    HibernateUtil.updateSensorCount(sensorID, false);
+                    HibernateUtil.updateSensorCount(timeseriesId, false);
                     
-                    if (HibernateUtil.getTimeseriesFeedsById(sensorID).getInUse() == 0) {
+                    if (HibernateUtil.getTimeseriesFeedById(timeseriesId).getInUse() == 0) {
                         LOG.debug("remove sensor from used list");
                      // TODO change unsubscribe interface
 //                        SosSesFeeder.getInst().removeUsedSensor(sensorID);
                     }
+                }
+                for (int i = 0; i < timeseriesFeedIds.size(); i++) {
+                    
                 }
             } catch (Exception e) {
                 //TODO error handling??
@@ -285,9 +301,9 @@ public class SesRulesServiceImpl implements SesRuleService {
                 HibernateUtil.deleteSubscription(museID, userID);
                 
                 
-                if (basicRule != null && !HibernateUtil.existsOtherSubscriptions(basicRule.getBasicRuleID())) {
+                if (basicRule != null && !HibernateUtil.existsOtherSubscriptions(basicRule.getId())) {
                     HibernateUtil.updateBasicRuleSubscribtion(ruleName, false);
-                } else if (complexRule != null && !HibernateUtil.existsOtherSubscriptions(complexRule.getComplexRuleID())) {
+                } else if (complexRule != null && !HibernateUtil.existsOtherSubscriptions(complexRule.getId())) {
                     HibernateUtil.updateComplexRuleSubscribtion(ruleName, false);
                 }
                 
@@ -343,8 +359,6 @@ public class SesRulesServiceImpl implements SesRuleService {
             if (basicRule != null) {
                 basicRule.setTimeseriesMetadata(rule.getTimeseriesMetadata());
                 
-                LOG.debug(basicRule.getEml());
-                
                 // user wants to edit the rule
                 if (edit) {
                     // update Basic rule
@@ -364,7 +378,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                     
                     // rule is subscribed
                     if (oldRule.isSubscribed()) {
-                        List<Subscription> subscriptions = HibernateUtil.getSubscriptionsFromRuleID(oldRule.getBasicRuleID());
+                        List<Subscription> subscriptions = HibernateUtil.getSubscriptionsFromRuleID(oldRule.getId());
                         // delete old rule
                         HibernateUtil.deleteRule(oldRuleName);
                         // save new
@@ -396,7 +410,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                 LOG.debug("save basicRule to DB");
                 HibernateUtil.saveBasicRule(basicRule);
             }
-            return new SesClientResponse(types.RULE_NAME_NOT_EXISTS);
+            return new SesClientResponse(types.RULE_NAME_NOT_EXISTS, rule);
         }
         catch (Exception e) {
             LOG.error("Exception occured on server side.", e);
@@ -427,7 +441,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                 BasicRule rule = basicList.get(i);
 
                 // check if user subscribed this rule
-                if (HibernateUtil.isSubscribed(id, rule.getBasicRuleID())) {
+                if (HibernateUtil.isSubscribed(id, rule.getId())) {
                     rule.setSubscribed(true);
                 } else {
                     rule.setSubscribed(false);
@@ -441,7 +455,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                 ComplexRule rule = complexList.get(i);
 
                 // check if user subscribed this rule
-                if (HibernateUtil.isSubscribed(id, rule.getComplexRuleID())) {
+                if (HibernateUtil.isSubscribed(id, rule.getId())) {
                     rule.setSubscribed(true);
                 } else {
                     rule.setSubscribed(false);
@@ -483,7 +497,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                 if (rule.isPublished()) {
 
                     // check if user subscribed this rule
-                    if (HibernateUtil.isSubscribed(id, rule.getBasicRuleID())) {
+                    if (HibernateUtil.isSubscribed(id, rule.getId())) {
                         rule.setSubscribed(true);
                     } else {
                         rule.setSubscribed(false);
@@ -500,7 +514,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                 if (rule.isPublished()) {
 
                     // check if user subscribed this rule
-                    if (HibernateUtil.isSubscribed(id, rule.getComplexRuleID())) {
+                    if (HibernateUtil.isSubscribed(id, rule.getId())) {
                         rule.setSubscribed(true);
                     } else {
                         rule.setSubscribed(false);
@@ -586,11 +600,11 @@ public class SesRulesServiceImpl implements SesRuleService {
             ComplexRule complexRule = HibernateUtil.getComplexRuleByName(ruleName);
             
             if (basicRule != null) {
-                if (HibernateUtil.ruleIsSubscribed(basicRule.getBasicRuleID())) {
+                if (HibernateUtil.ruleIsSubscribed(basicRule.getId())) {
                     return new SesClientResponse(SesClientResponse.types.DELETE_RULE_SUBSCRIBED);
                 }
             } else if (complexRule != null) {
-                if (HibernateUtil.ruleIsSubscribed(complexRule.getComplexRuleID())) {
+                if (HibernateUtil.ruleIsSubscribed(complexRule.getId())) {
                     return new SesClientResponse(SesClientResponse.types.DELETE_RULE_SUBSCRIBED);
                 }
             }
@@ -779,10 +793,10 @@ public class SesRulesServiceImpl implements SesRuleService {
                 
                 // set sensors
                 String sensors = "";
-                ArrayList<String> sensorsList = SesServerUtil.getSensorIDsFromEML(finalComplexRule.getEml());
+                ArrayList<String> timeseriesFeedIdsList = SesServerUtil.getTimeseriesIdsFromEML(finalComplexRule.getEml());
                 
-                for (int i = 0; i < sensorsList.size(); i++) {
-                    sensors = sensors + sensorsList.get(i);
+                for (int i = 0; i < timeseriesFeedIdsList.size(); i++) {
+                    sensors = sensors + timeseriesFeedIdsList.get(i);
                     sensors = sensors + "&";
                 }
                 finalComplexRule.setSensor(sensors);
@@ -816,7 +830,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                     
                     
                     if (oldRule.isSubscribed()) {
-                        List<Subscription> subscriptions = HibernateUtil.getSubscriptionsFromRuleID(oldRule.getComplexRuleID());
+                        List<Subscription> subscriptions = HibernateUtil.getSubscriptionsFromRuleID(oldRule.getId());
                         // delete old rule
                         HibernateUtil.deleteRule(oldRuleName);
                         // save new

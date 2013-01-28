@@ -178,7 +178,7 @@ public class BasicRule_5_Builder {
             Node value_1 = propertyRestrictiosnList.item(0);
             value_1.setTextContent(metadata.getPhenomenon());
             Node value_2 = propertyRestrictiosnList.item(1);
-            value_2.setTextContent(metadata.getProcedure());
+            value_2.setTextContent(metadata.getGlobalSesId());
 
             // set EventCount
             NodeList eventCountList = fstElement.getElementsByTagName(eventCount);

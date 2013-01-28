@@ -34,12 +34,12 @@ public class DatabaseAccess {
         transaction.commit();
 	}
 
-	public static synchronized void increaseSensorUse(TimeseriesMetadata timeseriesMetadata) {
-		changeCounter(timeseriesMetadata, 1);
+	public static synchronized void increaseSensorUse(TimeseriesFeed timeseriesFeed) {
+		changeCounter(timeseriesFeed, 1);
 	}
 
-	public static synchronized void decreaseSensorUse(TimeseriesMetadata timeseriesMetadata) {
-		changeCounter(timeseriesMetadata, -1);
+	public static synchronized void decreaseSensorUse(TimeseriesFeed timeseriesFeed) {
+		changeCounter(timeseriesFeed, -1);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -52,14 +52,11 @@ public class DatabaseAccess {
 		return timeseriesFeeds;
 	}
 
-	private static void changeCounter(TimeseriesMetadata timeseriesMetadata, int changeBy) {
+	private static void changeCounter(TimeseriesFeed timeseriesFeed, int changeBy) {
 		Session session = getSessionFactory().getCurrentSession();
 		Transaction transaction = session.beginTransaction();
-		List<TimeseriesFeed> timeseriesFeed = findTimeseriesFeedsWith(timeseriesMetadata, session);
-		for (TimeseriesFeed sensor : timeseriesFeed) {
-			sensor.setUsedCounter(sensor.getUsedCounter() + changeBy);
-			session.saveOrUpdate(sensor);
-		}
+		timeseriesFeed.setUsedCounter(timeseriesFeed.getUsedCounter() + changeBy);
+		session.saveOrUpdate(timeseriesFeed);
 		transaction.commit();
 	}
 
@@ -67,11 +64,12 @@ public class DatabaseAccess {
 	private static List<TimeseriesFeed> findTimeseriesFeedsWith(TimeseriesMetadata timeseriesMetadata, Session session) {
 		Criteria criteria = session.createCriteria(TimeseriesFeed.class);
 		List<TimeseriesFeed> timeseriesFeeds = criteria
-                .add(Restrictions.eq("serviceUrl", timeseriesMetadata.getServiceUrl()))
-                .add(Restrictions.eq("phenomenon", timeseriesMetadata.getPhenomenon()))
-				.add(Restrictions.eq("procedure", timeseriesMetadata.getProcedure()))
-				.add(Restrictions.eq("offering", timeseriesMetadata.getOffering()))
-				.add(Restrictions.eq("featureOfInterest", timeseriesMetadata.getFeatureOfInterest()))
+                .add(Restrictions.eq("timeseriesId", timeseriesMetadata.getTimeseriesId()))
+//                .add(Restrictions.eq("serviceUrl", timeseriesMetadata.getServiceUrl()))
+//                .add(Restrictions.eq("phenomenon", timeseriesMetadata.getPhenomenon()))
+//				.add(Restrictions.eq("procedure", timeseriesMetadata.getProcedure()))
+//				.add(Restrictions.eq("offering", timeseriesMetadata.getOffering()))
+//				.add(Restrictions.eq("featureOfInterest", timeseriesMetadata.getFeatureOfInterest()))
 				.list();
 		return timeseriesFeeds;
 	}

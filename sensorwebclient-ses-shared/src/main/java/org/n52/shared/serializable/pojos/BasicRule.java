@@ -29,7 +29,7 @@ public class BasicRule implements Serializable {
 
     private static final long serialVersionUID = -5628735312144877770L;
 
-    private int basicRuleID;
+    private int id;
 
     private String name;
 
@@ -54,7 +54,7 @@ public class BasicRule implements Serializable {
     private TimeseriesMetadata timeseriesMetadata;
     
     public BasicRule(BasicRuleDTO basicRuleDTO) {
-        this.basicRuleID = basicRuleDTO.getId();
+        this.id = basicRuleDTO.getId();
         this.name = basicRuleDTO.getName();
         this.ruleType = basicRuleDTO.getRuleType();
         this.setType(basicRuleDTO.getType());
@@ -87,12 +87,12 @@ public class BasicRule implements Serializable {
         // for serialization
     }
 
-    public int getBasicRuleID() {
-        return this.basicRuleID;
+    public int getId() {
+        return this.id;
     }
 
-    public void setBasicRuleID(int id) {
-        this.basicRuleID = id;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

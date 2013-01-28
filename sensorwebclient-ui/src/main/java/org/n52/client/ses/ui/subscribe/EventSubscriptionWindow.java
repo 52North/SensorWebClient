@@ -206,7 +206,8 @@ public class EventSubscriptionWindow extends Window {
                     EventBus.getMainEventBus().fireEvent(createEvt); // broker handles auto-subscribe
                     EventSubscriptionWindow.this.hide();
                 } else {
-                    // form validation will render error message
+                    // form validation should render error message
+                    // TODO form error handling does not work yet
                 }
             }
         };
@@ -264,7 +265,7 @@ public class EventSubscriptionWindow extends Window {
             Rule createdRule = evt.getCreatedRule();
             String ruleName = createdRule.getTitle();
             String cookie = getCookie(COOKIE_USER_ID);
-            getMainEventBus().fireEvent(new SubscribeEvent(cookie, ruleName, "email", "text"));
+            getMainEventBus().fireEvent(new SubscribeEvent(cookie, ruleName, "email", "EML"));
         }
 
         @Override

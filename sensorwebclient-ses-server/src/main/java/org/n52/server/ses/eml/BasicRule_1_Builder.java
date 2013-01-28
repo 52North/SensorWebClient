@@ -152,7 +152,7 @@ public class BasicRule_1_Builder {
             Node value_1 = propertyRestrictiosnList.item(0);
             value_1.setTextContent(rule.getTimeseriesMetadata().getPhenomenon());
             Node value_2 = propertyRestrictiosnList.item(1);
-            value_2.setTextContent(rule.getTimeseriesMetadata().getProcedure());
+            value_2.setTextContent(rule.getTimeseriesMetadata().getGlobalSesId());
 
             // set EventCount. This count represents the last measurements
             NodeList eventCountList = fstElement.getElementsByTagName(Constants.eventCount);
@@ -239,7 +239,7 @@ public class BasicRule_1_Builder {
                 // add first filter to document
                 if ((j == 0) && (i == 0)) {
 //                    fesLiteralNode.setTextContent(resultrUnit[1].toString());
-                    fesLiteralNode.setTextContent(rule.getEntryUnit());
+                    fesLiteralNode.setTextContent(rule.getEntryValue());
 
                     if (entryFilter != null) {
                         n.appendChild(entryFilter);
@@ -250,7 +250,7 @@ public class BasicRule_1_Builder {
                 // add second filter to the document
                 } else if ((j == 1) && (i == 0)) {
 //                    fesLiteralNode.setTextContent(resultcUnit[1].toString());
-                    fesLiteralNode.setTextContent(rule.getExitUnit());
+                    fesLiteralNode.setTextContent(rule.getExitValue());
 
                     if (exitFilter != null) {
                         n.appendChild(exitFilter);

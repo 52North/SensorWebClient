@@ -1,25 +1,85 @@
+
 package org.n52.shared.serializable.pojos;
 
 import java.io.Serializable;
 
+/**
+ * Represents a timeseries parameter constellation. A parameter constellation consists of
+ * <ul>
+ * <li>{@link #serviceUrl}</li>
+ * <li>{@link #offering}</li>
+ * <li>{@link #procedure}</li>
+ * <li>{@link #phenomenon}</li>
+ * <li>{@link #featureOfInterest}</li>
+ * </ul>
+ * <br>
+ * As an SES just uses procedure and phenomenon parameters to identify data stream to filter, the
+ * {@link SosSesFeeder} has to use a unique id for registering a timeseries at the SES. This unique id is
+ * being mapped so that each communication flow can be resolved either to an SOS parameter constellation (
+ * {@link TimeseriesMetadata}) or a global id representing the timeseries on SES side.
+ */
 public class TimeseriesMetadata implements Serializable {
-    
+
     private static final long serialVersionUID = -2169674834906583384L;
 
+    private String timeseriesId;
+
     private Integer id;
-    
+
     private String serviceUrl;
-    
+
     private String offering;
-    
+
     private String procedure;
-    
+
     private String phenomenon;
-    
+
     private String featureOfInterest;
 
     public TimeseriesMetadata() {
         // for serialization
+    }
+
+    /**
+     * Generates a unique id for this timeseries. The id is created by hashing all parameters forming an
+     * instance to a unique parameter constellation for a specific timeseries within an SOS instance.<br>
+     * <br>
+     * The following parameters identify a particular timeseries in an SOS instance:
+     * <ul>
+     * <li>{@link #serviceUrl}</li>
+     * <li>{@link #offering}</li>
+     * <li>{@link #procedure}</li>
+     * <li>{@link #phenomenon}</li>
+     * <li>{@link #featureOfInterest}</li>
+     * </ul>
+     * 
+     * @return an created id by hashing all timeseries parameters.
+     * @see #hashCode()
+     */
+    public String getGlobalSesId() {
+        return Integer.toString(hashCode());
+    }
+
+    /**
+     * Gets the unique timeseries is for this parameter constellation. This method does <b>only</b> return a reliable
+     * result, if and only if all the following parameters are set:
+     * <ul>
+     * <li>{@link #serviceUrl}</li>
+     * <li>{@link #offering}</li>
+     * <li>{@link #procedure}</li>
+     * <li>{@link #phenomenon}</li>
+     * <li>{@link #featureOfInterest}</li>
+     * </ul>
+     * 
+     * @return the unique timeseries id, if parameter constellation is complete.
+     */
+    public String getTimeseriesId() {
+        return timeseriesId;
+    }
+
+    // leave package private for serialization
+    void setTimeseriesId(String timeseriesId) {
+        this.timeseriesId = timeseriesId;
     }
 
     public Integer getId() {
@@ -70,6 +130,16 @@ public class TimeseriesMetadata implements Serializable {
         this.featureOfInterest = featureOfInterest;
     }
 
+    /**
+     * {@link Object#hashCode()} implementation using
+     * <ul>
+     * <li>{@link #serviceUrl}</li>
+     * <li>{@link #offering}</li>
+     * <li>{@link #procedure}</li>
+     * <li>{@link #phenomenon}</li>
+     * <li>{@link #featureOfInterest}</li>
+     * </ul>
+     */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -82,6 +152,16 @@ public class TimeseriesMetadata implements Serializable {
         return result;
     }
 
+    /**
+     * {@link Object#equals(Object)} implementation using
+     * <ul>
+     * <li>{@link #serviceUrl}</li>
+     * <li>{@link #offering}</li>
+     * <li>{@link #procedure}</li>
+     * <li>{@link #phenomenon}</li>
+     * <li>{@link #featureOfInterest}</li>
+     * </ul>
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -123,5 +203,5 @@ public class TimeseriesMetadata implements Serializable {
             return false;
         return true;
     }
-    
+
 }

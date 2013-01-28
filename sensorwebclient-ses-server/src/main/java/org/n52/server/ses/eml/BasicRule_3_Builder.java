@@ -170,7 +170,7 @@ public class BasicRule_3_Builder {
             Node value_1 = propertyRestrictiosnList.item(0);
             value_1.setTextContent(metadata.getPhenomenon());
             Node value_2 = propertyRestrictiosnList.item(1);
-            value_2.setTextContent(metadata.getProcedure());
+            value_2.setTextContent(metadata.getGlobalSesId());
 
             // set EventCount
             NodeList eventCountList = fstElement.getElementsByTagName(eventCount);
@@ -231,7 +231,7 @@ public class BasicRule_3_Builder {
                 // add first filter to document
                 if ((j == 0) && (i == 0)) {
 //                    fesLiteralNode.setTextContent(resultrUnit[1].toString());
-                    fesLiteralNode.setTextContent(rule.getEntryUnit());
+                    fesLiteralNode.setTextContent(rule.getEntryValue());
 
                     if (entryFilter != null) {
                         n.appendChild(entryFilter);
@@ -241,7 +241,7 @@ public class BasicRule_3_Builder {
                 // add second filter to document
                 } else if ((j == 1) && (i == 0)) {
 //                    fesLiteralNode.setTextContent(resultcUnit[1].toString());
-                    fesLiteralNode.setTextContent(rule.getExitUnit());
+                    fesLiteralNode.setTextContent(rule.getExitValue());
 
                     if (exitFilter != null) {
                         n.appendChild(exitFilter);

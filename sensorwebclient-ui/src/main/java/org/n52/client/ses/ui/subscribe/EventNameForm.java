@@ -35,6 +35,7 @@ public class EventNameForm extends DynamicForm {
         aboNameItem.setTextBoxStyle("n52_sensorweb_client_abo_name_textbox");
         aboNameItem.setTitle(i18n.aboName());
         aboNameItem.setWidth("*"); // fill form column
+        aboNameItem.setKeyPressFilter("[0-9 a-z A-Z _]");
         aboNameItem.setValue(controller.createSuggestedAbonnementName());
         aboNameItem.addKeyPressHandler(new KeyPressHandler() {
             public void onKeyPress(KeyPressEvent event) {
