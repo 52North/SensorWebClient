@@ -25,6 +25,8 @@
 package org.n52.server.ses.hibernate;
 
 import static org.hibernate.FetchMode.JOIN;
+import static org.n52.shared.serializable.pojos.UserRole.ADMIN;
+import static org.n52.shared.serializable.pojos.UserRole.NOT_REGISTERED_USER;
 
 import java.util.List;
 
@@ -44,6 +46,38 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HibernateUtil {
+
+    private static final String ROLE = "role";
+
+    private static final String SUBSCRIPTION_ID = "subscriptionID";
+
+    private static final String USER_ID = "userID";
+
+    private static final String FORMAT = "format";
+
+    private static final String MEDIUM = "medium";
+
+    private static final String RULE_ID = "ruleID";
+
+    private static final String TIMESERIES_ID = "timeseriesId";
+
+    private static final String PUBLISHED = "published";
+
+    private static final String RULE_NAME = "name";
+
+    private static final String OWNER_ID = "ownerID";
+
+    private static final String ACTIVE = "active";
+
+    private static final String REGISTER_ID = "registerID";
+
+    private static final String ID = "id";
+
+    private static final String MOBILE_NR = "handyNr";
+
+    private static final String E_MAIL = "eMail";
+
+    private static final String USER_NAME = "userName";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateUtil.class);
 
@@ -76,7 +110,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
-        if (crit.add(Restrictions.eq("userName", userName)).list().size() > 0) {
+        if (crit.add(Restrictions.eq(USER_NAME, userName)).list().size() > 0) {
             userNameExists = true;
         }
         session.getTransaction().commit();
@@ -88,7 +122,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
-        if (crit.add(Restrictions.eq("eMail", eMail)).list().size() > 0) {
+        if (crit.add(Restrictions.eq(E_MAIL, eMail)).list().size() > 0) {
             eMailExists = true;
         }
         session.getTransaction().commit();
@@ -101,7 +135,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
-        if (crit.add(Restrictions.eq("handyNr", handy)).list().size() > 0) {
+        if (crit.add(Restrictions.eq(MOBILE_NR, handy)).list().size() > 0) {
             handyExists = true;
         }
         session.getTransaction().commit();
@@ -109,11 +143,11 @@ public class HibernateUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static boolean updateUserRole(int userID, UserRole role) {
+    public static boolean updateUserRole(int userId, UserRole role) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
-        List<User> users = crit.add(Restrictions.eq("id", userID)).list();
+        List<User> users = crit.add(Restrictions.eq(ID, userId)).list();
         if (users.size() != 1) {
             return false;
         }
@@ -129,7 +163,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
-        List<User> users = crit.add(Restrictions.eq("id", userID)).list();
+        List<User> users = crit.add(Restrictions.eq(ID, userID)).list();
         if (users.size() != 1) {
             return false;
         }
@@ -145,7 +179,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
-        List<User> users = crit.add(Restrictions.eq("id", userID)).list();
+        List<User> users = crit.add(Restrictions.eq(ID, userID)).list();
         User user = users.get(0);
         session.getTransaction().commit();
         return user;
@@ -156,7 +190,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
-        List<User> users = crit.add(Restrictions.eq("registerID", registerID)).list();
+        List<User> users = crit.add(Restrictions.eq(REGISTER_ID, registerID)).list();
         User user;
         if (users.size() == 1) {
             user = users.get(0);
@@ -180,7 +214,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
-        List<User> users = crit.add(Restrictions.eq("id", userID)).list();
+        List<User> users = crit.add(Restrictions.eq(ID, userID)).list();
         if (users.size() == 1) {
             User user = users.get(0);
             session.delete(user);
@@ -195,7 +229,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
-        List<User> users = crit.add(Restrictions.eq("userName", userName)).list();
+        List<User> users = crit.add(Restrictions.eq(USER_NAME, userName)).list();
         if (users.size() != 1) {
             return null;
         }
@@ -209,7 +243,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
-        List<User> users = crit.add(Restrictions.eq("active", true)).list();
+        List<User> users = crit.add(Restrictions.eq(ACTIVE, true)).list();
 
         session.getTransaction().commit();
         return users;
@@ -252,7 +286,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(BasicRule.class);
-        List<BasicRule> rules = crit.add(Restrictions.eq("ownerID", Integer.valueOf(userID))).list();
+        List<BasicRule> rules = crit.add(Restrictions.eq(OWNER_ID, Integer.valueOf(userID))).list();
         session.getTransaction().commit();
         return rules;
     }
@@ -262,7 +296,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(ComplexRule.class);
-        List<ComplexRule> rules = crit.add(Restrictions.eq("ownerID", Integer.valueOf(userID))).list();
+        List<ComplexRule> rules = crit.add(Restrictions.eq(OWNER_ID, Integer.valueOf(userID))).list();
         session.getTransaction().commit();
         return rules;
     }
@@ -272,7 +306,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(BasicRule.class);
-        List<BasicRule> rules = crit.add(Restrictions.eq("name", ruleName)).list();
+        List<BasicRule> rules = crit.add(Restrictions.eq(RULE_NAME, ruleName)).list();
         session.getTransaction().commit();
         if (rules.size() == 1) {
             return rules.get(0);
@@ -285,7 +319,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(ComplexRule.class);
-        List<ComplexRule> rules = crit.add(Restrictions.eq("name", ruleName)).list();
+        List<ComplexRule> rules = crit.add(Restrictions.eq(RULE_NAME, ruleName)).list();
         session.getTransaction().commit();
         if (rules.size() == 1) {
             return rules.get(0);
@@ -318,7 +352,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(BasicRule.class);
-        List<BasicRule> rules = crit.add(Restrictions.not(Restrictions.eq("ownerID", Integer.valueOf(userID)))).list();
+        List<BasicRule> rules = crit.add(Restrictions.not(Restrictions.eq(OWNER_ID, Integer.valueOf(userID)))).list();
         session.getTransaction().commit();
         return rules;
     }
@@ -328,9 +362,9 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(BasicRule.class);
-        List<BasicRule> rules = crit.add(Restrictions.and(Restrictions.not(Restrictions.eq("ownerID",
+        List<BasicRule> rules = crit.add(Restrictions.and(Restrictions.not(Restrictions.eq(OWNER_ID,
                                                                                            Integer.valueOf(userID))),
-                                                          Restrictions.eq("published", true))).list();
+                                                          Restrictions.eq(PUBLISHED, true))).list();
         session.getTransaction().commit();
         return rules;
     }
@@ -340,9 +374,9 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(ComplexRule.class);
-        List<ComplexRule> rules = crit.add(Restrictions.and(Restrictions.not(Restrictions.eq("ownerID",
+        List<ComplexRule> rules = crit.add(Restrictions.and(Restrictions.not(Restrictions.eq(OWNER_ID,
                                                                                              Integer.valueOf(userID))),
-                                                            Restrictions.eq("published", true))).list();
+                                                            Restrictions.eq(PUBLISHED, true))).list();
         session.getTransaction().commit();
         return rules;
     }
@@ -352,7 +386,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(BasicRule.class);
-        List<BasicRule> rules = crit.add(Restrictions.eq("name", ruleName)).list();
+        List<BasicRule> rules = crit.add(Restrictions.eq(RULE_NAME, ruleName)).list();
         if (rules.size() == 1) {
             BasicRule rule = rules.get(0);
             rule.setSubscribed(newStatus);
@@ -366,7 +400,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(ComplexRule.class);
-        List<ComplexRule> rules = crit.add(Restrictions.eq("name", ruleName)).list();
+        List<ComplexRule> rules = crit.add(Restrictions.eq(RULE_NAME, ruleName)).list();
         if (rules.size() == 1) {
             ComplexRule rule = rules.get(0);
             rule.setSubscribed(newStatus);
@@ -380,7 +414,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(ComplexRule.class);
-        List<ComplexRule> rules = crit.add(Restrictions.not(Restrictions.eq("ownerID", Integer.valueOf(userID)))).list();
+        List<ComplexRule> rules = crit.add(Restrictions.not(Restrictions.eq(OWNER_ID, Integer.valueOf(userID)))).list();
         session.getTransaction().commit();
         return rules;
     }
@@ -400,8 +434,7 @@ public class HibernateUtil {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(TimeseriesFeed.class)
-                            .setFetchMode("TimeseriesMetadata", JOIN)
-                            .add(Restrictions.eq("timeseriesId", timeseriesId));
+                            .add(Restrictions.eq(TIMESERIES_ID, timeseriesId));
         List<TimeseriesFeed> timeseriesFeeds = crit.list();
         session.getTransaction().commit();
         if (timeseriesFeeds.size() != 0) {
@@ -415,7 +448,7 @@ public class HibernateUtil {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(TimeseriesFeed.class);
-        List<TimeseriesFeed> timeseriesFeeds = crit.add(Restrictions.eq("active", true)).list();
+        List<TimeseriesFeed> timeseriesFeeds = crit.add(Restrictions.eq(ACTIVE, true)).list();
         session.getTransaction().commit();
         return timeseriesFeeds;
     }
@@ -426,7 +459,7 @@ public class HibernateUtil {
         session.beginTransaction();
         Criteria crit = session.createCriteria(TimeseriesFeed.class)
                             .setFetchMode("TimeseriesMetadata", JOIN)
-                            .add(Restrictions.eq("timeseriesId", timeseriesId));
+                            .add(Restrictions.eq(TIMESERIES_ID, timeseriesId));
         List<TimeseriesFeed> sensors = crit.list();
 
         if (sensors.size() == 1) {
@@ -453,7 +486,6 @@ public class HibernateUtil {
     public static boolean publishRule(String ruleName, boolean value) {
         BasicRule basicRule = getBasicRuleByName(ruleName);
         ComplexRule complexRule = getComplexRuleByName(ruleName);
-
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
 
@@ -510,27 +542,23 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(Subscription.class);
-        List<Subscription> museID = crit.add(Restrictions.and(Restrictions.and(Restrictions.eq("ruleID", ruleID),
-                                                                               Restrictions.eq("medium", medium)),
-                                                              Restrictions.and(Restrictions.eq("format", format),
-                                                                               Restrictions.eq("userID", userID)))).list();
+        List<Subscription> museID = crit.add(Restrictions.and(Restrictions.and(Restrictions.eq(RULE_ID, ruleID),
+                                                                               Restrictions.eq(MEDIUM, medium)),
+                                                              Restrictions.and(Restrictions.eq(FORMAT, format),
+                                                                               Restrictions.eq(USER_ID, userID)))).list();
         if (museID.size() == 1) {
             return museID.get(0).getSubscriptionID();
         }
         return null;
     }
 
-    
-    /**
-     * @deprecated no sharing => only one user is using a rule
-     */
+
     @SuppressWarnings("unchecked")
-    public static boolean updateSensorCount(String sensorID, boolean newStatus) {
+    public static boolean updateSensorCount(String timeseriesId, boolean newStatus) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(TimeseriesFeed.class);
-        List<TimeseriesFeed> sensors = crit.add(Restrictions.eq("sensorID", sensorID)).list();
-
+        List<TimeseriesFeed> sensors = crit.add(Restrictions.eq(TIMESERIES_ID, timeseriesId)).list();
         if (sensors.size() == 1) {
             TimeseriesFeed sensor = sensors.get(0);
             if (newStatus) {
@@ -552,7 +580,6 @@ public class HibernateUtil {
     public static boolean deleteRule(String ruleName) {
         BasicRule basicRule = HibernateUtil.getBasicRuleByName(ruleName);
         ComplexRule complexRule = HibernateUtil.getComplexRuleByName(ruleName);
-
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
 
@@ -583,8 +610,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(TimeseriesFeed.class)
-                            .setFetchMode("TimeseriesMetadata", JOIN)
-                            .add(Restrictions.eq("timeseriesId", timeseriesId));
+                            .add(Restrictions.eq(TIMESERIES_ID, timeseriesId));
         List<TimeseriesFeed> sensors = crit.list();
 
         if (sensors.size() == 1) {
@@ -604,7 +630,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(BasicRule.class);
-        List<BasicRule> rules = crit.add(Restrictions.eq("published", true)).list();
+        List<BasicRule> rules = crit.add(Restrictions.eq(PUBLISHED, true)).list();
         session.getTransaction().commit();
         return rules;
     }
@@ -614,7 +640,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(ComplexRule.class);
-        List<ComplexRule> rules = crit.add(Restrictions.eq("published", true)).list();
+        List<ComplexRule> rules = crit.add(Restrictions.eq(PUBLISHED, true)).list();
         session.getTransaction().commit();
         return rules;
     }
@@ -624,8 +650,8 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(Subscription.class);
-        List<Subscription> subscription = crit.add(Restrictions.and(Restrictions.eq("userID", Integer.valueOf(id)),
-                                                                    Restrictions.eq("ruleID", ruleID))).list();
+        List<Subscription> subscription = crit.add(Restrictions.and(Restrictions.eq(USER_ID, Integer.valueOf(id)),
+                                                                    Restrictions.eq(RULE_ID, ruleID))).list();
 
         if (subscription.size() == 1) {
             return true;
@@ -638,8 +664,8 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(Subscription.class);
-        List<Subscription> subscriptions = crit.add(Restrictions.and(Restrictions.eq("userID", Integer.valueOf(userID)),
-                                                                     Restrictions.eq("subscriptionID", subscriptionID))).list();
+        List<Subscription> subscriptions = crit.add(Restrictions.and(Restrictions.eq(USER_ID, Integer.valueOf(userID)),
+                                                                     Restrictions.eq(SUBSCRIPTION_ID, subscriptionID))).list();
 
         if (subscriptions.size() == 1) {
             Subscription subscription = subscriptions.get(0);
@@ -655,7 +681,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(BasicRule.class);
-        List<BasicRule> rules = crit.add(Restrictions.eq("name", ruleName)).list();
+        List<BasicRule> rules = crit.add(Restrictions.eq(RULE_NAME, ruleName)).list();
         session.getTransaction().commit();
         if (rules.size() != 0) {
             return true;
@@ -668,7 +694,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(ComplexRule.class);
-        List<ComplexRule> rules = crit.add(Restrictions.eq("name", ruleName)).list();
+        List<ComplexRule> rules = crit.add(Restrictions.eq(RULE_NAME, ruleName)).list();
         session.getTransaction().commit();
         if (rules.size() != 0) {
             return true;
@@ -681,7 +707,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(Subscription.class);
-        List<Subscription> subscriptions = crit.add(Restrictions.eq("userID", Integer.valueOf(userID))).list();
+        List<Subscription> subscriptions = crit.add(Restrictions.eq(USER_ID, Integer.valueOf(userID))).list();
         session.getTransaction().commit();
 
         return subscriptions;
@@ -692,7 +718,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(Subscription.class);
-        List<Subscription> subscriptions = crit.add(Restrictions.eq("ruleID", ruleID)).list();
+        List<Subscription> subscriptions = crit.add(Restrictions.eq(RULE_ID, ruleID)).list();
         session.getTransaction().commit();
 
         return subscriptions;
@@ -703,7 +729,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(BasicRule.class);
-        List<BasicRule> rules = crit.add(Restrictions.eq("id", ruleID)).list();
+        List<BasicRule> rules = crit.add(Restrictions.eq(ID, ruleID)).list();
         session.getTransaction().commit();
         if (rules.size() == 1) {
             BasicRule rule = rules.get(0);
@@ -717,7 +743,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(BasicRule.class);
-        List<BasicRule> rules = crit.add(Restrictions.eq("id", ruleID)).list();
+        List<BasicRule> rules = crit.add(Restrictions.eq(ID, ruleID)).list();
         session.getTransaction().commit();
         return rules;
     }
@@ -727,7 +753,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(ComplexRule.class);
-        List<ComplexRule> rules = crit.add(Restrictions.eq("id", ruleID)).list();
+        List<ComplexRule> rules = crit.add(Restrictions.eq(ID, ruleID)).list();
         session.getTransaction().commit();
         if (rules.size() == 1) {
             ComplexRule rule = rules.get(0);
@@ -748,8 +774,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(TimeseriesFeed.class)
-                            .setFetchMode("TimeseriesMetadata", JOIN)
-                            .add(Restrictions.eq("timeseriesId", timeseriesId));
+                            .add(Restrictions.eq(TIMESERIES_ID, timeseriesId));
         List<TimeseriesFeed> timeseriesFeeds = crit.list();
         session.getTransaction().commit();
         return timeseriesFeeds.size() != 0;
@@ -760,7 +785,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(Subscription.class);
-        List<Subscription> subscriptions = crit.add(Restrictions.eq("userID", userID)).list();
+        List<Subscription> subscriptions = crit.add(Restrictions.eq(USER_ID, userID)).list();
         session.getTransaction().commit();
         return subscriptions;
     }
@@ -770,8 +795,8 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
-        List<User> users = crit.add(Restrictions.and(Restrictions.not(Restrictions.eq("id", userID)),
-                                                     Restrictions.eq("role", UserRole.ADMIN))).list();
+        List<User> users = crit.add(Restrictions.and(Restrictions.not(Restrictions.eq(ID, userID)),
+                                                     Restrictions.eq(ROLE, ADMIN))).list();
 
         if (users.size() >= 1) {
             return true;
@@ -784,7 +809,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(User.class);
-        List<User> users = crit.add(Restrictions.eq("role", UserRole.NOT_REGISTERED_USER)).list();
+        List<User> users = crit.add(Restrictions.eq(ROLE, NOT_REGISTERED_USER)).list();
 
         return users;
     }
@@ -794,7 +819,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(Subscription.class);
-        List<Subscription> subscription = crit.add(Restrictions.eq("ruleID", ruleID)).list();
+        List<Subscription> subscription = crit.add(Restrictions.eq(RULE_ID, ruleID)).list();
 
         if (subscription.size() >= 1) {
             return true;
@@ -817,10 +842,10 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(Subscription.class);
-        List<Subscription> subscription = crit.add(Restrictions.and(Restrictions.and(Restrictions.eq("ruleID", ruleID),
-                                                                                     Restrictions.eq("medium", medium)),
-                                                                    Restrictions.and(Restrictions.eq("format", format),
-                                                                                     Restrictions.eq("userID", userID)))).list();
+        List<Subscription> subscription = crit.add(Restrictions.and(Restrictions.and(Restrictions.eq(RULE_ID, ruleID),
+                                                                                     Restrictions.eq(MEDIUM, medium)),
+                                                                    Restrictions.and(Restrictions.eq(FORMAT, format),
+                                                                                     Restrictions.eq(USER_ID, userID)))).list();
 
         if (subscription.size() >= 1) {
             return true;
@@ -833,7 +858,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(Subscription.class);
-        List<Subscription> subscription = crit.add( (Restrictions.eq("ruleID", ruleID))).list();
+        List<Subscription> subscription = crit.add( (Restrictions.eq(RULE_ID, ruleID))).list();
 
         if (subscription.size() >= 1) {
             return true;
@@ -847,7 +872,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(BasicRule.class);
-        List<BasicRule> rules = crit.add(Restrictions.and(Restrictions.eq("published", true),
+        List<BasicRule> rules = crit.add(Restrictions.and(Restrictions.eq(PUBLISHED, true),
                                                           Restrictions.ilike(row, text))).list();
         session.getTransaction().commit();
         return rules;
@@ -858,7 +883,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(BasicRule.class);
-        List<BasicRule> rules = crit.add(Restrictions.and(Restrictions.eq("ownerID", Integer.valueOf(userID)),
+        List<BasicRule> rules = crit.add(Restrictions.and(Restrictions.eq(OWNER_ID, Integer.valueOf(userID)),
                                                           Restrictions.ilike(row, text))).list();
         session.getTransaction().commit();
         return rules;
@@ -870,7 +895,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(ComplexRule.class);
-        List<ComplexRule> rules = crit.add(Restrictions.and(Restrictions.eq("published", true),
+        List<ComplexRule> rules = crit.add(Restrictions.and(Restrictions.eq(PUBLISHED, true),
                                                             Restrictions.ilike(row, text))).list();
         session.getTransaction().commit();
         return rules;
@@ -881,7 +906,7 @@ public class HibernateUtil {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(ComplexRule.class);
-        List<ComplexRule> rules = crit.add(Restrictions.and(Restrictions.eq("ownerID", Integer.valueOf(userID)),
+        List<ComplexRule> rules = crit.add(Restrictions.and(Restrictions.eq(OWNER_ID, Integer.valueOf(userID)),
                                                             Restrictions.ilike(row, text))).list();
         session.getTransaction().commit();
         return rules;
@@ -892,8 +917,7 @@ public class HibernateUtil {
         session.beginTransaction();
         TimeseriesMetadata metadata = (TimeseriesMetadata) session
                                             .createCriteria(TimeseriesMetadata.class)
-                                            .setFetchMode("TimeseriesMetadata", JOIN)
-                                            .add(Restrictions.eq("timeseriesId", timeseriesId))
+                                            .add(Restrictions.eq(TIMESERIES_ID, timeseriesId))
                                             .uniqueResult();
         session.getTransaction().commit();
         return metadata;
