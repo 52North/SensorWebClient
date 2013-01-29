@@ -12,7 +12,7 @@ public class TimeseriesFeed implements Serializable {
 
     private static final long serialVersionUID = 8770405020547586667L;
 
-    private Integer id;
+    private String timeseriesId;
 
     private String sesId;
 
@@ -33,12 +33,23 @@ public class TimeseriesFeed implements Serializable {
     }
 
     /**
+     * Creates a timeseries feed from a parameter constellation.
+     * 
      * @param timeseriesMetadata
      *        the timeseries metadata representing a parameter constellation to retrieve observation data from
      *        a specific SOS instance.
      */
     public TimeseriesFeed(TimeseriesMetadata timeseriesMetadata) {
+        if (!isValid(timeseriesMetadata)) {
+            throw new IllegalStateException("Passed parameter constellation is not complete.");
+        }
+        this.timeseriesId = timeseriesMetadata.getTimeseriesId();
         this.timeseriesMetadata = timeseriesMetadata;
+    }
+
+    private boolean isValid(TimeseriesMetadata timeseriesMetadata) {
+        return timeseriesMetadata.isComplete();
+        
     }
 
     public TimeseriesMetadata getTimeseriesMetadata() {
@@ -48,13 +59,13 @@ public class TimeseriesFeed implements Serializable {
     public void setTimeseriesMetadata(TimeseriesMetadata timeseriesMetadata) {
         this.timeseriesMetadata = timeseriesMetadata;
     }
-
-    public Integer getId() {
-        return this.id;
+    
+    public String getTimeseriesId() {
+        return this.timeseriesId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setTimeseriesId(String timeseriesId) {
+        this.timeseriesId = timeseriesId;
     }
 
     public String getSesId() {
