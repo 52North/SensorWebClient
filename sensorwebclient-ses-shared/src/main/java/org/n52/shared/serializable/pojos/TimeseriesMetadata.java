@@ -22,7 +22,8 @@ public class TimeseriesMetadata implements Serializable {
 
     private static final long serialVersionUID = -2169674834906583384L;
 
-    private String timeseriesId;
+    @SuppressWarnings("unused")
+    private String timeseriesId; // used as db id
 
     private Integer id;
 
@@ -61,8 +62,8 @@ public class TimeseriesMetadata implements Serializable {
     }
 
     /**
-     * Gets the unique timeseries is for this parameter constellation. This method does <b>only</b> return a reliable
-     * result, if and only if all the following parameters are set:
+     * Gets the unique timeseries is for this parameter constellation. This method does <b>only</b> return a
+     * reliable result, if and only if all the following parameters are set:
      * <ul>
      * <li>{@link #serviceUrl}</li>
      * <li>{@link #offering}</li>
@@ -72,9 +73,15 @@ public class TimeseriesMetadata implements Serializable {
      * </ul>
      * 
      * @return the unique timeseries id, if parameter constellation is complete.
+     * @throws IllegalStateException
+     *         if one or more of the required parameters are not set yet.
+     * @see #getGlobalSesId()
      */
     public String getTimeseriesId() {
-        return timeseriesId;
+        if ( !isComplete()) {
+            throw new IllegalStateException("Timeseries metadata has to be complete to determine id.");
+        }
+        return getGlobalSesId();
     }
 
     // leave package private for serialization
@@ -202,6 +209,15 @@ public class TimeseriesMetadata implements Serializable {
         else if ( !serviceUrl.equals(other.serviceUrl))
             return false;
         return true;
+    }
+
+    public boolean isComplete() {
+        boolean hasServiceUrl = serviceUrl != null;
+        boolean hasOffering = offering != null;
+        boolean hasProcedure = procedure != null;
+        boolean hasPhenomenon = phenomenon != null;
+        boolean hasFOI = featureOfInterest != null;
+        return hasServiceUrl && hasOffering && hasProcedure && hasPhenomenon && hasFOI;
     }
 
 }
