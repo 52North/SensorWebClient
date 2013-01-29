@@ -3,7 +3,7 @@
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
 <hibernate-mapping package="org.n52.shared.serializable.pojos">
   <class name="TimeseriesMetadata" table="timeseries_metadata" >
-      <id name="id" column="ID">
+      <id name="id">
          <generator class="native"/>
       </id>
       <property name="serviceUrl" type="string"/>
@@ -11,6 +11,6 @@
       <property name="offering" type="string"/>
       <property name="phenomenon" type="string"/>
       <property name="featureOfInterest" type="string"/>
-      <property name="timeseriesId" type="string"/>
+      <property name="timeseriesId" type="string" unique="true" />
    </class>
 </hibernate-mapping>

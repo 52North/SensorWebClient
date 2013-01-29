@@ -2,18 +2,15 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
 <hibernate-mapping package="org.n52.shared.serializable.pojos">
-  <class name="TimeseriesFeed" table="timeseries_feed" >
-      <id name="id">
-         <generator class="sequence">
-            <param name="sequence">sensor_id_seq</param>
-         </generator>
-      </id>
-      <property name="sesId" type="string"/>
-      <property name="lastUpdate" type="calendar"/>
-      <property name="updateInterval" type="long"/>
-      <property name="usedCounter" type="long"/>
-      <property name="active" type="boolean"/>
-      <property name="inUse" type="integer"/>
-      <one-to-one name="timeseriesMetadata" class="org.n52.shared.serializable.pojos.TimeseriesMetadata" />
-   </class>
+	<class name="TimeseriesFeed" table="timeseries_feed">
+		<id name="timeseriesId" />
+		<property name="sesId" type="string" />
+		<property name="lastUpdate" type="calendar" />
+		<property name="updateInterval" type="long" />
+		<property name="usedCounter" type="long" />
+		<property name="active" type="boolean" />
+		<property name="inUse" type="integer" />
+		<many-to-one name="timeseriesMetadata" class="org.n52.shared.serializable.pojos.TimeseriesMetadata" 
+		          property-ref="timeseriesId" unique="true" not-null="true" cascade="persist" lazy="false" />
+	</class>
 </hibernate-mapping>
