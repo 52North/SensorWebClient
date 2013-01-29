@@ -23,27 +23,15 @@
  */
 package org.n52.server.service;
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.n52.server.oxf.util.ConfigurationContext.SERVER_TIMEOUT;
+import static org.n52.server.oxf.util.access.DescribeSensorAccessor.getSensorDescriptionAsSensorML;
 
-import java.io.ByteArrayInputStream;
 import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
 
+import org.apache.xmlbeans.XmlObject;
 import org.n52.client.service.SensorMetadataService;
-import org.n52.oxf.adapter.OperationResult;
-import org.n52.oxf.adapter.ParameterContainer;
-import org.n52.oxf.ows.capabilities.Operation;
-import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
-import org.n52.oxf.sos.adapter.SOSAdapter;
-import org.n52.oxf.sos.util.SosUtil;
 import org.n52.oxf.util.JavaHelper;
 import org.n52.server.oxf.util.ConfigurationContext;
-import org.n52.server.oxf.util.access.AccessorThreadPool;
-import org.n52.server.oxf.util.access.OperationAccessor;
 import org.n52.server.oxf.util.parser.DescribeSensorParser;
-import org.n52.server.util.SosAdapterFactory;
 import org.n52.shared.responses.GetProcedureDetailsUrlResponse;
 import org.n52.shared.responses.SensorMetadataResponse;
 import org.n52.shared.serializable.pojos.ReferenceValue;
@@ -67,8 +55,8 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
             Procedure procedure = ConfigurationContext.getSOSMetadata(sosUrl).getProcedure(procedureId);
             SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosUrl);
 
-            OperationResult result = requestDescribeSensor(sosUrl, procedureId, metadata);
-            DescribeSensorParser parser = new DescribeSensorParser(result.getIncomingResultAsStream(), metadata);
+            XmlObject sml = getSensorDescriptionAsSensorML(procedureId, metadata);
+            DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), metadata);
             tsProperties.setMetadataUrl(parser.buildUpSensorMetadataHtmlUrl(procedureId, sosUrl));
             tsProperties.setStationName(parser.buildUpSensorMetadataStationName());
             tsProperties.setUOM(parser.buildUpSensorMetadataUom(phenomenonId));
@@ -84,9 +72,6 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
     
             JavaHelper.cleanUpDir(ConfigurationContext.XSL_DIR, ConfigurationContext.FILE_KEEPING_TIME, "xml");
             return response;
-        } catch (ExecutionException e) {
-            LOG.error("Exception occured on server side.", e.getCause());
-            throw e; // last chance to log on server side
         } catch (Exception e) {
             LOG.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
@@ -98,44 +83,14 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
         try {
             LOG.debug("Request -> getProcedureDetailsUrl");
             SOSMetadata metadata = ConfigurationContext.getSOSMetadata(serviceURL);
-            OperationResult result = requestDescribeSensor(serviceURL, procedure, metadata);
-            ByteArrayInputStream resultInputStream = result.getIncomingResultAsStream();
-            DescribeSensorParser parser = new DescribeSensorParser(resultInputStream, metadata);
+            XmlObject sml = getSensorDescriptionAsSensorML(procedure, metadata);
+            DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), metadata);
             String url = parser.buildUpSensorMetadataHtmlUrl(procedure, serviceURL);
             return new GetProcedureDetailsUrlResponse(url);
-        } catch (ExecutionException e) {
-            LOG.error("Exception occured on server side.", e.getCause());
-            throw e; // last chance to log on server side
         } catch (Exception e) {
             LOG.error("Exception occured on server side.", e);
-            throw e;
+            throw e; // last chance to log on server side
         }
-    }
-
-    private OperationResult requestDescribeSensor(String sosUrl, String procedureId, SOSMetadata metadata) throws Exception {
-        String sosVersion = metadata.getSosVersion();
-        String smlVersion = metadata.getSensorMLVersion();
-        ParameterContainer parameters = new ParameterContainer();
-        parameters.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_SERVICE_PARAMETER, "SOS");
-        parameters.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_VERSION_PARAMETER, sosVersion);
-        parameters.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_PARAMETER, procedureId);
-        if (SosUtil.isVersion100(sosVersion)) {
-            parameters.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_OUTPUT_FORMAT, smlVersion);
-        } else if (SosUtil.isVersion200(sosVersion)) {
-            parameters.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_DESCRIPTION_FORMAT, smlVersion);
-        } else {
-            throw new IllegalStateException("SOS Version (" + sosVersion + ") is not supported!");
-        }
-   
-        Operation describeSensor = new Operation(SOSAdapter.DESCRIBE_SENSOR, sosUrl, sosUrl);
-        SOSAdapter adapter = SosAdapterFactory.createSosAdapter(metadata);
-
-        OperationAccessor accessor = new OperationAccessor(adapter, describeSensor, parameters);
-        FutureTask<OperationResult> task = new FutureTask<OperationResult>(accessor);
-        AccessorThreadPool.execute(task);
-
-        // read sensor description
-        return task.get(SERVER_TIMEOUT, MILLISECONDS);
     }
 
 }
