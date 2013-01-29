@@ -54,7 +54,7 @@ public class FeedObservationThread extends Thread {
     private Vector<String> currentlyFeedingSensors;
 
     public FeedObservationThread(TimeseriesFeed timeseriesFeed, Vector<String> v) {
-        super("sensorId_" + timeseriesFeed.getId()); // TODO choose better name
+        super("timeseriesId_" + timeseriesFeed.getTimeseriesId());
         this.timeseriesFeed = timeseriesFeed;
         this.currentlyFeedingSensors = v;
     }
