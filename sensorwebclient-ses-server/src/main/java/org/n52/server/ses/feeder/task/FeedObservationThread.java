@@ -1,6 +1,8 @@
 
 package org.n52.server.ses.feeder.task;
 
+import static org.n52.server.ses.feeder.FeederConfig.getFeederConfig;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -28,8 +30,8 @@ import org.n52.server.ses.feeder.FeederConfig;
 import org.n52.server.ses.feeder.connector.SESConnector;
 import org.n52.server.ses.feeder.connector.SOSConnector;
 import org.n52.server.ses.feeder.util.DatabaseAccess;
-import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.TimeseriesFeed;
+import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,9 +96,10 @@ public class FeedObservationThread extends Thread {
                 Calendar endUpdate = null;
                 if (startUpdate == null) {
                     // create start timestamp for feeding observations
-                    Calendar firstUpdateTime = new GregorianCalendar();
-                    firstUpdateTime.add(Calendar.MILLISECOND, -FeederConfig.getFeederConfig().getStartTimestamp());
-                    timeseriesFeed.setLastUpdate(firstUpdateTime);
+                    long firstUpdateTime = System.currentTimeMillis() - getFeederConfig().getStartTimestamp();
+                    Calendar updateTime = new GregorianCalendar();
+                    updateTime.setTimeInMillis(firstUpdateTime);
+                    timeseriesFeed.setLastUpdate(updateTime);
                     LOGGER.debug("Start Time generated for first feeding of " + metadata.getProcedure() +": "+ timeseriesFeed.getLastUpdate().getTimeInMillis());
                     // FIXME save to database the new defined start time for this sensor
                     /*
@@ -189,7 +192,7 @@ public class FeedObservationThread extends Thread {
         String[] blocks = values.split(blockSeperator);
         StringBuffer newValues = new StringBuffer();
         try {
-            List<String> noDatas = FeederConfig.getFeederConfig().getNoDatas();
+            List<String> noDatas = FeederConfig.getFeederConfig().getNoDataValues();
             for (String block : blocks) {
                 String[] value = block.split(tokenSeparator);
                 // check if noData values matching
@@ -219,7 +222,6 @@ public class FeedObservationThread extends Thread {
     private long getUpdateInterval(ObservationType observation, Calendar newestUpdate) {
         long updateInterval = 0;
         try {
-
             updateInterval = FeederConfig.getFeederConfig().getUpdateInterval();
             XmlCursor cResult = observation.getResult().newCursor();
             cResult.toChild(new QName("http://www.opengis.net/swe/1.0.1", "DataArray"));
@@ -248,7 +250,7 @@ public class FeedObservationThread extends Thread {
                     Date temp = dateTime.toDate();
                     long interval = (temp.getTime() - latest.getTime());
                     if (interval < updateInterval) {
-                        updateInterval = (int) interval;
+                        updateInterval = interval;
                     }
                     latest = temp;
                 } catch (Exception e) {

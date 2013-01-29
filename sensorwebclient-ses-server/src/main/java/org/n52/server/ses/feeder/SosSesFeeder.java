@@ -1,5 +1,7 @@
 package org.n52.server.ses.feeder;
 
+import static org.n52.server.ses.feeder.FeederConfig.getFeederConfig;
+
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -71,7 +73,7 @@ public class SosSesFeeder {
     
     private void startFeeding() {
         LOGGER.info("Start feeding registered timeseries to SES.");
-        this.timer.schedule(this.obsTask, 2000, FeederConfig.getFeederConfig().getObsTime());
+        this.timer.schedule(this.obsTask, 2000, getFeederConfig().getObsTime());
     }
     
     @Override

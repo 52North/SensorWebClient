@@ -5,20 +5,14 @@
 	<!-- URL to the SES and some other configurations for the SES -->
 	<entry key="ses_url">${ses.service.url}</entry>
 	
-	<!-- Supported sos version -->
-	<entry key="sos_version">${feeder.sos.version}</entry>
-	
-	<!-- Period to start to collect the sensorML documents in seconds -->
+	<!-- Period to start to collect the sensorML documents in milliseconds -->
 	<entry key="capabilities_task_period">${feeder.capabilities.task.period}</entry>
 	
-	<!-- Period to start to collect the new observations in seconds -->
+	<!-- Period to start to collect the new observations in milliseconds -->
 	<entry key="observations_task_period">${feeder.observation.task.period}</entry>
 	
-	<!-- Constraints for the procedure names as comma separated value -->
-	<entry key="procedure_name_constraints">${feeder.procedure.name.constraints}</entry>
-	
     <!-- NoData wildcards as comma separated values -->
-	<entry key="nodatas">${feeder.no.data}</entry>
+	<entry key="nodata_values">${feeder.nodata.values}</entry>
 	
 	
 	<!-- ################################################## 
@@ -30,10 +24,8 @@
 	<entry key="ses_register_publisher_endpoint">${feeder.ses.register.publisher.endpoint}</entry>
 	<entry key="ses_default_topic">${feeder.ses.default.topic}</entry>
 
-	<!-- Minimum update time for new observations in seconds -->
+	<!-- Minimum update time for new observations in milliseconds -->
 	<entry key="update_observation_period">${feeder.update.observation.period}</entry>
-	<!-- Number of Maximum loaded procedures -->
-	<entry key="maximum_number_procedures">${feeder.maximum.number.procedures}</entry>
     <!-- Prohibit procedure names as comma separated value -->
     <entry key="prohibit_procedure_names">${feeder.prohibit.procedure.name}</entry>
     <!-- Start timestamp in seconds before actual time -->
