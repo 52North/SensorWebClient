@@ -4,6 +4,8 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.Vector;
 
@@ -23,6 +25,8 @@ import org.slf4j.LoggerFactory;
 public class SosSesFeeder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SosSesFeeder.class);
+
+    private Map<String, SOSConnector> sosConnections = new HashMap<String, SOSConnector>();
     
     private ObservationsTask obsTask;
     
@@ -120,8 +124,8 @@ public class SosSesFeeder {
     	if (!timeseriesIsKnown) {
     		// get sensorML document from SOS
     		try {
-				SOSConnector sosConn = new SOSConnector(timeseriesMetadata.getServiceUrl());
-				SensorMLDocument sensorML = sosConn.getSensorML(timeseriesMetadata.getProcedure());
+    		    SOSConnector sosConnector = getSosConnector(timeseriesMetadata);
+				SensorMLDocument sensorML = sosConnector.getSensorML(timeseriesMetadata);
 				
 				// send sensorML document to SES
 				SESConnector sesConn = new SESConnector();
@@ -138,6 +142,16 @@ public class SosSesFeeder {
     	} else {
     		DatabaseAccess.increaseSensorUse(timeseriesFeed);
     	}
+    }
+
+    SOSConnector getSosConnector(TimeseriesMetadata timeseriesMetadata) {
+        SOSConnector sosConn = null;
+        String serviceUrl = timeseriesMetadata.getServiceUrl();
+        if (!sosConnections.containsKey(serviceUrl)) {
+            sosConnections.put(serviceUrl, new SOSConnector(serviceUrl));
+        }
+        sosConn = sosConnections.get(serviceUrl);
+        return sosConn;
     }
     
     public void disableTimeseriesFeed(TimeseriesFeed timeseriesFeed) {
