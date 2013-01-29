@@ -130,7 +130,7 @@ class EventSubscriptionController {
         } else if (getSelectedRuleTemplate() == SENSOR_LOSS) {
             sb.append("_").append(SENSOR_LOSS.toString());
         }
-        selectedAbonnementName = sb.toString().replaceAll("[^0-9 a-z A-Z _]", "_");
+        selectedAbonnementName = sb.toString().replaceAll("[^0-9a-zA-Z_]", "_");
         return selectedAbonnementName;
     }
 
@@ -214,7 +214,7 @@ class EventSubscriptionController {
         TimeseriesMetadata metadata = new TimeseriesMetadata();
         metadata.setServiceUrl(timeseries.getSosUrl());
         metadata.setOffering(timeseries.getOfferingId());
-        metadata.setProcedure(timeseries.getFeatureId());
+        metadata.setProcedure(timeseries.getProcedureId());
         metadata.setPhenomenon(timeseries.getPhenomenonId());
         metadata.setFeatureOfInterest(timeseries.getFeatureId());
         return metadata;
