@@ -95,7 +95,7 @@ public class FeedObservationThread extends Thread {
                 if (startUpdate == null) {
                     // create start timestamp for feeding observations
                     Calendar firstUpdateTime = new GregorianCalendar();
-                    firstUpdateTime.add(Calendar.MILLISECOND, -FeederConfig.getInstance().getStartTimestamp());
+                    firstUpdateTime.add(Calendar.MILLISECOND, -FeederConfig.getFeederConfig().getStartTimestamp());
                     timeseriesFeed.setLastUpdate(firstUpdateTime);
                     LOGGER.debug("Start Time generated for first feeding of " + metadata.getProcedure() +": "+ timeseriesFeed.getLastUpdate().getTimeInMillis());
                     // FIXME save to database the new defined start time for this sensor
@@ -189,7 +189,7 @@ public class FeedObservationThread extends Thread {
         String[] blocks = values.split(blockSeperator);
         StringBuffer newValues = new StringBuffer();
         try {
-            List<String> noDatas = FeederConfig.getInstance().getNoDatas();
+            List<String> noDatas = FeederConfig.getFeederConfig().getNoDatas();
             for (String block : blocks) {
                 String[] value = block.split(tokenSeparator);
                 // check if noData values matching
@@ -220,7 +220,7 @@ public class FeedObservationThread extends Thread {
         long updateInterval = 0;
         try {
 
-            updateInterval = FeederConfig.getInstance().getUpdateInterval();
+            updateInterval = FeederConfig.getFeederConfig().getUpdateInterval();
             XmlCursor cResult = observation.getResult().newCursor();
             cResult.toChild(new QName("http://www.opengis.net/swe/1.0.1", "DataArray"));
             DataArrayDocument dataArrayDoc = null;
@@ -264,8 +264,8 @@ public class FeedObservationThread extends Thread {
                 updateInterval = dateTimeLast.getMillis() - dateTimeFirst.getMillis();
             }
 
-            if (updateInterval <= FeederConfig.getInstance().getUpdateInterval()) {
-                return FeederConfig.getInstance().getUpdateInterval();
+            if (updateInterval <= FeederConfig.getFeederConfig().getUpdateInterval()) {
+                return FeederConfig.getFeederConfig().getUpdateInterval();
             }
         } catch (IllegalStateException e) {
             LOGGER.debug("Configuration is not available (anymore).", e);

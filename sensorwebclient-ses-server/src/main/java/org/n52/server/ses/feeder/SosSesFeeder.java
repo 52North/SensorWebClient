@@ -53,7 +53,7 @@ public class SosSesFeeder {
     private SosSesFeeder() {
     	
     	// initialize feeder configurations
-    	FeederConfig.getInstance();
+    	FeederConfig.getFeederConfig();
 
         // start description timer task
         this.obsTask = new ObservationsTask(CURRENTLY_FEEDED_SENSORS);
@@ -71,7 +71,7 @@ public class SosSesFeeder {
     
     private void startFeeding() {
         LOGGER.info("Start feeding registered timeseries to SES.");
-        this.timer.schedule(this.obsTask, 2000, FeederConfig.getInstance().getObsTime());
+        this.timer.schedule(this.obsTask, 2000, FeederConfig.getFeederConfig().getObsTime());
     }
     
     @Override

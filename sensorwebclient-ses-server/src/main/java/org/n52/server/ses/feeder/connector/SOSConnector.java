@@ -6,8 +6,6 @@ import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_CAPABILITIES_SERVIC
 import static org.n52.oxf.sos.adapter.SOSAdapter.GET_CAPABILITIES;
 import static org.n52.server.oxf.util.access.DescribeSensorAccessor.getSensorDescriptionAsSensorML;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,7 +33,6 @@ import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.access.ObservationAccessor;
 import org.n52.server.oxf.util.generator.RequestConfig;
 import org.n52.server.ses.feeder.FeederConfig;
-import org.n52.server.ses.feeder.util.IOHelper;
 import org.n52.server.util.SosAdapterFactory;
 import org.n52.server.util.TimeUtil;
 import org.n52.shared.serializable.pojos.TimeseriesFeed;
@@ -44,22 +41,22 @@ import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.mail.handlers.message_rfc822;
+
 /**
- * The SOSConnector class manages the communication between the feeder and a given SOS.
- * 
- * @author Jan Schulte
+ * Manages the communication to SOS.
  */
 public class SOSConnector {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSConnector.class);
 
-    private String sosURL;
-
-    private String serviceVersion;
+    private String serviceUrl;
 
     private SOSAdapter sosAdapter;
 
     private ServiceDescriptor serviceDescriptor;
+
+    private SOSMetadata serviceMetadata;
 
     /**
      * Instantiates a new SOSConnector.
@@ -69,10 +66,9 @@ public class SOSConnector {
      */
     public SOSConnector(String sosURL) {
         try {
-            this.sosURL = sosURL;
-            serviceVersion = FeederConfig.getInstance().getSosVersion();
-            SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosURL);
-            sosAdapter = SosAdapterFactory.createSosAdapter(metadata);
+            serviceUrl = sosURL;
+            serviceMetadata = ConfigurationContext.getSOSMetadata(serviceUrl);
+            sosAdapter = SosAdapterFactory.createSosAdapter(serviceMetadata);
         }
         catch (IllegalStateException e) {
             LOGGER.debug("Configuration is not available.", e);
@@ -86,14 +82,14 @@ public class SOSConnector {
      */
     public boolean initSosConnection() {
         try {
+            String serviceVersion = serviceMetadata.getVersion();
             ParameterContainer paramCon = new ParameterContainer();
             paramCon.addParameterShell(GET_CAPABILITIES_ACCEPT_VERSIONS_PARAMETER, serviceVersion);
             paramCon.addParameterShell(GET_CAPABILITIES_SERVICE_PARAMETER, "SOS");
-            LOGGER.trace("GetCapabilitiesRequest to '{}: \n'",
-                         sosURL,
+            LOGGER.trace("GetCapabilitiesRequest for '{}: \n' {}", serviceUrl,
                          sosAdapter.getRequestBuilder().buildGetCapabilitiesRequest(paramCon));
 
-            Operation operation = new Operation(GET_CAPABILITIES, sosURL + "?", sosURL);
+            Operation operation = new Operation(GET_CAPABILITIES, serviceUrl + "?", serviceUrl);
             OperationResult opResult = sosAdapter.doOperation(operation, paramCon);
             serviceDescriptor = sosAdapter.initService(opResult);
         }

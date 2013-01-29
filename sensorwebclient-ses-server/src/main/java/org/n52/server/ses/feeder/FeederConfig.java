@@ -249,7 +249,7 @@ public class FeederConfig {
      * @return The instance of the Configuration class
      * @throws UnavailableException
      */
-    public static FeederConfig getInstance() throws IllegalStateException {
+    public static FeederConfig getFeederConfig() throws IllegalStateException {
         if (instance == null) {
         	instance = new FeederConfig();
         }

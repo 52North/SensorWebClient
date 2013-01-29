@@ -235,7 +235,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     
     private TimeseriesFeed createTimeseriesFeed(TimeseriesMetadata timeseriesMetadata) {
         TimeseriesFeed timeseriesFeed = new TimeseriesFeed(timeseriesMetadata);
-        timeseriesFeed.setUpdateInterval(FeederConfig.getInstance().getUpdateInterval());
+        timeseriesFeed.setUpdateInterval(FeederConfig.getFeederConfig().getUpdateInterval());
         timeseriesFeed.setLastUpdate(null);
         timeseriesFeed.setUsedCounter(0);
         timeseriesFeed.setSesId(null);
