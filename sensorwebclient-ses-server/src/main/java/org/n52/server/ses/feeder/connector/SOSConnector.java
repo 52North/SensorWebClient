@@ -1,7 +1,10 @@
+
 package org.n52.server.ses.feeder.connector;
 
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_CAPABILITIES_ACCEPT_VERSIONS_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_CAPABILITIES_SERVICE_PARAMETER;
+import static org.n52.oxf.sos.adapter.SOSAdapter.GET_CAPABILITIES;
+import static org.n52.server.oxf.util.access.DescribeSensorAccessor.getSensorDescriptionAsSensorML;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,8 +17,6 @@ import net.opengis.om.x10.ObservationCollectionDocument;
 import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.ows.x11.ExceptionType;
 import net.opengis.sensorML.x101.SensorMLDocument;
-import net.opengis.sos.x10.DescribeSensorDocument;
-import net.opengis.sos.x10.DescribeSensorDocument.DescribeSensor;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -37,16 +38,15 @@ import org.n52.server.ses.feeder.FeederConfig;
 import org.n52.server.ses.feeder.util.IOHelper;
 import org.n52.server.util.SosAdapterFactory;
 import org.n52.server.util.TimeUtil;
-import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.TimeseriesFeed;
+import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The SOSConnector class manages the communication between the feeder and a
- * given SOS.
- *
+ * The SOSConnector class manages the communication between the feeder and a given SOS.
+ * 
  * @author Jan Schulte
  */
 public class SOSConnector {
@@ -59,61 +59,67 @@ public class SOSConnector {
 
     private SOSAdapter sosAdapter;
 
-    private ServiceDescriptor desc;
+    private ServiceDescriptor serviceDescriptor;
 
     /**
      * Instantiates a new SOSConnector.
-     *
-     * @param sosURL The url to send request to the SOS
+     * 
+     * @param sosURL
+     *        The url to send request to the SOS
      */
     public SOSConnector(String sosURL) {
         try {
             this.sosURL = sosURL;
-            this.serviceVersion = FeederConfig.getInstance().getSosVersion();
+            serviceVersion = FeederConfig.getInstance().getSosVersion();
             SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosURL);
-            this.sosAdapter = SosAdapterFactory.createSosAdapter(metadata);
+            sosAdapter = SosAdapterFactory.createSosAdapter(metadata);
         }
         catch (IllegalStateException e) {
-            LOGGER.debug("Configuration is not available (anymore).",e);
+            LOGGER.debug("Configuration is not available.", e);
         }
     }
 
     /**
      * Initialize the connection to the SOS.
-     *
+     * 
      * @return true - if service is running
      */
-    public boolean initService() {
+    public boolean initSosConnection() {
         try {
             ParameterContainer paramCon = new ParameterContainer();
-            paramCon.addParameterShell(GET_CAPABILITIES_ACCEPT_VERSIONS_PARAMETER,
-                    this.serviceVersion);
+            paramCon.addParameterShell(GET_CAPABILITIES_ACCEPT_VERSIONS_PARAMETER, serviceVersion);
             paramCon.addParameterShell(GET_CAPABILITIES_SERVICE_PARAMETER, "SOS");
-            LOGGER.debug("GetCapabilitiesRequest to " + this.sosURL + ":\n"
-                    + this.sosAdapter.getRequestBuilder().buildGetCapabilitiesRequest(paramCon));
+            LOGGER.trace("GetCapabilitiesRequest to '{}: \n'",
+                         sosURL,
+                         sosAdapter.getRequestBuilder().buildGetCapabilitiesRequest(paramCon));
 
-            Operation getCapOperation = new Operation(SOSAdapter.GET_CAPABILITIES, this.sosURL + "?", this.sosURL);
-            OperationResult opResult = this.sosAdapter.doOperation(getCapOperation, paramCon);
-            this.desc = this.sosAdapter.initService(opResult);
-        } catch (ExceptionReport e) {
+            Operation operation = new Operation(GET_CAPABILITIES, sosURL + "?", sosURL);
+            OperationResult opResult = sosAdapter.doOperation(operation, paramCon);
+            serviceDescriptor = sosAdapter.initService(opResult);
+        }
+        catch (ExceptionReport e) {
             LOGGER.error("Error while init SOS service: " + e.getMessage());
             return false;
-        } catch (OXFException e) {
+        }
+        catch (OXFException e) {
             LOGGER.error("Error while init SOS serivce: " + e.getMessage());
-        } catch (Exception e) {
+            return false;
+        }
+        catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
+            return false;
         }
         return true;
     }
 
     /**
      * Gets the offerings.
-     *
+     * 
      * @return A List of observation offerings for this SOS
      */
     public List<ObservationOffering> getOfferings() {
         ArrayList<ObservationOffering> obsOffs = new ArrayList<ObservationOffering>();
-        SOSContents sosCont = (SOSContents) this.desc.getContents();
+        SOSContents sosCont = (SOSContents) this.serviceDescriptor.getContents();
         for (int i = 0; i < sosCont.getDataIdentificationCount(); i++) {
             obsOffs.add(sosCont.getDataIdentification(i));
         }
@@ -121,63 +127,58 @@ public class SOSConnector {
     }
 
     /**
-     * Requests a sensorMLDocument by given procedure.
-     *
-     * @param procedure The given procedure
-     * @return The SensorMLDocument
+     * Requests sensor description as SensorML 1.0.1 for the set procedure within passed timeseries metadata.<br>
+     * <br>
+     * For the usage in SES context, all special characters (e.g. &auml;, &uuml;,...) have to be replaced
+     * (e.g. by ae, ue, ...).
+     * 
+     * @param timeseriesMetadata
+     *        The given timeseries metadata.
+     * @return the sensor description response as SensorML 1.0.1
      */
-    public SensorMLDocument getSensorML(String procedure){
-    	// TODO use sosAdapter to send request. 
-        // create request
-        DescribeSensorDocument descSensDoc = DescribeSensorDocument.Factory.newInstance();
-        DescribeSensor descSens = descSensDoc.addNewDescribeSensor();
-        descSens.setProcedure(procedure);
-        descSens.setService("SOS");
-        descSens.setVersion(serviceVersion);
-        descSens.setOutputFormat("text/xml;subtype=\"sensorML/1.0.1\"");
-
-        // send request
-        XmlObject response = null;
+    public SensorMLDocument getSensorML(TimeseriesMetadata timeseriesMetadata) {
         try {
-            response = sendRequest(descSensDoc);
-        } catch (IOException e) {
-            LOGGER.error("Error while requesting sensorML document: " + e.getMessage());
+            String serviceUrl = timeseriesMetadata.getServiceUrl();
+            String procedure = timeseriesMetadata.getProcedure();
+            SOSMetadata serviceMetadata = ConfigurationContext.getSOSMetadata(serviceUrl);
+            XmlObject sml = getSensorDescriptionAsSensorML(procedure, serviceMetadata);
+            return (SensorMLDocument) replaceSpecialCharacters(sml);
         }
-        // parse request to SensorML Document
-        // FIXME add try catch if response is not SensorML
-        try {
-        	SensorMLDocument sensorML = (SensorMLDocument) response;
-            return sensorML;
-        } catch (Exception e) {
-        	LOGGER.error("Problems during parsing of describe sensor response: " + e.getMessage(),e);
+        catch (Exception e) {
+            LOGGER.error("Problems during parsing of describe sensor response: " + e.getMessage(), e);
         }
         return null;
     }
 
     public ObservationCollectionDocument getObservation(TimeseriesFeed timeseriesFeed) throws Exception {
-        
-    	ObservationAccessor obsAccessor = new ObservationAccessor();
-    	List<String> fois = new ArrayList<String>();
-    	TimeseriesMetadata metadata = timeseriesFeed.getTimeseriesMetadata();
-    	fois.add(metadata.getFeatureOfInterest());
-    	List<String> phenoms = new ArrayList<String>();
-    	phenoms.add(metadata.getPhenomenon());
-		List<String> procedures = new ArrayList<String>();
-		procedures.add(metadata.getProcedure());
-		
-		SimpleDateFormat timeFormat = TimeUtil.createIso8601Formatter();
+        ObservationAccessor obsAccessor = new ObservationAccessor();
+        List<String> fois = new ArrayList<String>();
+        TimeseriesMetadata metadata = timeseriesFeed.getTimeseriesMetadata();
+        fois.add(metadata.getFeatureOfInterest());
+        List<String> phenoms = new ArrayList<String>();
+        phenoms.add(metadata.getPhenomenon());
+        List<String> procedures = new ArrayList<String>();
+        procedures.add(metadata.getProcedure());
+
+        SimpleDateFormat timeFormat = TimeUtil.createIso8601Formatter();
         String begin = timeFormat.format(timeseriesFeed.getLastUpdate().getTime());
         String end = timeFormat.format(new Date());
-		ITime time = TimeFactory.createTime(begin + "/" + end);
-		RequestConfig request = new RequestConfig(metadata.getServiceUrl(), metadata.getOffering(), fois, phenoms, procedures, time);
-		OperationResult operationResult = obsAccessor.sendRequest(request);
-		XmlObject response = XmlObject.Factory.parse(operationResult.getIncomingResultAsStream());
-		
+        ITime time = TimeFactory.createTime(begin + "/" + end);
+        RequestConfig request = new RequestConfig(metadata.getServiceUrl(),
+                                                  metadata.getOffering(),
+                                                  fois,
+                                                  phenoms,
+                                                  procedures,
+                                                  time);
+        OperationResult operationResult = obsAccessor.sendRequest(request);
+        XmlObject response = XmlObject.Factory.parse(operationResult.getIncomingResultAsStream());
+
         LOGGER.debug("GetObservation Response: " + response);
         // parse request to ObservationCollectionDocument
         if (response instanceof ObservationCollectionDocument) {
             return (ObservationCollectionDocument) response;
-        } else if (response instanceof ExceptionReportDocument) {
+        }
+        else if (response instanceof ExceptionReportDocument) {
             ExceptionReportDocument exRepDoc = (ExceptionReportDocument) response;
             ExceptionType[] exceptionArray = exRepDoc.getExceptionReport().getExceptionArray();
             throw new Exception(exceptionArray[0].getExceptionTextArray(0));
@@ -186,31 +187,10 @@ public class SOSConnector {
     }
 
     /**
-     * Sends the request to the SOS.
-     *
-     * @param request the request
-     * @return the xml object
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    private XmlObject sendRequest(XmlObject request) throws IOException {
-        XmlObject response = null;
-        String requestString = request.xmlText();
-
-        InputStream responseIS = IOHelper.sendPostMessage(this.sosURL, requestString);
-        
-        try {
-            response = replaceSpecialCharacters(XmlObject.Factory.parse(responseIS));
-        } catch (XmlException e) {
-            LOGGER.error("Error while parsing response stream: " + e.getMessage());
-        }
-
-        return response;
-    }
-
-    /**
      * Replace special characters.
-     *
-     * @param xmlObject the xml object
+     * 
+     * @param xmlObject
+     *        the xml object
      * @return the xml object
      */
     private XmlObject replaceSpecialCharacters(XmlObject xmlObject) {
@@ -226,7 +206,8 @@ public class SOSConnector {
         tempStr = tempStr.replace("`", "'");
         try {
             return XmlObject.Factory.parse(tempStr);
-        } catch (XmlException e) {
+        }
+        catch (XmlException e) {
             LOGGER.error("Error while replacing special characters: " + e.getMessage());
         }
         return null;
@@ -234,11 +215,11 @@ public class SOSConnector {
 
     /**
      * Gets the desc.
-     *
+     * 
      * @return the desc
      */
     public ServiceDescriptor getDesc() {
-        return this.desc;
+        return this.serviceDescriptor;
     }
 
 }

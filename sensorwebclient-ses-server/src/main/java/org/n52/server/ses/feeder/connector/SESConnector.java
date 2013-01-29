@@ -121,19 +121,18 @@ public class SESConnector {
             String lifetime = FeederConfig.getInstance().getSesLifetimeDuration();
             String localEndpoint = FeederConfig.getInstance().getSesEndpoint();
             String sensorMLString = sensorML.toString();
-            parameter.addParameterShell(REGISTER_PUBLISHER_SES_URL, this.sesUrl);
+            parameter.addParameterShell(REGISTER_PUBLISHER_SES_URL, sesUrl);
             parameter.addParameterShell(REGISTER_PUBLISHER_SENSORML, sensorMLString);
             parameter.addParameterShell(REGISTER_PUBLISHER_TOPIC_DIALECT, defaultTopicDialect);
             parameter.addParameterShell(REGISTER_PUBLISHER_TOPIC, defaultTopic);
             parameter.addParameterShell(REGISTER_PUBLISHER_LIFETIME_DURATION, lifetime);
             parameter.addParameterShell(REGISTER_PUBLISHER_FROM, localEndpoint);
 
-            opRes = this.sesAdapter.doOperation(new Operation(REGISTER_PUBLISHER,
+            opRes = sesAdapter.doOperation(new Operation(REGISTER_PUBLISHER,
                                                               this.sesUrl + "?",
                                                               this.sesUrl), parameter);
 
-            XmlObject response = this.sesAdapter.handle(REGISTER_PUBLISHER,
-                                                        opRes.getIncomingResultAsStream());
+            XmlObject response = sesAdapter.handleResponse(REGISTER_PUBLISHER, opRes.getIncomingResultAsStream());
 
             LOGGER.debug("RegisterPublisher response: \n" + response);
             String tmp = response.toString();
