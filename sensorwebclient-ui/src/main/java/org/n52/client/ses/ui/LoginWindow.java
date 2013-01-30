@@ -28,12 +28,16 @@ import static com.google.gwt.user.client.Cookies.getCookie;
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ID;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.shared.serializable.pojos.UserRole.ADMIN;
 import static org.n52.shared.serializable.pojos.UserRole.LOGOUT;
 
 import org.n52.client.ses.event.SetRoleEvent;
 import org.n52.client.ses.event.handler.SetRoleEventHandler;
 import org.n52.client.ses.ui.layout.LoginLayout;
 import org.n52.client.ses.ui.layout.RegisterLayout;
+import org.n52.client.ui.DataPanel;
+import org.n52.client.ui.DataPanelTab;
+import org.n52.client.ui.View;
 
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
@@ -109,7 +113,7 @@ public abstract class LoginWindow extends Window {
     }
 
     private Canvas createLinkToRegistration() {
-		Label registration = new Label("register"); // TODO
+		Label registration = new Label(i18n.register());
 		registration.setStyleName("n52_sensorweb_client_login_register");
 		registration.addClickHandler(new ClickHandler() {
 			@Override
@@ -156,6 +160,13 @@ public abstract class LoginWindow extends Window {
 		public void onChangeRole(SetRoleEvent evt) {
 			if (evt.getRole() == LOGOUT) {
                 return;
+            } else if (evt.getRole() == ADMIN) {
+            	this.window.hide();
+            	DataPanel dataPanel = View.getInstance().getDataPanel();
+        		DataPanelTab sesTab = View.getInstance().getSesTab();
+        		dataPanel.getPanel().selectTab(sesTab);
+        		dataPanel.setCurrentTab(sesTab);
+        		dataPanel.update();
             }
             if (window.isVisible()) {
                 reinitializeWindow();

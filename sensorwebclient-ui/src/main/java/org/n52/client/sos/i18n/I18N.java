@@ -347,7 +347,7 @@ public interface I18N extends Constants {
 
 	String todayTooltip();
 	
-	String sesTabButton();
+	String userSettingsButton();
 	
 	String defaultJumpToType();
 	

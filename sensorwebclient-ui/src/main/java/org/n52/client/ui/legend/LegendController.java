@@ -124,22 +124,6 @@ public class LegendController {
         }
 	}
 
-	void switchToSESTab() {
-		DataPanel dataPanel = View.getInstance().getDataPanel();
-		DataPanelTab sesTab = View.getInstance().getSesTab();
-		dataPanel.getPanel().selectTab(sesTab);
-		dataPanel.setCurrentTab(sesTab);
-		dataPanel.update();
-	}
-
-	void switchToEESTab() {
-		DataPanel dataPanel = View.getInstance().getDataPanel();
-		DataPanelTab eesTab = View.getInstance().getEesTab();
-		dataPanel.getPanel().selectTab(eesTab);
-		dataPanel.setCurrentTab(eesTab);
-		dataPanel.update();
-	}
-	
 	void confirmBeforeReload(final String url) {
 		SC.ask(i18n.changeLanguage(), new BooleanCallback() {
             public void execute(Boolean value) {

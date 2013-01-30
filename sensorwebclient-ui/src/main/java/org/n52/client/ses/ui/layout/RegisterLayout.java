@@ -79,9 +79,6 @@ public class RegisterLayout extends Layout {
     /** The email item 2. */
     private TextItem emailItem2;
 
-    /** The handy item. */
-    private TextItem handyItem;
-
     /** The accept box. */
     private CheckboxItem acceptBox;
 
@@ -161,14 +158,6 @@ public class RegisterLayout extends Layout {
         matchesValidator.setErrorMessage(i18n.passwordDoNotMatch());
         this.passwordItem2.setValidators(matchesValidator);
 
-        // handy
-        this.handyItem = new TextItem();
-        this.handyItem.setName("handy");
-        this.handyItem.setTitle(i18n.handy());
-        this.handyItem.setKeyPressFilter("[0-9+]");
-        // this.handyItem.setHint("Numeric only<br>[0-9]");
-        this.handyItem.setLength(250);
-
         // linkItem for terms of use
         this.linkTerms = new LinkItem("");
         this.linkTerms.setLinkTitle(i18n.termsOfUse());
@@ -199,13 +188,9 @@ public class RegisterLayout extends Layout {
                     String name = (String) RegisterLayout.this.nameItem.getValue();
                     String password = DataControlsSes.createMD5((String) RegisterLayout.this.passwordItem.getValue());
                     String eMail = (String) RegisterLayout.this.emailItem.getValue();
-                    String handyNr = (String) RegisterLayout.this.handyItem.getValue();
                     UserRole role = UserRole.NOT_REGISTERED_USER;
                     boolean activated = false;
                     
-                    if (handyNr == null || handyNr.equals("")) {
-                        handyNr = "";
-                    }
                     if (name == null || name.equals("")) {
                         name = "";
                     }
@@ -216,7 +201,7 @@ public class RegisterLayout extends Layout {
                     Cookies.removeCookie(SesRequestManager.COOKIE_USER_NAME);
 
                     // create user without parameterId and register
-                    UserDTO u = new UserDTO(userName, name, password, eMail, handyNr, role, activated, new Date());
+                    UserDTO u = new UserDTO(userName, name, password, eMail, "", role, activated, new Date());
                     EventBus.getMainEventBus().fireEvent(new RegisterUserEvent(u));
                 } else if (RegisterLayout.this.form.validate() && !(Boolean) RegisterLayout.this.acceptBox.getValue()) {
                     SC.say(i18n.acceptTermsOfUseInfo());
@@ -225,8 +210,8 @@ public class RegisterLayout extends Layout {
         });
 
         this.form.setFields(this.headerItem, this.userNameItem, this.nameItem, this.passwordItem, this.passwordItem2,
-                this.emailItem, this.emailItem2, this.handyItem, this.linkTerms, this.acceptBox, validateItem);
-
+                this.emailItem, this.emailItem2, this.linkTerms, this.acceptBox, validateItem);
+        
         addMember(this.form);
     }
 
@@ -240,7 +225,6 @@ public class RegisterLayout extends Layout {
         this.passwordItem2.clearValue();
         this.emailItem.clearValue();
         this.emailItem2.clearValue();
-        this.handyItem.clearValue();
         this.acceptBox.setValue(false);
     }
 

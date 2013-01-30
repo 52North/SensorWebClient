@@ -71,7 +71,7 @@ public class DataControlsEES extends DataControlsTimeSeries implements SwitchGri
                         i18n.undoExt());
         View.getInstance().registerTooltip(this.undo);        
         
-        sesTabButton = new Button( i18n.sesTabButton());
+        sesTabButton = new Button( i18n.userSettingsButton());
         
         sesTabButton.setIcon("../img/icons/email_go.png");
         

@@ -430,7 +430,7 @@ public class Legend extends VLayout {
 	}
 	
 	private Label createSESTabLabelButton() {
-		Label sesTabLabelButton = new Label(i18n.sesTabButton());
+		Label sesTabLabelButton = new Label(i18n.userSettingsButton());
 		sesTabLabelButton.setStyleName("n52_sensorweb_client_legendbutton");
 		sesTabLabelButton.addClickHandler(new ClickHandler() {
 			@Override
