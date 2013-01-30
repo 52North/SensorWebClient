@@ -5,6 +5,7 @@ import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_CAPABILITIES_ACCEPT
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_CAPABILITIES_SERVICE_PARAMETER;
 import static org.n52.oxf.sos.adapter.SOSAdapter.GET_CAPABILITIES;
 import static org.n52.server.oxf.util.access.DescribeSensorAccessor.getSensorDescriptionAsSensorML;
+import static org.n52.server.util.TimeUtil.createIso8601Formatter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -146,7 +147,7 @@ public class SOSConnector {
         return null;
     }
 
-    public ObservationCollectionDocument getObservation(TimeseriesFeed timeseriesFeed) throws Exception {
+    public ObservationCollectionDocument performGetObservation(TimeseriesFeed timeseriesFeed) throws Exception {
         ObservationAccessor obsAccessor = new ObservationAccessor();
         List<String> fois = new ArrayList<String>();
         TimeseriesMetadata metadata = timeseriesFeed.getTimeseriesMetadata();
@@ -156,9 +157,9 @@ public class SOSConnector {
         List<String> procedures = new ArrayList<String>();
         procedures.add(metadata.getProcedure());
 
-        SimpleDateFormat timeFormat = TimeUtil.createIso8601Formatter();
-        String begin = timeFormat.format(timeseriesFeed.getLastUpdate().getTime());
-        String end = timeFormat.format(new Date());
+        SimpleDateFormat iso8601 = createIso8601Formatter();
+        String begin = iso8601.format(timeseriesFeed.getLastFeeded().getTime());
+        String end = iso8601.format(new Date());
         ITime time = TimeFactory.createTime(begin + "/" + end);
         RequestConfig request = new RequestConfig(metadata.getServiceUrl(),
                                                   metadata.getOffering(),
