@@ -23,6 +23,9 @@
  */
 package org.n52.server.ses;
 
+import static org.n52.server.ses.feeder.SosSesFeeder.createSosSesFeeder;
+import static org.n52.server.ses.feeder.SosSesFeeder.getSosSesFeederInstance;
+
 import java.util.UUID;
 
 import javax.servlet.ServletException;
@@ -77,8 +80,8 @@ public class SESInitializationServlet extends HttpServlet {
             SesConfig.AUTH = this.getServletContext().getInitParameter("MAIL_AUTH");
             SesConfig.SSL_ENABLE = this.getServletContext().getInitParameter("MAIL_SSL_ENABLE");
 
-            // initialize feeder
-            SosSesFeeder.getInst();
+            boolean startAutomatically = true;
+            createSosSesFeeder(startAutomatically);
             
             LOGGER.info("ckeck availability of SES and WNS");
             Thread t = new Thread(new Runnable() {

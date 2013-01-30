@@ -116,11 +116,11 @@ public interface RpcSesRuleServiceAsync {
     /**
      * 
      * @param ruleName
-     * @param value 
+     * @param published 
      * @param role 
      * @param callback
      */
-    void publishRule(String ruleName, boolean value, String role, AsyncCallback<SesClientResponse> callback);
+    void publishRule(String ruleName, boolean published, String role, AsyncCallback<SesClientResponse> callback);
 
     /**
      * 
