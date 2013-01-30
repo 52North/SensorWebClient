@@ -35,8 +35,8 @@ import org.n52.server.ses.mail.MailSender;
 import org.n52.server.ses.util.SesParser;
 import org.n52.server.ses.util.SesServerUtil;
 import org.n52.shared.responses.SesClientResponse;
-import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.TimeseriesFeed;
+import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,10 +71,7 @@ public class SesTimeseriesFeedServiceImpl implements SesTimeseriesFeedService {
     public void updateTimeseriesFeed(String timeseriesFeedId, boolean active) throws Exception {
         try {
             LOGGER.debug("updateTimeseriesFeed: {}, Active: {}", timeseriesFeedId, active);
-            if (!HibernateUtil.updateTimeseriesFeed(timeseriesFeedId, active)) {
-                LOGGER.error("Update sensor failed!");
-                throw new Exception("Update sensor failed!");
-            }
+            updateTimeseriesFeed(timeseriesFeedId, active);
             
             if (!active) {
                 // sensor was deactivated

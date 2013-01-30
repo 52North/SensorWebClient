@@ -23,6 +23,14 @@
  */
 package org.n52.server.ses.service;
 
+import static org.n52.server.ses.feeder.FeederConfig.getFeederConfig;
+import static org.n52.server.ses.feeder.SosSesFeeder.getSosSesFeederInstance;
+import static org.n52.server.ses.hibernate.HibernateUtil.deleteSubscription;
+import static org.n52.server.ses.hibernate.HibernateUtil.existsOtherSubscriptions;
+import static org.n52.server.ses.hibernate.HibernateUtil.getTimeseriesFeedById;
+import static org.n52.server.ses.hibernate.HibernateUtil.updateBasicRuleSubscribtion;
+import static org.n52.server.ses.hibernate.HibernateUtil.updateComplexRuleSubscribtion;
+import static org.n52.server.ses.hibernate.HibernateUtil.updateTimeseriesFeed;
 import static org.n52.shared.responses.SesClientResponse.types.RULE_NAME_EXISTS;
 
 import java.util.ArrayList;
@@ -198,10 +206,10 @@ public class SesRulesServiceImpl implements SesRuleService {
                                 if (timeseriesFeed == null) {
                                     TimeseriesMetadata metadata = HibernateUtil.getTimeseriesMetadata(timeseriesId);
                                     LOG.debug("Create TimeseriesFeed: " + timeseriesId);
-                                    SosSesFeeder.getInst().enableTimeseriesForFeeding(createTimeseriesFeed(metadata));
+                                    getSosSesFeederInstance().enableTimeseriesForFeeding(createTimeseriesFeed(metadata));
                                 } else if (timeseriesFeed.getInUse() == 0) {
                                     LOG.debug("(Re-)enable TimeseriesFeed: " + timeseriesId);
-                                    SosSesFeeder.getInst().enableTimeseriesForFeeding(timeseriesFeed);
+                                    getSosSesFeederInstance().enableTimeseriesForFeeding(timeseriesFeed);
                                 }
                             }
                         } catch (Exception e) {
@@ -212,7 +220,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                         // increment sensor use count
                         try {
                             for (int j = 0; j < timeseriesIds.size(); j++) {
-                                HibernateUtil.updateSensorCount(timeseriesIds.get(j), true);
+                                updateTimeseriesFeed(timeseriesIds.get(j), true);
                             }
                         } catch (Exception e) {
                             LOG.error("Could not update database", e);
@@ -235,8 +243,8 @@ public class SesRulesServiceImpl implements SesRuleService {
     
     private TimeseriesFeed createTimeseriesFeed(TimeseriesMetadata timeseriesMetadata) {
         TimeseriesFeed timeseriesFeed = new TimeseriesFeed(timeseriesMetadata);
-        timeseriesFeed.setUpdateInterval(FeederConfig.getFeederConfig().getUpdateInterval());
-        timeseriesFeed.setLastUpdate(null);
+//        timeseriesFeed.setLastConsideredTimeInterval(getFeederConfig().getFirstUpdateIntervalRange());
+        timeseriesFeed.setLastFeeded(null);
         timeseriesFeed.setUsedCounter(0);
         timeseriesFeed.setSesId(null);
         return timeseriesFeed;
@@ -254,7 +262,6 @@ public class SesRulesServiceImpl implements SesRuleService {
             // rule as EML
             String ruleAsEML = "";
 
-            // get subscriptionID
             String museID = "";
             if (basicRule != null) {
                 museID = HibernateUtil.getSubscriptionID(basicRule.getId(), medium, eml, Integer.valueOf(userID));
@@ -279,13 +286,11 @@ public class SesRulesServiceImpl implements SesRuleService {
                 ArrayList<String> timeseriesFeedIds = SesServerUtil.getTimeseriesIdsFromEML(ruleAsEML);
                 for (String timeseriesId : timeseriesFeedIds) {
                     
-                    // decrement usedCount
-                    HibernateUtil.updateSensorCount(timeseriesId, false);
+                    updateTimeseriesFeed(timeseriesId, false);
                     
-                    if (HibernateUtil.getTimeseriesFeedById(timeseriesId).getInUse() == 0) {
-                        LOG.debug("remove sensor from used list");
-                     // TODO change unsubscribe interface
-//                        SosSesFeeder.getInst().removeUsedSensor(sensorID);
+                    if (getTimeseriesFeedById(timeseriesId).getUsedCounter() == 0) {
+                        TimeseriesFeed timseriesFeed = getTimeseriesFeedById(timeseriesId);
+                        getSosSesFeederInstance().decreaseSubscriptionCount(timseriesFeed);
                     }
                 }
                 for (int i = 0; i < timeseriesFeedIds.size(); i++) {
@@ -297,16 +302,15 @@ public class SesRulesServiceImpl implements SesRuleService {
             }
 
             try {
-                // delete subscription from DB
-                HibernateUtil.deleteSubscription(museID, userID);
+                deleteSubscription(museID, userID);
                 
+                // TODO devrease SubsriptionCount? ugly! better: refactor db model
                 
-                if (basicRule != null && !HibernateUtil.existsOtherSubscriptions(basicRule.getId())) {
-                    HibernateUtil.updateBasicRuleSubscribtion(ruleName, false);
-                } else if (complexRule != null && !HibernateUtil.existsOtherSubscriptions(complexRule.getId())) {
-                    HibernateUtil.updateComplexRuleSubscribtion(ruleName, false);
+                if (basicRule != null && !existsOtherSubscriptions(basicRule.getId())) {
+                    updateBasicRuleSubscribtion(ruleName, false);
+                } else if (complexRule != null && !existsOtherSubscriptions(complexRule.getId())) {
+                    updateComplexRuleSubscribtion(ruleName, false);
                 }
-                
             } catch (Exception e) {
                 throw new Exception("Failed delete subscription from DB!", e);
             }
@@ -315,6 +319,19 @@ public class SesRulesServiceImpl implements SesRuleService {
         catch (Exception e) {
             LOG.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
+        }
+    }
+
+    private void stopFeedingTimeseries(BasicRule basicRule) {
+        if (basicRule != null) {
+            TimeseriesMetadata metadata = basicRule.getTimeseriesMetadata();
+            String timeseriesId = metadata.getTimeseriesId();
+            try {
+                TimeseriesFeed feed = getTimeseriesFeedById(timeseriesId);
+                getSosSesFeederInstance().decreaseSubscriptionCount(feed);
+            } catch (Exception e) {
+                LOG.error("Failed to stop feeding timeseries '{}'.", timeseriesId);
+            }
         }
     }
 
@@ -536,18 +553,13 @@ public class SesRulesServiceImpl implements SesRuleService {
     }
 
     @Override
-    public SesClientResponse publishRule(String ruleName, boolean value, String role) throws Exception {
+    public SesClientResponse publishRule(String ruleName, boolean published, String role) throws Exception {
         try {
-            LOG.debug("publish rule: " + ruleName + ": " + value);
-            if (HibernateUtil.publishRule(ruleName, value)) {
-                if (role.equals("ADMIN")) {
-                    return new SesClientResponse(SesClientResponse.types.PUBLISH_RULE_ADMIN);
-                }
-                return new SesClientResponse(SesClientResponse.types.PUBLISH_RULE_USER);
-            } else {
-                LOG.error("Error occured while publish rule");
-                throw new Exception("Failed publish rule: " + ruleName);
+            LOG.debug("publish rule: " + ruleName + ": " + published);
+            if (role.equals("ADMIN")) {
+                return new SesClientResponse(SesClientResponse.types.PUBLISH_RULE_ADMIN);
             }
+            return new SesClientResponse(SesClientResponse.types.PUBLISH_RULE_USER);
         }
         catch (Exception e) {
             LOG.error("Exception occured on server side.", e);
