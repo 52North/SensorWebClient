@@ -24,7 +24,6 @@
 
 package org.n52.server.ses.hibernate;
 
-import static org.hibernate.FetchMode.JOIN;
 import static org.n52.shared.serializable.pojos.UserRole.ADMIN;
 import static org.n52.shared.serializable.pojos.UserRole.NOT_REGISTERED_USER;
 
@@ -248,9 +247,6 @@ public class HibernateUtil {
         session.getTransaction().commit();
         return users;
     }
-    
-    
-    
 
     public static void saveBasicRule(BasicRule rule) {
         Session session = getSessionFactory().getCurrentSession();
@@ -259,7 +255,6 @@ public class HibernateUtil {
         session.getTransaction().commit();
     }
 
-    
     /**
      * @deprecated no sharing anymore
      */
@@ -270,7 +265,6 @@ public class HibernateUtil {
         session.getTransaction().commit();
     }
 
-    
     /**
      * @deprecated no sharing anymore
      */
@@ -327,19 +321,6 @@ public class HibernateUtil {
         return null;
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     public static void saveSubscription(Subscription subscription) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -382,28 +363,28 @@ public class HibernateUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static void updateBasicRuleSubscribtion(String ruleName, boolean newStatus) {
+    public static void updateBasicRuleSubscribtion(String ruleName, boolean subscribed) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(BasicRule.class);
         List<BasicRule> rules = crit.add(Restrictions.eq(RULE_NAME, ruleName)).list();
         if (rules.size() == 1) {
             BasicRule rule = rules.get(0);
-            rule.setSubscribed(newStatus);
+            rule.setSubscribed(subscribed);
             session.saveOrUpdate(rule);
         }
         session.getTransaction().commit();
     }
 
     @SuppressWarnings("unchecked")
-    public static void updateComplexRuleSubscribtion(String ruleName, boolean newStatus) {
+    public static void updateComplexRuleSubscribtion(String ruleName, boolean subscribed) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(ComplexRule.class);
         List<ComplexRule> rules = crit.add(Restrictions.eq(RULE_NAME, ruleName)).list();
         if (rules.size() == 1) {
             ComplexRule rule = rules.get(0);
-            rule.setSubscribed(newStatus);
+            rule.setSubscribed(subscribed);
             session.saveOrUpdate(rule);
         }
         session.getTransaction().commit();
@@ -421,7 +402,7 @@ public class HibernateUtil {
 
     @SuppressWarnings("unchecked")
     public static List<TimeseriesFeed> getTimeseriesFeeds() {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Session session = getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(TimeseriesFeed.class);
         List<TimeseriesFeed> timeseriesFeeds = crit.list();
@@ -429,79 +410,70 @@ public class HibernateUtil {
         return timeseriesFeeds;
     }
 
-    @SuppressWarnings("unchecked")
-    public static TimeseriesFeed getTimeseriesFeedById(String timeseriesId) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        session.beginTransaction();
-        Criteria crit = session.createCriteria(TimeseriesFeed.class)
-                            .add(Restrictions.eq(TIMESERIES_ID, timeseriesId));
-        List<TimeseriesFeed> timeseriesFeeds = crit.list();
-        session.getTransaction().commit();
-        if (timeseriesFeeds.size() != 0) {
-            return timeseriesFeeds.get(0);
-        }
-        return null;
+    public static TimeseriesFeed getTimeseriesFeedById(final String timeseriesId) {
+        return execute(new CriteriaExecution<TimeseriesFeed>() {
+            @Override
+            public TimeseriesFeed execute(Session session) {
+                Criteria criteria = session.createCriteria(TimeseriesFeed.class);
+                criteria.add(Restrictions.eq(TIMESERIES_ID, timeseriesId));
+                return (TimeseriesFeed) criteria.uniqueResult();
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
     public static List<TimeseriesFeed> getActiveTimeseriesFeeds() {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        session.beginTransaction();
-        Criteria crit = session.createCriteria(TimeseriesFeed.class);
-        List<TimeseriesFeed> timeseriesFeeds = crit.add(Restrictions.eq(ACTIVE, true)).list();
-        session.getTransaction().commit();
-        return timeseriesFeeds;
+        return execute(new CriteriaExecution<List<TimeseriesFeed>>() {
+            @Override
+            public List<TimeseriesFeed> execute(Session session) {
+                Criteria criteria = session.createCriteria(TimeseriesFeed.class);
+                criteria.add(Restrictions.eq(ACTIVE, true));
+                return (List<TimeseriesFeed>) criteria.list();
+            }
+        });
     }
 
-    @SuppressWarnings("unchecked")
-    public static boolean updateTimeseriesFeed(String timeseriesId, boolean newStatus) {
-        Session session = getSessionFactory().getCurrentSession();
-        session.beginTransaction();
-        Criteria crit = session.createCriteria(TimeseriesFeed.class)
-                            .setFetchMode("TimeseriesMetadata", JOIN)
-                            .add(Restrictions.eq(TIMESERIES_ID, timeseriesId));
-        List<TimeseriesFeed> sensors = crit.list();
-
-        if (sensors.size() == 1) {
-            TimeseriesFeed sensor = sensors.get(0);
-            sensor.setActive(newStatus);
-            session.saveOrUpdate(sensor);
-            session.getTransaction().commit();
-            return true;
-        }
-        return false;
+    /**
+     * Updates the timeseries to be active or not active.
+     * 
+     * @param timeseriesId
+     *        the timeseries' id.
+     * @param active
+     *        <code>true</code> if the timeseries shall be activated, <code>false</code> otherwise.
+     * @return a {@link Void} to satisfy generics.
+     */
+    public static Void updateTimeseriesFeed(final String timeseriesId, final boolean active) {
+        return execute(new CriteriaExecution<Void>() {
+            @Override
+            public Void execute(Session session) {
+                Criteria criteria = session.createCriteria(TimeseriesFeed.class);
+                criteria.add(Restrictions.eq(TIMESERIES_ID, timeseriesId));
+                TimeseriesFeed uniqueResult = (TimeseriesFeed) criteria.uniqueResult();
+                session.saveOrUpdate(uniqueResult);
+                return null;
+            }
+        });
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    public static boolean publishRule(String ruleName, boolean value) {
-        BasicRule basicRule = getBasicRuleByName(ruleName);
-        ComplexRule complexRule = getComplexRuleByName(ruleName);
-        Session session = getSessionFactory().getCurrentSession();
-        session.beginTransaction();
-
-        if (basicRule != null) {
-            basicRule.setPublished(value);
-            session.update(basicRule);
-            session.getTransaction().commit();
-            return true;
-        }
-        else if (complexRule != null) {
-            complexRule.setPublished(value);
-            session.update(complexRule);
-            session.getTransaction().commit();
-            return true;
-        }
-        return false;
+    public static Void publishRule(final String ruleName, final boolean value) {
+        return execute(new CriteriaExecution<Void>() {
+            @Override
+            public Void execute(Session session) {
+                BasicRule basicRule = getBasicRuleByName(ruleName);
+                if (basicRule != null) {
+                    basicRule.setPublished(value);
+                    session.update(basicRule);
+                    session.getTransaction().commit();
+                }
+                else {
+                    ComplexRule complexRule = getComplexRuleByName(ruleName);
+                    complexRule.setPublished(value);
+                    session.update(complexRule);
+                    session.getTransaction().commit();
+                }
+                return null;
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -526,17 +498,6 @@ public class HibernateUtil {
         return rules;
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     @SuppressWarnings("unchecked")
     public static String getSubscriptionID(int ruleID, String medium, String format, int userID) {
         Session session = getSessionFactory().getCurrentSession();
@@ -550,31 +511,6 @@ public class HibernateUtil {
             return museID.get(0).getSubscriptionID();
         }
         return null;
-    }
-
-
-    @SuppressWarnings("unchecked")
-    public static boolean updateSensorCount(String timeseriesId, boolean newStatus) {
-        Session session = getSessionFactory().getCurrentSession();
-        session.beginTransaction();
-        Criteria crit = session.createCriteria(TimeseriesFeed.class);
-        List<TimeseriesFeed> sensors = crit.add(Restrictions.eq(TIMESERIES_ID, timeseriesId)).list();
-        if (sensors.size() == 1) {
-            TimeseriesFeed sensor = sensors.get(0);
-            if (newStatus) {
-                // increment count
-                sensor.setInUse(sensor.getInUse() + 1);
-            }
-            else {
-                // decrement count
-                sensor.setInUse(sensor.getInUse() - 1);
-            }
-
-            session.saveOrUpdate(sensor);
-            session.getTransaction().commit();
-            return true;
-        }
-        return false;
     }
 
     public static boolean deleteRule(String ruleName) {
@@ -595,27 +531,17 @@ public class HibernateUtil {
         }
         return false;
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
 
     @SuppressWarnings("unchecked")
     public static boolean deleteTimeseriesFeed(String timeseriesId) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        Criteria crit = session.createCriteria(TimeseriesFeed.class)
-                            .add(Restrictions.eq(TIMESERIES_ID, timeseriesId));
+        Criteria crit = session.createCriteria(TimeseriesFeed.class).add(Restrictions.eq(TIMESERIES_ID, timeseriesId));
         List<TimeseriesFeed> sensors = crit.list();
 
         if (sensors.size() == 1) {
             TimeseriesFeed sensor = sensors.get(0);
-            if (sensor.getInUse() > 0) {
+            if (sensor.getUsedCounter() > 0) {
                 return false;
             }
             session.delete(sensor);
@@ -659,21 +585,18 @@ public class HibernateUtil {
         return false;
     }
 
-    @SuppressWarnings("unchecked")
-    public static boolean deleteSubscription(String subscriptionID, String userID) {
-        Session session = getSessionFactory().getCurrentSession();
-        session.beginTransaction();
-        Criteria crit = session.createCriteria(Subscription.class);
-        List<Subscription> subscriptions = crit.add(Restrictions.and(Restrictions.eq(USER_ID, Integer.valueOf(userID)),
-                                                                     Restrictions.eq(SUBSCRIPTION_ID, subscriptionID))).list();
-
-        if (subscriptions.size() == 1) {
-            Subscription subscription = subscriptions.get(0);
-            session.delete(subscription);
-            session.getTransaction().commit();
-            return true;
-        }
-        return false;
+    public static Void deleteSubscription(final String subscriptionID, final String userID) {
+        return execute(new CriteriaExecution<Void>() {
+            @Override
+            public Void execute(final Session session) {
+                Criteria criteria = session.createCriteria(Subscription.class);
+                criteria.add(Restrictions.and(Restrictions.eq(USER_ID, Integer.valueOf(userID)),
+                                          Restrictions.eq(SUBSCRIPTION_ID, subscriptionID)));
+                Subscription subscription = (Subscription) criteria.uniqueResult();
+                session.delete(subscription);
+                return null;
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -773,8 +696,7 @@ public class HibernateUtil {
     public static boolean existsTimeseriesFeed(String timeseriesId) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        Criteria crit = session.createCriteria(TimeseriesFeed.class)
-                            .add(Restrictions.eq(TIMESERIES_ID, timeseriesId));
+        Criteria crit = session.createCriteria(TimeseriesFeed.class).add(Restrictions.eq(TIMESERIES_ID, timeseriesId));
         List<TimeseriesFeed> timeseriesFeeds = crit.list();
         session.getTransaction().commit();
         return timeseriesFeeds.size() != 0;
@@ -915,12 +837,62 @@ public class HibernateUtil {
     public static TimeseriesMetadata getTimeseriesMetadata(String timeseriesId) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        TimeseriesMetadata metadata = (TimeseriesMetadata) session
-                                            .createCriteria(TimeseriesMetadata.class)
-                                            .add(Restrictions.eq(TIMESERIES_ID, timeseriesId))
-                                            .uniqueResult();
+        TimeseriesMetadata metadata = (TimeseriesMetadata) session.createCriteria(TimeseriesMetadata.class).add(Restrictions.eq(TIMESERIES_ID,
+                                                                                                                                timeseriesId)).uniqueResult();
         session.getTransaction().commit();
         return metadata;
-        
+
     }
+
+    /**
+     * Encapsulates hibernate session management including retrieval of current {@link Session} and committing
+     * and flushing it respectively.
+     * 
+     * @param criteria
+     *        the criteria to execute on a current {@link Session}.
+     * @return the expected result (can be a {@link Void} to indicate that nothing is expected).
+     */
+    private static <T> T execute(CriteriaExecution<T> criteria) {
+        Session session = getCurrentSession();
+        try {
+            session.beginTransaction();
+            return criteria.execute(session);
+        }
+        finally {
+            session.getTransaction().commit();
+        }
+    }
+
+    private static Session getCurrentSession() {
+        return getSessionFactory().getCurrentSession();
+    }
+
+    /**
+     * Encapsulates an database execution on a given {@link Session}. Use it as leightweight execution
+     * environment in combination with {@link #execute(Session)}, e.g. in a anonymous type implementation.<br>
+     * <br>
+     * A simple example for a no returning execution might be:
+     * 
+     * <pre>
+     * public static Void updateTimeseriesFeed(final String timeseriesId, final boolean active) {
+     *      return execute(new CriteriaExecution<Void>() {
+     *          public Void execute(Session session) {
+     *              Criteria criteria = session.createCriteria(TimeseriesFeed.class);
+     *              criteria.add(Restrictions.eq(TIMESERIES_ID, timeseriesId));
+     *              TimeseriesFeed uniqueResult = (TimeseriesFeed) criteria.uniqueResult();
+     *              session.saveOrUpdate(uniqueResult);
+     *              return null;
+     *          }
+     *      });
+     *   }}
+     * </pre>
+     * 
+     * @param <T>
+     *        the expected result of the execution (can be a {@link Void} to indicate that nothing is
+     *        expected)
+     */
+    interface CriteriaExecution<T> {
+        T execute(final Session session);
+    }
+
 }
