@@ -3,13 +3,13 @@
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
 <hibernate-mapping package="org.n52.shared.serializable.pojos">
 	<class name="TimeseriesFeed" table="timeseries_feed">
-		<id name="timeseriesId" />
+		<id name="timeseriesId" type="string" />
 		<property name="sesId" type="string" />
-		<property name="lastUpdate" type="calendar" />
-		<property name="updateInterval" type="long" />
-		<property name="usedCounter" type="long" />
-		<property name="active" type="boolean" />
 		<property name="inUse" type="integer" />
+        <property name="usedCounter" type="long" />
+        <property name="lastFeeded" type="calendar" />
+        <property name="active" type="boolean" />
+        <property name="lastConsideredTimeInterval" type="long" />
 		<many-to-one name="timeseriesMetadata" class="org.n52.shared.serializable.pojos.TimeseriesMetadata" 
 		          property-ref="timeseriesId" unique="true" not-null="true" cascade="persist" lazy="false" />
 	</class>
