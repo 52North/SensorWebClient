@@ -475,7 +475,7 @@ public class SesRequestManager extends RequestManager {
         this.sesTimeseriesService.updateTimeseriesFeed(timeseriesFeedId, active, callback);
     }
 
-    public void publishRule(String ruleName, boolean value, String role) {
+    public void publishRule(String ruleName, boolean published, String role) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
                 Toaster.getInstance().addErrorMessage(i18n.failedPublishRule());
@@ -491,7 +491,7 @@ public class SesRequestManager extends RequestManager {
                 
             }
         };
-        this.sesRulesService.publishRule(ruleName, value, role, callback);
+        this.sesRulesService.publishRule(ruleName, published, role, callback);
     }
 
     public void getAllRules() {

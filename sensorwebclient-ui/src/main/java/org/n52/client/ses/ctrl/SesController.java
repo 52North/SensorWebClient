@@ -238,7 +238,7 @@ public class SesController extends ServiceController {
         }
 
         public void onPublish(PublishRuleEvent evt) {
-            SesController.this.getRm().publishRule(evt.getRuleName(), evt.isValue(), evt.getRole());
+            SesController.this.getRm().publishRule(evt.getRuleName(), evt.isPublished(), evt.getRole());
         }
 
         public void onGet(GetAllRulesEvent evt) {
