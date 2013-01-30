@@ -220,4 +220,20 @@ public class TimeseriesMetadata implements Serializable {
         return hasServiceUrl && hasOffering && hasProcedure && hasPhenomenon && hasFOI;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("TimeseriesMetadata [ ");
+        sb.append("SOS: ").append(serviceUrl).append(", ");
+        sb.append("offering: ").append(offering).append(", ");
+        sb.append("procedure: ").append(procedure).append(", ");
+        sb.append("phenomenon: ").append(phenomenon).append(", ");
+        sb.append("featureOfInterest").append(featureOfInterest);
+        sb.append(" ]");
+        return sb.toString();
+        
+    }
+    
+    
+
 }
