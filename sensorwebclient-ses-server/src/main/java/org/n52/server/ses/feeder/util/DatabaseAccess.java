@@ -34,12 +34,20 @@ public class DatabaseAccess {
         transaction.commit();
 	}
 
-	public static synchronized void increaseSensorUse(TimeseriesFeed timeseriesFeed) {
+	public static synchronized void increaseUsageCount(TimeseriesFeed timeseriesFeed) {
 		changeCounter(timeseriesFeed, 1);
 	}
 
-	public static synchronized void decreaseSensorUse(TimeseriesFeed timeseriesFeed) {
+	public static synchronized void decreaseUsageCount(TimeseriesFeed timeseriesFeed) {
 		changeCounter(timeseriesFeed, -1);
+	}
+	
+	private static void changeCounter(TimeseriesFeed timeseriesFeed, int changeBy) {
+	    Session session = getSessionFactory().getCurrentSession();
+	    Transaction transaction = session.beginTransaction();
+	    timeseriesFeed.setUsedCounter(timeseriesFeed.getUsedCounter() + changeBy);
+	    session.saveOrUpdate(timeseriesFeed);
+	    transaction.commit();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -50,14 +58,6 @@ public class DatabaseAccess {
 		List<TimeseriesFeed> timeseriesFeeds = criteria.add(Restrictions.gt("usedCounter", 0L)).list();
 		transaction.commit();
 		return timeseriesFeeds;
-	}
-
-	private static void changeCounter(TimeseriesFeed timeseriesFeed, int changeBy) {
-		Session session = getSessionFactory().getCurrentSession();
-		Transaction transaction = session.beginTransaction();
-		timeseriesFeed.setUsedCounter(timeseriesFeed.getUsedCounter() + changeBy);
-		session.saveOrUpdate(timeseriesFeed);
-		transaction.commit();
 	}
 
 	@SuppressWarnings("unchecked")
