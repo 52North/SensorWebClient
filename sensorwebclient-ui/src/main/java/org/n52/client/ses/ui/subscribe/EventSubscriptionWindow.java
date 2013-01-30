@@ -29,50 +29,35 @@ import static com.smartgwt.client.types.Alignment.RIGHT;
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ID;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
-import static org.n52.shared.serializable.pojos.UserRole.LOGOUT;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.event.CreateSimpleRuleEvent;
 import org.n52.client.ses.event.RuleCreatedEvent;
-import org.n52.client.ses.event.SetRoleEvent;
 import org.n52.client.ses.event.SubscribeEvent;
 import org.n52.client.ses.event.handler.RuleCreatedEventHandler;
-import org.n52.client.ses.event.handler.SetRoleEventHandler;
-import org.n52.client.ses.ui.layout.LoginLayout;
+import org.n52.client.ses.ui.LoginWindow;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.ui.ApplyCancelButtonLayout;
 import org.n52.shared.serializable.pojos.Rule;
 
-import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.events.CloseClickEvent;
-import com.smartgwt.client.widgets.events.CloseClickHandler;
-import com.smartgwt.client.widgets.events.ResizedEvent;
-import com.smartgwt.client.widgets.events.ResizedHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.StaticTextItem;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
-public class EventSubscriptionWindow extends Window {
+public class EventSubscriptionWindow extends LoginWindow {
+	
+	private static final String COMPONENT_ID = "eventSubscriptionWindow";
 
-    private static final String COMPONENT_ID = "eventSubscriptionWindow";
-    
-    private static int WIDTH = 950;
-
-    private static int HEIGHT = 550;
-    
     private static EventSubscriptionController controller;
 
     private static EventSubscriptionWindow instance;
 
     private Layout ruleTemplateEditCanvas;
-
-    private Layout content;
 
     public static EventSubscriptionWindow getInst(TimeSeries dataItem) {
         if (instance == null) {
@@ -85,57 +70,11 @@ public class EventSubscriptionWindow extends Window {
     }
 
     public EventSubscriptionWindow(EventSubscriptionController controller) {
-        setStyleName("n52_sensorweb_client_event_subscription_window");
+    	super(COMPONENT_ID);
         controller.setEventSubscription(this);
-        initializeWindow();
-        addCloseClickHandler(new CloseClickHandler() {
-            public void onCloseClick(CloseClickEvent event) {
-                hide();
-            }
-        });
     }
 
-    private void initializeWindow() {
-        setID(COMPONENT_ID);
-        setShowModalMask(true);
-        setIsModal(true);
-        setCanDragResize(true);
-        setShowMaximizeButton(true);
-        setShowMinimizeButton(false);
-        setMargin(10);
-        setTitle(i18n.createAboWindowTitle());
-        setWidth(WIDTH);
-        setHeight(HEIGHT);
-        centerInPage();
-        addResizedHandler(new ResizedHandler() {
-            @Override
-            public void onResized(ResizedEvent event) {
-                WIDTH = EventSubscriptionWindow.this.getWidth();
-                HEIGHT = EventSubscriptionWindow.this.getHeight();
-            }
-        });
-    }
-    
-    @Override
-    public void show() {
-        super.show();
-        if (content != null) {
-            removeItem(content);
-        }
-        if (notLoggedIn()) {
-            content = new LoginLayout();
-            addItem(content);
-        } else {
-            initializeContent();
-        }
-        redraw();
-    }
-
-    private boolean notLoggedIn() {
-        return getUserCookie() == null;
-    }
-
-    private void initializeContent() {
+    protected void initializeContent() {
         content = new HLayout();
         content.setStyleName("n52_sensorweb_client_create_abo_window_content");
         content.addMember(createNewEventAbonnementCanvas());
@@ -231,11 +170,6 @@ public class EventSubscriptionWindow extends Window {
         return contextHelpContent;
     }
 
-
-    public String getId() {
-        return COMPONENT_ID;
-    }
-
     public void setTimeseries(TimeSeries timeseries) {
         controller.setTimeseries(timeseries);
     }
@@ -250,14 +184,10 @@ public class EventSubscriptionWindow extends Window {
         ruleTemplateEditCanvas.redraw();
     }
     
-    private static class EventSubsriptionWindowEventBroker implements RuleCreatedEventHandler, SetRoleEventHandler {
-
-        private final EventSubscriptionWindow window;
+    private static class EventSubsriptionWindowEventBroker implements RuleCreatedEventHandler {
 
         public EventSubsriptionWindowEventBroker(EventSubscriptionWindow window) {
             getMainEventBus().addHandler(RuleCreatedEvent.TYPE, this);
-            getMainEventBus().addHandler(SetRoleEvent.TYPE, this);
-            this.window = window;
         }
         
         @Override
@@ -268,27 +198,5 @@ public class EventSubscriptionWindow extends Window {
             getMainEventBus().fireEvent(new SubscribeEvent(cookie, ruleName, "email", "EML"));
         }
 
-        @Override
-        public void onChangeRole(SetRoleEvent evt) {
-            if (evt.getRole() == LOGOUT) {
-                return;
-            }
-            if (window.isVisible()) {
-                reinitializeWindow();
-            }
-        }
-
-        private void reinitializeWindow() {
-            if (window.notLoggedIn()) {
-                SC.say(i18n.failedLogin());
-            } else {
-                window.show();
-            }
-        }
     }
-
-    public String getUserCookie() {
-        return getCookie(COOKIE_USER_ID);
-    }
-
 }

@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.gwtopenmaps.openlayers.client.MapWidget;
+import org.n52.client.ses.ui.usermanagement.AccountManagementWindow;
 import org.n52.client.ses.util.SesClientUtil;
 import org.n52.client.sos.event.data.ExportEvent.ExportType;
 import org.n52.client.sos.ui.StationSelector;
@@ -71,8 +72,6 @@ public class Legend extends VLayout {
     private Label exportButton;
     
 	private Label sesTabButton;
-
-	private Label eesTabButton;
 
 	private VLayout exportMenu;
 	
@@ -289,7 +288,6 @@ public class Legend extends VLayout {
         Label space = new Label();
         Label addTS = createAddTimeSeriesLabelButton();
         exportButton = createExportLabelButton();
-        eesTabButton = createEESTabLabelButton();
         sesTabButton = createSESTabLabelButton();
         space.setWidth("1%");
         exportButton.setWidth("20%");
@@ -299,9 +297,7 @@ public class Legend extends VLayout {
         menuStack.addMember(space);
         if (SesClientUtil.isSesEnabled()) {
         	addTS.setWidth("38%");
-            eesTabButton.setWidth("35%");
             sesTabButton.setWidth("35%");
-            menuStack.addMember(eesTabButton);
             menuStack.addMember(sesTabButton);
             menuStack.addMember(space);
         } else {
@@ -433,44 +429,20 @@ public class Legend extends VLayout {
         return addTS;
 	}
 	
-	private Label createEESTabLabelButton() {
-		Label eesTabLabelButton = new Label(i18n.diagram());
-		eesTabLabelButton.setStyleName("n52_sensorweb_client_legendbutton");
-		eesTabLabelButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {				
-				switchToSESButton();
-			}
-		});
-		eesTabLabelButton.setVisible(false);
-        return eesTabLabelButton;
-	}
-	
 	private Label createSESTabLabelButton() {
 		Label sesTabLabelButton = new Label(i18n.sesTabButton());
 		sesTabLabelButton.setStyleName("n52_sensorweb_client_legendbutton");
 		sesTabLabelButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				switchToEESButton();
+				AccountManagementWindow accManage = AccountManagementWindow.getInst();
+				accManage.show();
 			}
 		});
 		sesTabLabelButton.setVisible(true);
 		return sesTabLabelButton;
 	}
 	
-	private void switchToEESButton() {
-		controller.switchToSESTab();
-		eesTabButton.setVisible(true);
-		sesTabButton.setVisible(false);
-	}
-
-	private void switchToSESButton() {
-		controller.switchToEESTab();
-		eesTabButton.setVisible(false);
-		sesTabButton.setVisible(true);
-	}
-
     public VStack getLegendStack() {
         return this.legend;
     }
