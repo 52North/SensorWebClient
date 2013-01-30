@@ -1,13 +1,14 @@
 
 package org.n52.server.ses.feeder.task;
 
+import static java.lang.System.currentTimeMillis;
 import static org.n52.server.ses.feeder.FeederConfig.getFeederConfig;
+import static org.n52.server.util.TimeUtil.createIso8601Formatter;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Vector;
 
 import javax.xml.namespace.QName;
 
@@ -17,6 +18,7 @@ import net.opengis.om.x10.ObservationCollectionDocument;
 import net.opengis.om.x10.ObservationPropertyType;
 import net.opengis.om.x10.ObservationType;
 import net.opengis.swe.x101.DataArrayDocument;
+import net.opengis.swe.x101.DataValuePropertyType;
 import net.opengis.swe.x101.TextBlockDocument.TextBlock;
 import net.opengis.swe.x101.TimeObjectPropertyType;
 
@@ -36,29 +38,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This thread manages the collection of the observations for a Sensor. It
- * requests the observation document from the SOS and sends it to the SES by a
- * notify request.
- * 
- * @author Jan Schulte
- * 
+ * Manages the collection of the observations for a Timeseries. It requests the timeseries observation data
+ * from the SOS and sends it to the SES as a notify request. If a rule has been registered at the SES for this
+ * specific timeseries the SES filters automatically incoming notifications (in this case the observation) and
+ * generates outgoing notifications to inform external components if an observation triggers an event.<br>
+ * <br>
+ * Note that a publisher has to be registered at the SES. In this case the
+ * {@link TimeseriesFeed#getTimeseriesMetadata()} should has been registered as publisher.
  */
 public class FeedObservationThread extends Thread {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FeedObservationThread.class);
 
+    private SESConnector sesConnection = new SESConnector();
+    
     private TimeseriesFeed timeseriesFeed;
 
     private boolean running = true;
-    
-    private SESConnector sesCon;
 
-    private Vector<String> currentlyFeedingSensors;
-
-    public FeedObservationThread(TimeseriesFeed timeseriesFeed, Vector<String> v) {
+    public FeedObservationThread(TimeseriesFeed timeseriesFeed) {
         super("timeseriesId_" + timeseriesFeed.getTimeseriesId());
         this.timeseriesFeed = timeseriesFeed;
-        this.currentlyFeedingSensors = v;
     }
 
     public boolean isRunning() {
@@ -69,109 +69,73 @@ public class FeedObservationThread extends Thread {
         this.running = running;
     }
 
-    /**
-     * Collects and sends observation to the SES.
-     */
     @Override
     public void run() {
-
         if (isRunning()) {
             TimeseriesMetadata metadata = timeseriesFeed.getTimeseriesMetadata();
             try {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Start Observation thread for Sensor: " + metadata.getProcedure());
+                LOGGER.debug("Start feeding observation for {}: ", metadata);
+                if (!timeseriesFeed.hasBeenFeededBefore()) {
+                    setFirstTimeIntervalToFeed(timeseriesFeed);
                 }
 
-                SOSConnector sosCon = new SOSConnector(metadata.getServiceUrl());
-                sesCon = new SESConnector();
-
-                // do an observation request to sos for the sensor
-                Calendar startUpdate = this.timeseriesFeed.getLastUpdate();
-                if(LOGGER.isDebugEnabled()) {
-                	LOGGER.debug("Start Time of Database for " + 
-                			metadata.getProcedure() + ": " + 
-                			(startUpdate!=null?startUpdate.getTimeInMillis():
-                				"not defined => first time feeded") );
-                }
                 Calendar endUpdate = null;
-                if (startUpdate == null) {
-                    // create start timestamp for feeding observations
-                    long firstUpdateTime = System.currentTimeMillis() - getFeederConfig().getStartTimestamp();
-                    Calendar updateTime = new GregorianCalendar();
-                    updateTime.setTimeInMillis(firstUpdateTime);
-                    timeseriesFeed.setLastUpdate(updateTime);
-                    LOGGER.debug("Start Time generated for first feeding of " + metadata.getProcedure() +": "+ timeseriesFeed.getLastUpdate().getTimeInMillis());
-                    // FIXME save to database the new defined start time for this sensor
-                    /*
-                     * The problem is here to not have a start time that's increasing if the observations are not reguarly inserted into the SOS
-                     * 
-                     * Re-think this before implementing. Might be a cold-start or use case/configuration specific problem.
-                     * 
-                     * Solution could be in line 197:
-                     * if(endUpdate == null) // else {
-                     * 	this.sensor.setLastupdate(startUpdate);
-                     * }
-                     */
+                for (ObservationPropertyType observationMember : getObservationsFor(metadata)) {
+                    ObservationType observation = observationMember.getObservation();
+                    if (observation != null && observation.getProcedure().getHref().equals(metadata.getProcedure())) {
+                        endUpdate = getLastUpdateTime(observation.getSamplingTime());
+                        Calendar latestFeededAt = timeseriesFeed.getLastFeeded();
+                        timeseriesFeed.setLastConsideredTimeInterval(createUpdateInterval(observation, latestFeededAt));
+                        observationMember = checkObservations(observationMember);
+                        if ( ! (observationMember == null) && !sesConnection.isClosed()) {
+                            sesConnection.publishObservation(observationMember);
+                            LOGGER.info(metadata.getProcedure() + " with " + metadata.getOffering() + " added to SES");
+                        }
+                        else {
+                            LOGGER.info(String.format("No data received for procedure '%s'.", metadata.getProcedure()));
+                        }
+                    }
+                    else {
+                        LOGGER.info("No new Observations for " + metadata.getProcedure());
+                    }
                 }
-                
-				ObservationCollectionDocument obsCollDoc = sosCon.getObservation(timeseriesFeed);
-				ObservationPropertyType[] memberArray = obsCollDoc.getObservationCollection().getMemberArray();
-				// tell the others, that we are trying to feed observations
-				boolean addResult = this.currentlyFeedingSensors.add(metadata.getProcedure());
-				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("Added sensor \"" + metadata.getProcedure() + "\" to feeding list? " + addResult);
-				}
-				for (ObservationPropertyType obsPropType : memberArray) {
-					// start feeding
-					ObservationType observation = obsPropType.getObservation();
-					if (observation != null && observation.getProcedure().getHref().equals(metadata.getProcedure())) {
-						endUpdate = getLastUpdateTime(observation.getSamplingTime());
-						this.timeseriesFeed.setUpdateInterval(getUpdateInterval(observation, startUpdate));
-						LOGGER.info(metadata.getProcedure() + " from " + startUpdate.getTime() + " to " + endUpdate.getTime() + " for " + metadata.getOffering()); 
-						// create a Notify Message to the SES
-						obsPropType = checkObservations(obsPropType);
-						if (!(obsPropType == null) && !sesCon.isClosed()) {
-							sesCon.publishObservation(obsPropType);
-							LOGGER.info(metadata.getProcedure() + " with " + metadata.getOffering() + " added to SES");
-						} else {
-							LOGGER.info(String.format("No data received for procedure '%s'.", metadata.getProcedure()));
-						}
-					} else {
-						LOGGER.info("No new Observations for "	+ metadata.getProcedure());
-					}
-				}
                 if (endUpdate != null) {
                     // to prevent receiving observation two times
-                    LOGGER.debug("End Time before adding for " + metadata.getProcedure() +": "+ endUpdate.getTimeInMillis());
                     endUpdate.add(Calendar.MILLISECOND, 1);
-                    LOGGER.debug("End Time after adding for " + metadata.getProcedure() +": "+ endUpdate.getTimeInMillis());
-                    this.timeseriesFeed.setLastUpdate(endUpdate);
+                    this.timeseriesFeed.setLastFeeded(endUpdate);
                 }
                 DatabaseAccess.saveTimeseriesFeed(this.timeseriesFeed);
-            } catch (IllegalStateException e) {
+            }
+            catch (IllegalStateException e) {
                 LOGGER.warn("Failed to create SOS/SES Connection.", e);
                 return; // maybe shutdown .. try again
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 LOGGER.trace(e.getMessage(), e);
-            } catch (HibernateException e) {
+            }
+            catch (HibernateException e) {
                 LOGGER.warn("Datebase problem has occured: " + e.getMessage(), e);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 LOGGER.warn("Could not request and publish Observation to SES: " + e.getMessage(), e);
-            } finally {
-                //
-                // Feeding finished or failed because of exception
-                // => remove this sensor from the list of
-                // currentlyFeedingSensors
-                // remove() returns only true if the element was contained in
-                // the list
-                //
-                boolean removeResult = this.currentlyFeedingSensors.removeElement(metadata.getProcedure());
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("removed sensor \"" + metadata.getProcedure() + "\" from currently feeding list? "
-                            + removeResult);
-                }
             }
         }
+    }
+
+    private ObservationPropertyType[] getObservationsFor(TimeseriesMetadata metadata) throws Exception {
+        SOSConnector sosConnection = new SOSConnector(metadata.getServiceUrl());
+        ObservationCollectionDocument obsCollDoc = sosConnection.performGetObservation(timeseriesFeed);
+        return obsCollDoc.getObservationCollection().getMemberArray();
+    }
+
+    private void setFirstTimeIntervalToFeed(TimeseriesFeed timeseriesFeed) {
+        long lastConsideredTimeInterval = getFeederConfig().getFirstConsideredTimeInterval();
+        long firstConsideredTimeInterval = currentTimeMillis() - lastConsideredTimeInterval;
+        Calendar firstUpdate = new GregorianCalendar();
+        firstUpdate.setTimeInMillis(firstConsideredTimeInterval);
+        timeseriesFeed.setLastFeeded(firstUpdate);
+        String iso8601 = createIso8601Formatter().format(firstUpdate.getTime());
+        LOGGER.debug("First feeding set to {}.", iso8601);
     }
 
     private ObservationPropertyType checkObservations(ObservationPropertyType obsPropType) {
@@ -181,7 +145,8 @@ public class FeedObservationThread extends Thread {
         DataArrayDocument dataArrayDoc = null;
         try {
             dataArrayDoc = DataArrayDocument.Factory.parse(cResult.getDomNode());
-        } catch (XmlException e) {
+        }
+        catch (XmlException e) {
             LOGGER.error(e.getMessage());
         }
         TextBlock textBlock = dataArrayDoc.getDataArray1().getEncoding().getTextBlock();
@@ -203,11 +168,12 @@ public class FeedObservationThread extends Thread {
                         break;
                     }
                 }
-                if (!noDataMatch) {
+                if ( !noDataMatch) {
                     newValues.append(block + blockSeperator);
                 }
             }
-        } catch (IllegalStateException e) {
+        }
+        catch (IllegalStateException e) {
             LOGGER.debug("Configuration not available (anymore).", e);
         }
 
@@ -219,61 +185,69 @@ public class FeedObservationThread extends Thread {
         return obsPropType;
     }
 
-    private long getUpdateInterval(ObservationType observation, Calendar newestUpdate) {
-        long updateInterval = 0;
+    private long createUpdateInterval(ObservationType observation, Calendar lastFeededAt) {
+        long updateObservationPeriod = 0;
         try {
-            updateInterval = FeederConfig.getFeederConfig().getUpdateInterval();
-            XmlCursor cResult = observation.getResult().newCursor();
-            cResult.toChild(new QName("http://www.opengis.net/swe/1.0.1", "DataArray"));
-            DataArrayDocument dataArrayDoc = null;
+            // TODO for fix observation ranges makes this sense
+            updateObservationPeriod = getFeederConfig().getInitialUpdateIntervalRange();
+            
+            XmlCursor resultCursor = observation.getResult().newCursor();
+            resultCursor.toChild(new QName("http://www.opengis.net/swe/1.0.1", "DataArray"));
+            
+            String observationResult = "";
+            String tokenSeparator = ","; // default
+            String blockSeparator = ";"; // default
             try {
-                dataArrayDoc = DataArrayDocument.Factory.parse(cResult.getDomNode());
-            } catch (XmlException e) {
-                LOGGER.error("Error when parsing DataArray: " + e.getMessage());
+                DataArrayDocument dataArray  = DataArrayDocument.Factory.parse(resultCursor.getDomNode());
+                DataValuePropertyType dataValues = dataArray.getDataArray1().getValues();
+                observationResult = dataValues.getDomNode().getFirstChild().getNodeValue();
+                
+                TextBlock encoding = dataArray.getDataArray1().getEncoding().getTextBlock();
+                tokenSeparator = encoding.getTokenSeparator();
+                blockSeparator = encoding.getBlockSeparator();
             }
-            // get Seperators
-            TextBlock textBlock = dataArrayDoc.getDataArray1().getEncoding().getTextBlock();
-            String tokenSeparator = textBlock.getTokenSeparator();
-            String blockSeparator = textBlock.getBlockSeparator();
+            catch (XmlException e) {
+                LOGGER.error("Error when parsing DataArray.", e);
+            }
+            
 
-            // get values
-            String values = dataArrayDoc.getDataArray1().getValues().getDomNode().getFirstChild().getNodeValue();
-
-            // get updateInterval
-            String[] blockArray = values.split(blockSeparator);
             DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
-            Date latest = newestUpdate.getTime();
-            for (String value : blockArray) {
-                String[] valueArray = value.split(tokenSeparator);
+            String[] valueBlocks = observationResult.split(blockSeparator);
+            
+            // get updateInterval
+            long endUpdateInterval = lastFeededAt.getTimeInMillis();
+            for (String valueBlock : valueBlocks) {
+                String[] values = valueBlock.split(tokenSeparator);
                 try {
-                    DateTime dateTime = fmt.parseDateTime(valueArray[0]);
-                    Date temp = dateTime.toDate();
-                    long interval = (temp.getTime() - latest.getTime());
-                    if (interval < updateInterval) {
-                        updateInterval = interval;
+                    DateTime observationTime = fmt.parseDateTime(values[0]);
+                    long startUpdateInterval = observationTime.getMillis() - endUpdateInterval;
+                    if (startUpdateInterval < updateObservationPeriod) {
+                        updateObservationPeriod = startUpdateInterval;
                     }
-                    latest = temp;
-                } catch (Exception e) {
+                    endUpdateInterval = observationTime.getMillis();
+                }
+                catch (Exception e) {
                     LOGGER.error("Error when parsing Date: " + e.getMessage(), e);
                 }
             }
 
-            if (blockArray.length >= 2) {
-                String[] valueArrayFirst = blockArray[blockArray.length - 2].split(tokenSeparator);
-                String[] valueArrayLast = blockArray[blockArray.length - 1].split(tokenSeparator);
+            if (valueBlocks.length >= 2) {
+                String[] valueArrayFirst = valueBlocks[valueBlocks.length - 2].split(tokenSeparator);
+                String[] valueArrayLast = valueBlocks[valueBlocks.length - 1].split(tokenSeparator);
                 DateTime dateTimeFirst = fmt.parseDateTime(valueArrayFirst[0]);
                 DateTime dateTimeLast = fmt.parseDateTime(valueArrayLast[0]);
-                updateInterval = dateTimeLast.getMillis() - dateTimeFirst.getMillis();
+                updateObservationPeriod = dateTimeLast.getMillis() - dateTimeFirst.getMillis();
             }
 
-            if (updateInterval <= FeederConfig.getFeederConfig().getUpdateInterval()) {
-                return FeederConfig.getFeederConfig().getUpdateInterval();
+            if (updateObservationPeriod <= FeederConfig.getFeederConfig().getInitialUpdateIntervalRange()) {
+                return FeederConfig.getFeederConfig().getInitialUpdateIntervalRange();
             }
-        } catch (IllegalStateException e) {
+        }
+        catch (IllegalStateException e) {
             LOGGER.debug("Configuration is not available (anymore).", e);
         }
 
-        return updateInterval;
+        return updateObservationPeriod;
     }
 
     private Calendar getLastUpdateTime(TimeObjectPropertyType samplingTime) {
@@ -284,7 +258,8 @@ public class FeedObservationThread extends Thread {
         try {
             DateTime dateTime = fmt.parseDateTime(timePeriod.getEndPosition().getStringValue());
             date = dateTime.toDate();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Error when parsing Date: " + e.getMessage(), e);
         }
         Calendar cal = Calendar.getInstance();

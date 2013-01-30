@@ -20,19 +20,13 @@ import org.slf4j.LoggerFactory;
  * @author Jan Schulte
  * 
  */
-public class ObservationsTask extends TimerTask {
+public class GetObservationsTask extends TimerTask {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ObservationsTask.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationsTask.class);
 
-    private ExecutorService executor = Executors.newFixedThreadPool(1);
+    private ExecutorService executor = Executors.newFixedThreadPool(5);
     
-    private boolean active;
-
-    private Vector<String> currentTimeseriesFeed;
-
-    public ObservationsTask(Vector<String> currentlyFeededTimeseries) {
-        this.currentTimeseriesFeed = currentlyFeededTimeseries;
-    }
+    private boolean active = true;
 
     @Override
     public void run() {
@@ -48,42 +42,32 @@ public class ObservationsTask extends TimerTask {
 //    	feeder.enableSensorForFeeding(feedingMetadata);
     	/////
     	
-        LOGGER.info("Currenty feeded sensors: " + currentTimeseriesFeed.size());
-        active = true;
         try {
-            LOGGER.debug("############## Prepare Observations task ################");
+            LOGGER.debug("############## Prepare Observation tasks ################");
             List<TimeseriesFeed> timeseriesFeeds = DatabaseAccess.getUsedTimeseriesFeeds();
             LOGGER.debug("Number of Feeds: " + timeseriesFeeds.size());
             for (TimeseriesFeed timeseriesFeed : timeseriesFeeds) {
-                if (shallFeed(timeseriesFeed)) {
-                    TimeseriesMetadata metadata = timeseriesFeed.getTimeseriesMetadata();
-                    if (!this.currentTimeseriesFeed.contains(metadata)) {
-                        FeedObservationThread obsThread = new FeedObservationThread(timeseriesFeed, currentTimeseriesFeed);
-                        if (!executor.isShutdown()) {
-                            executor.execute(obsThread);
-                        }
+                if (active && shallFeed(timeseriesFeed)) {
+                    if (!executor.isShutdown()) {
+                        executor.execute(new FeedObservationThread(timeseriesFeed));
                     }
                 }
             }
-        } catch (NumberFormatException e) {
-            LOGGER.error("Could not parse 'KEY_OBSERVATIONS_TASK_PERIOD'.", e);
-        } catch (IllegalStateException e) {
-            LOGGER.debug("Configuration is not available (anymore).", e);
-        }
+        } 
         finally {
         	active = false;
         }
     }
 
     boolean shallFeed(TimeseriesFeed timeseriesFeed) {
-        boolean noUpdateYet = timeseriesFeed.getLastUpdate() == null;
+        boolean noUpdateYet = timeseriesFeed.getLastFeeded() == null;
         return noUpdateYet || isThresholdExceeded(timeseriesFeed);
     }
 
     boolean isThresholdExceeded(TimeseriesFeed timeseriesFeed) {
         long now = System.currentTimeMillis();
-        long lastUpdate = timeseriesFeed.getLastUpdate().getTimeInMillis();
-        return now - timeseriesFeed.getUpdateInterval() > lastUpdate;
+        long lastUpdate = timeseriesFeed.getLastFeeded().getTimeInMillis();
+        return now - timeseriesFeed.getLastConsideredTimeInterval() > lastUpdate;
     }
     
     public void stopObservationFeeds() {
@@ -105,6 +89,10 @@ public class ObservationsTask extends TimerTask {
             }
         }
         LOGGER.info("############## Observation task stopped ##############.");
+    }
+    
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public boolean isActive() {
