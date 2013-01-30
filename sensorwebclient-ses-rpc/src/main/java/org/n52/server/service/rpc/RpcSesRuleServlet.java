@@ -26,7 +26,6 @@ package org.n52.server.service.rpc;
 import javax.servlet.ServletException;
 
 import org.n52.client.service.SesRuleService;
-import org.n52.server.ses.feeder.SosSesFeeder;
 import org.n52.server.ses.service.SesRulesServiceImpl;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.serializable.pojos.ComplexRuleData;
@@ -48,8 +47,6 @@ public class RpcSesRuleServlet extends RemoteServiceServlet implements RpcSesRul
     @Override
     public void init() throws ServletException {
         LOGGER.debug("Initialize " + getClass().getName() +" Servlet for SES Client");
-        // initialize feeder
-        SosSesFeeder.getInst();
         service = new SesRulesServiceImpl();
     }
     
