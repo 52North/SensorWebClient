@@ -33,14 +33,20 @@ import static org.n52.shared.serializable.pojos.UserRole.LOGOUT;
 import org.n52.client.ses.event.SetRoleEvent;
 import org.n52.client.ses.event.handler.SetRoleEventHandler;
 import org.n52.client.ses.ui.layout.LoginLayout;
+import org.n52.client.ses.ui.layout.RegisterLayout;
 
 import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.Window;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.events.CloseClickEvent;
 import com.smartgwt.client.widgets.events.CloseClickHandler;
 import com.smartgwt.client.widgets.events.ResizedEvent;
 import com.smartgwt.client.widgets.events.ResizedHandler;
 import com.smartgwt.client.widgets.layout.Layout;
+import com.smartgwt.client.widgets.layout.VLayout;
 
 public abstract class LoginWindow extends Window {
 
@@ -92,7 +98,9 @@ public abstract class LoginWindow extends Window {
             removeItem(content);
         }
         if (notLoggedIn()) {
-            content = new LoginLayout();
+        	content = new VLayout();
+            content.addMember(new LoginLayout());
+            content.addMember(createLinkToRegistration());
             addItem(content);
         } else {
             initializeContent();
@@ -100,7 +108,28 @@ public abstract class LoginWindow extends Window {
         redraw();
     }
 
-    protected boolean notLoggedIn() {
+    private Canvas createLinkToRegistration() {
+		Label registration = new Label("register"); // TODO
+		registration.setStyleName("n52_sensorweb_client_login_register");
+		registration.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				loadRegistration();
+			}
+		});
+		return registration;
+	}
+
+	protected void loadRegistration() {
+		if (content != null) {
+            removeItem(content);
+        }
+		content = new RegisterLayout(); 
+		addItem(content);
+		redraw();
+	}
+
+	protected boolean notLoggedIn() {
         return getUserCookie() == null;
     }
 
