@@ -40,7 +40,7 @@ public interface SesRuleService {
 
     public SesClientResponse getAllOtherRules(String id, boolean edit) throws Exception;
 
-    public SesClientResponse publishRule(String ruleName, boolean value, String role) throws Exception;
+    public SesClientResponse publishRule(String ruleName, boolean published, String role) throws Exception;
 
     public SesClientResponse getAllRules() throws Exception;
 
