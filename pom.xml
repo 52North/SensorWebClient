@@ -701,14 +701,13 @@
 				<config.logger.consoleappender.level>DEBUG</config.logger.consoleappender.level>
 				<config.logger.fileappender.level>WARN</config.logger.fileappender.level>
 				
-				<feeder.capabilities.task.period>86400000</feeder.capabilities.task.period>
-				<feeder.observation.task.period>60000</feeder.observation.task.period>
-				<feeder.update.observation.period>120000</feeder.update.observation.period>
+                <feeder.nodata.values>-999999999</feeder.nodata.values>
+                <feeder.sleep.time.observation>5000</feeder.sleep.time.observation>
 				<feeder.prohibit.procedure.name>general</feeder.prohibit.procedure.name>
-				<feeder.nodata.values>-999999999</feeder.nodata.values>
-				<feeder.start.timestamp>900000</feeder.start.timestamp>
-				<feeder.sleep.time.observation>5000</feeder.sleep.time.observation>
 				<feeder.only.youngest.observation>true</feeder.only.youngest.observation>
+                <feeder.getobservations.update.time>60000</feeder.getobservations.update.time>
+                <feeder.first.update.interval.range>120000</feeder.first.update.interval.range>
+                <feeder.latest.considered.timeinterval>900000</feeder.latest.considered.timeinterval>
 				
 				<feeder.ses.version>0.0.0</feeder.ses.version>
 				<feeder.ses.default.topic.dialect>http://docs.oasis-open.org/wsn/t-1/TopicExpression/Simple</feeder.ses.default.topic.dialect>

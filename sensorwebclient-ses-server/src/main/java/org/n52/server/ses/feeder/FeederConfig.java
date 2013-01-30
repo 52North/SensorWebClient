@@ -1,10 +1,10 @@
 
 package org.n52.server.ses.feeder;
 
-import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_CAPABILITIES_TASK_PERIOD;
-import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_MAXIMUM_NUMBER_PROCEDURES;
+import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_FIRST_UPDATE_INTERVAL_RANGE;
+import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_LAST_CONSIDERED_TIME_INTERVAL;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_NO_DATA_VALUES;
-import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_OBSERVATIONS_TASK_PERIOD;
+import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_GETOBSERVATIONS_UPDATE_INTERVAL;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_ONLY_YOUNGEST_OBSERVATION;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_PROCEDURE_NAME_CONSTRAINTS;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_PROHIBIT_PROCEDURE_NAMES;
@@ -12,8 +12,6 @@ import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SES_D
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SES_DEFAULT_TOPIC_DIALECT;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SES_ENDPOINT;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SES_LIFETIME_DURATION;
-import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_START_TIMESTAMP;
-import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_UPDATE_OBSERVATION_PERIOD;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,10 +42,10 @@ public class FeederConfig {
     private static final String SES_DEFAULT_TOPIC = "ses:Measurements";
 
     private static FeederConfig instance;
-    
+
     private Properties configuration;
 
-    private long updateInterval;
+    private long firstUpdateIntervalRange;
 
     @Deprecated
     private List<String> procedureNameConstraints;
@@ -56,9 +54,7 @@ public class FeederConfig {
 
     private List<String> noDataValues;
 
-    private long continuesGetCapabilitiesUpdateInMillis;
-
-    private long continousGetObservationsUpdateInMillis;
+    private long elapseTimeOfGetObservationsUpdateInMillis;
 
     private boolean onlyYoungestName;
 
@@ -72,13 +68,8 @@ public class FeederConfig {
 
     private String sesEndpoint;
 
-    private long startTimestampInMillis;
+    private long firstConsideredTimeIntervalInMillis;
 
-    /**
-     * Gets the single instance of Configuration.
-     * 
-     * @return The instance of the Configuration class
-     */
     public static FeederConfig getFeederConfig() {
         if (instance == null) {
             instance = new FeederConfig();
@@ -87,13 +78,12 @@ public class FeederConfig {
     }
 
     private FeederConfig() {
-    	LOGGER.debug("Initialize " + getClass().getName());
-    	configuration = loadProperties();
+        LOGGER.debug("Initialize " + getClass().getName());
+        configuration = loadProperties();
 
-        startTimestampInMillis = parseLongValue(KEY_START_TIMESTAMP, 120000);
-        updateInterval = parseLongValue(KEY_UPDATE_OBSERVATION_PERIOD, 120000);
-    	continuesGetCapabilitiesUpdateInMillis = parseLongValue(KEY_CAPABILITIES_TASK_PERIOD, 86400000);
-    	continousGetObservationsUpdateInMillis = parseLongValue(KEY_OBSERVATIONS_TASK_PERIOD, 60000);
+        firstConsideredTimeIntervalInMillis = parseLongValue(KEY_LAST_CONSIDERED_TIME_INTERVAL, 120000);
+        firstUpdateIntervalRange = parseLongValue(KEY_FIRST_UPDATE_INTERVAL_RANGE, 120000);
+        elapseTimeOfGetObservationsUpdateInMillis = parseLongValue(KEY_GETOBSERVATIONS_UPDATE_INTERVAL, 60000);
 
         noDataValues = parseCommaSeparatedValues(KEY_NO_DATA_VALUES);
         prohibitProcedureNames = parseCommaSeparatedValues(KEY_PROHIBIT_PROCEDURE_NAMES);
@@ -119,7 +109,7 @@ public class FeederConfig {
             return defaultValue;
         }
     }
-    
+
     private List<String> parseCommaSeparatedValues(String configKey) {
         String configString = getValue(configKey);
         if (configString == null) {
@@ -129,7 +119,7 @@ public class FeederConfig {
         ArrayList<String> values = new ArrayList<String>();
         for (String valueString : configString.split(",")) {
             String trimmedValue = valueString.trim();
-            if (!trimmedValue.isEmpty()) {
+            if ( !trimmedValue.isEmpty()) {
                 values.add(trimmedValue);
             }
         }
@@ -146,17 +136,18 @@ public class FeederConfig {
     }
 
     private Properties loadProperties() {
-		try {
-			final Properties config = new Properties();
-			URL configurationResource = getClass().getResource(CONFIG_FILE);
-			File configFile = new File(configurationResource.toURI());
-			config.loadFromXML(new FileInputStream(configFile));
-			return config;
-		} catch (Exception e) {
-		    LOGGER.error("Could not find feeder configuration: {}", CONFIG_FILE);
-		    throw new IllegalStateException("Could not find configuration file.");
-		}
-	}
+        try {
+            final Properties config = new Properties();
+            URL configurationResource = getClass().getResource(CONFIG_FILE);
+            File configFile = new File(configurationResource.toURI());
+            config.loadFromXML(new FileInputStream(configFile));
+            return config;
+        }
+        catch (Exception e) {
+            LOGGER.error("Could not find feeder configuration: {}", CONFIG_FILE);
+            throw new IllegalStateException("Could not find configuration file.");
+        }
+    }
 
     public String getValue(String key) {
         return configuration.getProperty(key);
@@ -174,77 +165,56 @@ public class FeederConfig {
         return this.prohibitProcedureNames;
     }
 
-    public long getCapTime() {
-        return this.continuesGetCapabilitiesUpdateInMillis;
-    }
-
-    public long getObsTime() {
-        return this.continousGetObservationsUpdateInMillis;
+    /**
+     * @return update interval of performing GetObservation updates in milliseconds.
+     */
+    public long getElapseTimeOfGetObservationsUpdate() {
+        return this.elapseTimeOfGetObservationsUpdateInMillis;
     }
 
     public List<String> getNoDataValues() {
         return noDataValues;
     }
 
-    public long getUpdateInterval() {
-        return updateInterval;
+    public long getInitialUpdateIntervalRange() {
+        return firstUpdateIntervalRange;
     }
 
     public int getMaxNumProc() {
         return maximalNumberOfProcedures;
     }
 
-    /**
-     * @return the sesDefaultTopicDialect
-     */
     public String getSesDefaultTopicDialect() {
         return this.sesDefaultTopicDialect;
     }
 
-    /**
-     * @return the sesDefaultTopic
-     */
     public String getSesDefaultTopic() {
-        return this.sesDefaultTopic;
+        return sesDefaultTopic;
     }
 
-    /**
-     * @return the sesLifetimeDuration
-     */
     public String getSesLifetimeDuration() {
-        return this.sesLifetimeDuration;
+        return sesLifetimeDuration;
     }
 
-    /**
-     * @return the sesEndpoint
-     */
     public String getSesEndpoint() {
-        return this.sesEndpoint;
+        return sesEndpoint;
     }
 
-    /**
-     * @return the startTimestamp
-     */
-    public long getStartTimestamp() {
-        return this.startTimestampInMillis;
+    public long getFirstConsideredTimeInterval() {
+        return firstConsideredTimeIntervalInMillis;
     }
 
-    /**
-     * @return the onlyYoungestName
-     */
     public boolean isOnlyYoungestName() {
         return onlyYoungestName;
     }
 
     class ConfigurationKeys {
-        /** Key for the period to start to collect the sensorML documents in milliseconds. */
-        static final String KEY_CAPABILITIES_TASK_PERIOD = "capabilities_task_period";
 
         /** Key for the period to collect the new observations in milliseconds. */
-        static final String KEY_OBSERVATIONS_TASK_PERIOD = "observations_task_period";
+        static final String KEY_GETOBSERVATIONS_UPDATE_INTERVAL = "getobservations_update_time";
 
         /** Key for the minimum update time of an observation in milliseconds. */
-        static final String KEY_UPDATE_OBSERVATION_PERIOD = "update_observation_period";
+        static final String KEY_FIRST_UPDATE_INTERVAL_RANGE = "first_update_interval_range";
 
         /** Key for the maximum number of procedures. */
         static final String KEY_MAXIMUM_NUMBER_PROCEDURES = "maximum_number_procedures";
@@ -280,7 +250,7 @@ public class FeederConfig {
         static final String KEY_SES_ENDPOINT = "ses_register_publisher_endpoint";
 
         /** Key for the start timestamp for a feeded sensor */
-        static final String KEY_START_TIMESTAMP = "start_timestamp";
+        static final String KEY_LAST_CONSIDERED_TIME_INTERVAL = "latest_considered_time_interval";
 
         /** Key for the youngest new observation sended to the ses */
         static final String KEY_ONLY_YOUNGEST_OBSERVATION = "only_youngest_observation";
