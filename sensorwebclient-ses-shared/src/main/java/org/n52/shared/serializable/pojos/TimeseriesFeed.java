@@ -18,14 +18,18 @@ public class TimeseriesFeed implements Serializable {
 
     private TimeseriesMetadata timeseriesMetadata;
 
-    private Calendar lastUpdate;
+    private Calendar lastFeeded;
 
     private long usedCounter;
 
-    private long updateInterval;
+    private long lastConsideredTimeInterval;
 
     private boolean active;
 
+    /**
+     * use {@link #usedCounter} as it implicitly indicates if feed is being used
+     */
+    @Deprecated
     private int inUse;
 
     TimeseriesFeed() {
@@ -40,7 +44,7 @@ public class TimeseriesFeed implements Serializable {
      *        a specific SOS instance.
      */
     public TimeseriesFeed(TimeseriesMetadata timeseriesMetadata) {
-        if (!isValid(timeseriesMetadata)) {
+        if ( !isValid(timeseriesMetadata)) {
             throw new IllegalStateException("Passed parameter constellation is not complete.");
         }
         this.timeseriesId = timeseriesMetadata.getTimeseriesId();
@@ -49,7 +53,7 @@ public class TimeseriesFeed implements Serializable {
 
     private boolean isValid(TimeseriesMetadata timeseriesMetadata) {
         return timeseriesMetadata.isComplete();
-        
+
     }
 
     public TimeseriesMetadata getTimeseriesMetadata() {
@@ -59,7 +63,7 @@ public class TimeseriesFeed implements Serializable {
     public void setTimeseriesMetadata(TimeseriesMetadata timeseriesMetadata) {
         this.timeseriesMetadata = timeseriesMetadata;
     }
-    
+
     public String getTimeseriesId() {
         return this.timeseriesId;
     }
@@ -84,20 +88,37 @@ public class TimeseriesFeed implements Serializable {
         this.usedCounter = usedCounter;
     }
 
-    public Calendar getLastUpdate() {
-        return this.lastUpdate;
+    public boolean hasBeenFeededBefore() {
+        return lastFeeded != null;
     }
 
-    public void setLastUpdate(Calendar lastUpdate) {
-        this.lastUpdate = lastUpdate;
+    /**
+     * @return when the last GetObservation update was done for this feed. 
+     */
+    public Calendar getLastFeeded() {
+        return lastFeeded;
     }
 
-    public void setUpdateInterval(long updateInterval) {
-        this.updateInterval = updateInterval;
+    /**
+     * @param lastFeeded when the last GetObservation update was done for this feed.
+     */
+    public void setLastFeeded(Calendar lastFeeded) {
+        this.lastFeeded = lastFeeded;
     }
 
-    public long getUpdateInterval() {
-        return this.updateInterval;
+    /**
+     * @param lastConsideredTimeInterval
+     *        the time interval of the last successful GetObservation response in milliseconds.
+     */
+    public void setLastConsideredTimeInterval(long lastConsideredTimeInterval) {
+        this.lastConsideredTimeInterval = lastConsideredTimeInterval;
+    }
+
+    /**
+     * @return the time interval of the last successful GetObservation response in milliseconds.
+     */
+    public long getLastConsideredTimeInterval() {
+        return lastConsideredTimeInterval;
     }
 
     public boolean isActive() {
@@ -108,10 +129,12 @@ public class TimeseriesFeed implements Serializable {
         this.active = active;
     }
 
+    @Deprecated
     public int getInUse() {
         return inUse;
     }
 
+    @Deprecated
     public void setInUse(int inUse) {
         this.inUse = inUse;
     }
