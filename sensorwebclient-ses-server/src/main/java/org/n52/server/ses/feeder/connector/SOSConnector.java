@@ -33,16 +33,12 @@ import org.n52.oxf.valueDomains.time.TimeFactory;
 import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.access.ObservationAccessor;
 import org.n52.server.oxf.util.generator.RequestConfig;
-import org.n52.server.ses.feeder.FeederConfig;
 import org.n52.server.util.SosAdapterFactory;
-import org.n52.server.util.TimeUtil;
 import org.n52.shared.serializable.pojos.TimeseriesFeed;
 import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.sun.mail.handlers.message_rfc822;
 
 /**
  * Manages the communication to SOS.
@@ -87,8 +83,6 @@ public class SOSConnector {
             ParameterContainer paramCon = new ParameterContainer();
             paramCon.addParameterShell(GET_CAPABILITIES_ACCEPT_VERSIONS_PARAMETER, serviceVersion);
             paramCon.addParameterShell(GET_CAPABILITIES_SERVICE_PARAMETER, "SOS");
-            LOGGER.trace("GetCapabilitiesRequest for '{}: \n' {}", serviceUrl,
-                         sosAdapter.getRequestBuilder().buildGetCapabilitiesRequest(paramCon));
 
             Operation operation = new Operation(GET_CAPABILITIES, serviceUrl + "?", serviceUrl);
             OperationResult opResult = sosAdapter.doOperation(operation, paramCon);
@@ -170,8 +164,7 @@ public class SOSConnector {
         OperationResult operationResult = obsAccessor.sendRequest(request);
         XmlObject response = XmlObject.Factory.parse(operationResult.getIncomingResultAsStream());
 
-        LOGGER.debug("GetObservation Response: " + response);
-        // parse request to ObservationCollectionDocument
+        LOGGER.trace("GetObservation Response: \n{} ", response);
         if (response instanceof ObservationCollectionDocument) {
             return (ObservationCollectionDocument) response;
         }
