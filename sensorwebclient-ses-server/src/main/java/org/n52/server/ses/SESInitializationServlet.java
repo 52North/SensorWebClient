@@ -24,7 +24,6 @@
 package org.n52.server.ses;
 
 import static org.n52.server.ses.feeder.SosSesFeeder.createSosSesFeeder;
-import static org.n52.server.ses.feeder.SosSesFeeder.getSosSesFeederInstance;
 
 import java.util.UUID;
 
@@ -34,9 +33,7 @@ import javax.swing.JOptionPane;
 
 import org.jfree.util.Log;
 import org.n52.server.ses.eml.Meta_Builder;
-import org.n52.server.ses.feeder.SosSesFeeder;
 import org.n52.server.ses.hibernate.HibernateUtil;
-import org.n52.server.ses.service.SesTimeseriesFeedServiceImpl;
 import org.n52.server.ses.service.SesUserServiceImpl;
 import org.n52.server.ses.util.SesServerUtil;
 import org.n52.server.ses.util.WnsUtil;
@@ -246,16 +243,13 @@ public class SESInitializationServlet extends HttpServlet {
                 return;
             }
         });
-        // start thread
         sesUserThread.run();
     }
 
     @Override
     public void destroy() {
         try {
-            // Destroy method is called to undeploy the servlet.
-            // To avoid redeploy hang-ups we have to close the hibernate session factory 
-            HibernateUtil.getSessionFactory().close();
+            HibernateUtil.closeDatabaseSessionFactory();
         } catch (Exception e) {
             LOGGER.error("Could not close database session factory appropriatly.", e);
         }

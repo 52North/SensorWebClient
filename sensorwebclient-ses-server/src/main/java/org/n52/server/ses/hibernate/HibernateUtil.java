@@ -30,10 +30,11 @@ import static org.n52.shared.serializable.pojos.UserRole.NOT_REGISTERED_USER;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.classic.Session;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.n52.server.ses.db.CriteriaExecution;
+import org.n52.server.ses.db.HibernateDaoUtil;
+import org.n52.server.ses.feeder.SosSesFeeder;
 import org.n52.shared.serializable.pojos.BasicRule;
 import org.n52.shared.serializable.pojos.ComplexRule;
 import org.n52.shared.serializable.pojos.Subscription;
@@ -41,10 +42,8 @@ import org.n52.shared.serializable.pojos.TimeseriesFeed;
 import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.User;
 import org.n52.shared.serializable.pojos.UserRole;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class HibernateUtil {
+public class HibernateUtil extends HibernateDaoUtil {
 
     private static final String ROLE = "role";
 
@@ -77,22 +76,6 @@ public class HibernateUtil {
     private static final String E_MAIL = "eMail";
 
     private static final String USER_NAME = "userName";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(HibernateUtil.class);
-
-    private static SessionFactory sessionFactory;
-
-    public static SessionFactory getSessionFactory() {
-        if (sessionFactory == null) {
-            try {
-                sessionFactory = new Configuration().configure().buildSessionFactory();
-            }
-            catch (Exception e) {
-                LOGGER.error("Initial SessionFactory creation failed.", e);
-            }
-        }
-        return sessionFactory;
-    }
 
     public static void saveUser(User user) {
         user.setActive(true);
@@ -362,18 +345,34 @@ public class HibernateUtil {
         return rules;
     }
 
-    @SuppressWarnings("unchecked")
-    public static void updateBasicRuleSubscribtion(String ruleName, boolean subscribed) {
-        Session session = getSessionFactory().getCurrentSession();
-        session.beginTransaction();
-        Criteria crit = session.createCriteria(BasicRule.class);
-        List<BasicRule> rules = crit.add(Restrictions.eq(RULE_NAME, ruleName)).list();
-        if (rules.size() == 1) {
-            BasicRule rule = rules.get(0);
-            rule.setSubscribed(subscribed);
-            session.saveOrUpdate(rule);
-        }
-        session.getTransaction().commit();
+    
+    
+    public static void subscribeBasicRule(final String ruleName) {
+        execute(new CriteriaExecution<Void>() {
+            @Override
+            public Void execute(final Session session) {
+                Criteria criteria = session.createCriteria(BasicRule.class);
+                criteria.add(Restrictions.eq(RULE_NAME, ruleName));
+                BasicRule rule = (BasicRule) criteria.uniqueResult();
+                rule.setSubscribed(true);
+                session.saveOrUpdate(rule);
+                return null;
+            }
+        });
+    }
+    
+    public static void unsubscribeBasicRule(final String ruleName) {
+        execute(new CriteriaExecution<Void>() {
+            @Override
+            public Void execute(final Session session) {
+                Criteria criteria = session.createCriteria(BasicRule.class);
+                criteria.add(Restrictions.eq(RULE_NAME, ruleName));
+                BasicRule rule = (BasicRule) criteria.uniqueResult();
+                rule.setSubscribed(false);
+                session.saveOrUpdate(rule);
+                return null;
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -434,29 +433,47 @@ public class HibernateUtil {
     }
 
     /**
-     * Updates the timeseries to be active or not active.
+     * Deactivates the timeseries to be not considered for feeding by the {@link SosSesFeeder} 
      * 
      * @param timeseriesId
      *        the timeseries' id.
-     * @param active
-     *        <code>true</code> if the timeseries shall be activated, <code>false</code> otherwise.
-     * @return a {@link Void} to satisfy generics.
      */
-    public static Void updateTimeseriesFeed(final String timeseriesId, final boolean active) {
-        return execute(new CriteriaExecution<Void>() {
+    public static void deactivateTimeseriesFeed(final String timeseriesId) {
+        execute(new CriteriaExecution<Void>() {
             @Override
             public Void execute(Session session) {
                 Criteria criteria = session.createCriteria(TimeseriesFeed.class);
                 criteria.add(Restrictions.eq(TIMESERIES_ID, timeseriesId));
                 TimeseriesFeed uniqueResult = (TimeseriesFeed) criteria.uniqueResult();
+                uniqueResult.setActive(false);
+                session.saveOrUpdate(uniqueResult);
+                return null;
+            }
+        });
+    }
+    
+    /**
+     * Activates the timeseries to be used by the {@link SosSesFeeder}.
+     * 
+     * @param timeseriesId
+     *        the timeseries' id.
+     */
+    public static void activateTimeseriesFeed(final String timeseriesId) {
+        execute(new CriteriaExecution<Void>() {
+            @Override
+            public Void execute(Session session) {
+                Criteria criteria = session.createCriteria(TimeseriesFeed.class);
+                criteria.add(Restrictions.eq(TIMESERIES_ID, timeseriesId));
+                TimeseriesFeed uniqueResult = (TimeseriesFeed) criteria.uniqueResult();
+                uniqueResult.setActive(true);
                 session.saveOrUpdate(uniqueResult);
                 return null;
             }
         });
     }
 
-    public static Void publishRule(final String ruleName, final boolean value) {
-        return execute(new CriteriaExecution<Void>() {
+    public static void publishRule(final String ruleName, final boolean value) {
+        execute(new CriteriaExecution<Void>() {
             @Override
             public Void execute(Session session) {
                 BasicRule basicRule = getBasicRuleByName(ruleName);
@@ -585,13 +602,13 @@ public class HibernateUtil {
         return false;
     }
 
-    public static Void deleteSubscription(final String subscriptionID, final String userID) {
-        return execute(new CriteriaExecution<Void>() {
+    public static void deleteSubscription(final String subscriptionID, final String userID) {
+        execute(new CriteriaExecution<Void>() {
             @Override
             public Void execute(final Session session) {
                 Criteria criteria = session.createCriteria(Subscription.class);
                 criteria.add(Restrictions.and(Restrictions.eq(USER_ID, Integer.valueOf(userID)),
-                                          Restrictions.eq(SUBSCRIPTION_ID, subscriptionID)));
+                                              Restrictions.eq(SUBSCRIPTION_ID, subscriptionID)));
                 Subscription subscription = (Subscription) criteria.uniqueResult();
                 session.delete(subscription);
                 return null;
@@ -842,57 +859,6 @@ public class HibernateUtil {
         session.getTransaction().commit();
         return metadata;
 
-    }
-
-    /**
-     * Encapsulates hibernate session management including retrieval of current {@link Session} and committing
-     * and flushing it respectively.
-     * 
-     * @param criteria
-     *        the criteria to execute on a current {@link Session}.
-     * @return the expected result (can be a {@link Void} to indicate that nothing is expected).
-     */
-    private static <T> T execute(CriteriaExecution<T> criteria) {
-        Session session = getCurrentSession();
-        try {
-            session.beginTransaction();
-            return criteria.execute(session);
-        }
-        finally {
-            session.getTransaction().commit();
-        }
-    }
-
-    private static Session getCurrentSession() {
-        return getSessionFactory().getCurrentSession();
-    }
-
-    /**
-     * Encapsulates an database execution on a given {@link Session}. Use it as leightweight execution
-     * environment in combination with {@link #execute(Session)}, e.g. in a anonymous type implementation.<br>
-     * <br>
-     * A simple example for a no returning execution might be:
-     * 
-     * <pre>
-     * public static Void updateTimeseriesFeed(final String timeseriesId, final boolean active) {
-     *      return execute(new CriteriaExecution<Void>() {
-     *          public Void execute(Session session) {
-     *              Criteria criteria = session.createCriteria(TimeseriesFeed.class);
-     *              criteria.add(Restrictions.eq(TIMESERIES_ID, timeseriesId));
-     *              TimeseriesFeed uniqueResult = (TimeseriesFeed) criteria.uniqueResult();
-     *              session.saveOrUpdate(uniqueResult);
-     *              return null;
-     *          }
-     *      });
-     *   }}
-     * </pre>
-     * 
-     * @param <T>
-     *        the expected result of the execution (can be a {@link Void} to indicate that nothing is
-     *        expected)
-     */
-    interface CriteriaExecution<T> {
-        T execute(final Session session);
     }
 
 }

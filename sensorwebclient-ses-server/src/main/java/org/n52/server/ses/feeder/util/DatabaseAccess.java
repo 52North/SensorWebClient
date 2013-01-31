@@ -1,19 +1,19 @@
 package org.n52.server.ses.feeder.util;
 
-import static org.n52.server.ses.hibernate.HibernateUtil.getSessionFactory;
-
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
-import org.n52.shared.serializable.pojos.TimeseriesMetadata;
+import org.n52.server.ses.db.CriteriaExecution;
+import org.n52.server.ses.db.HibernateDaoUtil;
 import org.n52.shared.serializable.pojos.TimeseriesFeed;
+import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 
-public class DatabaseAccess {
+public class DatabaseAccess extends HibernateDaoUtil {
 
-    // TODO close sessions after committing transaction 
+    // TODO use HibernateDaoUtil's execution encapsulation 
     
 	public static synchronized boolean isKnownTimeseriesFeed(TimeseriesMetadata timeseriesMetadata) {
 		Session session = getSessionFactory().getCurrentSession();
@@ -34,24 +34,27 @@ public class DatabaseAccess {
         transaction.commit();
 	}
 
-	public static synchronized void increaseUsageCount(TimeseriesFeed timeseriesFeed) {
-		changeCounter(timeseriesFeed, 1);
+	public static void increaseSubscriptionCountFor(TimeseriesFeed timeseriesFeed) {
+		updateSubscriptionCount(timeseriesFeed, 1);
 	}
 
-	public static synchronized void decreaseUsageCount(TimeseriesFeed timeseriesFeed) {
-		changeCounter(timeseriesFeed, -1);
+	public static void decreaseSubscriptionCountFor(TimeseriesFeed timeseriesFeed) {
+		updateSubscriptionCount(timeseriesFeed, -1);
 	}
 	
-	private static void changeCounter(TimeseriesFeed timeseriesFeed, int changeBy) {
-	    Session session = getSessionFactory().getCurrentSession();
-	    Transaction transaction = session.beginTransaction();
-	    timeseriesFeed.setUsedCounter(timeseriesFeed.getUsedCounter() + changeBy);
-	    session.saveOrUpdate(timeseriesFeed);
-	    transaction.commit();
+	private static void updateSubscriptionCount(final TimeseriesFeed timeseriesFeed, final int changeBy) {
+	    execute(new CriteriaExecution<Void>() {
+            @Override
+            public Void execute(Session session) {
+                timeseriesFeed.setUsedCounter(timeseriesFeed.getUsedCounter() + changeBy);
+                session.saveOrUpdate(timeseriesFeed);
+                return null;
+            }
+	    });
 	}
 
 	@SuppressWarnings("unchecked")
-	public static synchronized List<TimeseriesFeed> getUsedTimeseriesFeeds() {
+	public static synchronized List<TimeseriesFeed> getSubscribedTimeseriesFeeds() {
 		Session session = getSessionFactory().getCurrentSession();
 		Transaction transaction = session.beginTransaction();
 		Criteria criteria = session.createCriteria(TimeseriesFeed.class);

@@ -51,14 +51,18 @@ public class FeedObservationThread extends Thread {
     private static final Logger LOGGER = LoggerFactory.getLogger(FeedObservationThread.class);
 
     private SESConnector sesConnection = new SESConnector();
+
+    // use managingTask.isActive() to interrupt long taking actions
+    private GetObservationsTask managingTask;
     
     private TimeseriesFeed timeseriesFeed;
 
     private boolean running = true;
 
-    public FeedObservationThread(TimeseriesFeed timeseriesFeed) {
+    public FeedObservationThread(TimeseriesFeed timeseriesFeed, GetObservationsTask managingTask) {
         super("timeseriesId_" + timeseriesFeed.getTimeseriesId());
         this.timeseriesFeed = timeseriesFeed;
+        this.managingTask = managingTask;
     }
 
     public boolean isRunning() {

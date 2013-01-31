@@ -2,8 +2,7 @@
 package org.n52.server.ses.feeder;
 
 import static org.n52.server.ses.feeder.FeederConfig.getFeederConfig;
-import static org.n52.server.ses.feeder.util.DatabaseAccess.decreaseUsageCount;
-import static org.n52.server.ses.feeder.util.DatabaseAccess.increaseUsageCount;
+import static org.n52.server.ses.feeder.util.DatabaseAccess.saveTimeseriesFeed;
 
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -12,7 +11,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
-import java.util.Vector;
 
 import net.opengis.sensorML.x101.SensorMLDocument;
 
@@ -22,8 +20,8 @@ import org.n52.server.ses.feeder.connector.SOSConnector;
 import org.n52.server.ses.feeder.task.GetObservationsTask;
 import org.n52.server.ses.feeder.util.DatabaseAccess;
 import org.n52.server.ses.hibernate.HibernateUtil;
-import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.TimeseriesFeed;
+import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,8 +43,7 @@ public class SosSesFeeder {
      * Creates the feeder singleton instance if it was not created before.<br>
      * <br>
      * The feeder is not started automatically. Use {@link #startFeeding()} or {@link #stopFeeding()} to
-     * control feeding activity or create the instance via {@link SosSesFeeder#createSosSesFeeder(boolean)}.
-     * <br>
+     * control feeding activity or create the instance via {@link SosSesFeeder#createSosSesFeeder(boolean)}. <br>
      * <br>
      * Uses {@link SosSesFeeder#getSosSesFeederInstance()} but without returning the instance.
      */
@@ -88,17 +85,16 @@ public class SosSesFeeder {
 
     public void stopFeeding() {
         timer.cancel();
+        observationTask.setActive(false);
         LOGGER.info("Feeding stopped.");
     }
 
-    public void enableTimeseriesForFeeding(TimeseriesFeed timeseriesFeed) {
+    public void enableFeedingFor(TimeseriesFeed timeseriesFeed) {
         TimeseriesMetadata timeseriesMetadata = timeseriesFeed.getTimeseriesMetadata();
-        if (timeseriesIsAlreadyBeingFeeded(timeseriesMetadata)) {
-            increaseUsageCount(timeseriesFeed);
-        }
-        else {
+        if ( !timeseriesIsAlreadyBeingFeeded(timeseriesMetadata)) {
             saveNewTimeseriesFeed(timeseriesFeed);
         }
+        increaseSubscriptionCountFor(timeseriesFeed);
     }
 
     boolean timeseriesIsAlreadyBeingFeeded(TimeseriesMetadata timeseriesMetadata) {
@@ -108,14 +104,13 @@ public class SosSesFeeder {
     private void saveNewTimeseriesFeed(TimeseriesFeed timeseriesFeed) {
         try {
             SensorMLDocument sensorML = getSensorMLfromSos(timeseriesFeed.getTimeseriesMetadata());
-
             SESConnector sesConnector = new SESConnector();
 
             // TODO do we have to exchange unique ID in sensorML?
 
             String publishedId = sesConnector.registerPublisher(sensorML);
             timeseriesFeed.setSesId(publishedId);
-            DatabaseAccess.saveTimeseriesFeed(timeseriesFeed);
+            saveTimeseriesFeed(timeseriesFeed);
         }
         catch (ExceptionReport e) {
             LOGGER.error("Error while register sensor in SES, ", e);
@@ -137,8 +132,12 @@ public class SosSesFeeder {
         return sosConnector;
     }
 
-    public void decreaseSubscriptionCount(TimeseriesFeed timeseriesFeed) {
-        decreaseUsageCount(timeseriesFeed);
+    public void increaseSubscriptionCountFor(TimeseriesFeed timeseriesFeed) {
+        DatabaseAccess.increaseSubscriptionCountFor(timeseriesFeed);
+    }
+
+    public void decreaseSubscriptionCountFor(TimeseriesFeed timeseriesFeed) {
+        DatabaseAccess.decreaseSubscriptionCountFor(timeseriesFeed);
     }
 
     @Override
@@ -160,7 +159,7 @@ public class SosSesFeeder {
 
             stopFeeding();
 
-            HibernateUtil.getSessionFactory().close();
+            HibernateUtil.closeDatabaseSessionFactory();
 
             // This manually deregisters JDBC driver, which prevents Tomcat 7 from complaining about memory
             // leaks wrto this class

@@ -23,14 +23,18 @@
  */
 package org.n52.server.ses.service;
 
-import static org.n52.server.ses.feeder.FeederConfig.getFeederConfig;
 import static org.n52.server.ses.feeder.SosSesFeeder.getSosSesFeederInstance;
+import static org.n52.server.ses.hibernate.HibernateUtil.activateTimeseriesFeed;
+import static org.n52.server.ses.hibernate.HibernateUtil.deactivateTimeseriesFeed;
 import static org.n52.server.ses.hibernate.HibernateUtil.deleteSubscription;
 import static org.n52.server.ses.hibernate.HibernateUtil.existsOtherSubscriptions;
+import static org.n52.server.ses.hibernate.HibernateUtil.existsSubscription;
 import static org.n52.server.ses.hibernate.HibernateUtil.getTimeseriesFeedById;
-import static org.n52.server.ses.hibernate.HibernateUtil.updateBasicRuleSubscribtion;
+import static org.n52.server.ses.hibernate.HibernateUtil.getTimeseriesMetadata;
+import static org.n52.server.ses.hibernate.HibernateUtil.subscribeBasicRule;
+import static org.n52.server.ses.hibernate.HibernateUtil.unsubscribeBasicRule;
 import static org.n52.server.ses.hibernate.HibernateUtil.updateComplexRuleSubscribtion;
-import static org.n52.server.ses.hibernate.HibernateUtil.updateTimeseriesFeed;
+import static org.n52.server.ses.util.SesServerUtil.getTimeseriesIdsFromEML;
 import static org.n52.shared.responses.SesClientResponse.types.RULE_NAME_EXISTS;
 
 import java.util.ArrayList;
@@ -48,8 +52,6 @@ import org.n52.server.ses.eml.BasicRule_5_Builder;
 import org.n52.server.ses.eml.ComplexRule_Builder;
 import org.n52.server.ses.eml.ComplexRule_BuilderV2;
 import org.n52.server.ses.eml.Meta_Builder;
-import org.n52.server.ses.feeder.FeederConfig;
-import org.n52.server.ses.feeder.SosSesFeeder;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.util.RulesUtil;
 import org.n52.server.ses.util.SearchUtil;
@@ -73,13 +75,13 @@ import org.slf4j.LoggerFactory;
 
 public class SesRulesServiceImpl implements SesRuleService {
     
-    private static final Logger LOG = LoggerFactory.getLogger(SesRulesServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SesRulesServiceImpl.class);
     
     @Override
     public SesClientResponse subscribe(String userID, String ruleName, String medium, String eml) throws Exception {
         try {
-            LOG.debug("subscribe to rule: " + ruleName);
-            LOG.debug("notification type:  " + medium);
+            LOGGER.debug("subscribe to rule: {}", ruleName);
+            LOGGER.debug("notification type:  {}", medium);
             
             // get EML from DB
             BasicRule basicRule = HibernateUtil.getBasicRuleByName(ruleName);
@@ -124,10 +126,10 @@ public class SesRulesServiceImpl implements SesRuleService {
                 for (int i = 0; i < formats.length; i++) {
                     subscriptionExists = false;
                     
-                    if (basicRule != null && HibernateUtil.existsSubscription(basicRule.getId(), media[k], formats[i], Integer.valueOf(userID))) {
+                    if (basicRule != null && existsSubscription(basicRule.getId(), media[k], formats[i], Integer.valueOf(userID))) {
                         subscriptionExists = true;
                         subscriptionsExists = true;
-                    } else if (complexRule != null && HibernateUtil.existsSubscription(complexRule.getId(), media[k], formats[i], Integer.valueOf(userID))) {
+                    } else if (complexRule != null && existsSubscription(complexRule.getId(), media[k], formats[i], Integer.valueOf(userID))) {
                         subscriptionExists = true;
                         subscriptionsExists = true;
                     }
@@ -181,50 +183,44 @@ public class SesRulesServiceImpl implements SesRuleService {
                                 throw new IllegalArgumentException("Illegal Muse resource");
                             }
                         } catch (Exception e) {
-                            LOG.error("Error while subscribing to SES", e);
+                            LOGGER.error("Error while subscribing to SES", e);
                             return new SesClientResponse(SesClientResponse.types.ERROR_SUBSCRIBE_SES);
                         }
 
                         // save subscription in DB
-                        LOG.debug("save subscription to DB: " + museResource);
+                        LOGGER.debug("save subscription to DB: " + museResource);
                         if (basicRule != null) {
                             HibernateUtil.saveSubscription(new Subscription(Integer.valueOf(userID), basicRule.getId(), museResource, media[k], formats[i]));
-                            HibernateUtil.updateBasicRuleSubscribtion(basicRule.getName(), true);
+                            subscribeBasicRule(basicRule.getName());
                         } else if (complexRule != null) {
                             HibernateUtil.saveSubscription(new Subscription(Integer.valueOf(userID), complexRule.getId(), museResource, media[k], formats[i]));
                             HibernateUtil.updateComplexRuleSubscribtion(complexRule.getName(), true);
                         }
                         
                         // set sensor status to used
-                        LOG.debug("set sensor to used");
+                        LOGGER.debug("set sensor to used");
                         ArrayList<String> timeseriesIds = SesServerUtil.getTimeseriesIdsFromEML(content);
                         
-                        // check if sensor is allready in feeder DB. If yes --> no new request to feeder
+                        // check if sensor is already in feeder DB. If yes --> no new request to feeder
                         try {
                             for (String timeseriesId : timeseriesIds) {
-                                TimeseriesFeed timeseriesFeed = HibernateUtil.getTimeseriesFeedById(timeseriesId);
+                                TimeseriesFeed timeseriesFeed = getTimeseriesFeedById(timeseriesId);
                                 if (timeseriesFeed == null) {
-                                    TimeseriesMetadata metadata = HibernateUtil.getTimeseriesMetadata(timeseriesId);
-                                    LOG.debug("Create TimeseriesFeed: " + timeseriesId);
-                                    getSosSesFeederInstance().enableTimeseriesForFeeding(createTimeseriesFeed(metadata));
-                                } else if (timeseriesFeed.getInUse() == 0) {
-                                    LOG.debug("(Re-)enable TimeseriesFeed: " + timeseriesId);
-                                    getSosSesFeederInstance().enableTimeseriesForFeeding(timeseriesFeed);
+                                    TimeseriesMetadata metadata = getTimeseriesMetadata(timeseriesId);
+                                    LOGGER.debug("Create TimeseriesFeed '{}'. " , timeseriesId);
+                                    TimeseriesFeed createdTimeseriesFeed = createTimeseriesFeed(metadata);
+                                    getSosSesFeederInstance().enableFeedingFor(createdTimeseriesFeed);
+                                } else if (timeseriesFeed.getUsedCounter() == 0) {
+                                    LOGGER.debug("Enable inactive TimeseriesFeed '{}'.", timeseriesId);
+                                    getSosSesFeederInstance().enableFeedingFor(timeseriesFeed);
+                                } else {
+                                    LOGGER.debug("TimeseriesFeed '{}' is already being feeded.");
                                 }
+                                activateTimeseriesFeedWith(timeseriesId);
                             }
                         } catch (Exception e) {
-                            LOG.error("Error subscribing to feeder.", e);
+                            LOGGER.error("Error subscribing to feeder.", e);
                             return new SesClientResponse(SesClientResponse.types.ERROR_SUBSCRIBE_FEEDER);
-                        }
-                        
-                        // increment sensor use count
-                        try {
-                            for (int j = 0; j < timeseriesIds.size(); j++) {
-                                updateTimeseriesFeed(timeseriesIds.get(j), true);
-                            }
-                        } catch (Exception e) {
-                            LOG.error("Could not update database", e);
-                            throw new Exception("Failed set sensor to use!");
                         }
                     }
                 }
@@ -236,8 +232,18 @@ public class SesRulesServiceImpl implements SesRuleService {
             return new SesClientResponse(SesClientResponse.types.OK);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
+        }
+    }
+
+    private void activateTimeseriesFeedWith(String timeseriesId) throws Exception {
+        try {
+            activateTimeseriesFeed(timeseriesId);
+        }
+        catch (Exception e) {
+            LOGGER.error("Could not update database", e);
+            throw new Exception("Failed to activate timeseries!");
         }
     }
     
@@ -253,7 +259,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse unSubscribe(String ruleName, String userID, String medium, String eml) throws Exception {
         try {
-            LOG.debug("unsubscribe: " + ruleName);
+            LOGGER.debug("unsubscribe: " + ruleName);
 
             // get rule
             BasicRule basicRule = HibernateUtil.getBasicRuleByName(ruleName);
@@ -273,42 +279,29 @@ public class SesRulesServiceImpl implements SesRuleService {
 
             try {
                 // unsubscribe from SES
-                LOG.debug("unsubscribe from SES: " + museID);
+                LOGGER.debug("unsubscribe from SES: " + museID);
                 SesServerUtil.unSubscribe(SesConfig.serviceVersion, SesConfig.sesEndpoint, museID);
             } catch (Exception e) {
-                LOG.error("Failed to unsubscribe", e);
+                LOGGER.error("Failed to unsubscribe", e);
                 return new SesClientResponse(SesClientResponse.types.ERROR_UNSUBSCRIBE_SES);
             }
             
-            try {
-                //TODO what happens if inUse is < 0??
-                // remove unused sensor from feeder
-                ArrayList<String> timeseriesFeedIds = SesServerUtil.getTimeseriesIdsFromEML(ruleAsEML);
-                for (String timeseriesId : timeseriesFeedIds) {
-                    
-                    updateTimeseriesFeed(timeseriesId, false);
-                    
-                    if (getTimeseriesFeedById(timeseriesId).getUsedCounter() == 0) {
-                        TimeseriesFeed timseriesFeed = getTimeseriesFeedById(timeseriesId);
-                        getSosSesFeederInstance().decreaseSubscriptionCount(timseriesFeed);
-                    }
+            ArrayList<String> timeseriesFeedIds = getTimeseriesIdsFromEML(ruleAsEML);
+            for (String timeseriesId : timeseriesFeedIds) {
+                TimeseriesFeed timseriesFeed = getTimeseriesFeedById(timeseriesId);
+                getSosSesFeederInstance().decreaseSubscriptionCountFor(timseriesFeed);
+                if (getTimeseriesFeedById(timeseriesId).getUsedCounter() == 0) {
+                    deactivateTimeseriesFeed(timeseriesId);
                 }
-                for (int i = 0; i < timeseriesFeedIds.size(); i++) {
-                    
-                }
-            } catch (Exception e) {
-                //TODO error handling??
-                LOG.error("decrement sensor count or remove used sensor from feeder failed!", e);
             }
 
             try {
+                // TODO couple subscription and rules in DB model
                 deleteSubscription(museID, userID);
-                
-                // TODO devrease SubsriptionCount? ugly! better: refactor db model
-                
                 if (basicRule != null && !existsOtherSubscriptions(basicRule.getId())) {
-                    updateBasicRuleSubscribtion(ruleName, false);
+                    unsubscribeBasicRule(ruleName);
                 } else if (complexRule != null && !existsOtherSubscriptions(complexRule.getId())) {
+                    // TODO refactor complex rules
                     updateComplexRuleSubscribtion(ruleName, false);
                 }
             } catch (Exception e) {
@@ -317,30 +310,17 @@ public class SesRulesServiceImpl implements SesRuleService {
             return new SesClientResponse(SesClientResponse.types.OK);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
-        }
-    }
-
-    private void stopFeedingTimeseries(BasicRule basicRule) {
-        if (basicRule != null) {
-            TimeseriesMetadata metadata = basicRule.getTimeseriesMetadata();
-            String timeseriesId = metadata.getTimeseriesId();
-            try {
-                TimeseriesFeed feed = getTimeseriesFeedById(timeseriesId);
-                getSosSesFeederInstance().decreaseSubscriptionCount(feed);
-            } catch (Exception e) {
-                LOG.error("Failed to stop feeding timeseries '{}'.", timeseriesId);
-            }
         }
     }
 
     @Override
     public SesClientResponse createBasicRule(Rule rule, boolean edit, String oldRuleName) throws Exception {
         try {
-            LOG.debug("createBasicRule: " + rule.getTitle());
+            LOGGER.debug("createBasicRule: " + rule.getTitle());
             if (exists(rule) && !edit) {
-                LOG.debug("Cannot create rule: Rule '{}' already exists!", rule.getTitle());
+                LOGGER.debug("Cannot create rule: Rule '{}' already exists!", rule.getTitle());
                 return new SesClientResponse(RULE_NAME_EXISTS);
             } 
 
@@ -379,7 +359,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                 // user wants to edit the rule
                 if (edit) {
                     // update Basic rule
-                    LOG.debug("update basicRule in DB");
+                    LOGGER.debug("update basicRule in DB");
                     BasicRule oldRule = HibernateUtil.getBasicRuleByName(oldRuleName);
                     
                     // check if only description and/or publish status is changed ==> no resubscriptions are needed
@@ -407,11 +387,11 @@ public class SesRulesServiceImpl implements SesRuleService {
                             Subscription subscription = subscriptions.get(i);
                             try {
                                 // unsubscribe from SES
-                                LOG.debug("unsubscribe from SES: " + subscription.getSubscriptionID());
+                                LOGGER.debug("unsubscribe from SES: " + subscription.getSubscriptionID());
                                 SesServerUtil.unSubscribe(SesConfig.serviceVersion, SesConfig.sesEndpoint, subscription.getSubscriptionID());
                                 subscribe(String.valueOf(rule.getUserID()), rule.getTitle(), subscription.getMedium(), subscription.getFormat());
                             } catch (Exception e) {
-                                LOG.error("Could not unsubscribe from SES", e);
+                                LOGGER.error("Could not unsubscribe from SES", e);
                             }
                             HibernateUtil.deleteSubscription(subscription.getSubscriptionID(), String.valueOf(subscription.getUserID()));
                         }
@@ -424,13 +404,13 @@ public class SesRulesServiceImpl implements SesRuleService {
 
                     return new SesClientResponse(types.EDIT_SIMPLE_RULE);
                 }
-                LOG.debug("save basicRule to DB");
+                LOGGER.debug("save basicRule to DB");
                 HibernateUtil.saveBasicRule(basicRule);
             }
             return new SesClientResponse(types.RULE_NAME_NOT_EXISTS, rule);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
@@ -442,7 +422,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse getAllOwnRules(String id, boolean edit) throws Exception {
         try {
-            LOG.debug("getAllOwnRules of user: " + id);
+            LOGGER.debug("getAllOwnRules of user: " + id);
 
             ArrayList<BasicRuleDTO> finalBasicList = new ArrayList<BasicRuleDTO>();
             ArrayList<ComplexRuleDTO> finalComplexList = new ArrayList<ComplexRuleDTO>();
@@ -488,7 +468,7 @@ public class SesRulesServiceImpl implements SesRuleService {
             return new SesClientResponse(SesClientResponse.types.OWN_RULES, finalBasicList, finalComplexList);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
@@ -496,7 +476,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse getAllOtherRules(String id, boolean edit) throws Exception {
         try {
-            LOG.debug("get all rules except user: " + id);
+            LOGGER.debug("get all rules except user: " + id);
             ArrayList<BasicRuleDTO> finalBasicList = new ArrayList<BasicRuleDTO>();
             ArrayList<ComplexRuleDTO> finalComplexList = new ArrayList<ComplexRuleDTO>();
             List<BasicRule> basicList;
@@ -547,7 +527,7 @@ public class SesRulesServiceImpl implements SesRuleService {
             return new SesClientResponse(SesClientResponse.types.OTHER_RULES, finalBasicList, finalComplexList);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
@@ -555,14 +535,14 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse publishRule(String ruleName, boolean published, String role) throws Exception {
         try {
-            LOG.debug("publish rule: " + ruleName + ": " + published);
+            LOGGER.debug("publish rule: " + ruleName + ": " + published);
             if (role.equals("ADMIN")) {
                 return new SesClientResponse(SesClientResponse.types.PUBLISH_RULE_ADMIN);
             }
             return new SesClientResponse(SesClientResponse.types.PUBLISH_RULE_USER);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
 
@@ -571,7 +551,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse getAllRules() throws Exception {
         try {
-            LOG.debug("get all rules");
+            LOGGER.debug("get all rules");
             
             BasicRuleDTO basicDTO;
             ComplexRuleDTO complexDTO;
@@ -597,7 +577,7 @@ public class SesRulesServiceImpl implements SesRuleService {
             return new SesClientResponse(SesClientResponse.types.All_RULES, finalBasicList, finalComplexList);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
@@ -605,7 +585,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse deleteRule(String ruleName) throws Exception {
         try {
-            LOG.debug("delete rule: " + ruleName);
+            LOGGER.debug("delete rule: " + ruleName);
             
             // get rule
             BasicRule basicRule = HibernateUtil.getBasicRuleByName(ruleName);
@@ -624,12 +604,12 @@ public class SesRulesServiceImpl implements SesRuleService {
             if (HibernateUtil.deleteRule(ruleName)) {
                 return new SesClientResponse(SesClientResponse.types.DELETE_RULE_OK);
             } else {
-                LOG.error("Error occured while deleting a rule");
+                LOGGER.error("Error occured while deleting a rule");
                 throw new Exception("Delete rule failed!");
             }
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
@@ -689,7 +669,7 @@ public class SesRulesServiceImpl implements SesRuleService {
             return null;
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
@@ -697,7 +677,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse getAllPublishedRules(String userID, int operator) throws Exception {
         try {
-            LOG.debug("get all published rules");
+            LOGGER.debug("get all published rules");
             ArrayList<String> finalList = new ArrayList<String>();
             
             List<BasicRule> basicRuleList = new ArrayList<BasicRule>();
@@ -734,7 +714,7 @@ public class SesRulesServiceImpl implements SesRuleService {
             return new SesClientResponse(SesClientResponse.types.ALL_PUBLISHED_RULES, finalList);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
@@ -742,14 +722,14 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse ruleNameExists(String ruleName) throws Exception {
         try {
-            LOG.debug("check whether rule name '{}' exists.", ruleName);
+            LOGGER.debug("check whether rule name '{}' exists.", ruleName);
             if (HibernateUtil.existsBasicRuleName(ruleName) || HibernateUtil.existsComplexRuleName(ruleName)) {
                 return new SesClientResponse(SesClientResponse.types.RULE_NAME_EXISTS);
             }
             return new SesClientResponse(SesClientResponse.types.RULE_NAME_NOT_EXISTS);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
@@ -757,7 +737,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse createComplexRule(ComplexRuleData rule, boolean edit, String oldRuleName) throws Exception {
         try {
-            LOG.debug("create complex rule: " + rule.getTitle());
+            LOGGER.debug("create complex rule: " + rule.getTitle());
             
             // rule name exists
             if ((HibernateUtil.existsComplexRuleName(rule.getTitle()) && !edit) || HibernateUtil.existsBasicRuleName(rule.getTitle())) {
@@ -826,7 +806,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                 
                 if (edit) {
                     // update Complex rule
-                    LOG.debug("update complex rule in DB");
+                    LOGGER.debug("update complex rule in DB");
                     ComplexRule oldRule = HibernateUtil.getComplexRuleByName(oldRuleName);
                     
                     // check if only description and/or publish status is changed ==> no resubscriptions are needed
@@ -853,11 +833,11 @@ public class SesRulesServiceImpl implements SesRuleService {
                             Subscription subscription = subscriptions.get(i);
                             try {
                                 // unsubscribe from SES
-                                LOG.debug("unsubscribe from SES: " + subscription.getSubscriptionID());
+                                LOGGER.debug("unsubscribe from SES: " + subscription.getSubscriptionID());
                                 SesServerUtil.unSubscribe(SesConfig.serviceVersion, SesConfig.sesEndpoint, subscription.getSubscriptionID());
                                 subscribe(String.valueOf(rule.getUserID()), rule.getTitle(), subscription.getMedium(), subscription.getFormat());
                             } catch (Exception e) {
-                                LOG.error("Error occured while unsubscribing a rule from SES: " + e.getMessage(), e);
+                                LOGGER.error("Error occured while unsubscribing a rule from SES: " + e.getMessage(), e);
                             }
                             HibernateUtil.deleteSubscription(subscription.getSubscriptionID(), String.valueOf(subscription.getUserID()));
                         }
@@ -875,7 +855,7 @@ public class SesRulesServiceImpl implements SesRuleService {
             return new SesClientResponse(SesClientResponse.types.OK);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
@@ -883,7 +863,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse getUserSubscriptions(String userID) throws Exception {
         try {
-            LOG.debug("get all subscriptions of user: " + userID);
+            LOGGER.debug("get all subscriptions of user: " + userID);
             List<Subscription> subscriptions = HibernateUtil.getUserSubscriptions(userID);
             ArrayList<BasicRuleDTO> basicList = new ArrayList<BasicRuleDTO>();
             ArrayList<ComplexRuleDTO> complexList = new ArrayList<ComplexRuleDTO>();
@@ -915,7 +895,7 @@ public class SesRulesServiceImpl implements SesRuleService {
             return new SesClientResponse(SesClientResponse.types.USER_SUBSCRIPTIONS, basicList, complexList);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
@@ -923,11 +903,11 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse search(String text, int criterion, String userID) throws Exception {
         try {
-            LOG.debug("search");
+            LOGGER.debug("search");
             return SearchUtil.search(text, criterion, userID);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
@@ -935,7 +915,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse copy(String userID, String ruleName) throws Exception {
         try {
-            LOG.debug("copy rule to own rules" + ruleName);
+            LOGGER.debug("copy rule to own rules" + ruleName);
 
             // get the selected rule
             BasicRule basicRule = HibernateUtil.getBasicRuleByName(ruleName);
@@ -973,7 +953,7 @@ public class SesRulesServiceImpl implements SesRuleService {
             return new SesClientResponse(SesClientResponse.types.OK);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
