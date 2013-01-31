@@ -52,7 +52,7 @@ public class FeedObservationThread extends Thread {
 
     private SESConnector sesConnection = new SESConnector();
 
-    // use managingTask.isActive() to interrupt long taking actions
+    // TODO use managingTask.isActive() to interrupt long taking actions
     private GetObservationsTask managingTask;
     
     private TimeseriesFeed timeseriesFeed;
