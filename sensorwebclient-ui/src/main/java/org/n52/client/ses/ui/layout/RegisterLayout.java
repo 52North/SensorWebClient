@@ -23,7 +23,10 @@
  */
 package org.n52.client.ses.ui.layout;
 
+import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.LOGIN;
+import static org.n52.shared.serializable.pojos.UserRole.NOT_REGISTERED_USER;
 
 import java.util.Date;
 
@@ -31,11 +34,11 @@ import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ses.ctrl.DataControlsSes;
 import org.n52.client.ses.ctrl.SesRequestManager;
+import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.GetTermsOfUseEvent;
 import org.n52.client.ses.event.RegisterUserEvent;
-import org.n52.client.ses.ui.Layout;
+import org.n52.client.ses.ui.FormLayout;
 import org.n52.shared.serializable.pojos.UserDTO;
-import org.n52.shared.serializable.pojos.UserRole;
 
 import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.data.DataSource;
@@ -53,111 +56,106 @@ import com.smartgwt.client.widgets.form.validator.MatchesFieldValidator;
 import com.smartgwt.client.widgets.form.validator.RegExpValidator;
 
 /**
- * The Class RegisterLayout.
- * 
  * This view is shown if a new user wants to register to the client.
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
  */
-public class RegisterLayout extends Layout {
+public class RegisterLayout extends FormLayout {
 
-    /** The user name item. */
     private TextItem userNameItem;
 
-    /** The name item. */
     private TextItem nameItem;
 
-    /** The password item. */
     private PasswordItem passwordItem;
 
-    /** The password item 2. */
-    private PasswordItem passwordItem2;
+    private PasswordItem verifyPasswordItem;
 
-    /** The email item. */
     private TextItem emailItem;
 
-    /** The email item 2. */
-    private TextItem emailItem2;
+    private TextItem verifyEmailItem;
 
-    /** The accept box. */
     private CheckboxItem acceptBox;
 
-    /** The link terms. */
     private LinkItem linkTerms;
 
-    /**
-     * Instantiates a new register layout.
-     */
     public RegisterLayout() {
         super(i18n.registration());
-        this.scClassName = "VLayout";
-
-        DataSource dataSource = new DataSource();
-
+        setStyleName("n52_sensorweb_client_form_content");
+        
         DataSourceTextField userNameField = new DataSourceTextField("userName", i18n.userName(), 50, true);
         DataSourceTextField nameField = new DataSourceTextField("name", i18n.name(), 50, false);
         DataSourcePasswordField passwordField = new DataSourcePasswordField("password", i18n.password(), 20, true);
         DataSourceTextField emailField = new DataSourceTextField("email", i18n.email(), 100, true);
-        DataSourceTextField handyField = new DataSourceTextField("handy", i18n.handy(), 20, false);
 
         RegExpValidator emailValidator = new RegExpValidator();
         emailValidator.setErrorMessage(i18n.invalidEmail());
         emailValidator.setExpression("^([a-zA-Z0-9_.\\-+])+@(([a-zA-Z0-9\\-])+\\.)+[a-zA-Z0-9]{2,4}$");
         emailField.setValidators(emailValidator);
 
-        dataSource.setFields(userNameField, nameField, passwordField, emailField, handyField);
-
+        DataSource dataSource = new DataSource();
+        dataSource.setFields(userNameField, nameField, passwordField, emailField);
         this.form.setDataSource(dataSource);
 
-        // user name
+        createNameTextInputs();
+        createPasswordTextInputs();
+        createEmailTextInputs();
+        createAcceptTermsOfUse();
+        ButtonItem registerButton = createRegisterButton();
+        LinkItem backToLoginLink = createBackToLoginLink();
+        this.form.setFields(this.headerItem, this.userNameItem, this.nameItem, this.passwordItem, this.verifyPasswordItem,
+                this.emailItem, this.verifyEmailItem, this.linkTerms, this.acceptBox, registerButton, backToLoginLink);
+        
+        addMember(this.form);
+    }
+
+    
+
+    private void createNameTextInputs() {
         this.userNameItem = new TextItem();
         this.userNameItem.setName("userName");
         this.userNameItem.setLength(250);
-
-        // name
+        
         this.nameItem = new TextItem();
         this.nameItem.setName("name");
         this.nameItem.setLength(250);
+    }
 
-        // password
+    private void createPasswordTextInputs() {
         this.passwordItem = new PasswordItem();
         this.passwordItem.setName("password");
-        this.passwordItem.setHint("<nobr>" + i18n.possibleChars() + " [0-9 a-z A-Z _ -]" + "</nobr>");
-        this.passwordItem.setKeyPressFilter("[0-9 a-z A-Z _ -]");
+        this.passwordItem.setHint("<nobr>" + i18n.possibleChars() + " [0-9a-zA-Z_-]" + "</nobr>");
+        this.passwordItem.setKeyPressFilter("[0-9a-zA-Z_-]");
         
-        // repeat password
-        this.passwordItem2 = new PasswordItem();
-        this.passwordItem2.setName("password2");
-        this.passwordItem2.setTitle(i18n.passwordAgain());
-        this.passwordItem2.setRequired(true);
-        this.passwordItem2.setHint("<nobr>" + i18n.possibleChars() + " [0-9 a-z A-Z _ -]" + "</nobr>");
-        this.passwordItem2.setKeyPressFilter("[0-9 a-z A-Z _ -]");
-        this.passwordItem2.setLength(250);
+        this.verifyPasswordItem = new PasswordItem();
+        this.verifyPasswordItem.setName("verifyPassword");
+        this.verifyPasswordItem.setTitle(i18n.passwordAgain());
+        this.verifyPasswordItem.setRequired(true);
+        this.verifyPasswordItem.setHint("<nobr>" + i18n.possibleChars() + " [0-9a-zA-Z_-]" + "</nobr>");
+        this.verifyPasswordItem.setKeyPressFilter("[0-9a-zA-Z_-]");
+        this.verifyPasswordItem.setLength(250);
 
-        // email
+        MatchesFieldValidator matchesValidator = new MatchesFieldValidator();
+        matchesValidator.setOtherField("password");
+        matchesValidator.setErrorMessage(i18n.passwordDoNotMatch());
+        this.verifyPasswordItem.setValidators(matchesValidator);
+    }
+
+    private void createEmailTextInputs() {
         this.emailItem = new TextItem();
         this.emailItem.setName("email");
         this.emailItem.setLength(250);
 
-        // repeat email
-        this.emailItem2 = new TextItem();
-        this.emailItem2.setName("email2");
-        this.emailItem2.setTitle(i18n.emailAgain());
-        this.emailItem2.setRequired(true);
-        this.emailItem2.setLength(250);
+        this.verifyEmailItem = new TextItem();
+        this.verifyEmailItem.setName("verifyEmail");
+        this.verifyEmailItem.setTitle(i18n.emailAgain());
+        this.verifyEmailItem.setRequired(true);
+        this.verifyEmailItem.setLength(250);
 
-        // email validator
         MatchesFieldValidator matchesValidatorEmail = new MatchesFieldValidator();
         matchesValidatorEmail.setOtherField("email");
         matchesValidatorEmail.setErrorMessage(i18n.emailDoNotMatch());
-        this.emailItem2.setValidators(matchesValidatorEmail);
+        this.verifyEmailItem.setValidators(matchesValidatorEmail);
+    }
 
-        // password validator
-        MatchesFieldValidator matchesValidator = new MatchesFieldValidator();
-        matchesValidator.setOtherField("password");
-        matchesValidator.setErrorMessage(i18n.passwordDoNotMatch());
-        this.passwordItem2.setValidators(matchesValidator);
-
+    void createAcceptTermsOfUse() {
         // linkItem for terms of use
         this.linkTerms = new LinkItem("");
         this.linkTerms.setLinkTitle(i18n.termsOfUse());
@@ -168,69 +166,74 @@ public class RegisterLayout extends Layout {
             }
         });
 
-        // acceptBox
         this.acceptBox = new CheckboxItem();
         this.acceptBox.setName("acceptTerms");
         this.acceptBox.setTitle(i18n.acceptTermsOfUse());
-        // this.acceptBox.setRequired(true);
         this.acceptBox.setValue(false);
-        this.acceptBox.setWidth(120);
         this.acceptBox.setRequired(true);
-
-        ButtonItem validateItem = new ButtonItem();
-        validateItem.setTitle(i18n.register());
-        validateItem.addClickHandler(new ClickHandler() {
+    }
+    
+    private ButtonItem createRegisterButton() {
+        ButtonItem registerButton = new ButtonItem();
+        registerButton.setTitle(i18n.register());
+        registerButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                RegisterLayout.this.form.validate(true);
-
-                if (RegisterLayout.this.form.validate() && (Boolean) RegisterLayout.this.acceptBox.getValue()) {
-                    String userName = (String) RegisterLayout.this.userNameItem.getValue();
-                    String name = (String) RegisterLayout.this.nameItem.getValue();
-                    String password = DataControlsSes.createMD5((String) RegisterLayout.this.passwordItem.getValue());
-                    String eMail = (String) RegisterLayout.this.emailItem.getValue();
-                    UserRole role = UserRole.NOT_REGISTERED_USER;
-                    boolean activated = false;
-                    
-                    if (name == null || name.equals("")) {
-                        name = "";
-                    }
-                    
-                    // delete cookie
-                    Cookies.removeCookie(SesRequestManager.COOKIE_USER_ID);
-                    Cookies.removeCookie(SesRequestManager.COOKIE_USER_ROLE);
-                    Cookies.removeCookie(SesRequestManager.COOKIE_USER_NAME);
-
-                    // create user without parameterId and register
-                    UserDTO u = new UserDTO(userName, name, password, eMail, "", role, activated, new Date());
-                    EventBus.getMainEventBus().fireEvent(new RegisterUserEvent(u));
-                } else if (RegisterLayout.this.form.validate() && !(Boolean) RegisterLayout.this.acceptBox.getValue()) {
-                    SC.say(i18n.acceptTermsOfUseInfo());
-                }
+                RegisterLayout.this.register();
             }
         });
-
-        this.form.setFields(this.headerItem, this.userNameItem, this.nameItem, this.passwordItem, this.passwordItem2,
-                this.emailItem, this.emailItem2, this.linkTerms, this.acceptBox, validateItem);
-        
-        addMember(this.form);
+        return registerButton;
     }
 
-    /**
-     *  clear all values
-     */
+    protected void register() {
+        form.validate(true);
+
+        if (RegisterLayout.this.form.validate() && (Boolean) RegisterLayout.this.acceptBox.getValue()) {
+            String userName = (String) RegisterLayout.this.userNameItem.getValue();
+            String name = (String) RegisterLayout.this.nameItem.getValue();
+            String password = DataControlsSes.createMD5((String) RegisterLayout.this.passwordItem.getValue());
+            String eMail = (String) RegisterLayout.this.emailItem.getValue();
+            boolean activated = false;
+            
+            if (name == null || name.equals("")) {
+                name = "";
+            }
+            
+            // delete cookie
+            Cookies.removeCookie(SesRequestManager.COOKIE_USER_ID);
+            Cookies.removeCookie(SesRequestManager.COOKIE_USER_ROLE);
+            Cookies.removeCookie(SesRequestManager.COOKIE_USER_NAME);
+
+            // create user without parameterId and register
+            UserDTO u = new UserDTO(userName, name, password, eMail, "", NOT_REGISTERED_USER, activated, new Date());
+            EventBus.getMainEventBus().fireEvent(new RegisterUserEvent(u));
+        } else if (RegisterLayout.this.form.validate() && !(Boolean) RegisterLayout.this.acceptBox.getValue()) {
+            SC.say(i18n.acceptTermsOfUseInfo());
+        }
+    }
+
+    private LinkItem createBackToLoginLink() {
+        LinkItem backToLoginLink = new LinkItem();
+        backToLoginLink.setShowTitle(false); // only link
+        backToLoginLink.setDefaultValue(i18n.userLogin());
+        backToLoginLink.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+            }
+        });
+        return backToLoginLink;
+    }
+
     public void clearFields() {
         this.userNameItem.clearValue();
         this.nameItem.clearValue();
         this.passwordItem.clearValue();
-        this.passwordItem2.clearValue();
+        this.verifyPasswordItem.clearValue();
         this.emailItem.clearValue();
-        this.emailItem2.clearValue();
+        this.verifyEmailItem.clearValue();
         this.acceptBox.setValue(false);
     }
 
-    /**
-     * @param termsOfUse
-     */
     public void setTermsOfUse(String termsOfUse) {
         SC.say(termsOfUse);
     }

@@ -25,62 +25,32 @@ package org.n52.client.ses.event;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.ChangeLayoutEventHandler;
-import org.n52.client.ses.ui.Layout.Layouts;
+import org.n52.client.ses.ui.FormLayout.LayoutType;
 
-/**
- * The Class ChangeLayoutEvent.
- */
 public class ChangeLayoutEvent extends FilteredDispatchGwtEvent<ChangeLayoutEventHandler> {
 
-    /** The TYPE. */
     public static Type<ChangeLayoutEventHandler> TYPE = new Type<ChangeLayoutEventHandler>();
 
-    /** The layout. */
-    private Layouts layout;
+    private LayoutType layout;
 
-    /**
-     * Instantiates a new change layout event.
-     * 
-     * @param l
-     *            the l
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
-    public ChangeLayoutEvent(Layouts l, ChangeLayoutEventHandler... blockedHandlers) {
+    public ChangeLayoutEvent(LayoutType l, ChangeLayoutEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.layout = l;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(ChangeLayoutEventHandler handler) {
         handler.onChange(this);
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
     public com.google.gwt.event.shared.GwtEvent.Type<ChangeLayoutEventHandler> getAssociatedType() {
         return TYPE;
     }
 
-    /**
-     * Gets the layout.
-     * 
-     * @return the layout
-     */
-    public Layouts getLayout() {
-        return this.layout;
+    public LayoutType getLayout() {
+        return layout;
     }
 
 }

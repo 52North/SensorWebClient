@@ -24,16 +24,18 @@
 
 package org.n52.client.ui.legend;
 
+import static org.n52.client.ses.ui.usermanagement.AccountManagementWindow.getProfileWindow;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.gwtopenmaps.openlayers.client.MapWidget;
-import org.n52.client.ses.ui.usermanagement.AccountManagementWindow;
 import org.n52.client.ses.util.SesClientUtil;
 import org.n52.client.sos.event.data.ExportEvent.ExportType;
 import org.n52.client.sos.ui.StationSelector;
+import org.n52.client.ui.DataPanel;
+import org.n52.client.ui.DataPanelTab;
 import org.n52.client.ui.Impressum;
 import org.n52.client.ui.View;
 import org.n52.client.ui.btn.ImageButton;
@@ -59,7 +61,7 @@ public class Legend extends VLayout {
 
     private ArrayList<ImageButton> contributedButtons = new ArrayList<ImageButton>();
 
-	private LegendController controller;
+    private LegendController controller;
 
     private LegendElement selectedElement;
 
@@ -70,12 +72,12 @@ public class Legend extends VLayout {
     private HLayout topButtons;
 
     private Label exportButton;
-    
-	private Label sesTabButton;
 
-	private VLayout exportMenu;
-	
-	private HLayout exportLoadingSpinner;
+    private Label sesTabButton;
+
+    private VLayout exportMenu;
+
+    private HLayout exportLoadingSpinner;
 
     public Legend(String id) {
         this.elemID = id;
@@ -87,11 +89,11 @@ public class Legend extends VLayout {
         // legend.setAnimateMembers(true);
     }
 
-    private MapWidget createMapContent(){
-    	OverviewMapController controller = new OverviewMapController();
+    private MapWidget createMapContent() {
+        OverviewMapController controller = new OverviewMapController();
         return controller.createMap(); // TODO refactor
 
-//    	return new LegendMap().getLayout();
+        // return new LegendMap().getLayout();
     }
 
     public LegendElement getSelectedLegendelement() {
@@ -102,7 +104,7 @@ public class Legend extends VLayout {
         element.setOrdering(legendEntries.size());
         legendEntries.add(element);
 
-//        le.setTargetToDrag(this); // disable legend dragging
+        // le.setTargetToDrag(this); // disable legend dragging
         legend.addMember(element.getLayout());
 
         // legend.addMember(le.getLegendEntry());
@@ -127,65 +129,49 @@ public class Legend extends VLayout {
     }
 
     public void generateLegend() {
-    	
-    	// TODO cleanup/extract method(s)
+
+        // TODO cleanup/extract method(s)
 
         setWidth("365px"); // TODO make configurable (Legend width)
-//        setWidth("27%");
+        // setWidth("27%");
         setHeight100();
         setMargin(2);
         setMinWidth(220);
         // setOverflow(Overflow.CLIP_H);
-        
+
         this.topButtons = new HLayout();
         this.topButtons.setTabIndex( -1);
         this.topButtons.setHeight(1);
         this.topButtons.setAlign(Alignment.RIGHT);
         this.topButtons.setReverseOrder(true);
 
-        ImageButton us = new ImageButton("us_lang",
-                                         "../img/icons/gb.png",
-                                         i18n.usLang(),
-                                         i18n.usLangExtended());
-        View.getInstance().registerTooltip(us);
-        ImageButton de = new ImageButton("de_lang",
-                                         "../img/icons/de.png",
-                                         i18n.deLang(),
-                                         i18n.deLangExtended());
-        View.getInstance().registerTooltip(de);
-        ImageButton ttips = new ImageButton("ttips",
-                                            "../img/icons/comment.png",
-                                            i18n.ttips(),
-                                            i18n.ttipsExtended());
-        View.getInstance().registerTooltip(ttips);
-        ImageButton help = new ImageButton("help",
-                                           "../img/icons/help.png",
-                                           i18n.help(),
-                                           i18n.helpExtended());
-        View.getInstance().registerTooltip(help);
-        ImageButton logger = new ImageButton("logger",
-                                             "../img/icons/report.png",
-                                             i18n.logger(),
-                                             i18n.loggerExtended());
-        View.getInstance().registerTooltip(logger);
+        ImageButton us = new ImageButton("us_lang", "../img/icons/gb.png", i18n.usLang(), i18n.usLangExtended());
+        View.getView().registerTooltip(us);
+        ImageButton de = new ImageButton("de_lang", "../img/icons/de.png", i18n.deLang(), i18n.deLangExtended());
+        View.getView().registerTooltip(de);
+        ImageButton ttips = new ImageButton("ttips", "../img/icons/comment.png", i18n.ttips(), i18n.ttipsExtended());
+        View.getView().registerTooltip(ttips);
+        ImageButton help = new ImageButton("help", "../img/icons/help.png", i18n.help(), i18n.helpExtended());
+        View.getView().registerTooltip(help);
+        ImageButton logger = new ImageButton("logger", "../img/icons/report.png", i18n.logger(), i18n.loggerExtended());
+        View.getView().registerTooltip(logger);
 
         ImageButton impressum = new ImageButton("impressum",
                                                 "../img/icons/information.png",
                                                 i18n.Impressum(),
                                                 i18n.Impressum());
-        
+
         Label imprint = new Label(i18n.Impressum());
         imprint.setTooltip(i18n.Impressum());
         imprint.setStyleName("label");
         imprint.setWidth(60);
-        
-        
-        View.getInstance().registerTooltip(impressum);
-        View.getInstance().switchDetailedTooltips();
-        
+
+        View.getView().registerTooltip(impressum);
+        View.getView().switchDetailedTooltips();
+
         imprint.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-            	new Impressum().show();
+                new Impressum().show();
             }
         });
 
@@ -197,71 +183,66 @@ public class Legend extends VLayout {
             }
         });
 
-//        this.topButtons.addMember(us);
-//        this.topButtons.addMember(de);
-//        this.topButtons.addMember(ttips);
-//        this.topButtons.addMember(help);
-//        this.topButtons.addMember(logger);
-//        this.topButtons.addMember(imprint);
+        // this.topButtons.addMember(us);
+        // this.topButtons.addMember(de);
+        // this.topButtons.addMember(ttips);
+        // this.topButtons.addMember(help);
+        // this.topButtons.addMember(logger);
+        // this.topButtons.addMember(imprint);
 
         addMember(this.topButtons);
 
-//        Button addTS = new Button(I18N.sosClient.addNewTimeseries());
-//        addTS.setIcon("../img/icons/chart_curve_add_new.png");
-        
-//        ImageButton addTS = new ImageButton("addTSLegend",
-//                                            "../img/icons/chart_curve_add_new.png",
-//                                            I18N.sosClient.picker(),
-//                                            I18N.sosClient.pickerExtended());
-//        View.getInstance().registerTooltip(addTS);
+        // Button addTS = new Button(I18N.sosClient.addNewTimeseries());
+        // addTS.setIcon("../img/icons/chart_curve_add_new.png");
 
-//        addTS.addClickHandler(new ClickHandler() {
-//            public void onClick(ClickEvent evt) {
-//            	StationSelector.getInst().show();
-//            }
-//        });
+        // ImageButton addTS = new ImageButton("addTSLegend",
+        // "../img/icons/chart_curve_add_new.png",
+        // I18N.sosClient.picker(),
+        // I18N.sosClient.pickerExtended());
+        // View.getInstance().registerTooltip(addTS);
 
-        
-//        addTS.setPadding(2);
-//        addTS.setSize("32px", "32px");
-//        addTS.setAlign(Alignment.CENTER);
+        // addTS.addClickHandler(new ClickHandler() {
+        // public void onClick(ClickEvent evt) {
+        // StationSelector.getInst().show();
+        // }
+        // });
 
-//        Label addTSLabel = new Label(I18N.sosClient.addNewTimeseries());
-//        addTSLabel.setHeight(20);
-//        addTSLabel.setWidth100();
-//        addTSLabel.setPadding(8);
-//        addTSLabel.setStyleName("legendAddBoxLabel");
-//        addTSLabel.setCursor(Cursor.HAND);
-//        addTSLabel.setAlign(Alignment.CENTER);
+        // addTS.setPadding(2);
+        // addTS.setSize("32px", "32px");
+        // addTS.setAlign(Alignment.CENTER);
 
-//        HLayout add = new HLayout();
-//        add.setStyleName("legendAddBox");
-//        add.setAutoHeight();
-//        add.addMember(addTS);
-//        add.addMember(addTSLabel);
-//        add.addClickHandler(new ClickHandler() {
-//            public void onClick(ClickEvent event) {
-//            	StationSelector.getInst().show();
-//            }
-//        });
-        
+        // Label addTSLabel = new Label(I18N.sosClient.addNewTimeseries());
+        // addTSLabel.setHeight(20);
+        // addTSLabel.setWidth100();
+        // addTSLabel.setPadding(8);
+        // addTSLabel.setStyleName("legendAddBoxLabel");
+        // addTSLabel.setCursor(Cursor.HAND);
+        // addTSLabel.setAlign(Alignment.CENTER);
 
+        // HLayout add = new HLayout();
+        // add.setStyleName("legendAddBox");
+        // add.setAutoHeight();
+        // add.addMember(addTS);
+        // add.addMember(addTSLabel);
+        // add.addClickHandler(new ClickHandler() {
+        // public void onClick(ClickEvent event) {
+        // StationSelector.getInst().show();
+        // }
+        // });
 
         // zip-export CSV
-//        this.exportZipCSV =
-//                new ImageButton("diagExportZipCSV", "../img/icons/folder_csv.png", i18nManager.i18nSOSClient
-//                        .exportZipCSV(), i18nManager.i18nSOSClient.exportZipCSVExtended());
-        
-//      View.getInstance().registerTooltip(this.exportZipCSV);
-        
+        // this.exportZipCSV =
+        // new ImageButton("diagExportZipCSV", "../img/icons/folder_csv.png", i18nManager.i18nSOSClient
+        // .exportZipCSV(), i18nManager.i18nSOSClient.exportZipCSVExtended());
+
+        // View.getInstance().registerTooltip(this.exportZipCSV);
 
         // zip-export XLS
-//        this.exportPDFallInOne =
-//                new ImageButton("diagExportPDFallIneOne", "../img/icons/page_white_acrobat_add.png",
-//                        i18nManager.i18nSOSClient.exportPDFallInOne(), i18nManager.i18nSOSClient.exportPDFallInOneExtended());
-//        View.getInstance().registerTooltip(this.exportPDFallInOne);
-        
-        
+        // this.exportPDFallInOne =
+        // new ImageButton("diagExportPDFallIneOne", "../img/icons/page_white_acrobat_add.png",
+        // i18nManager.i18nSOSClient.exportPDFallInOne(),
+        // i18nManager.i18nSOSClient.exportPDFallInOneExtended());
+        // View.getInstance().registerTooltip(this.exportPDFallInOne);
 
         Button exportZipCSV = new Button(i18n.csv());
         exportZipCSV.setIcon("../img/icons/table.png");
@@ -279,11 +260,11 @@ public class Legend extends VLayout {
                 controller.exportTo(ExportType.PDF_ALL_IN_ONE);
             }
         });
-        
+
         createExportLoadingSpinner();
-        
+
         HStack menuStack = new HStack();
-//        menuStack.setAlign(Alignment.CENTER);
+        // menuStack.setAlign(Alignment.CENTER);
         menuStack.setHeight100();
         Label space = new Label();
         Label addTS = createAddTimeSeriesLabelButton();
@@ -296,239 +277,199 @@ public class Legend extends VLayout {
         menuStack.addMember(addTS);
         menuStack.addMember(space);
         if (SesClientUtil.isSesEnabled()) {
-        	addTS.setWidth("38%");
+            addTS.setWidth("38%");
             sesTabButton.setWidth("35%");
             menuStack.addMember(sesTabButton);
             menuStack.addMember(space);
-        } else {
-        	addTS.setWidth("75%");
-		}
+        }
+        else {
+            addTS.setWidth("75%");
+        }
 
         menuStack.addMember(exportButton);
         menuStack.addMember(exportLoadingSpinner);
         setExportButtonActiv(false);
 
-		VStack vMenuStack = new VStack();
+        VStack vMenuStack = new VStack();
         vMenuStack.addMember(menuStack);
         vMenuStack.setHeight(28);
         addMember(vMenuStack);
-        
+
         // create export menu
         createExportMenu();
         addChild(exportMenu);
-        
+
         VStack separator = new VStack();
         separator.setHeight("3px");
         addMember(separator);
-        
+
         this.legend = new VStack();
         this.legend.setOverflow(Overflow.AUTO);
         this.legend.setHeight("*");
         this.legend.setShowResizeBar(true);
         addMember(this.legend);
-        //this.intro = new HTMLFlow(I18N.sosClient.intro());
-        //this.legend.addMember(this.intro);
-        
+        // this.intro = new HTMLFlow(I18N.sosClient.intro());
+        // this.legend.addMember(this.intro);
+
         addMember(separator);
-        
+
         Layout layout = new Layout();
         layout.addMember(createMapContent());
         layout.setWidth100();
         layout.setHeight("40%");
         addMember(layout);
-        
-//        this.footer = new HLayout();
-//        this.footer.setTabIndex( -1);
-//        addMember(this.footer);
+
+        // this.footer = new HLayout();
+        // this.footer.setTabIndex( -1);
+        // addMember(this.footer);
 
     }
 
-	private void createExportLoadingSpinner() {
-		this.exportLoadingSpinner = new HLayout();
-		Img spinner = new Img("../img/loader_wide.gif", 43, 11);
-//		this.exportLoadingSpinner.setWidth100();
-//		this.exportLoadingSpinner.setHeight100();
-		this.exportLoadingSpinner.setAlign(Alignment.CENTER);
-		this.exportLoadingSpinner.addMember(spinner);
-		this.exportLoadingSpinner.hide();
-	}
+    private void createExportLoadingSpinner() {
+        this.exportLoadingSpinner = new HLayout();
+        Img spinner = new Img("../img/loader_wide.gif", 43, 11);
+        // this.exportLoadingSpinner.setWidth100();
+        // this.exportLoadingSpinner.setHeight100();
+        this.exportLoadingSpinner.setAlign(Alignment.CENTER);
+        this.exportLoadingSpinner.addMember(spinner);
+        this.exportLoadingSpinner.hide();
+    }
 
-	private Label createCSVLabel() {
-		Label toCSV = new Label(i18n.toCSV());
-		toCSV.setWrap(false);
-		toCSV.setAutoFit(true);
-		toCSV.setPadding(3);
-		toCSV.setWidth100();
-		toCSV.setStyleName("n52_sensorweb_client_exportEntry");
-		toCSV.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				controller.exportTo(ExportType.CSV_ZIP);
-				exportMenu.hide();
-			}
-		});
-		return toCSV; 
-	}
+    private Label createCSVLabel() {
+        Label toCSV = new Label(i18n.toCSV());
+        toCSV.setWrap(false);
+        toCSV.setAutoFit(true);
+        toCSV.setPadding(3);
+        toCSV.setWidth100();
+        toCSV.setStyleName("n52_sensorweb_client_exportEntry");
+        toCSV.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                controller.exportTo(ExportType.CSV_ZIP);
+                exportMenu.hide();
+            }
+        });
+        return toCSV;
+    }
 
-	private Label createPDFLabel() {
-		Label toPDF = new Label(i18n.toPDF());
+    private Label createPDFLabel() {
+        Label toPDF = new Label(i18n.toPDF());
         toPDF.setWrap(false);
         toPDF.setAutoFit(true);
         toPDF.setPadding(3);
         toPDF.setWidth100();
         toPDF.setStyleName("n52_sensorweb_client_exportEntry");
         toPDF.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				controller.exportTo(ExportType.PDF_ALL_IN_ONE);
-				exportMenu.hide();
-			}
-		});
-		return toPDF;
-	}
+            @Override
+            public void onClick(ClickEvent event) {
+                controller.exportTo(ExportType.PDF_ALL_IN_ONE);
+                exportMenu.hide();
+            }
+        });
+        return toPDF;
+    }
 
-	private Label createExportLabelButton() {
+    private Label createExportLabelButton() {
         Label export = new Label(i18n.export());
         export.setStyleName("n52_sensorweb_client_legendbuttonDisabled");
         export.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if (exportMenu.isVisible()) {
-					exportMenu.hide();
-				} else {
-					exportMenu.setLeft(exportButton.getAbsoluteLeft() - 2);
-				    exportMenu.setWidth(exportButton.getWidth());
-					exportMenu.show();
-				}
-			}
-		});
+            @Override
+            public void onClick(ClickEvent event) {
+                if (exportMenu.isVisible()) {
+                    exportMenu.hide();
+                }
+                else {
+                    exportMenu.setLeft(exportButton.getAbsoluteLeft() - 2);
+                    exportMenu.setWidth(exportButton.getWidth());
+                    exportMenu.show();
+                }
+            }
+        });
         return export;
-	}
+    }
 
-	private void createExportMenu() {
-		exportMenu = new VLayout();
-	    exportMenu.setLeft(exportButton.getAbsoluteLeft());
-	    exportMenu.setTop(30);
-	    exportMenu.setStyleName("n52_sensorweb_client_interactionmenu");
-	    exportMenu.setAutoHeight();
-	    exportMenu.setZIndex(1000000);
-	    exportMenu.addMember(createPDFLabel());
-	    exportMenu.addMember(createCSVLabel());
-	    exportMenu.setVisible(false);
-	}
+    private void createExportMenu() {
+        exportMenu = new VLayout();
+        exportMenu.setLeft(exportButton.getAbsoluteLeft());
+        exportMenu.setTop(30);
+        exportMenu.setStyleName("n52_sensorweb_client_interactionmenu");
+        exportMenu.setAutoHeight();
+        exportMenu.setZIndex(1000000);
+        exportMenu.addMember(createPDFLabel());
+        exportMenu.addMember(createCSVLabel());
+        exportMenu.setVisible(false);
+    }
 
-	private Label createAddTimeSeriesLabelButton() {
-		Label addTS = new Label(i18n.picker()) ;
+    private Label createAddTimeSeriesLabelButton() {
+        Label addTS = new Label(i18n.picker());
         addTS.setStyleName("n52_sensorweb_client_legendbuttonPrimary");
         addTS.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				StationSelector.getInst().show();
-			}
-		});
+            @Override
+            public void onClick(ClickEvent event) {
+                StationSelector.getInst().show();
+            }
+        });
         return addTS;
-	}
-	
-	private Label createSESTabLabelButton() {
-		Label sesTabLabelButton = new Label(i18n.userSettingsButton());
-		sesTabLabelButton.setStyleName("n52_sensorweb_client_legendbutton");
-		sesTabLabelButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				AccountManagementWindow accManage = AccountManagementWindow.getInst();
-				accManage.show();
-			}
-		});
-		sesTabLabelButton.setVisible(true);
-		return sesTabLabelButton;
-	}
-	
+    }
+
+    private Label createSESTabLabelButton() {
+        Label sesTabLabelButton = new Label(i18n.editProfile());
+        sesTabLabelButton.setStyleName("n52_sensorweb_client_legendbutton");
+        sesTabLabelButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                getProfileWindow().show();
+            }
+        });
+        sesTabLabelButton.setVisible(true);
+        return sesTabLabelButton;
+    }
+    
+    public void switchToDiagramTab() {
+        DataPanel dataPanel = View.getView().getDataPanel();
+        DataPanelTab diagramTab = View.getView().getDiagramTab();
+        dataPanel.getPanel().selectTab(diagramTab);
+        dataPanel.setCurrentTab(diagramTab);
+        dataPanel.update();
+    }
+
     public VStack getLegendStack() {
         return this.legend;
     }
 
     public LegendElement[] getEntries() {
         LegendElement[] elements = new LegendElement[legendEntries.size()];
-		return legendEntries.toArray(elements);
+        return legendEntries.toArray(elements);
     }
 
     public void fill(ArrayList<LegendElement> elementsToFillIn) {
-    	
-    	// remove old elements
-    	Iterator<LegendElement> iterator = legendEntries.iterator();
-    	while (iterator.hasNext()) {
-			LegendElement currentElement = iterator.next();
-			if (!elementsToFillIn.contains(currentElement)) {
-				iterator.remove(); // remove current
-			}
-		}
-    	
-    	// add new elements
-    	for (LegendElement legendElement : elementsToFillIn) {
-			if (!legendEntries.contains(legendElement)) {
-				addLegendElement(legendElement);
-				if (!legendElement.equals(selectedElement)) {
+
+        // remove old elements
+        Iterator<LegendElement> iterator = legendEntries.iterator();
+        while (iterator.hasNext()) {
+            LegendElement currentElement = iterator.next();
+            if ( !elementsToFillIn.contains(currentElement)) {
+                iterator.remove(); // remove current
+            }
+        }
+
+        // add new elements
+        for (LegendElement legendElement : elementsToFillIn) {
+            if ( !legendEntries.contains(legendElement)) {
+                addLegendElement(legendElement);
+                if ( !legendElement.equals(selectedElement)) {
                     legendElement.hideFooter();
                 }
-			}
-		}
-    	
-//		TODO old code! .. remove if legend behaves correct
-//        List<LegendElement> itemsToDelete = new ArrayList<LegendElement>();
-//        List<LegendElement> itemsToAdd = new ArrayList<LegendElement>();
-//        try {
-//            // search deletions
-//            for (LegendElement currentElement : legendEntries) {
-//                boolean found = false;
-//                for (LegendElement newElement : elementsToFillIn) {
-//                    if (newElement.getElemId().equals(currentElement.getElemId())) {
-//                        found = true;
-//                    }
-//                }
-//                if ( !found) {
-//                    itemsToDelete.add(currentElement);
-//                }
-//            }
-//
-//            // search additions
-//            for (LegendElement newElement : elementsToFillIn) {
-//                boolean found = false;
-//                for (LegendElement legendElement : this.legendEntries) {
-//                    if (legendElement.getElemId() != null && legendElement.equals(newElement)) {
-//                        found = true;
-//                    }
-//                }
-//                if ( !found) {
-//                    itemsToAdd.add(newElement);
-//                }
-//            }
-//
-//            // del items
-//            for (LegendElement oldElement : itemsToDelete) {
-//                legendEntries.remove(oldElement);
-//            }
-//
-//            // add items
-//            for (LegendElement newElement : itemsToAdd) {
-//                addLegendElement(newElement);
-//                if (selectedElement != null && !selectedElement.equals(newElement)) {
-//                    newElement.hideFooter();
-//                }
-//            }
-//        }
-//        catch (Exception e) {
-//            GWT.log("Error filling legend entries", e);
-//        }
-
+            }
+        }
         reorderAlong(elementsToFillIn);
     }
 
-	/**
-	 * reorders legend entries along the order given by the passed 
-	 * <code>elements</code> 
-	 */
-	private void reorderAlong(ArrayList<LegendElement> elements) {
-		if (legend.getMembers().length > 0) {
+    /**
+     * reorders legend entries along the order given by the passed <code>elements</code>
+     */
+    private void reorderAlong(ArrayList<LegendElement> elements) {
+        if (legend.getMembers().length > 0) {
             legend.removeMembers(legend.getMembers());
             legendEntries.clear();
             for (int i = 0; i < elements.size(); i++) {
@@ -536,33 +477,34 @@ public class Legend extends VLayout {
                 legendEntries.add(i, elements.get(i));
             }
         }
-	}
+    }
 
     public String getId() {
         return this.elemID;
     }
 
-	void setSelectedElement(LegendElement element) {
-		this.selectedElement = element;
-	}
+    void setSelectedElement(LegendElement element) {
+        this.selectedElement = element;
+    }
 
-	public void stopExportLoadingSpinner() {
-		exportLoadingSpinner.hide();
-		exportButton.show();
-	}
+    public void stopExportLoadingSpinner() {
+        exportLoadingSpinner.hide();
+        exportButton.show();
+    }
 
-	public void setExportButtonActiv(boolean activ) {
-		if (activ) {
-			exportButton.setDisabled(false);
-			exportButton.setStyleName("n52_sensorweb_client_legendbutton");
-		} else {
-			exportButton.setDisabled(true);
-			exportButton.setStyleName("n52_sensorweb_client_legendbuttonDisabled");
-		}
-	}
+    public void setExportButtonActiv(boolean activ) {
+        if (activ) {
+            exportButton.setDisabled(false);
+            exportButton.setStyleName("n52_sensorweb_client_legendbutton");
+        }
+        else {
+            exportButton.setDisabled(true);
+            exportButton.setStyleName("n52_sensorweb_client_legendbuttonDisabled");
+        }
+    }
 
-	public void startExportLoadingSpinner() {
-		exportLoadingSpinner.show();
-		exportButton.hide();
-	}
+    public void startExportLoadingSpinner() {
+        exportLoadingSpinner.show();
+        exportButton.hide();
+    }
 }

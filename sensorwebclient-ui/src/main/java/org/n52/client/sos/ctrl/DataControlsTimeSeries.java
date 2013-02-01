@@ -23,6 +23,7 @@
  */
 package org.n52.client.sos.ctrl;
 
+import static org.n52.client.ctrl.PropertiesManager.getPropertiesManager;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ import org.n52.client.sos.event.data.handler.StoreTimeSeriesFirstValueEventHandl
 import org.n52.client.sos.event.data.handler.StoreTimeSeriesLastValueEventHandler;
 import org.n52.client.sos.event.handler.DatesChangedEventHandler;
 import org.n52.client.sos.legend.TimeSeries;
-import org.n52.client.sos.ui.EESTab;
+import org.n52.client.sos.ui.DiagramTab;
 import org.n52.client.ui.InteractionWindow;
 import org.n52.client.ui.Toaster;
 import org.n52.client.ui.View;
@@ -348,13 +349,13 @@ public abstract class DataControlsTimeSeries extends DataControls {
 
         this.setRefresh(new ImageButton("diagRefresh", "../img/icons/arrow_refresh.png", i18n
                 .refresh(), i18n.refreshExtended()));
-        View.getInstance().registerTooltip(this.getRefresh());
+        View.getView().registerTooltip(this.getRefresh());
         intervalForm.setNumCols(3);
 
         this.overviewInterval = new TextItem();
         this.overviewInterval.setTitle(i18n.overviewInterval());
         this.overviewInterval.setWidth(40);
-        this.overviewInterval.setDefaultValue(PropertiesManager.getInstance().getParameterAsString(
+        this.overviewInterval.setDefaultValue(getPropertiesManager().getParameterAsString(
                 "defaultOverviewInterval"));
 
         this.overviewIntervalType = new ComboBoxItem();
@@ -566,7 +567,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
                 .back(), i18n.backExtended()));
         // this.getDiagBackDay().setShowRollOver(true);
 //        this.topLayout.addMember(this.getDiagBackDay());
-        View.getInstance().registerTooltip(this.getDiagBackDay());
+        View.getView().registerTooltip(this.getDiagBackDay());
 
         Label day = new Label(i18n.day());
         day.setWidth(35);
@@ -578,14 +579,14 @@ public abstract class DataControlsTimeSeries extends DataControls {
         this.setDiagForwardDay(new ImageButton("diagForwardDay", "../img/icons/control_right.png",
                 i18n.forth(), i18n.forthExtended()));
 //        this.topLayout.addMember(this.getDiagForwardDay());
-        View.getInstance().registerTooltip(this.getDiagForwardDay());
+        View.getView().registerTooltip(this.getDiagForwardDay());
         // this.getDiagForwardDay().setShowRollOver(true);
 
         // week
         this.setDiagBackWeek(new ImageButton("diagBackWeek", "../img/icons/control_left.png", i18n
                 .back(), i18n.backExtended()));
 //        this.topLayout.addMember(this.getDiagBackWeek());
-        View.getInstance().registerTooltip(this.getDiagBackWeek());
+        View.getView().registerTooltip(this.getDiagBackWeek());
         // this.getDiagBackWeek().setShowRollOver(true);
 
         Label week = new Label(i18n.week());
@@ -598,14 +599,14 @@ public abstract class DataControlsTimeSeries extends DataControls {
         this.setDiagForwardWeek(new ImageButton("diagForwardWeek", "../img/icons/control_right.png",
                 i18n.forth(), i18n.forthExtended()));
 //        this.topLayout.addMember(this.getDiagForwardWeek());
-        View.getInstance().registerTooltip(this.getDiagForwardWeek());
+        View.getView().registerTooltip(this.getDiagForwardWeek());
         // this.getDiagForwardWeek().setShowRollOver(true);
 
         // month
         this.setDiagBackMonth(new ImageButton("diagBackMonth", "../img/icons/control_left.png", i18n
                 .back(), i18n.backExtended()));
 //        this.topLayout.addMember(this.getDiagBackMonth());
-        View.getInstance().registerTooltip(this.getDiagBackMonth());
+        View.getView().registerTooltip(this.getDiagBackMonth());
         // this.getDiagBackMonth().setShowRollOver(true);
 
         Label month = new Label(i18n.month());
@@ -618,14 +619,14 @@ public abstract class DataControlsTimeSeries extends DataControls {
         this.setDiagForwardMonth(new ImageButton("diagForwardMonth", "../img/icons/control_right.png",
                 i18n.forth(), i18n.forthExtended()));
 //        this.topLayout.addMember(this.getDiagForwardMonth());
-        View.getInstance().registerTooltip(this.getDiagForwardMonth());
+        View.getView().registerTooltip(this.getDiagForwardMonth());
         // this.getDiagForwardMonth().setShowRollOver(true);
 
         // year
         this.setDiagBackYear(new ImageButton("diagBackYear", "../img/icons/control_left.png", i18n
                 .back(), i18n.backExtended()));
 //        this.topLayout.addMember(this.getDiagBackYear());
-        View.getInstance().registerTooltip(this.getDiagBackYear());
+        View.getView().registerTooltip(this.getDiagBackYear());
         // this.getDiagBackYear().setShowRollOver(true);
 
         Label year = new Label(i18n.year());
@@ -637,7 +638,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
 
         this.setDiagForwardYear(new ImageButton("diagdiagForwardYear", "../img/icons/control_right.png",
                 i18n.forth(), i18n.forthExtended()));
-        View.getInstance().registerTooltip(this.getDiagForwardYear());
+        View.getView().registerTooltip(this.getDiagForwardYear());
 //        this.topLayout.addMember(this.getDiagForwardYear());
         // this.getDiagForwardYear().setShowRollOver(true);
 
@@ -652,25 +653,25 @@ public abstract class DataControlsTimeSeries extends DataControls {
         this.exportZipPDF =
                 new ImageButton("diagExportZipPDF", "../img/icons/folder_acrobat.png", i18n
                         .exportZipPDF(), i18n.exportZipPDFExtended());
-        View.getInstance().registerTooltip(this.exportZipPDF);
+        View.getView().registerTooltip(this.exportZipPDF);
 
         // zip-export CSV
         this.exportZipCSV =
                 new ImageButton("diagExportZipCSV", "../img/icons/folder_csv.png", i18n
                         .exportZipCSV(), i18n.exportZipCSVExtended());
-        View.getInstance().registerTooltip(this.exportZipCSV);
+        View.getView().registerTooltip(this.exportZipCSV);
 
         // zip-export XLS
         this.exportZipXLS =
                 new ImageButton("diagExportZipXLS", "../img/icons/folder_excel.png", i18n
                         .exportZipXLS(), i18n.exportZipXLSExtended());
-        View.getInstance().registerTooltip(this.exportZipXLS);
+        View.getView().registerTooltip(this.exportZipXLS);
 
         // zip-export XLS
         this.exportPDFallInOne =
                 new ImageButton("diagExportPDFallIneOne", "../img/icons/page_white_acrobat_add.png",
                         i18n.exportPDFallInOne(), i18n.exportPDFallInOneExtended());
-        View.getInstance().registerTooltip(this.exportPDFallInOne);
+        View.getView().registerTooltip(this.exportPDFallInOne);
 
         LayoutSpacer s = new LayoutSpacer();
         s.setWidth("*");
@@ -705,7 +706,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
 				}
 			}
 		});
-		EESTab.layout.addChild(expandDiagramInteractionMenuButton);
+		DiagramTab.layout.addChild(expandDiagramInteractionMenuButton);
 
         buttonLayout = new HLayout();
         buttonLayout.setStyleName("n52_sensorweb_client_diagramInteractionMenu");
@@ -719,7 +720,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
         diagramInteractionMenu.setAutoWidth();
         diagramInteractionMenu.setTop(34);
         diagramInteractionMenu.hide();
-        EESTab.layout.addChild(diagramInteractionMenu);
+        DiagramTab.layout.addChild(diagramInteractionMenu);
         initEventHandler();
     }
 

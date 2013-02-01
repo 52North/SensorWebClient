@@ -33,7 +33,7 @@ import org.n52.client.ses.event.DeleteUserEvent;
 import org.n52.client.ses.event.GetAllUsersEvent;
 import org.n52.client.ses.ui.CreateNewUserWindow;
 import org.n52.client.ses.ui.EditUserWindow;
-import org.n52.client.ses.ui.Layout;
+import org.n52.client.ses.ui.FormLayout;
 import org.n52.client.ses.ui.UserRecord;
 import org.n52.shared.serializable.pojos.UserDTO;
 
@@ -57,7 +57,7 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
  * 
  * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
  */
-public class ShowUserLayout extends Layout {
+public class ShowUserLayout extends FormLayout {
 
     /** The user grid. */
     private ListGrid userGrid;

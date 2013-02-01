@@ -32,6 +32,7 @@ public class EventNameForm extends DynamicForm {
 //        });
         
         aboNameItem = new TextItem();
+        aboNameItem.setRequired(true);
         aboNameItem.setTextBoxStyle("n52_sensorweb_client_abo_name_textbox");
         aboNameItem.setTitle(i18n.aboName());
         aboNameItem.setWidth("*"); // fill form column

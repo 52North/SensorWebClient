@@ -27,60 +27,28 @@ import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.handler.TabSelectedEventHandler;
 import org.n52.client.ui.DataPanelTab;
 
-/**
- * The Class TabSelectedEvent.
- * 
- * @author <a href="mailto:f.bache@52north.de">Felix Bache</a>
- */
 public class TabSelectedEvent extends FilteredDispatchGwtEvent<TabSelectedEventHandler> {
 
-    /** The TYPE. */
     public static Type<TabSelectedEventHandler> TYPE = new Type<TabSelectedEventHandler>();
 
-    /** The tab. */
     private DataPanelTab tab;
 
-    /**
-     * Instantiates a new tab selected event.
-     * 
-     * @param tab
-     *            the tab
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
     public TabSelectedEvent(DataPanelTab tab, TabSelectedEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.tab = tab;
     }
 
-    /**
-     * Gets the tab.
-     * 
-     * @return the tab
-     */
     public DataPanelTab getTab() {
         return this.tab;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(TabSelectedEventHandler handler) {
         handler.onSelected(this);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<TabSelectedEventHandler> getAssociatedType() {
+    public Type<TabSelectedEventHandler> getAssociatedType() {
         return TYPE;
     }
 

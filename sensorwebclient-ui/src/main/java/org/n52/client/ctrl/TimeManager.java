@@ -24,6 +24,7 @@
 
 package org.n52.client.ctrl;
 
+import static org.n52.client.ctrl.PropertiesManager.getPropertiesManager;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.Stack;
@@ -62,7 +63,7 @@ public class TimeManager {
 
     private TimeManager() {
         new TimeManagerEventBroker(); // registers handler class on event bus
-        PropertiesManager propertiesMgr = PropertiesManager.getInstance();
+        PropertiesManager propertiesMgr = getPropertiesManager();
         long days = propertiesMgr.getParamaterAsInt(Constants.DEFAULT_INTERVAL, 1);
         this.begin = System.currentTimeMillis() - daysToMillis(days);
         this.end = System.currentTimeMillis();

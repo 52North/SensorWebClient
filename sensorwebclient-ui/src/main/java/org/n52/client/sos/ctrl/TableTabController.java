@@ -75,7 +75,7 @@ public class TableTabController extends Controller<TableTab> {
 
     public void fillLegend(ArrayList<LegendElement> legendElems) {
 
-        Legend l = View.getInstance().getLegend();
+        Legend l = View.getView().getLegend();
         l.fill(legendElems);
 
     }
@@ -108,7 +108,7 @@ public class TableTabController extends Controller<TableTab> {
 
         public void onTimeSeriesChanged(TimeSeriesChangedEvent evt) {
             if (isSelfSelectedTab()) {
-                Legend l = View.getInstance().getLegend();
+                Legend l = View.getView().getLegend();
                 TableTabController.this.setSelectedLegendElement(l.getSelectedLegendelement());
                 if (TableTabController.this.getSelectedLegendElement() != null) {
                     requestData();
@@ -156,8 +156,8 @@ public class TableTabController extends Controller<TableTab> {
          */
         public void onResize(ResizeEvent evt) {
             if (isSelfSelectedTab()) {
-                int tabWidth = View.getInstance().getDataPanelWidth();
-                int tabHeight = View.getInstance().getDataPanelHeight();
+                int tabWidth = View.getView().getDataPanelWidth();
+                int tabHeight = View.getView().getDataPanelHeight();
                 TableTabController.this.getTab().resizeTo(tabWidth, tabHeight);
                 requestData();
             }
@@ -165,7 +165,7 @@ public class TableTabController extends Controller<TableTab> {
 
         public void onSelected(TabSelectedEvent evt) {
             if (isSelfSelectedTab()) {
-                Legend l = View.getInstance().getLegend();
+                Legend l = View.getView().getLegend();
                 TableTabController.this.setSelectedLegendElement(l.getSelectedLegendelement());
                 if (TableTabController.this.getSelectedLegendElement() != null) {
                     loadData();
@@ -198,7 +198,7 @@ public class TableTabController extends Controller<TableTab> {
 
         @Override
         protected boolean isSelfSelectedTab() {
-            return View.getInstance().getCurrentTab().equals(TableTabController.this.getTab());
+            return View.getView().getCurrentTab().equals(TableTabController.this.getTab());
         }
 
         /*

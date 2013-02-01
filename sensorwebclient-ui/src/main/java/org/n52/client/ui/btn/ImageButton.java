@@ -93,7 +93,7 @@ public class ImageButton extends Button {
         this.setShowFocusedAsOver(false);
         this.setCursor(Cursor.POINTER);
         
-        if (View.getInstance().isShowExtendedTooltip()) {
+        if (View.getView().isShowExtendedTooltip()) {
             this.setTooltip(this.extendedTooltip);
         }
         else {

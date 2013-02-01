@@ -25,7 +25,7 @@ package org.n52.client.ses.ui.layout;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
-import org.n52.client.ses.ui.Layout;
+import org.n52.client.ses.ui.FormLayout;
 import org.n52.shared.serializable.pojos.UserDTO;
 
 import com.smartgwt.client.widgets.form.fields.SpacerItem;
@@ -38,7 +38,7 @@ import com.smartgwt.client.widgets.form.fields.StaticTextItem;
  * 
  * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
  */
-public class WelcomeLayout extends Layout {
+public class WelcomeLayout extends FormLayout {
     
     private StaticTextItem welcomeText;
     

@@ -31,7 +31,7 @@ import org.n52.client.bus.EventBus;
 import org.n52.client.ses.ctrl.SesRequestManager;
 import org.n52.client.ses.data.RuleDataSource;
 import org.n52.client.ses.event.UnsubscribeEvent;
-import org.n52.client.ses.ui.Layout;
+import org.n52.client.ses.ui.FormLayout;
 import org.n52.client.ses.ui.RuleRecord;
 import org.n52.shared.serializable.pojos.BasicRuleDTO;
 import org.n52.shared.serializable.pojos.ComplexRuleDTO;
@@ -56,7 +56,7 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
  * 
  * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
  */
-public class UserSubscriptionsLayout extends Layout {
+public class UserSubscriptionsLayout extends FormLayout {
 
     /** The own rules grid. */
     private ListGrid subscriptionsGrid;

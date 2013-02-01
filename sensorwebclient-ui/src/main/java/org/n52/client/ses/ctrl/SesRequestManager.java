@@ -25,6 +25,7 @@ package org.n52.client.ses.ctrl;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.shared.responses.SesClientResponse.types.RULE_NAME_NOT_EXISTS;
+import static org.n52.shared.serializable.pojos.UserRole.LOGOUT;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,8 +48,8 @@ import org.n52.client.ses.event.RuleCreatedEvent;
 import org.n52.client.ses.event.SetRoleEvent;
 import org.n52.client.ses.event.ShowAllUserEvent;
 import org.n52.client.ses.event.UpdateProfileEvent;
-import org.n52.client.ses.ui.Layout;
-import org.n52.client.ses.ui.Layout.Layouts;
+import org.n52.client.ses.ui.FormLayout;
+import org.n52.client.ses.ui.FormLayout.LayoutType;
 import org.n52.client.ui.Toaster;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.responses.SesClientResponse.types;
@@ -102,7 +103,7 @@ public class SesRequestManager extends RequestManager {
                     if (userRole == null || !userRole.equals(UserRole.ADMIN.toString())) {
                         SC.say(i18n.emailSended());
                         // link to loginpage
-                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layout.Layouts.LOGIN));
+                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(FormLayout.LayoutType.LOGIN));
                     } else {
                         SC.say(i18n.createUserSuccessful());
                     }
@@ -190,7 +191,7 @@ public class SesRequestManager extends RequestManager {
                 } else {
                     if (!Cookies.getCookie(SesRequestManager.COOKIE_USER_ROLE).equals(UserRole.ADMIN.toString())) {
                         SC.say(i18n.passwordSended());
-                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.LOGIN));
+                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.LOGIN));
                     }
                 }
             }
@@ -208,11 +209,10 @@ public class SesRequestManager extends RequestManager {
             }
 
             public void onSuccess(Void result) {
-                // delete cookie
                 Cookies.removeCookie(COOKIE_USER_ID);
                 Cookies.removeCookie(COOKIE_USER_ROLE);
                 Cookies.removeCookie(COOKIE_USER_NAME);
-                EventBus.getMainEventBus().fireEvent(new SetRoleEvent(UserRole.LOGOUT));
+                EventBus.getMainEventBus().fireEvent(new SetRoleEvent(LOGOUT));
             }
         };
         this.sesUserService.logout(callback);
@@ -548,10 +548,10 @@ public class SesRequestManager extends RequestManager {
             
             public void onSuccess(SesClientResponse result) {
                 if (result.getType().equals(types.EDIT_SIMPLE_RULE)) {
-                    EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.CREATE_SIMPLE));
+                    EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.CREATE_SIMPLE));
                     EventBus.getMainEventBus().fireEvent(new EditSimpleRuleEvent(result.getBasicRule()));
                 } else if (result.getType().equals(types.EDIT_COMPLEX_RULE)) {
-                    EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.CREATE_COMPLEX));
+                    EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.CREATE_COMPLEX));
                     EventBus.getMainEventBus().fireEvent(new InformUserEvent(result));
                 }
             }
@@ -630,17 +630,17 @@ public class SesRequestManager extends RequestManager {
                 if (result.getType().equals(types.OK)) {
                     SC.say(i18n.creationSuccessful());
                     if ((Cookies.getCookie(SesRequestManager.COOKIE_USER_ROLE)).equals("USER")) {
-                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.ABOS));
+                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.ABOS));
                     } else {
-                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.RULELIST));
+                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.RULELIST));
                     }
                 } else if (result.getType().equals(types.RULE_NAME_EXISTS)) {
                     SC.say(i18n.ruleExists());
                 } else if (result.getType().equals(types.EDIT_COMPLEX_RULE)) {
                     if ((Cookies.getCookie(SesRequestManager.COOKIE_USER_ROLE)).equals("USER")) {
-                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.EDIT_RULES));
+                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.EDIT_RULES));
                     } else {
-                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.RULELIST));
+                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.RULELIST));
                     }
                 }
             }

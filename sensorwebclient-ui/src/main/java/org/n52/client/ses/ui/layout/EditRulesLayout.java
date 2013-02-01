@@ -35,7 +35,7 @@ import org.n52.client.ses.event.DeleteRuleEvent;
 import org.n52.client.ses.event.EditRuleEvent;
 import org.n52.client.ses.event.GetAllPublishedRulesEvent;
 import org.n52.client.ses.event.PublishRuleEvent;
-import org.n52.client.ses.ui.Layout;
+import org.n52.client.ses.ui.FormLayout;
 import org.n52.client.ses.ui.RuleRecord;
 import org.n52.shared.serializable.pojos.BasicRuleDTO;
 import org.n52.shared.serializable.pojos.ComplexRuleDTO;
@@ -65,7 +65,7 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
  * 
  * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
  */
-public class EditRulesLayout extends Layout {
+public class EditRulesLayout extends FormLayout {
 
     /** The rules grid. */
     private ListGrid ownRulesGrid;

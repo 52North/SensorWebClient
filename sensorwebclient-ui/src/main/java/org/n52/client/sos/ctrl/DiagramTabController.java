@@ -65,17 +65,17 @@ import org.n52.client.sos.event.handler.SwitchGridEventHandler;
 import org.n52.client.sos.event.handler.TabSelectedEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
 import org.n52.client.sos.legend.TimeSeries;
-import org.n52.client.sos.ui.EESTab;
+import org.n52.client.sos.ui.DiagramTab;
 import org.n52.client.ui.View;
 import org.n52.client.ui.legend.LegendElement;
 
 import com.smartgwt.client.types.Visibility;
 
-public class EESTabController extends Controller<EESTab> {
+public class DiagramTabController extends Controller<DiagramTab> {
 
     public Bounds currentOverviewBounds;
 
-    public EESTabController(EESTab tab) {
+    public DiagramTabController(DiagramTab tab) {
         super(tab);
 
         // register event buses
@@ -95,12 +95,12 @@ public class EESTabController extends Controller<EESTab> {
         }
 
         public void onSetOverviewDomainBounds(SetOverviewDomainBoundsEvent event) {
-            EESTabController.this.currentOverviewBounds = event.getBounds();
+            DiagramTabController.this.currentOverviewBounds = event.getBounds();
         }
 
         public void onLoadImageData(LoadImageDataEvent event) {
-            Double left = EESTabController.this.currentOverviewBounds.getLeft();
-            Double right = EESTabController.this.currentOverviewBounds.getRight();
+            Double left = DiagramTabController.this.currentOverviewBounds.getLeft();
+            Double right = DiagramTabController.this.currentOverviewBounds.getRight();
             Bounds bounds = new Bounds(left, right, null, null);
             EventBus.getMainEventBus().fireEvent(new SetDomainBoundsEvent(bounds));
             EventBus.getMainEventBus().fireEvent(new LoadImageDataEvent());
@@ -153,10 +153,10 @@ public class EESTabController extends Controller<EESTab> {
         public void onSelected(TabSelectedEvent evt) {
             if (isSelfSelectedTab()) {
                 contributeToLegend();
-                EESTabController.this.getTab().setVisibleSlider(true);
+                DiagramTabController.this.getTab().setVisibleSlider(true);
             }
             else {
-                EESTabController.this.getTab().setVisibleSlider(false);
+                DiagramTabController.this.getTab().setVisibleSlider(false);
             }
         }
 
@@ -170,11 +170,11 @@ public class EESTabController extends Controller<EESTab> {
         public void onTimeSeriesChanged(TimeSeriesChangedEvent evt) {
             contributeToLegend();
             if (DataStoreTimeSeriesImpl.getInst().getDataItems().isEmpty()) {
-                EESTabController.this.tab.hideTooltips();
-                EESTabController.this.getTab().removeSlider();
+                DiagramTabController.this.tab.hideTooltips();
+                DiagramTabController.this.getTab().removeSlider();
                 EventBus.getMainEventBus().fireEvent(new LoadImageDataEvent());
             }
-            EESTabController.this.getTab().addSlider();
+            DiagramTabController.this.getTab().addSlider();
         }
 
         public void onRequestData(RequestDataEvent evt) {
@@ -184,19 +184,19 @@ public class EESTabController extends Controller<EESTab> {
         public void onDeleteTimeSeries(DeleteTimeSeriesEvent evt) {
         	getTab().showLoadingSpinner();
             if (DataStoreTimeSeriesImpl.getInst().getDataItems().isEmpty()) {
-                EESTabController.this.tab.hideTooltips();
+                DiagramTabController.this.tab.hideTooltips();
             }
         }
 
         @Override
         protected boolean isSelfSelectedTab() {
-            return View.getInstance().getCurrentTab().equals(EESTabController.this.getTab());
+            return View.getView().getCurrentTab().equals(DiagramTabController.this.getTab());
         }
 
         public void onNewTimeSeries(NewTimeSeriesEvent evt) {
         	getTab().showLoadingSpinner();
             if (isSelfSelectedTab()) {
-                EESTabController.this.getTab().addSlider(); // TODO check, if onUpdate is enough
+                DiagramTabController.this.getTab().addSlider(); // TODO check, if onUpdate is enough
                 /*
                  * automatically switch on zoom and pan functionality
                  */
@@ -209,7 +209,7 @@ public class EESTabController extends Controller<EESTab> {
          * @see org.n52.client.eventBus.events.handler.InitEventHandler#onInit(org.n52.client.eventBus.events.InitEvent)
          */
         public void onInit(InitEvent evt) {
-            EESTabController.this.getTab().init();
+            DiagramTabController.this.getTab().init();
         }
 
 		@Override

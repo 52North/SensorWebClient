@@ -27,58 +27,28 @@ import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.RegisterUserEventHandler;
 import org.n52.shared.serializable.pojos.UserDTO;
 
-/**
- * The Class RegisterUserEvent.
- */
 public class RegisterUserEvent extends FilteredDispatchGwtEvent<RegisterUserEventHandler> {
 
-    /** The TYPE. */
     public static Type<RegisterUserEventHandler> TYPE = new Type<RegisterUserEventHandler>();
 
-    /** The user. */
     private UserDTO user;
 
-    /**
-     * Instantiates a new register user event.
-     * 
-     * @param u
-     *            the u
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
-    public RegisterUserEvent(UserDTO u, RegisterUserEventHandler... blockedHandlers) {
+    public RegisterUserEvent(UserDTO user, RegisterUserEventHandler... blockedHandlers) {
         super(blockedHandlers);
-        this.user = u;
+        this.user = user;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(RegisterUserEventHandler handler) {
         handler.onRegisterUser(this);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
     public com.google.gwt.event.shared.GwtEvent.Type<RegisterUserEventHandler> getAssociatedType() {
         return TYPE;
     }
 
-    /**
-     * Gets the user.
-     * 
-     * @return the user
-     */
     public UserDTO getUser() {
-        return this.user;
+        return user;
     }
 }

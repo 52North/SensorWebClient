@@ -24,6 +24,7 @@
 
 package org.n52.client.ui.map;
 
+import static org.n52.client.ctrl.PropertiesManager.getPropertiesManager;
 import static org.n52.shared.Constants.DISPLAY_PROJECTION;
 import static org.n52.shared.Constants.EPSG_4326;
 import static org.n52.shared.Constants.GOOGLE_PROJECTION;
@@ -106,7 +107,7 @@ public abstract class OpenLayersMapWrapper {
     }
 
     private void initializeBackgroundMapLayer() {
-        PropertiesManager properties = PropertiesManager.getInstance();
+        PropertiesManager properties = getPropertiesManager();
         spatialReference = properties.getParameterAsString("mapSrs");
         String url = properties.getParameterAsString("mapUrl");
         url = url == null ? "OSM" : url; // if not set in config
@@ -127,7 +128,7 @@ public abstract class OpenLayersMapWrapper {
     }
 
     private WMS initializeWMSLayer(String url) {
-        PropertiesManager properties = PropertiesManager.getInstance();
+        PropertiesManager properties = getPropertiesManager();
         defaultMapOptions.setProjection(DISPLAY_PROJECTION);
         currentMapProjection = DISPLAY_PROJECTION;
 
@@ -272,7 +273,7 @@ public abstract class OpenLayersMapWrapper {
      *         <code>false</code> if no extent was configured in the global properties file.
      */
     protected boolean isDefinedGlobalExtent() {
-        PropertiesManager propertiesMgr = PropertiesManager.getInstance();
+        PropertiesManager propertiesMgr = getPropertiesManager();
         return propertiesMgr.getParameterAsString("defaultExtent") != null;
     }
 

@@ -60,18 +60,18 @@ public class DataControlsEES extends DataControlsTimeSeries implements SwitchGri
 
         this.bbox = new ImageButton("diagBBox", "../img/icons/zoom_in.png",
                 i18n.bboxZoom(), i18n.bboxZoomExt());
-        View.getInstance().registerTooltip(this.bbox);
+        View.getView().registerTooltip(this.bbox);
 
         this.move = new ImageButton("diagMove", "../img/icons/dragger.png",
                 i18n.diagMove(), i18n.diagMoveExt());
-        View.getInstance().registerTooltip(this.move);
+        View.getView().registerTooltip(this.move);
 
         this.undo =
                 new ImageButton("undo", "../img/icons/arrow_undo.png", i18n.undo(),
                         i18n.undoExt());
-        View.getInstance().registerTooltip(this.undo);        
+        View.getView().registerTooltip(this.undo);        
         
-        sesTabButton = new Button( i18n.userSettingsButton());
+        sesTabButton = new Button( i18n.editProfile());
         
         sesTabButton.setIcon("../img/icons/email_go.png");
         
@@ -79,7 +79,7 @@ public class DataControlsEES extends DataControlsTimeSeries implements SwitchGri
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				View.getInstance().getDataPanel().getPanel().selectTab(View.getInstance().getSesTab());
+				View.getView().getDataPanel().getPanel().selectTab(View.getView().getSesTab());
 			}
 		});
         
@@ -97,7 +97,7 @@ public class DataControlsEES extends DataControlsTimeSeries implements SwitchGri
         this.autoScale =
                 new ImageButton("autoScale", "../img/icons/arrow_up_down.png",
                         i18n.autoScaleButton(), i18n.autoScaleButtonExtra());
-        View.getInstance().registerTooltip(this.autoScale);
+        View.getView().registerTooltip(this.autoScale);
         this.autoScale.addClickHandler(new ClickHandler() {
 
             public void onClick(ClickEvent event) {
@@ -111,7 +111,7 @@ public class DataControlsEES extends DataControlsTimeSeries implements SwitchGri
         });
 
         this.grid = new ImageButton("grid", "../img/icons/grid_on.png", "grid", "grid");
-        View.getInstance().registerTooltip(this.grid);
+        View.getView().registerTooltip(this.grid);
         this.grid.addClickHandler(new ClickHandler() {
 
             public void onClick(ClickEvent event) {

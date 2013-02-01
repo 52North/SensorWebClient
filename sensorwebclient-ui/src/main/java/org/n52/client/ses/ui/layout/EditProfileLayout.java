@@ -33,7 +33,7 @@ import org.n52.client.ses.ctrl.SesRequestManager;
 import org.n52.client.ses.event.DeleteProfileEvent;
 import org.n52.client.ses.event.LogoutEvent;
 import org.n52.client.ses.event.UpdateUserEvent;
-import org.n52.client.ses.ui.Layout;
+import org.n52.client.ses.ui.FormLayout;
 import org.n52.shared.serializable.pojos.UserDTO;
 import org.n52.shared.serializable.pojos.UserRole;
 
@@ -49,56 +49,28 @@ import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
 import com.smartgwt.client.widgets.form.validator.MatchesFieldValidator;
 import com.smartgwt.client.widgets.form.validator.RegExpValidator;
 
-/**
- * The Class EditProfileLayout.
- * 
- * Here the user can edit his personal user data
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- */
-public class EditProfileLayout extends Layout {
+public class EditProfileLayout extends FormLayout {
 
-    /** The password item. */
     private PasswordItem newPasswordItem;
     
     private PasswordItem currentPasswordItem;
 
-    /** The email item. */
     private TextItem emailItem;
 
-    /** The handy item. */
+    @Deprecated
     private TextItem handyItem;
 
-    /** The user name item. */
     private TextItem userNameItem;
     
-    /** The name item. */
     private TextItem nameItem;
     
     private int fieldWidth = 200;
 
-    /**
-     * Instantiates a new edits the profile layout.
-     */
     public EditProfileLayout() {
         super(i18n.editProfile());
-        this.scClassName = "VLayout";
+        setStyleName("n52_sensorweb_client_form_content");
 
         DataSource dataSource = new DataSource();
-
-//        DataSourceTextField usernameField = new DataSourceTextField("userName", i18nManager.i18nSESClient.userName(), 50, true);
-//        DataSourceTextField nameField = new DataSourceTextField("name", i18nManager.i18nSESClient.name(), 50, true);
-//        DataSourcePasswordField passwordField = new DataSourcePasswordField("password", i18nManager.i18nSESClient.password(), 20, true);
-//        DataSourceTextField emailField = new DataSourceTextField("email", i18nManager.i18nSESClient.email(), 100, true);
-//        DataSourceIntegerField handyField = new DataSourceIntegerField("handy", i18nManager.i18nSESClient.handy(), 20, true);
-
-//        RegExpValidator emailValidator = new RegExpValidator();
-//        emailValidator.setErrorMessage(i18nManager.i18nSESClient.invalidEmail());
-//        emailValidator.setExpression("^([a-zA-Z0-9_.\\-+])+@(([a-zA-Z0-9\\-])+\\.)+[a-zA-Z0-9]{2,4}$");
-//        emailField.setValidators(emailValidator);
-//
-//        dataSource.setFields(usernameField, nameField, passwordField, emailField, handyField);
-
         this.form.setDataSource(dataSource);
 
         this.userNameItem = new TextItem();

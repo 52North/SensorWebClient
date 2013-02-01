@@ -23,6 +23,8 @@
  */
 package org.n52.client.ui;
 
+import static org.n52.client.bus.EventBus.getMainEventBus;
+
 import java.util.ArrayList;
 
 import org.n52.client.Application;
@@ -250,9 +252,9 @@ public class DataPanel extends VLayout {
             InitEventHandler {
 
         public DataPanelEventBroker() {
-            EventBus.getMainEventBus().addHandler(TimeSeriesChangedEvent.TYPE, this);
-            EventBus.getMainEventBus().addHandler(TabSelectedEvent.TYPE, this);
-            EventBus.getMainEventBus().addHandler(InitEvent.TYPE, this);
+            getMainEventBus().addHandler(TimeSeriesChangedEvent.TYPE, this);
+            getMainEventBus().addHandler(TabSelectedEvent.TYPE, this);
+            getMainEventBus().addHandler(InitEvent.TYPE, this);
         }
 
         public void onTimeSeriesChanged(TimeSeriesChangedEvent evt) {
@@ -268,7 +270,7 @@ public class DataPanel extends VLayout {
             Integer width = DataPanel.this.getWidthPanel();
             Integer height = DataPanel.this.getHeightPanel();
             ResizeEvent event = new ResizeEvent(width, height);
-            EventBus.getMainEventBus().fireEvent(event);
+            getMainEventBus().fireEvent(event);
         }
 
     }

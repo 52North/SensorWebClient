@@ -61,8 +61,8 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
 		private FeatureOfInterest feature; // required
 		private Procedure procedure; // required
 		private Phenomenon phenomenon; // required
-		private int width = View.getInstance().getDataPanelWidth();
-		private int height = View.getInstance().getDataPanelHeight();
+		private int width = View.getView().getDataPanelWidth();
+		private int height = View.getView().getDataPanelHeight();
 		private boolean requestSensorData = true;
 		private NewTimeSeriesEventHandler[] blockedHandlers = new NewTimeSeriesEventHandler[0];
     	

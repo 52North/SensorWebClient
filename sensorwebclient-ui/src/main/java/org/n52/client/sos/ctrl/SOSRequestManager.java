@@ -84,7 +84,7 @@ import org.n52.client.sos.event.data.StoreTimeSeriesLastValueEvent;
 import org.n52.client.sos.event.data.StoreTimeSeriesPropsEvent;
 import org.n52.client.sos.event.data.TimeSeriesHasDataEvent;
 import org.n52.client.sos.legend.TimeSeries;
-import org.n52.client.sos.ui.EESTab;
+import org.n52.client.sos.ui.DiagramTab;
 import org.n52.client.ui.Toaster;
 import org.n52.client.ui.View;
 import org.n52.client.ui.legend.LegendElement;
@@ -264,8 +264,8 @@ public class SOSRequestManager extends RequestManager {
             ArrayList<TimeSeriesProperties> series = new ArrayList<TimeSeriesProperties>();
             for (TimeSeries timeSerie : timeSeries) {
                 if (timeSerie.getId().equals(id)) {
-                    timeSerie.getProperties().setHeight(View.getInstance().getDataPanelHeight());
-                    timeSerie.getProperties().setWidth(View.getInstance().getDataPanelWidth());
+                    timeSerie.getProperties().setHeight(View.getView().getDataPanelHeight());
+                    timeSerie.getProperties().setWidth(View.getView().getDataPanelWidth());
                     series.add(timeSerie.getProperties());
                     break;
                 }
@@ -419,8 +419,8 @@ public class SOSRequestManager extends RequestManager {
 
         ArrayList<TimeSeriesProperties> properties = new ArrayList<TimeSeriesProperties>();
         for (TimeSeries timeSerie : timeSeries) {
-            timeSerie.getProperties().setHeight(EESTab.getPanelHeight());
-            timeSerie.getProperties().setWidth(EESTab.getPanelWidth());
+            timeSerie.getProperties().setHeight(DiagramTab.getPanelHeight());
+            timeSerie.getProperties().setWidth(DiagramTab.getPanelWidth());
             properties.add(timeSerie.getProperties());
         }
 
@@ -467,7 +467,7 @@ public class SOSRequestManager extends RequestManager {
     }
 
     private void setDefaultValues(TimeSeriesProperties copy) {
-        PropertiesManager properties = PropertiesManager.getInstance();
+        PropertiesManager properties = PropertiesManager.getPropertiesManager();
         ArrayList<String> mappings = properties.getParameters("phenomenon");
         for (String mapping : mappings) {
             String[] values = mapping.split(",");
@@ -509,7 +509,7 @@ public class SOSRequestManager extends RequestManager {
                     // 0d, new Double(result.getPlotArea().getWidth()),
                     // 0d, 100d)));
                     GWT.log("Got OverviewDiagram: " + result.getWidth() + "w x " + result.getHeight() + "h");
-                    GWT.log("For Viewportsize: " + EESTab.getPanelWidth() + "w x " + EESTab.getPanelHeight() + "h");
+                    GWT.log("For Viewportsize: " + DiagramTab.getPanelWidth() + "w x " + DiagramTab.getPanelHeight() + "h");
                     // EESController.getOverviewEventBus().fireEvent(
                     // new SetMaxBoundsEvent(new Bounds((double)
                     // result.getDateRangeOnXAxis().getStart().getTime(),
@@ -560,7 +560,7 @@ public class SOSRequestManager extends RequestManager {
                     // block overview
                     if ( !GWT.isProdMode()) {
                         GWT.log("Got Diagram: " + result.getWidth() + "w x " + result.getHeight() + "h");
-                        GWT.log("For Viewportsize: " + EESTab.getPanelWidth() + "w x " + EESTab.getPanelHeight() + "h");
+                        GWT.log("For Viewportsize: " + DiagramTab.getPanelWidth() + "w x " + DiagramTab.getPanelHeight() + "h");
                     }
                     for (String key : result.getAxis().keySet()) {
                         EventBus.getMainEventBus().fireEvent(new StoreAxisDataEvent(key, result.getAxis().get(key)));

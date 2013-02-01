@@ -27,7 +27,7 @@ import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.event.NewPasswordEvent;
-import org.n52.client.ses.ui.Layout;
+import org.n52.client.ses.ui.FormLayout;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.fields.DataSourceTextField;
@@ -44,7 +44,7 @@ import com.smartgwt.client.widgets.form.validator.RegExpValidator;
  * 
  * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
  */
-public class ForgotPasswordLayout extends Layout {
+public class ForgotPasswordLayout extends FormLayout {
 
     /** The name item. */
     private TextItem nameItem;

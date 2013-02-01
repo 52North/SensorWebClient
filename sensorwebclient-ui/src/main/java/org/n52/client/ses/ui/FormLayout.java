@@ -21,6 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
+
 package org.n52.client.ses.ui;
 
 import com.google.gwt.user.client.ui.Label;
@@ -32,100 +33,55 @@ import com.smartgwt.client.widgets.layout.LayoutSpacer;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 /**
- * The Class Layout.
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
+ * Basic form layout for SES client UI components.
  */
-public abstract class Layout extends VLayout {
+public abstract class FormLayout extends VLayout {
 
-    /**
-     * The Enum Layouts.
-     */
-    public static enum Layouts {
-
-        /** The LOGIN. */
-        LOGIN,
-        /** The REGISTER. */
-        REGISTER,
-        /** The PASSWORD. */
-        PASSWORD,
-        /** The USERLIST. */
-        USERLIST,
-        /** The SENSORLIST. */
-        SENSORLIST,
-        /** The RULELIST. */
-        RULELIST,
-        /** The EDI t_ profile. */
-        EDIT_PROFILE,
-        /** The ABOS. */
-        ABOS,
-        /** The CREAT e_ simple. */
-        CREATE_SIMPLE,
-        /** The EDI t_ simple. */
-        EDIT_SIMPLE,
-        /** The CREAT e_ complex. */
-        CREATE_COMPLEX,
-        /** The EDI t_ complex. */
-        EDIT_COMPLEX,
-        /** The EDI t_ rules. */
-        EDIT_RULES,
-        /** The EDI t_ rules. */
-        USER_SUBSCRIPTIONS,
-        /** The welcome page */
-        WELCOME,
-        /** The search */
-        SEARCH
-    }
-
-    /** The header item. */
     protected HeaderItem headerItem;
 
-    /** The form. */
     protected DynamicForm form;
 
-    /** The form2. */
     protected DynamicForm form2;
 
-    /** The spacer. */
     protected LayoutSpacer spacer;
-    
+
     private HLayout loggedInAsLayout;
-    
+
     protected Label userNameLabel;
-    
+
     /**
-     * Instantiates a new layout.
-     * 
-     * @param h
-     *            the h
+     * @param formHeaderText
+     *        the header text this form layout shall have
      */
-    public Layout(String h) {
+    public FormLayout(String formHeaderText) {
         this.form = new DynamicForm();
         this.form.setUseAllDataSourceFields(true);
 
         this.headerItem = new HeaderItem();
-        this.headerItem.setDefaultValue(h);
+        this.headerItem.setDefaultValue(formHeaderText);
 
         this.spacer = new LayoutSpacer();
         this.spacer.setHeight(20);
-        
+
         this.loggedInAsLayout = new HLayout();
         this.loggedInAsLayout.setWidth100();
         this.loggedInAsLayout.setAlign(Alignment.RIGHT);
         this.loggedInAsLayout.setHeight(20);
-        
+
         this.userNameLabel = new Label("");
         this.userNameLabel.setWordWrap(false);
-        
+
         this.loggedInAsLayout.addMember(this.userNameLabel);
         addMember(this.loggedInAsLayout);
-//        addMember(this.spacer);
     }
 
-    /**
-     * @return Label
-     */
     public Label getUserNameLabel() {
         return this.userNameLabel;
     }
+
+    public static enum LayoutType {
+        LOGIN, REGISTER, PASSWORD, USERLIST, SENSORLIST, RULELIST, EDIT_PROFILE, ABOS, CREATE_SIMPLE, 
+        EDIT_SIMPLE, CREATE_COMPLEX, EDIT_COMPLEX, EDIT_RULES, USER_SUBSCRIPTIONS, WELCOME, SEARCH;
+    }
+
 }

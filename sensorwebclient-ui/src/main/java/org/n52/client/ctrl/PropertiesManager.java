@@ -52,7 +52,7 @@ public class PropertiesManager {
     
     private boolean initiated = false;
 
-    public static PropertiesManager getInstance() {
+    public static PropertiesManager getPropertiesManager() {
         if (instance == null) {
             instance = new PropertiesManager();
             if ( !instance.isInitiated()) {

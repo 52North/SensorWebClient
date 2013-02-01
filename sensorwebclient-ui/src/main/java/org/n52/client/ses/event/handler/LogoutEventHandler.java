@@ -27,18 +27,7 @@ import org.n52.client.ses.event.LogoutEvent;
 
 import com.google.gwt.event.shared.EventHandler;
 
-/**
- * The Interface LogoutEventHandler.
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- */
 public interface LogoutEventHandler extends EventHandler {
 
-    /**
-     * On logout.
-     * 
-     * @param evt
-     *            the evt
-     */
     void onLogout(LogoutEvent evt);
 }

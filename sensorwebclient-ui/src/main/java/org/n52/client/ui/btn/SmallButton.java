@@ -57,7 +57,7 @@ public class SmallButton extends Layout {
 		
 		addMember(canvas);
 		this.setMargin(this.margin);
-		if (View.getInstance().isShowExtendedTooltip()) {
+		if (View.getView().isShowExtendedTooltip()) {
 			this.setTooltip(this.extendedTooltip);
 		} else {
 			this.setTooltip(this.tooltip);

@@ -35,7 +35,7 @@ public abstract class ATabEventBroker {
     protected abstract boolean isSelfSelectedTab();
     
     protected void fillLegend(ArrayList<LegendElement> legendElems) {
-        Legend l = View.getInstance().getLegend();
+        Legend l = View.getView().getLegend();
         l.fill(legendElems);
     }
 }

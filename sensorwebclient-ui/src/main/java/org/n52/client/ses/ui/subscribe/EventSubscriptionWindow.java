@@ -44,6 +44,7 @@ import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.HeaderItem;
 import com.smartgwt.client.widgets.form.fields.StaticTextItem;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.Layout;
@@ -80,6 +81,7 @@ public class EventSubscriptionWindow extends LoginWindow {
         content.addMember(createNewEventAbonnementCanvas());
         content.addMember(createContextWindowHelp());
         addItem(content);
+        setTitle(i18n.createAboWindowTitle());
     }
 
     private Canvas createNewEventAbonnementCanvas() {
@@ -101,9 +103,11 @@ public class EventSubscriptionWindow extends LoginWindow {
         StaticTextItem parameter = new StaticTextItem();
         parameter.setTitle(i18n.phenomenon());
         parameter.setValue(timeSeries.getPhenomenonId());
+        HeaderItem header = new HeaderItem();
+        header.setDefaultValue(i18n.createBasicRule());
         DynamicForm form = new DynamicForm();
         form.setStyleName("n52_sensorweb_client_create_abo_info");
-        form.setFields(stationName, parameter);
+        form.setFields(header, stationName, parameter);
         return form;
     }
 

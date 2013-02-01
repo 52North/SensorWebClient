@@ -97,7 +97,7 @@ public class Toaster {
         return instance;
     }
 
-    public static Toaster createInstance(String id, int width, int height, String title, Canvas parentElem, int fadeout) {
+    public static Toaster createToasterInstance(String id, int width, int height, String title, Canvas parentElem, int fadeout) {
 
         if (instance == null) {
             instance = new Toaster(id, width, height, title, parentElem, fadeout);

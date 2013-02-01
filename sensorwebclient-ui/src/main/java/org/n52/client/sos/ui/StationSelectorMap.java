@@ -24,6 +24,7 @@
 
 package org.n52.client.sos.ui;
 
+import static org.n52.client.ctrl.PropertiesManager.getPropertiesManager;
 import static org.n52.shared.Constants.DISPLAY_PROJECTION;
 import static org.n52.shared.Constants.EPSG_4326;
 
@@ -70,7 +71,7 @@ public class StationSelectorMap extends OpenLayersMapWrapper {
         map.addLayer(markerLayer);
         try {
             if (isDefinedGlobalExtent()) {
-                PropertiesManager propertiesMgr = PropertiesManager.getInstance();
+                PropertiesManager propertiesMgr = getPropertiesManager();
                 double lleftX = new Double(propertiesMgr.getParameterAsString("lleftX"));
                 double lleftY = new Double(propertiesMgr.getParameterAsString("lleftY"));
                 double urightX = new Double(propertiesMgr.getParameterAsString("urightX"));

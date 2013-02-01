@@ -23,6 +23,7 @@
  */
 package org.n52.client;
 
+import static org.n52.client.ctrl.PropertiesManager.getPropertiesManager;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 import static org.n52.ext.link.sos.PermalinkParameter.BEGIN;
 import static org.n52.ext.link.sos.PermalinkParameter.END;
@@ -90,7 +91,7 @@ public final class Application {
     
 	public static void start() {
 		// TODO refactor startup to be more explicit
-        PropertiesManager.getInstance();
+        getPropertiesManager();
 	}
 
     public static void continueStartup() {
@@ -101,7 +102,7 @@ public final class Application {
         if (SesClientUtil.isSesEnabled()) {
             new SesController();
         }
-        View.getInstance();
+        View.getView();
         Element element = Document.get().getElementById("loadingWrapper");
         while (element.hasChildNodes()) {
             element.removeChild(element.getFirstChild());
@@ -211,7 +212,7 @@ public final class Application {
     }
 
     private static void showStationSelectorWhenConfigured() {
-        PropertiesManager properties = PropertiesManager.getInstance();
+        PropertiesManager properties = getPropertiesManager();
         boolean showAtStartup = properties.getParameterAsBoolean("showStationSelectorAtStartup");
         if (showAtStartup) {
             StationSelector.getInst().show();
@@ -236,7 +237,7 @@ public final class Application {
     private static void finalEvents() {
         // check for time intervals bigger than the default overview interval
         // (in days)
-        PropertiesManager propertiesMgr = PropertiesManager.getInstance();
+        PropertiesManager propertiesMgr = getPropertiesManager();
         int days = propertiesMgr.getParamaterAsInt(Constants.DEFAULT_OVERVIEW_INTERVAL, 5);
 
         TimeManager timeMgr = TimeManager.getInst();

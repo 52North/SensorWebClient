@@ -15,7 +15,12 @@ import static org.n52.oxf.ses.adapter.SESAdapter.NOTIFY;
 import static org.n52.oxf.ses.adapter.SESAdapter.REGISTER_PUBLISHER;
 import static org.n52.server.ses.feeder.FeederConfig.getFeederConfig;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,6 +28,8 @@ import java.util.regex.Pattern;
 import net.opengis.om.x10.ObservationPropertyType;
 import net.opengis.sensorML.x101.SensorMLDocument;
 
+import org.apache.commons.lang.text.StrBuilder;
+import org.apache.http.impl.conn.DefaultHttpResponseParser;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
@@ -35,6 +42,7 @@ import org.n52.oxf.ows.ExceptionReport;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.ses.adapter.SESAdapter;
 import org.n52.oxf.ses.adapter.SESRequestBuilder_00;
+import org.n52.oxf.xmlbeans.tools.SoapUtil;
 import org.n52.server.ses.SesConfig;
 import org.n52.server.ses.feeder.FeederConfig;
 import org.n52.server.ses.feeder.SosSesFeeder;
@@ -167,21 +175,31 @@ public class SESConnector {
             LOGGER.trace("Notify request: \n {}", new SESRequestBuilder_00().buildNotifyRequest(parameter));
 
             Operation operation = new Operation(NOTIFY, serviceUrl + "?", serviceUrl);
-            OperationResult doOperation = sesAdapter.doOperation(operation, parameter);
             
-            LOGGER.trace("Notify response: \n {}", XmlObject.Factory.parse(doOperation.getIncomingResultAsStream()));
-        }
-        catch (XmlException e) {
-            LOGGER.warn("Could not parse notify response.", e);
-        }
-        catch (IOException e) {
-            LOGGER.warn("Could not read notify response.", e);
+            OperationResult doOperation = sesAdapter.doOperation(operation, parameter);
+            InputStream responseStream = new BufferedInputStream(doOperation.getIncomingResultAsStream());
+            BufferedReader reader = new BufferedReader(new InputStreamReader(responseStream));
+            StringBuilder sb = new StringBuilder();
+            while (reader.ready()) {
+                sb.append(reader.readLine());
+            }
+            String response = sb.toString();
+            if (response.length() > 0 && response.startsWith("<?xml")) {
+                XmlObject responseXml = XmlObject.Factory.parse(response);
+                LOGGER.warn(responseXml.xmlText());
+            }
         }
         catch (OXFException e) {
             LOGGER.error("Error while sending notify message to SES.", e);
         }
         catch (NullPointerException e) {
             LOGGER.debug("Response of notify is null.", e);
+        }
+        catch (IOException e) {
+            LOGGER.debug("Cannot read notification response.", e);
+        }
+        catch (XmlException e) {
+            LOGGER.debug("Cannot parse notification response.", e);
         }
     }
 

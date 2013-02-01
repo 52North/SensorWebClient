@@ -43,8 +43,8 @@ import org.n52.client.Application;
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.DataControls;
 import org.n52.client.ctrl.ExceptionHandler;
+import org.n52.client.sos.ctrl.DiagramTabController;
 import org.n52.client.sos.ctrl.DragImageControl;
-import org.n52.client.sos.ctrl.EESTabController;
 import org.n52.client.sos.ctrl.MouseWheelControl;
 import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
 import org.n52.client.ui.DataPanelTab;
@@ -63,9 +63,9 @@ import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VStack;
 
-public class EESTab extends DataPanelTab {
+public class DiagramTab extends DataPanelTab {
 
-    private static EESTabController controller;
+    private static DiagramTabController controller;
 
     /*
      * TODO: monitor impact of setting this public
@@ -97,14 +97,14 @@ public class EESTab extends DataPanelTab {
     private Img mainChartLoadingSpinner;
     
 
-    public EESTab(String ID, String title) {
+    public DiagramTab(String ID, String title) {
         super("DiagramTab");
     	layout = new Layout();
     	
         MousePointerDomainBoundsHandler listener = new MousePointerDomainBoundsHandler();
         this.mainChartEventBus.addHandler(SetDomainBoundsEvent.TYPE, listener);
 
-        controller = new EESTabController(this);
+        controller = new DiagramTabController(this);
 
         setID(ID);
         setTitle(title);
@@ -129,13 +129,13 @@ public class EESTab extends DataPanelTab {
         try {
             setPane(layout);
             
-            EESTab.layout.setVertical(true);
+            DiagramTab.layout.setVertical(true);
 
             this.mainChartViewport = getMainChartViewport();
             this.overviewChartViewport = getOverviewChartViewport();
             
-            EESTab.layout.addMember(this.mainChartViewport);
-            EESTab.layout.addMember(this.overviewChartViewport);
+            DiagramTab.layout.addMember(this.mainChartViewport);
+            DiagramTab.layout.addMember(this.overviewChartViewport);
             initKeyControls();
             initZooming();
             initTooltips();
@@ -360,17 +360,11 @@ public class EESTab extends DataPanelTab {
 
     protected class MousePointerDomainBoundsHandler implements SetDomainBoundsEventHandler {
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @seeorg.eesgmbh.gimv.client.event.SetDomainBoundsEventHandler#
-         * onSetDomainBounds(org.eesgmbh.gimv.client.event.SetDomainBoundsEvent)
-         */
         public void onSetDomainBounds(SetDomainBoundsEvent event) {
             if ( !DataStoreTimeSeriesImpl.getInst().getDataItems().isEmpty()) {
                 String[] widthHeight = getBoundValues(event);
 
-                Element mousePointerElement = EESTab.this.getMousePointerLineElement();
+                Element mousePointerElement = DiagramTab.this.getMousePointerLineElement();
                 DOM.setStyleAttribute(mousePointerElement, "width", widthHeight[0]);
                 DOM.setStyleAttribute(mousePointerElement, "height", widthHeight[1]);
 
@@ -389,10 +383,10 @@ public class EESTab extends DataPanelTab {
 
         private void setTooltipsOnTop(SetDomainBoundsEvent event) {
             if (isWidthWiderOne(event)) {
-                EESTab.this.tooltipPresenter.setTooltipZIndex(Constants.Z_INDEX_ON_TOP);
+                DiagramTab.this.tooltipPresenter.setTooltipZIndex(Constants.Z_INDEX_ON_TOP);
             }
             else {
-                EESTab.this.tooltipPresenter.setTooltipZIndex(0);
+                DiagramTab.this.tooltipPresenter.setTooltipZIndex(0);
             }
         }
 
@@ -405,7 +399,7 @@ public class EESTab extends DataPanelTab {
      * 
      */
     public void hideTooltips() {
-        DOM.setStyleAttribute(EESTab.this.verticalMousePointerLine.getElement(), "width", "0px");
+        DOM.setStyleAttribute(DiagramTab.this.verticalMousePointerLine.getElement(), "width", "0px");
         this.tooltipPresenter.setTooltipZIndex(0);
     }
 

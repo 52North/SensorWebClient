@@ -23,7 +23,23 @@
  */
 package org.n52.client.ses.ctrl;
 
+import static com.google.gwt.user.client.Cookies.getCookie;
+import static org.n52.client.bus.EventBus.getMainEventBus;
+import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ID;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.ABOS;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.CREATE_COMPLEX;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.EDIT_PROFILE;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.EDIT_RULES;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.LOGIN;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.PASSWORD;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.REGISTER;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.RULELIST;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.USERLIST;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.USER_SUBSCRIPTIONS;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.WELCOME;
+import static org.n52.client.ui.View.getView;
+import static org.n52.shared.serializable.pojos.UserRole.ADMIN;
 
 import java.util.ArrayList;
 
@@ -50,7 +66,7 @@ import org.n52.client.ses.event.handler.InformUserEventHandler;
 import org.n52.client.ses.event.handler.SetRoleEventHandler;
 import org.n52.client.ses.event.handler.ShowAllUserEventHandler;
 import org.n52.client.ses.event.handler.UpdateProfileEventHandler;
-import org.n52.client.ses.ui.Layout.Layouts;
+import org.n52.client.ses.ui.FormLayout.LayoutType;
 import org.n52.client.ses.ui.SesTab;
 import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
 import org.n52.client.sos.event.TabSelectedEvent;
@@ -68,7 +84,7 @@ import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.form.FormItemErrorFormatter;
 
 public class SesTabController extends Controller<SesTab> {
-
+    
     public SesTabController(SesTab sesTab) {
         super(sesTab);
         new SesTabEventBroker();
@@ -103,73 +119,70 @@ public class SesTabController extends Controller<SesTab> {
 
         public void onChange(ChangeLayoutEvent evt) {
             // layout to show
-            Layouts layout = evt.getLayout();
-
+            LayoutType layout = evt.getLayout();
+            UserRole role = getDataControls().getRole();
+            if (role != ADMIN) {
+                return; // only admin shall use old UI
+            }
             SesTabController.this.getTab().setLayout(layout);
-            if (layout == Layouts.USERLIST) {
-                EventBus.getMainEventBus().fireEvent(new GetAllUsersEvent());
+            if (layout == USERLIST) {
+                getMainEventBus().fireEvent(new GetAllUsersEvent());
                 getDataControls().highlightSelectedButton(getDataControls().getManageUserButton());
-            } else if (layout == Layouts.CREATE_COMPLEX) {
-                EventBus.getMainEventBus().fireEvent(new GetAllPublishedRulesEvent(1));
+            } else if (layout == CREATE_COMPLEX) {
+                getMainEventBus().fireEvent(new GetAllPublishedRulesEvent(1));
                 getTab().getComplexLayout().clearFields();
                 getTab().getComplexLayout().setEditCR(false);
                 getDataControls().highlightSelectedButton(getDataControls().getCreateComplexRuleButton());
-            } else if (layout == Layouts.EDIT_PROFILE) {
+            } else if (layout == EDIT_PROFILE) {
                 getDataControls().highlightSelectedButton(getDataControls().getEditProfileButton());
-                EventBus.getMainEventBus().fireEvent(
-                        new GetSingleUserEvent(Cookies.getCookie(SesRequestManager.COOKIE_USER_ID)));
-            } else if (layout == Layouts.ABOS) {
+                getMainEventBus().fireEvent(new GetSingleUserEvent(getCookie(COOKIE_USER_ID)));
+            } else if (layout == ABOS) {
                 getDataControls().highlightSelectedButton(getDataControls().getAboRuleButton());
-                EventBus.getMainEventBus().fireEvent(
-                        new GetAllOwnRulesEvent(Cookies.getCookie(SesRequestManager.COOKIE_USER_ID), false));
-                EventBus.getMainEventBus().fireEvent(
-                        new GetAllOtherRulesEvent(Cookies.getCookie(SesRequestManager.COOKIE_USER_ID), false));
-            } else if (layout == Layouts.EDIT_RULES) {
+                getMainEventBus().fireEvent(new GetAllOwnRulesEvent(getCookie(COOKIE_USER_ID), false));
+                getMainEventBus().fireEvent(new GetAllOtherRulesEvent(getCookie(COOKIE_USER_ID), false));
+            } else if (layout == EDIT_RULES) {
                 getDataControls().highlightSelectedButton(getDataControls().getEditRulesButton());
-                EventBus.getMainEventBus().fireEvent(
-                        new GetAllOwnRulesEvent(Cookies.getCookie(SesRequestManager.COOKIE_USER_ID), true));
-                EventBus.getMainEventBus().fireEvent(
-                        new GetAllOtherRulesEvent(Cookies.getCookie(SesRequestManager.COOKIE_USER_ID), true));
-            } else if (layout == Layouts.RULELIST) {
+                getMainEventBus().fireEvent(new GetAllOwnRulesEvent(getCookie(COOKIE_USER_ID), true));
+                getMainEventBus().fireEvent(new GetAllOtherRulesEvent(getCookie(COOKIE_USER_ID), true));
+            } else if (layout == RULELIST) {
                 getDataControls().highlightSelectedButton(getDataControls().getManageRulesButton());
-                EventBus.getMainEventBus().fireEvent(new GetAllRulesEvent());
-            } else if (layout == Layouts.PASSWORD) {
+                getMainEventBus().fireEvent(new GetAllRulesEvent());
+            } else if (layout == PASSWORD) {
                 getDataControls().highlightSelectedButton(getDataControls().getGetPasswordButton());
                 getTab().getForgorPasswordLayout().clearFields();
-            } else if (layout == Layouts.REGISTER) {
+            } else if (layout == REGISTER) {
                 getDataControls().highlightSelectedButton(getDataControls().getRegisterButton());
                 getTab().getRegisterLayout().clearFields();
-            } else if (layout == Layouts.LOGIN) {
+            } else if (layout == LOGIN) {
                 getDataControls().highlightSelectedButton(getDataControls().getLoginButton());
                 getTab().getLoginLayout().clearFields();
-            } else if (layout == Layouts.USER_SUBSCRIPTIONS) {
+            } else if (layout == USER_SUBSCRIPTIONS) {
                 getDataControls().highlightSelectedButton(getDataControls().getSubscriptionsButton());
-                EventBus.getMainEventBus().fireEvent(
-                        new GetUserSubscriptionsEvent(Cookies.getCookie(SesRequestManager.COOKIE_USER_ID)));
+                getMainEventBus().fireEvent(new GetUserSubscriptionsEvent(getCookie(COOKIE_USER_ID)));
             }
         }
 
         public void onChangeRole(SetRoleEvent evt) {
             UserRole role = evt.getRole();
-            getDataControls().setRole(role);
-
-            setUserLoggedInAsText();
-
             switch (role) {
             case ADMIN:
-                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.WELCOME));
+                getMainEventBus().fireEvent(new ChangeLayoutEvent(WELCOME));
+                getDataControls().setRole(role);
+                setUserLoggedInAsText();
                 break;
-
-            case USER:
-                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.WELCOME));
-                break;
-
+//            case USER: // we only want admins to use old UI
+//                getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+//                getMainEventBus().fireEvent(new ChangeLayoutEvent(WELCOME));
+//                break;
             case NOT_REGISTERED_USER:
-                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.LOGIN));
+                getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
                 break;
-
+            case LOGOUT: 
+                getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                getView().getLegend().switchToDiagramTab();
+                break;
             default:
-                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.LOGIN));
+                getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
             }
         }
 
@@ -353,7 +366,7 @@ public class SesTabController extends Controller<SesTab> {
         
         @Override
         protected boolean isSelfSelectedTab() {
-            return View.getInstance().getCurrentTab().equals(SesTabController.this.getTab());
+            return View.getView().getCurrentTab().equals(SesTabController.this.getTab());
         }
     }
 }

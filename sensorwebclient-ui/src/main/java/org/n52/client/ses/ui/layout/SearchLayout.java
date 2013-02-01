@@ -32,7 +32,7 @@ import org.n52.client.ses.ctrl.SesRequestManager;
 import org.n52.client.ses.data.RuleDataSource;
 import org.n52.client.ses.event.EditRuleEvent;
 import org.n52.client.ses.event.SearchEvent;
-import org.n52.client.ses.ui.Layout;
+import org.n52.client.ses.ui.FormLayout;
 import org.n52.client.ses.ui.RuleRecord;
 import org.n52.shared.serializable.pojos.BasicRuleDTO;
 import org.n52.shared.serializable.pojos.ComplexRuleDTO;
@@ -61,7 +61,7 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
  * 
  * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
  */
-public class SearchLayout extends Layout {
+public class SearchLayout extends FormLayout {
 
     /** The rules grid. */
     private ListGrid rulesGrid;

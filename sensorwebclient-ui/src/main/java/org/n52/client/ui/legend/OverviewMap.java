@@ -24,6 +24,8 @@
 
 package org.n52.client.ui.legend;
 
+import static org.n52.client.ctrl.PropertiesManager.getPropertiesManager;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -224,7 +226,7 @@ public class OverviewMap extends OpenLayersMapWrapper {
     
     public void initMap() {
         if (isDefinedGlobalExtent()) {
-            PropertiesManager propertiesMgr = PropertiesManager.getInstance();
+            PropertiesManager propertiesMgr = getPropertiesManager();
             String lleftX = propertiesMgr.getParameterAsString("lleftX");
             String lleftY = propertiesMgr.getParameterAsString("lleftY");
             String urightX = propertiesMgr.getParameterAsString("urightX");

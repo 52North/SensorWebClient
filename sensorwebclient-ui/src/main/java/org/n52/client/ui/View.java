@@ -24,18 +24,19 @@
 
 package org.n52.client.ui;
 
+import static org.n52.client.bus.EventBus.getMainEventBus;
+import static org.n52.client.ctrl.PropertiesManager.getPropertiesManager;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
+import static org.n52.client.ui.Toaster.createToasterInstance;
 
 import java.util.ArrayList;
 
-import org.n52.client.bus.EventBus;
-import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ses.i18n.SesStringsAccessor;
 import org.n52.client.ses.ui.SesTab;
 import org.n52.client.ses.util.SesClientUtil;
 import org.n52.client.sos.event.TabSelectedEvent;
 import org.n52.client.sos.i18n.SosStringsAccessor;
-import org.n52.client.sos.ui.EESTab;
+import org.n52.client.sos.ui.DiagramTab;
 import org.n52.client.ui.btn.Button;
 import org.n52.client.ui.legend.Legend;
 
@@ -71,13 +72,13 @@ public class View {
 
 	private DataPanelTab sesTab;
 	
-	private DataPanelTab eesTab;
+	private DataPanelTab diagramTab;
 
-    private View() {
-        // keep private
+    protected View() {
+        // singleton, keep private
     }
 
-    public static View getInstance() {
+    public static View getView() {
         if (view == null) {
             view = new View();
             view.init();
@@ -92,24 +93,23 @@ public class View {
         SosStringsAccessor.init();
         SesStringsAccessor.init();
         
-        int fadeout = PropertiesManager.getInstance().getParamaterAsInt("toasterFadeout", 5);
-        Toaster.createInstance("toaster", 400, 200, i18n.loggerWindowTitle(), mainPanel, fadeout * 1000);
+        int fadeout = getPropertiesManager().getParamaterAsInt("toasterFadeout", 5);
+        createToasterInstance("toaster", 400, 200, i18n.loggerWindowTitle(), mainPanel, fadeout * 1000);
         VLayout vLayout = createLayoutStack();
         mainPanel.addMember(vLayout);
 
-        // TODO change tabs to widgets
-        eesTab = new EESTab("ees", i18n.diagram());
-        registerTabWidget(eesTab);
+        diagramTab = new DiagramTab("diagram", i18n.diagram());
+        registerTabWidget(diagramTab);
         if (SesClientUtil.isSesEnabled()) {
         	sesTab = new SesTab("SES", "SES");
         	registerTabWidget(sesTab);
         }
         
-        EventBus.getMainEventBus().fireEvent(new TabSelectedEvent(datapanel.getTab(0)));
+        getMainEventBus().fireEvent(new TabSelectedEvent(datapanel.getTab(0)));
     }
 
     private void registerTabWidget(DataPanelTab widget) {
-        ArrayList<String> configuredTabs = PropertiesManager.getInstance().getTabsFromPropertiesFile();
+        ArrayList<String> configuredTabs = getPropertiesManager().getTabsFromPropertiesFile();
         if (configuredTabs.contains(DataPanelTab.getTabIdentifier())) {
             datapanel.addTab(widget);
         }
@@ -252,8 +252,8 @@ public class View {
     	return this.sesTab;
     }
 
-    public DataPanelTab getEesTab() {
-		return eesTab;
+    public DataPanelTab getDiagramTab() {
+		return diagramTab;
 	}
 
 }

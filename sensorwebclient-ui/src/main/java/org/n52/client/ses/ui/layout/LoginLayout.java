@@ -21,16 +21,21 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
+
 package org.n52.client.ses.ui.layout;
 
+import static org.n52.client.bus.EventBus.getMainEventBus;
+import static org.n52.client.ses.ctrl.DataControlsSes.createMD5;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.REGISTER;
+import static org.n52.client.ui.View.getView;
 
-import org.n52.client.bus.EventBus;
-import org.n52.client.ses.ctrl.DataControlsSes;
+import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.LoginEvent;
-import org.n52.client.ses.ui.Layout;
+import org.n52.client.ses.ui.FormLayout;
 
 import com.smartgwt.client.widgets.form.fields.ButtonItem;
+import com.smartgwt.client.widgets.form.fields.LinkItem;
 import com.smartgwt.client.widgets.form.fields.PasswordItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
@@ -39,115 +44,147 @@ import com.smartgwt.client.widgets.form.fields.events.KeyPressEvent;
 import com.smartgwt.client.widgets.form.fields.events.KeyPressHandler;
 
 /**
- * The Class LoginLayout.
- * 
- * The login view. With a valid user name and password the user can
- * login to the client.
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
+ * The login view. With a valid user name and password the user can login to the client.
  */
-public class LoginLayout extends Layout {
+public class LoginLayout extends FormLayout {
 
-    /** The name item. */
-    private TextItem nameItem;
+    private TextItem userNameItem;
 
-    /** The password item. */
     private PasswordItem passwordItem;
-
-    /**
-     * Instantiates a new login layout.
-     */
-    public LoginLayout() {
-        super(i18n.login());
-        setStyleName("n52_sensorweb_client_login_content");
-        init();
+    
+    public static LoginLayout createUserLoginLayout() {
+        LoginLayout loginLayout = new LoginLayout(i18n.userLogin());
+        loginLayout.initUserLogin();
+        return loginLayout;
+    }
+    
+    public static LoginLayout createAdminLoginLayout() {
+        LoginLayout loginLayout = new LoginLayout(i18n.adminLogin());
+        loginLayout.initAdminLogin();
+        return loginLayout;
     }
 
-    /**
-     * Inits the layout.
-     */
-    private void init() {
+    private LoginLayout(String loginTitle) {
+        super(loginTitle);
+        setStyleName("n52_sensorweb_client_form_content");
+    }
+    
+    private void initUserLogin() {
+        userNameItem = createUserNameItem();
+        passwordItem = createPasswordItem();
+        ButtonItem loginButton = createLoginButton();
+        LinkItem registerLink = createRegisterLink();
+        form.setFields(headerItem, userNameItem, passwordItem, loginButton, registerLink);
+        addMember(form);
+    }
+    
+    private void initAdminLogin() {
+        addStyleName("n52_sensorweb_client_form_content n52_sensorweb_client_admin_login");
+        userNameItem = createUserNameItem();
+        passwordItem = createPasswordItem();
+        ButtonItem loginButton = createLoginButton();
+        LinkItem backToDiagramLink = createBackToDiagramLink();
+        form.setFields(headerItem, userNameItem, passwordItem, loginButton, backToDiagramLink);
+        addMember(form);
+    }
 
-        // NameItem
-        this.nameItem = new TextItem();
-        this.nameItem.setName("userName");
-        this.nameItem.setTitle(i18n.userName());
-        this.nameItem.setRequired(true);
-        this.nameItem.setSelectOnFocus(true);
-        this.nameItem.setLength(100);
-        this.nameItem.addKeyPressHandler(new KeyPressHandler() {
-            public void onKeyPress(KeyPressEvent event) {
-                if((event.getKeyName().equals("Enter"))&&(LoginLayout.this.form.validate(false))){
-                    login();
+    private TextItem createUserNameItem() {
+        if (userNameItem == null) {
+            userNameItem = new TextItem();
+            userNameItem.setName("userName");
+            userNameItem.setTitle(i18n.userName());
+            userNameItem.setRequired(true);
+            userNameItem.setSelectOnFocus(true);
+            userNameItem.setLength(100);
+            userNameItem.addKeyPressHandler(new KeyPressHandler() {
+                public void onKeyPress(KeyPressEvent event) {
+                    if ( (event.getKeyName().equals("Enter")) && (LoginLayout.this.form.validate(false))) {
+                        login();
+                    }
                 }
-            }
-        });
+            });
+        }
+        return userNameItem;
+    }
 
-        // PasswordItem
-        this.passwordItem = new PasswordItem();
-        this.passwordItem.setName("password");
-        this.passwordItem.setTitle(i18n.password());
-        this.passwordItem.setRequired(true);
-        this.passwordItem.setLength(20);
-        this.passwordItem.addKeyPressHandler(new KeyPressHandler() {
-            public void onKeyPress(KeyPressEvent event) {
-                if((event.getKeyName().equals("Enter"))&&(LoginLayout.this.form.validate(false))){
-                    login();
+    private PasswordItem createPasswordItem() {
+        if (passwordItem == null) {
+            passwordItem = new PasswordItem();
+            passwordItem.setName("password");
+            passwordItem.setTitle(i18n.password());
+            passwordItem.setRequired(true);
+            passwordItem.setLength(20);
+            passwordItem.addKeyPressHandler(new KeyPressHandler() {
+                public void onKeyPress(KeyPressEvent event) {
+                    if ( (event.getKeyName().equals("Enter")) && (LoginLayout.this.form.validate(false))) {
+                        login();
+                    }
                 }
-            }
-        });
+            });
+        }
+        return passwordItem;
+    }
 
-        // Login button
-        ButtonItem validateItem = new ButtonItem();
-        validateItem.setTitle(i18n.login());
-        validateItem.addClickHandler(new ClickHandler() {
+    private ButtonItem createLoginButton() {
+        ButtonItem loginButton = new ButtonItem();
+        loginButton.setTitle(i18n.login());
+        loginButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (LoginLayout.this.form.validate(false)) {
                     login();
                 }
             }
         });
-
-        this.form.setFields(this.headerItem, this.nameItem, this.passwordItem, validateItem);
-
-        addMember(this.form);
+        return loginButton;
     }
 
-    private void login(){
-        String name = LoginLayout.this.nameItem.getValue().toString();
-        Object o = LoginLayout.this.passwordItem.getValue();
-
-        EventBus.getMainEventBus().fireEvent(new LoginEvent(name, DataControlsSes.createMD5(o.toString())));
-        
+    private void login() {
+        String name = LoginLayout.this.userNameItem.getValueAsString();
+        String pwd = LoginLayout.this.passwordItem.getValueAsString();
+        getMainEventBus().fireEvent(new LoginEvent(name, createMD5(pwd)));
         clearFields();
     }
 
-    /**
-     * @return {@link TextItem}
-     */
+    private LinkItem createRegisterLink() {
+        LinkItem registerLink = new LinkItem();
+        registerLink.setShowTitle(false); // only link
+        registerLink.setDefaultValue(i18n.register());
+        registerLink.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                getMainEventBus().fireEvent(new ChangeLayoutEvent(REGISTER));
+            }
+        });
+        return registerLink;
+    }
+
+    private LinkItem createBackToDiagramLink() {
+        LinkItem backToDiagramLink = new LinkItem();
+        backToDiagramLink.setShowTitle(false); // only link
+        backToDiagramLink.setDefaultValue(i18n.back());
+        backToDiagramLink.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                getView().getLegend().switchToDiagramTab();
+            }
+        });
+        return backToDiagramLink;
+    }
+        
     public TextItem getNameItem() {
-        return this.nameItem;
+        return userNameItem;
     }
 
-    /**
-     * @return {@link PasswordItem}
-     */
     public PasswordItem getPasswordItem() {
-        return this.passwordItem;
+        return passwordItem;
     }
 
-    /**
-     * 
-     */
-    public void update(){
+    public void update() {
         LoginLayout.this.form.validate();
     }
-    
-    /**
-     * clear all fields
-     */
-    public void clearFields(){
-        this.nameItem.clearValue();
-        this.passwordItem.clearValue();
+
+    public void clearFields() {
+        userNameItem.clearValue();
+        passwordItem.clearValue();
     }
 }

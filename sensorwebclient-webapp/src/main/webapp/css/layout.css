@@ -122,6 +122,7 @@ body {
   filter: alpha(opacity = 100);
 }
 .n52_sensorweb_client_legendlink {
+  cursor: pointer;
   color: #3f8589;
   font-size: 11px;
 }
@@ -160,8 +161,11 @@ tr.sensorInfo:nth-child(2n) {
 tr.sensorInfo:hover {
   background-color: #3f8566;
 }
-.n52_sensorweb_client_login_content {
+.n52_sensorweb_client_form_content {
   margin: 2em;
+}
+.n52_sensorweb_client_admin_login headerItem {
+  text-color: red;
 }
 .n52_sensorweb_client_create_abo_form_content {
   float: left;

@@ -34,7 +34,7 @@ import org.n52.client.ses.data.Tree;
 import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.CreateComplexRuleEvent;
 import org.n52.client.ses.event.GetAllPublishedRulesEvent;
-import org.n52.client.ses.ui.Layout;
+import org.n52.client.ses.ui.FormLayout;
 import org.n52.shared.Constants;
 import org.n52.shared.LogicalOperator;
 import org.n52.shared.responses.SesClientResponse;
@@ -78,7 +78,7 @@ import com.smartgwt.client.widgets.layout.VLayout;
  * 
  * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
  */
-public class CreateComplexRuleLayout extends Layout {
+public class CreateComplexRuleLayout extends FormLayout {
 
     private VLayout ruleBlockLayout;
     private ArrayList<String> treeContent = new ArrayList<String>();
@@ -236,9 +236,9 @@ public class CreateComplexRuleLayout extends Layout {
             public void onClick(ClickEvent event) {
                 String role = Cookies.getCookie(SesRequestManager.COOKIE_USER_ROLE);
                 if (role.equals("ADMIN")) {
-                    EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.RULELIST));
+                    EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.RULELIST));
                 } else {
-                    EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.EDIT_RULES));
+                    EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.EDIT_RULES));
                 }
             }
         });

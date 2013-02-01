@@ -7,14 +7,13 @@ import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.OVER_UNDER
 import static org.n52.shared.serializable.pojos.Rule.GREATER_THAN;
 import static org.n52.shared.serializable.pojos.Rule.LESS_THAN_OR_EQUAL_TO;
 import static org.n52.shared.util.MathSymbolUtil.getInverse;
-import static org.n52.shared.util.MathSymbolUtil.getSymbolForIndex;
 import static org.n52.shared.util.MathSymbolUtil.getMathSymbols;
+import static org.n52.shared.util.MathSymbolUtil.getSymbolForIndex;
 
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.FormItemErrorFormatter;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.form.fields.StaticTextItem;

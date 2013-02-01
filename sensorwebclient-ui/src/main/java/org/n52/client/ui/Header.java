@@ -85,14 +85,14 @@ public class Header extends HLayout {
 //        linkLayout.addMember(getSeparator());
         linkLayout.addMember(getRestartLink());
         linkLayout.addMember(getSeparator());
+        if (SesClientUtil.isSesEnabled()) {
+            linkLayout.addMember(getAdminLink());
+            linkLayout.addMember(getSeparator());
+        }
         linkLayout.addMember(getHelpLink());
         linkLayout.addMember(getSeparator());
         linkLayout.addMember(getAddBookmarkLink());
         linkLayout.addMember(getSeparator());
-        if (SesClientUtil.isSesEnabled()) {
-        	linkLayout.addMember(getAdminLink());
-        	linkLayout.addMember(getSeparator());
-        }
         linkLayout.addMember(getImprintLink());
         linkLayout.addMember(getSeparator());
         linkLayout.addMember(getCopyrightLink());
@@ -190,12 +190,12 @@ public class Header extends HLayout {
 		admin.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				DataPanel dataPanel = View.getInstance().getDataPanel();
+				DataPanel dataPanel = View.getView().getDataPanel();
 				DataPanelTab newTab;
-				if (dataPanel.getCurrentTab().equals(View.getInstance().getSesTab())) {
-					newTab = View.getInstance().getEesTab();
+				if (dataPanel.getCurrentTab().equals(View.getView().getSesTab())) {
+					newTab = View.getView().getDiagramTab();
 				} else {
-					newTab = View.getInstance().getSesTab();
+					newTab = View.getView().getSesTab();
 				}
 				dataPanel.getPanel().selectTab(newTab);
 				dataPanel.setCurrentTab(newTab);

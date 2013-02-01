@@ -31,7 +31,7 @@ public interface I18N extends Constants {
 
     String password();
 
-    String login();
+    String userLogin();
 
     String registration();
 
@@ -421,5 +421,11 @@ public interface I18N extends Constants {
     String hours();
 
     String creatingRuleWasUnsuccessful();
+
+    String adminLogin();
+
+    String back();
+
+    String login();
     
 }

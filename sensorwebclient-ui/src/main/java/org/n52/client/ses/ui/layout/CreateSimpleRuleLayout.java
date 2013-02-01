@@ -28,8 +28,8 @@ import static java.lang.Integer.parseInt;
 import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ID;
 import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ROLE;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
-import static org.n52.client.ses.ui.Layout.Layouts.EDIT_RULES;
-import static org.n52.client.ses.ui.Layout.Layouts.RULELIST;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.EDIT_RULES;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.RULELIST;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.OVER_UNDERSHOOT;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.SENSOR_LOSS;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.SUM_OVER_TIME;
@@ -49,7 +49,7 @@ import org.n52.client.ses.ctrl.SesRequestManager;
 import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.CreateSimpleRuleEvent;
 import org.n52.client.ses.event.GetPhenomenaEvent;
-import org.n52.client.ses.ui.Layout;
+import org.n52.client.ses.ui.FormLayout;
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.Rule;
@@ -82,7 +82,7 @@ import com.smartgwt.client.widgets.layout.VLayout;
  * 
  * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
  */
-public class CreateSimpleRuleLayout extends Layout {
+public class CreateSimpleRuleLayout extends FormLayout {
 
     /** The selected type. */
     private SimpleRuleType selectedRuleType;

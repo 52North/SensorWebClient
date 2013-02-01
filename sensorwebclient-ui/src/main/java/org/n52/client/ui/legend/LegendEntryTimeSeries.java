@@ -24,6 +24,7 @@
 
 package org.n52.client.ui.legend;
 
+import static org.n52.client.ctrl.PropertiesManager.getPropertiesManager;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.ArrayList;
@@ -189,7 +190,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		if (this.wasDragged) {
 
 			// members are updated earlier than children!!
-			Canvas[] members = View.getInstance().getLegend().getLegendStack()
+			Canvas[] members = View.getView().getLegend().getLegendStack()
 					.getMembers();
 			for (int entryIndex = 0; entryIndex < members.length; entryIndex++) {
 				Canvas canvas = members[entryIndex];
@@ -375,7 +376,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 				"../img/icons/control_end_blue.png",
 				i18n.jumpToLast(),
 				i18n.jumpToLastExtended());
-		View.getInstance().registerTooltip(jumpLast);
+		View.getView().registerTooltip(jumpLast);
 		jumpLast.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
@@ -404,7 +405,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 				"../img/icons/control_start_blue.png",
 				i18n.jumpToFirst(),
 				i18n.jumpToFirstExtended());
-		View.getInstance().registerTooltip(jumpFirst);
+		View.getView().registerTooltip(jumpFirst);
 		jumpFirst.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
@@ -434,7 +435,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		ImageButton exportPDF = new ImageButton("exportPDF",
 				"../img/icons/page_white_acrobat.png",
 				i18n.exportPDF(), i18n.exportPDFExtended());
-		View.getInstance().registerTooltip(exportPDF);
+		View.getView().registerTooltip(exportPDF);
 		exportPDF.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
@@ -452,7 +453,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		ImageButton exportXLS = new ImageButton(
 				"exportXLS", "../img/icons/page_white_excel.png", //$NON-NLS-2$
 				i18n.exportXLS(), i18n.exportXLSExtended());
-		View.getInstance().registerTooltip(exportXLS);
+		View.getView().registerTooltip(exportXLS);
 		exportXLS.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
@@ -470,7 +471,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		ImageButton exportCSV = new ImageButton(
 				"exportCSV", "../img/icons/table.png", //$NON-NLS-2$
 				i18n.exportCSV(), i18n.exportCSVExtended());
-		View.getInstance().registerTooltip(exportCSV);
+		View.getView().registerTooltip(exportCSV);
 		exportCSV.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
@@ -816,8 +817,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.seriesType.addChangedHandler(new ChangedHandler() {
 
 			public void onChanged(ChangedEvent event) {
-				PropertiesManager propertiesManager = PropertiesManager
-						.getInstance();
+				PropertiesManager propertiesManager = getPropertiesManager();
 				String selectedSeriesType = LegendEntryTimeSeries.this.seriesType
 						.getValue().toString();
 
@@ -983,7 +983,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		up.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
-				Canvas[] members = View.getInstance().getLegend()
+				Canvas[] members = View.getView().getLegend()
 						.getLegendStack().getMembers();
 
 				for (int i = 0; i < members.length; i++) {
@@ -1026,7 +1026,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		down.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
-				Canvas[] members = View.getInstance().getLegend()
+				Canvas[] members = View.getView().getLegend()
 						.getLegendStack().getMembers();
 
 				for (int i = 0; i < members.length; i++) {

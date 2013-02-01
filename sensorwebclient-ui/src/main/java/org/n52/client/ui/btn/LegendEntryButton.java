@@ -95,7 +95,7 @@ public class LegendEntryButton extends Button {
         this.setShowFocusedAsOver(false);
         this.setMargin(this.margin);
         this.setCursor(Cursor.POINTER);
-        if (View.getInstance().isShowExtendedTooltip()) {
+        if (View.getView().isShowExtendedTooltip()) {
             this.setTooltip(this.extendedTooltip);
         } else {
             this.setTooltip(this.toolTip);

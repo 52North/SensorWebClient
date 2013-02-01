@@ -24,6 +24,8 @@
 package org.n52.client.ses.ctrl;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.shared.serializable.pojos.UserRole.LOGOUT;
+import static org.n52.shared.serializable.pojos.UserRole.NOT_REGISTERED_USER;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -36,7 +38,7 @@ import org.n52.client.ses.event.GetAllPublishedRulesEvent;
 import org.n52.client.ses.event.GetStationsEvent;
 import org.n52.client.ses.event.LogoutEvent;
 import org.n52.client.ses.ui.SesTab;
-import org.n52.client.ses.ui.Layout.Layouts;
+import org.n52.client.ses.ui.FormLayout.LayoutType;
 import org.n52.shared.serializable.pojos.UserRole;
 
 import com.google.gwt.core.client.GWT;
@@ -57,68 +59,44 @@ import com.smartgwt.client.widgets.layout.VLayout;
  */
 public class DataControlsSes extends DataControls {
 
-    /** The role. */
-    private UserRole role = UserRole.NOT_REGISTERED_USER;
+    private UserRole role = NOT_REGISTERED_USER;
 
-    /** The button width. */
     private final int buttonWidth = 190;
 
-    /** The inner layout. */
     private VLayout innerLayout;
 
-    /** The top layout. */
     private HLayout topLayout;
 
-    /** The bottom layout. */
     private HLayout bottomLayout;
 
-    // buttons
-    // user
-    /** The login button. */
     private IButton loginButton;
 
-    /** The logout button. */
     private IButton logoutButton;
 
-    /** The register button. */
     private IButton registerButton;
 
-    /** The get password button. */
     private IButton getPasswordButton;
 
-    // registered user
-    /** The edit profile button. */
     private IButton editProfileButton;
 
-    /** The abo rule button. */
     private IButton aboRuleButton;
 
-    /** The create simple rule button. */
     private IButton createSimpleRuleButton;
 
-    /** The create complex rule button. */
     private IButton createComplexRuleButton;
 
-    /** The edit rules button. */
     private IButton editRulesButton;
 
-    /** The subscriptions button. */
     private IButton subscriptionsButton;
 
-    // admin
-    /** The manage user button. */
     private IButton manageUserButton;
 
-    /** The manage rules button. */
     private IButton manageRulesButton;
 
-    /** The search rules button */
     private IButton searchRulesButton;
 
-    /** The help button */
     private IButton helpButton;
 
-    /** The tab. */
     public static SesTab tab;
 
     private static String webAppPath = "";
@@ -135,24 +113,14 @@ public class DataControlsSes extends DataControls {
 
     public static String defaultFormat;
 
-    /**
-     * Instantiates a new data controls ses.
-     * 
-     * @param sesTabController
-     *            the ses tab controller
-     */
     public DataControlsSes(SesTabController sesTabController) {
         generateControls();
     }
 
-    /**
-     * Generate controls.
-     */
     private void generateControls() {
         setAlign(Alignment.CENTER);
         setHeight(52);
         setOverflow(Overflow.AUTO);
-        // default is "normal"
         setStyleName("n52_sensorweb_client_dataControls");
 
         this.innerLayout = new VLayout();
@@ -163,13 +131,13 @@ public class DataControlsSes extends DataControls {
         this.bottomLayout.setTabIndex(-1);
 
         // loginButton
-        this.loginButton = new IButton(i18n.login());
+        this.loginButton = new IButton(i18n.userLogin());
         this.loginButton.setWidth(this.buttonWidth);
         this.loginButton.setShowRollOver(true);
         this.loginButton.setShowDown(true);
         this.loginButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.LOGIN));
+                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.LOGIN));
                 highlightSelectedButton(loginButton);
             }
         });
@@ -181,7 +149,7 @@ public class DataControlsSes extends DataControls {
         this.registerButton.setShowDown(true);
         this.registerButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.REGISTER));
+                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.REGISTER));
                 highlightSelectedButton(registerButton);
             }
         });
@@ -195,7 +163,7 @@ public class DataControlsSes extends DataControls {
         this.getPasswordButton.setShowDown(true);
         this.getPasswordButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.PASSWORD));
+                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.PASSWORD));
                 highlightSelectedButton(getPasswordButton);
             }
         });
@@ -207,7 +175,7 @@ public class DataControlsSes extends DataControls {
         this.editProfileButton.setShowDown(true);
         this.editProfileButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.EDIT_PROFILE));
+                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.EDIT_PROFILE));
                 highlightSelectedButton(editProfileButton);
             }
         });
@@ -219,7 +187,7 @@ public class DataControlsSes extends DataControls {
         this.aboRuleButton.setShowDown(true);
         this.aboRuleButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.ABOS));
+                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.ABOS));
                 highlightSelectedButton(aboRuleButton);
             }
         });
@@ -231,7 +199,7 @@ public class DataControlsSes extends DataControls {
         this.createSimpleRuleButton.setShowDown(true);
         this.createSimpleRuleButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.CREATE_SIMPLE));
+                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.CREATE_SIMPLE));
                 EventBus.getMainEventBus().fireEvent(new GetStationsEvent());
                 highlightSelectedButton(createSimpleRuleButton);
             }
@@ -244,7 +212,7 @@ public class DataControlsSes extends DataControls {
         this.createComplexRuleButton.setShowDown(true);
         this.createComplexRuleButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.CREATE_COMPLEX));
+                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.CREATE_COMPLEX));
                 highlightSelectedButton(createComplexRuleButton);
             }
         });
@@ -256,7 +224,7 @@ public class DataControlsSes extends DataControls {
         this.editRulesButton.setShowDown(true);
         this.editRulesButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.EDIT_RULES));
+                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.EDIT_RULES));
                 EventBus.getMainEventBus().fireEvent(new GetAllPublishedRulesEvent(1));
                 highlightSelectedButton(editRulesButton);
             }
@@ -269,7 +237,7 @@ public class DataControlsSes extends DataControls {
         this.subscriptionsButton.setShowDown(true);
         this.subscriptionsButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.USER_SUBSCRIPTIONS));
+                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.USER_SUBSCRIPTIONS));
                 highlightSelectedButton(subscriptionsButton);
             }
         });
@@ -281,7 +249,7 @@ public class DataControlsSes extends DataControls {
         this.manageUserButton.setShowDown(true);
         this.manageUserButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.USERLIST));
+                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.USERLIST));
                 highlightSelectedButton(manageUserButton);
             }
         });
@@ -293,7 +261,7 @@ public class DataControlsSes extends DataControls {
         this.manageRulesButton.setShowDown(true);
         this.manageRulesButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.RULELIST));
+                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.RULELIST));
                 highlightSelectedButton(manageRulesButton);
             }
         });
@@ -316,7 +284,7 @@ public class DataControlsSes extends DataControls {
         this.searchRulesButton.setShowDown(true);
         this.searchRulesButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.SEARCH));
+                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.SEARCH));
                 highlightSelectedButton(searchRulesButton);
             }
         });
@@ -340,9 +308,6 @@ public class DataControlsSes extends DataControls {
         addMemberToLayouts();
     }
 
-    /**
-     * Adds the member to layouts.
-     */
     public void addMemberToLayouts() {
 
         // remove all members from layouts
@@ -397,26 +362,20 @@ public class DataControlsSes extends DataControls {
         this.innerLayout.addMember(this.bottomLayout);
         addMember(this.innerLayout);
     }
+    
+    public UserRole getRole() {
+        return role;
+    }
 
-    /**
-     * Sets the role.
-     * 
-     * @param role
-     *            the new role
-     */
     public void setRole(UserRole role) {
-        if (role == UserRole.LOGOUT) {
-            this.role = UserRole.NOT_REGISTERED_USER;
+        if (role == LOGOUT) {
+            this.role = NOT_REGISTERED_USER;
         } else {
             this.role = role;
         }
         addMemberToLayouts();
     }
 
-    /**
-     * 
-     * @param selectedButton
-     */
     public void highlightSelectedButton(IButton selectedButton) {
         this.loginButton.setSelected(false);
         this.logoutButton.setSelected(false);
@@ -437,52 +396,24 @@ public class DataControlsSes extends DataControls {
         this.helpButton.setSelected(false);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.n52.client.view.gui.elements.controlsImpl.DataControls#getControls()
-     */
     @Override
     public Canvas getControls() {
         return this;
     }
 
-    /**
-     * Update.
-     */
     public void update() {
         generateControls();
     }
 
-    /**
-     * Gets the tab.
-     * 
-     * @return the tab
-     */
     public SesTab getTab() {
         return DataControlsSes.tab;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.n52.client.view.gui.elements.controlsImpl.DataControls#getControlHeight
-     * ()
-     */
     @Override
     public int getControlHeight() {
         return this.getHeight();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.n52.client.view.gui.elements.controlsImpl.DataControls#getControlWidth
-     * ()
-     */
     @Override
     public int getControlWidth() {
         return this.getWidth();

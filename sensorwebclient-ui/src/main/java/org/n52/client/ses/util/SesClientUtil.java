@@ -24,12 +24,14 @@
 
 package org.n52.client.ses.util;
 
+import static org.n52.client.ctrl.PropertiesManager.getPropertiesManager;
+
 import org.n52.client.ctrl.PropertiesManager;
 
 public class SesClientUtil {
     
 	public static boolean isSesEnabled() {
-    	return PropertiesManager.getInstance().getTabsFromPropertiesFile().contains("SesTab");
+    	return getPropertiesManager().getTabsFromPropertiesFile().contains("SesTab");
 	}
 	
 }

@@ -93,7 +93,7 @@ public class FeedObservationThread extends Thread {
                         observationMember = checkObservations(observationMember);
                         if ( ! (observationMember == null) && !sesConnection.isClosed()) {
                             sesConnection.publishObservation(observationMember);
-                            LOGGER.info(metadata.getProcedure() + " with " + metadata.getOffering() + " added to SES");
+                            LOGGER.info(metadata.getProcedure() + " with " + metadata.getOffering() + " feeded to SES");
                         }
                         else {
                             LOGGER.info(String.format("No data received for procedure '%s'.", metadata.getProcedure()));

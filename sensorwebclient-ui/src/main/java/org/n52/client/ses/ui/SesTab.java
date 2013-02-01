@@ -23,9 +23,11 @@
  */
 package org.n52.client.ses.ui;
 
+import static org.n52.client.ses.ui.layout.LoginLayout.createAdminLoginLayout;
+
 import org.n52.client.ctrl.DataControls;
 import org.n52.client.ses.ctrl.SesTabController;
-import org.n52.client.ses.ui.Layout.Layouts;
+import org.n52.client.ses.ui.FormLayout.LayoutType;
 import org.n52.client.ses.ui.layout.AllRulesLayout;
 import org.n52.client.ses.ui.layout.CreateComplexRuleLayout;
 import org.n52.client.ses.ui.layout.EditProfileLayout;
@@ -93,7 +95,7 @@ public class SesTab extends DataPanelTab {
         this.layout.setTabIndex(-1);
         this.layout.setCanAcceptDrop(true);
 
-        this.loginLayout = new LoginLayout();
+        this.loginLayout = createAdminLoginLayout();
         this.loginLayout.setCanAcceptDrop(true);
 
         this.registerLayout = new RegisterLayout();
@@ -144,7 +146,7 @@ public class SesTab extends DataPanelTab {
      * @param newLayout
      *            the new layout
      */
-    public void setLayout(Layouts newLayout) {
+    public void setLayout(LayoutType newLayout) {
         switch (newLayout) {
         case LOGIN:
             this.layout.setMembers(this.loginLayout);
@@ -275,10 +277,10 @@ public class SesTab extends DataPanelTab {
     }
 
     /**
-     * @return {@link Layout}
+     * @return {@link FormLayout}
      */
-    public Layout getCurrentLayout(){
-        return (Layout)this.layout.getMember(0);
+    public FormLayout getCurrentLayout(){
+        return (FormLayout)this.layout.getMember(0);
     }
 
     /**

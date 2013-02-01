@@ -24,6 +24,7 @@
 
 package org.n52.client.util;
 
+import static org.n52.client.ctrl.PropertiesManager.getPropertiesManager;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import org.n52.client.ctrl.PropertiesManager;
@@ -63,7 +64,7 @@ public class ClientUtils {
      */
     public static boolean isValidTimeFrameForZoomIn(long begin, long end) {
         long minTime = 1;
-        String parameter = PropertiesManager.getInstance().getParameterAsString("minTimeFrameZoom");
+        String parameter = getPropertiesManager().getParameterAsString("minTimeFrameZoom");
         try {
             minTime = Long.parseLong(parameter);
         }
