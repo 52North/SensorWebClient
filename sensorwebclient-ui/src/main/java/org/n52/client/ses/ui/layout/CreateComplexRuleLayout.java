@@ -785,7 +785,7 @@ public class CreateComplexRuleLayout extends FormLayout {
         this.oldSelectedFilter = "";
         this.cancelButton.setVisible(true);
         
-        ArrayList<String> treeList = response.getList();
+        ArrayList<String> treeList = response.getBasicRules();
         Rule rule = response.getRule();
         
         this.oldRuleName = rule.getTitle();

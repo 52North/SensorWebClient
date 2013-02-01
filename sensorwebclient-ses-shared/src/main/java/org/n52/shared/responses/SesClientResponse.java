@@ -127,7 +127,7 @@ public class SesClientResponse implements Serializable {
         return this.type;
     }
 
-    public ArrayList getList() {
+    public ArrayList getBasicRules() {
         return this.basicList;
     }
     
@@ -139,7 +139,7 @@ public class SesClientResponse implements Serializable {
         return this.message;
     }
 
-    public ArrayList getComplexList() {
+    public ArrayList getComplexRules() {
         return this.complexList;
     }
 

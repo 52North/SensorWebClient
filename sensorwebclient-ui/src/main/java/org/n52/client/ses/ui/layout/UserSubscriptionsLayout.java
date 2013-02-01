@@ -70,6 +70,7 @@ public class UserSubscriptionsLayout extends FormLayout {
      */
     public UserSubscriptionsLayout() {
         super(i18n.subscriptions());
+        setStyleName("n52_sensorweb_client_form_content");
         
         // init DataSource
         this.dataSource = new RuleDataSource();
@@ -95,8 +96,8 @@ public class UserSubscriptionsLayout extends FormLayout {
                         subscribeButton.setPrompt(i18n.unsubscribeThisRule());
                         subscribeButton.setShowDown(false);
                         subscribeButton.setShowRollOver(false);
-                        subscribeButton.setHeight(16);
-                        subscribeButton.setWidth(140);
+                        subscribeButton.setHeight(18);
+                        subscribeButton.setWidth("80%");
                         subscribeButton.setLayoutAlign(Alignment.CENTER);
                         subscribeButton.addClickHandler(new ClickHandler() {
                             public void onClick(ClickEvent event) {
@@ -125,31 +126,32 @@ public class UserSubscriptionsLayout extends FormLayout {
         this.subscriptionsGrid.sort(1, SortDirection.ASCENDING);
 
         // fields of the table
-        ListGridField typeField = new ListGridField("type", i18n.type());
-        typeField.setWidth(60);
-        typeField.setAlign(Alignment.CENTER);
+//        ListGridField typeField = new ListGridField("type", i18n.type());
+//        typeField.setWidth(60);
+//        typeField.setAlign(Alignment.CENTER);
 
         ListGridField nameField = new ListGridField("name", i18n.name());
         nameField.setAlign(Alignment.CENTER);
 
-        ListGridField descriptionField = new ListGridField("description", i18n.description());
-        descriptionField.setAlign(Alignment.CENTER);
+//        ListGridField descriptionField = new ListGridField("description", i18n.description());
+//        descriptionField.setAlign(Alignment.CENTER);
 
-        ListGridField mediumField = new ListGridField("medium", i18n.medium());
-        mediumField.setWidth(90);
-        mediumField.setAlign(Alignment.CENTER);
+//        ListGridField mediumField = new ListGridField("medium", i18n.medium());
+//        mediumField.setWidth(90);
+//        mediumField.setAlign(Alignment.CENTER);
 
-        ListGridField formatField = new ListGridField("format", "Format");
-        formatField.setWidth(90);
-        formatField.setAlign(Alignment.CENTER);
+//        ListGridField formatField = new ListGridField("format", "Format");
+//        formatField.setWidth(90);
+//        formatField.setAlign(Alignment.CENTER);
 
-        ListGridField subscribeField = new ListGridField("subscribe", i18n.unsubscribe());
-        subscribeField.setWidth(150);
+        ListGridField subscribeField = new ListGridField("subscribe", " " /*, i18n.unsubscribe()*/);
+        subscribeField.setWidth("20%");
         subscribeField.setAlign(Alignment.CENTER);
         subscribeField.setCanFilter(false);
+        subscribeField.setCanSort(false);
 
         // set Fields
-        this.subscriptionsGrid.setFields(typeField, nameField, descriptionField, mediumField, formatField, subscribeField);
+        this.subscriptionsGrid.setFields(nameField, subscribeField);
         this.subscriptionsGrid.setCanResizeFields(false);
 
         this.form.setFields(this.headerItem);

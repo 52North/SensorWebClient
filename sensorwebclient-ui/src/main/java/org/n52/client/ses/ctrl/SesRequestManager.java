@@ -152,7 +152,7 @@ public class SesRequestManager extends RequestManager {
                     }
                     if (user.getRole().equals(UserRole.ADMIN)) {
                         String names = null;
-                        ArrayList<String> list = response.getComplexList();
+                        ArrayList<String> list = response.getComplexRules();
                        
                         for (int i = 0; i < list.size(); i++) {
                             names = names + list.get(i) + ", ";

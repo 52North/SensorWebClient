@@ -199,13 +199,13 @@ public class SesTabController extends Controller<SesTab> {
             switch (response) {
 
             case DATA:
-                getDataControls().setWebAppPath((String) evt.getResponse().getList().get(0));
-                getDataControls().setWarnUserLongNotification((Boolean) evt.getResponse().getList().get(1));
-                getDataControls().setMinimumPasswordLength((Integer) evt.getResponse().getList().get(2));
-                getDataControls().setAvailableWNSMedia(((String)evt.getResponse().getList().get(3)).split(","));
-                getDataControls().setDefaultMedium((String) evt.getResponse().getList().get(4));
-                getDataControls().setAvailableFormats(((String)evt.getResponse().getList().get(5)).split(","));
-                getDataControls().setDefaultFormat((String) evt.getResponse().getList().get(6));
+                getDataControls().setWebAppPath((String) evt.getResponse().getBasicRules().get(0));
+                getDataControls().setWarnUserLongNotification((Boolean) evt.getResponse().getBasicRules().get(1));
+                getDataControls().setMinimumPasswordLength((Integer) evt.getResponse().getBasicRules().get(2));
+                getDataControls().setAvailableWNSMedia(((String)evt.getResponse().getBasicRules().get(3)).split(","));
+                getDataControls().setDefaultMedium((String) evt.getResponse().getBasicRules().get(4));
+                getDataControls().setAvailableFormats(((String)evt.getResponse().getBasicRules().get(5)).split(","));
+                getDataControls().setDefaultFormat((String) evt.getResponse().getBasicRules().get(6));
                 break;
 
             case TERMS_OF_USE:
@@ -270,26 +270,26 @@ public class SesTabController extends Controller<SesTab> {
 //                getTab().getSimpleRuleLayout().setUnit(evt.getResponse().getComplexList());
 //                break;
             case OWN_RULES:
-                getTab().getRuleLayout().setDataOwnRules(evt.getResponse().getList(),
-                        evt.getResponse().getComplexList());
+                getTab().getRuleLayout().setDataOwnRules(evt.getResponse().getBasicRules(),
+                        evt.getResponse().getComplexRules());
                 break;
             case OTHER_RULES:
-                getTab().getRuleLayout().setDataOtherRules(evt.getResponse().getList(),
-                        evt.getResponse().getComplexList());
+                getTab().getRuleLayout().setDataOtherRules(evt.getResponse().getBasicRules(),
+                        evt.getResponse().getComplexRules());
                 break;
             case EDIT_OWN_RULES:
-                getTab().getEditRulesLayout().setOwnData(evt.getResponse().getList(),
-                        evt.getResponse().getComplexList());
+                getTab().getEditRulesLayout().setOwnData(evt.getResponse().getBasicRules(),
+                        evt.getResponse().getComplexRules());
                 break;
             case EDIT_OTHER_RULES:
-                getTab().getEditRulesLayout().setOtherData(evt.getResponse().getList(),
-                        evt.getResponse().getComplexList());
+                getTab().getEditRulesLayout().setOtherData(evt.getResponse().getBasicRules(),
+                        evt.getResponse().getComplexRules());
                 break;
             case All_RULES:
-                getTab().getAllRulesLayout().setData(evt.getResponse().getList(), evt.getResponse().getComplexList());
+                getTab().getAllRulesLayout().setData(evt.getResponse().getBasicRules(), evt.getResponse().getComplexRules());
                 break;
             case ALL_PUBLISHED_RULES:
-                getTab().getComplexLayout().setRules(evt.getResponse().getList());
+                getTab().getComplexLayout().setRules(evt.getResponse().getBasicRules());
                 break;
                 // TODO remove dead code
 //            case RULE_NAME_EXISTS:
@@ -300,14 +300,14 @@ public class SesTabController extends Controller<SesTab> {
 //                });
 //                break;
             case USER_SUBSCRIPTIONS:
-                getTab().getUserSubscriptionsLayout().setData(evt.getResponse().getList(),
-                        evt.getResponse().getComplexList());
+                getTab().getUserSubscriptionsLayout().setData(evt.getResponse().getBasicRules(),
+                        evt.getResponse().getComplexRules());
                 break;
             case EDIT_COMPLEX_RULE:
                 getTab().getComplexLayout().editCR(evt.getResponse());
                 break;
             case SEARCH_RESULT:
-                getTab().getSearchLayout().setData(evt.getResponse().getList(), evt.getResponse().getComplexList());
+                getTab().getSearchLayout().setData(evt.getResponse().getBasicRules(), evt.getResponse().getComplexRules());
                 break;
             }
         }
