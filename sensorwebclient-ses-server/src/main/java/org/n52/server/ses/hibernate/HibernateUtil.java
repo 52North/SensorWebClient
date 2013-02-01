@@ -231,11 +231,20 @@ public class HibernateUtil extends HibernateDaoUtil {
         return users;
     }
 
-    public static void saveBasicRule(BasicRule rule) {
-        Session session = getSessionFactory().getCurrentSession();
-        session.beginTransaction();
-        session.saveOrUpdate(rule);
-        session.getTransaction().commit();
+    public static void saveBasicRule(final BasicRule rule) {
+    	execute(new CriteriaExecution<Void>() {
+			@Override
+			public Void execute(final Session session) {
+				TimeseriesMetadata metadata = rule.getTimeseriesMetadata();
+				if ( !existsTimeseriesMetadata(metadata)) {
+					String timeseriesId = metadata.getTimeseriesId();
+					TimeseriesMetadata persistedObject = getTimeseriesMetadata(timeseriesId);
+					rule.setTimeseriesMetadata(persistedObject);
+				}
+				session.saveOrUpdate(rule);
+				return null;
+			}
+		});
     }
 
     /**
@@ -709,14 +718,17 @@ public class HibernateUtil extends HibernateDaoUtil {
         session.getTransaction().commit();
     }
 
-    @SuppressWarnings("unchecked")
-    public static boolean existsTimeseriesFeed(String timeseriesId) {
-        Session session = getSessionFactory().getCurrentSession();
-        session.beginTransaction();
-        Criteria crit = session.createCriteria(TimeseriesFeed.class).add(Restrictions.eq(TIMESERIES_ID, timeseriesId));
-        List<TimeseriesFeed> timeseriesFeeds = crit.list();
-        session.getTransaction().commit();
-        return timeseriesFeeds.size() != 0;
+    public static boolean existsTimeseriesMetadata(final TimeseriesMetadata metadata) {
+    	return execute(new CriteriaExecution<Boolean>() {
+			@Override
+			public Boolean execute(Session session) {
+				String timeseriesId = metadata.getTimeseriesId();
+				Criteria crit = session.createCriteria(TimeseriesFeed.class);
+				crit.add(Restrictions.eq(TIMESERIES_ID, timeseriesId));
+		        List<TimeseriesFeed> timeseriesFeeds = crit.list();
+				return timeseriesFeeds.size() != 0;
+			}
+		}).booleanValue();
     }
 
     @SuppressWarnings("unchecked")

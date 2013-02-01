@@ -390,5 +390,9 @@ public interface I18N extends Constants {
 	String sesCommunicatorButton();
 	
 	String sesCommunicatorButtonExtend();
+
+	String loggedInAs();
+
+	String logout();
 	
 }
