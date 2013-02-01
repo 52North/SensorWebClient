@@ -177,6 +177,9 @@ public class SESConnector {
             Operation operation = new Operation(NOTIFY, serviceUrl + "?", serviceUrl);
             
             OperationResult doOperation = sesAdapter.doOperation(operation, parameter);
+            if (doOperation.getIncomingResultAsStream() == null) {
+                return; // SES responds with HTTP 204 when successful
+            }
             InputStream responseStream = new BufferedInputStream(doOperation.getIncomingResultAsStream());
             BufferedReader reader = new BufferedReader(new InputStreamReader(responseStream));
             StringBuilder sb = new StringBuilder();
