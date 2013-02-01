@@ -33,69 +33,68 @@ import org.n52.client.ses.event.handler.LoginEventHandler;
  */
 public class LoginEvent extends FilteredDispatchGwtEvent<LoginEventHandler> {
 
-    /** The TYPE. */
-    public static Type<LoginEventHandler> TYPE = new Type<LoginEventHandler>();
+	/** The TYPE. */
+	public static Type<LoginEventHandler> TYPE = new Type<LoginEventHandler>();
 
-    /** The name. */
-    private String name;
+	/** The name. */
+	private String name;
 
-    /** The password. */
-    private String password;
+	/** The password. */
+	private String password;
 
-    /**
-     * Instantiates a new login event.
-     * 
-     * @param name
-     *            the name
-     * @param password
-     *            the password
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
-    public LoginEvent(String name, String password, LoginEventHandler... blockedHandlers) {
-        super(blockedHandlers);
+	private boolean asAdmin;
 
-        this.name = name;
-        this.password = password;
-    }
+	/**
+	 * Instantiates a new login event.
+	 * 
+	 * @param name
+	 *            the name
+	 * @param password
+	 *            the password
+	 * @param asAdmin
+	 *            <b>true</b> if login as admin
+	 * @param blockedHandlers
+	 *            the blocked handlers
+	 */
+	public LoginEvent(String name, String password, boolean asAdmin,
+			LoginEventHandler... blockedHandlers) {
+		super(blockedHandlers);
+		this.name = name;
+		this.password = password;
+		this.asAdmin = asAdmin;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
-    @Override
-    protected void onDispatch(LoginEventHandler handler) {
-        handler.onLogin(this);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
+	 * .google.gwt.event.shared.EventHandler)
+	 */
+	@Override
+	protected void onDispatch(LoginEventHandler handler) {
+		handler.onLogin(this);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
-    @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<LoginEventHandler> getAssociatedType() {
-        return TYPE;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
+	 */
+	@Override
+	public com.google.gwt.event.shared.GwtEvent.Type<LoginEventHandler> getAssociatedType() {
+		return TYPE;
+	}
 
-    /**
-     * Gets the name.
-     * 
-     * @return the name
-     */
-    public String getName() {
-        return this.name;
-    }
+	public String getName() {
+		return this.name;
+	}
 
-    /**
-     * Gets the password.
-     * 
-     * @return the password
-     */
-    public String getPassword() {
-        return this.password;
-    }
+	public String getPassword() {
+		return this.password;
+	}
+
+	public boolean isAdminLogin() {
+		return this.asAdmin;
+	}
 }
