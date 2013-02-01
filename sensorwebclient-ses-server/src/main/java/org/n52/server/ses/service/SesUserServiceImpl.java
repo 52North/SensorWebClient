@@ -208,7 +208,7 @@ public class SesUserServiceImpl implements SesUserService {
     }
 
     @Override
-    public SesClientResponse login(String userName, String password) throws Exception {
+    public SesClientResponse login(String userName, String password, boolean isAdminLogin) throws Exception {
         try {
             LOG.debug("login user '{}'.", userName);
             // get user from DB
@@ -257,7 +257,9 @@ public class SesUserServiceImpl implements SesUserService {
                 HibernateUtil.updateUser(u);
 
                 // admin login
-                if (u.getRole().equals(UserRole.ADMIN)) {
+                if (isAdminLogin && !u.getRole().equals(UserRole.ADMIN)) {
+					return new SesClientResponse(SesClientResponse.types.LOGIN_AS_USER_IN_ADMIN_INTERFACE);
+				} else if (u.getRole().equals(UserRole.ADMIN)) {
                     // show the admin all deleted user since last login
                     ArrayList<String> temp = deletedUser;
                     deletedUser.clear();

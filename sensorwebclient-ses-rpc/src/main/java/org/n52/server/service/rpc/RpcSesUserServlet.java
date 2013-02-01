@@ -161,8 +161,8 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
     	return service.registerUser(userDTO);
     }
 
-    public synchronized SesClientResponse login(String userName, String password) throws Exception {
-        return service.login(userName, password);
+    public synchronized SesClientResponse login(String userName, String password, boolean isAdminLogin) throws Exception {
+        return service.login(userName, password, isAdminLogin);
     }
 
     public synchronized SesClientResponse newPassword(String userName, String email) throws Exception {

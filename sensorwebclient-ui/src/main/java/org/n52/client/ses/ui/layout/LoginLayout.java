@@ -51,6 +51,8 @@ public class LoginLayout extends FormLayout {
     private TextItem userNameItem;
 
     private PasswordItem passwordItem;
+
+	private boolean adminLogin;
     
     public static LoginLayout createUserLoginLayout() {
         LoginLayout loginLayout = new LoginLayout(i18n.userLogin());
@@ -70,6 +72,7 @@ public class LoginLayout extends FormLayout {
     }
     
     private void initUserLogin() {
+    	adminLogin = false;
         userNameItem = createUserNameItem();
         passwordItem = createPasswordItem();
         ButtonItem loginButton = createLoginButton();
@@ -79,6 +82,7 @@ public class LoginLayout extends FormLayout {
     }
     
     private void initAdminLogin() {
+    	adminLogin = true;
         addStyleName("n52_sensorweb_client_form_content n52_sensorweb_client_admin_login");
         userNameItem = createUserNameItem();
         passwordItem = createPasswordItem();
@@ -141,7 +145,11 @@ public class LoginLayout extends FormLayout {
     private void login() {
         String name = LoginLayout.this.userNameItem.getValueAsString();
         String pwd = LoginLayout.this.passwordItem.getValueAsString();
-        getMainEventBus().fireEvent(new LoginEvent(name, createMD5(pwd)));
+        if (adminLogin) {
+        	getMainEventBus().fireEvent(new LoginEvent(name, createMD5(pwd), true));
+        } else {
+        	getMainEventBus().fireEvent(new LoginEvent(name, createMD5(pwd), false));
+        }
         clearFields();
     }
 

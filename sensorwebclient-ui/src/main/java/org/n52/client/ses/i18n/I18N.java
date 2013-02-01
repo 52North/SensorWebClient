@@ -427,5 +427,7 @@ public interface I18N extends Constants {
     String back();
 
     String login();
+
+	String onlyAdminsAllowedToLogin();
     
 }

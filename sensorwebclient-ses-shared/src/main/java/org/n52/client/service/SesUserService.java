@@ -33,7 +33,7 @@ public interface SesUserService {
 
     public abstract SesClientResponse registerUser(UserDTO userDTO) throws Exception;
 
-    public abstract SesClientResponse login(String userName, String password) throws Exception;
+    public abstract SesClientResponse login(String userName, String password, boolean isAdminLogin) throws Exception;
 
     public abstract SesClientResponse newPassword(String userName, String email) throws Exception;
 

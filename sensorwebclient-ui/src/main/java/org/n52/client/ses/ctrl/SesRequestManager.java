@@ -127,7 +127,7 @@ public class SesRequestManager extends RequestManager {
      * @param password
      *            the password
      */
-    public void login(String name, String password) {
+    public void login(String name, String password, boolean isAdminLogin) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
                 Toaster.getInstance().addErrorMessage(i18n.failedLogin());
@@ -163,12 +163,14 @@ public class SesRequestManager extends RequestManager {
                     }
                     EventBus.getMainEventBus().fireEvent(new InformUserEvent(response));
                     EventBus.getMainEventBus().fireEvent(new SetRoleEvent(user.getRole()));
-                } else {
+                } else if (response.getType() == SesClientResponse.types.LOGIN_AS_USER_IN_ADMIN_INTERFACE) {
+					SC.say(i18n.onlyAdminsAllowedToLogin());
+				} else{
                     EventBus.getMainEventBus().fireEvent(new InformUserEvent(response));
                 }
             }
         };
-        this.sesUserService.login(name, password, callback);
+        this.sesUserService.login(name, password, isAdminLogin, callback);
     }
 
     /**

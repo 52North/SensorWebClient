@@ -80,7 +80,7 @@ public interface RpcSesUserServiceAsync {
      * @param callback
      *            the callback
      */
-    void login(String name, String password, AsyncCallback<SesClientResponse> callback);
+    void login(String name, String password, boolean isAdminLogin, AsyncCallback<SesClientResponse> callback);
 
     /**
      * New password.

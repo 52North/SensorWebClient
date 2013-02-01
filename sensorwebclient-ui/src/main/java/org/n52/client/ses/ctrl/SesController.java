@@ -178,7 +178,7 @@ public class SesController extends ServiceController {
         }
 
         public void onLogin(LoginEvent evt) {
-            SesController.this.getRm().login(evt.getName(), evt.getPassword());
+            SesController.this.getRm().login(evt.getName(), evt.getPassword(), evt.isAdminLogin());
         }
 
         public void onNewPassword(NewPasswordEvent evt) {
