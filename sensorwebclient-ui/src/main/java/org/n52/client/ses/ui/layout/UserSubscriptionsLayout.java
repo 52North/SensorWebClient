@@ -23,16 +23,24 @@
  */
 package org.n52.client.ses.ui.layout;
 
+import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ID;
+import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ROLE;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.client.ses.ui.RuleRecord.FORMAT;
+import static org.n52.client.ses.ui.RuleRecord.MEDIUM;
+import static org.n52.client.ses.ui.RuleRecord.NAME;
+import static org.n52.client.ses.ui.RuleRecord.SUBSCRIBED;
 
 import java.util.ArrayList;
 
 import org.n52.client.bus.EventBus;
-import org.n52.client.ses.ctrl.SesRequestManager;
 import org.n52.client.ses.data.RuleDataSource;
+import org.n52.client.ses.event.DeleteRuleEvent;
+import org.n52.client.ses.event.SubscribeEvent;
 import org.n52.client.ses.event.UnsubscribeEvent;
 import org.n52.client.ses.ui.FormLayout;
 import org.n52.client.ses.ui.RuleRecord;
+import org.n52.client.ui.btn.SmallButton;
 import org.n52.shared.serializable.pojos.BasicRuleDTO;
 import org.n52.shared.serializable.pojos.ComplexRuleDTO;
 
@@ -40,9 +48,13 @@ import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.SortDirection;
 import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.Img;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.CheckboxItem;
+import com.smartgwt.client.widgets.form.fields.events.ChangeEvent;
+import com.smartgwt.client.widgets.form.fields.events.ChangeHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
@@ -64,7 +76,11 @@ public class UserSubscriptionsLayout extends FormLayout {
     private RuleDataSource dataSource;
     
     private boolean first = true;
-
+    
+    private static final String NAME_FIELD = "name";
+    private static final String ACTIVATED_FIELD = "activate";
+    private static final String DELETE_FIELD = "delete";
+    
     /**
      * Instantiates a new user rule layout.
      */
@@ -84,28 +100,54 @@ public class UserSubscriptionsLayout extends FormLayout {
     private void init() {
 
         this.subscriptionsGrid = new ListGrid() {
-            @Override
+            private String delImg = "../img/icons/del.png";
+
+			@Override
             protected Canvas createRecordComponent(final ListGridRecord record, Integer colNum) {
                 if (record != null) {
 
                     String fieldName = this.getFieldName(colNum);
 
-                    if (fieldName.equals("subscribe")) {
-                        // subscribe button
-                        IButton subscribeButton = new IButton(i18n.unsubscribe());
-                        subscribeButton.setPrompt(i18n.unsubscribeThisRule());
-                        subscribeButton.setShowDown(false);
-                        subscribeButton.setShowRollOver(false);
-                        subscribeButton.setHeight(18);
-                        subscribeButton.setWidth("80%");
-                        subscribeButton.setLayoutAlign(Alignment.CENTER);
-                        subscribeButton.addClickHandler(new ClickHandler() {
-                            public void onClick(ClickEvent event) {
-                                String userID = Cookies.getCookie(SesRequestManager.COOKIE_USER_ID);
-                                EventBus.getMainEventBus().fireEvent(new UnsubscribeEvent(record.getAttribute("name"), userID, record.getAttribute("medium"),record.getAttribute("format")));
-                            }
-                        });
-                        return subscribeButton;
+                    if (fieldName.equals(DELETE_FIELD)) {
+                    	Canvas delButton = new SmallButton(new Img(delImg) , "", "");
+                    	delButton.setMargin(1);
+                    	delButton.setPrompt(i18n.unsubscribeThisRule());
+                    	delButton.setLayoutAlign(Alignment.CENTER);
+                    	delButton.addClickHandler(new ClickHandler() {
+							@Override
+							public void onClick(ClickEvent event) {
+//								String userID = Cookies.getCookie(SesRequestManager.COOKIE_USER_ID);
+								String role = Cookies.getCookie(COOKIE_USER_ROLE);
+								EventBus.getMainEventBus().fireEvent(new DeleteRuleEvent(record.getAttribute(NAME), role));
+//								EventBus.getMainEventBus().fireEvent(new UnsubscribeEvent(record.getAttribute("name"), userID, record.getAttribute("medium"),record.getAttribute("format")));
+							}
+						});
+                        return delButton;
+                    } else if (fieldName.equals(ACTIVATED_FIELD)) {
+                    	DynamicForm form = new DynamicForm();
+                    	form.setAutoWidth();
+                    	CheckboxItem checkBox = new CheckboxItem("activate"," ");
+                    	Boolean checked = Boolean.valueOf(record.getAttribute(SUBSCRIBED));
+                    	checkBox.setValue(checked);
+                    	checkBox.addChangeHandler(new ChangeHandler() {
+							@Override
+							public void onChange(ChangeEvent event) {
+								Object value = event.getValue();
+								if (value instanceof Boolean) {
+									boolean checked = (Boolean) value;
+									String userID = Cookies.getCookie(COOKIE_USER_ID);
+									if(checked) {
+										// TODO subscribe
+										EventBus.getMainEventBus().fireEvent(new SubscribeEvent(record.getAttribute(NAME), userID, record.getAttribute(MEDIUM),record.getAttribute(FORMAT)));
+									} else {
+										// TODO unsubscribe 
+										EventBus.getMainEventBus().fireEvent(new UnsubscribeEvent(record.getAttribute(NAME), userID, record.getAttribute(MEDIUM),record.getAttribute(FORMAT)));
+									}
+								}
+							}
+						});
+                    	form.setItems(checkBox);
+                    	return form;
                     }
                     return null;
                 }
@@ -125,33 +167,23 @@ public class UserSubscriptionsLayout extends FormLayout {
         this.subscriptionsGrid.setShowRollOver(false);
         this.subscriptionsGrid.sort(1, SortDirection.ASCENDING);
 
-        // fields of the table
-//        ListGridField typeField = new ListGridField("type", i18n.type());
-//        typeField.setWidth(60);
-//        typeField.setAlign(Alignment.CENTER);
-
-        ListGridField nameField = new ListGridField("name", i18n.name());
+        ListGridField nameField = new ListGridField(NAME_FIELD, i18n.name());
         nameField.setAlign(Alignment.CENTER);
 
-//        ListGridField descriptionField = new ListGridField("description", i18n.description());
-//        descriptionField.setAlign(Alignment.CENTER);
-
-//        ListGridField mediumField = new ListGridField("medium", i18n.medium());
-//        mediumField.setWidth(90);
-//        mediumField.setAlign(Alignment.CENTER);
-
-//        ListGridField formatField = new ListGridField("format", "Format");
-//        formatField.setWidth(90);
-//        formatField.setAlign(Alignment.CENTER);
-
-        ListGridField subscribeField = new ListGridField("subscribe", " " /*, i18n.unsubscribe()*/);
-        subscribeField.setWidth("20%");
-        subscribeField.setAlign(Alignment.CENTER);
-        subscribeField.setCanFilter(false);
-        subscribeField.setCanSort(false);
+        ListGridField activatedField = new ListGridField(ACTIVATED_FIELD, i18n.active());
+        activatedField.setWidth("10%");
+        activatedField.setAlign(Alignment.CENTER);
+        activatedField.setCanFilter(false);
+        activatedField.setCanSort(false);
+        
+        ListGridField deleteField = new ListGridField(DELETE_FIELD, " ");
+        deleteField.setWidth("10%");
+        deleteField.setAlign(Alignment.CENTER);
+        deleteField.setCanFilter(false);
+        deleteField.setCanSort(false);
 
         // set Fields
-        this.subscriptionsGrid.setFields(nameField, subscribeField);
+        this.subscriptionsGrid.setFields(nameField, activatedField, deleteField);
         this.subscriptionsGrid.setCanResizeFields(false);
 
         this.form.setFields(this.headerItem);
@@ -173,7 +205,7 @@ public class UserSubscriptionsLayout extends FormLayout {
         
         if (!this.first) {
             this.subscriptionsGrid.selectAllRecords();
-            this.subscriptionsGrid.removeSelectedData(); 
+            this.subscriptionsGrid.removeSelectedData();
         }
 
         for (int i = 0; i < basicRules.size(); i++) {
@@ -193,4 +225,9 @@ public class UserSubscriptionsLayout extends FormLayout {
         this.first = false;
         this.subscriptionsGrid.fetchData();
     }
+
+	public void clearGrid() {
+		this.subscriptionsGrid.setData(new ListGridRecord[] {});
+		this.subscriptionsGrid.fetchData();
+	}
 }

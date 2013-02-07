@@ -32,6 +32,17 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
  */
 public class RuleRecord extends ListGridRecord {
 
+	public static final String TYPE = "type";
+	public static final String OWNERNAME = "ownerName";
+	public static final String NAME = "name";
+	public static final String OWNERID = "ownerID";
+	public static final String DESCRIPTION = "description";
+	public static final String MEDIUM = "medium";
+	public static final String FORMAT = "format";
+	public static final String PUBLISHED = "published";
+	public static final String SUBSCRIBED = "subscribed";
+	public static final String USERNAME = "userName";
+	
     /**
      * Instantiates a new rule record.
      */
@@ -77,7 +88,7 @@ public class RuleRecord extends ListGridRecord {
      *            the new type
      */
     public void setType(String type) {
-        setAttribute("type", type);
+        setAttribute(TYPE, type);
     }
 
     /**
@@ -86,7 +97,7 @@ public class RuleRecord extends ListGridRecord {
      * @return the type
      */
     public String getType() {
-        return getAttributeAsString("type");
+        return getAttributeAsString(TYPE);
     }
     
     /**
@@ -94,7 +105,7 @@ public class RuleRecord extends ListGridRecord {
      * @param ownerName
      */
     public void setOwnerName(String ownerName) {
-        setAttribute("ownerName", ownerName);
+        setAttribute(OWNERNAME, ownerName);
     }
 
     /**
@@ -103,7 +114,7 @@ public class RuleRecord extends ListGridRecord {
      * @return the owner name
      */
     public String getOwnerName() {
-        return getAttributeAsString("ownerName");
+        return getAttributeAsString(OWNERNAME);
     }
     
     /**
@@ -111,7 +122,7 @@ public class RuleRecord extends ListGridRecord {
      * @param ownerID
      */
     public void setOwnerID(String ownerID) {
-        setAttribute("ownerID", ownerID);
+        setAttribute(OWNERID, ownerID);
     }
 
     /**
@@ -120,7 +131,7 @@ public class RuleRecord extends ListGridRecord {
      * @return the owner parameterId
      */
     public String getOwnerID() {
-        return getAttributeAsString("ownerID");
+        return getAttributeAsString(OWNERID);
     }
 
     /**
@@ -129,7 +140,7 @@ public class RuleRecord extends ListGridRecord {
      * @return the name
      */
     public String getName() {
-        return getAttributeAsString("name");
+        return getAttributeAsString(NAME);
     }
 
     /**
@@ -139,7 +150,7 @@ public class RuleRecord extends ListGridRecord {
      *            the new name
      */
     public void setName(String name) {
-        setAttribute("name", name);
+        setAttribute(NAME, name);
     }
 
     /**
@@ -149,7 +160,7 @@ public class RuleRecord extends ListGridRecord {
      *            the new description
      */
     public void setDescription(String description) {
-        setAttribute("description", description);
+        setAttribute(DESCRIPTION, description);
     }
 
     /**
@@ -158,7 +169,7 @@ public class RuleRecord extends ListGridRecord {
      * @return the description
      */
     public String getDescription() {
-        return getAttributeAsString("description");
+        return getAttributeAsString(DESCRIPTION);
     }
 
     /**
@@ -168,7 +179,7 @@ public class RuleRecord extends ListGridRecord {
      *            the new medium
      */
     public void setMedium(String medium) {
-        setAttribute("medium", medium);
+        setAttribute(MEDIUM, medium);
     }
 
     /**
@@ -177,7 +188,7 @@ public class RuleRecord extends ListGridRecord {
      * @return the medium
      */
     public String getMedium() {
-        return getAttributeAsString("medium");
+        return getAttributeAsString(MEDIUM);
     }
 
     /**
@@ -187,7 +198,7 @@ public class RuleRecord extends ListGridRecord {
      *            the new format
      */
     public void setFormat(String format) {
-        setAttribute("format", format);
+        setAttribute(FORMAT, format);
     }
 
     /**
@@ -196,7 +207,7 @@ public class RuleRecord extends ListGridRecord {
      * @return the format
      */
     public String getFormat() {
-        return getAttributeAsString("format");
+        return getAttributeAsString(FORMAT);
     }
 
     /**
@@ -206,7 +217,7 @@ public class RuleRecord extends ListGridRecord {
      *            the new published
      */
     public void setPublished(boolean published) {
-        setAttribute("published", published);
+        setAttribute(PUBLISHED, published);
     }
 
     /**
@@ -215,7 +226,7 @@ public class RuleRecord extends ListGridRecord {
      * @return the published
      */
     public boolean getPublished() {
-        return getAttributeAsBoolean("published");
+        return getAttributeAsBoolean(PUBLISHED);
     }
     
     /**
@@ -223,7 +234,7 @@ public class RuleRecord extends ListGridRecord {
      * @param subscribed 
      */
     public void setSubscribed(boolean subscribed) {
-        setAttribute("subscribed", subscribed);
+        setAttribute(SUBSCRIBED, subscribed);
     }
 
     /**
@@ -232,7 +243,7 @@ public class RuleRecord extends ListGridRecord {
      * @return the subscribed
      */
     public boolean getSubscribed() {
-        return getAttributeAsBoolean("subscribed");
+        return getAttributeAsBoolean(SUBSCRIBED);
     }
 
     /**
@@ -251,7 +262,7 @@ public class RuleRecord extends ListGridRecord {
      * @param userName
      */
     public void setUserName(String userName) {
-        setAttribute("userName", userName);
+        setAttribute(USERNAME, userName);
     }
 
     /**
@@ -259,6 +270,6 @@ public class RuleRecord extends ListGridRecord {
      * @return the user name
      */
     public String getUserName() {
-        return getAttributeAsString("userName");
+        return getAttributeAsString(USERNAME);
     }
 }

@@ -166,19 +166,15 @@ public class SesTabController extends Controller<SesTab> {
             UserRole role = evt.getRole();
             switch (role) {
             case ADMIN:
+            	getDataControls().setRole(role);
                 getMainEventBus().fireEvent(new ChangeLayoutEvent(WELCOME));
-                getDataControls().setRole(role);
                 setUserLoggedInAsText();
                 break;
-//            case USER: // we only want admins to use old UI
-//                getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
-//                getMainEventBus().fireEvent(new ChangeLayoutEvent(WELCOME));
-//                break;
             case NOT_REGISTERED_USER:
                 getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
                 break;
             case LOGOUT: 
-                getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+//                getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN)); // why jump to login when logout before?
                 getView().getLegend().switchToDiagramTab();
                 break;
             default:

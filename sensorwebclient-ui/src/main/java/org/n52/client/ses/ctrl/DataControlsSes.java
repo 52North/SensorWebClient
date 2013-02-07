@@ -61,7 +61,7 @@ public class DataControlsSes extends DataControls {
 
     private UserRole role = NOT_REGISTERED_USER;
 
-    private final int buttonWidth = 190;
+    private final int buttonWidth = 140;
 
     private VLayout innerLayout;
 

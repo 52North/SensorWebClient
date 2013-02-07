@@ -72,6 +72,12 @@ public class AccountManagementWindow extends LoginWindow {
 			EventBus.getMainEventBus().fireEvent(new GetUserSubscriptionsEvent(id));
 		}
 	}
+	
+	@Override
+	public void hide() {
+		super.hide();
+		subscriptionsLayout.clearGrid();
+	}
 
 	private static class AccountManagementWindowEventBroker implements UpdateProfileEventHandler, InformUserEventHandler {
 		
