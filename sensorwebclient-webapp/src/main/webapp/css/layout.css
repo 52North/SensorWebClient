@@ -234,7 +234,13 @@ table.n52_sensorweb_client_create_abo_metadata_table tr:hover {
 }
 .n52_sensorweb_client_linkBlock {
   left: 750px;
-  margin-top: 25px;
+  margin-top: 15px;
+  margin-right: 15px;
+}
+.n52_sensorweb_client_loginBlock {
+  left: 750px;
+  margin-top: 5px;
+  margin-right: 15px;
 }
 .n52_sensorweb_client_headerlink {
   color: #2E3B3B;
@@ -261,6 +267,11 @@ div .n52_sensorweb_client_imprint_content {
   height: 460;
   padding: 1em 1em 1em 1em;
   text-align: left;
+}
+.n52_sensorweb_client_headerLoggedInAs {
+  font-size: 12px;
+  padding-left: 3px;
+  padding-right: 3px;
 }
 .float-left {
   float: left;

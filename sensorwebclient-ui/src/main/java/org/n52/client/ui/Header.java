@@ -29,12 +29,7 @@ import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.Date;
 
-import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.TimeManager;
-import org.n52.client.ses.ctrl.SesRequestManager;
-import org.n52.client.ses.event.LogoutEvent;
-import org.n52.client.ses.event.SetRoleEvent;
-import org.n52.client.ses.event.handler.SetRoleEventHandler;
 import org.n52.client.ses.util.SesClientUtil;
 import org.n52.client.sos.ctrl.DataManagerSosImpl;
 import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
@@ -44,12 +39,10 @@ import org.n52.ext.link.AccessLinkFactory;
 import org.n52.ext.link.sos.TimeRange;
 import org.n52.ext.link.sos.TimeSeriesParameters;
 import org.n52.ext.link.sos.TimeSeriesPermalinkBuilder;
-import org.n52.shared.serializable.pojos.UserRole;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Cursor;
@@ -68,14 +61,11 @@ public class Header extends HLayout {
 
     private String url;
     
-    private HLayout loginInfo;
-
     public static com.google.gwt.user.client.ui.Label requestCounter;
 
     public Header (String id){
         this.elemID = id;
         generateHeader();
-        new HeaderEventBroker(this);
     }
 
     private void generateHeader(){
@@ -85,19 +75,15 @@ public class Header extends HLayout {
         setAutoHeight();
 
         addMember(getHomeLabel());
-        
-        
+
+        Layout rightLayout = new VLayout();
         Layout linkLayout = new HLayout();
         linkLayout.setStyleName("n52_sensorweb_client_linkBlock");
         linkLayout.setAlign(Alignment.RIGHT);
 
 //        linkLayout.addMember(getVersionInfo());
 //        linkLayout.addMember(getSeparator());
-        if (SesClientUtil.isSesEnabled()) {
-        	loginInfo = new HLayout();
-        	createLoginInfo();
-        	linkLayout.addMember(loginInfo);
-        }
+        
         linkLayout.addMember(getRestartLink());
         linkLayout.addMember(getSeparator());
         linkLayout.addMember(getHelpLink());
@@ -107,13 +93,18 @@ public class Header extends HLayout {
         linkLayout.addMember(getImprintLink());
         linkLayout.addMember(getSeparator());
         linkLayout.addMember(getCopyrightLink());
+        rightLayout.addMember(linkLayout);
         
-        addMember(linkLayout);
+        if (SesClientUtil.isSesEnabled()) {
+        	rightLayout.addMember(createLoginInfo());
+        }
+        
+        addMember(rightLayout);
     }
 
 	private Layout getHomeLabel() {
-		Layout layout = new HLayout();
-		layout.setStylePrimaryName("n52_sensorweb_client_logoBlock");
+		Layout layout = new VLayout();
+		layout.setStyleName("n52_sensorweb_client_logoBlock");
 		Img homeLabel = new Img("../img/client-logo.png", 289, 55);
 		homeLabel.setStyleName("n52_sensorweb_client_logo");
 		homeLabel.setCursor(Cursor.POINTER);
@@ -196,50 +187,8 @@ public class Header extends HLayout {
 		return restart;
 	}
 	
-	private void createLoginInfo() {
-		loginInfo.clear();
-		loginInfo = new HLayout();
-		String userName = Cookies.getCookie(SesRequestManager.COOKIE_USER_NAME);
-		if(userName != null) {
-			// add login label
-			Label user = new Label(i18n.loggedInAs() + " " + userName);
-			user.setStyleName("n52_sensorweb_client_headerLoggedInAs");
-			user.setAutoWidth();
-			user.setWrap(false);
-			loginInfo.addMember(user);
-			Label logout = getHeaderLinkLabel(i18n.logout());
-			logout.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					EventBus.getMainEventBus().fireEvent(new LogoutEvent());
-				}
-			});
-			loginInfo.addMember(logout);
-			String roleType = Cookies.getCookie(SesRequestManager.COOKIE_USER_ROLE);
-			if (roleType.equals(UserRole.ADMIN.name())) {
-				Label admin = getHeaderLinkLabel(i18n.admin());
-				loginInfo.addMember(getSeparator());
-				loginInfo.addMember(admin);
-				admin.addClickHandler(new ClickHandler() {
-					@Override
-					public void onClick(ClickEvent event) {
-						DataPanel dataPanel = View.getView().getDataPanel();
-						DataPanelTab newTab;
-						if (dataPanel.getCurrentTab().equals(View.getView().getSesTab())) {
-							newTab = View.getView().getDiagramTab();
-						} else {
-							newTab = View.getView().getSesTab();
-						}
-						dataPanel.getPanel().selectTab(newTab);
-						dataPanel.setCurrentTab(newTab);
-						dataPanel.update();
-					}
-				});
-			}
-		}
-		loginInfo.addMember(getSeparator());
-		loginInfo.setAutoWidth();
-		markForRedraw();
+	private LoginHeaderLayout createLoginInfo() {
+		return new LoginHeaderLayout();
 	}
 	
 	private boolean isEnglishLocale(String value) {
@@ -392,19 +341,4 @@ public class Header extends HLayout {
     private native void addToFavorites() /*-{
             $wnd.addBookmark();
     }-*/;
-
-    private static class HeaderEventBroker implements SetRoleEventHandler {
-
-    	private final Header header;
-    	
-		public HeaderEventBroker(Header header) {
-			EventBus.getMainEventBus().addHandler(SetRoleEvent.TYPE, this);
-			this.header = header;
-		}
-
-		@Override
-		public void onChangeRole(SetRoleEvent evt) {
-			header.createLoginInfo();
-		}
-    }
 }
