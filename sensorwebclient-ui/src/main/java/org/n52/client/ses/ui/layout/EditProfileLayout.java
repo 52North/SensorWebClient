@@ -196,7 +196,7 @@ public class EditProfileLayout extends FormLayout {
         });
 
         this.form.setFields(this.headerItem, this.userNameItem, this.nameItem, this.newPasswordItem, newPasswordAgainItem, this.currentPasswordItem, this.emailItem,
-                emailItem2, this.handyItem, saveButton, deleteButton);
+                emailItem2, /* this.handyItem,*/ saveButton, deleteButton);
 
         addMember(this.form);
     }
