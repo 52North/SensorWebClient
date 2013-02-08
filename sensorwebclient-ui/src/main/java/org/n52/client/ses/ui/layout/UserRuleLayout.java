@@ -23,7 +23,11 @@
  */
 package org.n52.client.ses.ui.layout;
 
+import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ID;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.client.ses.ui.RuleRecord.FORMAT;
+import static org.n52.client.ses.ui.RuleRecord.MEDIUM;
+import static org.n52.client.ses.ui.RuleRecord.NAME;
 
 import java.util.ArrayList;
 
@@ -125,11 +129,11 @@ public class UserRuleLayout extends FormLayout {
                                         medium = medium + "_";
                                     }
                                 }
-                                record.setAttribute("medium", medium);
+                                record.setAttribute(MEDIUM, medium);
                                 
                                 if (DataControlsSes.warnUserLongNotification) {
-                                    if (record.getAttribute("medium").contains("SMS")) {
-                                        if (record.getAttribute("format").contains("XML") || record.getAttribute("format").contains("EML")) {
+                                    if (record.getAttribute(MEDIUM).contains("SMS")) {
+                                        if (record.getAttribute(FORMAT).contains("XML") || record.getAttribute(FORMAT).contains("EML")) {
                                             SC.say(i18n.longNotificationMessage());
                                             return;
                                         }
@@ -164,11 +168,11 @@ public class UserRuleLayout extends FormLayout {
                                         format = format + "_";
                                     }
                                 }
-                                record.setAttribute("format", format);
+                                record.setAttribute(FORMAT, format);
                                 
                                 if (DataControlsSes.warnUserLongNotification) {
-                                    if (record.getAttribute("medium").contains("SMS")) {
-                                        if (record.getAttribute("format").contains("XML") || record.getAttribute("format").contains("EML")) {
+                                    if (record.getAttribute(RuleRecord.MEDIUM).contains("SMS")) {
+                                        if (record.getAttribute(FORMAT).contains("XML") || record.getAttribute(FORMAT).contains("EML")) {
                                             SC.say(i18n.longNotificationMessage());
                                             return;
                                         }
@@ -191,19 +195,19 @@ public class UserRuleLayout extends FormLayout {
                         subscribeButton.setAlign(Alignment.CENTER);
                         subscribeButton.addClickHandler(new ClickHandler() {
                             public void onClick(ClickEvent event) {
-                                if (record.getAttribute("medium").equals("")){
+                                if (record.getAttribute(MEDIUM).equals("")){
                                     SC.say(i18n.selectMedium());
-                                } else if (record.getAttribute("format").equals("")){
+                                } else if (record.getAttribute(FORMAT).equals("")){
                                     SC.say(i18n.selectFormat());
                                 } else {
-                                    String userID = Cookies.getCookie(SesRequestManager.COOKIE_USER_ID);
-                                    EventBus.getMainEventBus().fireEvent(new SubscribeEvent(userID, record.getAttribute("name"), record.getAttribute("medium"), record.getAttribute("format")));
+                                    String userID = Cookies.getCookie(COOKIE_USER_ID);
+                                    EventBus.getMainEventBus().fireEvent(new SubscribeEvent(record.getAttribute(NAME), userID, record.getAttribute(MEDIUM), record.getAttribute(FORMAT)));
                                 }
                             }
                         });
                         subscribeButton.setTitle(i18n.subscribe());
                         subscribeButton.setPrompt(i18n.subscribeThisRule());
-
+                        
                         return subscribeButton;
                     } else {
                         return null;
@@ -243,11 +247,11 @@ public class UserRuleLayout extends FormLayout {
                                         medium = medium + "_";
                                     }
                                 }
-                                record.setAttribute("medium", medium);
+                                record.setAttribute(MEDIUM, medium);
 
                                 if (DataControlsSes.warnUserLongNotification) {
-                                    if (record.getAttribute("medium").contains("SMS")) {
-                                        if (record.getAttribute("format").contains("XML") || record.getAttribute("format").contains("EML")) {
+                                    if (record.getAttribute(MEDIUM).contains("SMS")) {
+                                        if (record.getAttribute(FORMAT).contains("XML") || record.getAttribute(FORMAT).contains("EML")) {
                                             SC.say(i18n.longNotificationMessage());
                                             return;
                                         }
@@ -282,11 +286,11 @@ public class UserRuleLayout extends FormLayout {
                                         format = format + "_";
                                     }
                                 }
-                                record.setAttribute("format", format);
+                                record.setAttribute(FORMAT, format);
                                 
                                 if (DataControlsSes.warnUserLongNotification) {
-                                    if (record.getAttribute("medium").contains("SMS")) {
-                                        if (record.getAttribute("format").contains("XML") || record.getAttribute("format").contains("EML")) {
+                                    if (record.getAttribute(MEDIUM).contains("SMS")) {
+                                        if (record.getAttribute(FORMAT).contains("XML") || record.getAttribute(FORMAT).contains("EML")) {
                                             SC.say(i18n.longNotificationMessage());
                                             return;
                                         }
@@ -309,13 +313,13 @@ public class UserRuleLayout extends FormLayout {
                         subscribeButton.setAlign(Alignment.CENTER);
                         subscribeButton.addClickHandler(new ClickHandler() {
                             public void onClick(ClickEvent event) {
-                                if (record.getAttribute("medium").equals("")){
+                                if (record.getAttribute(MEDIUM).equals("")){
                                     SC.say(i18n.selectMedium());
-                                } else if (record.getAttribute("format").equals("")){
+                                } else if (record.getAttribute(FORMAT).equals("")){
                                     SC.say(i18n.selectFormat());
                                 } else {
                                     String userID = Cookies.getCookie(SesRequestManager.COOKIE_USER_ID);
-                                    EventBus.getMainEventBus().fireEvent(new SubscribeEvent(userID, record.getAttribute("name"), record.getAttribute("medium"), record.getAttribute("format")));
+                                    EventBus.getMainEventBus().fireEvent(new SubscribeEvent(userID, record.getAttribute(NAME), record.getAttribute(MEDIUM), record.getAttribute(FORMAT)));
                                 }
                             }
                         });

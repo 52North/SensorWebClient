@@ -76,7 +76,9 @@ public class AccountManagementWindow extends LoginWindow {
 	@Override
 	public void hide() {
 		super.hide();
-		subscriptionsLayout.clearGrid();
+		if (subscriptionsLayout != null) {
+			subscriptionsLayout.clearGrid();
+		}
 	}
 
 	private static class AccountManagementWindowEventBroker implements UpdateProfileEventHandler, InformUserEventHandler {

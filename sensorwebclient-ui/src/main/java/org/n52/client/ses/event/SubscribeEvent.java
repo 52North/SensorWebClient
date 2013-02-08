@@ -50,19 +50,18 @@ public class SubscribeEvent extends FilteredDispatchGwtEvent<SubscribeEventHandl
 
     /**
      * Instantiates a new subscribe event.
-     * @param userID 
-     * 
      * @param ruleName
      *            the rule name
+     * @param userID 
      * @param medium 
      * @param format 
      * @param blockedHandlers
      *            the blocked handlers
      */
-    public SubscribeEvent(String userID, String ruleName, String medium, String format, SubscribeEventHandler... blockedHandlers) {
+    public SubscribeEvent(String ruleName, String userID, String medium, String format, SubscribeEventHandler... blockedHandlers) {
         super(blockedHandlers);
-        this.userID = userID;
         this.ruleName = ruleName;
+        this.userID = userID;
         this.medium = medium;
         this.format = format;
     }
