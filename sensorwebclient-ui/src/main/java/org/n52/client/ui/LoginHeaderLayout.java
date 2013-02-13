@@ -38,7 +38,7 @@ public class LoginHeaderLayout extends HLayout {
 		addMember(user);
 		
 		// logout link
-		Label logout = getHeaderLinkLabel(i18n.logout());
+		Label logout = getHeaderLinkLabel("(" + i18n.logout() + ")");
 		logout.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
