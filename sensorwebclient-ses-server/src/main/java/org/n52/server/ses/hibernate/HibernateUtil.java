@@ -232,15 +232,15 @@ public class HibernateUtil extends HibernateDaoUtil {
     }
 
     public static void saveBasicRule(final BasicRule rule) {
+    	TimeseriesMetadata metadata = rule.getTimeseriesMetadata();
+    	if ( !existsTimeseriesMetadata(metadata)) {
+			String timeseriesId = metadata.getTimeseriesId();
+			TimeseriesMetadata persistedObject = getTimeseriesMetadata(timeseriesId);
+			rule.setTimeseriesMetadata(persistedObject);
+		}
     	execute(new CriteriaExecution<Void>() {
 			@Override
 			public Void execute(final Session session) {
-				TimeseriesMetadata metadata = rule.getTimeseriesMetadata();
-				if ( !existsTimeseriesMetadata(metadata)) {
-					String timeseriesId = metadata.getTimeseriesId();
-					TimeseriesMetadata persistedObject = getTimeseriesMetadata(timeseriesId);
-					rule.setTimeseriesMetadata(persistedObject);
-				}
 				session.saveOrUpdate(rule);
 				return null;
 			}
@@ -863,14 +863,14 @@ public class HibernateUtil extends HibernateDaoUtil {
         return rules;
     }
 
-    public static TimeseriesMetadata getTimeseriesMetadata(String timeseriesId) {
-        Session session = getSessionFactory().getCurrentSession();
-        session.beginTransaction();
-        TimeseriesMetadata metadata = (TimeseriesMetadata) session.createCriteria(TimeseriesMetadata.class).add(Restrictions.eq(TIMESERIES_ID,
-                                                                                                                                timeseriesId)).uniqueResult();
-        session.getTransaction().commit();
-        return metadata;
-
+    public static TimeseriesMetadata getTimeseriesMetadata(final String timeseriesId) {
+    	return execute(new CriteriaExecution<TimeseriesMetadata>() {
+    		@Override
+    		public TimeseriesMetadata execute(Session session) {
+    			Criteria criteria = session.createCriteria(TimeseriesMetadata.class);
+    			criteria.add(Restrictions.eq(TIMESERIES_ID,timeseriesId)).uniqueResult();
+    			return (TimeseriesMetadata) criteria.uniqueResult();
+    		}
+		});
     }
-
 }

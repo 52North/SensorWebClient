@@ -104,6 +104,7 @@ public class RegisterLayout extends FormLayout {
                 this.emailItem, this.verifyEmailItem, this.linkTerms, this.acceptBox, registerButton, backToLoginLink);
         
         addMember(this.form);
+        setAutoWidth();
     }
 
     
