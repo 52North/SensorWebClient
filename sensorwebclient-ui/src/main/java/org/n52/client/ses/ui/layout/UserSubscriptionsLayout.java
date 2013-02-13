@@ -75,8 +75,6 @@ public class UserSubscriptionsLayout extends FormLayout {
     
     private RuleDataSource dataSource;
     
-    private boolean first = true;
-    
     private static final String NAME_FIELD = "name";
     private static final String ACTIVATED_FIELD = "activate";
     private static final String DELETE_FIELD = "delete";
@@ -203,11 +201,6 @@ public class UserSubscriptionsLayout extends FormLayout {
         BasicRuleDTO ruleDTO;
         ComplexRuleDTO complexDTO;
         
-        if (!this.first) {
-            this.subscriptionsGrid.selectAllRecords();
-            this.subscriptionsGrid.removeSelectedData();
-        }
-
         for (int i = 0; i < basicRules.size(); i++) {
             ruleDTO = basicRules.get(i);
             rule = new RuleRecord(i18n.basic(), "", "", ruleDTO.getName(), ruleDTO.getDescription(), ruleDTO.getMedium(), ruleDTO.getFormat(), ruleDTO.isRelease(), ruleDTO.isSubscribed());
@@ -222,12 +215,11 @@ public class UserSubscriptionsLayout extends FormLayout {
             this.subscriptionsGrid.addData(rule);
         }
         
-        this.first = false;
         this.subscriptionsGrid.fetchData();
     }
 
 	public void clearGrid() {
-		this.subscriptionsGrid.setData(new ListGridRecord[] {});
-		this.subscriptionsGrid.fetchData();
+		this.subscriptionsGrid.selectAllRecords();
+		this.subscriptionsGrid.removeSelectedData();
 	}
 }
