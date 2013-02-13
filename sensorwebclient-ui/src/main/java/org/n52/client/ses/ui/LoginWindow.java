@@ -186,7 +186,9 @@ public abstract class LoginWindow extends Window {
                 window.updateWindowTitle(i18n.registration());
             } else if (evt.getLayout() == LOGIN) {
                 window.updateWindowTitle(i18n.userLogin());
-                window.show();
+                if (window.isVisible()) {
+                	window.show();
+                }
             }
         }
     }

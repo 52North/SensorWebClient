@@ -174,7 +174,6 @@ public class SesTabController extends Controller<SesTab> {
                 getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
                 break;
             case LOGOUT: 
-//                getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN)); // why jump to login when logout before?
                 getView().getLegend().switchToDiagramTab();
                 break;
             default:
