@@ -23,6 +23,16 @@
  */
 package org.n52.server.ses.util;
 
+import static org.n52.oxf.ses.adapter.ISESRequestBuilder.SUBSCRIBE_CONSUMER_REFERENCE_ADDRESS;
+import static org.n52.oxf.ses.adapter.ISESRequestBuilder.SUBSCRIBE_FILTER_MESSAGE_CONTENT;
+import static org.n52.oxf.ses.adapter.ISESRequestBuilder.SUBSCRIBE_FILTER_MESSAGE_CONTENT_DIALECT;
+import static org.n52.oxf.ses.adapter.ISESRequestBuilder.SUBSCRIBE_SES_URL;
+import static org.n52.oxf.ses.adapter.ISESRequestBuilder.UNSUBSCRIBE_REFERENCE;
+import static org.n52.oxf.ses.adapter.ISESRequestBuilder.UNSUBSCRIBE_SES_URL;
+import static org.n52.oxf.ses.adapter.SESAdapter.GET_CAPABILITIES;
+import static org.n52.oxf.ses.adapter.SESAdapter.SUBSCRIBE;
+import static org.n52.oxf.ses.adapter.SESAdapter.UNSUBSCRIBE;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.security.MessageDigest;
@@ -71,18 +81,17 @@ public class SesServerUtil {
      * @throws Exception
      */
     public synchronized static OperationResult subscribe(String serviceVersion, String sesEndpoint, String consumerReference, String content) throws Exception{
-        OperationResult opResult;
         SESAdapter adapter = new SESAdapter(serviceVersion);
-
-        Operation op = new Operation(SESAdapter.SUBSCRIBE, sesEndpoint + "?", sesEndpoint);
+        String brokerUrl = SesServerUtil.getBrokerUrl(sesEndpoint);
 
         ParameterContainer parameter = new ParameterContainer();
-        parameter.addParameterShell(ISESRequestBuilder.SUBSCRIBE_SES_URL, sesEndpoint);
-        parameter.addParameterShell(ISESRequestBuilder.SUBSCRIBE_CONSUMER_REFERENCE_ADDRESS, consumerReference);
-        parameter.addParameterShell(ISESRequestBuilder.SUBSCRIBE_FILTER_MESSAGE_CONTENT_DIALECT, "http://www.opengis.net/ses/filter/level3");
-        parameter.addParameterShell(ISESRequestBuilder.SUBSCRIBE_FILTER_MESSAGE_CONTENT, content);
+        parameter.addParameterShell(SUBSCRIBE_SES_URL, brokerUrl);
+        parameter.addParameterShell(SUBSCRIBE_CONSUMER_REFERENCE_ADDRESS, consumerReference);
+        parameter.addParameterShell(SUBSCRIBE_FILTER_MESSAGE_CONTENT_DIALECT, "http://www.opengis.net/ses/filter/level3");
+        parameter.addParameterShell(SUBSCRIBE_FILTER_MESSAGE_CONTENT, content);
 
-        opResult = adapter.doOperation(op, parameter);
+        Operation op = new Operation(SUBSCRIBE, null, brokerUrl);
+        OperationResult opResult = adapter.doOperation(op, parameter);
         LOGGER.debug("operation result:" + opResult.toString());
 
         return opResult;
@@ -96,16 +105,15 @@ public class SesServerUtil {
      * @throws Exception 
      */
     public synchronized static OperationResult unSubscribe(String serviceVersion, String sesEndpoint, String museResource) throws Exception{
-        OperationResult opResult = null;
         SESAdapter adapter = new SESAdapter(serviceVersion);
-
-        Operation op = new Operation(SESAdapter.UNSUBSCRIBE, sesEndpoint + "?", sesEndpoint);
+        String subscriptionManagerUrl = getSubscriptionManagerUrl(sesEndpoint);
 
         ParameterContainer paramCon = new ParameterContainer();
-        paramCon.addParameterShell(ISESRequestBuilder.UNSUBSCRIBE_SES_URL, sesEndpoint);
-        paramCon.addParameterShell(ISESRequestBuilder.UNSUBSCRIBE_REFERENCE, museResource);
+        paramCon.addParameterShell(UNSUBSCRIBE_SES_URL, subscriptionManagerUrl);
+        paramCon.addParameterShell(UNSUBSCRIBE_REFERENCE, museResource);
 
-        opResult = adapter.doOperation(op, paramCon);
+        Operation op = new Operation(UNSUBSCRIBE, null, subscriptionManagerUrl);
+        OperationResult opResult = adapter.doOperation(op, paramCon);
         LOGGER.debug(opResult.toString());
         return opResult;
     }
@@ -247,13 +255,12 @@ public class SesServerUtil {
      */
     public static boolean isAvailable(){
         SESAdapter adapter = new SESAdapter(SesConfig.serviceVersion);
-
-        // getCapabilities
-        Operation op = new Operation(SESAdapter.GET_CAPABILITIES, SesConfig.sesEndpoint + "?", SesConfig.sesEndpoint);
+        String brokerUrl = getBrokerUrl(SesConfig.sesEndpoint);
 
         try {
             ParameterContainer parameter = new ParameterContainer();
             parameter.addParameterShell(ISESRequestBuilder.GET_CAPABILITIES_SES_URL, SesConfig.sesEndpoint);
+            Operation op = new Operation(GET_CAPABILITIES, null, brokerUrl);
             OperationResult opResult = adapter.doOperation(op, parameter);
 
             return true;
@@ -374,5 +381,52 @@ public class SesServerUtil {
             LOGGER.error("Unkown MD5 algorithm.", e);
         }
         return buffer.toString();
+    }
+    
+
+    /**
+     * Operations:
+     * <ul>
+     * <li>Subscribe</li>
+     * <li>Notify</li>
+     * <li>GetCapabilities</li>
+     * <li>RegisterPublisher</li>
+     * <li>DescribeSensor</li>
+     * </ul>
+     * 
+     * @param serviceUrl SES services base URL.
+     * @return the broker URL.
+     */
+    public static String getBrokerUrl(String serviceUrl) {
+        return serviceUrl.endsWith("/") ? serviceUrl + "Broker" : serviceUrl + "/Broker";
+    }
+    
+    /**
+     * Operations:
+     * <ul>
+     * <li>Unsubscribe</li>
+     * <li>RenewSubscription</li>
+     * <li>PauseSubscription</li>
+     * <li>ResumeSubscription</li>
+     * </ul>
+     * 
+     * @param serviceUrl SES services base URL.
+     * @return the SubscriptionManager URL.
+     */
+    public static String getSubscriptionManagerUrl(String serviceUrl) {
+        return serviceUrl.endsWith("/") ? serviceUrl + "SubscriptionManager" : serviceUrl + "/SubscriptionManager";
+    }
+    
+    /**
+     * Operations:
+     * <ul>
+     * <li>Destroy</li>
+     * </ul>
+     * 
+     * @param serviceUrl SES services base URL.
+     * @return the PublisherRegistrationManager URL.
+     */
+    public static String getPublisherRegistrationManagerUrl(String serviceUrl) {
+        return serviceUrl.endsWith("/") ? serviceUrl + "PublisherRegistrationManager" : serviceUrl + "/PublisherRegistrationManager";
     }
 }

@@ -180,7 +180,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                                 SesServerUtil.subscribe(SesConfig.serviceVersion, SesConfig.sesEndpoint, SesConfig.consumerReference, content);
                             museResource = SesServerUtil.getSubscriptionIDfromSES(opResult);
                             if ((museResource == null) || (museResource.equals(""))) {
-                                throw new IllegalArgumentException("Illegal Muse resource");
+                                throw new IllegalArgumentException("Subscription failed.");
                             }
                         } catch (Exception e) {
                             LOGGER.error("Error while subscribing to SES", e);
@@ -323,15 +323,6 @@ public class SesRulesServiceImpl implements SesRuleService {
                 LOGGER.debug("Cannot create rule: Rule '{}' already exists!", rule.getTitle());
                 return new SesClientResponse(RULE_NAME_EXISTS);
             } 
-
-            TimeseriesMetadata metadata = rule.getTimeseriesMetadata();
-            List<TimeseriesFeed> timeseriesFeeds = HibernateUtil.getActiveTimeseriesFeeds();
-            for (TimeseriesFeed timeseriesFeed : timeseriesFeeds) {
-                if (timeseriesFeeds.contains(metadata)) {
-                    TimeseriesMetadata timeseriesMetadata = timeseriesFeed.getTimeseriesMetadata();
-                    metadata.setProcedure(timeseriesMetadata.getProcedure());
-                }
-            }
 
             BasicRule basicRule = null;
             switch (rule.getRuleType()) {

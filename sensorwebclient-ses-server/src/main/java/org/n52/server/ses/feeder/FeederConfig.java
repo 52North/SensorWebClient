@@ -2,15 +2,12 @@
 package org.n52.server.ses.feeder;
 
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_FIRST_UPDATE_INTERVAL_RANGE;
+import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_GETOBSERVATIONS_UPDATE_INTERVAL;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_LAST_CONSIDERED_TIME_INTERVAL;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_NO_DATA_VALUES;
-import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_GETOBSERVATIONS_UPDATE_INTERVAL;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_ONLY_YOUNGEST_OBSERVATION;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_PROCEDURE_NAME_CONSTRAINTS;
-import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_PROHIBIT_PROCEDURE_NAMES;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SES_DEFAULT_TOPIC;
-import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SES_DEFAULT_TOPIC_DIALECT;
-import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SES_ENDPOINT;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SES_LIFETIME_DURATION;
 
 import java.io.File;
@@ -35,8 +32,6 @@ public class FeederConfig {
 
     private static final String CONFIG_FILE = "/feeder-properties.xml";
 
-    private static final String SES_DEFAULT_TOPIC_DIALECT = "http://docs.oasis-open.org/wsn/t-1/TopicExpression/Simple";
-
     private static final String SES_DEFAULT_LIFETIME_DURATION = "2999-12-31T23:59:59+00:00";
 
     private static final String SES_DEFAULT_TOPIC = "ses:Measurements";
@@ -50,8 +45,6 @@ public class FeederConfig {
     @Deprecated
     private List<String> procedureNameConstraints;
 
-    private List<String> prohibitProcedureNames;
-
     private List<String> noDataValues;
 
     private long elapseTimeOfGetObservationsUpdateInMillis;
@@ -60,13 +53,9 @@ public class FeederConfig {
 
     private int maximalNumberOfProcedures;
 
-    private String sesDefaultTopicDialect;
-
     private String sesDefaultTopic;
 
     private String sesLifetimeDuration;
-
-    private String sesEndpoint;
 
     private long firstConsideredTimeIntervalInMillis;
 
@@ -86,13 +75,10 @@ public class FeederConfig {
         elapseTimeOfGetObservationsUpdateInMillis = parseLongValue(KEY_GETOBSERVATIONS_UPDATE_INTERVAL, 60000);
 
         noDataValues = parseCommaSeparatedValues(KEY_NO_DATA_VALUES);
-        prohibitProcedureNames = parseCommaSeparatedValues(KEY_PROHIBIT_PROCEDURE_NAMES);
         procedureNameConstraints = parseCommaSeparatedValues(KEY_PROCEDURE_NAME_CONSTRAINTS);
 
-        sesEndpoint = parseStringValue(KEY_SES_ENDPOINT, "http://localhost:8080/");
         sesDefaultTopic = parseStringValue(KEY_SES_DEFAULT_TOPIC, SES_DEFAULT_TOPIC);
         sesLifetimeDuration = parseStringValue(KEY_SES_LIFETIME_DURATION, SES_DEFAULT_LIFETIME_DURATION);
-        sesDefaultTopicDialect = parseStringValue(KEY_SES_DEFAULT_TOPIC_DIALECT, SES_DEFAULT_TOPIC_DIALECT);
 
         onlyYoungestName = Boolean.parseBoolean(getValue(KEY_ONLY_YOUNGEST_OBSERVATION));
 
@@ -161,10 +147,6 @@ public class FeederConfig {
         return this.procedureNameConstraints;
     }
 
-    public List<String> getProhibitProcedureNames() {
-        return this.prohibitProcedureNames;
-    }
-
     /**
      * @return update interval of performing GetObservation updates in milliseconds.
      */
@@ -184,20 +166,12 @@ public class FeederConfig {
         return maximalNumberOfProcedures;
     }
 
-    public String getSesDefaultTopicDialect() {
-        return this.sesDefaultTopicDialect;
-    }
-
     public String getSesDefaultTopic() {
         return sesDefaultTopic;
     }
 
     public String getSesLifetimeDuration() {
         return sesLifetimeDuration;
-    }
-
-    public String getSesEndpoint() {
-        return sesEndpoint;
     }
 
     public long getFirstConsideredTimeInterval() {
@@ -222,9 +196,6 @@ public class FeederConfig {
         /** Key for a list of procedure name constraints. */
         static final String KEY_PROCEDURE_NAME_CONSTRAINTS = "procedure_name_constraints";
 
-        /** Key for a list of prohibit procedure names. */
-        static final String KEY_PROHIBIT_PROCEDURE_NAMES = "prohibit_procedure_names";
-
         /** Key for a list of no data values. */
         static final String KEY_NO_DATA_VALUES = "nodata_values";
 
@@ -245,9 +216,6 @@ public class FeederConfig {
 
         /** Key for the lifetime duration in the SES. */
         static final String KEY_SES_LIFETIME_DURATION = "ses_register_publisher_lifetime";
-
-        /** Key for the SES endpoint. */
-        static final String KEY_SES_ENDPOINT = "ses_register_publisher_endpoint";
 
         /** Key for the start timestamp for a feeded sensor */
         static final String KEY_LAST_CONSIDERED_TIME_INTERVAL = "latest_considered_time_interval";

@@ -178,7 +178,7 @@
 			<dependency>
 				<groupId>org.apache.xmlbeans</groupId>
 				<artifactId>xmlbeans</artifactId>
-				<version>2.3.0</version>
+				<version>2.4.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.vividsolutions</groupId>
@@ -674,7 +674,7 @@
 
                 <ses.eml.resources.url>http://localhost/sensorwebclient-webapp/eml/</ses.eml.resources.url>
 				<ses.client.user.service.url>http://localhost/sensorwebclient-webapp/client/SesUserService</ses.client.user.service.url>
-                <ses.service.url>http://localhost/52n-ses-1.1.0/services/Broker</ses.service.url>
+                <ses.services.url>http://localhost/52n-ses-1.1.0/services</ses.services.url>
 				<ses.outgoing.notification.consumer.url>http://localhost/52n-notification-translator-1.1.0/Translator_Servlet</ses.outgoing.notification.consumer.url>
                 <wns.service.url>http://localhost/52n-wns-2.1.0/wns</wns.service.url>
 
@@ -703,17 +703,14 @@
 
 				<feeder.nodata.values>-999999999</feeder.nodata.values>
 				<feeder.sleep.time.observation>5000</feeder.sleep.time.observation>
-				<feeder.prohibit.procedure.name>general</feeder.prohibit.procedure.name>
 				<feeder.only.youngest.observation>true</feeder.only.youngest.observation>
 				<feeder.getobservations.update.time>60000</feeder.getobservations.update.time>
 				<feeder.first.update.interval.range>120000</feeder.first.update.interval.range>
 				<feeder.latest.considered.timeinterval>900000</feeder.latest.considered.timeinterval>
 
 				<feeder.ses.version>0.0.0</feeder.ses.version>
-				<feeder.ses.default.topic.dialect>http://docs.oasis-open.org/wsn/t-1/TopicExpression/Simple</feeder.ses.default.topic.dialect>
 				<feeder.ses.default.topic>ses:Measurements</feeder.ses.default.topic>
 				<feeder.ses.register.publisher.lifetime>2999-12-31T23:59:59+00:00</feeder.ses.register.publisher.lifetime>
-				<feeder.ses.register.publisher.endpoint>http://localhost:8080</feeder.ses.register.publisher.endpoint>
 			</properties>
 		</profile>
 		<profile>

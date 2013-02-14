@@ -3,24 +3,21 @@ package org.n52.server.ses.feeder.connector;
 
 import static org.n52.oxf.ses.adapter.ISESRequestBuilder.NOTIFY_SES_URL;
 import static org.n52.oxf.ses.adapter.ISESRequestBuilder.NOTIFY_TOPIC;
-import static org.n52.oxf.ses.adapter.ISESRequestBuilder.NOTIFY_TOPIC_DIALECT;
 import static org.n52.oxf.ses.adapter.ISESRequestBuilder.NOTIFY_XML_MESSAGE;
-import static org.n52.oxf.ses.adapter.ISESRequestBuilder.REGISTER_PUBLISHER_FROM;
 import static org.n52.oxf.ses.adapter.ISESRequestBuilder.REGISTER_PUBLISHER_LIFETIME_DURATION;
 import static org.n52.oxf.ses.adapter.ISESRequestBuilder.REGISTER_PUBLISHER_SENSORML;
 import static org.n52.oxf.ses.adapter.ISESRequestBuilder.REGISTER_PUBLISHER_SES_URL;
 import static org.n52.oxf.ses.adapter.ISESRequestBuilder.REGISTER_PUBLISHER_TOPIC;
-import static org.n52.oxf.ses.adapter.ISESRequestBuilder.REGISTER_PUBLISHER_TOPIC_DIALECT;
 import static org.n52.oxf.ses.adapter.SESAdapter.NOTIFY;
 import static org.n52.oxf.ses.adapter.SESAdapter.REGISTER_PUBLISHER;
 import static org.n52.server.ses.feeder.FeederConfig.getFeederConfig;
+import static org.n52.server.ses.util.SesServerUtil.getBrokerUrl;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,8 +25,6 @@ import java.util.regex.Pattern;
 import net.opengis.om.x10.ObservationPropertyType;
 import net.opengis.sensorML.x101.SensorMLDocument;
 
-import org.apache.commons.lang.text.StrBuilder;
-import org.apache.http.impl.conn.DefaultHttpResponseParser;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
@@ -42,7 +37,6 @@ import org.n52.oxf.ows.ExceptionReport;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.ses.adapter.SESAdapter;
 import org.n52.oxf.ses.adapter.SESRequestBuilder_00;
-import org.n52.oxf.xmlbeans.tools.SoapUtil;
 import org.n52.server.ses.SesConfig;
 import org.n52.server.ses.feeder.FeederConfig;
 import org.n52.server.ses.feeder.SosSesFeeder;
@@ -62,15 +56,12 @@ public class SESConnector {
 
     private String topic;
 
-    private String dialect;
-
     private boolean closed = false;
 
     public SESConnector() {
         try {
             sesAdapter = new SESAdapter();
             topic = FeederConfig.getFeederConfig().getSesDefaultTopic();
-            dialect = FeederConfig.getFeederConfig().getSesDefaultTopicDialect();
             serviceUrl = SesConfig.sesEndpoint;
         }
         catch (IllegalStateException e) {
@@ -90,25 +81,25 @@ public class SESConnector {
     public String registerPublisher(SensorMLDocument sensorML) throws ExceptionReport {
         LOGGER.trace("registerPublisher with sensorML: \n{}", sensorML.xmlText());
         try {
-            String defaultTopicDialect = getFeederConfig().getSesDefaultTopicDialect();
             String defaultTopic = getFeederConfig().getSesDefaultTopic();
             String lifetime = getFeederConfig().getSesLifetimeDuration();
-            String localEndpoint = getFeederConfig().getSesEndpoint();
+            String brokerUrl = getBrokerUrl(serviceUrl);
             
             ParameterContainer parameter = new ParameterContainer();
-            parameter.addParameterShell(REGISTER_PUBLISHER_SES_URL, serviceUrl);
+            parameter.addParameterShell(REGISTER_PUBLISHER_SES_URL, brokerUrl);
             parameter.addParameterShell(REGISTER_PUBLISHER_SENSORML, sensorML.xmlText());
-            parameter.addParameterShell(REGISTER_PUBLISHER_TOPIC_DIALECT, defaultTopicDialect);
             parameter.addParameterShell(REGISTER_PUBLISHER_LIFETIME_DURATION, lifetime);
             parameter.addParameterShell(REGISTER_PUBLISHER_TOPIC, defaultTopic);
-            parameter.addParameterShell(REGISTER_PUBLISHER_FROM, localEndpoint);
 
-            Operation operation = new Operation(REGISTER_PUBLISHER, serviceUrl + "?", serviceUrl);
+            Operation operation = new Operation(REGISTER_PUBLISHER, null, brokerUrl);
             OperationResult result = sesAdapter.doOperation(operation, parameter);
-            XmlObject response = sesAdapter.handleResponse(REGISTER_PUBLISHER, result.getIncomingResultAsStream());
-            LOGGER.trace("RegisterPublisher response: \n {}", response.xmlText());
             
-            // TODO use XPath to get Publisher ID
+//            Publisher publisher = new Publisher(null); // TODO quick fix
+//            publisher.parseResponse(XmlObject.Factory.parse(result.getIncomingResultAsStream()));
+//          XmlObject response = sesAdapter.handleResponse(REGISTER_PUBLISHER, result.getIncomingResultAsStream());
+            XmlObject response = XmlObject.Factory.parse(result.getIncomingResultAsStream());
+            
+//            // TODO use XPath to get Publisher ID
             String tmp = response.toString();
             String sesID = tmp.substring(tmp.indexOf('>', tmp.indexOf("ResourceId")) + 1,
                                          tmp.indexOf('<', tmp.indexOf("ResourceId")));
@@ -120,6 +111,16 @@ public class SESConnector {
         }
         catch (IllegalStateException e) {
             LOGGER.debug("Configuration is not available (anymore).", e);
+        }
+        catch (XmlException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            
+        }
+        catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            
         }
         return null;
     }
@@ -166,15 +167,15 @@ public class SESConnector {
 
     private void sendNotificationFor(String singleObservation) throws ExceptionReport {
         try {
+            String brokerUrl = getBrokerUrl(serviceUrl);
             ParameterContainer parameter = new ParameterContainer();
-            parameter.addParameterShell(NOTIFY_SES_URL, serviceUrl);
+            parameter.addParameterShell(NOTIFY_SES_URL, brokerUrl);
             parameter.addParameterShell(NOTIFY_TOPIC, topic);
-            parameter.addParameterShell(NOTIFY_TOPIC_DIALECT, dialect);
             parameter.addParameterShell(NOTIFY_XML_MESSAGE, singleObservation);
 
             LOGGER.trace("Notify request: \n {}", new SESRequestBuilder_00().buildNotifyRequest(parameter));
 
-            Operation operation = new Operation(NOTIFY, serviceUrl + "?", serviceUrl);
+            Operation operation = new Operation(NOTIFY, null, brokerUrl);
             
             OperationResult doOperation = sesAdapter.doOperation(operation, parameter);
             if (doOperation == null) {
@@ -186,10 +187,8 @@ public class SESConnector {
             while (reader.ready()) {
                 sb.append(reader.readLine());
             }
-            String response = sb.toString();
-            if (response.length() > 0 && response.startsWith("<?xml")) {
-                XmlObject responseXml = XmlObject.Factory.parse(response);
-                LOGGER.warn(responseXml.xmlText());
+            if (sb.length() > 0) {
+                LOGGER.warn("SES Reponse: " + sb.toString());
             }
         }
         catch (OXFException e) {
@@ -200,9 +199,6 @@ public class SESConnector {
         }
         catch (IOException e) {
             LOGGER.debug("Cannot read notification response.", e);
-        }
-        catch (XmlException e) {
-            LOGGER.debug("Cannot parse notification response.", e);
         }
     }
 
