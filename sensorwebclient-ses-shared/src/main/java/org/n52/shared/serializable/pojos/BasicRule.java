@@ -24,6 +24,7 @@
 package org.n52.shared.serializable.pojos;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 public class BasicRule implements Serializable {
 
@@ -53,6 +54,8 @@ public class BasicRule implements Serializable {
     
     private TimeseriesMetadata timeseriesMetadata;
     
+    private String uuid;
+    
     public BasicRule(BasicRuleDTO basicRuleDTO) {
         this.id = basicRuleDTO.getId();
         this.name = basicRuleDTO.getName();
@@ -65,6 +68,7 @@ public class BasicRule implements Serializable {
         this.subscribed = basicRuleDTO.isSubscribed();
         this.medium = basicRuleDTO.getMedium();
         this.format = basicRuleDTO.getFormat();
+        this.setUuid(basicRuleDTO.getUuid());
         
         // XXX check for inconsistence regarding to missing FOI+offering+serviceUrl
         this.timeseriesMetadata = basicRuleDTO.getTimeseriesMetadata();
@@ -81,6 +85,7 @@ public class BasicRule implements Serializable {
         this.ownerID = ownerID;
         this.eml = eml;
         this.subscribed = subscribed;
+        this.setUuid(UUID.randomUUID().toString());
     }
 
     public BasicRule() {
@@ -182,5 +187,13 @@ public class BasicRule implements Serializable {
     public void setTimeseriesMetadata(TimeseriesMetadata timeseriesMetadata) {
         this.timeseriesMetadata = timeseriesMetadata;
     }
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
 
 }

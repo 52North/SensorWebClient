@@ -42,6 +42,7 @@ public class RuleRecord extends ListGridRecord {
 	public static final String PUBLISHED = "published";
 	public static final String SUBSCRIBED = "subscribed";
 	public static final String USERNAME = "userName";
+	public static final String UUID = "uuid";
 	
     /**
      * Instantiates a new rule record.
@@ -69,7 +70,7 @@ public class RuleRecord extends ListGridRecord {
      *            the published
      * @param subscribed 
      */
-    public RuleRecord(String type, String ownerName, String ownerID, String name, String description, String medium, String format, boolean published, boolean subscribed) {
+    public RuleRecord(String type, String ownerName, String ownerID, String name, String description, String medium, String format, boolean published, boolean subscribed, String uuid) {
         setType(type);
         setOwnerName(ownerName);
         setOwnerID(ownerID);
@@ -79,9 +80,18 @@ public class RuleRecord extends ListGridRecord {
         setFormat(format);
         setPublished(published);
         setSubscribed(subscribed);
+        setUuid(uuid);
     }
 
-    /**
+    private void setUuid(String uuid) {
+		setAttribute(UUID, uuid);
+	}
+    
+    public String getUuid() {
+		return getAttribute(UUID);
+	}
+
+	/**
      * Sets the type.
      * 
      * @param type
@@ -272,4 +282,5 @@ public class RuleRecord extends ListGridRecord {
     public String getUserName() {
         return getAttributeAsString(USERNAME);
     }
+    
 }

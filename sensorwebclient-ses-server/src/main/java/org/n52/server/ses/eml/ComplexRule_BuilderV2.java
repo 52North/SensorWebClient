@@ -117,7 +117,7 @@ public class ComplexRule_BuilderV2 {
             // add basic or complex rules to RULES list
             for (int i = 0; i < ruleNames.size(); i++) {
                 BasicRule basic = HibernateUtil.getBasicRuleByName(ruleNames.get(i));
-                ComplexRule complex = HibernateUtil.getComplexRuleByName(ruleNames.get(i));
+                ComplexRule complex = HibernateUtil.getComplexRuleByUuid(ruleNames.get(i));
                 
                 if (basic != null) {
                     RULES.add(basic);

@@ -30,8 +30,10 @@ import static org.n52.client.ses.ui.RuleRecord.FORMAT;
 import static org.n52.client.ses.ui.RuleRecord.MEDIUM;
 import static org.n52.client.ses.ui.RuleRecord.NAME;
 import static org.n52.client.ses.ui.RuleRecord.SUBSCRIBED;
+import static org.n52.client.ses.ui.RuleRecord.UUID;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.data.RuleDataSource;
@@ -114,10 +116,8 @@ public class UserSubscriptionsLayout extends FormLayout {
                     	delButton.addClickHandler(new ClickHandler() {
 							@Override
 							public void onClick(ClickEvent event) {
-//								String userID = Cookies.getCookie(SesRequestManager.COOKIE_USER_ID);
 								String role = Cookies.getCookie(COOKIE_USER_ROLE);
-								EventBus.getMainEventBus().fireEvent(new DeleteRuleEvent(record.getAttribute(NAME), role));
-//								EventBus.getMainEventBus().fireEvent(new UnsubscribeEvent(record.getAttribute("name"), userID, record.getAttribute("medium"),record.getAttribute("format")));
+								EventBus.getMainEventBus().fireEvent(new DeleteRuleEvent(record.getAttribute(UUID), role));
 							}
 						});
                         return delButton;
@@ -203,14 +203,14 @@ public class UserSubscriptionsLayout extends FormLayout {
         
         for (int i = 0; i < basicRules.size(); i++) {
             ruleDTO = basicRules.get(i);
-            rule = new RuleRecord(i18n.basic(), "", "", ruleDTO.getName(), ruleDTO.getDescription(), ruleDTO.getMedium(), ruleDTO.getFormat(), ruleDTO.isRelease(), ruleDTO.isSubscribed());
+            rule = new RuleRecord(i18n.basic(), "", "", ruleDTO.getName(), ruleDTO.getDescription(), ruleDTO.getMedium(), ruleDTO.getFormat(), ruleDTO.isRelease(), ruleDTO.isSubscribed(), ruleDTO.getUuid());
             
             this.subscriptionsGrid.addData(rule);
         }
 
         for (int i = 0; i < complexRules.size(); i++) {
             complexDTO = complexRules.get(i);
-            rule = new RuleRecord(i18n.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), complexDTO.getMedium(), complexDTO.getFormat(), complexDTO.isRelease(), complexDTO.isSubscribed());
+            rule = new RuleRecord(i18n.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), complexDTO.getMedium(), complexDTO.getFormat(), complexDTO.isRelease(), complexDTO.isSubscribed(), "UUID"); // TODO add UUID to complex rule
 
             this.subscriptionsGrid.addData(rule);
         }

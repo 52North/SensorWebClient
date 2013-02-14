@@ -133,7 +133,7 @@ public interface RpcSesRuleServiceAsync {
      * @param ruleName
      * @param callback
      */
-    void deleteRule(String ruleName, AsyncCallback<SesClientResponse> callback);
+    void deleteRule(String uuid, AsyncCallback<SesClientResponse> callback);
 
     /**
      * @param ruleName

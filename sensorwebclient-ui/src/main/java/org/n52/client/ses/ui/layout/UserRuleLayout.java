@@ -437,14 +437,14 @@ public class UserRuleLayout extends FormLayout {
         
         for (int i = 0; i < basicRules.size(); i++) {
             basicDTO = basicRules.get(i);
-            rule = new RuleRecord(i18n.basic(), "", "", basicDTO.getName(), basicDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), basicDTO.isRelease(), basicDTO.isSubscribed());
+            rule = new RuleRecord(i18n.basic(), "", "", basicDTO.getName(), basicDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), basicDTO.isRelease(), basicDTO.isSubscribed(), basicDTO.getUuid());
             
             this.ownRulesGrid.addData(rule);
         }
         
         for (int i = 0; i < complexRules.size(); i++) {
             complexDTO = complexRules.get(i);
-            rule = new RuleRecord(i18n.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), complexDTO.isRelease(), complexDTO.isSubscribed());
+            rule = new RuleRecord(i18n.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), complexDTO.isRelease(), complexDTO.isSubscribed(), "UUID");
             
             this.ownRulesGrid.addData(rule);
         }
@@ -471,14 +471,14 @@ public class UserRuleLayout extends FormLayout {
 
         for (int i = 0; i < basicRules.size(); i++) {
             ruleDTO = basicRules.get(i);
-            rule = new RuleRecord(i18n.basic(), "", "", ruleDTO.getName(), ruleDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), ruleDTO.isRelease(), ruleDTO.isSubscribed());
+            rule = new RuleRecord(i18n.basic(), "", "", ruleDTO.getName(), ruleDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), ruleDTO.isRelease(), ruleDTO.isSubscribed(), ruleDTO.getUuid());
             
             this.otherRulesGrid.addData(rule);
         }
         
         for (int i = 0; i < complexRules.size(); i++) {
             complexDTO = complexRules.get(i);
-            rule = new RuleRecord(i18n.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), complexDTO.isRelease(), complexDTO.isSubscribed());
+            rule = new RuleRecord(i18n.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), complexDTO.isRelease(), complexDTO.isSubscribed(), "UUID");
 
             this.otherRulesGrid.addData(rule);
             

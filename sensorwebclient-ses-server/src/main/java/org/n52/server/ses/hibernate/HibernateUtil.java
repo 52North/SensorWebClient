@@ -76,6 +76,8 @@ public class HibernateUtil extends HibernateDaoUtil {
     private static final String E_MAIL = "eMail";
 
     private static final String USER_NAME = "userName";
+    
+    private static final String UUID = "uuid";
 
     public static void saveUser(User user) {
         user.setActive(true);
@@ -293,24 +295,17 @@ public class HibernateUtil extends HibernateDaoUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static BasicRule getBasicRuleByName(String ruleName) {
-        Session session = getSessionFactory().getCurrentSession();
-        session.beginTransaction();
-        Criteria crit = session.createCriteria(BasicRule.class);
-        List<BasicRule> rules = crit.add(Restrictions.eq(RULE_NAME, ruleName)).list();
-        session.getTransaction().commit();
-        if (rules.size() == 1) {
-            return rules.get(0);
-        }
+    public static ComplexRule getComplexRuleByUuid(String uuid) {
+        // not implemented now
         return null;
     }
-
+    
     @SuppressWarnings("unchecked")
-    public static ComplexRule getComplexRuleByName(String ruleName) {
+    public static ComplexRule getComplexRuleByName(String rulename) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
         Criteria crit = session.createCriteria(ComplexRule.class);
-        List<ComplexRule> rules = crit.add(Restrictions.eq(RULE_NAME, ruleName)).list();
+        List<ComplexRule> rules = crit.add(Restrictions.eq(RULE_NAME, rulename)).list();
         session.getTransaction().commit();
         if (rules.size() == 1) {
             return rules.get(0);
@@ -497,7 +492,7 @@ public class HibernateUtil extends HibernateDaoUtil {
                     session.getTransaction().commit();
                 }
                 else {
-                    ComplexRule complexRule = getComplexRuleByName(ruleName);
+                    ComplexRule complexRule = getComplexRuleByUuid(ruleName);
                     complexRule.setPublished(value);
                     session.update(complexRule);
                     session.getTransaction().commit();
@@ -544,6 +539,24 @@ public class HibernateUtil extends HibernateDaoUtil {
         return null;
     }
 
+    public static boolean deleteRuleWithUuid(String uuid) {
+        BasicRule basicRule = HibernateUtil.getBasicRuleByUuid(uuid);
+        ComplexRule complexRule = HibernateUtil.getComplexRuleByUuid(uuid);
+        Session session = getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        if (basicRule != null) {
+            session.delete(basicRule);
+            session.getTransaction().commit();
+            return true;
+        }
+        else if (complexRule != null) {
+            session.delete(complexRule);
+            session.getTransaction().commit();
+            return true;
+        }
+        return false;
+    }
+    
     public static boolean deleteRule(String ruleName) {
         BasicRule basicRule = HibernateUtil.getBasicRuleByName(ruleName);
         ComplexRule complexRule = HibernateUtil.getComplexRuleByName(ruleName);
@@ -692,7 +705,19 @@ public class HibernateUtil extends HibernateDaoUtil {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
+    public static BasicRule getBasicRuleByUuid(final String uuid) {
+    	return execute(new CriteriaExecution<BasicRule>() {
+            @Override
+            public BasicRule execute(final Session session) {
+                Criteria criteria = session.createCriteria(BasicRule.class);
+                criteria.add(Restrictions.eq(UUID, uuid));
+                BasicRule rule = (BasicRule) criteria.uniqueResult();
+                return rule;
+            }
+        });
+	}
+
+	@SuppressWarnings("unchecked")
     public static List<BasicRule> getBasicRulesByID(int ruleID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();
@@ -703,6 +728,19 @@ public class HibernateUtil extends HibernateDaoUtil {
     }
 
     @SuppressWarnings("unchecked")
+	public static BasicRule getBasicRuleByName(String ruleName) {
+	    Session session = getSessionFactory().getCurrentSession();
+	    session.beginTransaction();
+	    Criteria crit = session.createCriteria(BasicRule.class);
+	    List<BasicRule> rules = crit.add(Restrictions.eq(RULE_NAME, ruleName)).list();
+	    session.getTransaction().commit();
+	    if (rules.size() == 1) {
+	        return rules.get(0);
+	    }
+	    return null;
+	}
+
+	@SuppressWarnings("unchecked")
     public static ComplexRule getComplexRuleByID(int ruleID) {
         Session session = getSessionFactory().getCurrentSession();
         session.beginTransaction();

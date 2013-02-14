@@ -509,7 +509,7 @@ public class SesRequestManager extends RequestManager {
         this.sesRulesService.getAllRules(callback);
     }
 
-    public void deleteRule(String ruleName, final String role) {
+    public void deleteRule(String uuid, final String role) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
                 Toaster.getInstance().addErrorMessage(arg0.getMessage());
@@ -528,7 +528,7 @@ public class SesRequestManager extends RequestManager {
                 }
             }
         };
-        this.sesRulesService.deleteRule(ruleName, callback);  
+        this.sesRulesService.deleteRule(uuid, callback);  
     }
 
     public void deleteTimeseriesFeed(String timeseriesFeed) {

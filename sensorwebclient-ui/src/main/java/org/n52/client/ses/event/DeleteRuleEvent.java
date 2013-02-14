@@ -36,8 +36,7 @@ public class DeleteRuleEvent extends FilteredDispatchGwtEvent<DeleteRuleEventHan
     /** The TYPE. */
     public static Type<DeleteRuleEventHandler> TYPE = new Type<DeleteRuleEventHandler>();
 
-    /** The ruleName. */
-    private String ruleName;
+    private String uuid;
     
     /** The role of user who makes the call */
     private String role;
@@ -50,9 +49,9 @@ public class DeleteRuleEvent extends FilteredDispatchGwtEvent<DeleteRuleEventHan
      * @param blockedHandlers
      *            the blocked handlers
      */
-    public DeleteRuleEvent(String ruleName, String role, DeleteRuleEventHandler... blockedHandlers) {
+    public DeleteRuleEvent(String uuid, String role, DeleteRuleEventHandler... blockedHandlers) {
         super(blockedHandlers);
-        this.ruleName = ruleName;
+        this.uuid = uuid;
         this.role = role;
     }
 
@@ -83,8 +82,8 @@ public class DeleteRuleEvent extends FilteredDispatchGwtEvent<DeleteRuleEventHan
      * 
      * @return the ruleName
      */
-    public String getRuleName() {
-        return this.ruleName;
+    public String getUuid() {
+        return this.uuid;
     }
 
     /**

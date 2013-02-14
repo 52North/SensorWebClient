@@ -71,6 +71,8 @@ public class BasicRuleDTO implements Serializable {
     /** The ownerName */
     private String ownerName;
     
+    private String uuid;
+    
     private TimeseriesMetadata timeseriesMetadata;
 
     /**
@@ -114,7 +116,7 @@ public class BasicRuleDTO implements Serializable {
      * @param format 
      */
     public BasicRuleDTO(int id, String name, String ruleType, String type, String description, boolean release,
-            int ownerID, String eml, boolean subscribed, String medium, String format, TimeseriesMetadata timeseriesMetadata) {
+            int ownerID, String eml, boolean subscribed, String medium, String format, String uuid, TimeseriesMetadata timeseriesMetadata) {
         this.id = id;
         this.name = name;
         this.ruleType = ruleType;
@@ -126,6 +128,7 @@ public class BasicRuleDTO implements Serializable {
         this.subscribed = subscribed;
         this.medium = medium;
         this.format = format;
+        this.uuid = uuid;
         this.timeseriesMetadata = timeseriesMetadata;
     }
 
@@ -337,5 +340,13 @@ public class BasicRuleDTO implements Serializable {
     public void setTimeseriesMetadata(TimeseriesMetadata timeseriesMetadata) {
         this.timeseriesMetadata = timeseriesMetadata;
     }
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
 
 }

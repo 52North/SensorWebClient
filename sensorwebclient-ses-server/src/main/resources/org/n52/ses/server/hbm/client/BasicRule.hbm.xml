@@ -14,7 +14,8 @@
 		<property name="ownerID" type="integer" />
 		<property name="eml" type="text" />
 		<property name="subscribed" type="boolean" />
-		<many-to-one name="timeseriesMetadata" cascade="all" lazy="false"
+		<property name="uuid" type="string" />
+		<many-to-one name="timeseriesMetadata" cascade="persist" lazy="false"
 			class="org.n52.shared.serializable.pojos.TimeseriesMetadata" column="timeseriesMetadata" />
 	</class>
 </hibernate-mapping>

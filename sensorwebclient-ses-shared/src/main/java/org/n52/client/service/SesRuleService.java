@@ -44,7 +44,7 @@ public interface SesRuleService {
 
     public SesClientResponse getAllRules() throws Exception;
 
-    public SesClientResponse deleteRule(String ruleName) throws Exception;
+    public SesClientResponse deleteRule(String uuid) throws Exception;
 
     public SesClientResponse getRuleForEditing(String ruleName) throws Exception;
 

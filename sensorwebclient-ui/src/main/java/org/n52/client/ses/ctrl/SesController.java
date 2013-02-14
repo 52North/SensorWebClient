@@ -246,7 +246,7 @@ public class SesController extends ServiceController {
         }
 
         public void onDeleteRule(DeleteRuleEvent evt) {
-            SesController.this.getRm().deleteRule(evt.getRuleName(), evt.getRole());
+            SesController.this.getRm().deleteRule(evt.getUuid(), evt.getRole());
         }
 
         public void onDeleteSensor(DeleteSensorEvent evt) {

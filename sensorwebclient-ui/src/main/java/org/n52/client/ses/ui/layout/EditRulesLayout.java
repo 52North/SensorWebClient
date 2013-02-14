@@ -24,6 +24,7 @@
 package org.n52.client.ses.ui.layout;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.client.ses.ui.RuleRecord.UUID;
 
 import java.util.ArrayList;
 
@@ -163,7 +164,7 @@ public class EditRulesLayout extends FormLayout {
                                 SC.ask(i18n.reallyDeleteRule(), new BooleanCallback() {
                                     public void execute(Boolean value) {
                                         if (value) {
-                                            EventBus.getMainEventBus().fireEvent(new DeleteRuleEvent(record.getAttribute("name"), Cookies.getCookie(SesRequestManager.COOKIE_USER_ROLE)));
+                                            EventBus.getMainEventBus().fireEvent(new DeleteRuleEvent(record.getAttribute(UUID), Cookies.getCookie(SesRequestManager.COOKIE_USER_ROLE)));
                                         }
                                     }
                                 });
@@ -310,13 +311,13 @@ public class EditRulesLayout extends FormLayout {
 
         for (int i = 0; i < basic.size(); i++) {
             ruleDTO = basic.get(i);
-            rule = new RuleRecord(i18n.basic(), "", "", ruleDTO.getName(), ruleDTO.getDescription(), i18n.sms(), "XML", ruleDTO.isRelease(), ruleDTO.isSubscribed());
+            rule = new RuleRecord(i18n.basic(), "", "", ruleDTO.getName(), ruleDTO.getDescription(), i18n.sms(), "XML", ruleDTO.isRelease(), ruleDTO.isSubscribed(), ruleDTO.getUuid());
             
             this.ownRulesGrid.addData(rule);
         }
         for (int i = 0; i < complex.size(); i++) {
             complexDTO = complex.get(i);
-            rule = new RuleRecord(i18n.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), complexDTO.getMedium(), i18n.sms(), complexDTO.isRelease(), complexDTO.isSubscribed());
+            rule = new RuleRecord(i18n.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), complexDTO.getMedium(), i18n.sms(), complexDTO.isRelease(), complexDTO.isSubscribed(), "UUID");
 
             this.ownRulesGrid.addData(rule);
         }
@@ -343,13 +344,13 @@ public class EditRulesLayout extends FormLayout {
 
         for (int i = 0; i < basic.size(); i++) {
             ruleDTO = basic.get(i);
-            rule = new RuleRecord(i18n.basic(), "", "", ruleDTO.getName(), ruleDTO.getDescription(), i18n.sms(), "XML", ruleDTO.isRelease(), ruleDTO.isSubscribed());
+            rule = new RuleRecord(i18n.basic(), "", "", ruleDTO.getName(), ruleDTO.getDescription(), i18n.sms(), "XML", ruleDTO.isRelease(), ruleDTO.isSubscribed(), ruleDTO.getUuid());
 
             this.otherRulesGrid.addData(rule);
         }
         for (int i = 0; i < complex.size(); i++) {
             complexDTO = complex.get(i);
-            rule = new RuleRecord(i18n.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), complexDTO.getMedium(), i18n.sms(), complexDTO.isRelease(), complexDTO.isSubscribed());
+            rule = new RuleRecord(i18n.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), complexDTO.getMedium(), i18n.sms(), complexDTO.isRelease(), complexDTO.isSubscribed(), "UUID");
 
             this.otherRulesGrid.addData(rule);
         }
