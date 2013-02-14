@@ -702,13 +702,11 @@
 				<config.logger.fileappender.level>WARN</config.logger.fileappender.level>
 
 				<feeder.nodata.values>-999999999</feeder.nodata.values>
-				<feeder.sleep.time.observation>5000</feeder.sleep.time.observation>
 				<feeder.only.youngest.observation>true</feeder.only.youngest.observation>
 				<feeder.getobservations.update.time>60000</feeder.getobservations.update.time>
-				<feeder.first.update.interval.range>120000</feeder.first.update.interval.range>
+				<feeder.minimal.update.interval.range>120000</feeder.minimal.update.interval.range>
 				<feeder.latest.considered.timeinterval>900000</feeder.latest.considered.timeinterval>
 
-				<feeder.ses.version>0.0.0</feeder.ses.version>
 				<feeder.ses.default.topic>ses:Measurements</feeder.ses.default.topic>
 				<feeder.ses.register.publisher.lifetime>2999-12-31T23:59:59+00:00</feeder.ses.register.publisher.lifetime>
 			</properties>

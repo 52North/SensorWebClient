@@ -1,12 +1,11 @@
 
 package org.n52.server.ses.feeder;
 
-import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_FIRST_UPDATE_INTERVAL_RANGE;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_GETOBSERVATIONS_UPDATE_INTERVAL;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_LAST_CONSIDERED_TIME_INTERVAL;
+import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_MINIMAL_UPDATE_INTERVAL_RANGE;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_NO_DATA_VALUES;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_ONLY_YOUNGEST_OBSERVATION;
-import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_PROCEDURE_NAME_CONSTRAINTS;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SES_DEFAULT_TOPIC;
 import static org.n52.server.ses.feeder.FeederConfig.ConfigurationKeys.KEY_SES_LIFETIME_DURATION;
 
@@ -40,18 +39,13 @@ public class FeederConfig {
 
     private Properties configuration;
 
-    private long firstUpdateIntervalRange;
-
-    @Deprecated
-    private List<String> procedureNameConstraints;
+    private long minimalUpdateIntervalRange;
 
     private List<String> noDataValues;
 
     private long elapseTimeOfGetObservationsUpdateInMillis;
 
     private boolean onlyYoungestName;
-
-    private int maximalNumberOfProcedures;
 
     private String sesDefaultTopic;
 
@@ -71,11 +65,10 @@ public class FeederConfig {
         configuration = loadProperties();
 
         firstConsideredTimeIntervalInMillis = parseLongValue(KEY_LAST_CONSIDERED_TIME_INTERVAL, 120000);
-        firstUpdateIntervalRange = parseLongValue(KEY_FIRST_UPDATE_INTERVAL_RANGE, 120000);
+        minimalUpdateIntervalRange = parseLongValue(KEY_MINIMAL_UPDATE_INTERVAL_RANGE, 120000);
         elapseTimeOfGetObservationsUpdateInMillis = parseLongValue(KEY_GETOBSERVATIONS_UPDATE_INTERVAL, 60000);
 
         noDataValues = parseCommaSeparatedValues(KEY_NO_DATA_VALUES);
-        procedureNameConstraints = parseCommaSeparatedValues(KEY_PROCEDURE_NAME_CONSTRAINTS);
 
         sesDefaultTopic = parseStringValue(KEY_SES_DEFAULT_TOPIC, SES_DEFAULT_TOPIC);
         sesLifetimeDuration = parseStringValue(KEY_SES_LIFETIME_DURATION, SES_DEFAULT_LIFETIME_DURATION);
@@ -140,14 +133,6 @@ public class FeederConfig {
     }
 
     /**
-     * @deprecated obsolete config
-     */
-    @Deprecated
-    public List<String> getProcedureNameConstraints() {
-        return this.procedureNameConstraints;
-    }
-
-    /**
      * @return update interval of performing GetObservation updates in milliseconds.
      */
     public long getElapseTimeOfGetObservationsUpdate() {
@@ -158,12 +143,8 @@ public class FeederConfig {
         return noDataValues;
     }
 
-    public long getInitialUpdateIntervalRange() {
-        return firstUpdateIntervalRange;
-    }
-
-    public int getMaxNumProc() {
-        return maximalNumberOfProcedures;
+    public long getMinimalUpdateIntervalRange() {
+        return minimalUpdateIntervalRange;
     }
 
     public String getSesDefaultTopic() {
@@ -184,32 +165,14 @@ public class FeederConfig {
 
     class ConfigurationKeys {
 
+        /** Key for a list of no data values. */
+        static final String KEY_NO_DATA_VALUES = "nodata_values";
+
         /** Key for the period to collect the new observations in milliseconds. */
         static final String KEY_GETOBSERVATIONS_UPDATE_INTERVAL = "getobservations_update_time";
 
         /** Key for the minimum update time of an observation in milliseconds. */
-        static final String KEY_FIRST_UPDATE_INTERVAL_RANGE = "first_update_interval_range";
-
-        /** Key for the maximum number of procedures. */
-        static final String KEY_MAXIMUM_NUMBER_PROCEDURES = "maximum_number_procedures";
-
-        /** Key for a list of procedure name constraints. */
-        static final String KEY_PROCEDURE_NAME_CONSTRAINTS = "procedure_name_constraints";
-
-        /** Key for a list of no data values. */
-        static final String KEY_NO_DATA_VALUES = "nodata_values";
-
-        /** Key for the supported SES version. */
-        static final String KEY_SES_VERSION = "ses_version";
-
-        /** Key for the SES url. */
-        static final String KEY_SES_URL = "ses_url";
-
-        /** Key for the basic port type path of the SES. */
-        static final String KEY_SES_BASIC_PORT_TYPE_PATH = "ses_basic_port_type_path";
-
-        /** Key for the default topic dialect in the SES requests. */
-        static final String KEY_SES_DEFAULT_TOPIC_DIALECT = "ses_default_topic_dialect";
+        static final String KEY_MINIMAL_UPDATE_INTERVAL_RANGE = "minimal_update_interval_range";
 
         /** Key for the default topic in the SES request. */
         static final String KEY_SES_DEFAULT_TOPIC = "ses_default_topic";

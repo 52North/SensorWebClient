@@ -2,33 +2,29 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 
-	<!-- URL to the SES and some other configurations for the SES -->
-	<entry key="ses_url">${ses.services.url}</entry>
-	
-	<!-- Period to start to collect the sensorML documents in milliseconds -->
-	<entry key="capabilities_task_period">${feeder.capabilities.task.period}</entry>
-	
 	<!-- Period to start to collect the new observations in milliseconds -->
 	<entry key="getobservations_update_time">${feeder.getobservations.update.time}</entry>
 	
     <!-- NoData wildcards as comma separated values -->
 	<entry key="nodata_values">${feeder.nodata.values}</entry>
 	
-	
 	<!-- ################################################## 
 		        ADVANCED CONFIGURATION PARAMETERS
 	     ################################################## -->
 	     
+	<!-- Default filter topic, e.g. ses:Measurements -->
+    <entry key="ses_default_topic">${feeder.ses.default.topic}</entry>
+    
+    <!-- How long a publisher shall survive until it will be destroyed as ISO8901 string -->
 	<entry key="ses_register_publisher_lifetime">${feeder.ses.register.publisher.lifetime}</entry>
-	<entry key="ses_default_topic">${feeder.ses.default.topic}</entry>
 
 	<!-- Minimum update time for new observations in milliseconds -->
-	<entry key="first_update_interval_range">${feeder.first.update.interval.range}</entry>
+	<entry key="minimal_update_interval_range">${feeder.minimal.update.interval.range}</entry>
+	
     <!-- Start timestamp in seconds before actual time -->
     <entry key="latest_considered_time_interval">${feeder.latest.considered.timeinterval}</entry>
-    <!-- Sleep time between two observations send to SES in milliseconds -->
-    <entry key="sleep_time_observation">${feeder.sleep.time.observation}</entry>
-    <!-- Take just the youngest new observation an send it to the ses -->
+    
+    <!-- Take just the youngest new observation an send it to the SES -->
     <entry key="only_youngest_observation">${feeder.only.youngest.observation}</entry>
 	
 </properties>

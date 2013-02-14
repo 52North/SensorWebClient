@@ -193,7 +193,7 @@ public class FeedObservationThread extends Thread {
         long updateObservationPeriod = 0;
         try {
             // TODO for fix observation ranges makes this sense
-            updateObservationPeriod = getFeederConfig().getInitialUpdateIntervalRange();
+            updateObservationPeriod = getFeederConfig().getMinimalUpdateIntervalRange();
             
             XmlCursor resultCursor = observation.getResult().newCursor();
             resultCursor.toChild(new QName("http://www.opengis.net/swe/1.0.1", "DataArray"));
@@ -243,8 +243,8 @@ public class FeedObservationThread extends Thread {
                 updateObservationPeriod = dateTimeLast.getMillis() - dateTimeFirst.getMillis();
             }
 
-            if (updateObservationPeriod <= FeederConfig.getFeederConfig().getInitialUpdateIntervalRange()) {
-                return FeederConfig.getFeederConfig().getInitialUpdateIntervalRange();
+            if (updateObservationPeriod <= FeederConfig.getFeederConfig().getMinimalUpdateIntervalRange()) {
+                return FeederConfig.getFeederConfig().getMinimalUpdateIntervalRange();
             }
         }
         catch (IllegalStateException e) {
