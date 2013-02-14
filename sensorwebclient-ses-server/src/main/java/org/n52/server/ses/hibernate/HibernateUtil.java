@@ -233,10 +233,15 @@ public class HibernateUtil extends HibernateDaoUtil {
 
     public static void saveBasicRule(final BasicRule rule) {
     	TimeseriesMetadata metadata = rule.getTimeseriesMetadata();
-    	if ( !existsTimeseriesMetadata(metadata)) {
+    	if (!existsTimeseriesMetadata(metadata)) {
 			String timeseriesId = metadata.getTimeseriesId();
 			TimeseriesMetadata persistedObject = getTimeseriesMetadata(timeseriesId);
-			rule.setTimeseriesMetadata(persistedObject);
+			if (persistedObject == null) {
+				setTimeseriesMetadata(metadata);
+				rule.setTimeseriesMetadata(metadata);
+			} else {
+				rule.setTimeseriesMetadata(persistedObject);
+			}
 		}
     	execute(new CriteriaExecution<Void>() {
 			@Override
@@ -870,6 +875,16 @@ public class HibernateUtil extends HibernateDaoUtil {
     			Criteria criteria = session.createCriteria(TimeseriesMetadata.class);
     			criteria.add(Restrictions.eq(TIMESERIES_ID,timeseriesId)).uniqueResult();
     			return (TimeseriesMetadata) criteria.uniqueResult();
+    		}
+		});
+    }
+    
+    public static void setTimeseriesMetadata(final TimeseriesMetadata metadata) {
+    	execute(new CriteriaExecution<Void>() {
+    		@Override
+    		public Void execute(Session session) {
+    			session.saveOrUpdate(metadata);
+				return null;
     		}
 		});
     }
