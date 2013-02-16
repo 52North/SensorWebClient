@@ -78,6 +78,7 @@ import com.smartgwt.client.widgets.layout.VLayout;
  * 
  * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
  */
+@Deprecated
 public class CreateComplexRuleLayout extends FormLayout {
 
     private VLayout ruleBlockLayout;

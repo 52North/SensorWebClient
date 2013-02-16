@@ -23,11 +23,12 @@
  */
 package org.n52.client.ses.ui.layout;
 
+import static com.google.gwt.user.client.Cookies.getCookie;
 import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ID;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.RuleRecord.FORMAT;
 import static org.n52.client.ses.ui.RuleRecord.MEDIUM;
-import static org.n52.client.ses.ui.RuleRecord.NAME;
+import static org.n52.client.ses.ui.RuleRecord.UUID;
 
 import java.util.ArrayList;
 
@@ -195,13 +196,20 @@ public class UserRuleLayout extends FormLayout {
                         subscribeButton.setAlign(Alignment.CENTER);
                         subscribeButton.addClickHandler(new ClickHandler() {
                             public void onClick(ClickEvent event) {
-                                if (record.getAttribute(MEDIUM).equals("")){
+                                String medium = record.getAttribute(MEDIUM);
+                                if (medium.equals("")){
                                     SC.say(i18n.selectMedium());
-                                } else if (record.getAttribute(FORMAT).equals("")){
-                                    SC.say(i18n.selectFormat());
-                                } else {
-                                    String userID = Cookies.getCookie(COOKIE_USER_ID);
-                                    EventBus.getMainEventBus().fireEvent(new SubscribeEvent(record.getAttribute(NAME), userID, record.getAttribute(MEDIUM), record.getAttribute(FORMAT)));
+                                }
+                                else {
+                                    String format = record.getAttribute(FORMAT);
+                                    if (format.equals("")){
+                                        SC.say(i18n.selectFormat());
+                                    } else {
+                                        String uuid = record.getAttribute(UUID);
+                                        String userId = getCookie(COOKIE_USER_ID);
+                                        SubscribeEvent subscribeEvent = new SubscribeEvent(uuid, userId, medium, format);
+                                        EventBus.getMainEventBus().fireEvent(subscribeEvent);
+                                    }
                                 }
                             }
                         });
@@ -313,13 +321,20 @@ public class UserRuleLayout extends FormLayout {
                         subscribeButton.setAlign(Alignment.CENTER);
                         subscribeButton.addClickHandler(new ClickHandler() {
                             public void onClick(ClickEvent event) {
-                                if (record.getAttribute(MEDIUM).equals("")){
+                                String medium = record.getAttribute(MEDIUM);
+                                if (medium.equals("")){
                                     SC.say(i18n.selectMedium());
-                                } else if (record.getAttribute(FORMAT).equals("")){
-                                    SC.say(i18n.selectFormat());
-                                } else {
-                                    String userID = Cookies.getCookie(SesRequestManager.COOKIE_USER_ID);
-                                    EventBus.getMainEventBus().fireEvent(new SubscribeEvent(userID, record.getAttribute(NAME), record.getAttribute(MEDIUM), record.getAttribute(FORMAT)));
+                                }
+                                else {
+                                    String format = record.getAttribute(FORMAT);
+                                    if (format.equals("")){
+                                        SC.say(i18n.selectFormat());
+                                    } else {
+                                        String uuid = record.getAttribute(UUID);
+                                        String userId = getCookie(COOKIE_USER_ID);
+                                        SubscribeEvent subscribeEvent = new SubscribeEvent(uuid, userId, medium, format);
+                                        EventBus.getMainEventBus().fireEvent(subscribeEvent);
+                                    }
                                 }
                             }
                         });

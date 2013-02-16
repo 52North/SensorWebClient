@@ -195,7 +195,7 @@ public class SesUserServiceImpl implements SesUserService {
             user.setActive(true);
 
             // add user to DB
-            HibernateUtil.saveUser(user);
+            HibernateUtil.save(user);
             UserDTO resultUser = createUserDTO(user);
 
             // send registration mail

@@ -23,10 +23,13 @@
  */
 package org.n52.server.ses.service;
 
+import static java.util.UUID.randomUUID;
 import static org.n52.server.ses.feeder.SosSesFeeder.getSosSesFeederInstance;
 import static org.n52.server.ses.hibernate.HibernateUtil.activateTimeseriesFeed;
 import static org.n52.server.ses.hibernate.HibernateUtil.deactivateTimeseriesFeed;
 import static org.n52.server.ses.hibernate.HibernateUtil.deleteSubscription;
+import static org.n52.server.ses.hibernate.HibernateUtil.existsBasicRule;
+import static org.n52.server.ses.hibernate.HibernateUtil.existsComplexRuleName;
 import static org.n52.server.ses.hibernate.HibernateUtil.existsOtherSubscriptions;
 import static org.n52.server.ses.hibernate.HibernateUtil.existsSubscription;
 import static org.n52.server.ses.hibernate.HibernateUtil.getTimeseriesFeedById;
@@ -40,6 +43,7 @@ import static org.n52.shared.responses.SesClientResponse.types.RULE_NAME_EXISTS;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 
 import org.n52.client.service.SesRuleService;
 import org.n52.oxf.adapter.OperationResult;
@@ -78,14 +82,14 @@ public class SesRulesServiceImpl implements SesRuleService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SesRulesServiceImpl.class);
     
     @Override
-    public SesClientResponse subscribe(String userID, String ruleName, String medium, String eml) throws Exception {
+    public SesClientResponse subscribe(String userID, String uuid, String medium, String eml) throws Exception {
         try {
-            LOGGER.debug("subscribe to rule: {}", ruleName);
+            LOGGER.debug("subscribe to rule with UUID: {}", uuid);
             LOGGER.debug("notification type:  {}", medium);
             
             // get EML from DB
-            BasicRule basicRule = HibernateUtil.getBasicRuleByName(ruleName);
-            ComplexRule complexRule = HibernateUtil.getComplexRuleByUuid(ruleName);
+            BasicRule basicRule = HibernateUtil.getBasicRuleByUuid(uuid);
+            ComplexRule complexRule = HibernateUtil.getComplexRuleByName(uuid);
             
             // get user from DBs
             User user = HibernateUtil.getUserBy(Integer.valueOf(userID));
@@ -93,26 +97,26 @@ public class SesRulesServiceImpl implements SesRuleService {
             // subscribe basic rules from other user
             if (basicRule != null && basicRule.getOwnerID() != Integer.valueOf(userID)) {
                 // copy rule and then continue
-                SesClientResponse response = copy(userID, ruleName);
+                SesClientResponse response = copy(userID, uuid);
                 if (response.getType().equals(SesClientResponse.types.RULE_NAME_EXISTS)) {
                     // rule name exists
                     return response;
                 }
                 // new rule name = originalRulaName_USERNAME
                 String newRuleName = basicRule.getName() + "_" + user.getUserName();
-                basicRule = HibernateUtil.getBasicRuleByName(newRuleName);
+                basicRule = HibernateUtil.getBasicRuleByUuid(uuid);
             }
             // subscribe complex rule from other user
             if (complexRule != null && complexRule.getOwnerID() != Integer.valueOf(userID)) {
                 // copy rule and then continue
-                SesClientResponse response = copy(userID, ruleName);
+                SesClientResponse response = copy(userID, uuid);
                 if (response.equals(SesClientResponse.types.RULE_NAME_EXISTS)) {
                     // rule name exists
                     return response;
                 }
                 // new rule name = originalRulaName_USERNAME
                 String newRuleName = complexRule.getName() + "_" + user.getUserName();
-                complexRule = HibernateUtil.getComplexRuleByUuid(newRuleName);
+                complexRule = HibernateUtil.getComplexRuleByName(newRuleName);
             }
             
             // for all formats check whether such subscription already exists
@@ -180,7 +184,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                                 SesServerUtil.subscribe(SesConfig.serviceVersion, SesConfig.sesEndpoint, SesConfig.consumerReference, content);
                             museResource = SesServerUtil.getSubscriptionIDfromSES(opResult);
                             if ((museResource == null) || (museResource.equals(""))) {
-                                throw new IllegalArgumentException("Subscription failed.");
+                                throw new IllegalStateException("Subscribing resource at SES failed.");
                             }
                         } catch (Exception e) {
                             LOGGER.error("Error while subscribing to SES", e);
@@ -191,10 +195,10 @@ public class SesRulesServiceImpl implements SesRuleService {
                         LOGGER.debug("save subscription to DB: " + museResource);
                         if (basicRule != null) {
                             HibernateUtil.saveSubscription(new Subscription(Integer.valueOf(userID), basicRule.getId(), museResource, media[k], formats[i]));
-                            subscribeBasicRule(basicRule.getName());
+                            subscribeBasicRule(uuid);
                         } else if (complexRule != null) {
                             HibernateUtil.saveSubscription(new Subscription(Integer.valueOf(userID), complexRule.getId(), museResource, media[k], formats[i]));
-                            HibernateUtil.updateComplexRuleSubscribtion(complexRule.getName(), true);
+                            HibernateUtil.updateComplexRuleSubscribtion(uuid, true);
                         }
                         
                         // set sensor status to used
@@ -257,13 +261,13 @@ public class SesRulesServiceImpl implements SesRuleService {
     }
 
     @Override
-    public SesClientResponse unSubscribe(String ruleName, String userID, String medium, String eml) throws Exception {
+    public SesClientResponse unSubscribe(String uuid, String userID, String medium, String eml) throws Exception {
         try {
-            LOGGER.debug("unsubscribe: " + ruleName);
+            LOGGER.debug("unsubscribe from rule with UUID: {}", uuid);
 
             // get rule
-            BasicRule basicRule = HibernateUtil.getBasicRuleByName(ruleName);
-            ComplexRule complexRule = HibernateUtil.getComplexRuleByUuid(ruleName);
+            BasicRule basicRule = HibernateUtil.getBasicRuleByUuid(uuid);
+            ComplexRule complexRule = HibernateUtil.getComplexRuleByName(uuid);
             
             // rule as EML
             String ruleAsEML = "";
@@ -299,10 +303,10 @@ public class SesRulesServiceImpl implements SesRuleService {
                 // TODO couple subscription and rules in DB model
                 deleteSubscription(museID, userID);
                 if (basicRule != null && !existsOtherSubscriptions(basicRule.getId())) {
-                    unsubscribeBasicRule(ruleName);
+                    unsubscribeBasicRule(uuid);
                 } else if (complexRule != null && !existsOtherSubscriptions(complexRule.getId())) {
                     // TODO refactor complex rules
-                    updateComplexRuleSubscribtion(ruleName, false);
+                    updateComplexRuleSubscribtion(uuid, false);
                 }
             } catch (Exception e) {
                 throw new Exception("Failed delete subscription from DB!", e);
@@ -318,7 +322,8 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse createBasicRule(Rule rule, boolean edit, String oldRuleName) throws Exception {
         try {
-            LOGGER.debug("createBasicRule: " + rule.getTitle());
+            rule.setUuid(randomUUID().toString());
+            LOGGER.debug("createBasicRule with UUID {}: ", rule.getUuid());
             if (exists(rule) && !edit) {
                 LOGGER.debug("Cannot create rule: Rule '{}' already exists!", rule.getTitle());
                 return new SesClientResponse(RULE_NAME_EXISTS);
@@ -340,7 +345,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                 basicRule = ruleGenerator.create(rule);
                 break;
             case SENSOR_LOSS:
-                basicRule = BasicRule_5_Builder.create_BR_5(rule);
+                basicRule = new BasicRule_5_Builder().create_BR_5(rule);
                 break;
             }
 
@@ -351,7 +356,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                 if (edit) {
                     // update Basic rule
                     LOGGER.debug("update basicRule in DB");
-                    BasicRule oldRule = HibernateUtil.getBasicRuleByName(oldRuleName);
+                    BasicRule oldRule = HibernateUtil.getBasicRuleByUuid(oldRuleName);
                     
                     // check if only description and/or publish status is changed ==> no resubscriptions are needed
                     if (RulesUtil.changesOnlyInDBBasic(oldRule, basicRule)) {
@@ -407,7 +412,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     }
 
     boolean exists(Rule rule) {
-        return HibernateUtil.existsBasicRuleName(rule.getTitle()) || HibernateUtil.existsComplexRuleName(rule.getTitle());
+        return existsBasicRule(rule.getUuid()) || existsComplexRuleName(rule.getTitle());
     }
 
     @Override
@@ -579,20 +584,20 @@ public class SesRulesServiceImpl implements SesRuleService {
             LOGGER.debug("delete rule with uuid " + uuid);
             
             // get rule
-//            BasicRule basicRule = HibernateUtil.getBasicRuleByUuid(uuid);
-//            ComplexRule complexRule = HibernateUtil.getComplexRuleByName(uuid); // TODO implement getcomplex rule for uuid
+            BasicRule basicRule = HibernateUtil.getBasicRuleByUuid(uuid);
+            ComplexRule complexRule = HibernateUtil.getComplexRuleByName(uuid);
             
-//            if (basicRule != null) {
-//                if (HibernateUtil.ruleIsSubscribed(basicRule.getId())) {
-//                    return new SesClientResponse(SesClientResponse.types.DELETE_RULE_SUBSCRIBED);
-//                }
-//            } else if (complexRule != null) {
-//                if (HibernateUtil.ruleIsSubscribed(complexRule.getId())) {
-//                    return new SesClientResponse(SesClientResponse.types.DELETE_RULE_SUBSCRIBED);
-//                }
-//            }
+            if (basicRule != null) {
+                if (HibernateUtil.ruleIsSubscribed(basicRule.getId())) {
+                    return new SesClientResponse(SesClientResponse.types.DELETE_RULE_SUBSCRIBED);
+                }
+            } else if (complexRule != null) {
+                if (HibernateUtil.ruleIsSubscribed(complexRule.getId())) {
+                    return new SesClientResponse(SesClientResponse.types.DELETE_RULE_SUBSCRIBED);
+                }
+            }
             
-            if (HibernateUtil.deleteRuleWithUuid(uuid)) {
+            if (HibernateUtil.deleteRule(uuid)) {
                 return new SesClientResponse(SesClientResponse.types.DELETE_RULE_OK);
             } else {
                 LOGGER.error("Error occured while deleting a rule");
@@ -608,8 +613,8 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse getRuleForEditing(String ruleName) throws Exception {
         try {
-            BasicRule basicRule = HibernateUtil.getBasicRuleByName(ruleName);
-            ComplexRule complexRule = HibernateUtil.getComplexRuleByUuid(ruleName);
+            BasicRule basicRule = HibernateUtil.getBasicRuleByUuid(ruleName);
+            ComplexRule complexRule = HibernateUtil.getComplexRuleByName(ruleName);
             Rule rule = null;
             
             if (basicRule != null) {
@@ -623,7 +628,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                 } else if (basicRule.getType().equals("BR4")) {
                     rule = new BasicRule_4_Builder().getRuleByEML(basicRule);
                 } else if (basicRule.getType().equals("BR5")) {
-                    rule = BasicRule_5_Builder.getRuleByEML(basicRule);
+                    rule = new BasicRule_5_Builder().getRuleByEML(basicRule);
                 }
                 rule.setTitle(basicRule.getName());
                 rule.setDescription(basicRule.getDescription());
@@ -645,7 +650,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                     
                     // check whether the rule names still exist 
                     if ((!content.equals(LogicalOperator.AND.toString()) && !content.equals(LogicalOperator.OR.toString()) && !content.equals(LogicalOperator.AND_NOT.toString()))) {
-                        if (!HibernateUtil.existsBasicRuleName(content) && !HibernateUtil.existsComplexRuleName(content)) {
+                        if (!HibernateUtil.existsBasicRule(content) && !HibernateUtil.existsComplexRuleName(content)) {
                             content = Constants.SES_OP_SEPARATOR + content;
                         }
                     }
@@ -686,8 +691,8 @@ public class SesRulesServiceImpl implements SesRuleService {
             } else if (operator == 3) {
                 basicRuleList.addAll(HibernateUtil.getAllBasicRulesBy(userID));
                 complexRuleList.addAll(HibernateUtil.getAllComplexRulesBy(userID));
-                basicRuleList.addAll(HibernateUtil.getAllPublishedBR());
-                complexRuleList.addAll(HibernateUtil.getAllPublishedCR());
+                basicRuleList.addAll(HibernateUtil.getAllPublishedBasicRules());
+                complexRuleList.addAll(HibernateUtil.getAllPublishedCcomplexRules());
             }
             // HashSet is used to avoid duplicates
             HashSet<String> h = new HashSet<String>();
@@ -714,7 +719,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     public SesClientResponse ruleNameExists(String ruleName) throws Exception {
         try {
             LOGGER.debug("check whether rule name '{}' exists.", ruleName);
-            if (HibernateUtil.existsBasicRuleName(ruleName) || HibernateUtil.existsComplexRuleName(ruleName)) {
+            if (HibernateUtil.existsBasicRule(ruleName) || HibernateUtil.existsComplexRuleName(ruleName)) {
                 return new SesClientResponse(SesClientResponse.types.RULE_NAME_EXISTS);
             }
             return new SesClientResponse(SesClientResponse.types.RULE_NAME_NOT_EXISTS);
@@ -726,12 +731,13 @@ public class SesRulesServiceImpl implements SesRuleService {
     }
 
     @Override
+    @Deprecated
     public SesClientResponse createComplexRule(ComplexRuleData rule, boolean edit, String oldRuleName) throws Exception {
         try {
             LOGGER.debug("create complex rule: " + rule.getTitle());
             
             // rule name exists
-            if ((HibernateUtil.existsComplexRuleName(rule.getTitle()) && !edit) || HibernateUtil.existsBasicRuleName(rule.getTitle())) {
+            if ((HibernateUtil.existsComplexRuleName(rule.getTitle()) && !edit) || HibernateUtil.existsBasicRule(rule.getTitle())) {
                 return new SesClientResponse(SesClientResponse.types.RULE_NAME_EXISTS);
             }
             
@@ -749,8 +755,8 @@ public class SesRulesServiceImpl implements SesRuleService {
 
                 // get all used rules
                 for (int i = 1; i < ruleNames.size(); i++) {
-                    basicRule = HibernateUtil.getBasicRuleByName(ruleNames.get(i));
-                    complexRule = HibernateUtil.getComplexRuleByUuid(ruleNames.get(i));
+                    basicRule = HibernateUtil.getBasicRuleByUuid(ruleNames.get(i));
+                    complexRule = HibernateUtil.getComplexRuleByName(ruleNames.get(i));
                     
                     if (basicRule != null) {
                         rules.add(basicRule);
@@ -798,7 +804,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                 if (edit) {
                     // update Complex rule
                     LOGGER.debug("update complex rule in DB");
-                    ComplexRule oldRule = HibernateUtil.getComplexRuleByUuid(oldRuleName);
+                    ComplexRule oldRule = HibernateUtil.getComplexRuleByName(oldRuleName);
                     
                     // check if only description and/or publish status is changed ==> no resubscriptions are needed
                     if (RulesUtil.changesOnlyInDBComplex(oldRule, finalComplexRule)) {
@@ -854,7 +860,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse getUserSubscriptions(String userID) throws Exception {
         try {
-            LOGGER.debug("get all subscriptions of user: " + userID);
+            LOGGER.debug("get all subscriptions of user with id {}.", userID);
             List<Subscription> subscriptions = HibernateUtil.getUserSubscriptions(userID);
             ArrayList<BasicRuleDTO> basicList = new ArrayList<BasicRuleDTO>();
             ArrayList<ComplexRuleDTO> complexList = new ArrayList<ComplexRuleDTO>();
@@ -904,13 +910,13 @@ public class SesRulesServiceImpl implements SesRuleService {
     }
 
     @Override
-    public SesClientResponse copy(String userID, String ruleName) throws Exception {
+    public SesClientResponse copy(String userID, String uuid) throws Exception {
         try {
-            LOGGER.debug("copy rule to own rules" + ruleName);
+            LOGGER.debug("Copy rule to own rules: " + uuid);
 
             // get the selected rule
-            BasicRule basicRule = HibernateUtil.getBasicRuleByName(ruleName);
-            ComplexRule complexRule = HibernateUtil.getComplexRuleByUuid(ruleName);
+            BasicRule basicRule = HibernateUtil.getBasicRuleByUuid(uuid);
+            ComplexRule complexRule = HibernateUtil.getComplexRuleByName(uuid);
             
             User user = HibernateUtil.getUserBy(Integer.valueOf(userID));
             
@@ -920,7 +926,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                 newRuleName = basicRule.getName() + "_" + user.getUserName();
                 
                 // check if allready exists
-                if (HibernateUtil.existsBasicRuleName(newRuleName)) {
+                if (HibernateUtil.existsBasicRule(newRuleName)) {
                     return new SesClientResponse(SesClientResponse.types.RULE_NAME_EXISTS);
                 }
                 

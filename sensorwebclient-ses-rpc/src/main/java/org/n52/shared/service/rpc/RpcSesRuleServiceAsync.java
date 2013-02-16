@@ -61,130 +61,40 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface RpcSesRuleServiceAsync {
 
-    /**
-     * Subscribe.
-     * @param userID 
-     * 
-     * @param ruleName
-     *            the rule name
-     * @param medium 
-     * @param eml 
-     * @param callback
-     *            the callback
-     */
-    void subscribe(String userID, String ruleName, String medium, String eml, AsyncCallback<SesClientResponse> callback);
+    void subscribe(String userID, String uuid, String medium, String eml, AsyncCallback<SesClientResponse> callback);
 
-    /**
-     * Un subscribe.
-     * 
-     * @param ruleName
-     *            the rule name
-     * @param userID 
-     * @param medium 
-     * @param format 
-     * @param callback
-     *            the callback
-     */
-    void unSubscribe(String ruleName, String userID, String medium, String format, AsyncCallback<SesClientResponse> callback);
+    void unSubscribe(String uuid, String userID, String medium, String format, AsyncCallback<SesClientResponse> callback);
 
-    /**
-     * Creates the basic rule.
-     * 
-     * @param rule
-     *            the rule
-     * @param edit 
-     * @param oldRuleName 
-     * @param callback
-     *            the callback
-     */
     void createBasicRule(Rule rule, boolean edit, String oldRuleName, AsyncCallback<SesClientResponse> callback);
 
-    /**
-     * @param parameterId
-     * @param edit
-     * @param callback
-     */
     void getAllOwnRules(String id, boolean edit,  AsyncCallback<SesClientResponse> callback);
 
-    /**
-     * @param parameterId
-     * @param edit 
-     * @param callback
-     */
+    @Deprecated
     void getAllOtherRules(String id, boolean edit, AsyncCallback<SesClientResponse> callback);
 
-    /**
-     * 
-     * @param ruleName
-     * @param published 
-     * @param role 
-     * @param callback
-     */
+    @Deprecated
     void publishRule(String ruleName, boolean published, String role, AsyncCallback<SesClientResponse> callback);
 
-    /**
-     * 
-     * @param callback
-     */
+    @Deprecated
     void getAllRules(AsyncCallback<SesClientResponse> callback);
 
-    /**
-     * 
-     * @param ruleName
-     * @param callback
-     */
     void deleteRule(String uuid, AsyncCallback<SesClientResponse> callback);
 
-    /**
-     * @param ruleName
-     * @param callback
-     */
+    @Deprecated
     void getRuleForEditing(String ruleName, AsyncCallback<SesClientResponse> callback);
 
-    /**
-     * 
-     * @param userID 
-     * @param callback
-     */
     void getAllPublishedRules(String userID, int operator, AsyncCallback<SesClientResponse> callback);
 
-    /**
-     * 
-     * @param ruleName
-     * @param callback
-     */
+    @Deprecated
     void ruleNameExists(String ruleName, AsyncCallback<SesClientResponse> callback);
 
-    /**
-     * 
-     * @param rule 
-     * @param edit 
-     * @param oldRuleName 
-     * @param callback
-     */
+    @Deprecated
     void createComplexRule(ComplexRuleData rule, boolean edit, String oldRuleName, AsyncCallback<SesClientResponse> callback);
 
-    /**
-     * 
-     * @param userID
-     * @param callback
-     */
     void getUserSubscriptions(String userID, AsyncCallback<SesClientResponse> callback);
 
-    /**
-     * 
-     * @param text
-     * @param criterion
-     * @param userID 
-     * @param callback
-     */
     void search(String text, int criterion, String userID, AsyncCallback<SesClientResponse> callback);
 
-    /**
-     * 
-     * @param userID
-     * @param ruleName
-     * @param callback
-     */
+    @Deprecated
     void copy(String userID, String ruleName, AsyncCallback<SesClientResponse> callback);
 }

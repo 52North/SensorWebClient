@@ -26,99 +26,49 @@ package org.n52.client.ses.event;
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.UnsubscribeEventHandler;
 
-/**
- * The Class SubscribeEvent.
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- */
 public class UnsubscribeEvent extends FilteredDispatchGwtEvent<UnsubscribeEventHandler> {
 
-    /** The TYPE. */
     public static Type<UnsubscribeEventHandler> TYPE = new Type<UnsubscribeEventHandler>();
 
-    /** The rule name. */
-    private String ruleName;
+    private String uuid;
     
-    /** The userID. */
     private String userID;
     
-    /** The medium. */
     private String medium;
     
-    /** The format. */
     private String format;
 
-
-    /**
-     * Instantiates a new subscribe event.
-     * 
-     * @param ruleName
-     *            the rule name
-     * @param userID 
-     * @param medium 
-     * @param format 
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
-    public UnsubscribeEvent(String ruleName, String userID, String medium, String format, UnsubscribeEventHandler... blockedHandlers) {
+    public UnsubscribeEvent(String uuid, String userID, String medium, String format, UnsubscribeEventHandler... blockedHandlers) {
         super(blockedHandlers);
-        this.ruleName = ruleName;
+        this.uuid = uuid;
         this.userID = userID;
         this.medium = medium;
         this.format = format;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(UnsubscribeEventHandler handler) {
         handler.onUnsubscribe(this);
-
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<UnsubscribeEventHandler> getAssociatedType() {
+    public Type<UnsubscribeEventHandler> getAssociatedType() {
         return TYPE;
     }
 
-    /**
-     * Gets the rule name.
-     * 
-     * @return the rule name
-     */
-    public String getRuleName() {
-        return this.ruleName;
+    public String getUuid() {
+        return uuid;
     }
 
-    /**
-     * @return userID
-     */
     public String getUserID() {
-        return this.userID;
+        return userID;
     }
 
-    /**
-     * 
-     * @return medium
-     */
     public String getMedium() {
-        return this.medium;
+        return medium;
     }
 
-    /**
-     * @return format
-     */
     public String getFormat() {
-        return this.format;
+        return format;
     }
 }

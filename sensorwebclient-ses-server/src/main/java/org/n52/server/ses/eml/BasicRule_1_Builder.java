@@ -53,6 +53,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+@Deprecated
 public class BasicRule_1_Builder {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(BasicRule_1_Builder.class);
@@ -270,8 +271,9 @@ public class BasicRule_1_Builder {
         finalEml = eml;
         finalEml = finalEml.substring(finalEml.indexOf("<EML"));
 
-        return new BasicRule(rule.getTitle(), "B", "BR1", rule.getDescription(), rule.isPublish(), user.getId(),
-                finalEml, false);
+        BasicRule basicRule = new BasicRule(title, "B", "BR1", rule.getDescription(), rule.isPublish(), user.getId(), finalEml, false);
+        basicRule.setUuid(rule.getUuid());
+        return basicRule;
     }
 
     /**

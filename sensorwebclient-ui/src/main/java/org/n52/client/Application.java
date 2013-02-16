@@ -45,7 +45,6 @@ import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ctrl.RequestManager;
 import org.n52.client.ctrl.TimeManager;
 import org.n52.client.ses.ctrl.SesController;
-import org.n52.client.ses.util.SesClientUtil;
 import org.n52.client.sos.ctrl.DataManagerSosImpl;
 import org.n52.client.sos.ctrl.SOSController;
 import org.n52.client.sos.event.DatesChangedEvent;
@@ -63,6 +62,7 @@ import org.n52.client.sos.event.data.StoreSOSMetadataEvent;
 import org.n52.client.sos.ui.StationSelector;
 import org.n52.client.ui.Toaster;
 import org.n52.client.ui.View;
+import org.n52.client.util.ClientUtils;
 import org.n52.ext.link.sos.PermalinkParameter;
 import org.n52.ext.link.sos.TimeRange;
 import org.n52.shared.Constants;
@@ -99,7 +99,7 @@ public final class Application {
         // init handlers before throwing events
         DataManagerSosImpl.getInst();
         new SOSController();
-        if (SesClientUtil.isSesEnabled()) {
+        if (ClientUtils.isSesEnabled()) {
             new SesController();
         }
         View.getView();

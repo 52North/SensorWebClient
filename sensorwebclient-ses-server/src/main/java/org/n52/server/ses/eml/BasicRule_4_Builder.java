@@ -23,26 +23,37 @@
  */
 package org.n52.server.ses.eml;
 
+import static org.n52.oxf.xmlbeans.tools.XmlUtil.qualifySubstitutionGroup;
 import static org.n52.shared.util.MathSymbolUtil.getSymbolIndexForFilter;
 
 import java.io.ByteArrayInputStream;
-import java.io.StringWriter;
-import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
+import net.opengis.eml.x001.ComplexPatternDocument.ComplexPattern;
+import net.opengis.eml.x001.EMLDocument;
+import net.opengis.eml.x001.EMLDocument.EML.ComplexPatterns;
+import net.opengis.eml.x001.EMLDocument.EML.SimplePatterns;
+import net.opengis.eml.x001.SimplePatternType;
+import net.opengis.fes.x20.BinaryComparisonOpType;
+import net.opengis.fes.x20.FilterType;
+import net.opengis.fes.x20.LiteralDocument;
+import net.opengis.fes.x20.LiteralType;
+import net.opengis.fes.x20.PropertyIsEqualToDocument;
+import net.opengis.fes.x20.PropertyIsGreaterThanDocument;
+import net.opengis.fes.x20.PropertyIsGreaterThanOrEqualToDocument;
+import net.opengis.fes.x20.PropertyIsLessThanDocument;
+import net.opengis.fes.x20.PropertyIsLessThanOrEqualToDocument;
+import net.opengis.fes.x20.PropertyIsNotEqualToDocument;
+import net.opengis.fes.x20.ValueReferenceDocument;
+
+import org.apache.xmlbeans.XmlObject;
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
+import org.n52.oxf.xmlbeans.tools.XmlUtil;
 import org.n52.server.ses.SesConfig;
-import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.shared.serializable.pojos.BasicRule;
 import org.n52.shared.serializable.pojos.Rule;
-import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +64,7 @@ import org.w3c.dom.NodeList;
 /**
  * Overshoot and Undershoot Rule
  */
-public class BasicRule_4_Builder {
+public class BasicRule_4_Builder extends BasicRuleBuilder {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(BasicRule_4_Builder.class);
 
@@ -80,37 +91,23 @@ public class BasicRule_4_Builder {
     // TAG NAMES
     private final String fesFilter = "fes:Filter";
 
-    private final String propertyValue = "value";
-
-    private final String valuereference = "fes:ValueReference";
-
-    private final String fesLiteral = "fes:Literal";
-
-    private final String simplePattern = "SimplePattern";
-
-    private final String complexPattern = "ComplexPattern";
-
-    private final String selectFunction = "SelectFunction";
-
-    private final String patternReference = "PatternReference";
-
     // Pattern names
-    private String simple1;
+    private String overshootPatternId;
 
-    private String simple2;
+    private String undershootPatternId;
 
-    private String complex1;
+    private String entryNotificationPatternId;
 
-    private String complex2;
+    private String exitNotificationPatternId;
 
     // newEventNames
-    private String simpleName1;
+    private String overshootEventName;
 
-    private String simpleName2;
+    private String undershootEventName;
 
-    private String complexName1;
+    private String entryEventName;
 
-    private String complexName2;
+    private String exitEventName;
 
     // output names
     private String output_enter;
@@ -120,6 +117,10 @@ public class BasicRule_4_Builder {
     private String eml;
 
     private String finalEml;
+    
+    public BasicRule_4_Builder() {
+        super(SesConfig.resLocation_4);
+    }
 
     /**
      * Overshoot and Undershoot
@@ -136,168 +137,49 @@ public class BasicRule_4_Builder {
 
         // Pre-defined pattern IDs and event names. All names start with the title of the rule.
         // This is important to have unique names
-        this.simple1 = title + this.overshootStream;
-        this.simple2 = title + this.undershootStream;
-        this.complex1 = title + this.overshootNotificationStream;
-        this.complex2 = title + this.undershootNotificationStream;
+        this.overshootPatternId = title + this.overshootStream;
+        this.undershootPatternId = title + this.undershootStream;
+        this.entryNotificationPatternId = title + this.overshootNotificationStream;
+        this.exitNotificationPatternId = title + this.undershootNotificationStream;
 
-        this.simpleName1 = title + this.overshoot;
-        this.simpleName2 = title + this.undershoot;
-        this.complexName1 = title + this.overshootNotification;
-        this.complexName2 = title + this.undershootNotification;
+        this.overshootEventName = title + this.overshoot;
+        this.undershootEventName = title + this.undershoot;
+        this.entryEventName = title + this.overshootNotification;
+        this.exitEventName = title + this.undershootNotification;
 
         this.output_enter = title + this.enter;
         this.output_exit = title + this.exit;
 
         try {
-        	// URL adress of the BR_4.xml file
-            URL url = new URL(SesConfig.resLocation_4);
+            EMLDocument emlTemplateDoc = getEmlTemplate();
 
-            // build document
-            DocumentBuilderFactory docFac = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docBuilder = docFac.newDocumentBuilder();
-            Document doc = docBuilder.parse(url.openStream());
+            SimplePatterns simplePatterns = emlTemplateDoc.getEML().getSimplePatterns();
+            ComplexPatterns complexPatterns = emlTemplateDoc.getEML().getComplexPatterns();
 
-            // transformer for final output
-            Transformer transormer = TransformerFactory.newInstance().newTransformer();
-            transormer.setOutputProperty(OutputKeys.INDENT, "yes");
-
-            // set user input
             // set patternID of simplePatterns
-            NodeList simplePatternIDList = doc.getElementsByTagName(this.simplePattern);
-            Node s1 = simplePatternIDList.item(0);
-            s1.getAttributes().item(1).setTextContent(this.simple1);
-            Node s2 = simplePatternIDList.item(1);
-            s2.getAttributes().item(1).setTextContent(this.simple2);
-
+            SimplePatternType ruleUndershoot = simplePatterns.getSimplePatternArray(0);
+            processSimplePattern(ruleUndershoot, overshootPatternId, overshootEventName);
+            processPropertyRestrictions(ruleUndershoot, rule.getTimeseriesMetadata());
+            processFilterGuard(ruleUndershoot, rule.getEntryOperatorIndex(), rule.getEntryValue());
+            
+            SimplePatternType ruleOvershoot = simplePatterns.getSimplePatternArray(1);
+            processSimplePattern(ruleOvershoot, undershootPatternId, undershootEventName);
+            processPropertyRestrictions(ruleOvershoot, rule.getTimeseriesMetadata());
+            processFilterGuard(ruleOvershoot, rule.getExitOperatorIndex(), rule.getExitValue());
+            
             // set patternID of complexPatterns
-            NodeList complexPatternIDLIst = doc.getElementsByTagName(this.complexPattern);
-            Node c1 = complexPatternIDLIst.item(0);
-            c1.getAttributes().item(0).setTextContent(this.complex1);
-            Node c2 = complexPatternIDLIst.item(1);
-            c2.getAttributes().item(0).setTextContent(this.complex2);
-
-            // set selectFunction newEventName
-            NodeList selectFunctionList = doc.getElementsByTagName(this.selectFunction);
-            Node selectFunction1 = selectFunctionList.item(0);
-            selectFunction1.getAttributes().item(1).setTextContent(this.simpleName1);
-            Node selectFunction2 = selectFunctionList.item(1);
-            selectFunction2.getAttributes().item(1).setTextContent(this.simpleName2);
-
-            Node selectFunction3 = selectFunctionList.item(2);
-            selectFunction3.getAttributes().item(1).setTextContent(this.complexName1);
-            selectFunction3.getAttributes().item(2).setTextContent(this.output_enter);
-            Node selectFunction4 = selectFunctionList.item(3);
-            selectFunction4.getAttributes().item(1).setTextContent(this.complexName2);
-            selectFunction4.getAttributes().item(2).setTextContent(this.output_exit);
-
-            // set PatternReference
-            NodeList patternReferenceList = doc.getElementsByTagName(this.patternReference);
-            Node patternRef1 = patternReferenceList.item(0);
-            patternRef1.setTextContent(this.simple2);
-            Node patternRef2 = patternReferenceList.item(1);
-            patternRef2.setTextContent(this.simple1);
-            Node patternRef3 = patternReferenceList.item(2);
-            patternRef3.setTextContent(this.simple1);
-            Node patternRef4 = patternReferenceList.item(3);
-            patternRef4.setTextContent(this.simple2);
-
-            // property restrictions
-            TimeseriesMetadata metadata = rule.getTimeseriesMetadata();
-            NodeList propertyRestrictionsList = doc.getElementsByTagName(this.propertyValue);
-            Node n1 = propertyRestrictionsList.item(0);
-            n1.setTextContent(metadata.getPhenomenon());
-            Node n2 = propertyRestrictionsList.item(1);
-            n2.setTextContent(metadata.getGlobalSesId());
-
-            Node n4 = propertyRestrictionsList.item(2);
-            n4.setTextContent(metadata.getPhenomenon());
-            Node n5 = propertyRestrictionsList.item(3);
-            n5.setTextContent(metadata.getGlobalSesId());
-
-            // fes:Filter
-            NodeList filterList = doc.getElementsByTagName(this.fesFilter);
-            for (int i = 0; i < filterList.getLength(); i++) {
-
-                Node n = filterList.item(i);
-
-                Node filterNode = null;
-                Node filterNode2 = null;
-
-                // first filter
-                if (rule.getEntryOperatorIndex() == Rule.LESS_THAN) {
-                    filterNode = doc.createElement("fes:PropertyIsLessThan");
-                } else if (rule.getEntryOperatorIndex() == Rule.GREATER_THAN) {
-                    filterNode = doc.createElement("fes:PropertyIsGreaterThan");
-                } else if (rule.getEntryOperatorIndex() == Rule.EQUAL_TO) {
-                    filterNode = doc.createElement("fes:PropertyIsEqualTo");
-                } else if (rule.getEntryOperatorIndex() == Rule.GREATER_THAN_OR_EQUAL_TO) {
-                    filterNode = doc.createElement("fes:PropertyIsGreaterThanOrEqualTo");
-                } else if (rule.getEntryOperatorIndex() == Rule.LESS_THAN_OR_EQUAL_TO) {
-                    filterNode = doc.createElement("fes:PropertyIsLessThanOrEqualTo");
-                } else if (rule.getEntryOperatorIndex() == Rule.NOT_EQUAL_TO) {
-                    filterNode = doc.createElement("fes:PropertyIsNotEqualTo");
-                }
-
-                // second filter
-                if (rule.getExitOperatorIndex() == Rule.LESS_THAN) {
-                    filterNode2 = doc.createElement("fes:PropertyIsLessThan");
-                } else if (rule.getExitOperatorIndex() == Rule.GREATER_THAN) {
-                    filterNode2 = doc.createElement("fes:PropertyIsGreaterThan");
-                } else if (rule.getExitOperatorIndex() == Rule.EQUAL_TO) {
-                    filterNode2 = doc.createElement("fes:PropertyIsEqualTo");
-                } else if (rule.getExitOperatorIndex() == Rule.GREATER_THAN_OR_EQUAL_TO) {
-                    filterNode2 = doc.createElement("fes:PropertyIsGreaterThanOrEqualTo");
-                } else if (rule.getExitOperatorIndex() == Rule.LESS_THAN_OR_EQUAL_TO) {
-                    filterNode2 = doc.createElement("fes:PropertyIsLessThanOrEqualTo");
-                } else if (rule.getExitOperatorIndex() == Rule.NOT_EQUAL_TO) {
-                    filterNode2 = doc.createElement("fes:PropertyIsNotEqualTo");
-                }
-
-                Node valueReferenceNode = doc.createElement(this.valuereference);
-                valueReferenceNode.setTextContent("input/doubleValue");
-
-                // Unit Conversion
-//                SESUnitConverter converter = new SESUnitConverter();
-//                Object[] resultrUnit = converter.convert(rule.getEntryUnit(), Double.valueOf(rule.getEntryValue()));
-//                Object[] resultcUnit = converter.convert(rule.getExitUnit(), Double.valueOf(rule.getExitValue()));
-
-                Node fesLiteralNode = doc.createElement(this.fesLiteral);
-
-                // add first filter to document
-                if (i == 0) {
-//                    fesLiteralNode.setTextContent(resultrUnit[1].toString());
-                    fesLiteralNode.setTextContent(rule.getEntryValue());
-
-                    if (filterNode != null) {
-                        n.appendChild(filterNode);
-                        filterNode.appendChild(valueReferenceNode);
-                        filterNode.appendChild(fesLiteralNode);
-                    }
-
-                // add second filter to document
-                } else if (i == 1) {
-//                    fesLiteralNode.setTextContent(resultcUnit[1].toString());
-                    fesLiteralNode.setTextContent(rule.getExitValue());
-
-                    if (filterNode2 != null) {
-                        n.appendChild(filterNode2);
-                        filterNode2.appendChild(valueReferenceNode);
-                        filterNode2.appendChild(fesLiteralNode);
-                    }
-
-                }
-            }
-
-            // final EML document. Convert document to string for saving in DB
-            StreamResult result = new StreamResult(new StringWriter());
-            DOMSource source = new DOMSource(doc);
-            transormer.transform(source, result);
-
-            this.eml = result.getWriter().toString();
-            this.finalEml = this.eml;
-            this.finalEml = finalEml.substring(finalEml.indexOf("<EML"));
-            LOGGER.info(this.finalEml);
+            ComplexPattern entryClause = complexPatterns.getComplexPatternArray(0);
+            processComplexPattern(entryClause, entryNotificationPatternId, entryEventName, output_enter);
+            entryClause.getFirstPattern().setPatternReference(undershootPatternId);
+            entryClause.getSecondPattern().setPatternReference(overshootPatternId);
+            
+            ComplexPattern exitClause = complexPatterns.getComplexPatternArray(1);
+            processComplexPattern(exitClause, exitNotificationPatternId, exitEventName, output_exit);
+            exitClause.getFirstPattern().setPatternReference(overshootPatternId);
+            exitClause.getFirstPattern().setPatternReference(undershootPatternId);
+            
+            eml = emlTemplateDoc.xmlText();
+            finalEml = eml;
 
         } catch (Exception e) {
             LOGGER.error("Error creating rule", e);
@@ -305,10 +187,67 @@ public class BasicRule_4_Builder {
         }
         
         // Get current user. This user is also the owner of the new rule
-        User user = HibernateUtil.getUserBy(rule.getUserID());
+        User user = getUserFrom(rule);
         
-        return new BasicRule(rule.getTitle(), "B", "BR4", rule.getDescription(), rule.isPublish(), user.getId(),
-                this.finalEml, false);
+        BasicRule basicRule = new BasicRule(rule.getTitle(), "B", "BR4", rule.getDescription(), rule.isPublish(), user.getId(), finalEml, false);
+        basicRule.setUuid(rule.getUuid());
+        return basicRule;
+    }
+
+    private void processFilterGuard(SimplePatternType pattern, int operator, String value) {
+        FilterType filter = pattern.getGuard().getFilter();
+        processComparisonFilter(filter, operator, value);
+    }
+
+    void processComparisonFilter(FilterType filter, int operator, String value) {
+        if (operator == Rule.LESS_THAN) {
+            PropertyIsLessThanDocument lessThanDoc = PropertyIsLessThanDocument.Factory.newInstance();
+            BinaryComparisonOpType binaryOperator = lessThanDoc.addNewPropertyIsLessThan();
+            processDoubleValueExpression(binaryOperator, value);
+            filter.setComparisonOps(binaryOperator);
+            qualifySubstitutionGroup(filter.getComparisonOps(), lessThanDoc.schemaType().getDocumentElementName());
+        } else if (operator == Rule.GREATER_THAN) {
+            PropertyIsGreaterThanDocument greaterThanDoc = PropertyIsGreaterThanDocument.Factory.newInstance();
+            BinaryComparisonOpType binaryOperator = greaterThanDoc.addNewPropertyIsGreaterThan();
+            processDoubleValueExpression(binaryOperator, value);
+            filter.setComparisonOps(binaryOperator); 
+            qualifySubstitutionGroup(filter.getComparisonOps(), greaterThanDoc.schemaType().getDocumentElementName());
+        } else if (operator == Rule.EQUAL_TO) {
+            PropertyIsEqualToDocument equalToDoc = PropertyIsEqualToDocument.Factory.newInstance();
+            BinaryComparisonOpType binaryOperator = equalToDoc.addNewPropertyIsEqualTo();
+            processDoubleValueExpression(binaryOperator, value);
+            filter.setComparisonOps(binaryOperator);
+            qualifySubstitutionGroup(filter.getComparisonOps(), equalToDoc.schemaType().getDocumentElementName());
+        } else if (operator == Rule.GREATER_THAN_OR_EQUAL_TO) {
+            PropertyIsGreaterThanOrEqualToDocument greaterOrEqualToDoc = PropertyIsGreaterThanOrEqualToDocument.Factory.newInstance();
+            BinaryComparisonOpType binaryOperator = greaterOrEqualToDoc.addNewPropertyIsGreaterThanOrEqualTo();
+            processDoubleValueExpression(binaryOperator, value);
+            filter.setComparisonOps(binaryOperator);
+            qualifySubstitutionGroup(filter.getComparisonOps(), greaterOrEqualToDoc.schemaType().getDocumentElementName());
+        } else if (operator == Rule.LESS_THAN_OR_EQUAL_TO) {
+            PropertyIsLessThanOrEqualToDocument lessThanOrEqualToDoc = PropertyIsLessThanOrEqualToDocument.Factory.newInstance();
+            BinaryComparisonOpType binaryOperator = lessThanOrEqualToDoc.addNewPropertyIsLessThanOrEqualTo();
+            processDoubleValueExpression(binaryOperator, value);
+            filter.setComparisonOps(binaryOperator);
+            qualifySubstitutionGroup(filter.getComparisonOps(), lessThanOrEqualToDoc.schemaType().getDocumentElementName());
+        } else if (operator == Rule.NOT_EQUAL_TO) {
+            PropertyIsNotEqualToDocument notEqualToDoc = PropertyIsNotEqualToDocument.Factory.newInstance();
+            BinaryComparisonOpType binaryOperator = notEqualToDoc.addNewPropertyIsNotEqualTo();
+            processDoubleValueExpression(binaryOperator, value);
+            filter.setComparisonOps(binaryOperator);
+            qualifySubstitutionGroup(filter.getComparisonOps(), notEqualToDoc.schemaType().getDocumentElementName());
+        } 
+    }
+
+    private void processDoubleValueExpression(BinaryComparisonOpType binaryComparison, String value) {
+        ValueReferenceDocument valueReference = ValueReferenceDocument.Factory.newInstance();
+        valueReference.setValueReference("input/doubleValue");
+        binaryComparison.set(valueReference);
+
+        LiteralType literalType = LiteralDocument.Factory.newInstance().addNewLiteral();
+        XmlUtil.setTextContent(literalType, value);
+        XmlObject expression = binaryComparison.addNewExpression().set(literalType);
+        qualifySubstitutionGroup(expression, LiteralDocument.type.getDocumentElementName());
     }
 
     /**

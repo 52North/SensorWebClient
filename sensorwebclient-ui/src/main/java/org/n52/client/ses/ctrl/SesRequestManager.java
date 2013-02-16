@@ -23,6 +23,8 @@
  */
 package org.n52.client.ses.ctrl;
 
+import static com.google.gwt.user.client.Cookies.getCookie;
+import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ID;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.shared.responses.SesClientResponse.types.RULE_NAME_NOT_EXISTS;
 import static org.n52.shared.serializable.pojos.UserRole.LOGOUT;
@@ -286,7 +288,7 @@ public class SesRequestManager extends RequestManager {
         this.sesUserService.updateUser(user, userID, callback);
     }
 
-    public void subscribe(final String userID, final String ruleName, final String medium, final String format) {
+    public void subscribe(final String userID, final String uuid, final String medium, final String format) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
                 Toaster.getInstance().addErrorMessage(arg0.getMessage());
@@ -313,7 +315,6 @@ public class SesRequestManager extends RequestManager {
                     finalFormat = finalFormat.trim();
                     finalMedium = finalMedium.trim();
                     
-                    message = message.replace("_R_", ruleName).replace("_M_", finalMedium).replace("_F_", finalFormat);
                     String finalMessage = message + "\n" + i18n.subscribeSuccessful2();
                     SC.say(finalMessage);
                     
@@ -339,7 +340,7 @@ public class SesRequestManager extends RequestManager {
                 }
             }
         };
-        this.sesRulesService.subscribe(userID, ruleName, medium, format, callback);
+        this.sesRulesService.subscribe(userID, uuid, medium, format, callback);
     }
 
     public void createBasicRule(Rule rule, boolean edit, String oldRuleName) {
@@ -523,7 +524,7 @@ public class SesRequestManager extends RequestManager {
                     if (role.equals("ADMIN")) {
                         EventBus.getMainEventBus().fireEvent(new GetAllRulesEvent());
                     } else {
-                        EventBus.getMainEventBus().fireEvent(new GetAllOwnRulesEvent(Cookies.getCookie(SesRequestManager.COOKIE_USER_ID), true));
+                        EventBus.getMainEventBus().fireEvent(new GetAllOwnRulesEvent(getCookie(COOKIE_USER_ID), true));
                     }
                 }
             }
@@ -579,7 +580,7 @@ public class SesRequestManager extends RequestManager {
         this.sesRulesService.getAllPublishedRules(Cookies.getCookie(SesRequestManager.COOKIE_USER_ID), operator, callback);
     }
 
-    public void unsubscribe(String ruleName, final String userID, String medium, String format) {
+    public void unsubscribe(String uuid, final String userID, String medium, String format) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
                 Toaster.getInstance().addErrorMessage(arg0.getMessage());
@@ -603,7 +604,7 @@ public class SesRequestManager extends RequestManager {
                 }
             }
         };
-        this.sesRulesService.unSubscribe(ruleName, userID, medium, format, callback); 
+        this.sesRulesService.unSubscribe(uuid, userID, medium, format, callback); 
     }
 
     /**

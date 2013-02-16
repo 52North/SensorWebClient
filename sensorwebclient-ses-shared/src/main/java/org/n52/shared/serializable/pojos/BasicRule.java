@@ -32,6 +32,8 @@ public class BasicRule implements Serializable {
 
     private int id;
 
+    private String uuid;
+    
     private String name;
 
     private String ruleType;
@@ -54,8 +56,6 @@ public class BasicRule implements Serializable {
     
     private TimeseriesMetadata timeseriesMetadata;
     
-    private String uuid;
-    
     public BasicRule(BasicRuleDTO basicRuleDTO) {
         this.id = basicRuleDTO.getId();
         this.name = basicRuleDTO.getName();
@@ -75,8 +75,7 @@ public class BasicRule implements Serializable {
         
     }
 
-    public BasicRule(String name, String ruleType, String type, String description, boolean release, int ownerID,
-            String eml, boolean subscribed) {
+    public BasicRule(String name, String ruleType, String type, String description, boolean release, int ownerID, String eml, boolean subscribed) {
         this.name = name;
         this.ruleType = ruleType;
         this.type = type;
@@ -85,7 +84,6 @@ public class BasicRule implements Serializable {
         this.ownerID = ownerID;
         this.eml = eml;
         this.subscribed = subscribed;
-        this.setUuid(UUID.randomUUID().toString());
     }
 
     public BasicRule() {

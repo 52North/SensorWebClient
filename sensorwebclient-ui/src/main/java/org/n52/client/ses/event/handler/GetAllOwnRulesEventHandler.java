@@ -27,16 +27,7 @@ import org.n52.client.ses.event.GetAllOwnRulesEvent;
 
 import com.google.gwt.event.shared.EventHandler;
 
-/**
- * The Interface GetAllOwnRulesEventHandler.
- */
 public interface GetAllOwnRulesEventHandler extends EventHandler {
 
-    /**
-     * On change.
-     * 
-     * @param evt
-     *            the evt
-     */
     void onGet(GetAllOwnRulesEvent evt);
 }

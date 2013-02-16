@@ -21,101 +21,55 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
+
 package org.n52.client.ses.event;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.SubscribeEventHandler;
 
-/**
- * The Class SubscribeEvent.
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- */
 public class SubscribeEvent extends FilteredDispatchGwtEvent<SubscribeEventHandler> {
 
-    /** The TYPE. */
     public static Type<SubscribeEventHandler> TYPE = new Type<SubscribeEventHandler>();
 
-    /** The userID. */
-    private String userID;
+    private String uuid;
     
-    /** The rule name. */
-    private String ruleName;
+    private String userId;
 
-    /** The medium. */
     private String medium;
-    
-    /** The format. */
+
     private String format;
 
-    /**
-     * Instantiates a new subscribe event.
-     * @param ruleName
-     *            the rule name
-     * @param userID 
-     * @param medium 
-     * @param format 
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
-    public SubscribeEvent(String ruleName, String userID, String medium, String format, SubscribeEventHandler... blockedHandlers) {
+    public SubscribeEvent(String uuid, String userId, String medium, String format, SubscribeEventHandler... blockedHandlers) {
         super(blockedHandlers);
-        this.ruleName = ruleName;
-        this.userID = userID;
+        this.uuid = uuid;
+        this.userId = userId;
         this.medium = medium;
         this.format = format;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(SubscribeEventHandler handler) {
         handler.onSubscribe(this);
-
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<SubscribeEventHandler> getAssociatedType() {
+    public Type<SubscribeEventHandler> getAssociatedType() {
         return TYPE;
     }
 
-    /**
-     * Gets the rule name.
-     * 
-     * @return the rule name
-     */
-    public String getRuleName() {
-        return this.ruleName;
+    public String getUuid() {
+        return uuid;
     }
 
-    /**
-     * @return {@link String}
-     */
+    public String getUserId() {
+        return userId;
+    }
+    
     public String getMedium() {
-        return this.medium;
+        return medium;
     }
 
-    /**
-     * @return {@link String}
-     */
-    public String getUserID() {
-        return this.userID;
-    }
-
-    /**
-     * @return {@link String}
-     */
     public String getFormat() {
-        return this.format;
+        return format;
     }
 }

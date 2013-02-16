@@ -197,9 +197,9 @@ public class EventSubscriptionWindow extends LoginWindow {
         @Override
         public void onRuleCreated(RuleCreatedEvent evt) {
             Rule createdRule = evt.getCreatedRule();
-            String ruleName = createdRule.getTitle();
+            String uuid = createdRule.getUuid();
             String userID = getCookie(COOKIE_USER_ID);
-            getMainEventBus().fireEvent(new SubscribeEvent(ruleName, userID, "email", "EML"));
+            getMainEventBus().fireEvent(new SubscribeEvent(uuid, userID, "email", "EML"));
         }
 
     }

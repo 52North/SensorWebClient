@@ -33,12 +33,12 @@ import java.util.ArrayList;
 
 import org.n52.client.ses.i18n.SesStringsAccessor;
 import org.n52.client.ses.ui.SesTab;
-import org.n52.client.ses.util.SesClientUtil;
 import org.n52.client.sos.event.TabSelectedEvent;
 import org.n52.client.sos.i18n.SosStringsAccessor;
 import org.n52.client.sos.ui.DiagramTab;
 import org.n52.client.ui.btn.Button;
 import org.n52.client.ui.legend.Legend;
+import org.n52.client.util.ClientUtils;
 
 import com.smartgwt.client.types.Cursor;
 import com.smartgwt.client.types.Overflow;
@@ -100,7 +100,7 @@ public class View {
 
         diagramTab = new DiagramTab("diagram", i18n.diagram());
         registerTabWidget(diagramTab);
-        if (SesClientUtil.isSesEnabled()) {
+        if (ClientUtils.isSesEnabled()) {
         	sesTab = new SesTab("SES", "SES");
         	registerTabWidget(sesTab);
         }

@@ -23,6 +23,9 @@
  */
 package org.n52.server.ses.util;
 
+import static org.n52.oxf.ses.adapter.SESAdapter.GET_CAPABILITIES;
+import static org.n52.server.ses.util.SesServerUtil.getBrokerUrl;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
@@ -103,6 +106,7 @@ public class SesParser {
     /**
      * @return registeredSensors from SES
      */
+    @Deprecated
     public synchronized ArrayList<String> getRegisteredSensors(){
         this.sensors = getCapabilities(this.serviceVersion, this.sesEndpoint);
         return this.sensors;
@@ -111,6 +115,7 @@ public class SesParser {
     /**
      * get sensors from capability request
      */
+    @Deprecated
     private synchronized ArrayList<String> getCapabilities(String serviceVersion, String sesEndpoint) {
         //List of all availible sensors
         ArrayList<String> sensors = new ArrayList<String>();
@@ -120,7 +125,7 @@ public class SesParser {
         try {
             SESAdapter adapter = new SESAdapter(serviceVersion);
 
-            Operation op = new Operation(SESAdapter.GET_CAPABILITIES, sesEndpoint + "?", sesEndpoint);
+            Operation op = new Operation(GET_CAPABILITIES, null, getBrokerUrl(sesEndpoint));
 
             ParameterContainer paramCon = new ParameterContainer();
 
@@ -166,6 +171,7 @@ public class SesParser {
     /**
      * Describe sensor request to get phenomenon
      */
+    @Deprecated
     private synchronized String describeSensor(String sensorID, String sesEndpoint){
         LOGGER.debug("describeSensor: " + sensorID);
         String field = "swe:field";
@@ -365,6 +371,7 @@ public class SesParser {
      * build describe sensor request. This was a work-around because the implemented
      * request in the OX-Framework didn't work.
      */
+    @Deprecated
     private synchronized String buildDescribeSensorRequest(ParameterContainer parameter) {
         String ns_addressing = "http://www.w3.org/2005/08/addressing";
         String request = "";

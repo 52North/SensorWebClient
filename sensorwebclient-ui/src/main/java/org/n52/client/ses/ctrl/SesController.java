@@ -202,7 +202,7 @@ public class SesController extends ServiceController {
         }
 
         public void onSubscribe(SubscribeEvent evt) {
-            SesController.this.getRm().subscribe(evt.getUserID(), evt.getRuleName(), evt.getMedium(), evt.getFormat());
+            SesController.this.getRm().subscribe(evt.getUserId(), evt.getUuid(), evt.getMedium(), evt.getFormat());
         }
 
         public void onCreate(CreateSimpleRuleEvent evt) {
@@ -262,7 +262,7 @@ public class SesController extends ServiceController {
         }
 
         public void onUnsubscribe(UnsubscribeEvent evt) {
-            SesController.this.getRm().unsubscribe(evt.getRuleName(), evt.getUserID(), evt.getMedium(), evt.getFormat());
+            SesController.this.getRm().unsubscribe(evt.getUuid(), evt.getUserID(), evt.getMedium(), evt.getFormat());
         }
 
         public void onExists(RuleNameExistsEvent evt) {

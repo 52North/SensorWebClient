@@ -23,23 +23,24 @@
  */
 package org.n52.client.ses.ui.layout;
 
+import static com.google.gwt.user.client.Cookies.getCookie;
 import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ID;
 import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ROLE;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.RuleRecord.FORMAT;
 import static org.n52.client.ses.ui.RuleRecord.MEDIUM;
-import static org.n52.client.ses.ui.RuleRecord.NAME;
 import static org.n52.client.ses.ui.RuleRecord.SUBSCRIBED;
 import static org.n52.client.ses.ui.RuleRecord.UUID;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.data.RuleDataSource;
 import org.n52.client.ses.event.DeleteRuleEvent;
+import org.n52.client.ses.event.GetAllOwnRulesEvent;
 import org.n52.client.ses.event.SubscribeEvent;
 import org.n52.client.ses.event.UnsubscribeEvent;
+import org.n52.client.ses.event.handler.GetAllOwnRulesEventHandler;
 import org.n52.client.ses.ui.FormLayout;
 import org.n52.client.ses.ui.RuleRecord;
 import org.n52.client.ui.btn.SmallButton;
@@ -118,6 +119,7 @@ public class UserSubscriptionsLayout extends FormLayout {
 							public void onClick(ClickEvent event) {
 								String role = Cookies.getCookie(COOKIE_USER_ROLE);
 								EventBus.getMainEventBus().fireEvent(new DeleteRuleEvent(record.getAttribute(UUID), role));
+                                removeData(record);
 							}
 						});
                         return delButton;
@@ -133,13 +135,16 @@ public class UserSubscriptionsLayout extends FormLayout {
 								Object value = event.getValue();
 								if (value instanceof Boolean) {
 									boolean checked = (Boolean) value;
-									String userID = Cookies.getCookie(COOKIE_USER_ID);
-									if(checked) {
-										// TODO subscribe
-										EventBus.getMainEventBus().fireEvent(new SubscribeEvent(record.getAttribute(NAME), userID, record.getAttribute(MEDIUM),record.getAttribute(FORMAT)));
+                                    String uuid = record.getAttribute(UUID);
+									String userID = getCookie(COOKIE_USER_ID);
+									String medium = record.getAttribute(MEDIUM);
+                                    String format = record.getAttribute(FORMAT);
+                                    if(checked) {
+										SubscribeEvent subscribeEvent = new SubscribeEvent(uuid, userID, medium,format);
+                                        EventBus.getMainEventBus().fireEvent(subscribeEvent);
 									} else {
-										// TODO unsubscribe 
-										EventBus.getMainEventBus().fireEvent(new UnsubscribeEvent(record.getAttribute(NAME), userID, record.getAttribute(MEDIUM),record.getAttribute(FORMAT)));
+                                        UnsubscribeEvent unsubsriveEvent = new UnsubscribeEvent(uuid, userID, medium, format);
+                                        EventBus.getMainEventBus().fireEvent(unsubsriveEvent);
 									}
 								}
 							}
@@ -222,4 +227,5 @@ public class UserSubscriptionsLayout extends FormLayout {
 		this.subscriptionsGrid.selectAllRecords();
 		this.subscriptionsGrid.removeSelectedData();
 	}
+	
 }

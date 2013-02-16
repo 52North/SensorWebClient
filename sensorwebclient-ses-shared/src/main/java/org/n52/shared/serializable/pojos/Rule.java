@@ -28,7 +28,6 @@ import static org.n52.shared.util.MathSymbolUtil.getInverse;
 import java.io.Serializable;
 
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
-import org.n52.shared.util.MathSymbolUtil;
 
 public class Rule implements Serializable {
     
@@ -47,6 +46,8 @@ public class Rule implements Serializable {
     public static final int LESS_THAN_OR_EQUAL_TO = 5;
     
     private SimpleRuleType ruleType;
+
+    private String uuid;
 
     private String title;
 
@@ -89,7 +90,9 @@ public class Rule implements Serializable {
     
     /**
      * Instantiates a new rule.
+     * @deprecated use {@link RuleBuilder}
      */
+    @Deprecated
     public Rule(SimpleRuleType ruleType, String title, TimeseriesMetadata timeseriesMetadata,
             String notificationType, String description, boolean publish, boolean enterEqualsExitCondition,
             int entryOperatorIndex, String entryValue, String entryUnit, int exitOperatorIndex, String exitValue, String exitUnit, int userID) {
@@ -104,7 +107,9 @@ public class Rule implements Serializable {
 
     /**
      * BasicRule_1: Tendenz_Anzahl
+     * @deprecated use {@link RuleBuilder}
      */
+    @Deprecated
     public Rule(SimpleRuleType ruleType, String title, TimeseriesMetadata timeseriesMetadata,
             String notificationType, String description, boolean publish, boolean enterEqualsExitCondition,
             int entryOperatorIndex, String entryValue, String entryUnit,int exitOperatorIndex, String exitValue, String exitUnit, int userID, String count, String exitCount) {
@@ -125,8 +130,9 @@ public class Rule implements Serializable {
 
     /**
      * BasicRule_2: Tendenz_Zeit
-     * 
+     * @deprecated use {@link RuleBuilder}
      */
+    @Deprecated
     public Rule(SimpleRuleType ruleType, String title, TimeseriesMetadata timeseriesMetadata,
             String notificationType, String description, boolean publish, boolean enterEqualsExitCondition,
             int entryOperatorIndex, String entryValue, String entryUnit,int exitOperatorIndex, String exitValue, String exitUnit, int userID,
@@ -150,7 +156,9 @@ public class Rule implements Serializable {
 
     /**
      * BasicRule_5: Ausfall
+     * @deprecated use {@link RuleBuilder}
      */
+    @Deprecated
     public Rule(SimpleRuleType ruleType, String title, TimeseriesMetadata timeseriesMetadata, String notificationType, String description, 
             boolean publish, boolean enterEqualsExitCondition, int userID, String entryTime, String entryTimeUnit) {
         this(ruleType, title, timeseriesMetadata, notificationType, description, publish, enterEqualsExitCondition, userID);
@@ -158,7 +166,7 @@ public class Rule implements Serializable {
         this.entryTimeUnit = entryTimeUnit;
     }
     
-    public Rule(SimpleRuleType ruleType, String title, TimeseriesMetadata timeseriesMetadata, String notificationType, String description, 
+    private Rule(SimpleRuleType ruleType, String title, TimeseriesMetadata timeseriesMetadata, String notificationType, String description, 
             boolean publish, boolean enterEqualsExitCondition, int userID) {
         this.ruleType = ruleType;
         this.title = title;
@@ -178,6 +186,14 @@ public class Rule implements Serializable {
         this.ruleType = ruleType;
     }
 
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+    
+    public String getUuid() {
+        return uuid;
+    }
+    
     public String getTitle() {
         return this.title;
     }
@@ -335,5 +351,5 @@ public class Rule implements Serializable {
         return entryOperatorIndex == getInverse(exitOperatorIndex) 
                 && entryValue.equals(exitValue);
     }
-    
+
 }

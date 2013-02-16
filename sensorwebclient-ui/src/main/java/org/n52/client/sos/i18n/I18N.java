@@ -394,5 +394,7 @@ public interface I18N extends Constants {
 	String loggedInAs();
 
 	String logout();
+
+    String logoutSuccessful();
 	
 }

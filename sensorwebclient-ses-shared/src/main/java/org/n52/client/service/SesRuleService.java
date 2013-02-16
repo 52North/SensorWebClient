@@ -30,9 +30,9 @@ import org.n52.shared.serializable.pojos.Rule;
 
 public interface SesRuleService {
 
-    public SesClientResponse subscribe(String userID, String ruleName, String medium, String eml) throws Exception;
+    public SesClientResponse subscribe(String userID, String uuid, String medium, String eml) throws Exception;
 
-    public SesClientResponse unSubscribe(String ruleName, String userID, String medium, String format) throws Exception;
+    public SesClientResponse unSubscribe(String uuid, String userID, String medium, String format) throws Exception;
 
     public SesClientResponse createBasicRule(Rule rule, boolean edit, String oldRuleName) throws Exception;
 
@@ -46,18 +46,22 @@ public interface SesRuleService {
 
     public SesClientResponse deleteRule(String uuid) throws Exception;
 
+    @Deprecated
     public SesClientResponse getRuleForEditing(String ruleName) throws Exception;
 
     public SesClientResponse getAllPublishedRules(String userID, int operator) throws Exception;
 
+    @Deprecated
     public SesClientResponse ruleNameExists(String ruleName) throws Exception;
 
+    @Deprecated
     public SesClientResponse createComplexRule(ComplexRuleData rule, boolean edit, String oldRuleName) throws Exception;
 
     public SesClientResponse getUserSubscriptions(String userID) throws Exception;
 
     public SesClientResponse search(String text, int criterion, String userID) throws Exception;
 
+    @Deprecated
     public SesClientResponse copy(String userID, String ruleName) throws Exception;
 
 }

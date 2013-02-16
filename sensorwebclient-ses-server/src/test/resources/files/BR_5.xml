@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EML xmlns="http://www.opengis.net/eml/0.0.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/eml/0.0.1 ./3111_XSD/eml/0.0.1/OGC-EML-0_0_1-eml.xsd"  xmlns:fes="http://www.opengis.net/fes/2.0">
+   <SimplePatterns>
+      <SimplePattern inputName="input" patternID="incoming_observations_count_stream">
+         <SelectFunctions>
+            <SelectFunction newEventName="incoming_observations_count">
+               <SelectCount/>
+            </SelectFunction>
+         </SelectFunctions>
+         <View>
+            <UserDefinedView name="TimeBatchWithParameter">
+               <ViewParameters>
+                  <ViewParameter>
+                     <UserParameterName>isStartEager</UserParameterName>
+                     <UserParameterValue>true</UserParameterValue>
+                  </ViewParameter>
+                  <ViewParameter>
+                     <UserParameterName>isForceUpdates</UserParameterName>
+                     <UserParameterValue>true</UserParameterValue>
+                  </ViewParameter>
+                  <ViewParameter>
+                     <UserParameterName>Duration</UserParameterName>
+                     <UserParameterValue>PT10S</UserParameterValue>
+                  </ViewParameter>
+               </ViewParameters>
+            </UserDefinedView>
+         </View>
+         <PropertyRestrictions>
+            <PropertyRestriction>
+               <name>observedProperty</name>
+               <value>urn:ogc:def:phenomenon:OGC::WaterLevel</value>
+            </PropertyRestriction>
+            <PropertyRestriction>
+               <name>sensorID</name>
+               <value>SENSOR_1</value>
+            </PropertyRestriction>
+         </PropertyRestrictions>
+      </SimplePattern>
+   </SimplePatterns>
+   <ComplexPatterns>
+      <ComplexPattern patternID="no_observations_received_stream">
+         <SelectFunctions>
+            <SelectFunction newEventName="no_observation_received">
+               <SelectEvent eventName="incoming_observations_count"></SelectEvent>
+            </SelectFunction>
+         </SelectFunctions>
+         <Guard>
+            <fes:Filter>
+               <fes:PropertyIsEqualTo>
+                  <fes:ValueReference>incoming_observations_count/doubleValue</fes:ValueReference>
+                  <fes:Literal>0</fes:Literal>
+               </fes:PropertyIsEqualTo>
+            </fes:Filter>
+         </Guard>
+         <Logicaloperator>
+            <AND/>
+         </Logicaloperator>
+         <FirstPattern>
+            <PatternReference>incoming_observations_count_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </FirstPattern>
+         <SecondPattern>
+            <PatternReference>incoming_observations_count_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </SecondPattern>
+      </ComplexPattern>
+      <ComplexPattern patternID="observations_received_stream">
+         <SelectFunctions>
+            <SelectFunction newEventName="observations_received">
+               <SelectEvent eventName="incoming_observations_count"></SelectEvent>
+            </SelectFunction>
+         </SelectFunctions>
+		 <Guard>
+            <fes:Filter>
+               <fes:PropertyIsNotEqualTo>
+                  <fes:ValueReference>incoming_observations_count/doubleValue</fes:ValueReference>
+                  <fes:Literal>0</fes:Literal>
+               </fes:PropertyIsNotEqualTo>
+            </fes:Filter>
+         </Guard>
+         <Logicaloperator>
+            <AND/>
+         </Logicaloperator>
+         <FirstPattern>
+            <PatternReference>incoming_observations_count_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </FirstPattern>
+         <SecondPattern>
+            <PatternReference>incoming_observations_count_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </SecondPattern>
+      </ComplexPattern>
+      <ComplexPattern patternID="no_observation_notification_stream">
+         <SelectFunctions>
+            <SelectFunction newEventName="no_observation_notification" createCausality="true" outputName="no_observation_output">
+               <NotifyOnSelect>
+                  <Message>Einstiegsklausel</Message>
+               </NotifyOnSelect>
+            </SelectFunction>
+         </SelectFunctions>
+         <StructuralOperator>
+            <BEFORE/>
+         </StructuralOperator>
+         <FirstPattern>
+            <PatternReference>observations_received_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </FirstPattern>
+         <SecondPattern>
+            <PatternReference>no_observations_received_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </SecondPattern>
+      </ComplexPattern>
+      <!-- Ausstiegsklausel -->
+      <ComplexPattern patternID="observation_notification_stream">
+         <SelectFunctions>
+            <SelectFunction newEventName="observation_notification" createCausality="true" outputName="observation_output">
+               <NotifyOnSelect>
+                  <Message>Ausstiegsklausel</Message>
+               </NotifyOnSelect>
+            </SelectFunction>
+         </SelectFunctions>
+         <StructuralOperator>
+            <BEFORE/>
+         </StructuralOperator>
+         <FirstPattern>
+            <PatternReference>no_observations_received_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </FirstPattern>
+         <SecondPattern>
+            <PatternReference>observations_received_stream</PatternReference>
+            <SelectFunctionNumber>0</SelectFunctionNumber>
+         </SecondPattern>
+      </ComplexPattern>
+   </ComplexPatterns>
+   <TimerPatterns/>
+   <RepetitivePatterns/>
+</EML>

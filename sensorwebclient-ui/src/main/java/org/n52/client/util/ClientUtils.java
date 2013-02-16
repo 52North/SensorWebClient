@@ -77,4 +77,8 @@ public class ClientUtils {
         Toaster.getInstance().addMessage(i18n.maxZoomInTime());
         return false;
     }
+    
+    public static boolean isSesEnabled() {
+        return getPropertiesManager().getTabsFromPropertiesFile().contains("SesTab");
+    }
 }

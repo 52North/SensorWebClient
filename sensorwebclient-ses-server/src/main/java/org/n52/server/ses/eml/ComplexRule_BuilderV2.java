@@ -50,6 +50,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+@Deprecated
 public class ComplexRule_BuilderV2 {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(ComplexRule_BuilderV2.class);
@@ -116,8 +117,9 @@ public class ComplexRule_BuilderV2 {
 
             // add basic or complex rules to RULES list
             for (int i = 0; i < ruleNames.size(); i++) {
-                BasicRule basic = HibernateUtil.getBasicRuleByName(ruleNames.get(i));
-                ComplexRule complex = HibernateUtil.getComplexRuleByUuid(ruleNames.get(i));
+//                BasicRule basic = HibernateUtil.getBasicRuleByName(ruleNames.get(i));
+                BasicRule basic = HibernateUtil.getBasicRuleByUuid(ruleNames.get(i)); // XXX
+                ComplexRule complex = HibernateUtil.getComplexRuleByName(ruleNames.get(i));
                 
                 if (basic != null) {
                     RULES.add(basic);

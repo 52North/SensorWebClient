@@ -115,6 +115,9 @@ public class SesServerUtil {
         Operation op = new Operation(UNSUBSCRIBE, null, subscriptionManagerUrl);
         OperationResult opResult = adapter.doOperation(op, paramCon);
         LOGGER.debug(opResult.toString());
+        
+        // TODO destroy also SubscriptionResource when SESAapter supports destroy operation
+        
         return opResult;
     }
 

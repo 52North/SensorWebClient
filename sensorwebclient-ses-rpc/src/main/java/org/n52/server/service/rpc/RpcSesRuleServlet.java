@@ -50,13 +50,13 @@ public class RpcSesRuleServlet extends RemoteServiceServlet implements RpcSesRul
         service = new SesRulesServiceImpl();
     }
     
-    public synchronized SesClientResponse subscribe(String userID, String ruleName, String medium, String eml) throws Exception {
-        return service.subscribe(userID, ruleName, medium, eml);
+    public synchronized SesClientResponse subscribe(String userID, String uuid, String medium, String eml) throws Exception {
+        return service.subscribe(userID, uuid, medium, eml);
     }
 
     // unsubscribe rule from SES
-    public synchronized SesClientResponse unSubscribe(String ruleName, String userID, String medium, String eml) throws Exception {
-        return service.unSubscribe(ruleName, userID, medium, eml);
+    public synchronized SesClientResponse unSubscribe(String uuid, String userID, String medium, String eml) throws Exception {
+        return service.unSubscribe(uuid, userID, medium, eml);
     }
 
     // create basic rule from user inputs
@@ -84,8 +84,8 @@ public class RpcSesRuleServlet extends RemoteServiceServlet implements RpcSesRul
     }
 
     // delete rule. If a rule is still subscribed, the user gets a message
-    public synchronized SesClientResponse deleteRule(String ruleName) throws Exception {
-        return service.deleteRule(ruleName);
+    public synchronized SesClientResponse deleteRule(String uuid) throws Exception {
+        return service.deleteRule(uuid);
     }
 
     public synchronized SesClientResponse getAllPublishedRules(String userID, int operator) throws Exception {

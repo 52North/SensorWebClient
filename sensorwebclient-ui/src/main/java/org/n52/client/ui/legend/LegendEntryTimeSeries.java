@@ -38,7 +38,6 @@ import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ctrl.TimeManager;
 import org.n52.client.ses.ui.subscribe.EventSubscriptionWindow;
-import org.n52.client.ses.util.SesClientUtil;
 import org.n52.client.sos.ctrl.SOSController;
 import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
 import org.n52.client.sos.event.ChangeTimeSeriesStyleEvent;
@@ -65,6 +64,7 @@ import org.n52.client.ui.Toaster;
 import org.n52.client.ui.View;
 import org.n52.client.ui.btn.ImageButton;
 import org.n52.client.ui.btn.SmallButton;
+import org.n52.client.util.ClientUtils;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.smartgwt.client.types.Alignment;
@@ -357,7 +357,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		createColorChangeButton();
 		tools.addMember(this.titleCol);
 		
-		if (SesClientUtil.isSesEnabled()) {
+		if (ClientUtils.isSesEnabled()) {
 			createSesCommunicatorButton();
 			tools.addMember(this.sesComButton);
 		}
@@ -1082,7 +1082,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.infoButton.hide();
 		this.deleteButton.hide();
 		this.legendEntryFoot.hide();
-		if (SesClientUtil.isSesEnabled()) {
+		if (ClientUtils.isSesEnabled()) {
 			this.sesComButton.hide();
 		}
 	}
@@ -1091,7 +1091,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.infoButton.show();
 		this.deleteButton.show();
 		this.legendEntryFoot.show();
-		if (SesClientUtil.isSesEnabled()) {
+		if (ClientUtils.isSesEnabled()) {
 			this.sesComButton.show();
 		}
 	}

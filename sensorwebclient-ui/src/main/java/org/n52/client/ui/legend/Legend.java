@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.gwtopenmaps.openlayers.client.MapWidget;
-import org.n52.client.ses.util.SesClientUtil;
 import org.n52.client.sos.event.data.ExportEvent.ExportType;
 import org.n52.client.sos.ui.StationSelector;
 import org.n52.client.ui.DataPanel;
@@ -39,6 +38,7 @@ import org.n52.client.ui.DataPanelTab;
 import org.n52.client.ui.Impressum;
 import org.n52.client.ui.View;
 import org.n52.client.ui.btn.ImageButton;
+import org.n52.client.util.ClientUtils;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
@@ -276,7 +276,7 @@ public class Legend extends VLayout {
         exportLoadingSpinner.setWidth("2%");
         menuStack.addMember(addTS);
         menuStack.addMember(space);
-        if (SesClientUtil.isSesEnabled()) {
+        if (ClientUtils.isSesEnabled()) {
             addTS.setWidth("38%");
             sesTabButton.setWidth("35%");
             menuStack.addMember(sesTabButton);

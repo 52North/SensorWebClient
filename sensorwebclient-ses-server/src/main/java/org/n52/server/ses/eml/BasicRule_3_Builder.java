@@ -60,6 +60,7 @@ import org.w3c.dom.NodeList;
  * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
  *
  */
+@Deprecated
 public class BasicRule_3_Builder {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(BasicRule_3_Builder.class);
@@ -261,8 +262,10 @@ public class BasicRule_3_Builder {
         finalEml = eml;
         finalEml = finalEml.substring(finalEml.indexOf("<EML"));
 
-        return new BasicRule(rule.getTitle(), "B", "BR3", rule.getDescription(), rule.isPublish(), user.getId(),
+        BasicRule basicRule = new BasicRule(rule.getTitle(), "B", "BR3", rule.getDescription(), rule.isPublish(), user.getId(),
                 finalEml, false);
+        basicRule.setUuid(rule.getUuid());
+        return basicRule;
     }
 
     /**

@@ -11,6 +11,7 @@ import org.n52.shared.serializable.pojos.UserRole;
 
 import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
@@ -43,6 +44,7 @@ public class LoginHeaderLayout extends HLayout {
 			@Override
 			public void onClick(ClickEvent event) {
 				EventBus.getMainEventBus().fireEvent(new LogoutEvent());
+				SC.say(i18n.logoutSuccessful());
 			}
 		});
 		addMember(logout);

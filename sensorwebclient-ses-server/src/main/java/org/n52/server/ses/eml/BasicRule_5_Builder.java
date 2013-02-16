@@ -25,34 +25,42 @@
 package org.n52.server.ses.eml;
 
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.SENSOR_LOSS;
+import static org.n52.oxf.xmlbeans.tools.XmlUtil.qualifySubstitutionGroup;
 
 import java.io.ByteArrayInputStream;
-import java.io.StringWriter;
-import java.net.URL;
-import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
+import net.opengis.eml.x001.ComplexPatternDocument.ComplexPattern;
+import net.opengis.eml.x001.EMLDocument;
+import net.opengis.eml.x001.EMLDocument.EML.ComplexPatterns;
+import net.opengis.eml.x001.EMLDocument.EML.SimplePatterns;
+import net.opengis.eml.x001.SimplePatternType;
+import net.opengis.eml.x001.UserParameterType;
+import net.opengis.eml.x001.ViewType.UserDefinedView;
+import net.opengis.fes.x20.BinaryComparisonOpType;
+import net.opengis.fes.x20.FilterType;
+import net.opengis.fes.x20.LiteralDocument;
+import net.opengis.fes.x20.LiteralType;
+import net.opengis.fes.x20.PropertyIsEqualToDocument;
+import net.opengis.fes.x20.PropertyIsNotEqualToDocument;
+import net.opengis.fes.x20.ValueReferenceDocument;
+
+import org.apache.xmlbeans.SchemaType;
+import org.apache.xmlbeans.XmlObject;
+import org.n52.oxf.xmlbeans.tools.XmlUtil;
 import org.n52.server.ses.SesConfig;
-import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.shared.serializable.pojos.BasicRule;
-import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.Rule;
 import org.n52.shared.serializable.pojos.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class BasicRule_5_Builder {
+public class BasicRule_5_Builder extends BasicRuleBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BasicRule_5_Builder.class);
 
@@ -88,6 +96,11 @@ public class BasicRule_5_Builder {
 
     final static String outputName = "outputName";
 
+    
+    public BasicRule_5_Builder() {
+        super(SesConfig.resLocation_5);
+    }
+
     /**
      * Sensor Failure
      * 
@@ -99,155 +112,74 @@ public class BasicRule_5_Builder {
      * @throws Exception
      * @return {@link BasicRule}
      */
-    public static BasicRule create_BR_5(Rule rule) throws Exception {
+    public BasicRule create_BR_5(Rule rule) throws Exception {
 
-        // Get current user. This user is also the owner of the new rule
-        User user = HibernateUtil.getUserBy(rule.getUserID());
-
-        String eml;
         String finalEml;
         String title = rule.getTitle();
 
         // Pre-defined pattern IDs and event names. All names start with the title of the rule.
         // This is important to have unique names.
-        ArrayList<String> simplePatternID = new ArrayList<String>();
-        simplePatternID.add(title + "_incoming_observations_count_stream");
+        
+        String incomingObservationsCountPatternId = title + "_incoming_observations_count_stream";
+        String incomingObservationsEventName = title + "_incoming_observations_count";
+        
+        String noObservationsReceivedStreamPatternId = title + "_no_observation_received_stream";
+        String observationsReceivedStreamPatternId = title + "_observation_received_stream";
+        String noObservationsNotificationPatternId = title + "_no_observation_notification";
+        String observationsNotificationPatternId = title + "_observation_notification";
 
-        ArrayList<String> simpleNewEventName = new ArrayList<String>();
-        simpleNewEventName.add(title + "_incoming_observations_count");
+        String noObservationsReceivedEventName = title + "_no_observation_received";
+        String observationsReceivedEventName = title + "_observation_received";
+        
+        String noObservationsOutputName = title + "_no_observation_output";
+        String observationsOutputName = title + "_observation_output";
 
-        ArrayList<String> complexPatternID = new ArrayList<String>();
-        complexPatternID.add(title + "_no_observations_received_stream");
-        complexPatternID.add(title + "_observations_received_stream");
-        complexPatternID.add(title + "_no_observation_notification_stream");
-        complexPatternID.add(title + "_observation_notification_stream");
 
-        ArrayList<String> complexNewEventName = new ArrayList<String>();
-        complexNewEventName.add(title + "_no_observation_received");
-        complexNewEventName.add(title + "_observation_received");
-        complexNewEventName.add(title + "_no_observation_notification");
-        complexNewEventName.add(title + "observation_notification");
+        EMLDocument emlTemplateDoc = getEmlTemplate();
+        SimplePatterns simplePatterns = emlTemplateDoc.getEML().getSimplePatterns();
+        SimplePatternType incomingObservationCount = simplePatterns.getSimplePatternArray(0);
+        processSimplePattern(incomingObservationCount, incomingObservationsCountPatternId, incomingObservationsEventName);
+        processPropertyRestrictions(incomingObservationCount, rule.getTimeseriesMetadata());
+        processDurationValue(incomingObservationCount, rule);
+        
+        // XXX check: no user paramter EventCount present in template 
+//        NodeList eventCountList = fstElement.getElementsByTagName(eventCount);
+//        if (eventCountList.getLength() != 0) {
+//            Node eventCountNode = eventCountList.item(0);
+//            eventCountNode.setTextContent(rule.getEntryCount());
+//        }
+        
+        ComplexPatterns complexPatterns = emlTemplateDoc.getEML().getComplexPatterns();
+        ComplexPattern noObservationsReceived = complexPatterns.getComplexPatternArray(0);
+        processComplexPattern(noObservationsReceived, noObservationsReceivedStreamPatternId, noObservationsReceivedEventName);
+        setSelectEventName(noObservationsReceived, incomingObservationsEventName);
+        noObservationsReceived.getFirstPattern().setPatternReference(incomingObservationsCountPatternId);
+        noObservationsReceived.getSecondPattern().setPatternReference(incomingObservationsCountPatternId);
+        processEqualToFilterGuard(noObservationsReceived, incomingObservationsEventName);
 
-        ArrayList<String> complexOutputname = new ArrayList<String>();
-        complexOutputname.add(title + "_no_observation_output");
-        complexOutputname.add(title + "_observation_output");
+        ComplexPattern observationsReceived = complexPatterns.getComplexPatternArray(1);
+        processComplexPattern(observationsReceived, observationsReceivedStreamPatternId, observationsReceivedEventName);
+        setSelectEventName(observationsReceived, incomingObservationsEventName);
+        observationsReceived.getFirstPattern().setPatternReference(incomingObservationsCountPatternId);
+        observationsReceived.getSecondPattern().setPatternReference(incomingObservationsCountPatternId);
+        processNotEqualToFilterGuard(observationsReceived, incomingObservationsEventName);
+        
+        ComplexPattern noObservationsReceivedNotification = complexPatterns.getComplexPatternArray(2);
+        processComplexPattern(noObservationsReceivedNotification, noObservationsNotificationPatternId, noObservationsReceivedEventName);
+        setOutputName(noObservationsReceivedNotification, noObservationsOutputName);
+        noObservationsReceivedNotification.getFirstPattern().setPatternReference(observationsReceivedStreamPatternId);
+        noObservationsReceivedNotification.getSecondPattern().setPatternReference(noObservationsReceivedStreamPatternId);
 
-        // This ArrayList defines the references in the PatternReference tags.
-        // The references are ordered from first to the last pattern.
-        ArrayList<String> patternReferenceText = new ArrayList<String>();
-        patternReferenceText.add(simplePatternID.get(0));
-        patternReferenceText.add(simplePatternID.get(0));
-        patternReferenceText.add(simplePatternID.get(0));
-        patternReferenceText.add(simplePatternID.get(0));
+        ComplexPattern observationsReceivedNotification = complexPatterns.getComplexPatternArray(3);
+        processComplexPattern(observationsReceivedNotification, observationsNotificationPatternId, observationsReceivedEventName);
+        setOutputName(observationsReceivedNotification, observationsOutputName);
+        observationsReceivedNotification.getFirstPattern().setPatternReference(noObservationsReceivedStreamPatternId);
+        observationsReceivedNotification.getSecondPattern().setPatternReference(observationsReceivedStreamPatternId);
+        
+        finalEml = emlTemplateDoc.xmlText();
 
-        patternReferenceText.add(complexPatternID.get(1));
-        patternReferenceText.add(complexPatternID.get(0));
-        patternReferenceText.add(complexPatternID.get(0));
-        patternReferenceText.add(complexPatternID.get(1));
-
-        // URL adress of the BR_5.xml file
-        URL url = new URL(SesConfig.resLocation_5);
-
-        // build document
-        DocumentBuilderFactory docFac = DocumentBuilderFactory.newInstance();
-        DocumentBuilder docBuilder = docFac.newDocumentBuilder();
-        Document doc = docBuilder.parse(url.openStream());
-
-        // transformer for final output
-        Transformer transormer = TransformerFactory.newInstance().newTransformer();
-        transormer.setOutputProperty(OutputKeys.INDENT, "yes");
-
-        // parse <SimplePattern>
-        NodeList simplePatternList = doc.getElementsByTagName(simplePattern);
-        for (int i = 0; i < simplePatternList.getLength(); i++) {
-            Node fstNode = simplePatternList.item(i);
-            Element fstElement = (Element) fstNode;
-
-            // set patternID
-            Node patternIdSimple = simplePatternList.item(i);
-            patternIdSimple.getAttributes().getNamedItem(patternID).setTextContent(simplePatternID.get(i));
-
-            // set newEventName of SelectFunction
-            NodeList selectFunctionList = fstElement.getElementsByTagName(selectFunction);
-            Node selectFunctionNode = selectFunctionList.item(0);
-            selectFunctionNode.getAttributes().getNamedItem(newEventName).setTextContent(simpleNewEventName.get(i));
-
-            // set propertyRestrictions
-            TimeseriesMetadata metadata = rule.getTimeseriesMetadata();
-            NodeList propertyRestrictiosnList = fstElement.getElementsByTagName(propertyValue);
-            Node value_1 = propertyRestrictiosnList.item(0);
-            value_1.setTextContent(metadata.getPhenomenon());
-            Node value_2 = propertyRestrictiosnList.item(1);
-            value_2.setTextContent(metadata.getGlobalSesId());
-
-            // set EventCount
-            NodeList eventCountList = fstElement.getElementsByTagName(eventCount);
-            if (eventCountList.getLength() != 0) {
-                Node eventCountNode = eventCountList.item(0);
-                eventCountNode.setTextContent(rule.getEntryCount());
-            }
-
-            // set UserParameterValue
-            NodeList userParameterValueList = fstElement.getElementsByTagName(userParameterValue);
-            Node userParameterValueNode = userParameterValueList.item(2);
-            userParameterValueNode.setTextContent("PT" + rule.getEntryTime() + rule.getEntryTimeUnit());
-        }
-
-        // parse <ComplexPatterns>
-        NodeList complexPatternList = doc.getElementsByTagName(complexPattern);
-        for (int i = 0; i < complexPatternList.getLength(); i++) {
-            Node fstNode = complexPatternList.item(i);
-            Element fstElement = (Element) fstNode;
-
-            // set patternID
-            Node patternIdNode = complexPatternList.item(i);
-            patternIdNode.getAttributes().getNamedItem(patternID).setTextContent(complexPatternID.get(i));
-
-            // set newEventName of SelectFunction
-            NodeList selectFunctionList = fstElement.getElementsByTagName(selectFunction);
-            Node selectFunctionNode = selectFunctionList.item(0);
-            selectFunctionNode.getAttributes().getNamedItem(newEventName).setTextContent(complexNewEventName.get(i));
-            if (selectFunctionNode.getAttributes().getNamedItem(outputName) != null) {
-                selectFunctionNode.getAttributes().getNamedItem(outputName).setTextContent(complexOutputname.get(i - 2));
-            }
-
-            // set PatternReference
-            NodeList patterReferenceList = fstElement.getElementsByTagName(patternReference);
-            for (int j = 0; j < patterReferenceList.getLength(); j++) {
-                Node patterReferenceNode = patterReferenceList.item(j);
-                if (j == 0) {
-                    patterReferenceNode.setTextContent(patternReferenceText.get(2 * i));
-                }
-                else {
-                    patterReferenceNode.setTextContent(patternReferenceText.get( (2 * i) + 1));
-                }
-            }
-
-            // set eventName of selectEvent
-            NodeList selectEventList = fstElement.getElementsByTagName(selectEvent);
-            if (selectEventList.getLength() != 0) {
-                Node selectEventNode = selectEventList.item(0);
-                selectEventNode.getAttributes().getNamedItem(eventName).setTextContent(simpleNewEventName.get(0));
-            }
-
-            // <fes:Filter>
-            NodeList filterList = fstElement.getElementsByTagName(valuereference);
-            if (filterList.getLength() != 0) {
-                Node valueReferenceNode = filterList.item(0);
-                valueReferenceNode.setTextContent(simpleNewEventName.get(0) + "/doubleValue");
-            }
-        }
-
-        // final EML document. Convert document to string for saving in DB
-        StreamResult result = new StreamResult(new StringWriter());
-        DOMSource source = new DOMSource(doc);
-        transormer.transform(source, result);
-
-        eml = result.getWriter().toString();
-        finalEml = eml;
-        finalEml = finalEml.substring(finalEml.indexOf("<EML"));
-
-        return new BasicRule(rule.getTitle(),
+        User user = getUserFrom(rule);
+        BasicRule basicRule = new BasicRule(rule.getTitle(),
                              "B",
                              "BR5",
                              rule.getDescription(),
@@ -255,6 +187,48 @@ public class BasicRule_5_Builder {
                              user.getId(),
                              finalEml,
                              false);
+        basicRule.setUuid(rule.getUuid());
+        return basicRule;
+    }
+
+    private void processDurationValue(SimplePatternType incomingObservationCount, Rule rule) {
+        UserDefinedView userDefinedView = incomingObservationCount.getView().getUserDefinedView();
+        UserParameterType durationParameter = userDefinedView.getViewParameters().getViewParameterArray(2);
+        durationParameter.setUserParameterValue("PT" + rule.getEntryTime() + rule.getEntryTimeUnit()); // XXX period or iso?
+    }
+
+    private void processEqualToFilterGuard(ComplexPattern pattern, String eventName) {
+        FilterType filter = pattern.getGuard().getFilter();
+        PropertyIsEqualToDocument equalToDoc = PropertyIsEqualToDocument.Factory.newInstance();
+        setFilterProperty(filter, eventName, equalToDoc.addNewPropertyIsEqualTo());
+        qualifyComparisonType(filter, equalToDoc.schemaType());
+    }
+
+    private void processNotEqualToFilterGuard(ComplexPattern pattern, String eventName) {
+        FilterType filter = pattern.getGuard().getFilter();
+        PropertyIsNotEqualToDocument notEqualToDoc = PropertyIsNotEqualToDocument.Factory.newInstance();
+        setFilterProperty(filter, eventName, notEqualToDoc.addNewPropertyIsNotEqualTo());
+        qualifyComparisonType(filter, notEqualToDoc.schemaType());
+    }
+
+    protected void setFilterProperty(FilterType filter, String eventName, BinaryComparisonOpType binaryOperator) {
+        processDoubleValueExpression(binaryOperator, eventName);
+        filter.setComparisonOps(binaryOperator);
+    }
+
+    private void processDoubleValueExpression(BinaryComparisonOpType binaryComparison, String eventName) {
+        ValueReferenceDocument valueReference = ValueReferenceDocument.Factory.newInstance();
+        valueReference.setValueReference(eventName + "/doubleValue");
+        binaryComparison.set(valueReference);
+        
+        LiteralType literalType = LiteralDocument.Factory.newInstance().addNewLiteral();
+        XmlUtil.setTextContent(literalType, "0");
+        XmlObject expression = binaryComparison.addNewExpression().set(literalType);
+        qualifySubstitutionGroup(expression, LiteralDocument.type.getDocumentElementName());
+    }
+    
+    protected XmlObject qualifyComparisonType(FilterType filter, SchemaType schemaType) {
+        return qualifySubstitutionGroup(filter.getComparisonOps(), schemaType.getDocumentElementName());
     }
 
     /**
@@ -265,7 +239,7 @@ public class BasicRule_5_Builder {
      * @param basicRule
      * @return {@link Rule}
      */
-    public static Rule getRuleByEML(BasicRule basicRule) {
+    public Rule getRuleByEML(BasicRule basicRule) {
         Rule rule = new Rule();
         rule.setTimeseriesMetadata(basicRule.getTimeseriesMetadata());
 

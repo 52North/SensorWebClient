@@ -215,7 +215,7 @@ public class SESInitializationServlet extends HttpServlet {
 //                            admin.setWnsSmsId(WnsUtil
 //                                    .sendToWNSSMS(admin.getName(), String.valueOf(admin.getHandyNr())));
 
-                            HibernateUtil.saveUser(new User(admin));
+                            HibernateUtil.save(new User(admin));
                         } catch (Exception e) {
                             LOGGER.debug("WNS is not available.", e);
                         }
@@ -233,7 +233,7 @@ public class SESInitializationServlet extends HttpServlet {
 
                             try {
                                 user.setWnsEmailId(WnsUtil.sendToWNSMail(user.getName(), user.geteMail()));
-                                HibernateUtil.saveUser(new User(user));
+                                HibernateUtil.save(new User(user));
                             } catch (Exception e) {
                                 LOGGER.debug("WNS is not available.",e);
                             }

@@ -53,6 +53,7 @@ import org.xml.sax.InputSource;
  * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
  *
  */
+@Deprecated
 public class ComplexRule_Builder {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(ComplexRule_Builder.class);

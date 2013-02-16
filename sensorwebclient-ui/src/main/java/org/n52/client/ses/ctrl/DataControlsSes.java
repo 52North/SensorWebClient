@@ -125,6 +125,7 @@ public class DataControlsSes extends DataControls {
 
         this.innerLayout = new VLayout();
         this.innerLayout.setTabIndex(-1);
+        this.innerLayout.setTop(0);
         this.topLayout = new HLayout();
         this.topLayout.setTabIndex(-1);
         this.bottomLayout = new HLayout();
