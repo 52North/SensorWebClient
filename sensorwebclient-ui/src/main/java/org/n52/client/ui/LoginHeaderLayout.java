@@ -1,6 +1,7 @@
 package org.n52.client.ui;
 
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
+import static org.n52.shared.serializable.pojos.UserRole.LOGOUT;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.ctrl.SesRequestManager;
@@ -91,6 +92,10 @@ public class LoginHeaderLayout extends HLayout {
 		}
 	}
 	
+	public void logout() {
+	    hide();
+	}
+	
     private Label getHeaderLinkLabel(String labelText) {
     	Label label = new Label(labelText);
         label.setStyleName("n52_sensorweb_client_headerlink");
@@ -117,7 +122,12 @@ public class LoginHeaderLayout extends HLayout {
 
 		@Override
 		public void onChangeRole(SetRoleEvent evt) {
-			loginHeaderLayout.updateLoginInfo();
+		    UserRole role = evt.getRole();
+		    if (LOGOUT == role) {
+                loginHeaderLayout.logout();
+            } else {
+                loginHeaderLayout.updateLoginInfo();
+            }
 		}
     }
 
