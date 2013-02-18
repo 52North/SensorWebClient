@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.apache.http.HttpResponse;
+import org.n52.oxf.util.web.HttpClient;
 import org.n52.oxf.util.web.ProxyAwareHttpClient;
 import org.n52.oxf.util.web.SimpleHttpClient;
 import org.n52.server.ses.SesConfig;
@@ -70,8 +71,9 @@ public class WnsUtil {
         StringBuffer sb = new StringBuffer();
         String result;
 
-        ProxyAwareHttpClient httpClient = new ProxyAwareHttpClient(new SimpleHttpClient());
-        HttpResponse response = httpClient.executePost(SesConfig.wns, createNewUserMailRequest(userName, mail), TEXT_XML);
+        HttpClient httpClient = new SimpleHttpClient();//new ProxyAwareHttpClient(new SimpleHttpClient());
+        String serviceUrl = SesConfig.wns;
+        HttpResponse response = httpClient.executePost(serviceUrl, createNewUserMailRequest(userName, mail), TEXT_XML);
         BufferedReader bufferedReader = getBufferedReader(response);
         while (bufferedReader.ready()) {
             sb.append(bufferedReader.readLine() + "\n");
