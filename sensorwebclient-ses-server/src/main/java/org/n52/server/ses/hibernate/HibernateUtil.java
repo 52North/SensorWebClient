@@ -533,6 +533,19 @@ public class HibernateUtil extends HibernateDaoUtil {
         }
         return null;
     }
+    
+    public static String getSubscriptionIdByRuleIdAndUserId(final int ruleID, final int userID) {
+    	return execute(new CriteriaExecution<String>() {
+			@Override
+			public String execute(Session session) {
+				Criteria crit = session.createCriteria(Subscription.class);
+				Subscription subscription = (Subscription) crit.add(
+						Restrictions.and(Restrictions.eq(RULE_ID, ruleID),
+								Restrictions.eq(USER_ID, userID))).uniqueResult();
+				return subscription.getSubscriptionID();
+			}
+		});
+    }
 
     public static boolean deleteRule(String uuid) {
         BasicRule basicRule = HibernateUtil.getBasicRuleByUuid(uuid);
@@ -619,6 +632,36 @@ public class HibernateUtil extends HibernateDaoUtil {
                 return null;
             }
         });
+    }
+    
+    public static void deactivateSubscription(final String subscriptionID, final String userID) {
+        execute(new CriteriaExecution<Void>() {
+            @Override
+            public Void execute(final Session session) {
+                Criteria criteria = session.createCriteria(Subscription.class);
+                criteria.add(Restrictions.and(Restrictions.eq(USER_ID, Integer.valueOf(userID)),
+                                              Restrictions.eq(SUBSCRIPTION_ID, subscriptionID)));
+                Subscription subscription = (Subscription) criteria.uniqueResult();
+                subscription.setActive(false);
+                session.update(subscription);
+                return null;
+            }
+        });
+    }
+    
+    public static void activateSubscription(final int ruleID, final int userID) {
+    	execute(new CriteriaExecution<Void>() {
+			@Override
+			public Void execute(Session session) {
+				Criteria criteria = session.createCriteria(Subscription.class);
+				criteria.add(Restrictions.and(Restrictions.eq(RULE_ID, ruleID),
+                        Restrictions.eq(USER_ID, userID)));
+				Subscription subscription = (Subscription) criteria.uniqueResult();
+				subscription.setActive(true);
+				session.update(subscription);
+				return null;
+			}
+		});
     }
 
     public static boolean existsBasicRule(final String uuid) {

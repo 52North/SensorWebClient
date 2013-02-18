@@ -37,10 +37,8 @@ import java.util.ArrayList;
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.data.RuleDataSource;
 import org.n52.client.ses.event.DeleteRuleEvent;
-import org.n52.client.ses.event.GetAllOwnRulesEvent;
 import org.n52.client.ses.event.SubscribeEvent;
 import org.n52.client.ses.event.UnsubscribeEvent;
-import org.n52.client.ses.event.handler.GetAllOwnRulesEventHandler;
 import org.n52.client.ses.ui.FormLayout;
 import org.n52.client.ses.ui.RuleRecord;
 import org.n52.client.ui.btn.SmallButton;
@@ -50,6 +48,8 @@ import org.n52.shared.serializable.pojos.ComplexRuleDTO;
 import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.SortDirection;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Img;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -117,9 +117,21 @@ public class UserSubscriptionsLayout extends FormLayout {
                     	delButton.addClickHandler(new ClickHandler() {
 							@Override
 							public void onClick(ClickEvent event) {
-								String role = Cookies.getCookie(COOKIE_USER_ROLE);
-								EventBus.getMainEventBus().fireEvent(new DeleteRuleEvent(record.getAttribute(UUID), role));
-                                removeData(record);
+								Boolean subscribed = Boolean.valueOf(record.getAttribute(SUBSCRIBED));
+								if (subscribed) {
+									SC.say(i18n.deleteOnlyWhenUnsubbscribed());
+								} else {
+									SC.ask(i18n.deleteSubscriptionQuestion(), new BooleanCallback() {
+										@Override
+										public void execute(Boolean value) {
+											if (value) {
+												String role = Cookies.getCookie(COOKIE_USER_ROLE);
+												EventBus.getMainEventBus().fireEvent(new DeleteRuleEvent(record.getAttribute(UUID), role));
+												removeData(record);
+											}
+										}
+									});
+								}
 							}
 						});
                         return delButton;
@@ -139,8 +151,9 @@ public class UserSubscriptionsLayout extends FormLayout {
 									String userID = getCookie(COOKIE_USER_ID);
 									String medium = record.getAttribute(MEDIUM);
                                     String format = record.getAttribute(FORMAT);
+                                    record.setAttribute(SUBSCRIBED, checked);
                                     if(checked) {
-										SubscribeEvent subscribeEvent = new SubscribeEvent(uuid, userID, medium,format);
+										SubscribeEvent subscribeEvent = new SubscribeEvent(uuid, userID, medium, format);
                                         EventBus.getMainEventBus().fireEvent(subscribeEvent);
 									} else {
                                         UnsubscribeEvent unsubsriveEvent = new UnsubscribeEvent(uuid, userID, medium, format);

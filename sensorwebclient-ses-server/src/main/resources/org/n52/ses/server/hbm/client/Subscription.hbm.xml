@@ -11,5 +11,6 @@
       <property name="subscriptionID" type="string"/>
       <property name="medium" type="string"/>
       <property name="format" type="string"/>
+      <property name="active" type="boolean"/>
    </class>
 </hibernate-mapping>

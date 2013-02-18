@@ -594,7 +594,6 @@ public class SesRequestManager extends RequestManager {
                     SC.say(i18n.unsubscribeSuccessful());
                     EventBus.getMainEventBus().fireEvent(new GetAllOwnRulesEvent(userID, false));
                     EventBus.getMainEventBus().fireEvent(new GetAllOtherRulesEvent(userID, false));
-                    EventBus.getMainEventBus().fireEvent(new GetUserSubscriptionsEvent(userID));
                     break;
                 case ERROR_UNSUBSCRIBE_SES:
                     Toaster.getInstance().addErrorMessage(i18n.errorUnsubscribeSES());

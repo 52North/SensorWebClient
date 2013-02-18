@@ -29,29 +29,20 @@ public class Subscription implements Serializable {
 
     private static final long serialVersionUID = -4999105897968249627L;
 
-    /** The id. */
     private int id;
     
-    /** The userID. */
     private int userID;
 
-    /** The ruleID. */
     private int ruleID;
 
-    /** The subscriptionID. */
     private String subscriptionID;
     
-    /** The medium. */
     private String medium;
     
-    /** The format. */
     private String format;
-
-
-
-    /**
-     * Instantiates a new subscription.
-     */
+    
+    private boolean active;
+    
     public Subscription() {
         // basic constructor is needed
     }
@@ -62,107 +53,71 @@ public class Subscription implements Serializable {
      * @param ruleID
      * @param subscriptionID
      * @param medium 
-     * @param format 
+     * @param format
+     * @param active 
      */
-    public Subscription(int userID, int ruleID, String subscriptionID, String medium, String format){
+    public Subscription(int userID, int ruleID, String subscriptionID, String medium, String format, boolean active){
         this.userID = userID;
         this.ruleID = ruleID;
         this.subscriptionID = subscriptionID;
         this.medium = medium;
         this.format = format;
+        this.active = active;
     }
 
-    /**
-     * Sets the id.
-     * 
-     * @param id
-     *            the new id
-     */
     public void setId(int id) {
         this.id = id;
     }
 
-    /**
-     * Gets the id.
-     * 
-     * @return the id
-     */
     public int getId() {
         return this.id;
     }
 
-  
-    /**
-     * @return ruleID
-     */
     public int getRuleID() {
         return this.ruleID;
     }
 
-    /**
-     * @param ruleID
-     */
     public void setRuleID(int ruleID) {
         this.ruleID = ruleID;
     }
 
-    /**
-     * @return subscriptionID
-     */
     public String getSubscriptionID() {
         return this.subscriptionID;
     }
 
-    /**
-     * @param subscriptionID
-     */
     public void setSubscriptionID(String subscriptionID) {
         this.subscriptionID = subscriptionID;
     }
 
-    /**
-     * @return the userID
-     */
     public int getUserID() {
         return this.userID;
     }
 
-    /**
-     * @param userID
-     */
     public void setUserID(int userID) {
         this.userID = userID;
     }
 
-    /**
-     * 
-     * @return medium
-     */
     public String getMedium() {
         return this.medium;
     }
 
-    /**
-     * 
-     * @param medium
-     */
     public void setMedium(String medium) {
         this.medium = medium;
     }
 
-    /**
-     * 
-     * @return format
-     */
     public String getFormat() {
         return this.format;
     }
 
-    /**
-     * 
-     * @param format
-     */
     public void setFormat(String format) {
         this.format = format;
     }
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
 }

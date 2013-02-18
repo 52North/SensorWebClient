@@ -133,6 +133,8 @@ public class SesRulesServiceImpl implements SesRuleService {
                     if (basicRule != null && existsSubscription(basicRule.getId(), media[k], formats[i], Integer.valueOf(userID))) {
                         subscriptionExists = true;
                         subscriptionsExists = true;
+                        HibernateUtil.activateSubscription(basicRule.getId(), Integer.valueOf(userID));
+                        HibernateUtil.subscribeBasicRule(uuid);
                     } else if (complexRule != null && existsSubscription(complexRule.getId(), media[k], formats[i], Integer.valueOf(userID))) {
                         subscriptionExists = true;
                         subscriptionsExists = true;
@@ -194,44 +196,42 @@ public class SesRulesServiceImpl implements SesRuleService {
                         // save subscription in DB
                         LOGGER.debug("save subscription to DB: " + museResource);
                         if (basicRule != null) {
-                            HibernateUtil.saveSubscription(new Subscription(Integer.valueOf(userID), basicRule.getId(), museResource, media[k], formats[i]));
+                            HibernateUtil.saveSubscription(new Subscription(Integer.valueOf(userID), basicRule.getId(), museResource, media[k], formats[i], true));
                             subscribeBasicRule(uuid);
                         } else if (complexRule != null) {
-                            HibernateUtil.saveSubscription(new Subscription(Integer.valueOf(userID), complexRule.getId(), museResource, media[k], formats[i]));
+                            HibernateUtil.saveSubscription(new Subscription(Integer.valueOf(userID), complexRule.getId(), museResource, media[k], formats[i], true));
                             HibernateUtil.updateComplexRuleSubscribtion(uuid, true);
-                        }
-                        
-                        // set sensor status to used
-                        LOGGER.debug("set sensor to used");
-                        ArrayList<String> timeseriesIds = SesServerUtil.getTimeseriesIdsFromEML(content);
-                        
-                        // check if sensor is already in feeder DB. If yes --> no new request to feeder
-                        try {
-                            for (String timeseriesId : timeseriesIds) {
-                                TimeseriesFeed timeseriesFeed = getTimeseriesFeedById(timeseriesId);
-                                if (timeseriesFeed == null) {
-                                    TimeseriesMetadata metadata = getTimeseriesMetadata(timeseriesId);
-                                    LOGGER.debug("Create TimeseriesFeed '{}'. " , timeseriesId);
-                                    TimeseriesFeed createdTimeseriesFeed = createTimeseriesFeed(metadata);
-                                    getSosSesFeederInstance().enableFeedingFor(createdTimeseriesFeed);
-                                } else if (timeseriesFeed.getUsedCounter() == 0) {
-                                    LOGGER.debug("Enable inactive TimeseriesFeed '{}'.", timeseriesId);
-                                    getSosSesFeederInstance().enableFeedingFor(timeseriesFeed);
-                                } else {
-                                    LOGGER.debug("TimeseriesFeed '{}' is already being feeded.", timeseriesId);
-                                }
-                                activateTimeseriesFeedWith(timeseriesId);
-                            }
-                        } catch (Exception e) {
-                            LOGGER.error("Error subscribing to feeder.", e);
-                            return new SesClientResponse(SesClientResponse.types.ERROR_SUBSCRIBE_FEEDER);
                         }
                     }
                 }
             }
 
-            if (subscriptionsExists) {
-                return new SesClientResponse(SesClientResponse.types.SUBSCRIPTION_EXISTS);
+            
+            if (basicRule != null) {
+            	// set sensor status to used
+                LOGGER.debug("set sensor to used");
+                ArrayList<String> timeseriesIds = SesServerUtil.getTimeseriesIdsFromEML(basicRule.getEml());
+                // check if sensor is already in feeder DB. If yes --> no new request to feeder
+                try {
+                    for (String timeseriesId : timeseriesIds) {
+                        TimeseriesFeed timeseriesFeed = getTimeseriesFeedById(timeseriesId);
+                        if (timeseriesFeed == null) {
+                            TimeseriesMetadata metadata = getTimeseriesMetadata(timeseriesId);
+                            LOGGER.debug("Create TimeseriesFeed '{}'. " , timeseriesId);
+                            TimeseriesFeed createdTimeseriesFeed = createTimeseriesFeed(metadata);
+                            getSosSesFeederInstance().enableFeedingFor(createdTimeseriesFeed);
+                        } else if (timeseriesFeed.getUsedCounter() == 0) {
+                            LOGGER.debug("Enable inactive TimeseriesFeed '{}'.", timeseriesId);
+                            getSosSesFeederInstance().enableFeedingFor(timeseriesFeed);
+                        } else {
+                            LOGGER.debug("TimeseriesFeed '{}' is already being feeded.", timeseriesId);
+                        }
+                        activateTimeseriesFeedWith(timeseriesId);
+                    }
+                } catch (Exception e) {
+                    LOGGER.error("Error subscribing to feeder.", e);
+                    return new SesClientResponse(SesClientResponse.types.ERROR_SUBSCRIBE_FEEDER);
+                }
             }
             return new SesClientResponse(SesClientResponse.types.OK);
         }
@@ -274,10 +274,10 @@ public class SesRulesServiceImpl implements SesRuleService {
 
             String museID = "";
             if (basicRule != null) {
-                museID = HibernateUtil.getSubscriptionID(basicRule.getId(), medium, eml, Integer.valueOf(userID));
+                museID = HibernateUtil.getSubscriptionIdByRuleIdAndUserId(basicRule.getId(), Integer.valueOf(userID));
                 ruleAsEML = basicRule.getEml();
             } else if (complexRule != null) {
-                museID = HibernateUtil.getSubscriptionID(complexRule.getId(), medium, eml, Integer.valueOf(userID));
+                museID = HibernateUtil.getSubscriptionIdByRuleIdAndUserId(complexRule.getId(), Integer.valueOf(userID));
                 ruleAsEML = complexRule.getEml();
             }
 
@@ -301,10 +301,10 @@ public class SesRulesServiceImpl implements SesRuleService {
 
             try {
                 // TODO couple subscription and rules in DB model
-                deleteSubscription(museID, userID);
-                if (basicRule != null && !existsOtherSubscriptions(basicRule.getId())) {
+                HibernateUtil.deactivateSubscription(museID, userID);
+                if (basicRule != null) {
                     unsubscribeBasicRule(uuid);
-                } else if (complexRule != null && !existsOtherSubscriptions(complexRule.getId())) {
+                } else if (complexRule != null) {
                     // TODO refactor complex rules
                     updateComplexRuleSubscribtion(uuid, false);
                 }
@@ -865,16 +865,10 @@ public class SesRulesServiceImpl implements SesRuleService {
             ArrayList<BasicRuleDTO> basicList = new ArrayList<BasicRuleDTO>();
             ArrayList<ComplexRuleDTO> complexList = new ArrayList<ComplexRuleDTO>();
 
-            String medium = "";
-            String format = "";
-            
             BasicRule basicRule;
             ComplexRule complexRule;
             for (int i = 0; i < subscriptions.size(); i++) {
                 Subscription subscription = subscriptions.get(i);
-                medium = subscription.getMedium();
-                format = subscription.getFormat();
-
                 basicRule = HibernateUtil.getBasicRuleByID(subscription.getRuleID());
                 
                 if (basicRule != null) {
@@ -889,6 +883,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                     complexList.add(SesUserServiceImpl.createComplexRuleDTO(complexRule));
                 }
             }
+            
             return new SesClientResponse(SesClientResponse.types.USER_SUBSCRIPTIONS, basicList, complexList);
         }
         catch (Exception e) {
