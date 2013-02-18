@@ -199,7 +199,7 @@ public class EventSubscriptionWindow extends LoginWindow {
             Rule createdRule = evt.getCreatedRule();
             String uuid = createdRule.getUuid();
             String userID = getCookie(COOKIE_USER_ID);
-            getMainEventBus().fireEvent(new SubscribeEvent(uuid, userID, "email", "EML"));
+            getMainEventBus().fireEvent(new SubscribeEvent(uuid, userID, "email", "Text"));
         }
 
     }
