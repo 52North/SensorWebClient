@@ -23,12 +23,15 @@
  */
 package org.n52.server.ses.util;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import static org.apache.http.entity.ContentType.TEXT_XML;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import org.apache.http.HttpResponse;
+import org.n52.oxf.util.web.ProxyAwareHttpClient;
+import org.n52.oxf.util.web.SimpleHttpClient;
 import org.n52.server.ses.SesConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,30 +46,13 @@ public class WnsUtil {
     /**
      * returns true if WNS delivers a response.
      */
-    public static boolean isAvailable(){
-	        HttpURLConnection connect = null;
-
+    public static boolean isAvailable() {
 	        try {
-	            URL url = new URL(SesConfig.wns);
-	            connect = (HttpURLConnection) url.openConnection();
-	            connect.setRequestProperty("Content-Type", "text/xml");
-	            connect.setRequestMethod("POST");
-	            connect.setDoOutput(true);
-	            connect.setDoInput(true);
-	            PrintWriter pw = new PrintWriter(connect.getOutputStream());
-	            pw.write(createCapabilitiesRequest());
-	            pw.close();
-	            BufferedReader in = new BufferedReader(new InputStreamReader(connect.getInputStream()));
-	            
-	            in.close();
-	            connect.disconnect();
-	            
-	            return true;
+	            ProxyAwareHttpClient httpClient = new ProxyAwareHttpClient(new SimpleHttpClient());
+	            HttpResponse response = httpClient.executePost(SesConfig.wns, createCapabilitiesRequest(), TEXT_XML);
+	            return response.getStatusLine().getStatusCode() < 400;
 	        } catch (Exception e) {
         		LOGGER.trace("WNS is not available: {}", SesConfig.wns);
-	            if (connect != null) {
-	            	connect.disconnect();
-				}
 	            return false;
 	        }
 	    }
@@ -80,36 +66,28 @@ public class WnsUtil {
      * @throws Exception
      */
     public static String sendToWNSMail(String userName, String mail) throws Exception {
-        URL url;
         String[] UserID = null;
         StringBuffer sb = new StringBuffer();
         String result;
 
-        url = new URL(SesConfig.wns);
-        HttpURLConnection connect = (HttpURLConnection) url.openConnection();
-        connect.setRequestProperty("Content-Type", "text/xml");
-        connect.setRequestMethod("POST");
-        connect.setDoOutput(true);
-        connect.setDoInput(true);
-        PrintWriter pw = new PrintWriter(connect.getOutputStream());
-        pw.write(createNewUserMailRequest(userName, mail));
-        pw.close();
-        BufferedReader in = new BufferedReader(new InputStreamReader(connect.getInputStream()));
-        // Antwort merken
-        try {
-            while (in.ready()) {
-                sb.append(in.readLine() + "\n");
-            }
-            // WNS UserID filtern
-            UserID = sb.toString().split("UserID");
-            result = UserID[1].substring(1, UserID[1].length() - 2);
-            
-            LOGGER.debug("WNS_USER_ID: {}", result);
-            return result;
-        } finally {
-            in.close();
-            connect.disconnect();
+        ProxyAwareHttpClient httpClient = new ProxyAwareHttpClient(new SimpleHttpClient());
+        HttpResponse response = httpClient.executePost(SesConfig.wns, createNewUserMailRequest(userName, mail), TEXT_XML);
+        BufferedReader bufferedReader = getBufferedReader(response);
+        while (bufferedReader.ready()) {
+            sb.append(bufferedReader.readLine() + "\n");
         }
+        // WNS UserID filtern
+        UserID = sb.toString().split("UserID");
+        result = UserID[1].substring(1, UserID[1].length() - 2);
+        
+        LOGGER.debug("WNS_USER_ID: {}", result);
+        return result;
+    }
+
+    protected static BufferedReader getBufferedReader(HttpResponse response) throws IOException {
+        InputStreamReader reader = new InputStreamReader(response.getEntity().getContent());
+        BufferedReader bufferedReader = new BufferedReader(reader);
+        return bufferedReader;
     }
 
     /**
@@ -121,28 +99,14 @@ public class WnsUtil {
      * @throws Exception
      */
     public static void updateToWNSMail(String wnsID, String mail, String oldMail) throws Exception {
-        URL url;
         StringBuffer sb = new StringBuffer();
-
-        url = new URL(SesConfig.wns);
-        HttpURLConnection connect = (HttpURLConnection) url.openConnection();
-        connect.setRequestProperty("Content-Type", "text/xml");
-        connect.setRequestMethod("POST");
-        connect.setDoOutput(true);
-        connect.setDoInput(true);
-        PrintWriter pw = new PrintWriter(connect.getOutputStream());
-        pw.write(createUpdateSingleUserMailRequest(wnsID, mail, oldMail));
-        pw.close();
-        BufferedReader in = new BufferedReader(new InputStreamReader(connect.getInputStream()));
-        try {
-            while (in.ready()) {
-                sb.append(in.readLine() + "\n");
-            }
-            LOGGER.trace(sb.toString());
-        } finally {
-            in.close();
-            connect.disconnect();
+        ProxyAwareHttpClient httpClient = new ProxyAwareHttpClient(new SimpleHttpClient());
+        HttpResponse response = httpClient.executePost(SesConfig.wns, createUpdateSingleUserMailRequest(wnsID, mail, oldMail), TEXT_XML);
+        BufferedReader bufferedReader = getBufferedReader(response);
+        while (bufferedReader.ready()) {
+            sb.append(bufferedReader.readLine() + "\n");
         }
+        LOGGER.trace(sb.toString());
     }
 
 
@@ -154,24 +118,15 @@ public class WnsUtil {
      * @throws Exception
      */
     public static String sendToWNSUnregister(String userID) throws Exception {
-        URL url;
         StringBuffer sb = new StringBuffer();
         String result;
 
-        url = new URL(SesConfig.wns);
-        HttpURLConnection connect = (HttpURLConnection) url.openConnection();
-        connect.setRequestProperty("Content-Type", "text/xml");
-        connect.setRequestMethod("POST");
-        connect.setDoOutput(true);
-        connect.setDoInput(true);
-        PrintWriter pw = new PrintWriter(connect.getOutputStream());
-        pw.write(createUnregisterUserRequest(userID));
-        pw.close();
-        BufferedReader in = new BufferedReader(new InputStreamReader(connect.getInputStream()));
-        // Antwort merken
+        ProxyAwareHttpClient httpClient = new ProxyAwareHttpClient(new SimpleHttpClient());
+        HttpResponse response = httpClient.executePost(SesConfig.wns, createUnregisterUserRequest(userID), TEXT_XML);
+        BufferedReader bufferedReader = getBufferedReader(response);
         try {
-            while (in.ready()) {
-                sb.append(in.readLine() + "\n");
+            while (bufferedReader.ready()) {
+                sb.append(bufferedReader.readLine() + "\n");
             }
             LOGGER.trace(sb.toString());
             result = sb.toString();
@@ -180,8 +135,7 @@ public class WnsUtil {
             // TODO WHAT? Please specify this!
             return result;
         } finally {
-            in.close();
-            connect.disconnect();
+            bufferedReader.close();
         }
     }
 
