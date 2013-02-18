@@ -25,11 +25,11 @@ package org.n52.server.ses.util;
 
 import static org.apache.http.entity.ContentType.TEXT_XML;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import org.apache.http.HttpResponse;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.n52.oxf.util.web.HttpClient;
 import org.n52.oxf.util.web.ProxyAwareHttpClient;
 import org.n52.oxf.util.web.SimpleHttpClient;
@@ -67,29 +67,18 @@ public class WnsUtil {
      * @throws Exception
      */
     public static String sendToWNSMail(String userName, String mail) throws Exception {
-        String[] UserID = null;
-        StringBuffer sb = new StringBuffer();
-        String result;
-
         HttpClient httpClient = new ProxyAwareHttpClient(new SimpleHttpClient());
-        String serviceUrl = SesConfig.wns;
-        HttpResponse response = httpClient.executePost(serviceUrl, createNewUserMailRequest(userName, mail), TEXT_XML);
-        BufferedReader bufferedReader = getBufferedReader(response);
-        while (bufferedReader.ready()) {
-            sb.append(bufferedReader.readLine() + "\n");
-        }
-        // WNS UserID filtern
-        UserID = sb.toString().split("UserID");
-        result = UserID[1].substring(1, UserID[1].length() - 2);
-        
+        String request = createNewUserMailRequest(userName, mail);
+        HttpResponse response = httpClient.executePost(SesConfig.wns, request, TEXT_XML);
+        XmlObject xmlResponse = readXmlResponse(response);
+        String[] userIDs = xmlResponse.xmlText().split("UserID");
+        String result = userIDs[1].substring(1, userIDs[1].length() - 2);
         LOGGER.debug("WNS_USER_ID: {}", result);
         return result;
     }
 
-    protected static BufferedReader getBufferedReader(HttpResponse response) throws IOException {
-        InputStreamReader reader = new InputStreamReader(response.getEntity().getContent());
-        BufferedReader bufferedReader = new BufferedReader(reader);
-        return bufferedReader;
+    protected static XmlObject readXmlResponse(HttpResponse response) throws XmlException, IOException {
+        return XmlObject.Factory.parse(response.getEntity().getContent());
     }
 
     /**
@@ -101,16 +90,11 @@ public class WnsUtil {
      * @throws Exception
      */
     public static void updateToWNSMail(String wnsID, String mail, String oldMail) throws Exception {
-        StringBuffer sb = new StringBuffer();
         ProxyAwareHttpClient httpClient = new ProxyAwareHttpClient(new SimpleHttpClient());
         HttpResponse response = httpClient.executePost(SesConfig.wns, createUpdateSingleUserMailRequest(wnsID, mail, oldMail), TEXT_XML);
-        BufferedReader bufferedReader = getBufferedReader(response);
-        while (bufferedReader.ready()) {
-            sb.append(bufferedReader.readLine() + "\n");
-        }
-        LOGGER.trace(sb.toString());
+        XmlObject xmlResponse = readXmlResponse(response);
+        LOGGER.trace(xmlResponse.xmlText());
     }
-
 
     /**
      * Unregister user with given userID
@@ -120,25 +104,14 @@ public class WnsUtil {
      * @throws Exception
      */
     public static String sendToWNSUnregister(String userID) throws Exception {
-        StringBuffer sb = new StringBuffer();
-        String result;
-
         ProxyAwareHttpClient httpClient = new ProxyAwareHttpClient(new SimpleHttpClient());
         HttpResponse response = httpClient.executePost(SesConfig.wns, createUnregisterUserRequest(userID), TEXT_XML);
-        BufferedReader bufferedReader = getBufferedReader(response);
-        try {
-            while (bufferedReader.ready()) {
-                sb.append(bufferedReader.readLine() + "\n");
-            }
-            LOGGER.trace(sb.toString());
-            result = sb.toString();
-            // UserID = sb.toString().split("UserID");
-            // result = UserID[1].substring(1, UserID[1].length() - 2);
-            // TODO WHAT? Please specify this!
-            return result;
-        } finally {
-            bufferedReader.close();
-        }
+        XmlObject xmlResponse = readXmlResponse(response);
+        LOGGER.trace(xmlResponse.xmlText());
+        // UserID = sb.toString().split("UserID");
+        // result = UserID[1].substring(1, UserID[1].length() - 2);
+        // TODO WHAT? Please specify this!
+        return xmlResponse.xmlText();
     }
 
     /**
