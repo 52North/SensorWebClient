@@ -218,7 +218,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                                     LOGGER.debug("Enable inactive TimeseriesFeed '{}'.", timeseriesId);
                                     getSosSesFeederInstance().enableFeedingFor(timeseriesFeed);
                                 } else {
-                                    LOGGER.debug("TimeseriesFeed '{}' is already being feeded.");
+                                    LOGGER.debug("TimeseriesFeed '{}' is already being feeded.", timeseriesId);
                                 }
                                 activateTimeseriesFeedWith(timeseriesId);
                             }
