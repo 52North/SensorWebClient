@@ -176,7 +176,7 @@ public class BasicRule_4_Builder extends BasicRuleBuilder {
             ComplexPattern exitClause = complexPatterns.getComplexPatternArray(1);
             processComplexPattern(exitClause, exitNotificationPatternId, exitEventName, output_exit);
             exitClause.getFirstPattern().setPatternReference(overshootPatternId);
-            exitClause.getFirstPattern().setPatternReference(undershootPatternId);
+            exitClause.getSecondPattern().setPatternReference(undershootPatternId);
             
             eml = emlTemplateDoc.xmlText();
             finalEml = eml;
