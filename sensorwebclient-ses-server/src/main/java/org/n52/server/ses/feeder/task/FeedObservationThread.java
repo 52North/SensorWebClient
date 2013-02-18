@@ -87,6 +87,7 @@ public class FeedObservationThread extends Thread {
                 for (ObservationPropertyType observationMember : getObservationsFor(metadata)) {
                     ObservationType observation = observationMember.getObservation();
                     if (observation != null && observation.getProcedure().getHref().equals(metadata.getProcedure())) {
+                        replaceProcedureWithGlobalSesId(observation, metadata);
                         endUpdate = getLastUpdateTime(observation.getSamplingTime());
                         Calendar latestFeededAt = timeseriesFeed.getLastFeeded();
                         timeseriesFeed.setLastConsideredTimeInterval(createUpdateInterval(observation, latestFeededAt));
@@ -124,6 +125,10 @@ public class FeedObservationThread extends Thread {
                 LOGGER.warn("Could not request and publish Observation to SES: " + e.getMessage(), e);
             }
         }
+    }
+
+    private void replaceProcedureWithGlobalSesId(ObservationType observation, TimeseriesMetadata metadata) {
+        observation.getProcedure().setHref(metadata.getGlobalSesId());
     }
 
     private ObservationPropertyType[] getObservationsFor(TimeseriesMetadata metadata) throws Exception {
