@@ -71,7 +71,7 @@ public class WnsUtil {
         StringBuffer sb = new StringBuffer();
         String result;
 
-        HttpClient httpClient = new SimpleHttpClient();//new ProxyAwareHttpClient(new SimpleHttpClient());
+        HttpClient httpClient = new ProxyAwareHttpClient(new SimpleHttpClient());
         String serviceUrl = SesConfig.wns;
         HttpResponse response = httpClient.executePost(serviceUrl, createNewUserMailRequest(userName, mail), TEXT_XML);
         BufferedReader bufferedReader = getBufferedReader(response);
