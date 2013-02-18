@@ -82,8 +82,10 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
             public void onChanged(ChangedEvent event) {
                 SelectItem selectItem = (SelectItem) event.getSource();
                 String operator = selectItem.getValueAsString();
+                String inverseOperator = getInverse(operator);
                 controller.getOverUndershootEntryConditions().setOperator(operator);
-                exitOperatorItem.setValue(getInverse(operator));
+                exitOperatorItem.setValue(inverseOperator);
+                controller.getOverUndershootExitConditions().setOperator(inverseOperator);
             }
         };
     }
