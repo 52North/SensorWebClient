@@ -25,7 +25,10 @@ package org.n52.server.ses.util;
 
 import static org.apache.http.entity.ContentType.TEXT_XML;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import org.apache.http.HttpResponse;
 import org.apache.xmlbeans.XmlException;
@@ -77,8 +80,21 @@ public class WnsUtil {
         return result;
     }
 
-    protected static XmlObject readXmlResponse(HttpResponse response) throws XmlException, IOException {
-        return XmlObject.Factory.parse(response.getEntity().getContent());
+    protected static XmlObject readXmlResponse(HttpResponse response) throws IOException {
+        InputStream content = response.getEntity().getContent();
+        StringBuilder sb = new StringBuilder();
+        try {
+            String line = "";
+            BufferedReader reader = new BufferedReader(new InputStreamReader(content));
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            return XmlObject.Factory.parse(sb.toString());
+        }
+        catch (XmlException e) {
+            LOGGER.error("Failed to parse WNS response: {}", sb.toString(), e);
+            return XmlObject.Factory.newInstance();
+        }
     }
 
     /**
