@@ -52,12 +52,6 @@
 			<resource>
 				<!-- copy and filter -->
 				<directory>src/main/resources</directory>
-				<includes>
-					<include>logback.xml</include>
-					<include>logback-test.xml</include>
-					<include>hibernate.cfg.xml</include>
-					<include>feeder-properties.xml</include>
-				</includes>
 				<filtering>true</filtering>
 			</resource>
 		</resources>
