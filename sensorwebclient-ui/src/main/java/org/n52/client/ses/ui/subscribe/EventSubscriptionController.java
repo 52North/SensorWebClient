@@ -99,11 +99,24 @@ class EventSubscriptionController {
         return selectedAbonnementName;
     }
 
-    public boolean isSelectionValid() {
-        // TODO validate template
-        //return selectedRuleTemplate.validateTemplate();
-        return true;
-    }
+	public boolean isSelectionValid() {
+		// TODO validate template
+		// return selectedRuleTemplate.validateTemplate();
+		if (selectedRuleTemplate instanceof OverUndershootRuleTemplate) {
+			if (overUndershootEntryConditions.getValue() != null
+					&& overUndershootExitConditions.getValue() != null
+					&& selectedAbonnementName != null) {
+				return true;
+			}
+		} else if (selectedRuleTemplate instanceof SensorLossRuleTemplate) {
+			if (sensorLossConditions != null
+					&& sensorLossConditions.getUnit() != null
+					&& sensorLossConditions.getValue() != null) {
+				return true;
+			}
+		}
+		return false;
+	}
     
     public void setSelectedRuleTemplate(RuleTemplate template) {
         selectedRuleTemplate = template;

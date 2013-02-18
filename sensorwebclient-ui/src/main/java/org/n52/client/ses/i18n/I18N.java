@@ -429,5 +429,11 @@ public interface I18N extends Constants {
     String login();
 
 	String onlyAdminsAllowedToLogin();
+
+	String deleteOnlyWhenUnsubbscribed();
+
+	String deleteSubscriptionQuestion();
+
+	String validateTextBoxes();
     
 }

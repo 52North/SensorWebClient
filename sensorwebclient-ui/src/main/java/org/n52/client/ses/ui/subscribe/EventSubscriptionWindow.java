@@ -40,6 +40,7 @@ import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.ui.ApplyCancelButtonLayout;
 import org.n52.shared.serializable.pojos.Rule;
 
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
@@ -151,6 +152,7 @@ public class EventSubscriptionWindow extends LoginWindow {
                 } else {
                     // form validation should render error message
                     // TODO form error handling does not work yet
+                	SC.warn(i18n.validateTextBoxes());
                 }
             }
         };
