@@ -78,13 +78,14 @@ public abstract class LoginWindow extends Window {
         setID(COMPONENT_ID);
         setShowModalMask(true);
         setIsModal(true);
+        setTitle(i18n.login());
+        setWidth(WIDTH);
+        setHeight(HEIGHT);
+        centerInPage();
         setCanDragResize(true);
         setShowMaximizeButton(true);
         setShowMinimizeButton(false);
         setMargin(10);
-        setWidth(WIDTH);
-        setHeight(HEIGHT);
-        centerInPage();
         addResizedHandler(new ResizedHandler() {
             @Override
             public void onResized(ResizedEvent event) {
@@ -96,7 +97,6 @@ public abstract class LoginWindow extends Window {
 
     @Override
     public void show() {
-        super.show();
         if (content != null) {
             removeItem(content);
         }
@@ -109,6 +109,7 @@ public abstract class LoginWindow extends Window {
         else {
             initializeContent();
         }
+        super.show();
         redraw();
     }
 

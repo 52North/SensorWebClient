@@ -68,6 +68,20 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
  */
 public class EditRulesLayout extends FormLayout {
 
+    private static final String EDIT_RULES_DELETE = "editRulesDelete";
+
+    private static final String EDIT_RULES_EDIT = "editRulesEdit";
+
+    private static final String EDIT_RULES_DESCRIPTION = "editRulesDescription";
+
+    private static final String EDIT_RULES_NAME = "editRulesName";
+
+    private static final String EDIT_RULES_TYPE = "editRulesType";
+
+    private static final String EDIT_RULES_COPY = "editRulesCopy";
+
+    private static final String EDIT_RULES_PUBLISHED = "editRulesPublished";
+
     /** The rules grid. */
     private ListGrid ownRulesGrid;
     
@@ -105,7 +119,7 @@ public class EditRulesLayout extends FormLayout {
                 if (record != null) {
                     String fieldName = this.getFieldName(colNum);
 
-                    if (fieldName.equals("edit")) {
+                    if (fieldName.equals(EDIT_RULES_EDIT)) {
                         // subscribe button
                         IButton editButton = new IButton(i18n.edit());
                         editButton.setShowDown(false);
@@ -122,7 +136,7 @@ public class EditRulesLayout extends FormLayout {
 
                         return editButton;
 
-                    } else if (fieldName.equals("published")) {
+                    } else if (fieldName.equals(EDIT_RULES_PUBLISHED)) {
                         // publish button
                         IButton publishButton = new IButton(i18n.publishButton());
                         publishButton.setShowDown(false);
@@ -186,7 +200,7 @@ public class EditRulesLayout extends FormLayout {
                 if (record != null) {
                     String fieldName = this.getFieldName(colNum);
 
-                   if (fieldName.equals("copy")) {
+                   if (fieldName.equals(EDIT_RULES_COPY)) {
                         // Copy button
                         IButton copyButton = new IButton(i18n.copy());
                         copyButton.setShowDown(false);
@@ -235,32 +249,32 @@ public class EditRulesLayout extends FormLayout {
         this.otherRulesGrid.sort(1, SortDirection.ASCENDING);
 
         // grid fields
-        ListGridField typeField = new ListGridField("type", i18n.type());
+        ListGridField typeField = new ListGridField(EDIT_RULES_TYPE, i18n.type());
         typeField.setWidth(60);
         typeField.setAlign(Alignment.CENTER);
 
-        ListGridField nameField = new ListGridField("name", i18n.name());
+        ListGridField nameField = new ListGridField(EDIT_RULES_NAME, i18n.name());
         nameField.setAlign(Alignment.CENTER);
 
-        ListGridField descriptionField = new ListGridField("description", i18n.description());
+        ListGridField descriptionField = new ListGridField(EDIT_RULES_DESCRIPTION, i18n.description());
         descriptionField.setAlign(Alignment.CENTER);
 
-        ListGridField editField = new ListGridField("edit", i18n.edit());
+        ListGridField editField = new ListGridField(EDIT_RULES_EDIT, i18n.edit());
         editField.setWidth(110);
         editField.setCanFilter(false);
         editField.setAlign(Alignment.CENTER);
 
-        ListGridField publishField = new ListGridField("published", i18n.publishButton());
+        ListGridField publishField = new ListGridField(EDIT_RULES_PUBLISHED, i18n.publishButton());
         publishField.setWidth(130);
         publishField.setCanFilter(false);
         publishField.setAlign(Alignment.CENTER);
 
-        ListGridField deleteField = new ListGridField("delete", i18n.delete());
+        ListGridField deleteField = new ListGridField(EDIT_RULES_DELETE, i18n.delete());
         deleteField.setWidth(110);
         deleteField.setCanFilter(false);
         deleteField.setAlign(Alignment.CENTER);
         
-        ListGridField copyField = new ListGridField("copy", i18n.copy());
+        ListGridField copyField = new ListGridField(EDIT_RULES_COPY, i18n.copy());
         copyField.setWidth(110);
         copyField.setCanFilter(false);
         copyField.setAlign(Alignment.CENTER);

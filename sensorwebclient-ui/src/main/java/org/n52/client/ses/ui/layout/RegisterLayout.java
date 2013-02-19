@@ -158,7 +158,7 @@ public class RegisterLayout extends FormLayout {
 
     void createAcceptTermsOfUse() {
         // linkItem for terms of use
-        this.linkTerms = new LinkItem("");
+        this.linkTerms = new LinkItem("termsOfUse");
         this.linkTerms.setLinkTitle(i18n.termsOfUse());
         this.linkTerms.setShouldSaveValue(false);
         this.linkTerms.addClickHandler(new ClickHandler() {

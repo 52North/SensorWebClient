@@ -59,6 +59,20 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
  */
 public class AllRulesLayout extends FormLayout {
 
+    private static final String ALL_RULES_DELETE = "allRulesDelete";
+
+    private static final String ALL_RULES_EDIT = "allRulesEdit";
+
+    private static final String ALL_RULES_PUBLISHED = "allRulesPublished";
+
+    private static final String ALL_RULES_DESCRIPTION = "allRulesDescription";
+
+    private static final String ALL_RULES_NAME = "allRulesName";
+
+    private static final String ALL_RULES_OWNER_NAME = "allRulesOwnerName";
+
+    private static final String ALL_RULES_TYPE = "allRulesType";
+
     /** The rules grid. */
     private ListGrid rulesGrid;
     
@@ -90,7 +104,7 @@ public class AllRulesLayout extends FormLayout {
                 if (record != null) {
                     String fieldName = this.getFieldName(colNum);
 
-                    if (fieldName.equals("published")) {
+                    if (fieldName.equals(ALL_RULES_PUBLISHED)) {
 
                         // publish button
                         IButton publishButton = new IButton(i18n.publishButton());
@@ -140,7 +154,7 @@ public class AllRulesLayout extends FormLayout {
                         } 
                         return null;
 
-                    } else if (fieldName.equals("edit")) {
+                    } else if (fieldName.equals(ALL_RULES_EDIT)) {
                         String userID = Cookies.getCookie(SesRequestManager.COOKIE_USER_ID);
                         if (record.getAttribute("ownerID").equals(userID)) {
                             // subscribe button
@@ -159,7 +173,7 @@ public class AllRulesLayout extends FormLayout {
                             return editButton;
                         }
 
-                    } else if (fieldName.equals("delete")) {
+                    } else if (fieldName.equals(ALL_RULES_DELETE)) {
                         // delete button
                         IButton deleteButton = new IButton(i18n.delete());
                         deleteButton.setShowDown(false);
@@ -204,31 +218,31 @@ public class AllRulesLayout extends FormLayout {
         this.rulesGrid.sort(1, SortDirection.ASCENDING);
 
         // grid fields
-        ListGridField typeField = new ListGridField("type", i18n.type());
+        ListGridField typeField = new ListGridField(ALL_RULES_TYPE, i18n.type());
         typeField.setWidth(60);
         typeField.setAlign(Alignment.CENTER);
         
-        ListGridField ownerField = new ListGridField("ownerName", i18n.owner());
+        ListGridField ownerField = new ListGridField(ALL_RULES_OWNER_NAME, i18n.owner());
         ownerField.setWidth(150);
         ownerField.setAlign(Alignment.CENTER);
 
-        ListGridField nameField = new ListGridField("name", i18n.name());
+        ListGridField nameField = new ListGridField(ALL_RULES_NAME, i18n.name());
         nameField.setAlign(Alignment.CENTER);
 
-        ListGridField descriptionField = new ListGridField("description", i18n.description());
+        ListGridField descriptionField = new ListGridField(ALL_RULES_DESCRIPTION, i18n.description());
         descriptionField.setAlign(Alignment.CENTER);
         
-        ListGridField publishField = new ListGridField("published", i18n.publish());
+        ListGridField publishField = new ListGridField(ALL_RULES_PUBLISHED, i18n.publish());
         publishField.setWidth(110);
         publishField.setCanFilter(false);
         publishField.setAlign(Alignment.CENTER);
 
-        ListGridField editField = new ListGridField("edit", i18n.edit());
+        ListGridField editField = new ListGridField(ALL_RULES_EDIT, i18n.edit());
         editField.setWidth(110);
         editField.setCanFilter(false);
         editField.setAlign(Alignment.CENTER);
 
-        ListGridField deleteField = new ListGridField("delete", i18n.delete());
+        ListGridField deleteField = new ListGridField(ALL_RULES_DELETE, i18n.delete());
         deleteField.setWidth(110);
         deleteField.setCanFilter(false);
         deleteField.setAlign(Alignment.CENTER);

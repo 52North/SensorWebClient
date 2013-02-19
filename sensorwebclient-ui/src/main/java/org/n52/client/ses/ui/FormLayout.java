@@ -58,6 +58,7 @@ public abstract class FormLayout extends VLayout {
         this.form.setUseAllDataSourceFields(true);
 
         this.headerItem = new HeaderItem();
+        this.headerItem.setName("n52_sensorweb_client_headerItem");
         this.headerItem.setDefaultValue(formHeaderText);
 
         this.spacer = new LayoutSpacer();

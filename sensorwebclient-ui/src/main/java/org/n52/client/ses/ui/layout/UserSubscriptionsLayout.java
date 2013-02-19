@@ -78,9 +78,9 @@ public class UserSubscriptionsLayout extends FormLayout {
     
     private RuleDataSource dataSource;
     
-    private static final String NAME_FIELD = "name";
-    private static final String ACTIVATED_FIELD = "activate";
-    private static final String DELETE_FIELD = "delete";
+    private static final String NAME_FIELD = "userSubscriptionName";
+    private static final String ACTIVATED_FIELD = "userSubscriptionActivate";
+    private static final String DELETE_FIELD = "userSubscriptionDelete";
     
     /**
      * Instantiates a new user rule layout.
