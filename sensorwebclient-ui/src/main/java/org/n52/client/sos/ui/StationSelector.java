@@ -126,17 +126,17 @@ public class StationSelector extends Window {
     }
 
 	private void initializeWindow() {
-        setShowModalMask(true);
         setID(COMPONENT_ID);
+        setShowModalMask(true);
+        setIsModal(true);
         setTitle(i18n.pickStation());
         setWidth(WIDTH);
         setHeight(HEIGHT);
         centerInPage();
-        setIsModal(true);
         setCanDragResize(true);
         setShowMaximizeButton(true);
         setShowMinimizeButton(false);
-        setMargin(0);
+        setMargin(10);
         addResizedHandler(new ResizedHandler() {
 			@Override
 			public void onResized(ResizedEvent event) {
@@ -309,7 +309,8 @@ public class StationSelector extends Window {
 			RadioGroupItem selector = stationFilterGroups.get(serviceUrl);
 			return selector;
 		}
-		RadioGroupItem radioGroup = new RadioGroupItem(serviceUrl);
+		//RadioGroupItem radioGroup = new RadioGroupItem(serviceUrl);
+		RadioGroupItem radioGroup = new RadioGroupItem("sosDataSource");
 		radioGroup.setShowTitle(false);
 		radioGroup.addChangedHandler(new ChangedHandler() {
 			@Override
