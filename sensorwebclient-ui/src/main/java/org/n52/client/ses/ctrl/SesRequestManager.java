@@ -207,19 +207,23 @@ public class SesRequestManager extends RequestManager {
      * Logout and delete cookie.
      */
     public void logout() {
-        AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-            public void onFailure(Throwable arg0) {
-                Toaster.getInstance().addErrorMessage(i18n.failedLogout());
-            }
-
-            public void onSuccess(Void result) {
-                Cookies.removeCookie(COOKIE_USER_ID);
-                Cookies.removeCookie(COOKIE_USER_ROLE);
-                Cookies.removeCookie(COOKIE_USER_NAME);
-                EventBus.getMainEventBus().fireEvent(new SetRoleEvent(LOGOUT));
-            }
-        };
-        this.sesUserService.logout(callback);
+//        AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+//            public void onFailure(Throwable arg0) {
+//                Toaster.getInstance().addErrorMessage(i18n.failedLogout());
+//            }
+//
+//            public void onSuccess(Void result) {
+//                Cookies.removeCookie(COOKIE_USER_ID);
+//                Cookies.removeCookie(COOKIE_USER_ROLE);
+//                Cookies.removeCookie(COOKIE_USER_NAME);
+//                EventBus.getMainEventBus().fireEvent(new SetRoleEvent(LOGOUT));
+//            }
+//        };
+//        this.sesUserService.logout(callback);
+        Cookies.removeCookie(COOKIE_USER_ID);
+        Cookies.removeCookie(COOKIE_USER_ROLE);
+        Cookies.removeCookie(COOKIE_USER_NAME);
+        EventBus.getMainEventBus().fireEvent(new SetRoleEvent(LOGOUT));
     }
 
     public void getUser(String id) {
