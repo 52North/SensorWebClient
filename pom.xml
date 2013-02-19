@@ -814,7 +814,7 @@
 	<properties>
 		<dev.mode>false</dev.mode>
 		<gwt.version>2.5.0</gwt.version>
-		<smartgwt.version>3.0</smartgwt.version>
+		<smartgwt.version>3.1</smartgwt.version>
 		<geotools.version>8.2</geotools.version>
 		<oxf.version>2.0.0-alpha.2-SNAPSHOT</oxf.version>
 		<hibernate.version>3.5.0-Final</hibernate.version>
