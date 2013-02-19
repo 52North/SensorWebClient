@@ -68,7 +68,7 @@ public abstract class RuleTemplate {
         TextItem valueItem = new TextItem();
         valueItem.setTitle(i18n.value());
         valueItem.setTitleOrientation(TOP);
-        valueItem.setKeyPressFilter("[0-9]");
+        valueItem.setKeyPressFilter("[0-9\\.]");
         return valueItem;
     }
 
@@ -86,7 +86,13 @@ public abstract class RuleTemplate {
         return labelItem;
     }
 
-    protected FormItemErrorFormatter createErrorFormatter(final String alt, final String title) {
+
+    protected void declareAsRequired(FormItem formItem) {
+        formItem.setErrorFormatter(createErrorFormatter("invalid", i18n.invalidInputs()));
+        formItem.setRequired(true);
+    }
+    
+    private FormItemErrorFormatter createErrorFormatter(final String alt, final String title) {
         return new FormItemErrorFormatter() {
             @Override
             public String getErrorHTML(String[] errors) {
@@ -100,10 +106,4 @@ public abstract class RuleTemplate {
         };
         
     }
-
-    protected void declareAsRequired(FormItem formItem) {
-        formItem.setErrorFormatter(createErrorFormatter("invalid", i18n.invalidInputs()));
-        formItem.setRequired(true);
-    }
-    
 }
