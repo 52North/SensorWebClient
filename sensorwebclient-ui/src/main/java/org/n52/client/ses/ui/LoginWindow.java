@@ -101,6 +101,7 @@ public abstract class LoginWindow extends Window {
             removeItem(content);
         }
         if (notLoggedIn()) {
+            setTitle(i18n.login());
             content = new VLayout();
             content.addMember(createUserLoginLayout());
             addItem(content);
