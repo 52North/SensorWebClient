@@ -84,7 +84,7 @@ public class Header extends HLayout {
 //        linkLayout.addMember(getVersionInfo());
 //        linkLayout.addMember(getSeparator());
         
-        linkLayout.addMember(getRestartLink());
+        linkLayout.addMember(getPermalinkLink());
         linkLayout.addMember(getSeparator());
         linkLayout.addMember(getHelpLink());
         linkLayout.addMember(getSeparator());
@@ -159,8 +159,8 @@ public class Header extends HLayout {
 		return addToFavorites;
 	}
 
-	private Label getRestartLink() {
-		Label restart = getHeaderLinkLabel(i18n.restart());
+	private Label getPermalinkLink() {
+		Label restart = getHeaderLinkLabel(i18n.permalink());
         restart.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent evt) {
             	String localeParameter = Window.Location.getParameter("locale");
