@@ -24,6 +24,12 @@
 package org.n52.server.ses.eml;
 
 import static org.n52.oxf.xmlbeans.tools.XmlUtil.qualifySubstitutionGroup;
+import static org.n52.shared.serializable.pojos.Rule.EQUAL_TO;
+import static org.n52.shared.serializable.pojos.Rule.GREATER_THAN;
+import static org.n52.shared.serializable.pojos.Rule.GREATER_THAN_OR_EQUAL_TO;
+import static org.n52.shared.serializable.pojos.Rule.LESS_THAN;
+import static org.n52.shared.serializable.pojos.Rule.LESS_THAN_OR_EQUAL_TO;
+import static org.n52.shared.serializable.pojos.Rule.NOT_EQUAL_TO;
 import static org.n52.shared.util.MathSymbolUtil.getSymbolIndexForFilter;
 
 import java.io.ByteArrayInputStream;
@@ -47,6 +53,8 @@ import net.opengis.fes.x20.PropertyIsLessThanDocument;
 import net.opengis.fes.x20.PropertyIsLessThanOrEqualToDocument;
 import net.opengis.fes.x20.PropertyIsNotEqualToDocument;
 import net.opengis.fes.x20.ValueReferenceDocument;
+import net.opengis.swe.x101.QuantityDocument;
+import net.opengis.swe.x101.QuantityDocument.Quantity;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
@@ -160,12 +168,12 @@ public class BasicRule_4_Builder extends BasicRuleBuilder {
             SimplePatternType ruleUndershoot = simplePatterns.getSimplePatternArray(0);
             processSimplePattern(ruleUndershoot, overshootPatternId, overshootEventName);
             processPropertyRestrictions(ruleUndershoot, rule.getTimeseriesMetadata());
-            processFilterGuard(ruleUndershoot, rule.getEntryOperatorIndex(), rule.getEntryValue());
+            processFilterGuard(ruleUndershoot, createEntryFilter(rule));
             
             SimplePatternType ruleOvershoot = simplePatterns.getSimplePatternArray(1);
             processSimplePattern(ruleOvershoot, undershootPatternId, undershootEventName);
             processPropertyRestrictions(ruleOvershoot, rule.getTimeseriesMetadata());
-            processFilterGuard(ruleOvershoot, rule.getExitOperatorIndex(), rule.getExitValue());
+            processFilterGuard(ruleOvershoot, createExitFilter(rule));
             
             // set patternID of complexPatterns
             ComplexPattern entryClause = complexPatterns.getComplexPatternArray(0);
@@ -194,60 +202,77 @@ public class BasicRule_4_Builder extends BasicRuleBuilder {
         return basicRule;
     }
 
-    private void processFilterGuard(SimplePatternType pattern, int operator, String value) {
-        FilterType filter = pattern.getGuard().getFilter();
-        processComparisonFilter(filter, operator, value);
+    private RuleFilter createEntryFilter(Rule rule) {
+        return new RuleFilter(rule.getEntryOperatorIndex(), rule.getEntryValue(), rule.getEntryUnit());
     }
 
-    void processComparisonFilter(FilterType filter, int operator, String value) {
-        if (operator == Rule.LESS_THAN) {
+    private RuleFilter createExitFilter(Rule rule) {
+        return new RuleFilter(rule.getExitOperatorIndex(), rule.getExitValue(), rule.getExitUnit());
+    }
+
+    private void processFilterGuard(SimplePatternType pattern, RuleFilter ruleFilter) {
+        FilterType filter = pattern.getGuard().getFilter();
+        processComparisonFilter(filter, ruleFilter);
+    }
+
+    void processComparisonFilter(FilterType filter, RuleFilter ruleFilter) {
+        if (ruleFilter.getOperator() == LESS_THAN) {
             PropertyIsLessThanDocument lessThanDoc = PropertyIsLessThanDocument.Factory.newInstance();
             BinaryComparisonOpType binaryOperator = lessThanDoc.addNewPropertyIsLessThan();
-            processDoubleValueExpression(binaryOperator, value);
+            processDoubleValueExpression(binaryOperator, ruleFilter);
             filter.setComparisonOps(binaryOperator);
             qualifySubstitutionGroup(filter.getComparisonOps(), lessThanDoc.schemaType().getDocumentElementName());
-        } else if (operator == Rule.GREATER_THAN) {
+        } else if (ruleFilter.getOperator() == GREATER_THAN) {
             PropertyIsGreaterThanDocument greaterThanDoc = PropertyIsGreaterThanDocument.Factory.newInstance();
             BinaryComparisonOpType binaryOperator = greaterThanDoc.addNewPropertyIsGreaterThan();
-            processDoubleValueExpression(binaryOperator, value);
+            processDoubleValueExpression(binaryOperator, ruleFilter);
             filter.setComparisonOps(binaryOperator); 
             qualifySubstitutionGroup(filter.getComparisonOps(), greaterThanDoc.schemaType().getDocumentElementName());
-        } else if (operator == Rule.EQUAL_TO) {
+        } else if (ruleFilter.getOperator() == EQUAL_TO) {
             PropertyIsEqualToDocument equalToDoc = PropertyIsEqualToDocument.Factory.newInstance();
             BinaryComparisonOpType binaryOperator = equalToDoc.addNewPropertyIsEqualTo();
-            processDoubleValueExpression(binaryOperator, value);
+            processDoubleValueExpression(binaryOperator, ruleFilter);
             filter.setComparisonOps(binaryOperator);
             qualifySubstitutionGroup(filter.getComparisonOps(), equalToDoc.schemaType().getDocumentElementName());
-        } else if (operator == Rule.GREATER_THAN_OR_EQUAL_TO) {
+        } else if (ruleFilter.getOperator() == GREATER_THAN_OR_EQUAL_TO) {
             PropertyIsGreaterThanOrEqualToDocument greaterOrEqualToDoc = PropertyIsGreaterThanOrEqualToDocument.Factory.newInstance();
             BinaryComparisonOpType binaryOperator = greaterOrEqualToDoc.addNewPropertyIsGreaterThanOrEqualTo();
-            processDoubleValueExpression(binaryOperator, value);
+            processDoubleValueExpression(binaryOperator, ruleFilter);
             filter.setComparisonOps(binaryOperator);
             qualifySubstitutionGroup(filter.getComparisonOps(), greaterOrEqualToDoc.schemaType().getDocumentElementName());
-        } else if (operator == Rule.LESS_THAN_OR_EQUAL_TO) {
+        } else if (ruleFilter.getOperator() == LESS_THAN_OR_EQUAL_TO) {
             PropertyIsLessThanOrEqualToDocument lessThanOrEqualToDoc = PropertyIsLessThanOrEqualToDocument.Factory.newInstance();
             BinaryComparisonOpType binaryOperator = lessThanOrEqualToDoc.addNewPropertyIsLessThanOrEqualTo();
-            processDoubleValueExpression(binaryOperator, value);
+            processDoubleValueExpression(binaryOperator, ruleFilter);
             filter.setComparisonOps(binaryOperator);
             qualifySubstitutionGroup(filter.getComparisonOps(), lessThanOrEqualToDoc.schemaType().getDocumentElementName());
-        } else if (operator == Rule.NOT_EQUAL_TO) {
+        } else if (ruleFilter.getOperator() == NOT_EQUAL_TO) {
             PropertyIsNotEqualToDocument notEqualToDoc = PropertyIsNotEqualToDocument.Factory.newInstance();
             BinaryComparisonOpType binaryOperator = notEqualToDoc.addNewPropertyIsNotEqualTo();
-            processDoubleValueExpression(binaryOperator, value);
+            processDoubleValueExpression(binaryOperator, ruleFilter);
             filter.setComparisonOps(binaryOperator);
             qualifySubstitutionGroup(filter.getComparisonOps(), notEqualToDoc.schemaType().getDocumentElementName());
         } 
     }
 
-    private void processDoubleValueExpression(BinaryComparisonOpType binaryComparison, String value) {
+    private void processDoubleValueExpression(BinaryComparisonOpType binaryComparison, RuleFilter ruleFilter) {
         ValueReferenceDocument valueReference = ValueReferenceDocument.Factory.newInstance();
         valueReference.setValueReference("input/doubleValue");
         binaryComparison.set(valueReference);
 
         LiteralType literalType = LiteralDocument.Factory.newInstance().addNewLiteral();
-        XmlUtil.setTextContent(literalType, value);
+        literalType.set(createQuantity(ruleFilter));
+//        XmlUtil.setTextContent(literalType, value);
         XmlObject expression = binaryComparison.addNewExpression().set(literalType);
         qualifySubstitutionGroup(expression, LiteralDocument.type.getDocumentElementName());
+    }
+
+    protected QuantityDocument createQuantity(RuleFilter ruleFilter) {
+        QuantityDocument quantityDoc = QuantityDocument.Factory.newInstance();
+        Quantity quantity = quantityDoc.addNewQuantity();
+        quantity.setValue(Double.parseDouble(ruleFilter.getValue()));
+        quantity.addNewUom().setCode(ruleFilter.getUnit());
+        return quantityDoc;
     }
 
     /**
@@ -304,5 +329,31 @@ public class BasicRule_4_Builder extends BasicRuleBuilder {
         }
 
         return rule;
+    }
+
+    private class RuleFilter {
+    
+        private int operator;
+        private String value;
+        private String unit;
+    
+        public RuleFilter(int operatorIndex, String value, String unit) {
+            this.operator = operatorIndex;
+            this.value = value;
+            this.unit = unit;
+        }
+    
+        public int getOperator() {
+            return operator;
+        }
+    
+        public String getValue() {
+            return value;
+        }
+    
+        public String getUnit() {
+            return unit;
+        }
+        
     }
 }
