@@ -63,7 +63,7 @@ public class SelectSubscriptionForm extends DynamicForm {
             @Override
             public void onChanged(ChangedEvent event) {
                 RadioGroupItem item = (RadioGroupItem) event.getItem();
-                String value = (String) item.getValue();
+                String value = item.getValueAsString();
                 final SimpleRuleType template = SimpleRuleType.getTypeFor(value);
                 SelectSubscriptionForm.this.handleRuleTemplateSelection(template);
             }
