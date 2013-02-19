@@ -37,6 +37,7 @@ import org.n52.oxf.ows.ExceptionReport;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.ses.adapter.SESAdapter;
 import org.n52.oxf.ses.adapter.SESRequestBuilder_00;
+import org.n52.oxf.ses.adapter.client.Publisher;
 import org.n52.server.ses.SesConfig;
 import org.n52.server.ses.feeder.FeederConfig;
 import org.n52.server.ses.feeder.SosSesFeeder;
@@ -94,33 +95,29 @@ public class SESConnector {
             Operation operation = new Operation(REGISTER_PUBLISHER, null, brokerUrl);
             OperationResult result = sesAdapter.doOperation(operation, parameter);
             
-//            Publisher publisher = new Publisher(null); // TODO quick fix
-//            publisher.parseResponse(XmlObject.Factory.parse(result.getIncomingResultAsStream()));
-//          XmlObject response = sesAdapter.handleResponse(REGISTER_PUBLISHER, result.getIncomingResultAsStream());
-            XmlObject response = XmlObject.Factory.parse(result.getIncomingResultAsStream());
+            Publisher publisher = new Publisher(null); // TODO quick fix
+            publisher.parseResponse(XmlObject.Factory.parse(result.getIncomingResultAsStream()));
+//          mlObject response = sesAdapter.handleResponse(REGISTER_PUBLISHER, result.getIncomingResultAsStream());
+//            XmlObject response = XmlObject.Factory.parse(result.getIncomingResultAsStream());
             
 //            // TODO use XPath to get Publisher ID
-            String tmp = response.toString();
-            String sesID = tmp.substring(tmp.indexOf('>', tmp.indexOf("ResourceId")) + 1,
-                                         tmp.indexOf('<', tmp.indexOf("ResourceId")));
+//            String tmp = response.toString();
+//            String sesID = tmp.substring(tmp.indexOf('>', tmp.indexOf("ResourceId")) + 1,
+//                                         tmp.indexOf('<', tmp.indexOf("ResourceId")));
 
-            return sesID;
+            return publisher.getResourceID();
         }
         catch (OXFException e) {
             LOGGER.error("Error while sending registerPublisher request to SES.", e);
         }
         catch (IllegalStateException e) {
-            LOGGER.debug("Configuration is not available (anymore).", e);
+            LOGGER.debug("Configuration is not available.", e);
         }
         catch (XmlException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            
+            LOGGER.error("Could not parse SES response.", e);
         }
         catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            
+            LOGGER.error("Could not read SES response.", e);
         }
         return null;
     }
