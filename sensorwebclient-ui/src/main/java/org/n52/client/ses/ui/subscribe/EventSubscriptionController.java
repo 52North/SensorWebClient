@@ -101,7 +101,7 @@ class EventSubscriptionController {
 
 	public boolean isSelectionValid() {
 		// TODO validate template
-		// return selectedRuleTemplate.validateTemplate();
+//		 return selectedRuleTemplate.validateTemplate();
 		if (selectedRuleTemplate instanceof OverUndershootRuleTemplate) {
 			if (overUndershootEntryConditions.getValue() != null
 					&& overUndershootExitConditions.getValue() != null
@@ -174,6 +174,12 @@ class EventSubscriptionController {
         return sensorLossConditions;
     }
 
+    public void clearSelectionData() {
+        overUndershootEntryConditions = null;
+        overUndershootExitConditions = null;
+        sensorLossConditions = null;
+    }
+    
     public Rule createSimpleRuleFromSelection() {
         SimpleRuleType ruleType = getSelectedRuleTemplate();
         if (ruleType == OVER_UNDERSHOOT) {
@@ -194,7 +200,7 @@ class EventSubscriptionController {
                 .setRuleType(OVER_UNDERSHOOT)
                 .setCookie(parseInt(userCookie))
                 .setDescription("Auto-Generated Rule from Template.")
-                .setTimeseriesMetadata(createTimeseriesMetadataFrom())
+                .setTimeseriesMetadata(createTimeseriesMetadata())
                 .setEntryOperatorIndex(getIndexFor(entryConditions.getOperator()))
                 .setEntryValue(entryConditions.getValue())
                 .setEntryUnit(entryConditions.getUnit())
@@ -215,14 +221,14 @@ class EventSubscriptionController {
                 .setRuleType(OVER_UNDERSHOOT)
                 .setCookie(parseInt(userCookie))
                 .setDescription("Auto-Generated Rule from Template.")
-                .setTimeseriesMetadata(createTimeseriesMetadataFrom())
+                .setTimeseriesMetadata(createTimeseriesMetadata())
                 .setEntryTime(condition.getValue())
                 .setEntryTimeUnit(condition.getUnit())
                 .setPublish(false)
                 .build();
     }
     
-    private TimeseriesMetadata createTimeseriesMetadataFrom() {
+    private TimeseriesMetadata createTimeseriesMetadata() {
         final TimeSeries timeseries = this.timeseries;
         TimeseriesMetadata metadata = new TimeseriesMetadata();
         metadata.setServiceUrl(timeseries.getSosUrl());
