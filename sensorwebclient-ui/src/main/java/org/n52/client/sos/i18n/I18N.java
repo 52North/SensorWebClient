@@ -283,7 +283,7 @@ public interface I18N extends Constants {
 
     String Impressum();
 
-	String restart();
+	String permalink();
 
     String jumpToFirst();
 
