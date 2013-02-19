@@ -37,6 +37,7 @@ public class SensorLossRuleTemplate extends RuleTemplate {
 
     @Override
     public Canvas createEditCanvas() {
+        controller.clearSelectionData();
         Layout layout = new VLayout();
         layout.setStyleName("n52_sensorweb_client_create_abo_template_sensorlosscondition");
         layout.addMember(alignVerticalCenter(createEditConditionCanvas()));
@@ -45,7 +46,7 @@ public class SensorLossRuleTemplate extends RuleTemplate {
     
     @Override
     public boolean validateTemplate() {
-        return conditionForm.validate();
+        return conditionForm.validate(false);
     }
 
     private Canvas createEditConditionCanvas() {
