@@ -2,14 +2,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=9" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta name="keywords" lang="en" content="Sensor Web, SWE, OGC, SOS, SES, Data">
 <meta name="gwt:property" content="locale=<%=request.getLocale()%>">
 <meta name="author" content="52&deg;North - http://52north.org/">
 <meta name="DC.title" content="Sensor Web Client ${project.version}">
 <meta name="DC.creator" content="52&deg;North - http://52north.org/">
-<meta name="DC.subject" content="ThinSWE client including SOS and SES support">
+<meta name="DC.subject" content="Sensor Web Client including SOS and SES support">
 
 <title>${application.title}</title>
 
