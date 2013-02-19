@@ -1,7 +1,11 @@
 package org.n52.client.ui;
 
+import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_NAME;
+import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ROLE;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
+import static org.n52.shared.serializable.pojos.UserRole.ADMIN;
 import static org.n52.shared.serializable.pojos.UserRole.LOGOUT;
+import static org.n52.shared.serializable.pojos.UserRole.USER;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.ctrl.SesRequestManager;
@@ -26,7 +30,7 @@ public class LoginHeaderLayout extends HLayout {
 	public LoginHeaderLayout() {
 		initializeLayout();
 		new LoginHeaderEventBroker(this);
-		updateLoginInfo();
+		showUserAsLoggedIn();
 	}
 
 	private void initializeLayout() {
@@ -45,7 +49,6 @@ public class LoginHeaderLayout extends HLayout {
 			@Override
 			public void onClick(ClickEvent event) {
 				EventBus.getMainEventBus().fireEvent(new LogoutEvent());
-				SC.say(i18n.logoutSuccessful());
 			}
 		});
 		addMember(logout);
@@ -76,12 +79,12 @@ public class LoginHeaderLayout extends HLayout {
 //		setAutoWidth();
 	}
 	
-	public void updateLoginInfo() {
-		String userName = Cookies.getCookie(SesRequestManager.COOKIE_USER_NAME);
+	public void showUserAsLoggedIn() {
+		String userName = Cookies.getCookie(COOKIE_USER_NAME);
 		if(userName != null) {
 			show();
 			user.setContents(i18n.loggedInAs() + " " + userName);
-			String roleType = Cookies.getCookie(SesRequestManager.COOKIE_USER_ROLE);
+			String roleType = Cookies.getCookie(COOKIE_USER_ROLE);
 			if (roleType.equals(UserRole.ADMIN.name())) {
 				admin.show();
 			} else {
@@ -92,7 +95,8 @@ public class LoginHeaderLayout extends HLayout {
 		}
 	}
 	
-	public void logout() {
+	public void showLoggedOutHeader() {
+	    admin.hide();
 	    hide();
 	}
 	
@@ -124,9 +128,10 @@ public class LoginHeaderLayout extends HLayout {
 		public void onChangeRole(SetRoleEvent evt) {
 		    UserRole role = evt.getRole();
 		    if (LOGOUT == role) {
-                loginHeaderLayout.logout();
-            } else {
-                loginHeaderLayout.updateLoginInfo();
+                loginHeaderLayout.showLoggedOutHeader();
+                SC.say(i18n.logoutSuccessful());
+            } else if (USER == role || ADMIN == role) {
+                loginHeaderLayout.showUserAsLoggedIn();
             }
 		}
     }
