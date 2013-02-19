@@ -40,6 +40,8 @@ public class BasicRule_4_BuilderTest {
         rule = RuleBuilder.aRule()
                             .setEntryValue("500")
                             .setExitValue("400")
+                            .setEntryUnit("m")
+                            .setExitUnit("m")
                             .setTitle("MyTestRule")
                             .setTimeseriesMetadata(metadata)
                             .build();
