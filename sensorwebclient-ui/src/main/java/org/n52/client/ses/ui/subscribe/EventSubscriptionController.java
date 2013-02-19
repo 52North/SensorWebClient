@@ -143,8 +143,27 @@ class EventSubscriptionController {
         } else if (getSelectedRuleTemplate() == SENSOR_LOSS) {
             sb.append("_").append(SENSOR_LOSS.toString());
         }
-        selectedAbonnementName = sb.toString().replaceAll("[^0-9a-zA-Z_]", "_");
+        String toReplace = replaceAllUmlauts(sb.toString());
+        selectedAbonnementName = replaceNonAlphaNumerics(toReplace);
         return selectedAbonnementName;
+    }
+
+    String replaceAllUmlauts(String toReplace) {
+        toReplace = toReplace.replaceAll("[ö]", "oe");
+        toReplace = toReplace.replaceAll("^Ö", "Oe");
+        toReplace = toReplace.replaceAll("[Ö]", "OE");
+        toReplace = toReplace.replaceAll("[ä]", "ae");
+        toReplace = toReplace.replaceAll("^Ä", "Ae");
+        toReplace = toReplace.replaceAll("[Ä]", "AE");
+        toReplace = toReplace.replaceAll("[ü]", "ue");
+        toReplace = toReplace.replaceAll("^Ü", "Ue");
+        toReplace = toReplace.replaceAll("[Ü]", "UE");
+        toReplace = toReplace.replaceAll("[ß]", "ss");
+        return toReplace;
+    }
+
+    String replaceNonAlphaNumerics(String toReplace) {
+        return toReplace.replaceAll("[^0-9a-zA-Z_]", "_");
     }
 
     public SimpleRuleType getSelectedRuleTemplate() {
