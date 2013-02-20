@@ -37,6 +37,7 @@ public class LoginSessionStore {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
+                // TODO update expiring date? => cookie has also to be reset on client side 
                 sessionToLoggedInUserName.remove(loginSession.getSession());
             }
         }, loginSession.getExpiringDate());
