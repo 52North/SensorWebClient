@@ -20,7 +20,12 @@ public class CookieManager {
      * @return a login session object containing the active session id (if present).
      */
     public static LoginSession getCurrentLoginSession() {
-        return LoginSessionBuilder.aLoginSession().withSessionId(getCookie(COOKIE_SESSION_ID)).build();
+        return LoginSessionBuilder.aLoginSession()
+                .forUser(getCookie(COOKIE_USER_NAME))
+                .withUserId(COOKIE_USER_ID)
+                .withRole(getCookie(COOKIE_USER_ROLE))
+                .withSessionId(getCookie(COOKIE_SESSION_ID))
+                .build();
     }
 
     /**
