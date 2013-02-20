@@ -110,7 +110,7 @@ public class LoaderImage extends Loader {
         if (this.parentImageButton != null) {
             this.parentImageButton.turnOFF();
         } else if (this.parentLegendEntry != null) {
-            Toaster.getInstance().addMessage("turnOFF");
+            Toaster.getToasterInstance().addMessage("turnOFF");
         }
     }
 
@@ -125,7 +125,7 @@ public class LoaderImage extends Loader {
             this.parentImageButton.turnON();
         } else if (this.parentLegendEntry != null) {
 //            this.parentLegendEntry.setHeaderLoading();
-            Toaster.getInstance().addMessage("turnON");
+            Toaster.getToasterInstance().addMessage("turnON");
         }
     }
 

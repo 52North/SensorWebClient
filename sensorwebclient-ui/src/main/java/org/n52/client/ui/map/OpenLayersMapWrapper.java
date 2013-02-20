@@ -121,7 +121,7 @@ public abstract class OpenLayersMapWrapper {
             catch (Exception e) {
                 // fallback to default
                 String message = "Could not create WMS layer.";
-                Toaster.getInstance().addErrorMessage(message);
+                Toaster.getToasterInstance().addErrorMessage(message);
                 map.addLayer(initializeOSMLayer());
             }
         }

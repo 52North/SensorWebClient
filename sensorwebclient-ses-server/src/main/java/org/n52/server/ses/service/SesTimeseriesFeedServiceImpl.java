@@ -35,6 +35,7 @@ import org.n52.server.ses.mail.MailSender;
 import org.n52.server.ses.util.SesParser;
 import org.n52.server.ses.util.SesServerUtil;
 import org.n52.shared.responses.SesClientResponse;
+import org.n52.shared.responses.SesClientResponseType;
 import org.n52.shared.serializable.pojos.TimeseriesFeed;
 import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.User;
@@ -59,7 +60,7 @@ public class SesTimeseriesFeedServiceImpl implements SesTimeseriesFeedService {
         try {
             LOGGER.debug("get registered timeseriesFeeds from DB");
             List<TimeseriesFeed> timeseriesFeeds = HibernateUtil.getTimeseriesFeeds();
-            return new SesClientResponse(SesClientResponse.types.REGISTERED_TIMESERIES_FEEDS, timeseriesFeeds);
+            return new SesClientResponse(SesClientResponseType.REGISTERED_TIMESERIES_FEEDS, timeseriesFeeds);
         }
         catch (Exception e) {
             LOGGER.error("Exception occured on server side.", e);
@@ -110,7 +111,7 @@ public class SesTimeseriesFeedServiceImpl implements SesTimeseriesFeedService {
             // TODO make FeedingMetadata comparable
 //            Collections.sort(finalList);
     
-            return new SesClientResponse(SesClientResponse.types.STATIONS, finalList);
+            return new SesClientResponse(SesClientResponseType.STATIONS, finalList);
         }
         catch (Exception e) {
             LOGGER.error("Exception occured on server side.", e);
@@ -136,7 +137,7 @@ public class SesTimeseriesFeedServiceImpl implements SesTimeseriesFeedService {
             }
             
             Collections.sort(finalList);
-            return new SesClientResponse(SesClientResponse.types.PHENOMENA, finalList, unit);
+            return new SesClientResponse(SesClientResponseType.PHENOMENA, finalList, unit);
         }
         catch (Exception e) {
             LOGGER.error("Exception occured on server side.", e);
@@ -149,7 +150,7 @@ public class SesTimeseriesFeedServiceImpl implements SesTimeseriesFeedService {
         try {
             LOGGER.debug("delete timeseries feed: " + timeseriesId);
             if (HibernateUtil.deleteTimeseriesFeed(timeseriesId)) {
-                return new SesClientResponse(SesClientResponse.types.DELETE_SENSOR_OK);
+                return new SesClientResponse(SesClientResponseType.DELETE_SENSOR_OK);
             }
             throw new Exception("delete timeseries feed: " + timeseriesId + " " + "failed");
         }

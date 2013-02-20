@@ -24,6 +24,19 @@
 
 package org.n52.server.ses.service;
 
+import static org.n52.server.ses.hibernate.HibernateUtil.getSubscriptionfromUserID;
+import static org.n52.shared.responses.SesClientResponseType.LAST_ADMIN;
+import static org.n52.shared.responses.SesClientResponseType.LOGIN_ACTIVATED;
+import static org.n52.shared.responses.SesClientResponseType.LOGIN_LOCKED;
+import static org.n52.shared.responses.SesClientResponseType.LOGIN_NAME;
+import static org.n52.shared.responses.SesClientResponseType.LOGIN_OK;
+import static org.n52.shared.responses.SesClientResponseType.LOGIN_PASSWORD;
+import static org.n52.shared.responses.SesClientResponseType.LOGIN_USER;
+import static org.n52.shared.responses.SesClientResponseType.LOGOUT;
+import static org.n52.shared.responses.SesClientResponseType.NEW_PASSWORD_ERROR;
+import static org.n52.shared.responses.SesClientResponseType.NEW_PASSWORD_OK;
+import static org.n52.shared.serializable.pojos.UserRole.ADMIN;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -42,6 +55,7 @@ import org.n52.server.ses.mail.MailSender;
 import org.n52.server.ses.util.SesServerUtil;
 import org.n52.server.ses.util.WnsUtil;
 import org.n52.shared.responses.SesClientResponse;
+import org.n52.shared.responses.SesClientResponseType;
 import org.n52.shared.serializable.pojos.BasicRule;
 import org.n52.shared.serializable.pojos.BasicRuleDTO;
 import org.n52.shared.serializable.pojos.ComplexRule;
@@ -50,18 +64,21 @@ import org.n52.shared.serializable.pojos.Subscription;
 import org.n52.shared.serializable.pojos.User;
 import org.n52.shared.serializable.pojos.UserDTO;
 import org.n52.shared.serializable.pojos.UserRole;
+import org.n52.shared.session.LoginSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SesUserServiceImpl implements SesUserService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SesUserServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SesUserServiceImpl.class);
 
     // list with all deleted user accounts since last login of the admin.
     // This list is shown to the admin after the login
     private static ArrayList<String> deletedUser = new ArrayList<String>();
 
-    public synchronized static UserDTO createUserDTO(User user) {
+    private LoginSessionStore sessionStore = new LoginSessionStore();
+    
+    public static UserDTO createUserDTO(User user) {
 
         // XXX refactor
 
@@ -100,13 +117,7 @@ public class SesUserServiceImpl implements SesUserService {
                            user.getDate());
     }
 
-    /**
-     * Creates the complex rule dto.
-     * 
-     * @param complexRule
-     * @return {@link ComplexRuleDTO}
-     */
-    public synchronized static ComplexRuleDTO createComplexRuleDTO(ComplexRule complexRule) {
+    public static ComplexRuleDTO createComplexRuleDTO(ComplexRule complexRule) {
         // XXX refactor
         return new ComplexRuleDTO(complexRule.getId(),
                                   complexRule.getName(),
@@ -123,14 +134,7 @@ public class SesUserServiceImpl implements SesUserService {
                                   complexRule.getPhenomenon());
     }
 
-    /**
-     * Creates the basic rule dto.
-     * 
-     * @param basicRule
-     *        the basic rule
-     * @return the basic rule dto
-     */
-    public synchronized static BasicRuleDTO createBasicRuleDTO(BasicRule basicRule) {
+    public static BasicRuleDTO createBasicRuleDTO(BasicRule basicRule) {
         // XXX refactor
         return new BasicRuleDTO(basicRule.getId(),
                                 basicRule.getName(),
@@ -150,10 +154,10 @@ public class SesUserServiceImpl implements SesUserService {
     /**
      * delete all users who do not confirm the registration within a time span (e.g 24h)
      */
-    public synchronized static void deleteUnregisteredUser() {
+    public static void deleteUnregisteredUser() {
         // XXX refactor
-        LOG.debug("delete all unregistered user");
-        LOG.debug("Timeinterval in milliseconds: " + SesConfig.deleteUserInterval);
+        LOGGER.debug("delete all unregistered user");
+        LOGGER.debug("Timeinterval in milliseconds: " + SesConfig.deleteUserInterval);
         List<User> users = HibernateUtil.deleteUnregisteredUser();
 
         for (int i = 0; i < users.size(); i++) {
@@ -163,7 +167,7 @@ public class SesUserServiceImpl implements SesUserService {
             Date currentDate = new Date(new Date().toGMTString());
             long difference = currentDate.getTime() - date.getTime();
             if (difference >= SesConfig.deleteUserInterval) {
-                LOG.debug("user " + user.getName() + " has not verrified his registration since " + difference
+                LOGGER.debug("user " + user.getName() + " has not verrified his registration since " + difference
                         / (1000 * 60 * 60) + " hours!");
                 // delete user
                 HibernateUtil.deleteUserBy(user.getId());
@@ -171,8 +175,8 @@ public class SesUserServiceImpl implements SesUserService {
                 // add deleted user to list
                 deletedUser.add(user.getUserName());
             }
-            LOG.debug("Difference = " + difference / (1000 * 60 * 60) + " hours");
-            LOG.debug("Difference = " + difference / (1000 * 60) + " minutes");
+            LOGGER.debug("Difference = " + difference / (1000 * 60 * 60) + " hours");
+            LOGGER.debug("Difference = " + difference / (1000 * 60) + " minutes");
         }
     }
 
@@ -183,10 +187,10 @@ public class SesUserServiceImpl implements SesUserService {
             // to avoid multiple accounts with the same data
             User user = new User(userDTO);
             if (HibernateUtil.existsUserName(user.getUserName())) {
-                return new SesClientResponse(SesClientResponse.types.REGISTER_NAME);
+                return new SesClientResponse(SesClientResponseType.REGISTER_NAME);
             }
             if (HibernateUtil.existsEMail(user.geteMail())) {
-                return new SesClientResponse(SesClientResponse.types.REGSITER_EMAIL);
+                return new SesClientResponse(SesClientResponseType.REGSITER_EMAIL);
             }
 
             // generate new userID
@@ -200,55 +204,51 @@ public class SesUserServiceImpl implements SesUserService {
 
             // send registration mail
             MailSender.sendRegisterMail(resultUser.geteMail(), resultUser.getRegisterID(), resultUser.getUserName());
-            return new SesClientResponse(SesClientResponse.types.REGISTER_OK, resultUser);
+            return new SesClientResponse(SesClientResponseType.REGISTER_OK, resultUser);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
 
     @Override
-    public SesClientResponse login(String userName, String password, boolean isAdminLogin) throws Exception {
+    public SesClientResponse login(String userName, String password) throws Exception {
         try {
-            LOG.debug("login user '{}'.", userName);
-            // get user from DB
+            LOGGER.debug("login user '{}'.", userName);
+            if ( !HibernateUtil.existsUserName(userName)) {
+                return new SesClientResponse(LOGIN_NAME);
+            }
             User u = HibernateUtil.findUserBy(userName);
             UserDTO user = createUserDTO(u);
-            if (user == null) {
-                return new SesClientResponse(SesClientResponse.types.LOGIN_NAME);
-            }
             // check entered password
             if (user.getPassword() != null) {
                 // wrong password
                 if ( !user.getPassword().equals(password)) {
-                    LOG.debug("wrong password");
+                    LOGGER.debug("wrong password");
                     int count = u.getFalseLoginCount();
                     if (count < 3) {
-                        LOG.debug("increase falseLoginCount");
+                        LOGGER.debug("increase falseLoginCount");
                         // increment the count of false logins
                         u.setFalseLoginCount(count + 1);
                         HibernateUtil.updateUser(u);
-                        return new SesClientResponse(SesClientResponse.types.LOGIN_PASSWORD);
+                        return new SesClientResponse(LOGIN_PASSWORD);
                     }
-                    LOG.debug("lock account");
+                    LOGGER.debug("lock account");
                     // lock the account after entering the wrong password three times in sequence
                     u.setActive(false);
                     HibernateUtil.updateUser(u);
-                    return new SesClientResponse(SesClientResponse.types.LOGIN_LOCKED);
+                    return new SesClientResponse(LOGIN_LOCKED);
                 }
             }
             else if ( !password.equals("")) {
-                return new SesClientResponse(SesClientResponse.types.LOGIN_PASSWORD);
+                return new SesClientResponse(LOGIN_PASSWORD);
             }
 
             // user account is not activated
             if ( !user.getActivated()) {
-                return new SesClientResponse(SesClientResponse.types.LOGIN_ACTIVATED);
+                return new SesClientResponse(LOGIN_ACTIVATED);
             }
-
-            // clear password from user
-            user.setPassword("");
 
             if (u.isActive()) {
                 user.setEmailVerified(u.isEmailVerified());
@@ -257,35 +257,43 @@ public class SesUserServiceImpl implements SesUserService {
                 u.setFalseLoginCount(0);
                 HibernateUtil.updateUser(u);
 
-                // admin login
-                if (isAdminLogin && !u.getRole().equals(UserRole.ADMIN)) {
-					return new SesClientResponse(SesClientResponse.types.LOGIN_AS_USER_IN_ADMIN_INTERFACE);
-				} else if (u.getRole().equals(UserRole.ADMIN)) {
+                // clear password from user
+                user.setPassword("");
+                /* admin login
+                if ( !u.getRole().equals(ADMIN)) {
+                    return new SesClientResponse(LOGIN_USER);
+                }
+                else */ if (u.getRole().equals(ADMIN)) {
                     // show the admin all deleted user since last login
                     ArrayList<String> temp = deletedUser;
                     deletedUser.clear();
-                    return new SesClientResponse(SesClientResponse.types.LOGIN_OK, user, temp);
+
+                    SesClientResponse response = new SesClientResponse(LOGIN_OK, user, temp);
+                    response.setLoginCookie(sessionStore.createNewLoginSessionFor(u));
+                    return response;
                 }
-                // user login OK
-                return new SesClientResponse(SesClientResponse.types.LOGIN_OK, user);
+
+                SesClientResponse response = new SesClientResponse(LOGIN_OK, user);
+                response.setLoginCookie(sessionStore.createNewLoginSessionFor(u));
+                return response;
 
             }
-            return new SesClientResponse(SesClientResponse.types.LOGIN_LOCKED);
+            return new SesClientResponse(LOGIN_LOCKED);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
 
     @Override
-    public SesClientResponse newPassword(String userName, String email) throws Exception {
+    public SesClientResponse resetPassword(String userName, String email) throws Exception {
         try {
             User user = HibernateUtil.findUserBy(userName);
 
             // no user founf or the email address is not valid
             if (user == null || !user.geteMail().equals(email)) {
-                return new SesClientResponse(SesClientResponse.types.NEW_PASSWORD_ERROR);
+                return new SesClientResponse(NEW_PASSWORD_ERROR);
             }
             // generate new password
             String newPassword = Long.toHexString(Double.doubleToLongBits(Math.random()));
@@ -299,119 +307,150 @@ public class SesUserServiceImpl implements SesUserService {
             // send mail with new password
             MailSender.sendPasswordMail(email, newPassword);
 
-            return new SesClientResponse(SesClientResponse.types.NEW_PASSWORD_OK);
+            return new SesClientResponse(NEW_PASSWORD_OK);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
 
     @Override
-    public void logout() throws Exception {
+    public void logout(LoginSession loginSession) throws Exception {
         try {
-            // nothing to do for now
+            sessionStore.removeSession(loginSession);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
 
     @Override
-    public UserDTO getUser(String id) throws Exception {
+    public UserDTO getUser(LoginSession loginSession) throws Exception {
         try {
-            LOG.debug("get user with parameterId=" + id);
-            int userID = Integer.valueOf(id);
+            LOGGER.debug("Get user with id '{}'", loginSession.getUserId());
+            int userID = Integer.valueOf(loginSession.getUserId());
             return createUserDTO(HibernateUtil.getUserBy(userID));
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
 
     @Override
-    public SesClientResponse deleteUser(String id) throws Exception {
+    public SesClientResponse deleteUser(LoginSession loginSession, String id) throws Exception {
         try {
-            LOG.debug("delete user");
-            int userID = Integer.valueOf(id);
-            User user = HibernateUtil.getUserBy(userID);
-
-            // avoid deletion of the last admin
-            if (user.getRole().equals(UserRole.ADMIN) && !HibernateUtil.otherAdminsExist(userID)) {
-                return new SesClientResponse(SesClientResponse.types.LAST_ADMIN);
-            }
-
-            // delete all subscriptions from user
-            try {
-                List<Subscription> subscriptions = HibernateUtil.getSubscriptionfromUserID(userID);
-
-                for (int i = 0; i < subscriptions.size(); i++) {
-                    String subscriptionID = subscriptions.get(i).getSubscriptionID();
-
-                    // delete from DB
-                    HibernateUtil.deleteSubscription(subscriptionID, String.valueOf(userID));
-                    // delete from SES
-                    SesServerUtil.unSubscribe(SesConfig.serviceVersion, SesConfig.sesEndpoint, subscriptionID);
-                }
-            }
-            catch (Exception e) {
-                throw new Exception("Delete user failed: Delete users subscriptions failed!", e);
-            }
-
-            // delete all not published rules
-            List<BasicRule> basicList = HibernateUtil.getAllBasicRulesBy(id);
-            List<ComplexRule> complexList = HibernateUtil.getAllComplexRulesBy(id);
-
-            // delete all basic rules
-            for (int i = 0; i < basicList.size(); i++) {
-                BasicRule rule = basicList.get(i);
-                if ( !rule.isPublished()) {
-                    HibernateUtil.deleteRule(rule.getName());
-                }
-            }
-
-            // dele all complex rules
-            for (int i = 0; i < complexList.size(); i++) {
-                ComplexRule rule = complexList.get(i);
-                if ( !rule.isPublished()) {
-                    HibernateUtil.deleteRule(rule.getName());
-                }
-            }
-
-            // unsubscribe in WNS
-            try {
-                if (!LOG.isDebugEnabled()) {
-                    WnsUtil.sendToWNSUnregister(user.getWnsEmailId());
-
-                    if (user.getWnsSmsId() != null && !user.getWnsSmsId().equals("")) {
-                        WnsUtil.sendToWNSUnregister(user.getWnsSmsId());
-                    }
-                }
-
-            }
-            catch (Exception e) {
-                throw new Exception("Delete user failed: Unsubscribe user from WNS failed!", e);
-            }
-
-            // delete user from DB
-            if ( !HibernateUtil.deleteUserBy(userID)) {
-                LOG.error("Delete user failed: Unsubscribe user from data base failed!");
-                throw new Exception("Delete user failed: Unsubscribe user from data base failed!");
-            }
-
-            return new SesClientResponse();
+            LOGGER.debug("delete user with id '{}'", id);
+            sessionStore.validateIncomingLoginSession(loginSession);
+            
+            return performUserDelete(id);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
+    
+    /**
+     * Performs a user delete. Performing the deletion assumes all pre-requirements are met so that it is ok
+     * to delete the user directly from the system.
+     * 
+     * @param userId
+     *        the id of the user to delete.
+     * @return a response object containing process status.
+     * @throws Exception
+     *         if processing request fails.
+     * 
+     * @see #requestToDeleteProfile(LoginSession, String)
+     */
+    public SesClientResponse performUserDelete(String userId) throws Exception {
+        int userID = Integer.valueOf(userId);
+        User user = HibernateUtil.getUserBy(userID);
+        if (isLastAdministator(user)) {
+            // avoid deletion of last admin
+            return new SesClientResponse(LAST_ADMIN);
+        }
+        deleteUserSubscriptions(userID);
+        deleteAllUserRules(userId);
+        unsubscribeUserFromWns(user);
+        deleteUserFromDatabase(userID);
+        return new SesClientResponse();
+    }
+
+    private boolean isLastAdministator(User user) {
+        return user.getRole().equals(UserRole.ADMIN) && !HibernateUtil.otherAdminsExist(user.getId());
+    }
+
+    private void deleteUserSubscriptions(int userID) throws Exception {
+        // delete all subscriptions from user
+        try {
+            List<Subscription> subscriptions = getSubscriptionfromUserID(userID);
+
+            for (int i = 0; i < subscriptions.size(); i++) {
+                String subscriptionID = subscriptions.get(i).getSubscriptionID();
+
+                // delete from DB
+                HibernateUtil.deleteSubscription(subscriptionID, String.valueOf(userID));
+                // delete from SES
+                SesServerUtil.unSubscribe(SesConfig.serviceVersion, SesConfig.sesEndpoint, subscriptionID);
+            }
+        }
+        catch (Exception e) {
+            throw new Exception("Delete user failed: Delete users subscriptions failed!", e);
+        }
+    }
+
+    private void deleteAllUserRules(String id) {
+        List<BasicRule> basicList = HibernateUtil.getAllBasicRulesBy(id);
+        List<ComplexRule> complexList = HibernateUtil.getAllComplexRulesBy(id);
+
+        // delete all basic rules
+        for (int i = 0; i < basicList.size(); i++) {
+            BasicRule rule = basicList.get(i);
+            if ( !rule.isPublished()) {
+                HibernateUtil.deleteRule(rule.getName());
+            }
+        }
+
+        // dele all complex rules
+        for (int i = 0; i < complexList.size(); i++) {
+            ComplexRule rule = complexList.get(i);
+            if ( !rule.isPublished()) {
+                HibernateUtil.deleteRule(rule.getName());
+            }
+        }
+    }
+    
+    private  void unsubscribeUserFromWns(User user) throws Exception {
+        try {
+            if ( !LOGGER.isDebugEnabled()) {
+                WnsUtil.sendToWNSUnregister(user.getWnsEmailId());
+                if (user.getWnsSmsId() != null && !user.getWnsSmsId().equals("")) {
+                    WnsUtil.sendToWNSUnregister(user.getWnsSmsId());
+                }
+            }
+        }
+        catch (Exception e) {
+            throw new Exception("Delete user failed: Unsubscribe user from WNS failed!", e);
+        }
+    }
+
+    private void deleteUserFromDatabase(int userID) throws Exception {
+        if ( !HibernateUtil.deleteUserBy(userID)) {
+            LOGGER.error("Delete user failed: Unsubscribe user from data base failed!");
+            throw new Exception("Delete user failed: Unsubscribe user from data base failed!");
+        }
+    }
+
 
     @Override
-    public SesClientResponse updateUser(UserDTO newUser, String userID) throws Exception {
+    public SesClientResponse updateUser(LoginSession loginSession, UserDTO newUser) throws Exception {
         try {
+            LOGGER.debug("update user with id '{}'", newUser.getId());
+            sessionStore.validateIncomingLoginSession(loginSession);
+            
             boolean mailChanged = false;
             boolean passwordChanged = false;
             String newHandy = null;
@@ -425,7 +464,7 @@ public class SesUserServiceImpl implements SesUserService {
             if (newUser.getPassword() != null) {
                 // check password
                 if ( !oldUser.getPassword().equals(newUser.getPassword())) {
-                    return new SesClientResponse(SesClientResponse.types.ERROR);
+                    return new SesClientResponse(SesClientResponseType.ERROR);
                 }
                 if (newUser.getNewPassword() != null) {
                     newUser.setPassword(newUser.getNewPassword());
@@ -436,23 +475,11 @@ public class SesUserServiceImpl implements SesUserService {
                 newUser.setPassword(oldUser.getPassword());
             }
 
-            // String oldPassword = oldUser.getPassword();
-            // if (oldPassword != null) {
-            // if (!oldUser.getPassword().equals(newUser.getPassword())) {
-            // passwordChanged = true;
-            // if (oldUser.isPasswordChanged()) {
-            // passwordChanged = false;
-            // }
-            // }
-            // } else {
-            // passwordChanged = true;
-            // }
-
             // check Mail
             if ( !oldUser.geteMail().equals(newUser.geteMail())) {
                 // mail address exsists
                 if (HibernateUtil.existsEMail(newUser.geteMail())) {
-                    return new SesClientResponse(SesClientResponse.types.REGSITER_EMAIL);
+                    return new SesClientResponse(SesClientResponseType.REGSITER_EMAIL);
                 }
                 // new address --> send validation mail
                 MailSender.sendEmailValidationMail(newUser.geteMail(), oldUser.getRegisterID());
@@ -461,16 +488,16 @@ public class SesUserServiceImpl implements SesUserService {
                 mailChanged = true;
 
                 // update email address in WNS
-                if (!LOG.isDebugEnabled()) {
+                if ( !LOGGER.isDebugEnabled()) {
                     WnsUtil.updateToWNSMail(oldUser.getWnsEmailId(), newUser.geteMail(), oldUser.geteMail());
-                    LOG.info("Update eMail of user " + oldUser.getName() + " in WNS");
+                    LOGGER.info("Update eMail of user " + oldUser.getName() + " in WNS");
                 }
             }
             // check user name
             if ( !oldUser.getUserName().equals(newUser.getUserName())) {
                 // user name exists
                 if (HibernateUtil.existsUserName(newUser.getUserName())) {
-                    return new SesClientResponse(SesClientResponse.types.REGISTER_NAME);
+                    return new SesClientResponse(SesClientResponseType.REGISTER_NAME);
                 }
             }
 
@@ -479,23 +506,23 @@ public class SesUserServiceImpl implements SesUserService {
             if (oldUser.getRole().equals(UserRole.ADMIN)) {
                 if (newUser.getRole().equals(UserRole.USER)) {
                     if ( !HibernateUtil.otherAdminsExist(newUser.getId())) {
-                        LOG.debug("Last admin, admin is not allowed to change his role from admin to user");
-                        return new SesClientResponse(SesClientResponse.types.LAST_ADMIN);
+                        LOGGER.warn("Deleting user with admin role aborted: At least one admin has to exist!");
+                        return new SesClientResponse(LAST_ADMIN);
                     }
-                    else if (oldUser.getId() == Integer.valueOf(userID)) {
-                        LOG.debug("set admin to user and update user data in database");
+                    else if (oldUser.getId() == Integer.valueOf(loginSession.getUserId())) {
+                        LOGGER.debug("set admin to user and update user data in database");
                         User u = new User(newUser);
                         u.setEmailVerified(newUser.isEmailVerified());
                         u.setActive(oldUser.isActive());
 
                         HibernateUtil.updateUser(u);
-                        return new SesClientResponse(SesClientResponse.types.LOGOUT);
+                        return new SesClientResponse(LOGOUT);
                     }
                 }
             }
 
             // set data
-            LOG.debug("update user data in database");
+            LOGGER.debug("update user data in database");
             User u = new User(newUser);
             u.setEmailVerified(newUser.isEmailVerified());
             u.setActive(oldUser.isActive());
@@ -509,20 +536,21 @@ public class SesUserServiceImpl implements SesUserService {
             HibernateUtil.updateUser(u);
 
             if (mailChanged) {
-                return new SesClientResponse(SesClientResponse.types.MAIL);
+                return new SesClientResponse(SesClientResponseType.MAIL);
             }
-            return new SesClientResponse(SesClientResponse.types.OK);
+            return new SesClientResponse(SesClientResponseType.OK);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
 
     @Override
-    public List<UserDTO> getAllUsers() throws Exception {
+    public List<UserDTO> getAllUsers(LoginSession loginSession) throws Exception {
         try {
-            LOG.debug("getAllUsers");
+            LOGGER.debug("getAllUsers");
+            sessionStore.validateIncomingLoginSession(loginSession);
             List<UserDTO> finalList = new ArrayList<UserDTO>();
 
             List<User> list = HibernateUtil.getAllUsers();
@@ -532,27 +560,28 @@ public class SesUserServiceImpl implements SesUserService {
             return finalList;
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
 
     @Override
-    public SesClientResponse deleteProfile(String id) throws Exception {
+    public SesClientResponse requestToDeleteProfile(LoginSession loginSession) throws Exception {
         try {
-            LOG.debug("delete profile");
-            LOG.debug("set user status to false to avoid logins");
-            // get user from DB
+            LOGGER.debug("prepare user delete with id '{}'", loginSession.getUserId());
+            sessionStore.validateIncomingLoginSession(loginSession);
+            String id = sessionStore.getLoggedInUserId(loginSession);
             User user = HibernateUtil.getUserBy(Integer.valueOf(id));
+            
+            LOGGER.debug("prevent user from further logins");
             HibernateUtil.updateUserStatus(Integer.valueOf(id), false);
 
-            // send mail to user
+            LOGGER.debug("send confirmation mail to {}", user.geteMail());
             MailSender.sendDeleteProfileMail(user.geteMail(), user.getRegisterID());
-
             return new SesClientResponse();
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
@@ -560,7 +589,7 @@ public class SesUserServiceImpl implements SesUserService {
     @Override
     public SesClientResponse getTermsOfUse(String language) throws Exception {
         try {
-            LOG.debug("get terms of use");
+            LOGGER.debug("get terms of use");
             // terms of use from file
             String termsOfUsePath = "";
 
@@ -580,10 +609,10 @@ public class SesUserServiceImpl implements SesUserService {
             }
             reader.close();
 
-            return new SesClientResponse(SesClientResponse.types.TERMS_OF_USE, contents.toString());
+            return new SesClientResponse(SesClientResponseType.TERMS_OF_USE, contents.toString());
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
@@ -611,10 +640,10 @@ public class SesUserServiceImpl implements SesUserService {
             dataList.add(SesConfig.availableFormats);
             dataList.add(SesConfig.defaultFormat);
 
-            return new SesClientResponse(SesClientResponse.types.DATA, dataList);
+            return new SesClientResponse(SesClientResponseType.DATA, dataList);
         }
         catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }

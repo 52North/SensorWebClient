@@ -70,7 +70,7 @@ public class PropertiesManager {
             RequestCallback callback = new RequestCallback() {
 
                 public void onError(Request request, Throwable exception) {
-                    Toaster.getInstance().addMessage(i18n.errorRequest());
+                    Toaster.getToasterInstance().addMessage(i18n.errorRequest());
                 }
 
                 public void onResponseReceived(Request request, Response response) {
@@ -81,7 +81,7 @@ public class PropertiesManager {
             requestBuilder.sendRequest(null, callback);
         }
         catch (RequestException ex) {
-            Toaster.getInstance().addMessage(i18n.errorRequest());
+            Toaster.getToasterInstance().addMessage(i18n.errorRequest());
         }
     }
 

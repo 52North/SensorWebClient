@@ -24,11 +24,11 @@
 package org.n52.client.ses.ui;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
 
 import java.util.Date;
 
 import org.n52.client.bus.EventBus;
-import org.n52.client.ses.ctrl.SesRequestManager;
 import org.n52.client.ses.event.UpdateUserEvent;
 import org.n52.shared.serializable.pojos.UserDTO;
 import org.n52.shared.serializable.pojos.UserRole;
@@ -167,7 +167,7 @@ public class EditUserWindow {
                     // create new User
                     UserDTO user = new UserDTO(Integer.valueOf(EditUserWindow.record.getId()), userName, name, null, email, handy, role, new Date());
                     user.setActivated(true);
-                    EventBus.getMainEventBus().fireEvent(new UpdateUserEvent(user,Cookies.getCookie(SesRequestManager.COOKIE_USER_ID)));
+                    EventBus.getMainEventBus().fireEvent(new UpdateUserEvent(user,Cookies.getCookie(COOKIE_USER_ID)));
                     EditUserWindow.window.destroy();
                 }
             }

@@ -21,18 +21,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
+
 package org.n52.shared.serializable.pojos;
 
-/**
- * The Enum UserRole.
- * 
- * @author <a href="mailto:j.schulte@52north.de">Jan Schulte</a>
- */
 public enum UserRole {
-
-    /** The NO t_ registere d_ user. */
-    NOT_REGISTERED_USER, /** The USER. */
- USER, /** The ADMIN. */
- ADMIN, /** The LOGOUT. */
- LOGOUT
+    NOT_REGISTERED_USER, USER, ADMIN, LOGOUT
 }

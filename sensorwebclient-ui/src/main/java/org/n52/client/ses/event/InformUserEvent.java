@@ -27,57 +27,28 @@ import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.InformUserEventHandler;
 import org.n52.shared.responses.SesClientResponse;
 
-/**
- * The Class ChangeLayoutEvent.
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- */
 public class InformUserEvent extends FilteredDispatchGwtEvent<InformUserEventHandler> {
 
-    /** The TYPE. */
     public static Type<InformUserEventHandler> TYPE = new Type<InformUserEventHandler>();
 
     private SesClientResponse response;
 
-    /**
-     * Instantiates a new InformUserEvent.
-     * @param response 
-     * 
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
-    public InformUserEvent(SesClientResponse response,
-            InformUserEventHandler... blockedHandlers) {
+    public InformUserEvent(SesClientResponse response, InformUserEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.response = response;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(InformUserEventHandler handler) {
         handler.onInform(this);
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<InformUserEventHandler> getAssociatedType() {
+    public Type<InformUserEventHandler> getAssociatedType() {
         return TYPE;
     }
 
-    /**
-     * @return {@link SesClientResponse}
-     */
     public SesClientResponse getResponse() {
         return this.response;
     }

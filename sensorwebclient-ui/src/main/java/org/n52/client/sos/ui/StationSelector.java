@@ -388,7 +388,7 @@ public class StationSelector extends Window {
 		RadioGroupItem selector = stationFilterGroups.get(serviceURL);
 		if (selector == null) {
 			// debug message .. should not happen anyway
-			Toaster.getInstance().addErrorMessage("Missing expansion component for " + serviceURL);
+			Toaster.getToasterInstance().addErrorMessage("Missing expansion component for " + serviceURL);
 		} else {
 			selector.setValue(filter);
 		}

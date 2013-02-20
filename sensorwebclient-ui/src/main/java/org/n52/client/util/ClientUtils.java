@@ -74,7 +74,7 @@ public class ClientUtils {
         if ( (end - begin) >= (minTime * 1000 * 60)) {
             return true;
         }
-        Toaster.getInstance().addMessage(i18n.maxZoomInTime());
+        Toaster.getToasterInstance().addMessage(i18n.maxZoomInTime());
         return false;
     }
     

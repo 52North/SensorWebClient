@@ -481,7 +481,7 @@ public class SOSRequestManager extends RequestManager {
                         throw new Exception("Pattern for hex color do not match");
                     }
                 } catch (Exception e) {
-                    Toaster.getInstance().addErrorMessage(i18n.errorPhenomenonProperties());
+                    Toaster.getToasterInstance().addErrorMessage(i18n.errorPhenomenonProperties());
                 }
             }
         }

@@ -26,57 +26,27 @@ package org.n52.client.ses.event;
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.DeleteUserEventHandler;
 
-/**
- * The Class DeleteUserEvent.
- */
 public class DeleteUserEvent extends FilteredDispatchGwtEvent<DeleteUserEventHandler> {
 
-    /** The TYPE. */
     public static Type<DeleteUserEventHandler> TYPE = new Type<DeleteUserEventHandler>();
 
-    /** The parameterId. */
     private String id;
 
-    /**
-     * Instantiates a new delete user event.
-     * 
-     * @param parameterId
-     *            the parameterId
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
     public DeleteUserEvent(String id, DeleteUserEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.id = id;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(DeleteUserEventHandler handler) {
         handler.onDeleteUser(this);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<DeleteUserEventHandler> getAssociatedType() {
+    public Type<DeleteUserEventHandler> getAssociatedType() {
         return TYPE;
     }
 
-    /**
-     * Gets the parameterId.
-     * 
-     * @return the parameterId
-     */
     public String getId() {
         return this.id;
     }

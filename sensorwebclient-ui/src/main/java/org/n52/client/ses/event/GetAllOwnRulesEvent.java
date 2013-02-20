@@ -21,69 +21,41 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
+
 package org.n52.client.ses.event;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.GetAllOwnRulesEventHandler;
 
-/**
- * The Class GetAllOwnRulesEvent.
- */
 public class GetAllOwnRulesEvent extends FilteredDispatchGwtEvent<GetAllOwnRulesEventHandler> {
 
-    /** The TYPE. */
     public static Type<GetAllOwnRulesEventHandler> TYPE = new Type<GetAllOwnRulesEventHandler>();
 
     private String id;
 
     private boolean edit;
-    /**
-     * Instantiates a new change layout event.
-     * @param parameterId 
-     * @param edit 
-     * 
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
+
     public GetAllOwnRulesEvent(String id, boolean edit, GetAllOwnRulesEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.id = id;
         this.edit = edit;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(GetAllOwnRulesEventHandler handler) {
         handler.onGet(this);
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<GetAllOwnRulesEventHandler> getAssociatedType() {
+    public Type<GetAllOwnRulesEventHandler> getAssociatedType() {
         return TYPE;
     }
 
-    /**
-     * @return {@link String}
-     */
     public String getId() {
         return this.id;
     }
 
-    /**
-     * @return {@link Boolean}
-     */
     public boolean isEdit() {
         return this.edit;
     }

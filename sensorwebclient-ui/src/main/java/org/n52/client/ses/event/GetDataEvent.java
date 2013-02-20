@@ -26,42 +26,22 @@ package org.n52.client.ses.event;
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.GetDataEventHandler;
 
-/**
- * The Class GetDataEvent.
- */
 public class GetDataEvent extends FilteredDispatchGwtEvent<GetDataEventHandler> {
 
-    /** The TYPE. */
     public static Type<GetDataEventHandler> TYPE = new Type<GetDataEventHandler>();
 
-    /**
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
     public GetDataEvent(GetDataEventHandler... blockedHandlers) {
         super(blockedHandlers);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(GetDataEventHandler handler) {
         handler.onGetData(this);
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<GetDataEventHandler> getAssociatedType() {
+    public Type<GetDataEventHandler> getAssociatedType() {
         return TYPE;
     }
 }

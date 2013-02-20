@@ -24,17 +24,16 @@
 package org.n52.client.ses.ui.layout;
 
 import static com.google.gwt.user.client.Cookies.getCookie;
-import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ID;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.RuleRecord.FORMAT;
 import static org.n52.client.ses.ui.RuleRecord.MEDIUM;
 import static org.n52.client.ses.ui.RuleRecord.UUID;
+import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
 
 import java.util.ArrayList;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.ctrl.DataControlsSes;
-import org.n52.client.ses.ctrl.SesRequestManager;
 import org.n52.client.ses.data.RuleDataSource;
 import org.n52.client.ses.event.SubscribeEvent;
 import org.n52.client.ses.ui.FormLayout;
@@ -42,7 +41,6 @@ import org.n52.client.ses.ui.RuleRecord;
 import org.n52.shared.serializable.pojos.BasicRuleDTO;
 import org.n52.shared.serializable.pojos.ComplexRuleDTO;
 
-import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.MultipleAppearance;
 import com.smartgwt.client.types.SortDirection;

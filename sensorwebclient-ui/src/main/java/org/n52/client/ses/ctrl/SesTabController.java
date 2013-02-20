@@ -25,7 +25,6 @@ package org.n52.client.ses.ctrl;
 
 import static com.google.gwt.user.client.Cookies.getCookie;
 import static org.n52.client.bus.EventBus.getMainEventBus;
-import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ID;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.ABOS;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.CREATE_COMPLEX;
@@ -40,6 +39,8 @@ import static org.n52.client.ses.ui.FormLayout.LayoutType.USER_SUBSCRIPTIONS;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.WELCOME;
 import static org.n52.client.ui.View.getView;
 import static org.n52.shared.serializable.pojos.UserRole.ADMIN;
+import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
+import static org.n52.shared.session.LoginSession.COOKIE_USER_NAME;
 
 import java.util.ArrayList;
 
@@ -76,7 +77,7 @@ import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.ui.View;
 import org.n52.client.ui.legend.LegendElement;
-import org.n52.shared.responses.SesClientResponse;
+import org.n52.shared.responses.SesClientResponseType;
 import org.n52.shared.serializable.pojos.UserRole;
 
 import com.google.gwt.user.client.Cookies;
@@ -190,7 +191,7 @@ public class SesTabController extends Controller<SesTab> {
         }
 
         public void onInform(InformUserEvent evt) {
-            SesClientResponse.types response = evt.getResponse().getType();
+            SesClientResponseType response = evt.getResponse().getType();
             switch (response) {
 
             case DATA:
@@ -314,7 +315,7 @@ public class SesTabController extends Controller<SesTab> {
 
         private void setUserLoggedInAsText() {
             // get user name from coockie
-            String userName = Cookies.getCookie(SesRequestManager.COOKIE_USER_NAME);
+            String userName = Cookies.getCookie(COOKIE_USER_NAME);
 
             if (userName != null) {
                 // build text string

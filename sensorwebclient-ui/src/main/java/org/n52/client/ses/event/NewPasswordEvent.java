@@ -26,32 +26,14 @@ package org.n52.client.ses.event;
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.NewPasswordEventHandler;
 
-/**
- * The Class NewPasswordEvent.
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- */
 public class NewPasswordEvent extends FilteredDispatchGwtEvent<NewPasswordEventHandler> {
 
-    /** The TYPE. */
     public static Type<NewPasswordEventHandler> TYPE = new Type<NewPasswordEventHandler>();
 
-    /** The email. */
     private String email;
 
-    /** The name. */
     private String name;
 
-    /**
-     * Instantiates a new new password event.
-     * 
-     * @param name
-     *            the name
-     * @param email
-     *            the email
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
     public NewPasswordEvent(String name, String email, NewPasswordEventHandler... blockedHandlers) {
         super(blockedHandlers);
 
@@ -59,42 +41,20 @@ public class NewPasswordEvent extends FilteredDispatchGwtEvent<NewPasswordEventH
         this.email = email;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(NewPasswordEventHandler handler) {
         handler.onNewPassword(this);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<NewPasswordEventHandler> getAssociatedType() {
+    public Type<NewPasswordEventHandler> getAssociatedType() {
         return TYPE;
     }
 
-    /**
-     * Gets the name.
-     * 
-     * @return the name
-     */
     public String getName() {
         return this.name;
     }
 
-    /**
-     * Gets the email.
-     * 
-     * @return the email
-     */
     public String getEmail() {
         return this.email;
     }

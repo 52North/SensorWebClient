@@ -26,63 +26,27 @@ package org.n52.client.ses.event;
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.LoginEventHandler;
 
-/**
- * The Class LoginEvent.
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- */
 public class LoginEvent extends FilteredDispatchGwtEvent<LoginEventHandler> {
 
-	/** The TYPE. */
 	public static Type<LoginEventHandler> TYPE = new Type<LoginEventHandler>();
 
-	/** The name. */
 	private String name;
 
-	/** The password. */
 	private String password;
 
-	private boolean asAdmin;
-
-	/**
-	 * Instantiates a new login event.
-	 * 
-	 * @param name
-	 *            the name
-	 * @param password
-	 *            the password
-	 * @param asAdmin
-	 *            <b>true</b> if login as admin
-	 * @param blockedHandlers
-	 *            the blocked handlers
-	 */
-	public LoginEvent(String name, String password, boolean asAdmin,
-			LoginEventHandler... blockedHandlers) {
+	public LoginEvent(String name, String password, LoginEventHandler... blockedHandlers) {
 		super(blockedHandlers);
 		this.name = name;
 		this.password = password;
-		this.asAdmin = asAdmin;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-	 * .google.gwt.event.shared.EventHandler)
-	 */
 	@Override
 	protected void onDispatch(LoginEventHandler handler) {
 		handler.onLogin(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-	 */
 	@Override
-	public com.google.gwt.event.shared.GwtEvent.Type<LoginEventHandler> getAssociatedType() {
+	public Type<LoginEventHandler> getAssociatedType() {
 		return TYPE;
 	}
 
@@ -92,9 +56,5 @@ public class LoginEvent extends FilteredDispatchGwtEvent<LoginEventHandler> {
 
 	public String getPassword() {
 		return this.password;
-	}
-
-	public boolean isAdminLogin() {
-		return this.asAdmin;
 	}
 }

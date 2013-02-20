@@ -120,7 +120,7 @@ public class PermaLinkController {
             Procedure p = metadata.getProcedure(procedure);
             Station station = metadata.getStation(offering, foi, procedure, phenomenon);
             
-            Toaster.getInstance().addMessage("load session from permalink");
+            Toaster.getToasterInstance().addMessage("load session from permalink");
             permalinkLoaded = true;
             
             NewTimeSeriesEvent event = new NewTimeSeriesEvent.Builder(url)

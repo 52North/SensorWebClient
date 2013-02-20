@@ -27,8 +27,8 @@ package org.n52.client.ses.ui.subscribe;
 import static com.google.gwt.user.client.Cookies.getCookie;
 import static com.smartgwt.client.types.Alignment.RIGHT;
 import static org.n52.client.bus.EventBus.getMainEventBus;
-import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ID;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.event.CreateSimpleRuleEvent;

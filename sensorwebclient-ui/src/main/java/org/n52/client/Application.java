@@ -124,7 +124,7 @@ public final class Application {
                 TimeRange timeRange = createTimeRange();
                 
                 if (!isAllParametersAvailable(services, versions, offerings, features, procedures, phenomenons)) {
-                    Toaster.getInstance().addErrorMessage(i18n.errorUrlParsing());
+                    Toaster.getToasterInstance().addErrorMessage(i18n.errorUrlParsing());
                     return;
                 }
 
@@ -169,7 +169,7 @@ public final class Application {
                 GWT.log("Error evaluating permalink!", e);
             }
             showStationSelectorWhenConfigured();
-            Toaster.getInstance().addErrorMessage(i18n.errorUrlParsing());
+            Toaster.getToasterInstance().addErrorMessage(i18n.errorUrlParsing());
         } finally {
             finalEvents();
         }
@@ -201,8 +201,8 @@ public final class Application {
             DateTimeFormat formatter = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.ISO_8601);
             long begin = formatter.parseStrict(timeRange.getStart()).getTime();
             long end = formatter.parseStrict(timeRange.getEnd()).getTime();
-            Toaster.getInstance().addMessage("Begin: " + timeRange.getStart());
-            Toaster.getInstance().addMessage("End: " + timeRange.getEnd());
+            Toaster.getToasterInstance().addMessage("Begin: " + timeRange.getStart());
+            Toaster.getToasterInstance().addMessage("End: " + timeRange.getEnd());
             EventBus.getMainEventBus().fireEvent(new DatesChangedEvent(begin, end, true));
         } catch (Exception e) {
             if (!GWT.isProdMode()) {

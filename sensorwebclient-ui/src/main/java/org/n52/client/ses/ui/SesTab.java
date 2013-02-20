@@ -23,7 +23,7 @@
  */
 package org.n52.client.ses.ui;
 
-import static org.n52.client.ses.ui.layout.LoginLayout.createAdminLoginLayout;
+import static org.n52.client.ses.ui.layout.LoginLayout.createUserLoginLayout;
 
 import org.n52.client.ctrl.DataControls;
 import org.n52.client.ses.ctrl.SesTabController;
@@ -95,7 +95,7 @@ public class SesTab extends DataPanelTab {
         this.layout.setTabIndex(-1);
         this.layout.setCanAcceptDrop(true);
 
-        this.loginLayout = createAdminLoginLayout();
+        this.loginLayout = createUserLoginLayout();
         this.loginLayout.setCanAcceptDrop(true);
 
         this.registerLayout = new RegisterLayout();

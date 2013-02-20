@@ -108,7 +108,7 @@ public class TimeManager {
 
     protected void undoLast() {
         if (this.undoStack.isEmpty()) {
-            Toaster.getInstance().addMessage(i18n.undoMessage());
+            Toaster.getToasterInstance().addMessage(i18n.undoMessage());
             return;
         }
         DateAction last = this.undoStack.pop();
@@ -168,7 +168,7 @@ public class TimeManager {
         public void onChanged(OverviewIntervalChangedEvent evt) {
             long interval = TimeManager.this.end - TimeManager.this.begin;
             if (interval > evt.getInterval()) {
-                Toaster.getInstance().addMessage(i18n.errorOverviewInterval());
+                Toaster.getToasterInstance().addMessage(i18n.errorOverviewInterval());
             }
             else {
                 TimeManager.this.intervalType = evt.getType();

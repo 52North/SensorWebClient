@@ -28,29 +28,143 @@ import java.util.List;
 
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.serializable.pojos.UserDTO;
+import org.n52.shared.serializable.pojos.UserRole;
+import org.n52.shared.session.LoginSession;
 
+/**
+ * TODO extract admin operations
+ */
 public interface SesUserService {
 
-    public abstract SesClientResponse registerUser(UserDTO userDTO) throws Exception;
+    /**
+     * Starts registration process to register a new user. A new user has to verify registration via email,
+     * before login is complete.
+     * 
+     * @param userDTO
+     *        the user data to use for registration.
+     * @return a response object containing information about the new use.
+     * @throws Exception
+     *         if registration process fails.
+     */
+    public SesClientResponse registerUser(UserDTO userDTO) throws Exception;
 
-    public abstract SesClientResponse login(String userName, String password, boolean isAdminLogin) throws Exception;
+    /**
+     * Logs in a user with given username and password hash.
+     * 
+     * @param userName
+     *        the user's username.
+     * @param password
+     *        the hashed password.
+     * @return a response object containing login status.
+     * @throws Exception
+     *         if processing request fails.
+     */
+    public SesClientResponse login(String userName, String password) throws Exception;
 
-    public abstract SesClientResponse newPassword(String userName, String email) throws Exception;
+    /**
+     * Starts process of resetting a user's password. The given email address has to match with that address
+     * belonging to the stored user.
+     * 
+     * @param username
+     *        the user's username
+     * @param email
+     *        the user's email.
+     * @return a response object containing process status.
+     * @throws Exception
+     *         if processing request fails.
+     */
+    public SesClientResponse resetPassword(String username, String email) throws Exception;
 
-    public abstract void logout() throws Exception;
+    /**
+     * Logs out a user and destroys the user's session hold on server side.
+     * 
+     * @param loginSession
+     *        the user's login session to destroy.
+     * @throws Exception
+     *         if processing request fails.
+     */
+    public void logout(LoginSession loginSession) throws Exception;
 
-    public abstract UserDTO getUser(String id) throws Exception;
+    /**
+     * Gets user information from given login session object.
+     * 
+     * @param loginSession
+     *        the active login session object.
+     * @return the user information as data transfer object.
+     * @throws Exception
+     *         if processing request fails.
+     */
+    public UserDTO getUser(LoginSession loginSession) throws Exception;
 
-    public abstract SesClientResponse deleteUser(String id) throws Exception;
+    /**
+     * Deletes a user with the given user id. only user's with {@link UserRole#ADMIN} are allowed to delete a
+     * user directly. Deletion of normal users are handled via
+     * {@link #requestToDeleteProfile(LoginSession, String)} as it starts a confirmation process beforehand.<br>
+     * <br>
+     * Note that at least one user with {@link UserRole#ADMIN} has to exist.
+     * 
+     * @param loginSession
+     *        the user's active login session object.
+     * @param userId
+     *        the id of the user to delete.
+     * @return a response object containing process status.
+     * @throws Exception
+     *         if processing request fails.
+     * 
+     * @see #requestToDeleteProfile(LoginSession, String)
+     * @see #performUserDelete(String)
+     */
+    public SesClientResponse deleteUser(LoginSession loginSession, String userId) throws Exception;
 
-    public abstract SesClientResponse updateUser(UserDTO newUser, String userID) throws Exception;
+    /**
+     * Updates user information of a registered user.
+     * 
+     * @param loginSession
+     *        the user's active login session object.
+     * @param userDataToUpdate
+     *        the data to update the registered user with.
+     * @return a response object containing process status.
+     * @throws Exception
+     *         if processing request fails.
+     */
+    public SesClientResponse updateUser(LoginSession loginSession, UserDTO userDataToUpdate) throws Exception;
 
-    public abstract List<UserDTO> getAllUsers() throws Exception;
+    /**
+     * Gets all users registered at the system. Only user's with {@link UserRole#ADMIN} are allowed to a list
+     * of all users.
+     * 
+     * @param loginSession
+     *        the user's active login session object.
+     * @return a response object containing process status.
+     * @throws Exception
+     *         if processing request fails.
+     */
+    public List<UserDTO> getAllUsers(LoginSession loginSession) throws Exception;
 
-    public abstract SesClientResponse deleteProfile(String id) throws Exception;
+    /**
+     * Starts deletion process of a user. The deletion has to be confirmed by email before deletion takes
+     * place.<br>
+     * <br>
+     * Note that at least one user with {@link UserRole#ADMIN} has to exist.
+     * 
+     * @param loginSession
+     *        the user's active login session object.
+     * @return a response object containing process status.
+     * @throws Exception
+     *         if processing request fails.
+     */
+    public SesClientResponse requestToDeleteProfile(LoginSession loginSession) throws Exception;
 
-    public abstract SesClientResponse getTermsOfUse(String language) throws Exception;
+    /**
+     * XXX remove this method and integrate terms of use on client side only
+     */
+    public SesClientResponse getTermsOfUse(String language) throws Exception;
 
-    public abstract SesClientResponse getData() throws Exception;
+    /**
+     * XXX let UI read config directly from URL (as SOS client does)
+     * 
+     * @return the SES configuration
+     */
+    public SesClientResponse getData() throws Exception;
 
 }

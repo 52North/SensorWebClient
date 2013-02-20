@@ -25,11 +25,12 @@ package org.n52.client.ses.ui.layout;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.RuleRecord.UUID;
+import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
+import static org.n52.shared.session.LoginSession.COOKIE_USER_ROLE;
 
 import java.util.ArrayList;
 
 import org.n52.client.bus.EventBus;
-import org.n52.client.ses.ctrl.SesRequestManager;
 import org.n52.client.ses.data.RuleDataSource;
 import org.n52.client.ses.event.CopyEvent;
 import org.n52.client.ses.event.DeleteRuleEvent;
@@ -178,7 +179,7 @@ public class EditRulesLayout extends FormLayout {
                                 SC.ask(i18n.reallyDeleteRule(), new BooleanCallback() {
                                     public void execute(Boolean value) {
                                         if (value) {
-                                            EventBus.getMainEventBus().fireEvent(new DeleteRuleEvent(record.getAttribute(UUID), Cookies.getCookie(SesRequestManager.COOKIE_USER_ROLE)));
+                                            EventBus.getMainEventBus().fireEvent(new DeleteRuleEvent(record.getAttribute(UUID), Cookies.getCookie(COOKIE_USER_ROLE)));
                                         }
                                     }
                                 });
@@ -211,7 +212,7 @@ public class EditRulesLayout extends FormLayout {
                         copyButton.addClickHandler(new ClickHandler() {
                             public void onClick(ClickEvent event) {
                                 System.out.println("copy " + record.getAttribute("name"));
-                                String userID = Cookies.getCookie(SesRequestManager.COOKIE_USER_ID);
+                                String userID = Cookies.getCookie(COOKIE_USER_ID);
                                 EventBus.getMainEventBus().fireEvent(new CopyEvent(userID, record.getAttribute("name")));
                             }
                         });

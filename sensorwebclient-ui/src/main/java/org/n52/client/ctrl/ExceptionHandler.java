@@ -47,7 +47,7 @@ public class ExceptionHandler {
      *            the e
      */
     private static void logInToaster(MetaException e) {
-        Toaster toaster = Toaster.getInstance();
+        Toaster toaster = Toaster.getToasterInstance();
         if (toaster == null) {
             Window.alert("Initialization error: no message toaster present!");
             if (!GWT.isProdMode()) {
@@ -74,7 +74,7 @@ public class ExceptionHandler {
     }
 
     public static void handleUnexpectedException(Exception e) {
-        Toaster t = Toaster.getInstance();
+        Toaster t = Toaster.getToasterInstance();
         StringBuilder sb = new StringBuilder();
         sb.append("Unexpected Exception occured. Msg: \"");
         sb.append(e.getMessage()).append("\"");

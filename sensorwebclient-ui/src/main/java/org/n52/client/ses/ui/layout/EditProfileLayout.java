@@ -24,12 +24,13 @@
 package org.n52.client.ses.ui.layout;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
+import static org.n52.shared.session.LoginSession.COOKIE_USER_ROLE;
 
 import java.util.Date;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.ctrl.DataControlsSes;
-import org.n52.client.ses.ctrl.SesRequestManager;
 import org.n52.client.ses.event.DeleteProfileEvent;
 import org.n52.client.ses.event.LogoutEvent;
 import org.n52.client.ses.event.UpdateUserEvent;
@@ -150,7 +151,7 @@ public class EditProfileLayout extends FormLayout {
             public void onClick(ClickEvent event) {
                 if (EditProfileLayout.this.form.validate(false)) {
                     UserRole userRole;
-                    String role = Cookies.getCookie(SesRequestManager.COOKIE_USER_ROLE);
+                    String role = Cookies.getCookie(COOKIE_USER_ROLE);
                     if (role.equals(UserRole.ADMIN.toString())) {
                         userRole = UserRole.ADMIN;
                     } else {
@@ -160,7 +161,7 @@ public class EditProfileLayout extends FormLayout {
                     String password = DataControlsSes.createMD5(EditProfileLayout.this.form.getValueAsString("oldPassword"));
 
                     UserDTO u =
-                        new UserDTO(Integer.parseInt(Cookies.getCookie(SesRequestManager.COOKIE_USER_ID)),
+                        new UserDTO(Integer.parseInt(Cookies.getCookie(COOKIE_USER_ID)),
                                 EditProfileLayout.this.form.getValueAsString("userName"),
                                 EditProfileLayout.this.form.getValueAsString("name"), 
                                 password, 
@@ -173,7 +174,7 @@ public class EditProfileLayout extends FormLayout {
                         u.setNewPassword(DataControlsSes.createMD5(EditProfileLayout.this.newPasswordItem.getValueAsString()));
                     }
 
-                    EventBus.getMainEventBus().fireEvent(new UpdateUserEvent(u, Cookies.getCookie(SesRequestManager.COOKIE_USER_ID)));
+                    EventBus.getMainEventBus().fireEvent(new UpdateUserEvent(u, Cookies.getCookie(COOKIE_USER_ID)));
                 }
             }
         });
@@ -187,7 +188,7 @@ public class EditProfileLayout extends FormLayout {
                     public void execute(Boolean value) {
                         if (value) {
                             EventBus.getMainEventBus().fireEvent(
-                                    new DeleteProfileEvent(Cookies.getCookie(SesRequestManager.COOKIE_USER_ID)));
+                                    new DeleteProfileEvent(Cookies.getCookie(COOKIE_USER_ID)));
                             EventBus.getMainEventBus().fireEvent(new LogoutEvent());
                         }
                     }

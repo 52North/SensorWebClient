@@ -90,7 +90,7 @@ public class Toaster {
         };
     }
     
-    public static Toaster getInstance() {
+    public static Toaster getToasterInstance() {
         if (instance == null) {
             throw new IllegalStateException("Create first a Toaster instance with createInstance(...).");
         }

@@ -52,27 +52,18 @@ public class LoginLayout extends FormLayout {
 
     private PasswordItem passwordItem;
 
-	private boolean adminLogin;
-    
     public static LoginLayout createUserLoginLayout() {
         LoginLayout loginLayout = new LoginLayout(i18n.userLogin());
         loginLayout.initUserLogin();
         return loginLayout;
     }
     
-    public static LoginLayout createAdminLoginLayout() {
-        LoginLayout loginLayout = new LoginLayout(i18n.adminLogin());
-        loginLayout.initAdminLogin();
-        return loginLayout;
-    }
-
     private LoginLayout(String loginTitle) {
         super(loginTitle);
         setStyleName("n52_sensorweb_client_form_content");
     }
     
     private void initUserLogin() {
-    	adminLogin = false;
         userNameItem = createUserNameItem();
         passwordItem = createPasswordItem();
         ButtonItem loginButton = createLoginButton();
@@ -81,17 +72,6 @@ public class LoginLayout extends FormLayout {
         addMember(form);
     }
     
-    private void initAdminLogin() {
-    	adminLogin = true;
-        addStyleName("n52_sensorweb_client_form_content n52_sensorweb_client_admin_login");
-        userNameItem = createUserNameItem();
-        passwordItem = createPasswordItem();
-        ButtonItem loginButton = createLoginButton();
-        LinkItem backToDiagramLink = createBackToDiagramLink();
-        form.setFields(headerItem, userNameItem, passwordItem, loginButton, backToDiagramLink);
-        addMember(form);
-    }
-
     private TextItem createUserNameItem() {
         if (userNameItem == null) {
             userNameItem = new TextItem();
@@ -145,11 +125,7 @@ public class LoginLayout extends FormLayout {
     private void login() {
         String name = LoginLayout.this.userNameItem.getValueAsString();
         String pwd = LoginLayout.this.passwordItem.getValueAsString();
-        if (adminLogin) {
-        	getMainEventBus().fireEvent(new LoginEvent(name, createMD5(pwd), true));
-        } else {
-        	getMainEventBus().fireEvent(new LoginEvent(name, createMD5(pwd), false));
-        }
+    	getMainEventBus().fireEvent(new LoginEvent(name, createMD5(pwd)));
         clearFields();
     }
 

@@ -23,6 +23,9 @@
  */
 package org.n52.server.service.rpc;
 
+import static org.n52.server.ses.util.WnsUtil.sendToWNSMail;
+import static org.n52.shared.responses.SesClientResponseType.LAST_ADMIN;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -34,12 +37,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.n52.client.service.SesUserService;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.service.SesUserServiceImpl;
-import org.n52.server.ses.util.WnsUtil;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.serializable.pojos.User;
 import org.n52.shared.serializable.pojos.UserDTO;
 import org.n52.shared.serializable.pojos.UserRole;
 import org.n52.shared.service.rpc.RpcSesUserService;
+import org.n52.shared.session.LoginSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +66,7 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
     }
 
     @Override
-    public synchronized void doGet(HttpServletRequest request, HttpServletResponse response) {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) {
         // attribute string at the end of the url
     	String registerID = request.getQueryString();
         User user = null;
@@ -80,13 +83,17 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
             user = HibernateUtil.getUserBy(id);
             int userID = user.getId();
             try {
-                deleteUser(String.valueOf(userID));
+                SesClientResponse result = performUserDelete(String.valueOf(userID));
+                if (result.getType() == LAST_ADMIN) {
+                    writeHtmlResponse("You are the last admin! At one admin has to exist.", response);
+                }
                 return;
             } catch (Exception e) {
                 LOGGER.error("Error deleting user", e);
+                writeHtmlResponse("Could not delete user.", e, response);
             }
             // validation of new email address
-        } else if (operator.equals("valida")) {
+        } else if (operator.equals("valida")) { // XXX check operator here
         	// user ID
             String id = registerID.substring(9);
             // user
@@ -94,105 +101,148 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
             // set the flag "emailVerified" to true
             user.setEmailVerified(true);
             HibernateUtil.updateUser(user);
-            
-            try {
-            	// user information
-                PrintWriter writer = response.getWriter();
-                writer.println("Your e-mail validation was successful!");
-                writer.flush();
-            } catch (IOException e) {
-                LOGGER.error("Could not read response", e);
-            }
+            writeHtmlResponse("Your e-mail validation was successful!", response);
             return;
         } else {
-
             // register new account
             LOGGER.info("RECEIVE activation link from new user");
-            boolean successfull = true;
 
             // user data from DB
             String id = registerID.substring(5);
             user = HibernateUtil.getUserBy(id);
 
-            // check user role to avoid changing admin role to user
-            if (user != null) {
+            if (activateUser(user)) {
+                LOGGER.debug("register user: " + user.getName() + " to WNS");
                 try {
-                    if (user.getRole() != UserRole.ADMIN) {
-                    	// set user role to USER
-                        user.setRole(UserRole.USER);
-                        user.setActivated(true);
-                    } else {
-                    	// admin account is activated
-                        user.setActivated(true);
-                    }
-                } catch (NumberFormatException nfe) {
-                    successfull = false;
+                    user.setWnsEmailId(sendToWNSMail(user.getName(), user.geteMail()));
+                    HibernateUtil.updateUser(user);
+                } catch (Exception e) {
+                    LOGGER.error("Registration to WNS failed!", e);
+                    writeHtmlResponse("Registration to WNS failed!", e, response);
                 }
+                writeHtmlResponse("Registration successful!", response);
             } else {
-                // no user found for the registerID
-                successfull = false;
-            }
-            try {
-                PrintWriter writer = response.getWriter();
-                if (successfull) {
-                    LOGGER.debug("register user: " + user.getName() + " to WNS");
-                    try {
-                        user.setWnsEmailId(WnsUtil.sendToWNSMail(user.getName(), user.geteMail()));
-
-                        // add WNS IDs to user data
-                        HibernateUtil.updateUser(user);
-                    } catch (Exception e) {
-                        writer.println("Registration to WNS failed!");
-                        LOGGER.error("Registration to WNS failed!", e);
-                    }
-                    writer.println("Your registration was successful!");
-                } else {
-                    writer.println("Registration failed! Because the registration ID is unknown.");
-                }
-                writer.flush();
-            } catch (IOException e) {
-                LOGGER.error(e.getMessage(), e);
+                LOGGER.error("Activation of user '{}' failed!", user.getId());
+                writeHtmlResponse("User activation failed!", response);
             }
         }
-
     }
 
-    public synchronized SesClientResponse registerUser(UserDTO userDTO) throws Exception {
+    protected boolean activateUser(User user) {
+        // check user role to avoid changing admin role to user
+        if (user != null) {
+            try {
+                if (user.getRole() != UserRole.ADMIN) {
+                	// set user role to USER
+                    user.setRole(UserRole.USER);
+                    user.setActivated(true);
+                } else {
+                	// admin account is activated
+                    user.setActivated(true);
+                }
+            } catch (NumberFormatException nfe) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+        return false;
+    }
+    
+    private void writeHtmlResponse(String message, HttpServletResponse response) {
+        message = includeExceptionInfoTo(message, null);
+        writeResponse(message, response);
+    }
+    
+    private void writeHtmlResponse(String message, Exception e, HttpServletResponse response) {
+        message = includeExceptionInfoTo(message, e);
+        writeResponse(message, response);
+    }
+
+    private String includeExceptionInfoTo(String message, Exception e) {
+        StringBuilder sb = new StringBuilder(message);
+        sb.append("<html><body>");
+        sb.append("<h1>An exception occured</h1>");
+        sb.append("<div>").append(message).append("</div>");
+        if (e != null) {
+            sb.append("<h2>Details</h2>");
+            sb.append("<div>").append(e.getMessage()).append("</div>");
+            sb.append("<ul style=\"list-style-type:none;\">");
+            for (StackTraceElement trace : e.getStackTrace()) {
+                sb.append("<br />");
+                sb.append("<li>").append(trace.toString()).append("</li>");
+            }
+            sb.append("</ul>");
+        }
+        sb.append("</body></html>");
+        return sb.toString();
+    }
+
+    private void writeResponse(String message, HttpServletResponse response) {
+        PrintWriter writer = null;
+        try {
+            response.getWriter().println(message);
+        } catch (IOException e) {
+            LOGGER.error("Could not write to response", e);
+        } finally {
+            if (writer != null) {
+                writer.flush();
+                writer.close();
+            }
+        }
+    }
+
+    @Override
+    public SesClientResponse registerUser(UserDTO userDTO) throws Exception {
     	return service.registerUser(userDTO);
     }
 
-    public synchronized SesClientResponse login(String userName, String password, boolean isAdminLogin) throws Exception {
-        return service.login(userName, password, isAdminLogin);
+    @Override
+    public SesClientResponse login(String userName, String password) throws Exception {
+        return service.login(userName, password);
     }
 
-    public synchronized SesClientResponse newPassword(String userName, String email) throws Exception {
-        return service.newPassword(userName, email);
+    @Override
+    public SesClientResponse resetPassword(String userName, String email) throws Exception {
+        return service.resetPassword(userName, email);
     }
 
-    public synchronized void logout() throws Exception {
-        service.logout();
+    @Override
+    public void logout(LoginSession loginSession) throws Exception {
+        service.logout(loginSession);
     }
 
-    public synchronized UserDTO getUser(String id) throws Exception {
-        return service.getUser(id);
+    @Override
+    public UserDTO getUser(LoginSession loginSession) throws Exception {
+        return service.getUser(loginSession);
     }
 
-    public synchronized SesClientResponse deleteUser(String id) throws Exception {
-        return service.deleteUser(id);
+    @Override
+    public SesClientResponse deleteUser(LoginSession loginSession, String id) throws Exception {
+        return service.deleteUser(loginSession, id);
     }
 
-    public synchronized SesClientResponse updateUser(UserDTO newUser, String userID) throws Exception {
-        return service.updateUser(newUser, userID);
+    
+    public SesClientResponse performUserDelete(String userId) throws Exception {
+        return ((SesUserServiceImpl) service).performUserDelete(userId);
     }
 
-    public synchronized List<UserDTO> getAllUsers() throws Exception {
-       return service.getAllUsers();
+    @Override
+    public SesClientResponse updateUser(LoginSession loginSession, UserDTO newUser) throws Exception {
+        return service.updateUser(loginSession, newUser);
     }
 
-    public SesClientResponse deleteProfile(String id) throws Exception {
-        return service.deleteProfile(id);
+    @Override
+    public List<UserDTO> getAllUsers(LoginSession loginSession) throws Exception {
+       return service.getAllUsers(loginSession);
     }
 
+    @Override
+    public SesClientResponse requestToDeleteProfile(LoginSession loginSession) throws Exception {
+        return service.requestToDeleteProfile(loginSession);
+    }
+
+    @Override
     public SesClientResponse getTermsOfUse(String language) throws Exception {
         return service.getTermsOfUse(language);
     }
@@ -202,4 +252,5 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
     public SesClientResponse getData() throws Exception {
         return service.getData();
     }
+
 }

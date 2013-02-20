@@ -26,6 +26,7 @@ package org.n52.client.ses.ui.layout;
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.LOGIN;
+import static org.n52.client.util.CookieManager.destroyCurrentLoginSession;
 import static org.n52.shared.serializable.pojos.UserRole.NOT_REGISTERED_USER;
 
 import java.util.Date;
@@ -33,14 +34,12 @@ import java.util.Date;
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ses.ctrl.DataControlsSes;
-import org.n52.client.ses.ctrl.SesRequestManager;
 import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.GetTermsOfUseEvent;
 import org.n52.client.ses.event.RegisterUserEvent;
 import org.n52.client.ses.ui.FormLayout;
 import org.n52.shared.serializable.pojos.UserDTO;
 
-import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.fields.DataSourcePasswordField;
 import com.smartgwt.client.data.fields.DataSourceTextField;
@@ -199,11 +198,8 @@ public class RegisterLayout extends FormLayout {
                 name = "";
             }
             
-            // delete cookie
-            Cookies.removeCookie(SesRequestManager.COOKIE_USER_ID);
-            Cookies.removeCookie(SesRequestManager.COOKIE_USER_ROLE);
-            Cookies.removeCookie(SesRequestManager.COOKIE_USER_NAME);
-
+            destroyCurrentLoginSession();
+            
             // create user without parameterId and register
             UserDTO u = new UserDTO(userName, name, password, eMail, "", NOT_REGISTERED_USER, activated, new Date());
             EventBus.getMainEventBus().fireEvent(new RegisterUserEvent(u));

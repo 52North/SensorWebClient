@@ -23,12 +23,15 @@
  */
 package org.n52.shared.responses;
 
+import static org.n52.shared.responses.SesClientResponseType.ERROR;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.n52.shared.serializable.pojos.Rule;
 import org.n52.shared.serializable.pojos.UserDTO;
+import org.n52.shared.session.LoginSession;
 
 public class SesClientResponse implements Serializable {
 
@@ -38,7 +41,9 @@ public class SesClientResponse implements Serializable {
     
     private String EmailMessage = "E-Mail is invalid!";
 
-    private SesClientResponse.types type = types.ERROR;
+    private SesClientResponseType responseType = ERROR;
+    
+    private LoginSession loginCookie;
 
     private UserDTO user;
 
@@ -52,58 +57,49 @@ public class SesClientResponse implements Serializable {
     
     private List sensorList;
     
-    public static enum types {LOGIN_OK, LAST_ADMIN, LOGOUT, MAIL, TERMS_OF_USE,
-        LOGIN_NAME, LOGIN_PASSWORD, LOGIN_ACTIVATED, LOGIN_LOCKED, OK, EDIT_COMPLEX_RULE,
-        NEW_PASSWORD_ERROR, NEW_PASSWORD_OK, REGISTER_NAME, REGISTER_OK, REGSITER_EMAIL, REGISTER_HANDY,
-        ERROR, STATIONS, SENSORS, PHENOMENA, OWN_RULES, OTHER_RULES, REGISTERED_TIMESERIES_FEEDS,
-        EDIT_OWN_RULES, EDIT_OTHER_RULES, PUBLISH_RULE_USER, PUBLISH_RULE_ADMIN, All_RULES, DELETE_RULE_OK, DELETE_SENSOR_OK, EDIT_SIMPLE_RULE,
-        ALL_PUBLISHED_RULES, RULE_NAME_NOT_EXISTS, RULE_NAME_EXISTS, MESSAGE, USER_SUBSCRIPTIONS, DELETE_RULE_SUBSCRIBED,
-        ERROR_SUBSCRIBE_SES, ERROR_SUBSCRIBE_FEEDER, ERROR_UNSUBSCRIBE_SES, SEARCH_RESULT, SUBSCRIPTION_EXISTS, SET_USERNAME, DATA, LOGIN_AS_USER_IN_ADMIN_INTERFACE}
-
-
     public SesClientResponse() {
         // empty constructor
     }
 
-    public SesClientResponse(SesClientResponse.types type){
-        this.type = type;
+    public SesClientResponse(SesClientResponseType type){
+        this.responseType = type;
     }
 
-    public SesClientResponse(SesClientResponse.types type, UserDTO user){
-        this.type = type;
+    public SesClientResponse(SesClientResponseType type, UserDTO user){
+        this.responseType = type;
         this.user = user;
     }
     
-    public SesClientResponse(SesClientResponse.types type, UserDTO user, ArrayList list){
-        this.type = type;
+    public SesClientResponse(SesClientResponseType type, UserDTO user, ArrayList list){
+        this.responseType = type;
         this.user = user;
         this.complexList = list;
     }
 
-    public SesClientResponse(SesClientResponse.types type, ArrayList list){
-        this.type = type;
+    public SesClientResponse(SesClientResponseType type, ArrayList list){
+        this.responseType = type;
         this.basicList = list;
     }
     
-    public SesClientResponse(SesClientResponse.types type, List list){
-        this.type = type;
+    public SesClientResponse(SesClientResponseType type, List list){
+        this.responseType = type;
         this.sensorList = list;
     }
     
-    public SesClientResponse(SesClientResponse.types type, ArrayList list, ArrayList complexList){
-        this.type = type;
+    public SesClientResponse(SesClientResponseType type, ArrayList list, ArrayList complexList){
+        this.responseType = type;
         this.basicList = list;
         this.complexList = complexList;
     }
 
 
-    public SesClientResponse(SesClientResponse.types type, Rule rule) {
-        this.type = type;
+    public SesClientResponse(SesClientResponseType type, Rule rule) {
+        this.responseType = type;
         this.rule = rule;
     }
 
-    public SesClientResponse(SesClientResponse.types type, String message) {
-        this.type = type;
+    public SesClientResponse(SesClientResponseType type, String message) {
+        this.responseType = type;
         this.message = message;
     }
     
@@ -123,8 +119,8 @@ public class SesClientResponse implements Serializable {
         return this.EmailMessage;
     }
 
-    public SesClientResponse.types getType() {
-        return this.type;
+    public SesClientResponseType getType() {
+        return this.responseType;
     }
 
     public ArrayList getBasicRules() {
@@ -157,5 +153,13 @@ public class SesClientResponse implements Serializable {
 
     public List getSensorList() {
         return this.sensorList;
+    }
+
+    public LoginSession getLoginSession() {
+        return loginCookie;
+    }
+
+    public void setLoginCookie(LoginSession loginCookie) {
+        this.loginCookie = loginCookie;
     }
 }

@@ -24,11 +24,11 @@
 package org.n52.client.ses.ui.layout;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
 
 import java.util.ArrayList;
 
 import org.n52.client.bus.EventBus;
-import org.n52.client.ses.ctrl.SesRequestManager;
 import org.n52.client.ses.data.RuleDataSource;
 import org.n52.client.ses.event.EditRuleEvent;
 import org.n52.client.ses.event.SearchEvent;
@@ -192,7 +192,7 @@ public class SearchLayout extends FormLayout {
                     String text = textItem.getValue().toString();
                     String criterion = comboBoxItem.getValue().toString();
                    
-                    String userID = Cookies.getCookie(SesRequestManager.COOKIE_USER_ID);
+                    String userID = Cookies.getCookie(COOKIE_USER_ID);
                     int operator = 0;
                     
                     if (criterion.equals(i18n.searchFullText())) {

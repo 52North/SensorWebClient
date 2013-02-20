@@ -29,6 +29,7 @@ import java.util.List;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.service.SesUserServiceImpl;
 import org.n52.shared.responses.SesClientResponse;
+import org.n52.shared.responses.SesClientResponseType;
 import org.n52.shared.serializable.pojos.BasicRule;
 import org.n52.shared.serializable.pojos.BasicRuleDTO;
 import org.n52.shared.serializable.pojos.ComplexRule;
@@ -96,7 +97,7 @@ public class SearchUtil {
             }
         }
         
-        return new SesClientResponse(SesClientResponse.types.SEARCH_RESULT, finalBasicList, finalComplexList);
+        return new SesClientResponse(SesClientResponseType.SEARCH_RESULT, finalBasicList, finalComplexList);
     }
     
     /**

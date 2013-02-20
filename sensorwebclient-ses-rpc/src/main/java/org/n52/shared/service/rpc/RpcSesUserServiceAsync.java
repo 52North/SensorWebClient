@@ -46,118 +46,119 @@
 
  Created on: 27.07.2010
  *********************************************************************************/
+
 package org.n52.shared.service.rpc;
 
 import java.util.List;
 
+import org.n52.client.service.SesUserService;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.serializable.pojos.UserDTO;
+import org.n52.shared.session.LoginSession;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
- * The Interface RpcSesUserServiceAsync.
+ * TODO extract admin operations 
  */
 public interface RpcSesUserServiceAsync {
 
     /**
-     * Register user.
+     * See {@link SesUserService#registerUser(UserDTO)} for documentation.
      * 
-     * @param u
-     *            the u
      * @param callback
-     *            the callback
+     *        a callback handling the server response.
+     * @see SesUserService#registerUser(UserDTO)
      */
-    void registerUser(UserDTO u, AsyncCallback<SesClientResponse> callback);
+    void registerUser(UserDTO userDTO, AsyncCallback<SesClientResponse> callback);
 
     /**
-     * Login.
+     * See {@link SesUserService#login(String, String)} for documentation.
      * 
-     * @param name
-     *            the name
-     * @param password
-     *            the password
      * @param callback
-     *            the callback
+     *        a callback handling the server response.
+     * @see SesUserService#login(String, String)
      */
-    void login(String name, String password, boolean isAdminLogin, AsyncCallback<SesClientResponse> callback);
+    void login(String userName, String password, AsyncCallback<SesClientResponse> callback);
 
     /**
-     * New password.
+     * See {@link SesUserService#resetPassword(String, String)} for documentation.
      * 
-     * @param name
-     *            the name
-     * @param email
-     *            the email
      * @param callback
-     *            the callback
+     *        a callback handling the server response.
+     * @see SesUserService#resetPassword(String, String)
      */
-    void newPassword(String name, String email, AsyncCallback<SesClientResponse> callback);
+    void resetPassword(String username, String email, AsyncCallback<SesClientResponse> callback);
 
     /**
-     * Logout.
+     * See {@link SesUserService#logout(LoginSession)} for documentation.
      * 
      * @param callback
-     *            the callback
+     *        a callback for post processing after server finishes.
+     * @see SesUserService#logout(LoginSession)
      */
-    void logout(AsyncCallback<Void> callback);
+    void logout(LoginSession loginSession, AsyncCallback<Void> callback);
 
     /**
-     * Gets the user.
+     * See {@link SesUserService#getUser(LoginSession)} for documentation.
      * 
-     * @param parameterId
-     *            the parameterId
      * @param callback
-     *            the callback
+     *        a callback handling the server response.
+     * @see SesUserService#getUser(LoginSession)
      */
-    void getUser(String id, AsyncCallback<UserDTO> callback);
+    void getUser(LoginSession loginSession, AsyncCallback<UserDTO> callback);
 
     /**
-     * Delete user.
+     * See {@link SesUserService#deleteUser(LoginSession, String)} for documentation.
      * 
-     * @param parameterId
-     *            the parameterId
      * @param callback
-     *            the callback
+     *        a callback handling the server response.
+     * @see SesUserService#deleteUser(LoginSession, String)
      */
-    void deleteUser(String id, AsyncCallback<SesClientResponse> callback);
+    void deleteUser(LoginSession loginSession, String userId, AsyncCallback<SesClientResponse> callback);
 
     /**
-     * Update user.
+     * See {@link SesUserService#deleteUser(LoginSession, String)} for documentation.
      * 
-     * @param u
-     *            the u
-     * @param userID 
      * @param callback
-     *            the callback
+     *        a callback handling the server response.
+     * @see SesUserService#deleteUser(LoginSession, String)
      */
-    void updateUser(UserDTO u, String userID, AsyncCallback<SesClientResponse> callback);
+    void updateUser(LoginSession loginSession, UserDTO userDataToUpdate, AsyncCallback<SesClientResponse> callback);
 
     /**
-     * Get all users
+     * See {@link SesUserService#getAllUsers(LoginSession)} for documentation.
      * 
      * @param callback
+     *        a callback handling the server response.
+     * @see SesUserService#getAllUsers(LoginSession)
      */
-    void getAllUsers(AsyncCallback<List<UserDTO>> callback);
+    void getAllUsers(LoginSession loginSession, AsyncCallback<List<UserDTO>> callback);
 
     /**
-     * Delete user profile
+     * See {@link SesUserService#requestToDeleteProfile(LoginSession)} for documentation.
      * 
-     * @param parameterId
      * @param callback
+     *        a callback handling the server response.
+     * @see SesUserService#requestToDeleteProfile(LoginSession)
      */
-    void deleteProfile(String id, AsyncCallback<SesClientResponse> callback);
+    void requestToDeleteProfile(LoginSession loginSession, AsyncCallback<SesClientResponse> callback);
 
     /**
+     * See {@link SesUserService#getTermsOfUse(String)} for documentation.
      * 
-     * @param language 
      * @param callback
+     *        a callback handling the server response.
+     * @see SesUserService#getTermsOfUse(String)
      */
     void getTermsOfUse(String language, AsyncCallback<SesClientResponse> callback);
 
     /**
+     * See {@link SesUserService#getData()} for documentation.
      * 
      * @param callback
+     *        a callback handling the server response.
+     * @see SesUserService#getData()
      */
     void getData(AsyncCallback<SesClientResponse> callback);
 }

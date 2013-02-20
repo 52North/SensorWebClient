@@ -29,51 +29,26 @@ import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.GetAllUsersEventHandler;
 import org.n52.shared.serializable.pojos.UserDTO;
 
-/**
- * The Class ChangeLayoutEvent.
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- */
 public class GetAllUsersEvent extends FilteredDispatchGwtEvent<GetAllUsersEventHandler> {
 
-    /** The TYPE. */
     public static Type<GetAllUsersEventHandler> TYPE = new Type<GetAllUsersEventHandler>();
 
-    /** All users. */
     private List<UserDTO> allUser;
 
-    /**
-     * Instantiates a new get all users event.
-     * 
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
     public GetAllUsersEvent(GetAllUsersEventHandler... blockedHandlers) {
         super(blockedHandlers);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<GetAllUsersEventHandler> getAssociatedType() {
+    public Type<GetAllUsersEventHandler> getAssociatedType() {
         return TYPE;
     }
 
-    /* (non-Javadoc)
-     * @see org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com.google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(GetAllUsersEventHandler handler) {
         handler.onGetAllUser(this);
     }
 
-    /**
-     * 
-     * @return ArrayList<UserDTO>
-     */
     public List<UserDTO> getAllUser() {
         return this.allUser;
     }

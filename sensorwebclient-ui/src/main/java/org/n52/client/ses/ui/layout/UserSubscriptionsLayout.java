@@ -24,13 +24,13 @@
 package org.n52.client.ses.ui.layout;
 
 import static com.google.gwt.user.client.Cookies.getCookie;
-import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ID;
-import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ROLE;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.RuleRecord.FORMAT;
 import static org.n52.client.ses.ui.RuleRecord.MEDIUM;
 import static org.n52.client.ses.ui.RuleRecord.SUBSCRIBED;
 import static org.n52.client.ses.ui.RuleRecord.UUID;
+import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
+import static org.n52.shared.session.LoginSession.COOKIE_USER_ROLE;
 
 import java.util.ArrayList;
 

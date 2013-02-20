@@ -25,8 +25,6 @@ package org.n52.client.ses.ui.layout;
 
 import static com.google.gwt.user.client.Cookies.getCookie;
 import static java.lang.Integer.parseInt;
-import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ID;
-import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ROLE;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.EDIT_RULES;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.RULELIST;
@@ -35,25 +33,25 @@ import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.SENSOR_LOS
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.SUM_OVER_TIME;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.TENDENCY_OVER_COUNT;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.TENDENCY_OVER_TIME;
-import static org.n52.shared.util.MathSymbolUtil.getInverse;
-import static org.n52.shared.util.MathSymbolUtil.getInverse;
-import static org.n52.shared.util.MathSymbolUtil.getSymbolForIndex;
+import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
+import static org.n52.shared.session.LoginSession.COOKIE_USER_ROLE;
 import static org.n52.shared.util.MathSymbolUtil.getIndexFor;
+import static org.n52.shared.util.MathSymbolUtil.getInverse;
 import static org.n52.shared.util.MathSymbolUtil.getMathSymbols;
+import static org.n52.shared.util.MathSymbolUtil.getSymbolForIndex;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import org.n52.client.bus.EventBus;
-import org.n52.client.ses.ctrl.SesRequestManager;
 import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.CreateSimpleRuleEvent;
 import org.n52.client.ses.event.GetPhenomenaEvent;
 import org.n52.client.ses.ui.FormLayout;
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
-import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.Rule;
 import org.n52.shared.serializable.pojos.RuleBuilder;
+import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 
 import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.data.DataSource;
@@ -488,7 +486,7 @@ public class CreateSimpleRuleLayout extends FormLayout {
         String rTime = this.entryTimeItem.getValueAsString();
         String rTimeUnit = this.entryTimeUnitItem.getValueAsString();
         
-        int cookieAsInt = Integer.parseInt(Cookies.getCookie(SesRequestManager.COOKIE_USER_ID));
+        int cookieAsInt = Integer.parseInt(Cookies.getCookie(COOKIE_USER_ID));
         Rule rule = RuleBuilder.aRule()
                         .setRuleType(ruleTyp)
                         .setTitle(name)
@@ -606,7 +604,7 @@ public class CreateSimpleRuleLayout extends FormLayout {
                         .setEntryOperatorIndex(entryOperatorIndex)
                         .setEntryValue(entryValue)
                         .setEntryUnit(entryUnit)
-                        .setCookie(parseInt(getCookie(SesRequestManager.COOKIE_USER_ID)))
+                        .setCookie(parseInt(getCookie(COOKIE_USER_ID)))
                         .setEntryTime(entryTime)
                         .setEntryTimeUnit(entryTimeUnit)
                         .setExitTime(exitTime)
@@ -649,7 +647,7 @@ public class CreateSimpleRuleLayout extends FormLayout {
             countCondValue = countValue;
         }
 
-        int cookieAsInt = Integer.parseInt(Cookies.getCookie(SesRequestManager.COOKIE_USER_ID));
+        int cookieAsInt = Integer.parseInt(Cookies.getCookie(COOKIE_USER_ID));
         Rule rule = RuleBuilder.aRule()
                         .setRuleType(ruleTyp)
                         .setTitle(name)

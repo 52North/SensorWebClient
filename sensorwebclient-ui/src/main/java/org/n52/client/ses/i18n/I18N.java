@@ -223,7 +223,7 @@ public interface I18N extends Constants {
 
     String failedRegistration();
 
-    String emailSended();
+    String emailSent();
 
     String failedLogin();
 
@@ -300,7 +300,7 @@ public interface I18N extends Constants {
     
     String lastAdmin();
     
-    String mailSended();
+    String mailSent();
     
     String profileDelete();
     

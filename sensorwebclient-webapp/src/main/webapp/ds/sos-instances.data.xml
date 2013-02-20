@@ -19,7 +19,7 @@
 		<defaultZoom>13</defaultZoom>
 	</instance>
 	
-    <!-- 
+	<!-- 
     <instance>
         <itemName>Tideelbe SOS</itemName>
         <url>http://geodata-srv02.rzi.dlz-it.de:8080/52nSOS_ZDM_PORTALE/sos</url>
@@ -35,6 +35,7 @@
         <urNorthing>54.1</urNorthing>
         <defaultZoom>13</defaultZoom>
     </instance>
+     -->
     
     <instance>
         <itemName>Wupperverband</itemName>
@@ -51,7 +52,6 @@
         <requestChunk>200</requestChunk>
         <autoZoom>true</autoZoom>
     </instance>
-     -->
 	
 <!-- 
 	<instance>
@@ -88,8 +88,6 @@
 	</instance>
 -->
 	
-	
-<!-- 
 	<instance>
 		<itemName>Air Quality Belgium</itemName>
 		<url>http://sos.irceline.be/sos</url>
@@ -105,8 +103,6 @@
 		<urNorthing>51.6</urNorthing>
 		<defaultZoom>11</defaultZoom>
 	</instance>
-	
--->
 	
 <!-- 
 

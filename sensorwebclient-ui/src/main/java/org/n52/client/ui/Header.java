@@ -261,7 +261,7 @@ public class Header extends HLayout {
             AccessLinkFactory factory = builder.build();
             return factory.createAccessURL(baseUrl).toString();
         } catch (ExternalToolsException e) {
-            Toaster.getInstance().addErrorMessage("Malformed base URL: " + baseUrl);
+            Toaster.getToasterInstance().addErrorMessage("Malformed base URL: " + baseUrl);
             return baseUrl;
         }
 

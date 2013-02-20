@@ -1,14 +1,13 @@
 package org.n52.client.ui;
 
-import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_NAME;
-import static org.n52.client.ses.ctrl.SesRequestManager.COOKIE_USER_ROLE;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 import static org.n52.shared.serializable.pojos.UserRole.ADMIN;
 import static org.n52.shared.serializable.pojos.UserRole.LOGOUT;
 import static org.n52.shared.serializable.pojos.UserRole.USER;
+import static org.n52.shared.session.LoginSession.COOKIE_USER_NAME;
+import static org.n52.shared.session.LoginSession.COOKIE_USER_ROLE;
 
 import org.n52.client.bus.EventBus;
-import org.n52.client.ses.ctrl.SesRequestManager;
 import org.n52.client.ses.event.LogoutEvent;
 import org.n52.client.ses.event.SetRoleEvent;
 import org.n52.client.ses.event.handler.SetRoleEventHandler;

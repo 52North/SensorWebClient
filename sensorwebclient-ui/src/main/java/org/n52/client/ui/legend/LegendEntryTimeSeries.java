@@ -383,7 +383,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 				long date = LegendEntryTimeSeries.this.getTimeSeries()
 						.getLastValueDate();
 				if (date == 0) {
-					Toaster.getInstance().addMessage(
+					Toaster.getToasterInstance().addMessage(
 							i18n.errorSOS() + ": "
 									+ i18n.jumpToLast());
 					return;
@@ -413,7 +413,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 						.getFirstValueDate();
 
 				if (date == 0) {
-					Toaster.getInstance().addMessage(
+					Toaster.getToasterInstance().addMessage(
 							i18n.errorSOS() + ": "
 									+ i18n.jumpToFirst());
 					return;
@@ -491,7 +491,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.deleteButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent evt) {
 				if (SOSController.isDeletingTS) {
-					Toaster.getInstance().addMessage(i18n.deleteTimeSeriesActiv());
+					Toaster.getToasterInstance().addMessage(i18n.deleteTimeSeriesActiv());
 				} else {
 					SOSController.isDeletingTS = true;
 					LegendEntryTimeSeries.this.getEventBroker().unregister();
@@ -738,7 +738,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 					long date = LegendEntryTimeSeries.this.getTimeSeries()
 							.getFirstValueDate();
 					if (date == 0) {
-						Toaster.getInstance().addMessage(
+						Toaster.getToasterInstance().addMessage(
 								i18n.errorSOS() + ": "
 										+ i18n.jumpToFirst());
 						return;
@@ -768,7 +768,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 					long date = LegendEntryTimeSeries.this.getTimeSeries()
 							.getLastValueDate();
 					if (date == 0) {
-						Toaster.getInstance().addMessage(
+						Toaster.getToasterInstance().addMessage(
 								i18n.errorSOS() + ": "
 										+ i18n.jumpToLast());
 						return;
@@ -1263,7 +1263,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 						LegendEntryTimeSeries.this.noDataSign.show();
 						LegendEntryTimeSeries.this.legendEntryHead
 								.setStyleName("n52_sensorweb_client_legendEntryHeaderSelectedNoData");
-						Toaster.getInstance().addMessage(
+						Toaster.getToasterInstance().addMessage(
 								i18n.noDataAvailable()
 										+ LegendEntryTimeSeries.this
 												.getTimeSeries().getProcedureId());
@@ -1277,7 +1277,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 						LegendEntryTimeSeries.this.noDataSign.show();
 						LegendEntryTimeSeries.this.legendEntryHead
 								.setStyleName("n52_sensorweb_client_legendEntryHeaderNoData");
-						Toaster.getInstance().addMessage(
+						Toaster.getToasterInstance().addMessage(
 								i18n.noDataAvailable()
 										+ LegendEntryTimeSeries.this
 												.getTimeSeries().getProcedureId());

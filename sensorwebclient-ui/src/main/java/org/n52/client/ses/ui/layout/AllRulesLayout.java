@@ -23,13 +23,15 @@
  */
 package org.n52.client.ses.ui.layout;
 
+import static com.google.gwt.user.client.Cookies.getCookie;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.RuleRecord.UUID;
+import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
+import static org.n52.shared.session.LoginSession.COOKIE_USER_ROLE;
 
 import java.util.ArrayList;
 
 import org.n52.client.bus.EventBus;
-import org.n52.client.ses.ctrl.SesRequestManager;
 import org.n52.client.ses.data.RuleDataSource;
 import org.n52.client.ses.event.DeleteRuleEvent;
 import org.n52.client.ses.event.EditRuleEvent;
@@ -52,11 +54,6 @@ import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 
-/**
- * The Class AllRulesLayout.
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- */
 public class AllRulesLayout extends FormLayout {
 
     private static final String ALL_RULES_DELETE = "allRulesDelete";
@@ -73,28 +70,18 @@ public class AllRulesLayout extends FormLayout {
 
     private static final String ALL_RULES_TYPE = "allRulesType";
 
-    /** The rules grid. */
     private ListGrid rulesGrid;
     
     private boolean first = true;
     
     private RuleDataSource dataSource;
 
-    /**
-     * Instantiates a new all rules layout.
-     */
     public AllRulesLayout() {
         super(i18n.allRules());
-        
-        // init DataSource
         this.dataSource = new RuleDataSource();
-        
         init();
     }
 
-    /**
-     * Inits the.
-     */
     private void init() {
 
         this.rulesGrid = new ListGrid() {
@@ -117,7 +104,7 @@ public class AllRulesLayout extends FormLayout {
                         final boolean published = record.getAttributeAsBoolean("published");
                         final String ruleName = record.getAttribute("name");
                         
-                        String userID = Cookies.getCookie(SesRequestManager.COOKIE_USER_ID);
+                        String userID = Cookies.getCookie(COOKIE_USER_ID);
                         String recordUserID = record.getAttribute("ownerID");
                         
                         
@@ -155,7 +142,7 @@ public class AllRulesLayout extends FormLayout {
                         return null;
 
                     } else if (fieldName.equals(ALL_RULES_EDIT)) {
-                        String userID = Cookies.getCookie(SesRequestManager.COOKIE_USER_ID);
+                        String userID = Cookies.getCookie(COOKIE_USER_ID);
                         if (record.getAttribute("ownerID").equals(userID)) {
                             // subscribe button
                             IButton editButton = new IButton(i18n.edit());
@@ -186,7 +173,10 @@ public class AllRulesLayout extends FormLayout {
                                 SC.ask(i18n.reallyDeleteRule(), new BooleanCallback() {
                                     public void execute(Boolean value) {
                                         if (value) {
-                                            EventBus.getMainEventBus().fireEvent(new DeleteRuleEvent(record.getAttribute(UUID), Cookies.getCookie(SesRequestManager.COOKIE_USER_ROLE)));
+                                            String uuid = record.getAttribute(UUID);
+                                            String userRole = getCookie(COOKIE_USER_ROLE);
+                                            DeleteRuleEvent deleteRuleEvent = new DeleteRuleEvent(uuid, userRole);
+                                            EventBus.getMainEventBus().fireEvent(deleteRuleEvent);
                                         }
                                     }
                                 });

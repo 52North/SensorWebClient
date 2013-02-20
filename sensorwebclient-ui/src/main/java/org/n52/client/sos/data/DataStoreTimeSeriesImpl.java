@@ -203,7 +203,7 @@ public class DataStoreTimeSeriesImpl extends ADataStore<TimeSeries> {
                 }
                 dataItem.getProperties().setSetAxis(true);
             } catch (NullPointerException e) {
-                Toaster.getInstance().addErrorMessage(i18n.timeSeriesNotExists());
+                Toaster.getToasterInstance().addErrorMessage(i18n.timeSeriesNotExists());
             }
         }
 
@@ -281,7 +281,7 @@ public class DataStoreTimeSeriesImpl extends ADataStore<TimeSeries> {
             try {
                 DataStoreTimeSeriesImpl.this.getDataItem(evt.getTSID()).setHasData(evt.hasData());
             } catch (NullPointerException e) {
-                Toaster.getInstance().addErrorMessage(i18n.timeSeriesNotExists());
+                Toaster.getToasterInstance().addErrorMessage(i18n.timeSeriesNotExists());
             }
         }
 

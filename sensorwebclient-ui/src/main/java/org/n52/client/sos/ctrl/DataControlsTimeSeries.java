@@ -486,7 +486,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
 
                     long interval = end.getTime() - begin.getTime();
                     if (interval > DataControlsTimeSeries.this.currentInterval) {
-                        Toaster.getInstance().addMessage(i18n.errorOverviewInterval());
+                        Toaster.getToasterInstance().addMessage(i18n.errorOverviewInterval());
                         DataControlsTimeSeries.this.getRefresh().setNotClicked();
                         LoaderManager.getInstance().stopLoadingAnimations();
                         return;
@@ -909,7 +909,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
 
                     long interval = end.getTime() - begin.getTime();
                     if (interval > DataControlsTimeSeries.this.currentInterval) {
-                        Toaster.getInstance().addMessage(i18n.errorOverviewInterval());
+                        Toaster.getToasterInstance().addMessage(i18n.errorOverviewInterval());
                         DataControlsTimeSeries.this.getRefresh().setNotClicked();
                         LoaderManager.getInstance().stopLoadingAnimations();
                         return;
@@ -987,14 +987,14 @@ public abstract class DataControlsTimeSeries extends DataControls {
         // check for date crossing
         if (begin > end) {
             // violated cross dates
-            Toaster.getInstance().addErrorMessage(i18n.errorCrossDates());
+            Toaster.getToasterInstance().addErrorMessage(i18n.errorCrossDates());
             resetDatePicker();
             return false;
         }
 
         // check for bigger interval than 5min
         if ((end - begin) < 5000) {
-            Toaster.getInstance().addErrorMessage(i18n.errorMinimalInterval());
+            Toaster.getToasterInstance().addErrorMessage(i18n.errorMinimalInterval());
             resetDatePicker();
             return false;
         }

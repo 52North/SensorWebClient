@@ -24,12 +24,13 @@
 package org.n52.client.ses.ui.layout;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
+import static org.n52.shared.session.LoginSession.COOKIE_USER_ROLE;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import org.n52.client.bus.EventBus;
-import org.n52.client.ses.ctrl.SesRequestManager;
 import org.n52.client.ses.data.Tree;
 import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.CreateComplexRuleEvent;
@@ -75,8 +76,6 @@ import com.smartgwt.client.widgets.layout.VLayout;
  * is limited to maximum 6 rules on one time. It is possible to use complex rules
  * as one of the six possible rules. So it is theoreticaly possible combine
  * infinit count of rules.
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
  */
 @Deprecated
 public class CreateComplexRuleLayout extends FormLayout {
@@ -235,7 +234,7 @@ public class CreateComplexRuleLayout extends FormLayout {
         this.cancelButton.setVisible(false);
         this.cancelButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                String role = Cookies.getCookie(SesRequestManager.COOKIE_USER_ROLE);
+                String role = Cookies.getCookie(COOKIE_USER_ROLE);
                 if (role.equals("ADMIN")) {
                     EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.RULELIST));
                 } else {
@@ -718,7 +717,7 @@ public class CreateComplexRuleLayout extends FormLayout {
                 }
                 
                 if (valid) {
-                    int userID = Integer.parseInt(Cookies.getCookie(SesRequestManager.COOKIE_USER_ID));
+                    int userID = Integer.parseInt(Cookies.getCookie(COOKIE_USER_ID));
                     ComplexRuleData data = new ComplexRuleData(finalList, title, description, publish, userID, null, null, null);
 
                     EventBus.getMainEventBus().fireEvent(new CreateComplexRuleEvent(data, this.editCR, this.oldRuleName));
@@ -743,7 +742,7 @@ public class CreateComplexRuleLayout extends FormLayout {
 
             if (valid) {
                 
-                int userID = Integer.parseInt(Cookies.getCookie(SesRequestManager.COOKIE_USER_ID));
+                int userID = Integer.parseInt(Cookies.getCookie(COOKIE_USER_ID));
 
                 ComplexRuleData data = new ComplexRuleData(null, title, description, publish, userID, this.treeContent, null, null);
 
