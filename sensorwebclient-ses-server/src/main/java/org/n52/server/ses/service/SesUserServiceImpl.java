@@ -31,7 +31,6 @@ import static org.n52.shared.responses.SesClientResponseType.LOGIN_LOCKED;
 import static org.n52.shared.responses.SesClientResponseType.LOGIN_NAME;
 import static org.n52.shared.responses.SesClientResponseType.LOGIN_OK;
 import static org.n52.shared.responses.SesClientResponseType.LOGIN_PASSWORD;
-import static org.n52.shared.responses.SesClientResponseType.LOGIN_USER;
 import static org.n52.shared.responses.SesClientResponseType.LOGOUT;
 import static org.n52.shared.responses.SesClientResponseType.NEW_PASSWORD_ERROR;
 import static org.n52.shared.responses.SesClientResponseType.NEW_PASSWORD_OK;
@@ -329,8 +328,8 @@ public class SesUserServiceImpl implements SesUserService {
     @Override
     public UserDTO getUser(LoginSession loginSession) throws Exception {
         try {
-            LOGGER.debug("Get user with id '{}'", loginSession.getUserId());
-            int userID = Integer.valueOf(loginSession.getUserId());
+            LOGGER.debug("Get user with id '{}'", sessionStore.getLoggedInUserId(loginSession));
+            int userID = Integer.valueOf(sessionStore.getLoggedInUserId(loginSession));
             return createUserDTO(HibernateUtil.getUserBy(userID));
         }
         catch (Exception e) {
@@ -509,7 +508,7 @@ public class SesUserServiceImpl implements SesUserService {
                         LOGGER.warn("Deleting user with admin role aborted: At least one admin has to exist!");
                         return new SesClientResponse(LAST_ADMIN);
                     }
-                    else if (oldUser.getId() == Integer.valueOf(loginSession.getUserId())) {
+                    else if (oldUser.getId() == Integer.valueOf(sessionStore.getLoggedInUserId(loginSession))) {
                         LOGGER.debug("set admin to user and update user data in database");
                         User u = new User(newUser);
                         u.setEmailVerified(newUser.isEmailVerified());
@@ -568,7 +567,7 @@ public class SesUserServiceImpl implements SesUserService {
     @Override
     public SesClientResponse requestToDeleteProfile(LoginSession loginSession) throws Exception {
         try {
-            LOGGER.debug("prepare user delete with id '{}'", loginSession.getUserId());
+            LOGGER.debug("prepare user delete with id '{}'", sessionStore.getLoggedInUserId(loginSession));
             sessionStore.validateIncomingLoginSession(loginSession);
             String id = sessionStore.getLoggedInUserId(loginSession);
             User user = HibernateUtil.getUserBy(Integer.valueOf(id));
