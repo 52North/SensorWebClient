@@ -10,6 +10,7 @@ import static org.n52.shared.util.MathSymbolUtil.getInverse;
 import static org.n52.shared.util.MathSymbolUtil.getMathSymbols;
 import static org.n52.shared.util.MathSymbolUtil.getSymbolForIndex;
 
+import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 
 import com.smartgwt.client.widgets.Canvas;
@@ -68,7 +69,7 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
         entryValueItem.setWidth(EDIT_ITEMS_WIDTH);
         declareAsRequired(entryValueItem);
         
-        StaticTextItem entryUnitItem = createStaticUnitItem();
+        StaticTextItem entryUnitItem = createStaticUnitItem(data);
         entryUnitItem.setWidth(EDIT_ITEMS_WIDTH);
         
         FormItem[] items = new FormItem[] { labelItem, entryOperatorItem, entryValueItem, entryUnitItem };
@@ -107,13 +108,13 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
     }
     
 
-    private StaticTextItem createStaticUnitItem() {
+    private StaticTextItem createStaticUnitItem(OverUndershootSelectionData data) {
         StaticTextItem unitItem = new StaticTextItem();
         unitItem.setTitle(i18n.unit());
         unitItem.setTitleOrientation(TOP);
-        String unitOfMeasure = controller.getTimeSeries().getUnitOfMeasure();
-        controller.getOverUndershootEntryConditions().setUnit(unitOfMeasure);
-        unitItem.setValue(unitOfMeasure);
+        TimeSeries unitOfMeasure = controller.getTimeSeries();
+        unitItem.setValue(unitOfMeasure.getUnitOfMeasure());
+        data.setUnit(unitOfMeasure.getUnitOfMeasure());
         return unitItem;
     }
 
@@ -130,7 +131,7 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
         exitValueItem.setWidth(EDIT_ITEMS_WIDTH);
         declareAsRequired(exitValueItem);
 
-        StaticTextItem exitUnitItem = createStaticUnitItem();
+        StaticTextItem exitUnitItem = createStaticUnitItem(data);
         exitUnitItem.setWidth(EDIT_ITEMS_WIDTH);
         
         FormItem[] items = new FormItem[] { labelItem, exitOperatorItem, exitValueItem, exitUnitItem };
