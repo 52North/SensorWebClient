@@ -237,7 +237,7 @@ class EventSubscriptionController {
         final String userCookie = eventSubscriptionWindow.getUserCookie();
         return RuleBuilder.aRule()
                 .setTitle(subscriptionName)
-                .setRuleType(OVER_UNDERSHOOT)
+                .setRuleType(SENSOR_LOSS)
                 .setCookie(parseInt(userCookie))
                 .setDescription("Auto-Generated Rule from Template.")
                 .setTimeseriesMetadata(createTimeseriesMetadata())

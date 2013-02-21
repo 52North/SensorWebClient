@@ -319,7 +319,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     public SesClientResponse createBasicRule(Rule rule, boolean edit, String oldRuleName) throws Exception {
         try {
             rule.setUuid(randomUUID().toString());
-            LOGGER.debug("createBasicRule with UUID {}: ", rule.getUuid());
+            LOGGER.debug("createBasicRule with UUID {} and timeseries {}", rule.getUuid(), rule.getTimeseriesMetadata());
             if (exists(rule) && !edit) {
                 LOGGER.debug("Cannot create rule: Rule '{}' already exists!", rule.getTitle());
                 return new SesClientResponse();

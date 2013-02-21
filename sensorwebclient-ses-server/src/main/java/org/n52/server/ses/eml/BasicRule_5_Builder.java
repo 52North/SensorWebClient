@@ -114,81 +114,87 @@ public class BasicRule_5_Builder extends BasicRuleBuilder {
      */
     public BasicRule create_BR_5(Rule rule) throws Exception {
 
-        String finalEml;
-        String title = rule.getTitle();
+        try {
+            String finalEml;
+            String title = rule.getTitle();
 
-        // Pre-defined pattern IDs and event names. All names start with the title of the rule.
-        // This is important to have unique names.
-        
-        String incomingObservationsCountPatternId = title + "_incoming_observations_count_stream";
-        String incomingObservationsEventName = title + "_incoming_observations_count";
-        
-        String noObservationsReceivedStreamPatternId = title + "_no_observation_received_stream";
-        String observationsReceivedStreamPatternId = title + "_observation_received_stream";
-        String noObservationsNotificationPatternId = title + "_no_observation_notification";
-        String observationsNotificationPatternId = title + "_observation_notification";
+            // Pre-defined pattern IDs and event names. All names start with the title of the rule.
+            // This is important to have unique names.
+            
+            String incomingObservationsCountPatternId = title + "_incoming_observations_count_stream";
+            String incomingObservationsEventName = title + "_incoming_observations_count";
+            
+            String noObservationsReceivedStreamPatternId = title + "_no_observation_received_stream";
+            String observationsReceivedStreamPatternId = title + "_observation_received_stream";
+            String noObservationsNotificationPatternId = title + "_no_observation_notification";
+            String observationsNotificationPatternId = title + "_observation_notification";
 
-        String noObservationsReceivedEventName = title + "_no_observation_received";
-        String observationsReceivedEventName = title + "_observation_received";
-        
-        String noObservationsOutputName = title + "_no_observation_output";
-        String observationsOutputName = title + "_observation_output";
+            String noObservationsReceivedEventName = title + "_no_observation_received";
+            String observationsReceivedEventName = title + "_observation_received";
+            
+            String noObservationsOutputName = title + "_no_observation_output";
+            String observationsOutputName = title + "_observation_output";
 
 
-        EMLDocument emlTemplateDoc = getEmlTemplate();
-        SimplePatterns simplePatterns = emlTemplateDoc.getEML().getSimplePatterns();
-        SimplePatternType incomingObservationCount = simplePatterns.getSimplePatternArray(0);
-        processSimplePattern(incomingObservationCount, incomingObservationsCountPatternId, incomingObservationsEventName);
-        processPropertyRestrictions(incomingObservationCount, rule.getTimeseriesMetadata());
-        processDurationValue(incomingObservationCount, rule);
-        
-        // XXX check: no user paramter EventCount present in template 
-//        NodeList eventCountList = fstElement.getElementsByTagName(eventCount);
-//        if (eventCountList.getLength() != 0) {
-//            Node eventCountNode = eventCountList.item(0);
-//            eventCountNode.setTextContent(rule.getEntryCount());
-//        }
-        
-        ComplexPatterns complexPatterns = emlTemplateDoc.getEML().getComplexPatterns();
-        ComplexPattern noObservationsReceived = complexPatterns.getComplexPatternArray(0);
-        processComplexPattern(noObservationsReceived, noObservationsReceivedStreamPatternId, noObservationsReceivedEventName);
-        setSelectEventName(noObservationsReceived, incomingObservationsEventName);
-        noObservationsReceived.getFirstPattern().setPatternReference(incomingObservationsCountPatternId);
-        noObservationsReceived.getSecondPattern().setPatternReference(incomingObservationsCountPatternId);
-        processEqualToFilterGuard(noObservationsReceived, incomingObservationsEventName);
+            EMLDocument emlTemplateDoc = getEmlTemplate();
+            SimplePatterns simplePatterns = emlTemplateDoc.getEML().getSimplePatterns();
+            SimplePatternType incomingObservationCount = simplePatterns.getSimplePatternArray(0);
+            processSimplePattern(incomingObservationCount, incomingObservationsCountPatternId, incomingObservationsEventName);
+            processPropertyRestrictions(incomingObservationCount, rule.getTimeseriesMetadata());
+            processDurationValue(incomingObservationCount, rule);
+            
+            // XXX check: no user paramter EventCount present in template 
+//            NodeList eventCountList = fstElement.getElementsByTagName(eventCount);
+//            if (eventCountList.getLength() != 0) {
+//                Node eventCountNode = eventCountList.item(0);
+//                eventCountNode.setTextContent(rule.getEntryCount());
+//            }
+            
+            ComplexPatterns complexPatterns = emlTemplateDoc.getEML().getComplexPatterns();
+            ComplexPattern noObservationsReceived = complexPatterns.getComplexPatternArray(0);
+            processComplexPattern(noObservationsReceived, noObservationsReceivedStreamPatternId, noObservationsReceivedEventName);
+            setSelectEventName(noObservationsReceived, incomingObservationsEventName);
+            noObservationsReceived.getFirstPattern().setPatternReference(incomingObservationsCountPatternId);
+            noObservationsReceived.getSecondPattern().setPatternReference(incomingObservationsCountPatternId);
+            processEqualToFilterGuard(noObservationsReceived, incomingObservationsEventName);
 
-        ComplexPattern observationsReceived = complexPatterns.getComplexPatternArray(1);
-        processComplexPattern(observationsReceived, observationsReceivedStreamPatternId, observationsReceivedEventName);
-        setSelectEventName(observationsReceived, incomingObservationsEventName);
-        observationsReceived.getFirstPattern().setPatternReference(incomingObservationsCountPatternId);
-        observationsReceived.getSecondPattern().setPatternReference(incomingObservationsCountPatternId);
-        processNotEqualToFilterGuard(observationsReceived, incomingObservationsEventName);
-        
-        ComplexPattern noObservationsReceivedNotification = complexPatterns.getComplexPatternArray(2);
-        processComplexPattern(noObservationsReceivedNotification, noObservationsNotificationPatternId, noObservationsReceivedEventName);
-        setOutputName(noObservationsReceivedNotification, noObservationsOutputName);
-        noObservationsReceivedNotification.getFirstPattern().setPatternReference(observationsReceivedStreamPatternId);
-        noObservationsReceivedNotification.getSecondPattern().setPatternReference(noObservationsReceivedStreamPatternId);
+            ComplexPattern observationsReceived = complexPatterns.getComplexPatternArray(1);
+            processComplexPattern(observationsReceived, observationsReceivedStreamPatternId, observationsReceivedEventName);
+            setSelectEventName(observationsReceived, incomingObservationsEventName);
+            observationsReceived.getFirstPattern().setPatternReference(incomingObservationsCountPatternId);
+            observationsReceived.getSecondPattern().setPatternReference(incomingObservationsCountPatternId);
+            processNotEqualToFilterGuard(observationsReceived, incomingObservationsEventName);
+            
+            ComplexPattern noObservationsReceivedNotification = complexPatterns.getComplexPatternArray(2);
+            processComplexPattern(noObservationsReceivedNotification, noObservationsNotificationPatternId, noObservationsReceivedEventName);
+            setOutputName(noObservationsReceivedNotification, noObservationsOutputName);
+            noObservationsReceivedNotification.getFirstPattern().setPatternReference(observationsReceivedStreamPatternId);
+            noObservationsReceivedNotification.getSecondPattern().setPatternReference(noObservationsReceivedStreamPatternId);
 
-        ComplexPattern observationsReceivedNotification = complexPatterns.getComplexPatternArray(3);
-        processComplexPattern(observationsReceivedNotification, observationsNotificationPatternId, observationsReceivedEventName);
-        setOutputName(observationsReceivedNotification, observationsOutputName);
-        observationsReceivedNotification.getFirstPattern().setPatternReference(noObservationsReceivedStreamPatternId);
-        observationsReceivedNotification.getSecondPattern().setPatternReference(observationsReceivedStreamPatternId);
-        
-        finalEml = emlTemplateDoc.xmlText();
+            ComplexPattern observationsReceivedNotification = complexPatterns.getComplexPatternArray(3);
+            processComplexPattern(observationsReceivedNotification, observationsNotificationPatternId, observationsReceivedEventName);
+            setOutputName(observationsReceivedNotification, observationsOutputName);
+            observationsReceivedNotification.getFirstPattern().setPatternReference(noObservationsReceivedStreamPatternId);
+            observationsReceivedNotification.getSecondPattern().setPatternReference(observationsReceivedStreamPatternId);
+            
+            finalEml = emlTemplateDoc.xmlText();
 
-        User user = getUserFrom(rule);
-        BasicRule basicRule = new BasicRule(rule.getTitle(),
-                             "B",
-                             "BR5",
-                             rule.getDescription(),
-                             rule.isPublish(),
-                             user.getId(),
-                             finalEml,
-                             false);
-        basicRule.setUuid(rule.getUuid());
-        return basicRule;
+            User user = getUserFrom(rule);
+            BasicRule basicRule = new BasicRule(rule.getTitle(),
+                                 "B",
+                                 "BR5",
+                                 rule.getDescription(),
+                                 rule.isPublish(),
+                                 user.getId(),
+                                 finalEml,
+                                 false);
+            basicRule.setUuid(rule.getUuid());
+            return basicRule;
+        } catch (Exception e) {
+            // TODO improve exception handling in a whole!
+            LOGGER.error("Error creating rule", e);
+            return null;
+        }
     }
 
     private void processDurationValue(SimplePatternType incomingObservationCount, Rule rule) {

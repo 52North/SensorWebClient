@@ -24,10 +24,12 @@
 package org.n52.shared.serializable.pojos;
 
 import static org.n52.shared.util.MathSymbolUtil.getInverse;
+import static org.n52.shared.util.MathSymbolUtil.getSymbolForIndex;
 
 import java.io.Serializable;
 
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
+import org.n52.shared.util.MathSymbolUtil;
 
 public class Rule implements Serializable {
     
@@ -83,6 +85,28 @@ public class Rule implements Serializable {
     private String exitTime;
     private String entryTimeUnit;
     private String exitTimeUnit;
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Rule: [ ");
+        sb.append("uuid: ").append(uuid).append(", ");
+        sb.append("title: ").append(title).append(", ");
+        sb.append("notificationType: ").append(notificationType).append(", ");
+        sb.append("entryFilter: ");
+        sb.append(getFilterValueString(entryOperatorIndex, entryValue, entryUnit));
+        sb.append("exitFilter: ");
+        sb.append(getFilterValueString(exitOperatorIndex, exitValue, exitUnit));
+        sb.append("type: ").append(ruleType.name()).append(", ");
+        return sb.append(" ]").toString();
+    }
+
+    private String getFilterValueString(int operator, String value, String unit) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getSymbolForIndex(operator)).append(" ");
+        sb.append(value).append(" (").append(unit).append("), ");
+        return sb.toString();
+    }
 
     public Rule() {
         //
