@@ -143,9 +143,12 @@ class EventSubscriptionController {
         } else if (getSelectedRuleTemplate() == SENSOR_LOSS) {
             sb.append("_").append(SENSOR_LOSS.toString());
         }
-        String toReplace = replaceAllUmlauts(sb.toString());
-        selectedAbonnementName = replaceNonAlphaNumerics(toReplace);
+        selectedAbonnementName = normalize(sb.toString());
         return selectedAbonnementName;
+    }
+    
+    String normalize(String toNormalize) {
+        return replaceNonAlphaNumerics(replaceAllUmlauts(toNormalize));
     }
 
     String replaceAllUmlauts(String toReplace) {
