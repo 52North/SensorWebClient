@@ -173,9 +173,12 @@ public class SOSConnector {
             ExceptionType[] exceptionArray = exRepDoc.getExceptionReport().getExceptionArray();
             throw new Exception(exceptionArray[0].getExceptionTextArray(0));
         }
-        return null;
+        LOGGER.warn("Unexpected response: {}", response.schemaType());
+        ObservationCollectionDocument emptyCollection = ObservationCollectionDocument.Factory.newInstance();
+        emptyCollection.addNewObservationCollection(); // adds an empty member array
+        return emptyCollection;
     }
-
+    
     /**
      * Replace special characters.
      * 
