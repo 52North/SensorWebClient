@@ -67,30 +67,37 @@ public class DataControlsSes extends DataControls {
 
     private HLayout topLayout;
 
+    @Deprecated
     private HLayout bottomLayout;
 
+    @Deprecated
     private IButton loginButton;
 
+    @Deprecated
     private IButton logoutButton;
 
+    @Deprecated
     private IButton registerButton;
 
     private IButton getPasswordButton;
 
     private IButton editProfileButton;
 
+    @Deprecated
     private IButton aboRuleButton;
 
+    @Deprecated
     private IButton createSimpleRuleButton;
 
+    @Deprecated
     private IButton createComplexRuleButton;
 
+    @Deprecated
     private IButton editRulesButton;
-
-    private IButton subscriptionsButton;
 
     private IButton manageUserButton;
 
+    @Deprecated
     private IButton manageRulesButton;
 
     private IButton searchRulesButton;
@@ -128,8 +135,8 @@ public class DataControlsSes extends DataControls {
         this.innerLayout.setTop(0);
         this.topLayout = new HLayout();
         this.topLayout.setTabIndex(-1);
-        this.bottomLayout = new HLayout();
-        this.bottomLayout.setTabIndex(-1);
+//        this.bottomLayout = new HLayout();
+//        this.bottomLayout.setTabIndex(-1);
 
         // loginButton
         this.loginButton = new IButton(i18n.userLogin());
@@ -232,16 +239,16 @@ public class DataControlsSes extends DataControls {
         });
 
         // subscriptionsButton
-        this.subscriptionsButton = new IButton(i18n.subscriptions());
-        this.subscriptionsButton.setWidth(this.buttonWidth);
-        this.subscriptionsButton.setShowRollOver(true);
-        this.subscriptionsButton.setShowDown(true);
-        this.subscriptionsButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.USER_SUBSCRIPTIONS));
-                highlightSelectedButton(subscriptionsButton);
-            }
-        });
+//        this.subscriptionsButton = new IButton(i18n.subscriptions());
+//        this.subscriptionsButton.setWidth(this.buttonWidth);
+//        this.subscriptionsButton.setShowRollOver(true);
+//        this.subscriptionsButton.setShowDown(true);
+//        this.subscriptionsButton.addClickHandler(new ClickHandler() {
+//            public void onClick(ClickEvent event) {
+//                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.USER_SUBSCRIPTIONS));
+//                highlightSelectedButton(subscriptionsButton);
+//            }
+//        });
 
         // manageUserButton
         this.manageUserButton = new IButton(i18n.userManagement());
@@ -315,7 +322,7 @@ public class DataControlsSes extends DataControls {
         boolean firstTime = true;
 
         this.topLayout.removeMembers(this.topLayout.getMembers());
-        this.bottomLayout.removeMembers(this.bottomLayout.getMembers());
+//        this.bottomLayout.removeMembers(this.bottomLayout.getMembers());
         this.innerLayout.removeMembers(this.innerLayout.getMembers());
 
         if (!firstTime) {
@@ -327,40 +334,38 @@ public class DataControlsSes extends DataControls {
         switch (this.role) {
         case ADMIN:
             this.topLayout.addMember(this.manageUserButton);
-            this.topLayout.addMember(this.createSimpleRuleButton);
-            this.topLayout.addMember(this.aboRuleButton);
-            this.topLayout.addMember(this.manageRulesButton);
+//            this.topLayout.addMember(this.createSimpleRuleButton);
+//            this.topLayout.addMember(this.aboRuleButton);
+//            this.topLayout.addMember(this.manageRulesButton);
             this.topLayout.addMember(this.searchRulesButton);
 
-            this.bottomLayout.addMember(this.createComplexRuleButton);
-            this.bottomLayout.addMember(this.subscriptionsButton);
-            this.bottomLayout.addMember(this.helpButton);
-            this.bottomLayout.addMember(this.logoutButton);
-            break;
-
-        case USER:
-            this.topLayout.addMember(this.aboRuleButton);
-            this.topLayout.addMember(this.createSimpleRuleButton);
-            this.topLayout.addMember(this.subscriptionsButton);
+//            this.bottomLayout.addMember(this.createComplexRuleButton);
             this.topLayout.addMember(this.helpButton);
-
-            this.bottomLayout.addMember(this.editRulesButton);
-            this.bottomLayout.addMember(this.createComplexRuleButton);
-            this.bottomLayout.addMember(this.editProfileButton);
-            this.bottomLayout.addMember(this.searchRulesButton);
-            this.bottomLayout.addMember(this.logoutButton);
+//            this.bottomLayout.addMember(this.logoutButton);
             break;
 
-        default:
-            this.topLayout.addMember(this.loginButton);
-            this.topLayout.addMember(this.helpButton);
-            this.bottomLayout.addMember(this.registerButton);
-            this.bottomLayout.addMember(this.getPasswordButton);
-            break;
+//        case USER:
+//            this.topLayout.addMember(this.aboRuleButton);
+//            this.topLayout.addMember(this.createSimpleRuleButton);
+//            this.topLayout.addMember(this.helpButton);
+//
+//            this.bottomLayout.addMember(this.editRulesButton);
+//            this.bottomLayout.addMember(this.createComplexRuleButton);
+//            this.bottomLayout.addMember(this.editProfileButton);
+//            this.bottomLayout.addMember(this.searchRulesButton);
+//            this.bottomLayout.addMember(this.logoutButton);
+//            break;
+
+//        default:
+//            this.topLayout.addMember(this.loginButton);
+//            this.topLayout.addMember(this.helpButton);
+//            this.bottomLayout.addMember(this.registerButton);
+//            this.bottomLayout.addMember(this.getPasswordButton);
+//            break;
         }
 
         this.innerLayout.addMember(this.topLayout);
-        this.innerLayout.addMember(this.bottomLayout);
+//        this.innerLayout.addMember(this.bottomLayout);
         addMember(this.innerLayout);
     }
     
@@ -387,7 +392,6 @@ public class DataControlsSes extends DataControls {
         this.createSimpleRuleButton.setSelected(false);
         this.createComplexRuleButton.setSelected(false);
         this.editRulesButton.setSelected(false);
-        this.subscriptionsButton.setSelected(false);
         this.manageUserButton.setSelected(false);
         this.manageRulesButton.setSelected(false);
         this.searchRulesButton.setSelected(false);
@@ -490,14 +494,6 @@ public class DataControlsSes extends DataControls {
 
     public void setEditRulesButton(IButton editRulesButton) {
         this.editRulesButton = editRulesButton;
-    }
-
-    public IButton getSubscriptionsButton() {
-        return subscriptionsButton;
-    }
-
-    public void setSubscriptionsButton(IButton subscriptionsButton) {
-        this.subscriptionsButton = subscriptionsButton;
     }
 
     public IButton getManageUserButton() {
