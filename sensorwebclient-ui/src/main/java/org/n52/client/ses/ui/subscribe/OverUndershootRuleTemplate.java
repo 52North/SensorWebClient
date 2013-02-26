@@ -4,8 +4,8 @@ import static com.smartgwt.client.types.Alignment.CENTER;
 import static com.smartgwt.client.types.TitleOrientation.TOP;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.OVER_UNDERSHOOT;
-import static org.n52.shared.serializable.pojos.Rule.GREATER_THAN;
-import static org.n52.shared.serializable.pojos.Rule.LESS_THAN_OR_EQUAL_TO;
+import static org.n52.shared.util.MathSymbolUtil.GREATER_THAN_INT;
+import static org.n52.shared.util.MathSymbolUtil.LESS_THAN_OR_EQUAL_TO_INT;
 import static org.n52.shared.util.MathSymbolUtil.getInverse;
 import static org.n52.shared.util.MathSymbolUtil.getMathSymbols;
 import static org.n52.shared.util.MathSymbolUtil.getSymbolForIndex;
@@ -43,12 +43,20 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
 
     @Override
     public Canvas createEditCanvas() {
+        clearTemplate();
         controller.clearSelectionData();
         Layout layout = new VLayout();
         layout.setStyleName("n52_sensorweb_client_create_abo_template_overundershootcondition");
         layout.addMember(alignVerticalCenter(createEntryConditionEditCanvas()));
         layout.addMember(alignVerticalCenter(createExitConditionEditCanvas()));
         return layout;
+    }
+
+    private void clearTemplate() {
+        exitOperatorItem = null;
+        exitValueItem = null;
+        entryConditionForm = null;
+        exitConditionForm = null;
     }
 
     @Override
@@ -60,7 +68,7 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
         StaticTextItem labelItem = createLabelItem(i18n.enterCondition());
         
         OverUndershootSelectionData data = controller.getOverUndershootEntryConditions();
-        SelectItem entryOperatorItem = createOperatorItem(data, GREATER_THAN);
+        SelectItem entryOperatorItem = createOperatorItem(data, GREATER_THAN_INT);
         entryOperatorItem.addChangedHandler(createEntryOperatorChangedHandler());
         entryOperatorItem.setWidth(EDIT_ITEMS_WIDTH);
 
@@ -122,7 +130,7 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
         StaticTextItem labelItem = createLabelItem(i18n.exitCondition());
 
         OverUndershootSelectionData data = controller.getOverUndershootExitConditions();
-        exitOperatorItem = createOperatorItem(data, LESS_THAN_OR_EQUAL_TO);
+        exitOperatorItem = createOperatorItem(data, LESS_THAN_OR_EQUAL_TO_INT);
         exitOperatorItem.addChangedHandler(createExitOperatorChangedHandler());
         exitOperatorItem.setWidth(EDIT_ITEMS_WIDTH);
 
@@ -161,14 +169,14 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
         };
     }
     
-    private SelectItem createOperatorItem(OverUndershootSelectionData data, int operatorIndex) {
+    private SelectItem createOperatorItem(OverUndershootSelectionData data, int initialOperator) {
         SelectItem operatorItem = new SelectItem();
         operatorItem.setTitle(i18n.operator());
         operatorItem.setTitleOrientation(TOP);
         operatorItem.setTextAlign(CENTER);
         
         operatorItem.setValueMap(getMathSymbols());
-        String operator = getSymbolForIndex(operatorIndex);
+        String operator = getSymbolForIndex(initialOperator);
         if (getMathSymbols().containsKey(operator)) {
             operatorItem.setDefaultValue(operator);
             data.setOperator(operator);

@@ -23,59 +23,12 @@
  */
 package org.n52.server.ses.util;
 
-import static org.n52.shared.serializable.pojos.Rule.EQUAL_TO;
-import static org.n52.shared.serializable.pojos.Rule.GREATER_THAN;
-import static org.n52.shared.serializable.pojos.Rule.GREATER_THAN_OR_EQUAL_TO;
-import static org.n52.shared.serializable.pojos.Rule.LESS_THAN;
-import static org.n52.shared.serializable.pojos.Rule.LESS_THAN_OR_EQUAL_TO;
-import static org.n52.shared.serializable.pojos.Rule.NOT_EQUAL_TO;
-
 import org.n52.shared.serializable.pojos.BasicRule;
 import org.n52.shared.serializable.pojos.ComplexRule;
 
 public class RulesUtil {
-
-    /**
-     * 
-     * @param anOperator
-     * @param anotherOperator
-     * @return true if op2 is the reverse operator of op1
-     */
-    public static boolean isReverseOperators(int anOperator, int anotherOperator){
-        
-        boolean result = false;
-        
-        switch(anOperator){
-        case EQUAL_TO:
-            if (anotherOperator == NOT_EQUAL_TO) result = true; 
-            break;
-            
-        case NOT_EQUAL_TO:
-            if (anotherOperator == EQUAL_TO) result = true;
-            break;
-            
-        case GREATER_THAN:
-            if (anotherOperator == LESS_THAN_OR_EQUAL_TO) result = true;
-            break;
-            
-        case LESS_THAN:
-            if (anotherOperator == GREATER_THAN_OR_EQUAL_TO) result = true;
-            break;
-            
-        case GREATER_THAN_OR_EQUAL_TO:
-            if (anotherOperator == LESS_THAN) result = true;
-            break;
-            
-        case LESS_THAN_OR_EQUAL_TO:
-            if (anotherOperator == GREATER_THAN) result = true;
-            break;
-        }
-        
-        return result;
-    }
     
     /**
-     * 
      * @param oldRule
      * @param newRule
      * @return true if only description and/or the publish status has changed.

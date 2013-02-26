@@ -1,13 +1,6 @@
 
 package org.n52.shared.util;
 
-import static org.n52.shared.serializable.pojos.Rule.EQUAL_TO;
-import static org.n52.shared.serializable.pojos.Rule.GREATER_THAN;
-import static org.n52.shared.serializable.pojos.Rule.GREATER_THAN_OR_EQUAL_TO;
-import static org.n52.shared.serializable.pojos.Rule.LESS_THAN;
-import static org.n52.shared.serializable.pojos.Rule.LESS_THAN_OR_EQUAL_TO;
-import static org.n52.shared.serializable.pojos.Rule.NOT_EQUAL_TO;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -16,17 +9,49 @@ import java.util.Map;
 import org.n52.shared.serializable.pojos.Rule;
 
 public class MathSymbolUtil {
+    
+    /*
+     * For easy RPC serialization
+     */
+
+    public static final int EQUAL_TO_INT = 0;
+
+    public static final int NOT_EQUAL_TO_INT = 1;
+    
+    public static final int GREATER_THAN_INT = 2;
+    
+    public static final int LESS_THAN_INT = 3;
+    
+    public static final int GREATER_THAN_OR_EQUAL_TO_INT = 4;
+    
+    public static final int LESS_THAN_OR_EQUAL_TO_INT = 5;
+    
+    /*
+     * Normal constants
+     */
+    
+    private static final String EQUAL_SYMBOL = "=";
+    
+    private static final String NOT_EQUAL_SYMBOL = "<>";
+    
+    private static final String GREATER_THAN_SYMBOL = ">";
+    
+    private static final String LESS_THAN_SYMBOL = "&lt;"; // IE doesn't like '<'
+    
+    private static final String GREATER_EQUAL_SYMBOL = ">=";
+    
+    private static final String LESS_EQUAL_SYMBOL = "<=";
 
     private static LinkedHashMap<String, String> mathSymbols = createMathSymbolsMap();
 
     private static LinkedHashMap<String, String> createMathSymbolsMap() {
         Map<String, String> symbolsHashMap = new HashMap<String, String>();
-        symbolsHashMap.put("=", "=");
-        symbolsHashMap.put("<>", "<>");
-        symbolsHashMap.put(">", ">");
-        symbolsHashMap.put("<", "<");
-        symbolsHashMap.put(">=", ">=");
-        symbolsHashMap.put("<=", "<=");
+        symbolsHashMap.put(EQUAL_SYMBOL, EQUAL_SYMBOL);
+        symbolsHashMap.put(NOT_EQUAL_SYMBOL, NOT_EQUAL_SYMBOL);
+        symbolsHashMap.put(GREATER_THAN_SYMBOL, GREATER_THAN_SYMBOL);
+        symbolsHashMap.put(LESS_THAN_SYMBOL, LESS_THAN_SYMBOL);
+        symbolsHashMap.put(GREATER_EQUAL_SYMBOL, GREATER_EQUAL_SYMBOL);
+        symbolsHashMap.put(LESS_EQUAL_SYMBOL, LESS_EQUAL_SYMBOL);
         Map<String, String> unmodifiableMap = Collections.unmodifiableMap(symbolsHashMap);
         return new LinkedHashMap<String, String>(unmodifiableMap);
     }
@@ -46,23 +71,23 @@ public class MathSymbolUtil {
      *         found.
      */
     public static int getIndexFor(String symbol) {
-        if (symbol.equals("=")) {
-            return EQUAL_TO;
+        if (symbol.equals(EQUAL_SYMBOL)) {
+            return EQUAL_TO_INT;
         }
-        else if (symbol.equals("<>")) {
-            return NOT_EQUAL_TO;
+        else if (symbol.equals(NOT_EQUAL_SYMBOL)) {
+            return NOT_EQUAL_TO_INT;
         }
-        else if (symbol.equals(">")) {
-            return GREATER_THAN;
+        else if (symbol.equals(GREATER_THAN_SYMBOL)) {
+            return GREATER_THAN_INT;
         }
-        else if (symbol.equals("<")) {
-            return LESS_THAN;
+        else if (symbol.equals(LESS_THAN_SYMBOL)) {
+            return LESS_THAN_INT;
         }
-        else if (symbol.equals(">=")) {
-            return GREATER_THAN_OR_EQUAL_TO;
+        else if (symbol.equals(GREATER_EQUAL_SYMBOL)) {
+            return GREATER_THAN_OR_EQUAL_TO_INT;
         }
-        else if (symbol.equals("<=")) {
-            return LESS_THAN_OR_EQUAL_TO;
+        else if (symbol.equals(LESS_EQUAL_SYMBOL)) {
+            return LESS_THAN_OR_EQUAL_TO_INT;
         }
         else {
             return -1;
@@ -83,23 +108,23 @@ public class MathSymbolUtil {
      * @return the inverse math symbol, or an empty String if no symbol matches.
      */
     public static String getInverse(String symbol) {
-        if (symbol.equals("=")) {
-            return "<>";
+        if (symbol.equals(EQUAL_SYMBOL)) {
+            return NOT_EQUAL_SYMBOL;
         }
-        else if (symbol.equals("<>")) {
-            return "=";
+        else if (symbol.equals(NOT_EQUAL_SYMBOL)) {
+            return EQUAL_SYMBOL;
         }
-        else if (symbol.equals(">")) {
-            return "<=";
+        else if (symbol.equals(GREATER_THAN_SYMBOL)) {
+            return LESS_EQUAL_SYMBOL;
         }
-        else if (symbol.equals("<")) {
-            return ">=";
+        else if (symbol.equals(LESS_THAN_SYMBOL)) {
+            return GREATER_EQUAL_SYMBOL;
         }
-        else if (symbol.equals(">=")) {
-            return "&lt;";
+        else if (symbol.equals(GREATER_EQUAL_SYMBOL)) {
+            return LESS_THAN_SYMBOL;
         }
-        else if (symbol.equals("<=")) {
-            return ">";
+        else if (symbol.equals(LESS_EQUAL_SYMBOL)) {
+            return GREATER_THAN_SYMBOL;
         }
         else {
             return "";
@@ -117,22 +142,22 @@ public class MathSymbolUtil {
      */
     public static int getSymbolIndexForFilter(String fesFilter) {
         if (fesFilter.equals("fes:PropertyIsLessThan")) {
-            return LESS_THAN;
+            return LESS_THAN_INT;
         }
         else if (fesFilter.equals("fes:PropertyIsGreaterThan")) {
-            return GREATER_THAN;
+            return GREATER_THAN_INT;
         }
         else if (fesFilter.equals("fes:PropertyIsEqualTo")) {
-            return EQUAL_TO;
+            return EQUAL_TO_INT;
         }
         else if (fesFilter.equals("fes:PropertyIsGreaterThanOrEqualTo")) {
-            return GREATER_THAN_OR_EQUAL_TO;
+            return GREATER_THAN_OR_EQUAL_TO_INT;
         }
         else if (fesFilter.equals("fes:PropertyIsLessThanOrEqualTo")) {
-            return LESS_THAN_OR_EQUAL_TO;
+            return LESS_THAN_OR_EQUAL_TO_INT;
         }
         else if (fesFilter.equals("fest:PropertyIsNotEqualTo")) {
-            return NOT_EQUAL_TO;
+            return NOT_EQUAL_TO_INT;
         }
         return -1;
     }
@@ -147,22 +172,22 @@ public class MathSymbolUtil {
      */
     public static String getSymbolForIndex(int symbolIndex) {
         if (symbolIndex == 0) {
-            return "=";
+            return EQUAL_SYMBOL;
         }
         else if (symbolIndex == 1) {
-            return "<>";
+            return NOT_EQUAL_SYMBOL;
         }
         else if (symbolIndex == 2) {
-            return ">";
+            return GREATER_THAN_SYMBOL;
         }
         else if (symbolIndex == 3) {
-            return "<";
+            return LESS_THAN_SYMBOL;
         }
         else if (symbolIndex == 4) {
-            return ">=";
+            return GREATER_EQUAL_SYMBOL;
         }
         else if (symbolIndex == 5) {
-            return "<=";
+            return LESS_EQUAL_SYMBOL;
         }
         return "";
     }
@@ -186,22 +211,22 @@ public class MathSymbolUtil {
      * @return the appropriate filter property with prefix <code>fes:</code>
      */
     public static String getFesFilterFor(int symbolIndex) {
-        if (symbolIndex == LESS_THAN) {
+        if (symbolIndex == LESS_THAN_INT) {
             return "fes:PropertyIsLessThan";
         }
-        else if (symbolIndex == GREATER_THAN) {
+        else if (symbolIndex == GREATER_THAN_INT) {
             return "fes:PropertyIsGreaterThan";
         }
-        else if (symbolIndex == EQUAL_TO) {
+        else if (symbolIndex == EQUAL_TO_INT) {
             return "fes:PropertyIsEqualTo";
         }
-        else if (symbolIndex == GREATER_THAN_OR_EQUAL_TO) {
+        else if (symbolIndex == GREATER_THAN_OR_EQUAL_TO_INT) {
             return "fes:PropertyIsGreaterThanOrEqualTo";
         }
-        else if (symbolIndex == LESS_THAN_OR_EQUAL_TO) {
+        else if (symbolIndex == LESS_THAN_OR_EQUAL_TO_INT) {
             return "fes:PropertyIsLessThanOrEqualTo";
         }
-        else if (symbolIndex == NOT_EQUAL_TO) {
+        else if (symbolIndex == NOT_EQUAL_TO_INT) {
             return "fes:PropertyIsNotEqualTo";
         }
         else {

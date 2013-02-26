@@ -29,24 +29,11 @@ import static org.n52.shared.util.MathSymbolUtil.getSymbolForIndex;
 import java.io.Serializable;
 
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
-import org.n52.shared.util.MathSymbolUtil;
 
 public class Rule implements Serializable {
     
     private static final long serialVersionUID = -1913430711568432313L;
 
-    public static final int EQUAL_TO = 0;
-
-    public static final int NOT_EQUAL_TO = 1;
-    
-    public static final int GREATER_THAN = 2;
-    
-    public static final int LESS_THAN = 3;
-    
-    public static final int GREATER_THAN_OR_EQUAL_TO = 4;
-    
-    public static final int LESS_THAN_OR_EQUAL_TO = 5;
-    
     private SimpleRuleType ruleType;
 
     private String uuid;
