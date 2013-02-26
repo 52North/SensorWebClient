@@ -25,15 +25,16 @@
 package org.n52.client.ses.ui.subscribe;
 
 import static java.lang.Integer.parseInt;
+import static org.n52.client.util.CookieManager.getLoggedInUserId;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.OVER_UNDERSHOOT;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.SENSOR_LOSS;
 import static org.n52.shared.util.MathSymbolUtil.getIndexFor;
 
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
-import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 import org.n52.shared.serializable.pojos.Rule;
 import org.n52.shared.serializable.pojos.RuleBuilder;
+import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 
 class EventSubscriptionController {
 
@@ -216,11 +217,10 @@ class EventSubscriptionController {
         final String subscriptionName = selectedAbonnementName;
         final OverUndershootSelectionData entryConditions = overUndershootEntryConditions;
         final OverUndershootSelectionData exitConditions = overUndershootExitConditions;
-        final String userCookie = eventSubscriptionWindow.getUserCookie();
         return RuleBuilder.aRule()
                 .setTitle(subscriptionName)
                 .setRuleType(OVER_UNDERSHOOT)
-                .setCookie(parseInt(userCookie))
+                .setUserId(parseInt(getLoggedInUserId()))
                 .setDescription("Auto-Generated Rule from Template.")
                 .setTimeseriesMetadata(createTimeseriesMetadata())
                 .setEntryOperatorIndex(getIndexFor(entryConditions.getOperator()))
@@ -237,11 +237,10 @@ class EventSubscriptionController {
     private Rule createSensorLossRule() {
         final String subscriptionName = selectedAbonnementName;
         final SensorLossSelectionData condition = sensorLossConditions;
-        final String userCookie = eventSubscriptionWindow.getUserCookie();
         return RuleBuilder.aRule()
                 .setTitle(subscriptionName)
                 .setRuleType(SENSOR_LOSS)
-                .setCookie(parseInt(userCookie))
+                .setUserId(parseInt(getLoggedInUserId()))
                 .setDescription("Auto-Generated Rule from Template.")
                 .setTimeseriesMetadata(createTimeseriesMetadata())
                 .setEntryTime(condition.getValue())

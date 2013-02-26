@@ -77,6 +77,9 @@ public class EventSubscriptionWindow extends LoginWindow {
     }
 
     protected void initializeContent() {
+        if (content != null) {
+            removeItem(content);
+        }
         content = new HLayout();
         content.setStyleName("n52_sensorweb_client_create_abo_window_content");
         content.addMember(createNewEventAbonnementCanvas());
