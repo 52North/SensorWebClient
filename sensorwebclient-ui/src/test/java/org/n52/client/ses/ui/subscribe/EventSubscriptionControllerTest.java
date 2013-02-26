@@ -34,5 +34,12 @@ public class EventSubscriptionControllerTest {
     {
         assertThat(controllerUnderTest.replaceAllUmlauts("ÜüÖöÄäß"), is("UeueOEoeAEaess"));
     }
+    
+    @Test public void 
+    shouldNormalizeUmlautsAndNonAlphaNumerics()
+    {
+        assertThat(controllerUnderTest.normalize("ÜüÖöÄäß#'+`´^°!§$%&/()=?-ABCNksdfjiu098723049234lkjdsf"), 
+                   is("UeueOEoeAEaess__________________ABCNksdfjiu098723049234lkjdsf"));
+    }
 
 }
