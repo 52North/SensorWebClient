@@ -16,7 +16,7 @@ public class RuleBuilder {
     private String entryUnit;
     private String exitValue;
     private String exitUnit;
-    private int cookieAsInt;
+    private int userId;
     private String entrycount;
     private String exitCount;
     private String entryTime;
@@ -102,8 +102,8 @@ public class RuleBuilder {
         return this;
     }
 
-    public RuleBuilder setCookie(int cookieAsInt) {
-        this.cookieAsInt = cookieAsInt;
+    public RuleBuilder setUserId(int userId) {
+        this.userId = userId;
         return this;
     }
     
@@ -153,7 +153,7 @@ public class RuleBuilder {
         rule.setEntryUnit(entryUnit);
         rule.setEntryValue(entryValue);
         rule.setTitle(title);
-        rule.setUserID(cookieAsInt);
+        rule.setUserID(userId);
         return rule;
     }
 
