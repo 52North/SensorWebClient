@@ -201,6 +201,11 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
     public SesClientResponse login(String userName, String password) throws Exception {
         return service.login(userName, password);
     }
+    
+    @Override
+    public SesClientResponse validateLoginSession(LoginSession loginSession) throws Exception {
+        return service.validateLoginSession(loginSession);
+    }
 
     @Override
     public SesClientResponse resetPassword(String userName, String email) throws Exception {

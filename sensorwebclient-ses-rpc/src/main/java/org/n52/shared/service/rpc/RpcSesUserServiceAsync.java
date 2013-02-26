@@ -59,7 +59,7 @@ import org.n52.shared.session.LoginSession;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
- * TODO extract admin operations 
+ * TODO extract admin operations
  */
 public interface RpcSesUserServiceAsync {
 
@@ -80,6 +80,15 @@ public interface RpcSesUserServiceAsync {
      * @see SesUserService#login(String, String)
      */
     void login(String userName, String password, AsyncCallback<SesClientResponse> callback);
+
+    /**
+     * See {@link SesUserService#validateLoginSession(LoginSession)} for documentation.
+     * 
+     * @param callback
+     *        a callback handling the server response.
+     * @see SesUserService#validateLoginSession(LoginSession)
+     */
+    void validateLoginSession(LoginSession loginSession, AsyncCallback<SesClientResponse> callback);
 
     /**
      * See {@link SesUserService#resetPassword(String, String)} for documentation.

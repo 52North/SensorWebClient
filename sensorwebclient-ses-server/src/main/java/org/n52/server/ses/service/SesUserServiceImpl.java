@@ -27,6 +27,7 @@ package org.n52.server.ses.service;
 import static org.n52.server.ses.hibernate.HibernateUtil.getSubscriptionfromUserID;
 import static org.n52.shared.responses.SesClientResponseType.LAST_ADMIN;
 import static org.n52.shared.responses.SesClientResponseType.LOGIN_ACTIVATED;
+import static org.n52.shared.responses.SesClientResponseType.LOGIN_ADMIN;
 import static org.n52.shared.responses.SesClientResponseType.LOGIN_LOCKED;
 import static org.n52.shared.responses.SesClientResponseType.LOGIN_NAME;
 import static org.n52.shared.responses.SesClientResponseType.LOGIN_OK;
@@ -216,6 +217,7 @@ public class SesUserServiceImpl implements SesUserService {
         try {
             LOGGER.debug("login user '{}'.", userName);
             if ( !HibernateUtil.existsUserName(userName)) {
+                LOGGER.info("User unknown.");
                 return new SesClientResponse(LOGIN_NAME);
             }
             User u = HibernateUtil.findUserBy(userName);
@@ -284,6 +286,24 @@ public class SesUserServiceImpl implements SesUserService {
             throw e; // last chance to log on server side
         }
     }
+    
+    public SesClientResponse validateLoginSession(LoginSession loginSession) throws Exception {
+        try {
+            if (sessionStore.hasValidLoginSession(loginSession)) {
+                if (sessionStore.isLoggedInAdmin(loginSession)) {
+                    return new SesClientResponse(LOGIN_ADMIN);
+                } else {
+                    return new SesClientResponse(LOGIN_OK);
+                }
+            } else {
+                return new SesClientResponse(LOGOUT);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Exception occured on server side.", e);
+            throw e; // last chance to log on server side
+        }
+    }
+    
 
     @Override
     public SesClientResponse resetPassword(String userName, String email) throws Exception {
@@ -328,6 +348,7 @@ public class SesUserServiceImpl implements SesUserService {
     @Override
     public UserDTO getUser(LoginSession loginSession) throws Exception {
         try {
+            sessionStore.validateIncomingLoginSession(loginSession);
             LOGGER.debug("Get user with id '{}'", sessionStore.getLoggedInUserId(loginSession));
             int userID = Integer.valueOf(sessionStore.getLoggedInUserId(loginSession));
             return createUserDTO(HibernateUtil.getUserBy(userID));

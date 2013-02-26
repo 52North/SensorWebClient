@@ -24,6 +24,9 @@
 
 package org.n52.client.ses.ctrl;
 
+import static org.n52.client.util.CookieManager.getCurrentLoginSession;
+import static org.n52.client.util.CookieManager.hasActiveLoginSession;
+
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.ServiceController;
 import org.n52.client.ses.event.CopyEvent;
@@ -96,6 +99,9 @@ public class SesController extends ServiceController {
     public SesController() {
         this.setRm(new SesRequestManager());
         new SesControllerEventBroker();
+        if (hasActiveLoginSession()) {
+            rm.validateLoginSession(getCurrentLoginSession());
+        }
     }
 
     public void setRm(SesRequestManager rm) {
