@@ -18,7 +18,6 @@ public class ApplyCancelButtonLayout extends HLayout {
     private String loaderImg = "../img/loader_wide.gif";
     
     public ApplyCancelButtonLayout() {
-        setAutoHeight();
         loadingSpinner = createLoadingSpinner();
         addMember(loadingSpinner);
     }
