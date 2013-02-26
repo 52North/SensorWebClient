@@ -24,6 +24,15 @@
 
 package org.n52.shared.serializable.pojos;
 
+
 public enum UserRole {
-    NOT_REGISTERED_USER, USER, ADMIN, LOGOUT
+    NOT_REGISTERED_USER, USER, ADMIN, LOGOUT;
+
+    public static boolean isAdmin(String role) {
+        try {
+            return valueOf(role) == ADMIN;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
 }
