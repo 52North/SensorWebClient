@@ -62,6 +62,15 @@ public interface SesUserService {
     public SesClientResponse login(String userName, String password) throws Exception;
 
     /**
+     * @param loginSession
+     *        the active login session.
+     * @return the user information as data transfer object.
+     * @throws Exception
+     *         if processing request fails.
+     */
+    public SesClientResponse validateLoginSession(LoginSession loginSession) throws Exception;
+
+    /**
      * Starts process of resetting a user's password. The given email address has to match with that address
      * belonging to the stored user.
      * 
