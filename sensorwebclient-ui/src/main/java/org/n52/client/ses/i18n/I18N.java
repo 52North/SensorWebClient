@@ -435,5 +435,7 @@ public interface I18N extends Constants {
 	String deleteSubscriptionQuestion();
 
 	String validateTextBoxes();
+
+    String loginIsOrHasBecomeInvalid();
     
 }
