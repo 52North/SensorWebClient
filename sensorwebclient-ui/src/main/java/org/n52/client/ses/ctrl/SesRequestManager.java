@@ -32,6 +32,8 @@ import static org.n52.client.util.CookieManager.destroyCurrentLoginSession;
 import static org.n52.client.util.CookieManager.getCurrentLoginSession;
 import static org.n52.shared.responses.SesClientResponseType.ERROR;
 import static org.n52.shared.responses.SesClientResponseType.LAST_ADMIN;
+import static org.n52.shared.responses.SesClientResponseType.LOGIN_OK;
+import static org.n52.shared.responses.SesClientResponseType.LOGIN_USER;
 import static org.n52.shared.responses.SesClientResponseType.LOGOUT;
 import static org.n52.shared.responses.SesClientResponseType.MAIL;
 import static org.n52.shared.responses.SesClientResponseType.NEW_PASSWORD_OK;
@@ -80,6 +82,7 @@ import org.n52.shared.service.rpc.RpcSesTimeseriesToFeedService;
 import org.n52.shared.service.rpc.RpcSesTimeseriesToFeedServiceAsync;
 import org.n52.shared.service.rpc.RpcSesUserService;
 import org.n52.shared.service.rpc.RpcSesUserServiceAsync;
+import org.n52.shared.session.LoginSession;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Cookies;
@@ -149,7 +152,7 @@ public class SesRequestManager extends RequestManager {
             }
 
             public void onSuccess(SesClientResponse response) {
-                if (response.getType() == SesClientResponseType.LOGIN_OK) {
+                if (response.getType() == LOGIN_OK) {
                     UserDTO user = response.getUser();
 
                     CookieManager.setCookiesFrom(response.getLoginSession());
@@ -160,7 +163,7 @@ public class SesRequestManager extends RequestManager {
                     if (user.isPasswordChanged()) {
                         SC.say(i18n.passwordChanged());
                     }
-                    if (user.getRole().equals(UserRole.ADMIN)) {
+                    if (user.getRole().equals(ADMIN)) {
                         String names = null;
                         ArrayList<String> list = response.getComplexRules();
 
@@ -174,7 +177,7 @@ public class SesRequestManager extends RequestManager {
                     EventBus.getMainEventBus().fireEvent(new InformUserEvent(response));
                     EventBus.getMainEventBus().fireEvent(new SetRoleEvent(user.getRole()));
                 }
-                else if (response.getType() == SesClientResponseType.LOGIN_USER) {
+                else if (response.getType() == LOGIN_USER) {
                     SC.say(i18n.onlyAdminsAllowedToLogin());
                 }
                 else {
@@ -184,6 +187,30 @@ public class SesRequestManager extends RequestManager {
 
         };
         this.sesUserService.login(name, password, callback);
+    }
+
+    /**
+     * Validates if given login session is known or has become invalid on server side. This can be the case
+     * after a server restart, or when cookie has been expired on server side.
+     * 
+     * @param loginSession the login session to check.
+     */
+    public void validateLoginSession(LoginSession loginSession) {
+        AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                destroyCurrentLoginSession();
+                getToasterInstance().addErrorMessage(i18n.loginIsOrHasBecomeInvalid());
+            }
+
+            @Override
+            public void onSuccess(SesClientResponse result) {
+                if (result.getType() == LOGOUT) {
+                    getMainEventBus().fireEvent(new LogoutEvent());
+                }
+            }
+        };
+        sesUserService.validateLoginSession(loginSession, callback);
     }
 
     /**
