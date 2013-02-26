@@ -56,5 +56,20 @@ public class CookieManager {
         removeCookie(COOKIE_USER_NAME, "/");
         removeCookie(COOKIE_SESSION_ID, "/");
     }
+    
+    public static boolean hasActiveLoginSession() {
+        return getCookie(COOKIE_SESSION_ID) != null;
+    }
+    
+    public static String getLoggedInUser()  {
+        return getCookie(COOKIE_USER_NAME);
+    }
 
+    public static String getLoggedInUserRole() {
+        return getCookie(COOKIE_USER_ROLE);   
+    }
+
+    public static String getLoggedInUserId() {
+        return getCookie(COOKIE_USER_ID);   
+    }
 }
