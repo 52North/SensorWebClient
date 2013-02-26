@@ -157,10 +157,11 @@ public class SesTabController extends Controller<SesTab> {
             } else if (layout == LOGIN) {
                 getDataControls().highlightSelectedButton(getDataControls().getLoginButton());
                 getTab().getLoginLayout().clearFields();
-            } else if (layout == USER_SUBSCRIPTIONS) {
-                getDataControls().highlightSelectedButton(getDataControls().getSubscriptionsButton());
-                getMainEventBus().fireEvent(new GetUserSubscriptionsEvent(getCookie(COOKIE_USER_ID)));
-            }
+            } 
+//            else if (layout == USER_SUBSCRIPTIONS) {
+//                getDataControls().highlightSelectedButton(getDataControls().getSubscriptionsButton());
+//                getMainEventBus().fireEvent(new GetUserSubscriptionsEvent(getCookie(COOKIE_USER_ID)));
+//            }
         }
 
         public void onChangeRole(SetRoleEvent evt) {
@@ -169,7 +170,6 @@ public class SesTabController extends Controller<SesTab> {
             case ADMIN:
             	getDataControls().setRole(role);
                 getMainEventBus().fireEvent(new ChangeLayoutEvent(WELCOME));
-                setUserLoggedInAsText();
                 break;
             case NOT_REGISTERED_USER:
                 getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
@@ -295,10 +295,10 @@ public class SesTabController extends Controller<SesTab> {
 //                    }
 //                });
 //                break;
-            case USER_SUBSCRIPTIONS:
-                getTab().getUserSubscriptionsLayout().setData(evt.getResponse().getBasicRules(),
-                        evt.getResponse().getComplexRules());
-                break;
+//            case USER_SUBSCRIPTIONS:
+//                getTab().getUserSubscriptionsLayout().setData(evt.getResponse().getBasicRules(),
+//                        evt.getResponse().getComplexRules());
+//                break;
             case EDIT_COMPLEX_RULE:
                 getTab().getComplexLayout().editCR(evt.getResponse());
                 break;
@@ -313,28 +313,28 @@ public class SesTabController extends Controller<SesTab> {
 //            getTab().getSimpleRuleLayout().setEditRule(evt.getBasicRule());
 //        }
 
-        private void setUserLoggedInAsText() {
-            // get user name from coockie
-            String userName = Cookies.getCookie(COOKIE_USER_NAME);
-
-            if (userName != null) {
-                // build text string
-                String text = i18n.loggedinAs() + ": " + userName;
-
-                // set string to all views
-                getTab().getShowUserLayout().getUserNameLabel().setText(text);
-                getTab().getRuleLayout().getUserNameLabel().setText(text);
-                getTab().getComplexLayout().getUserNameLabel().setText(text);
-                getTab().getEditProfileLayout().getUserNameLabel().setText(text);
-                // TODO remove dead code
-//                getTab().getSimpleRuleLayout().getUserNameLabel().setText(text);
-                getTab().getAllRulesLayout().getUserNameLabel().setText(text);
-                getTab().getEditRulesLayout().getUserNameLabel().setText(text);
-                getTab().getUserSubscriptionsLayout().getUserNameLabel().setText(text);
-                getTab().getWelcomeLayout().getUserNameLabel().setText(text);
-                getTab().getSearchLayout().getUserNameLabel().setText(text);
-            }
-        }
+//        private void setUserLoggedInAsText() {
+//            // get user name from coockie
+//            String userName = Cookies.getCookie(COOKIE_USER_NAME);
+//
+//            if (userName != null) {
+//                // build text string
+//                String text = i18n.loggedinAs() + ": " + userName;
+//
+//                // set string to all views
+//                getTab().getShowUserLayout().getUserNameLabel().setText(text);
+//                getTab().getRuleLayout().getUserNameLabel().setText(text);
+//                getTab().getComplexLayout().getUserNameLabel().setText(text);
+//                getTab().getEditProfileLayout().getUserNameLabel().setText(text);
+//                // TODO remove dead code
+////                getTab().getSimpleRuleLayout().getUserNameLabel().setText(text);
+//                getTab().getAllRulesLayout().getUserNameLabel().setText(text);
+//                getTab().getEditRulesLayout().getUserNameLabel().setText(text);
+//                getTab().getUserSubscriptionsLayout().getUserNameLabel().setText(text);
+//                getTab().getWelcomeLayout().getUserNameLabel().setText(text);
+//                getTab().getSearchLayout().getUserNameLabel().setText(text);
+//            }
+//        }
 
         public void onTimeSeriesChanged(TimeSeriesChangedEvent evt) {
             contributeToLegend();
