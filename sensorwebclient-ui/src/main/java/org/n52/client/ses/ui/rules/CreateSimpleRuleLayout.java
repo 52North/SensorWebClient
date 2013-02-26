@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.ses.ui.layout;
+package org.n52.client.ses.ui.rules;
 
 import static com.google.gwt.user.client.Cookies.getCookie;
 import static java.lang.Integer.parseInt;
@@ -52,6 +52,7 @@ import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 import org.n52.shared.serializable.pojos.Rule;
 import org.n52.shared.serializable.pojos.RuleBuilder;
 import org.n52.shared.serializable.pojos.TimeseriesMetadata;
+import org.n52.shared.util.MathSymbolUtil;
 
 import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.data.DataSource;
@@ -496,7 +497,7 @@ public class CreateSimpleRuleLayout extends FormLayout {
                         .setDescription(description)
                         .setPublish(publish)
                         .setEnterIsSameAsExitCondition(enterConditionIsSameAsExitCondition)
-                        .setCookie(cookieAsInt)
+                        .setUserId(cookieAsInt)
                         .setEntryTime(rTime)
                         .setEntryTimeUnit(rTimeUnit)
                         .build();
@@ -548,7 +549,7 @@ public class CreateSimpleRuleLayout extends FormLayout {
                         .setExitOperatorIndex(exitOperatorIndex)
                         .setExitValue(exitValue)
                         .setExitUnit(exitUnit)
-                        .setCookie(parseInt(getCookie(COOKIE_USER_ID)))
+                        .setUserId(parseInt(getCookie(COOKIE_USER_ID)))
                         .setEntryCount(entryCount)
                         .build();
 
@@ -604,7 +605,7 @@ public class CreateSimpleRuleLayout extends FormLayout {
                         .setEntryOperatorIndex(entryOperatorIndex)
                         .setEntryValue(entryValue)
                         .setEntryUnit(entryUnit)
-                        .setCookie(parseInt(getCookie(COOKIE_USER_ID)))
+                        .setUserId(parseInt(getCookie(COOKIE_USER_ID)))
                         .setEntryTime(entryTime)
                         .setEntryTimeUnit(entryTimeUnit)
                         .setExitTime(exitTime)
@@ -663,7 +664,7 @@ public class CreateSimpleRuleLayout extends FormLayout {
                         .setExitOperatorIndex(operatorIndexCond)
                         .setExitValue(cValue)
                         .setExitUnit(cUnit)
-                        .setCookie(cookieAsInt)
+                        .setUserId(cookieAsInt)
                         .setExitCount(countValue)
                         .setEntryCount(countCondValue)
                         .build();
@@ -716,7 +717,7 @@ public class CreateSimpleRuleLayout extends FormLayout {
                         .setExitOperatorIndex(exitOperatorIndex)
                         .setExitValue(exitValue)
                         .setExitUnit(exitUnit)
-                        .setCookie(cookieAsInt)
+                        .setUserId(cookieAsInt)
                         .build();
         
 //        Rule rule =
@@ -1289,20 +1290,8 @@ public class CreateSimpleRuleLayout extends FormLayout {
         this.exitOperatorItem.setValueMap(getMathSymbols());
         this.exitOperatorItem.setTextAlign(Alignment.CENTER);
         
-        String defaultValue = "";
-        if (this.entryOperatorItem.getValueAsString().equals("=")) {
-            defaultValue = "<>";
-        } else if (this.entryOperatorItem.getValueAsString().equals("<>")) {
-            defaultValue = "=";
-        } else if (this.entryOperatorItem.getValueAsString().equals(">")) {
-            defaultValue = "<=";
-        } else if (this.entryOperatorItem.getValueAsString().equals("&lt;")) {
-            defaultValue = ">=";
-        } else if (this.entryOperatorItem.getValueAsString().equals(">=")) {
-            defaultValue = "<";
-        } else if (this.entryOperatorItem.getValueAsString().equals("<=")) {
-            defaultValue = ">";
-        }
+        String entryOperator = entryOperatorItem.getValueAsString();
+        String defaultValue = MathSymbolUtil.getInverse(entryOperator);
         this.exitOperatorItem.setDefaultValue(defaultValue);
     }
     

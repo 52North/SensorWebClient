@@ -26,55 +26,27 @@ package org.n52.client.ses.event;
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.GetUserSubscriptionsEventHandler;
 
-/**
- * The Class ChangeLayoutEvent.
- */
 public class GetUserSubscriptionsEvent extends FilteredDispatchGwtEvent<GetUserSubscriptionsEventHandler> {
 
-    /** The TYPE. */
     public static Type<GetUserSubscriptionsEventHandler> TYPE = new Type<GetUserSubscriptionsEventHandler>();
     
-    /** The user ID */
     private String userID;
 
-    /**
-     * Instantiates a new GetAllPublishedRulesEvent.
-     * @param userID 
-     * 
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
     public GetUserSubscriptionsEvent(String userID, GetUserSubscriptionsEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.userID = userID;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(GetUserSubscriptionsEventHandler handler) {
         handler.onGet(this);
-
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<GetUserSubscriptionsEventHandler> getAssociatedType() {
+    public Type<GetUserSubscriptionsEventHandler> getAssociatedType() {
         return TYPE;
     }
 
-    /**
-     * @return {@link String}
-     */
     public String getUserID() {
         return this.userID;
     }

@@ -21,23 +21,21 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.ses.ui.layout;
+package org.n52.client.ses.ui.rules;
 
 import static com.google.gwt.user.client.Cookies.getCookie;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
-import static org.n52.client.ses.ui.RuleRecord.FORMAT;
-import static org.n52.client.ses.ui.RuleRecord.MEDIUM;
-import static org.n52.client.ses.ui.RuleRecord.UUID;
+import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.FORMAT;
+import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.MEDIUM;
+import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.UUID;
 import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
 
 import java.util.ArrayList;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.ctrl.DataControlsSes;
-import org.n52.client.ses.data.RuleDataSource;
 import org.n52.client.ses.event.SubscribeEvent;
 import org.n52.client.ses.ui.FormLayout;
-import org.n52.client.ses.ui.RuleRecord;
 import org.n52.shared.serializable.pojos.BasicRuleDTO;
 import org.n52.shared.serializable.pojos.ComplexRuleDTO;
 
@@ -93,9 +91,6 @@ public class UserRuleLayout extends FormLayout {
         init();
     }
 
-    /**
-     * Inits the layout.
-     */
     private void init() {
 
         this.ownRulesGrid = new ListGrid() {
@@ -128,16 +123,9 @@ public class UserRuleLayout extends FormLayout {
                                         medium = medium + "_";
                                     }
                                 }
-                                record.setAttribute(MEDIUM, medium);
+                                record.setAttribute(RuleDataSourceRecord.MEDIUM, medium);
                                 
-                                if (DataControlsSes.warnUserLongNotification) {
-                                    if (record.getAttribute(MEDIUM).contains("SMS")) {
-                                        if (record.getAttribute(FORMAT).contains("XML") || record.getAttribute(FORMAT).contains("EML")) {
-                                            SC.say(i18n.longNotificationMessage());
-                                            return;
-                                        }
-                                    }
-                                }
+                                UserRuleLayout.warnForLongSmsMessages(record);
                             }
                         });
                         
@@ -168,15 +156,7 @@ public class UserRuleLayout extends FormLayout {
                                     }
                                 }
                                 record.setAttribute(FORMAT, format);
-                                
-                                if (DataControlsSes.warnUserLongNotification) {
-                                    if (record.getAttribute(RuleRecord.MEDIUM).contains("SMS")) {
-                                        if (record.getAttribute(FORMAT).contains("XML") || record.getAttribute(FORMAT).contains("EML")) {
-                                            SC.say(i18n.longNotificationMessage());
-                                            return;
-                                        }
-                                    }
-                                }
+                                UserRuleLayout.warnForLongSmsMessages(record);
                             }
                         });
                         
@@ -226,8 +206,8 @@ public class UserRuleLayout extends FormLayout {
         this.otherRulesGrid = new ListGrid() {
             @Override
             protected Canvas createRecordComponent(final ListGridRecord record, Integer colNum) {
-
                 if (record != null) {
+                    final RuleDataSourceRecord ruleRecord = (RuleDataSourceRecord) record;
                     String fieldName = this.getFieldName(colNum);
 
                     if (fieldName.equals("medium")) {
@@ -253,11 +233,11 @@ public class UserRuleLayout extends FormLayout {
                                         medium = medium + "_";
                                     }
                                 }
-                                record.setAttribute(MEDIUM, medium);
+                                ruleRecord.setMedium(medium);
 
                                 if (DataControlsSes.warnUserLongNotification) {
-                                    if (record.getAttribute(MEDIUM).contains("SMS")) {
-                                        if (record.getAttribute(FORMAT).contains("XML") || record.getAttribute(FORMAT).contains("EML")) {
+                                    if (ruleRecord.getMedium().contains("SMS")) {
+                                        if (ruleRecord.getFormat().contains("XML") || ruleRecord.getFormat().contains("EML")) {
                                             SC.say(i18n.longNotificationMessage());
                                             return;
                                         }
@@ -292,11 +272,11 @@ public class UserRuleLayout extends FormLayout {
                                         format = format + "_";
                                     }
                                 }
-                                record.setAttribute(FORMAT, format);
+                                ruleRecord.setFormat(format);
                                 
                                 if (DataControlsSes.warnUserLongNotification) {
-                                    if (record.getAttribute(MEDIUM).contains("SMS")) {
-                                        if (record.getAttribute(FORMAT).contains("XML") || record.getAttribute(FORMAT).contains("EML")) {
+                                    if (ruleRecord.getMedium().contains("SMS")) {
+                                        if (ruleRecord.getFormat().contains("XML") || ruleRecord.getFormat().contains("EML")) {
                                             SC.say(i18n.longNotificationMessage());
                                             return;
                                         }
@@ -319,16 +299,16 @@ public class UserRuleLayout extends FormLayout {
                         subscribeButton.setAlign(Alignment.CENTER);
                         subscribeButton.addClickHandler(new ClickHandler() {
                             public void onClick(ClickEvent event) {
-                                String medium = record.getAttribute(MEDIUM);
+                                String medium = ruleRecord.getMedium();
                                 if (medium.equals("")){
                                     SC.say(i18n.selectMedium());
                                 }
                                 else {
-                                    String format = record.getAttribute(FORMAT);
+                                    String format = ruleRecord.getFormat();
                                     if (format.equals("")){
                                         SC.say(i18n.selectFormat());
                                     } else {
-                                        String uuid = record.getAttribute(UUID);
+                                        String uuid = ruleRecord.getUuid();
                                         String userId = getCookie(COOKIE_USER_ID);
                                         SubscribeEvent subscribeEvent = new SubscribeEvent(uuid, userId, medium, format);
                                         EventBus.getMainEventBus().fireEvent(subscribeEvent);
@@ -431,6 +411,18 @@ public class UserRuleLayout extends FormLayout {
         addMember(this.otherRulesGrid);
     }
 
+    private static void warnForLongSmsMessages(ListGridRecord record) {
+        if (DataControlsSes.warnUserLongNotification) {
+            if (record.getAttribute(MEDIUM).contains("SMS")) {
+                String format = record.getAttribute(FORMAT);
+                if (format.contains("XML") || format.contains("EML")) {
+                    SC.say(i18n.longNotificationMessage());
+                    return;
+                }
+            }
+        }
+    }
+
     /**
      * Fills the table with own rules.
      * 
@@ -438,7 +430,7 @@ public class UserRuleLayout extends FormLayout {
      * @param complexRules 
      */
     public void setDataOwnRules(ArrayList<BasicRuleDTO> basicRules, ArrayList<ComplexRuleDTO> complexRules) {
-        RuleRecord rule;
+        RuleDataSourceRecord rule;
         BasicRuleDTO basicDTO;
         ComplexRuleDTO complexDTO;
         
@@ -450,14 +442,14 @@ public class UserRuleLayout extends FormLayout {
         
         for (int i = 0; i < basicRules.size(); i++) {
             basicDTO = basicRules.get(i);
-            rule = new RuleRecord(i18n.basic(), "", "", basicDTO.getName(), basicDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), basicDTO.isRelease(), basicDTO.isSubscribed(), basicDTO.getUuid());
+            rule = new RuleDataSourceRecord(i18n.basic(), "", "", basicDTO.getName(), basicDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), basicDTO.isRelease(), basicDTO.isSubscribed(), basicDTO.getUuid());
             
             this.ownRulesGrid.addData(rule);
         }
         
         for (int i = 0; i < complexRules.size(); i++) {
             complexDTO = complexRules.get(i);
-            rule = new RuleRecord(i18n.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), complexDTO.isRelease(), complexDTO.isSubscribed(), "UUID");
+            rule = new RuleDataSourceRecord(i18n.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), complexDTO.isRelease(), complexDTO.isSubscribed(), "UUID");
             
             this.ownRulesGrid.addData(rule);
         }
@@ -473,7 +465,7 @@ public class UserRuleLayout extends FormLayout {
      * @param complexRules 
      */
     public void setDataOtherRules(ArrayList<BasicRuleDTO> basicRules, ArrayList<ComplexRuleDTO> complexRules) {
-        RuleRecord rule;
+        RuleDataSourceRecord rule;
         BasicRuleDTO ruleDTO;
         ComplexRuleDTO complexDTO;
         
@@ -484,14 +476,14 @@ public class UserRuleLayout extends FormLayout {
 
         for (int i = 0; i < basicRules.size(); i++) {
             ruleDTO = basicRules.get(i);
-            rule = new RuleRecord(i18n.basic(), "", "", ruleDTO.getName(), ruleDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), ruleDTO.isRelease(), ruleDTO.isSubscribed(), ruleDTO.getUuid());
+            rule = new RuleDataSourceRecord(i18n.basic(), "", "", ruleDTO.getName(), ruleDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), ruleDTO.isRelease(), ruleDTO.isSubscribed(), ruleDTO.getUuid());
             
             this.otherRulesGrid.addData(rule);
         }
         
         for (int i = 0; i < complexRules.size(); i++) {
             complexDTO = complexRules.get(i);
-            rule = new RuleRecord(i18n.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), complexDTO.isRelease(), complexDTO.isSubscribed(), "UUID");
+            rule = new RuleDataSourceRecord(i18n.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), DataControlsSes.getDefaultMedium(), DataControlsSes.getDefaultFormat(), complexDTO.isRelease(), complexDTO.isSubscribed(), "UUID");
 
             this.otherRulesGrid.addData(rule);
             

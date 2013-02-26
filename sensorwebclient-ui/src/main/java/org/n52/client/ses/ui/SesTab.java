@@ -28,18 +28,18 @@ import static org.n52.client.ses.ui.layout.LoginLayout.createUserLoginLayout;
 import org.n52.client.ctrl.DataControls;
 import org.n52.client.ses.ctrl.SesTabController;
 import org.n52.client.ses.ui.FormLayout.LayoutType;
-import org.n52.client.ses.ui.layout.AllRulesLayout;
-import org.n52.client.ses.ui.layout.CreateComplexRuleLayout;
-import org.n52.client.ses.ui.layout.EditProfileLayout;
-import org.n52.client.ses.ui.layout.EditRulesLayout;
 import org.n52.client.ses.ui.layout.ForgotPasswordLayout;
 import org.n52.client.ses.ui.layout.LoginLayout;
 import org.n52.client.ses.ui.layout.RegisterLayout;
 import org.n52.client.ses.ui.layout.SearchLayout;
 import org.n52.client.ses.ui.layout.ShowUserLayout;
-import org.n52.client.ses.ui.layout.UserRuleLayout;
-import org.n52.client.ses.ui.layout.UserSubscriptionsLayout;
 import org.n52.client.ses.ui.layout.WelcomeLayout;
+import org.n52.client.ses.ui.profile.EditProfileLayout;
+import org.n52.client.ses.ui.profile.SubscriptionsLayout;
+import org.n52.client.ses.ui.rules.AllRulesLayout;
+import org.n52.client.ses.ui.rules.CreateComplexRuleLayout;
+import org.n52.client.ses.ui.rules.EditRulesLayout;
+import org.n52.client.ses.ui.rules.UserRuleLayout;
 import org.n52.client.ui.DataPanelTab;
 
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -70,7 +70,7 @@ public class SesTab extends DataPanelTab {
 
     private EditRulesLayout editRulesLayout;
     
-    private UserSubscriptionsLayout userSubscriptionsLayout;
+//    private SubscriptionsLayout userSubscriptionsLayout;
     
     private WelcomeLayout welcomeLayout;
     
@@ -85,6 +85,8 @@ public class SesTab extends DataPanelTab {
         this.id = id;
         this.title = title;
         init();
+        
+        
     }
 
     private void init() {
@@ -125,8 +127,8 @@ public class SesTab extends DataPanelTab {
         this.editRulesLayout = new EditRulesLayout();
         this.editRulesLayout.setCanAcceptDrop(true);
         
-        this.userSubscriptionsLayout = new UserSubscriptionsLayout();
-        this.userSubscriptionsLayout.setCanAcceptDrop(true);
+//        this.userSubscriptionsLayout = new SubscriptionsLayout();
+//        this.userSubscriptionsLayout.setCanAcceptDrop(true);
         
         this.welcomeLayout = new WelcomeLayout();
         this.welcomeLayout.setCanAcceptDrop(true);
@@ -199,9 +201,9 @@ public class SesTab extends DataPanelTab {
             this.layout.setMembers(this.editRulesLayout);
             break;
             
-        case USER_SUBSCRIPTIONS:
-            this.layout.setMembers(this.userSubscriptionsLayout);
-            break;
+//        case USER_SUBSCRIPTIONS:
+//            this.layout.setMembers(this.userSubscriptionsLayout);
+//            break;
             
         case SEARCH:
             this.layout.setMembers(this.searchLayout);
@@ -304,13 +306,9 @@ public class SesTab extends DataPanelTab {
         return this.allRulesLayout;
     }
 
-    /**
-     * 
-     * @return {@link UserSubscriptionsLayout}
-     */
-    public UserSubscriptionsLayout getUserSubscriptionsLayout() {
-        return this.userSubscriptionsLayout;
-    }
+//    public SubscriptionsLayout getUserSubscriptionsLayout() {
+//        return this.userSubscriptionsLayout;
+//    }
 
     /**
      * @return {@link WelcomeLayout}

@@ -24,15 +24,14 @@
 
 package org.n52.client.ses.ui;
 
-import static com.google.gwt.user.client.Cookies.getCookie;
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.LOGIN;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.REGISTER;
 import static org.n52.client.ses.ui.layout.LoginLayout.createUserLoginLayout;
+import static org.n52.client.util.CookieManager.hasActiveLoginSession;
 import static org.n52.shared.serializable.pojos.UserRole.ADMIN;
 import static org.n52.shared.serializable.pojos.UserRole.LOGOUT;
-import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
 
 import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.SetRoleEvent;
@@ -56,9 +55,9 @@ public abstract class LoginWindow extends Window {
 
     private static String COMPONENT_ID;
 
-    private static int WIDTH = 950;
+    private static int WIDTH = 960;
 
-    private static int HEIGHT = 550;
+    private static int HEIGHT = 552;
 
     protected Layout content;
 
@@ -100,7 +99,7 @@ public abstract class LoginWindow extends Window {
         if (content != null) {
             removeItem(content);
         }
-        if (notLoggedIn()) {
+        if ( !hasActiveLoginSession()) {
             setTitle(i18n.login());
             content = new VLayout();
             content.addMember(createUserLoginLayout());
@@ -110,7 +109,6 @@ public abstract class LoginWindow extends Window {
             initializeContent();
         }
         super.show();
-        redraw();
     }
 
     private void loadRegistration() {
@@ -122,10 +120,6 @@ public abstract class LoginWindow extends Window {
         redraw();
     }
 
-    protected boolean notLoggedIn() {
-        return getUserCookie() == null;
-    }
-    
     protected void updateWindowTitle(String newTitle) {
         setTitle(newTitle);
     }
@@ -134,10 +128,6 @@ public abstract class LoginWindow extends Window {
 
     public String getId() {
         return COMPONENT_ID;
-    }
-
-    public String getUserCookie() {
-        return getCookie(COOKIE_USER_ID);
     }
 
     /**
@@ -160,6 +150,7 @@ public abstract class LoginWindow extends Window {
                 return;
             }
             else if (evt.getRole() == ADMIN) {
+                // switch to admin UI
                 window.hide();
                 DataPanel dataPanel = View.getView().getDataPanel();
                 DataPanelTab sesTab = View.getView().getSesTab();
@@ -168,17 +159,13 @@ public abstract class LoginWindow extends Window {
                 dataPanel.update();
             }
             if (window.isVisible()) {
+                // user stays in modal window
                 reinitializeWindow();
             }
         }
 
         private void reinitializeWindow() {
-            if (window.notLoggedIn()) {
-                SC.say(i18n.failedLogin());
-            }
-            else {
-                window.show();
-            }
+            window.show();
         }
 
         @Override
@@ -186,11 +173,6 @@ public abstract class LoginWindow extends Window {
             if (evt.getLayout() == REGISTER) {
                 window.loadRegistration();
                 window.updateWindowTitle(i18n.registration());
-            } else if (evt.getLayout() == LOGIN) {
-                window.updateWindowTitle(i18n.userLogin());
-                if (window.isVisible()) {
-                	window.show();
-                }
             }
         }
     }

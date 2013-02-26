@@ -29,11 +29,11 @@ import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
 import java.util.ArrayList;
 
 import org.n52.client.bus.EventBus;
-import org.n52.client.ses.data.RuleDataSource;
 import org.n52.client.ses.event.EditRuleEvent;
 import org.n52.client.ses.event.SearchEvent;
 import org.n52.client.ses.ui.FormLayout;
-import org.n52.client.ses.ui.RuleRecord;
+import org.n52.client.ses.ui.rules.RuleDataSource;
+import org.n52.client.ses.ui.rules.RuleDataSourceRecord;
 import org.n52.shared.serializable.pojos.BasicRuleDTO;
 import org.n52.shared.serializable.pojos.ComplexRuleDTO;
 
@@ -226,7 +226,7 @@ public class SearchLayout extends FormLayout {
      * @param complexRules 
      */
     public void setData(ArrayList<BasicRuleDTO> basicRules, ArrayList<ComplexRuleDTO> complexRules) {
-        RuleRecord rule;
+        RuleDataSourceRecord rule;
         BasicRuleDTO basicDTO;
         ComplexRuleDTO complexDTO;
         
@@ -237,14 +237,14 @@ public class SearchLayout extends FormLayout {
 
         for (int i = 0; i < basicRules.size(); i++) {
             basicDTO = basicRules.get(i);
-            rule = new RuleRecord(i18n.basic(), "", "", basicDTO.getName(), basicDTO.getDescription(), "SMS", "XML", basicDTO.isRelease(), basicDTO.isSubscribed(), basicDTO.getUuid());
+            rule = new RuleDataSourceRecord(i18n.basic(), "", "", basicDTO.getName(), basicDTO.getDescription(), "SMS", "XML", basicDTO.isRelease(), basicDTO.isSubscribed(), basicDTO.getUuid());
             
             this.rulesGrid.addData(rule);
         }
 
         for (int i = 0; i < complexRules.size(); i++) {
             complexDTO = complexRules.get(i);
-            rule = new RuleRecord(i18n.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), "SMS", "XML", complexDTO.isRelease(), complexDTO.isSubscribed(), "UUID");
+            rule = new RuleDataSourceRecord(i18n.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), "SMS", "XML", complexDTO.isRelease(), complexDTO.isSubscribed(), "UUID");
             
             this.rulesGrid.addData(rule);
         }

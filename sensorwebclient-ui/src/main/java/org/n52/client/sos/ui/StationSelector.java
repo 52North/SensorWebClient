@@ -24,6 +24,8 @@
 
 package org.n52.client.sos.ui;
 
+import static com.smartgwt.client.types.Overflow.HIDDEN;
+import static com.smartgwt.client.types.Overflow.VISIBLE;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.Comparator;
@@ -50,6 +52,7 @@ import org.n52.shared.serializable.pojos.sos.Station;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.AnimationEffect;
+import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.HTMLPane;
 import com.smartgwt.client.widgets.Img;
@@ -75,9 +78,9 @@ public class StationSelector extends Window {
 	
     private static final String COMPONENT_ID = "stationSelector";
     
-    private static int WIDTH = 950;
+    private static int WIDTH = 960;
     
-    private static int HEIGHT = 550;
+    private static int HEIGHT = 552;
 
     private static StationSelector instance;
 
@@ -127,6 +130,7 @@ public class StationSelector extends Window {
 
 	private void initializeWindow() {
         setID(COMPONENT_ID);
+        setOverflow(HIDDEN);
         setShowModalMask(true);
         setIsModal(true);
         setTitle(i18n.pickStation());
@@ -136,7 +140,6 @@ public class StationSelector extends Window {
         setCanDragResize(true);
         setShowMaximizeButton(true);
         setShowMinimizeButton(false);
-        setMargin(10);
         addResizedHandler(new ResizedHandler() {
 			@Override
 			public void onResized(ResizedEvent event) {
@@ -244,7 +247,6 @@ public class StationSelector extends Window {
             applyCancel = new ApplyCancelButtonLayout();
             applyCancel.createApplyButton(i18n.addNewTimeseries(), i18n.addNewTimeseriesExt(), createApplyHandler());
             applyCancel.createCancelButton(i18n.cancel(), i18n.cancel(), createCancelHandler());
-            applyCancel.setStyleName("n52_sensorweb_client_create_abo_applycancel");
             applyCancel.setAlign(Alignment.RIGHT);
         }
         return applyCancel;

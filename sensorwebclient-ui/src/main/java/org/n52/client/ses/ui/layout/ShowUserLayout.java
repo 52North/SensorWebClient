@@ -29,12 +29,12 @@ import java.util.List;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.data.UserDataSource;
+import org.n52.client.ses.data.UserDataSourceRecord;
 import org.n52.client.ses.event.DeleteUserEvent;
 import org.n52.client.ses.event.GetAllUsersEvent;
 import org.n52.client.ses.ui.CreateNewUserWindow;
 import org.n52.client.ses.ui.EditUserWindow;
 import org.n52.client.ses.ui.FormLayout;
-import org.n52.client.ses.ui.UserRecord;
 import org.n52.shared.serializable.pojos.UserDTO;
 
 import com.smartgwt.client.types.Alignment;
@@ -99,7 +99,7 @@ public class ShowUserLayout extends FormLayout {
                     editButton.setHeight(16);
                     editButton.addClickHandler(new ClickHandler() {
                         public void onClick(ClickEvent event) {
-                            EditUserWindow.init((UserRecord)record);
+                            EditUserWindow.init((UserDataSourceRecord)record);
                         }
                     });
 
@@ -205,7 +205,7 @@ public class ShowUserLayout extends FormLayout {
      */
     public void setData(List<UserDTO> list) {
         UserDTO user;
-        UserRecord userRecord;
+        UserDataSourceRecord userRecord;
         
         if (!this.first) {
             this.userGrid.selectAllRecords();
@@ -214,7 +214,7 @@ public class ShowUserLayout extends FormLayout {
 
         for (int i = 0; i < list.size(); i++) {
             user = list.get(i);
-            userRecord = new UserRecord(String.valueOf(user.getId()), user.getUserName(), user.getName(), user.getPassword(), user.geteMail(), user.getHandyNr(), user.getRole().toString());
+            userRecord = new UserDataSourceRecord(String.valueOf(user.getId()), user.getUserName(), user.getName(), user.getPassword(), user.geteMail(), user.getHandyNr(), user.getRole().toString());
 
             this.userGrid.addData(userRecord);
         }

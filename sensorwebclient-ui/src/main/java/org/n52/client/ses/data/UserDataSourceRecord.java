@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.ses.ui;
+package org.n52.client.ses.data;
 
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 
@@ -30,12 +30,12 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
  * 
  * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>s
  */
-public class UserRecord extends ListGridRecord {
+public class UserDataSourceRecord extends ListGridRecord {
 
     /**
      * Instantiates a new user record.
      */
-    public UserRecord() {
+    public UserDataSourceRecord() {
         //
     }
 
@@ -55,7 +55,7 @@ public class UserRecord extends ListGridRecord {
      * @param role
      *            the role
      */
-    public UserRecord(String id, String userName, String name, String password, String eMail, String handy, String role) {
+    public UserDataSourceRecord(String id, String userName, String name, String password, String eMail, String handy, String role) {
         setId(id);
         setUserName(userName);
         setName(name);

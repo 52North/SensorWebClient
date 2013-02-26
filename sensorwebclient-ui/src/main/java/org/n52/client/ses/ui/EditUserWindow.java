@@ -29,6 +29,7 @@ import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
 import java.util.Date;
 
 import org.n52.client.bus.EventBus;
+import org.n52.client.ses.data.UserDataSourceRecord;
 import org.n52.client.ses.event.UpdateUserEvent;
 import org.n52.shared.serializable.pojos.UserDTO;
 import org.n52.shared.serializable.pojos.UserRole;
@@ -54,14 +55,14 @@ import com.smartgwt.client.widgets.form.validator.RegExpValidator;
  */
 public class EditUserWindow {
 
-    private static UserRecord record;
+    private static UserDataSourceRecord record;
     private static Window window;
 
     /**
      * Inits the EditUserWindow.
      * @param record 
      */
-    public static void init(UserRecord record) {
+    public static void init(UserDataSourceRecord record) {
         int length = 250;
         EditUserWindow.record = record;
 

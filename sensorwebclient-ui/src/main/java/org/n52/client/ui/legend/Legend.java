@@ -24,7 +24,7 @@
 
 package org.n52.client.ui.legend;
 
-import static org.n52.client.ses.ui.usermanagement.AccountManagementWindow.getProfileWindow;
+import static org.n52.client.ses.ui.profile.ProfileWindow.getProfileWindow;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.ArrayList;
