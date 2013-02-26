@@ -199,7 +199,7 @@ public class SESInitializationServlet extends HttpServlet {
                 }
                 // run only if the init servlet is initialized
                 if (SESInitializationServlet.initialized) {
-                    LOGGER.info("create default user");
+                    LOGGER.info("create admin user");
 
                     // create default admin on start
                     UserDTO admin =
