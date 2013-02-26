@@ -104,6 +104,8 @@ body {
   padding-left: 5px;
 }
 .n52_sensorweb_client_smallicon {
+  width: 20px;
+  height: 20px;
   padding: 1px;
   filter: alpha(opacity = 100);
   opacity: 1;
@@ -166,6 +168,9 @@ tr.sensorInfo:hover {
 }
 .n52_sensorweb_client_admin_login headerItem {
   text-color: red;
+}
+.n52_sensorweb_client_create_abo_applycancel {
+  height: 20px;
 }
 .n52_sensorweb_client_create_abo_form_content {
   float: left;
@@ -430,7 +435,7 @@ div .n52_sensorweb_client_options_button img {
 }
 .n52_sensorweb_client_stationselectormap {
   width: 950px;
-  height: 560px;
+  height: 550px;
 }
 .n52_sensorweb_client_loadingSpinner {
   padding-top: 20px;
