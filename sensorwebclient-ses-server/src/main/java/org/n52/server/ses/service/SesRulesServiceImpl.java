@@ -36,6 +36,7 @@ import static org.n52.server.ses.hibernate.HibernateUtil.subscribeBasicRule;
 import static org.n52.server.ses.hibernate.HibernateUtil.unsubscribeBasicRule;
 import static org.n52.server.ses.hibernate.HibernateUtil.updateComplexRuleSubscribtion;
 import static org.n52.server.ses.util.SesServerUtil.getTimeseriesIdsFromEML;
+import static org.n52.shared.responses.SesClientResponseType.USER_SUBSCRIPTIONS;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -880,7 +881,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                 }
             }
             
-            return new SesClientResponse(SesClientResponseType.USER_SUBSCRIPTIONS, basicList, complexList);
+            return new SesClientResponse(USER_SUBSCRIPTIONS, basicList, complexList);
         }
         catch (Exception e) {
             LOGGER.error("Exception occured on server side.", e);
