@@ -38,7 +38,6 @@ import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.SetRoleEvent;
 import org.n52.client.ses.event.handler.ChangeLayoutEventHandler;
 import org.n52.client.ses.event.handler.SetRoleEventHandler;
-import org.n52.client.ses.ui.FormLayout.LayoutType;
 import org.n52.client.ses.ui.layout.ForgotPasswordLayout;
 import org.n52.client.ses.ui.layout.RegisterLayout;
 import org.n52.client.ui.DataPanel;
