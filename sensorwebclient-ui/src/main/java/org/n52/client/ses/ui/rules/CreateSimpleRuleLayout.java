@@ -52,7 +52,6 @@ import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 import org.n52.shared.serializable.pojos.Rule;
 import org.n52.shared.serializable.pojos.RuleBuilder;
 import org.n52.shared.serializable.pojos.TimeseriesMetadata;
-import org.n52.shared.util.MathSymbolUtil;
 
 import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.data.DataSource;
@@ -469,12 +468,12 @@ public class CreateSimpleRuleLayout extends FormLayout {
 
         if (this.ruleTyp == SimpleRuleType.OVER_UNDERSHOOT) {
             createOverUnderShootRule();
-        } else if (this.ruleTyp == SimpleRuleType.TENDENCY_OVER_COUNT) {
-            createTendenzAnzahlRule();
-        } else if (this.ruleTyp == SimpleRuleType.TENDENCY_OVER_TIME) {
-            createTendenzZeitRule();
-        } else if (this.ruleTyp == SimpleRuleType.SUM_OVER_TIME) {
-            createSummeZeitRule();
+//        } else if (this.ruleTyp == SimpleRuleType.TENDENCY_OVER_COUNT) {
+//            createTendenzAnzahlRule();
+//        } else if (this.ruleTyp == SimpleRuleType.TENDENCY_OVER_TIME) {
+//            createTendenzZeitRule();
+//        } else if (this.ruleTyp == SimpleRuleType.SUM_OVER_TIME) {
+//            createSummeZeitRule();
         } else if (this.ruleTyp == SimpleRuleType.SENSOR_LOSS) {
             createAusfallRule();
         }
@@ -537,8 +536,6 @@ public class CreateSimpleRuleLayout extends FormLayout {
         Rule rule = RuleBuilder.aRule()
                         .setRuleType(ruleTyp)
                         .setTitle(name)
-//                        .setProcedure(procedure)
-//                        .setPhenomenon(phenomenon)
                         .setNotificationType(notificationType)
                         .setDescription(description)
                         .setPublish(publish)
@@ -1276,7 +1273,8 @@ public class CreateSimpleRuleLayout extends FormLayout {
         this.entryOperatorItem.addChangedHandler(new ChangedHandler() {
             public void onChanged(ChangedEvent event) {
                 if (exitOperatorItem != null) {
-                    exitOperatorItem.setValue(getInverse((String)event.getValue()));
+                    TextItem exitOperatorTextItem = (TextItem) event.getSource();
+                    exitOperatorItem.setValue(getInverse(exitOperatorTextItem.getValueAsString()));
                 }
             }
         });
@@ -1291,8 +1289,7 @@ public class CreateSimpleRuleLayout extends FormLayout {
         this.exitOperatorItem.setTextAlign(Alignment.CENTER);
         
         String entryOperator = entryOperatorItem.getValueAsString();
-        String defaultValue = MathSymbolUtil.getInverse(entryOperator);
-        this.exitOperatorItem.setDefaultValue(defaultValue);
+        this.exitOperatorItem.setDefaultValue(getInverse(entryOperator));
     }
     
     public void setUnit(ArrayList<String> units){

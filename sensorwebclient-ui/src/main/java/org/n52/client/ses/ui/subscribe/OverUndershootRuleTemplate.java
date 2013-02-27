@@ -43,20 +43,12 @@ public class OverUndershootRuleTemplate extends RuleTemplate {
 
     @Override
     public Canvas createEditCanvas() {
-        clearTemplate();
         controller.clearSelectionData();
         Layout layout = new VLayout();
         layout.setStyleName("n52_sensorweb_client_create_abo_template_overundershootcondition");
         layout.addMember(alignVerticalCenter(createEntryConditionEditCanvas()));
         layout.addMember(alignVerticalCenter(createExitConditionEditCanvas()));
         return layout;
-    }
-
-    private void clearTemplate() {
-        exitOperatorItem = null;
-        exitValueItem = null;
-        entryConditionForm = null;
-        exitConditionForm = null;
     }
 
     @Override

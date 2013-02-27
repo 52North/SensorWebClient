@@ -44,7 +44,7 @@ public class SelectSubscriptionForm extends DynamicForm {
     
     public SelectSubscriptionForm(final EventSubscriptionController controller) {
         this.setStyleName("n52_sensorweb_client_create_abo_selection");
-        this.controller = controller;;
+        this.controller = controller;
         setFields(createPredefinedEventSelectionItem());
         controller.setSelectedRuleTemplate(getDefaultRuleTemplate());
     }

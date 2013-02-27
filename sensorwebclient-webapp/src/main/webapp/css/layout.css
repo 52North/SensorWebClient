@@ -104,8 +104,6 @@ body {
   padding-left: 5px;
 }
 .n52_sensorweb_client_smallicon {
-  width: 20px;
-  height: 20px;
   padding: 1px;
   filter: alpha(opacity = 100);
   opacity: 1;

@@ -84,8 +84,8 @@ public class EventSubscriptionWindow extends LoginWindow {
         content.setStyleName("n52_sensorweb_client_create_abo_window_content");
         content.addMember(createNewEventAbonnementCanvas());
         content.addMember(createContextWindowHelp());
-        addItem(content);
         setTitle(i18n.createAboWindowTitle());
+        addItem(content);
     }
 
     private Canvas createNewEventAbonnementCanvas() {
@@ -126,11 +126,9 @@ public class EventSubscriptionWindow extends LoginWindow {
     }
 
     private Canvas createRuleTemplateEditorCanvas(RuleTemplate template) {
-        if (ruleTemplateEditCanvas == null) {
-            ruleTemplateEditCanvas = new VLayout();
-            ruleTemplateEditCanvas.setStyleName("n52_sensorweb_client_edit_create_abo_edit");
-            ruleTemplateEditCanvas.addMember(template.getTemplateContent());
-        }
+        ruleTemplateEditCanvas = new VLayout();
+        ruleTemplateEditCanvas.setStyleName("n52_sensorweb_client_edit_create_abo_edit");
+        ruleTemplateEditCanvas.addMember(template.getTemplateContent());
         return ruleTemplateEditCanvas;
     }
 
