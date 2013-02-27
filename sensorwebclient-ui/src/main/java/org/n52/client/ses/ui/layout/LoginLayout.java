@@ -28,11 +28,17 @@ import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.ctrl.DataControlsSes.createMD5;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.REGISTER;
+import static org.n52.shared.responses.SesClientResponseType.LOGIN_NAME;
+import static org.n52.shared.responses.SesClientResponseType.LOGIN_PASSWORD;
 
 import org.n52.client.ses.event.ChangeLayoutEvent;
+import org.n52.client.ses.event.InformUserEvent;
 import org.n52.client.ses.event.LoginEvent;
+import org.n52.client.ses.event.handler.InformUserEventHandler;
 import org.n52.client.ses.ui.FormLayout;
+import org.n52.shared.responses.SesClientResponse;
 
+import com.smartgwt.client.widgets.form.FormItemErrorFormatter;
 import com.smartgwt.client.widgets.form.fields.ButtonItem;
 import com.smartgwt.client.widgets.form.fields.LinkItem;
 import com.smartgwt.client.widgets.form.fields.PasswordItem;
@@ -47,9 +53,9 @@ import com.smartgwt.client.widgets.form.fields.events.KeyPressHandler;
  */
 public class LoginLayout extends FormLayout {
 
-    private TextItem userNameItem;
-
-    private PasswordItem passwordItem;
+    private static final String USER_NAME_FIELD = "userName";
+    
+    private static final String PASSWORD_FIELD = "password";
 
     public static LoginLayout createUserLoginLayout() {
         LoginLayout loginLayout = new LoginLayout(i18n.userLogin());
@@ -63,61 +69,43 @@ public class LoginLayout extends FormLayout {
     }
     
     private void initUserLogin() {
-        userNameItem = createUserNameItem();
-        passwordItem = createPasswordItem();
+        new LoginLayoutEventBroker(this);
+        TextItem userNameItem = createUserNameItem();
+        PasswordItem passwordItem = createPasswordItem();
         ButtonItem loginButton = createLoginButton();
         LinkItem registerLink = createRegisterLink();
-        LinkItem forgotPassword = createForgotPasswordLink();
-        form.setFields(headerItem, userNameItem, passwordItem, loginButton, registerLink, forgotPassword);
+        form.setFields(headerItem, userNameItem, passwordItem, loginButton, registerLink);
         addMember(form);
     }
     
-    private LinkItem createForgotPasswordLink() {
-        LinkItem forgotPasswordLink = new LinkItem();
-        forgotPasswordLink.setTitle(i18n.forgotPassword());
-        forgotPasswordLink.setShowTitle(false); // only link
-        forgotPasswordLink.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                // TODO set content to change password layout
-//                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(PASSWORD));
+    private TextItem createUserNameItem() {
+        TextItem userNameItem = new TextItem(USER_NAME_FIELD);
+        userNameItem.setTitle(i18n.userName());
+        userNameItem.setRequired(true);
+        userNameItem.setSelectOnFocus(true);
+        userNameItem.setLength(100);
+        userNameItem.addKeyPressHandler(new KeyPressHandler() {
+            public void onKeyPress(KeyPressEvent event) {
+                if ( (event.getKeyName().equals("Enter")) && (LoginLayout.this.form.validate(false))) {
+                    login();
+                }
             }
         });
-        return forgotPasswordLink;
-    }
-
-    private TextItem createUserNameItem() {
-        if (userNameItem == null) {
-            userNameItem = new TextItem("userName");
-            userNameItem.setTitle(i18n.userName());
-            userNameItem.setRequired(true);
-            userNameItem.setSelectOnFocus(true);
-            userNameItem.setLength(100);
-            userNameItem.addKeyPressHandler(new KeyPressHandler() {
-                public void onKeyPress(KeyPressEvent event) {
-                    if ( (event.getKeyName().equals("Enter")) && (LoginLayout.this.form.validate(false))) {
-                        login();
-                    }
-                }
-            });
-        }
         return userNameItem;
     }
 
     private PasswordItem createPasswordItem() {
-        if (passwordItem == null) {
-            passwordItem = new PasswordItem();
-            passwordItem.setName("password");
-            passwordItem.setTitle(i18n.password());
-            passwordItem.setRequired(true);
-            passwordItem.setLength(20);
-            passwordItem.addKeyPressHandler(new KeyPressHandler() {
-                public void onKeyPress(KeyPressEvent event) {
-                    if ( (event.getKeyName().equals("Enter")) && (LoginLayout.this.form.validate(false))) {
-                        login();
-                    }
+        PasswordItem passwordItem = new PasswordItem(PASSWORD_FIELD);
+        passwordItem.setTitle(i18n.password());
+        passwordItem.setRequired(true);
+        passwordItem.setLength(20);
+        passwordItem.addKeyPressHandler(new KeyPressHandler() {
+            public void onKeyPress(KeyPressEvent event) {
+                if ( (event.getKeyName().equals("Enter")) && (LoginLayout.this.form.validate(false))) {
+                    login();
                 }
-            });
-        }
+            }
+        });
         return passwordItem;
     }
 
@@ -135,8 +123,8 @@ public class LoginLayout extends FormLayout {
     }
 
     private void login() {
-        String name = LoginLayout.this.userNameItem.getValueAsString();
-        String pwd = LoginLayout.this.passwordItem.getValueAsString();
+        String name = getUserNameField().getValueAsString();
+        String pwd = getPasswordField().getValueAsString();
     	getMainEventBus().fireEvent(new LoginEvent(name, createMD5(pwd)));
         clearFields();
     }
@@ -154,20 +142,57 @@ public class LoginLayout extends FormLayout {
         return registerLink;
     }
 
-    public TextItem getNameItem() {
-        return userNameItem;
-    }
-
-    public PasswordItem getPasswordItem() {
-        return passwordItem;
-    }
-
     public void update() {
         LoginLayout.this.form.validate();
     }
 
     public void clearFields() {
-        userNameItem.clearValue();
-        passwordItem.clearValue();
+        getUserNameField().clearValue();
+        getPasswordField().clearValue();
+    }
+
+    private TextItem getUserNameField() {
+        return (TextItem) form.getField(USER_NAME_FIELD);
+    }
+
+    private PasswordItem getPasswordField() {
+        return (PasswordItem) form.getField(PASSWORD_FIELD);
+    }
+
+    private static class LoginLayoutEventBroker implements InformUserEventHandler {
+
+        private LoginLayout loginLayout;
+
+        LoginLayoutEventBroker(LoginLayout loginLayout) {
+            this.loginLayout = loginLayout;
+            getMainEventBus().addHandler(InformUserEvent.TYPE, this);
+        }
+        
+        @Override
+        public void onInform(InformUserEvent evt) {
+            SesClientResponse reponse = evt.getResponse();
+            if (reponse.getType() == LOGIN_NAME) {
+                setErrorFormatter(loginLayout);
+            } else if(reponse.getType() == LOGIN_PASSWORD) {
+                loginLayout.getPasswordField().setValue("");
+                setErrorFormatter(loginLayout);
+            }
+            loginLayout.update();
+        }
+
+        private void setErrorFormatter(final LoginLayout loginLayout) {
+            setErrorFormatter(loginLayout.getUserNameField(), i18n.invalidName());
+            setErrorFormatter(loginLayout.getPasswordField(), i18n.invalidPassword());
+        }
+
+        private void setErrorFormatter(final TextItem field, final String msg) {
+            field.setErrorFormatter(new FormItemErrorFormatter() {
+                public String getErrorHTML(String[] errors) {
+                    String imgUrl = "../img/icons/exclamation.png";
+                    return "<img src='" + imgUrl + "' alt='invalide name' title='" + msg + "'/>";
+                }
+            });
+        }
+        
     }
 }
