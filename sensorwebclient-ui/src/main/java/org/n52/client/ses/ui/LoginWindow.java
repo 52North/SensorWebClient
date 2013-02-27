@@ -45,7 +45,6 @@ import org.n52.client.ui.DataPanel;
 import org.n52.client.ui.DataPanelTab;
 import org.n52.client.ui.View;
 
-import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.CloseClickEvent;
 import com.smartgwt.client.widgets.events.CloseClickHandler;
@@ -184,10 +183,11 @@ public abstract class LoginWindow extends Window {
             if (evt.getLayout() == REGISTER) {
                 window.loadRegistration();
                 window.updateWindowTitle(i18n.registration());
-            }
-            if (evt.getLayout() == PASSWORD) {
+            } else if (evt.getLayout() == PASSWORD) {
             	window.loadForgotPassword();
             	window.updateWindowTitle(i18n.forgotPassword());
+            } else if (evt.getLayout() == LOGIN) {
+                reinitializeWindow();
             }
         }
     }

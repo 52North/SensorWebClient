@@ -5,8 +5,8 @@ import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.TextItem;
-import com.smartgwt.client.widgets.form.fields.events.KeyPressEvent;
-import com.smartgwt.client.widgets.form.fields.events.KeyPressHandler;
+import com.smartgwt.client.widgets.form.fields.events.KeyUpEvent;
+import com.smartgwt.client.widgets.form.fields.events.KeyUpHandler;
 
 public class EventNameForm extends DynamicForm {
 
@@ -22,15 +22,6 @@ public class EventNameForm extends DynamicForm {
     }
     
     private TextItem createAbonnementNameItem() {
-        
-        // TODO add check if rule already exists
-        
-//        getTab().getSimpleRuleLayout().getTitleItem().setErrorFormatter(new FormItemErrorFormatter() {
-//            public String getErrorHTML(String[] errors) {
-//                return "<img src='../img/icons/exclamation.png' alt='rule name allready exists' title='rule name allready exists'/>";
-//            }
-//        });
-        
         aboNameItem = new TextItem();
         aboNameItem.setRequired(true);
         aboNameItem.setTextBoxStyle("n52_sensorweb_client_abo_name_textbox");
@@ -38,8 +29,8 @@ public class EventNameForm extends DynamicForm {
         aboNameItem.setWidth("*"); // fill form column
         aboNameItem.setKeyPressFilter("[0-9a-zA-Z_]");
         aboNameItem.setValue(controller.createSuggestedAbonnementName());
-        aboNameItem.addKeyPressHandler(new KeyPressHandler() {
-            public void onKeyPress(KeyPressEvent event) {
+        aboNameItem.addKeyUpHandler(new KeyUpHandler() {
+            public void onKeyUp(KeyUpEvent event) {
                 TextItem nameItem = (TextItem) event.getSource();
                 String currentAbonnementName = (String) nameItem.getValue();
                 controller.setSelectedAbonnementName(currentAbonnementName);

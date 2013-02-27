@@ -366,7 +366,7 @@ public class SesRequestManager extends RequestManager {
                     finalFormat = finalFormat.trim();
                     finalMedium = finalMedium.trim();
 
-                    String finalMessage = message + "\n" + i18n.subscribeSuccessful2() + "\n" + i18n.subscriptionInfo();
+                    String finalMessage = message + i18n.subscribeSuccessful2() + "<br/><br/>" + i18n.subscriptionInfo();
                     SC.say(finalMessage);
 
                     getMainEventBus().fireEvent(new GetAllOwnRulesEvent(userID, false));
