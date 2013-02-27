@@ -57,6 +57,8 @@ public class ForgotPasswordLayout extends FormLayout {
      */
     public ForgotPasswordLayout() {
         super(i18n.forgotPassword());
+        
+        setStyleName("n52_sensorweb_client_form_content");
 
         DataSource dataSource = new DataSource();
 

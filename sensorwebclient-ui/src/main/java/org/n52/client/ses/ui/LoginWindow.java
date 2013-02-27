@@ -27,6 +27,7 @@ package org.n52.client.ses.ui;
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.LOGIN;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.PASSWORD;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.REGISTER;
 import static org.n52.client.ses.ui.layout.LoginLayout.createUserLoginLayout;
 import static org.n52.client.util.CookieManager.hasActiveLoginSession;
@@ -37,6 +38,8 @@ import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.SetRoleEvent;
 import org.n52.client.ses.event.handler.ChangeLayoutEventHandler;
 import org.n52.client.ses.event.handler.SetRoleEventHandler;
+import org.n52.client.ses.ui.FormLayout.LayoutType;
+import org.n52.client.ses.ui.layout.ForgotPasswordLayout;
 import org.n52.client.ses.ui.layout.RegisterLayout;
 import org.n52.client.ui.DataPanel;
 import org.n52.client.ui.DataPanelTab;
@@ -63,7 +66,6 @@ public abstract class LoginWindow extends Window {
 
     public LoginWindow(String ID) {
         COMPONENT_ID = ID;
-        setStyleName("n52_sensorweb_client_login_window");
         initializeWindow();
         new LoginWindowEventBroker(this);
         addCloseClickHandler(new CloseClickHandler() {
@@ -120,7 +122,16 @@ public abstract class LoginWindow extends Window {
         redraw();
     }
 
-    protected void updateWindowTitle(String newTitle) {
+    private void loadForgotPassword() {
+    	if (content != null) {
+    		removeItem(content);
+    	}
+    	content = new ForgotPasswordLayout();
+    	addItem(content);
+    	redraw();
+	}
+
+	protected void updateWindowTitle(String newTitle) {
         setTitle(newTitle);
     }
 
@@ -173,6 +184,10 @@ public abstract class LoginWindow extends Window {
             if (evt.getLayout() == REGISTER) {
                 window.loadRegistration();
                 window.updateWindowTitle(i18n.registration());
+            }
+            if (evt.getLayout() == PASSWORD) {
+            	window.loadForgotPassword();
+            	window.updateWindowTitle(i18n.forgotPassword());
             }
         }
     }

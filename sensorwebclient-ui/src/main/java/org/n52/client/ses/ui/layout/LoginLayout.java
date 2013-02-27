@@ -27,6 +27,7 @@ package org.n52.client.ses.ui.layout;
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.ctrl.DataControlsSes.createMD5;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.PASSWORD;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.REGISTER;
 import static org.n52.shared.responses.SesClientResponseType.LOGIN_NAME;
 import static org.n52.shared.responses.SesClientResponseType.LOGIN_PASSWORD;
@@ -74,7 +75,8 @@ public class LoginLayout extends FormLayout {
         PasswordItem passwordItem = createPasswordItem();
         ButtonItem loginButton = createLoginButton();
         LinkItem registerLink = createRegisterLink();
-        form.setFields(headerItem, userNameItem, passwordItem, loginButton, registerLink);
+        LinkItem forgotPasswordLink = createForgotPasswordLink();
+        form.setFields(headerItem, userNameItem, passwordItem, loginButton, registerLink, forgotPasswordLink);
         addMember(form);
     }
     
@@ -141,6 +143,18 @@ public class LoginLayout extends FormLayout {
         });
         return registerLink;
     }
+    
+    private LinkItem createForgotPasswordLink() {
+        LinkItem forgotPasswordLink = new LinkItem();
+        forgotPasswordLink.setShowTitle(false); // only link
+        forgotPasswordLink.setDefaultValue(i18n.forgotPassword());
+        forgotPasswordLink.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                getMainEventBus().fireEvent(new ChangeLayoutEvent(PASSWORD));
+            }
+        });
+        return forgotPasswordLink;
+    }
 
     public void update() {
         LoginLayout.this.form.validate();
@@ -193,6 +207,5 @@ public class LoginLayout extends FormLayout {
                 }
             });
         }
-        
     }
 }

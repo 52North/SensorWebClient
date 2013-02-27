@@ -234,10 +234,8 @@ public class SesRequestManager extends RequestManager {
                     SC.say(i18n.invalidNewPasswordInputs());
                 }
                 else {
-                    if ( !Cookies.getCookie(COOKIE_USER_ROLE).equals(ADMIN.toString())) {
-                        SC.say(i18n.passwordSended());
-                        getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.LOGIN));
-                    }
+					SC.say(i18n.passwordSended());
+					getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.LOGIN));
                 }
             }
         };
