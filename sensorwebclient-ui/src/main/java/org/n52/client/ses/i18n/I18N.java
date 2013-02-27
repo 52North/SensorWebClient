@@ -258,6 +258,7 @@ public interface I18N extends Constants {
     String failedAddSensorToFeeder();
     String subscribeSuccessful1();
     String subscribeSuccessful2();
+    String subscriptionInfo();
     String failedUnsubscribe();
     String failedDeleteSubscription();
     String failedDeleteRule();
