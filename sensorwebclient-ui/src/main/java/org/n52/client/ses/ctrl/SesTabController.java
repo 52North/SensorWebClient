@@ -213,26 +213,26 @@ public class SesTabController extends Controller<SesTab> {
             case LOGIN_ACTIVATED:
                 SC.say(i18n.accountNotActivated());
                 break;
-            case LOGIN_NAME:
-                getTab().getLoginLayout().getNameItem().setValue("");
-                getTab().getLoginLayout().update();
-                getTab().getLoginLayout().getNameItem().setErrorFormatter(new FormItemErrorFormatter() {
-                    public String getErrorHTML(String[] errors) {
-                        return "<img src='../img/icons/exclamation.png' alt='invalide name' title='"
-                                + i18n.invalidName() + "'/>";
-                    }
-                });
-                break;
-            case LOGIN_PASSWORD:
-                getTab().getLoginLayout().getPasswordItem().setValue("");
-                getTab().getLoginLayout().update();
-                getTab().getLoginLayout().getPasswordItem().setErrorFormatter(new FormItemErrorFormatter() {
-                    public String getErrorHTML(String[] errors) {
-                        return "<img src='../img/icons/exclamation.png' alt='invalide password' title='"
-                                + i18n.invalidPassword() + "'/>";
-                    }
-                });
-                break;
+//            case LOGIN_NAME:
+//                getTab().getLoginLayout().getNameItem().setValue("");
+//                getTab().getLoginLayout().update();
+//                getTab().getLoginLayout().getNameItem().setErrorFormatter(new FormItemErrorFormatter() {
+//                    public String getErrorHTML(String[] errors) {
+//                        return "<img src='../img/icons/exclamation.png' alt='invalide name' title='"
+//                                + i18n.invalidName() + "'/>";
+//                    }
+//                });
+//                break;
+//            case LOGIN_PASSWORD:
+//                getTab().getLoginLayout().getPasswordItem().setValue("");
+//                getTab().getLoginLayout().update();
+//                getTab().getLoginLayout().getPasswordItem().setErrorFormatter(new FormItemErrorFormatter() {
+//                    public String getErrorHTML(String[] errors) {
+//                        return "<img src='../img/icons/exclamation.png' alt='invalide password' title='"
+//                                + i18n.invalidPassword() + "'/>";
+//                    }
+//                });
+//                break;
             case LOGIN_LOCKED:
                 SC.say(i18n.accountLocked());
                 break;
