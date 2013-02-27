@@ -28,7 +28,6 @@ import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.ctrl.DataControlsSes.createMD5;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.REGISTER;
-import static org.n52.client.ui.View.getView;
 
 import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.LoginEvent;
@@ -68,14 +67,27 @@ public class LoginLayout extends FormLayout {
         passwordItem = createPasswordItem();
         ButtonItem loginButton = createLoginButton();
         LinkItem registerLink = createRegisterLink();
-        form.setFields(headerItem, userNameItem, passwordItem, loginButton, registerLink);
+        LinkItem forgotPassword = createForgotPasswordLink();
+        form.setFields(headerItem, userNameItem, passwordItem, loginButton, registerLink, forgotPassword);
         addMember(form);
     }
     
+    private LinkItem createForgotPasswordLink() {
+        LinkItem forgotPasswordLink = new LinkItem();
+        forgotPasswordLink.setTitle(i18n.forgotPassword());
+        forgotPasswordLink.setShowTitle(false); // only link
+        forgotPasswordLink.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                // TODO set content to change password layout
+//                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(PASSWORD));
+            }
+        });
+        return forgotPasswordLink;
+    }
+
     private TextItem createUserNameItem() {
         if (userNameItem == null) {
-            userNameItem = new TextItem();
-            userNameItem.setName("userName");
+            userNameItem = new TextItem("userName");
             userNameItem.setTitle(i18n.userName());
             userNameItem.setRequired(true);
             userNameItem.setSelectOnFocus(true);
@@ -142,19 +154,6 @@ public class LoginLayout extends FormLayout {
         return registerLink;
     }
 
-    private LinkItem createBackToDiagramLink() {
-        LinkItem backToDiagramLink = new LinkItem();
-        backToDiagramLink.setShowTitle(false); // only link
-        backToDiagramLink.setDefaultValue(i18n.back());
-        backToDiagramLink.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                getView().getLegend().switchToDiagramTab();
-            }
-        });
-        return backToDiagramLink;
-    }
-        
     public TextItem getNameItem() {
         return userNameItem;
     }

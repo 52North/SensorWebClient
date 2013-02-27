@@ -21,9 +21,9 @@ public class CookieManager {
      */
     public static LoginSession getCurrentLoginSession() {
         return LoginSessionBuilder.aLoginSession()
-                .forUser(getCookie(COOKIE_USER_NAME))
-                .withUserId(COOKIE_USER_ID)
-                .withRole(getCookie(COOKIE_USER_ROLE))
+//                .forUser(getCookie(COOKIE_USER_NAME))
+//                .withUserId(COOKIE_USER_ID)
+//                .withRole(getCookie(COOKIE_USER_ROLE))
                 .withSessionId(getCookie(COOKIE_SESSION_ID))
                 .build();
     }

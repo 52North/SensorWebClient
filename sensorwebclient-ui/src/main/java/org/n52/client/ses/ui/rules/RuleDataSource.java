@@ -33,21 +33,11 @@ import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.TYPE;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.UUID;
 
 import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.fields.DataSourceIntegerField;
-import com.smartgwt.client.data.fields.DataSourceSequenceField;
 import com.smartgwt.client.data.fields.DataSourceTextField;
 
 public class RuleDataSource extends DataSource {
 
     public RuleDataSource() {
-//        DataSourceIntegerField pkField = new DataSourceIntegerField("itemId"); 
-//        pkField.setPrimaryKey(true);
-//        pkField.setHidden(true);  
-        
-//        DataSourceSequenceField pkField = new DataSourceSequenceField("uniqueId");
-//        pkField.setPrimaryKey(true);
-//        pkField.setHidden(true);
-        
         DataSourceTextField pkField = new DataSourceTextField(UUID);
         pkField.setPrimaryKey(true);
         pkField.setHidden(true);
