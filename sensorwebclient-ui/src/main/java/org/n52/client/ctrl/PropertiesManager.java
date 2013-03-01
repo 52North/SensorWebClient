@@ -65,6 +65,7 @@ public class PropertiesManager {
 
     private void init() {
         try {
+            // TODO refactor grabbing properties + loading mechanism
         	setCurrentLanguage();
             RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, "properties/client-properties.xml");
             RequestCallback callback = new RequestCallback() {

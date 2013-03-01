@@ -54,7 +54,7 @@ import java.util.List;
 import org.n52.client.service.SesUserService;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.serializable.pojos.UserDTO;
-import org.n52.shared.session.LoginSession;
+import org.n52.shared.session.SessionInfo;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -73,22 +73,30 @@ public interface RpcSesUserServiceAsync {
     void registerUser(UserDTO userDTO, AsyncCallback<SesClientResponse> callback);
 
     /**
-     * See {@link SesUserService#login(String, String)} for documentation.
+     * See {@link SesUserService#login(String, String, SessionInfo)} for documentation.
      * 
      * @param callback
      *        a callback handling the server response.
      * @see SesUserService#login(String, String)
      */
-    void login(String userName, String password, AsyncCallback<SesClientResponse> callback);
+    void login(String userName, String password, SessionInfo sessionInfo, AsyncCallback<SesClientResponse> callback);
 
     /**
-     * See {@link SesUserService#validateLoginSession(LoginSession)} for documentation.
+     * See {@link SesUserService#validateLoginSession(SessionInfo)} for documentation.
      * 
      * @param callback
      *        a callback handling the server response.
-     * @see SesUserService#validateLoginSession(LoginSession)
+     * @see SesUserService#validateLoginSession(SessionInfo)
      */
-    void validateLoginSession(LoginSession loginSession, AsyncCallback<SesClientResponse> callback);
+    void validateLoginSession(SessionInfo sessionInfo, AsyncCallback<SesClientResponse> callback);
+
+    /**
+     * See {@link SesUserService#createNotLoggedInSession()} for documentation.
+     * 
+     * @param callback
+     *        a callback handling the server response.
+     */
+    void createNotLoggedInSession(AsyncCallback<SessionInfo> callback);
 
     /**
      * See {@link SesUserService#resetPassword(String, String)} for documentation.
@@ -100,58 +108,58 @@ public interface RpcSesUserServiceAsync {
     void resetPassword(String username, String email, AsyncCallback<SesClientResponse> callback);
 
     /**
-     * See {@link SesUserService#logout(LoginSession)} for documentation.
+     * See {@link SesUserService#logout(SessionInfo)} for documentation.
      * 
      * @param callback
      *        a callback for post processing after server finishes.
-     * @see SesUserService#logout(LoginSession)
+     * @see SesUserService#logout(SessionInfo)
      */
-    void logout(LoginSession loginSession, AsyncCallback<Void> callback);
+    void logout(SessionInfo loginSession, AsyncCallback<Void> callback);
 
     /**
-     * See {@link SesUserService#getUser(LoginSession)} for documentation.
+     * See {@link SesUserService#getUser(SessionInfo)} for documentation.
      * 
      * @param callback
      *        a callback handling the server response.
-     * @see SesUserService#getUser(LoginSession)
+     * @see SesUserService#getUser(SessionInfo)
      */
-    void getUser(LoginSession loginSession, AsyncCallback<UserDTO> callback);
+    void getUser(SessionInfo sessionInfo, AsyncCallback<SesClientResponse> callback);
 
     /**
-     * See {@link SesUserService#deleteUser(LoginSession, String)} for documentation.
+     * See {@link SesUserService#deleteUser(SessionInfo, String)} for documentation.
      * 
      * @param callback
      *        a callback handling the server response.
-     * @see SesUserService#deleteUser(LoginSession, String)
+     * @see SesUserService#deleteUser(SessionInfo, String)
      */
-    void deleteUser(LoginSession loginSession, String userId, AsyncCallback<SesClientResponse> callback);
+    void deleteUser(SessionInfo sessionInfo, String userId, AsyncCallback<SesClientResponse> callback);
 
     /**
-     * See {@link SesUserService#deleteUser(LoginSession, String)} for documentation.
+     * See {@link SesUserService#deleteUser(SessionInfo, String)} for documentation.
      * 
      * @param callback
      *        a callback handling the server response.
-     * @see SesUserService#deleteUser(LoginSession, String)
+     * @see SesUserService#deleteUser(SessionInfo, String)
      */
-    void updateUser(LoginSession loginSession, UserDTO userDataToUpdate, AsyncCallback<SesClientResponse> callback);
+    void updateUser(SessionInfo sessionInfo, UserDTO userDataToUpdate, AsyncCallback<SesClientResponse> callback);
 
     /**
-     * See {@link SesUserService#getAllUsers(LoginSession)} for documentation.
+     * See {@link SesUserService#getAllUsers(SessionInfo)} for documentation.
      * 
      * @param callback
      *        a callback handling the server response.
-     * @see SesUserService#getAllUsers(LoginSession)
+     * @see SesUserService#getAllUsers(SessionInfo)
      */
-    void getAllUsers(LoginSession loginSession, AsyncCallback<List<UserDTO>> callback);
+    void getAllUsers(SessionInfo sessionInfo, AsyncCallback<List<UserDTO>> callback);
 
     /**
-     * See {@link SesUserService#requestToDeleteProfile(LoginSession)} for documentation.
+     * See {@link SesUserService#requestToDeleteProfile(SessionInfo)} for documentation.
      * 
      * @param callback
      *        a callback handling the server response.
-     * @see SesUserService#requestToDeleteProfile(LoginSession)
+     * @see SesUserService#requestToDeleteProfile(SessionInfo)
      */
-    void requestToDeleteProfile(LoginSession loginSession, AsyncCallback<SesClientResponse> callback);
+    void requestToDeleteProfile(SessionInfo sessionInfo, AsyncCallback<SesClientResponse> callback);
 
     /**
      * See {@link SesUserService#getTermsOfUse(String)} for documentation.

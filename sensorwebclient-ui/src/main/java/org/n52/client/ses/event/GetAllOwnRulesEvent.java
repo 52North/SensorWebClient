@@ -31,13 +31,10 @@ public class GetAllOwnRulesEvent extends FilteredDispatchGwtEvent<GetAllOwnRules
 
     public static Type<GetAllOwnRulesEventHandler> TYPE = new Type<GetAllOwnRulesEventHandler>();
 
-    private String id;
-
     private boolean edit;
 
-    public GetAllOwnRulesEvent(String id, boolean edit, GetAllOwnRulesEventHandler... blockedHandlers) {
+    public GetAllOwnRulesEvent(boolean edit, GetAllOwnRulesEventHandler... blockedHandlers) {
         super(blockedHandlers);
-        this.id = id;
         this.edit = edit;
     }
 
@@ -50,10 +47,6 @@ public class GetAllOwnRulesEvent extends FilteredDispatchGwtEvent<GetAllOwnRules
     @Override
     public Type<GetAllOwnRulesEventHandler> getAssociatedType() {
         return TYPE;
-    }
-
-    public String getId() {
-        return this.id;
     }
 
     public boolean isEdit() {

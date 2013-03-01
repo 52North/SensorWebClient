@@ -32,46 +32,30 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = -6378856998449759965L;
 
-    /** The id. */
     private int id;
 
-    /** The user name. */
     private String userName; // login name
 
-    /** The name. */
     private String name;
 
-    /** The password. */
     private String password;
 
-    /** The e mail. */
     private String eMail;
 
-    /** The handy nr. */
-    private String handyNr;
-
-    /** The register ID */
     private String registerID;
 
-    /** The role. */
     private UserRole role;
 
-    /** The activated. */
     private boolean activated;
 
-    /** The wnsSmsId. */
     private String wnsSmsId;
 
-    /** The wnsEmailId. */
     private String wnsEmailId;
 
-    /** The basic rules. */
     private Set<BasicRule> basicRules = new HashSet<BasicRule>();
 
-    /** The complex rules. */
     private Set<ComplexRule> complexRules = new HashSet<ComplexRule>();
     
-    /** The registration time */
     private Date date;
     
     private Date falseLoginDate;
@@ -84,26 +68,16 @@ public class User implements Serializable {
     
     private boolean passwordChanged;
 
-    /**
-     * Instantiates a new user.
-     */
     public User() {
-        // basic constructor is needed
+        // for serialization only
     }
 
-    /**
-     * Instantiates a new user.
-     * 
-     * @param userDTO
-     *            the user dto
-     */
     public User(UserDTO userDTO) {
         this.id = userDTO.getId();
         this.userName = userDTO.getUserName();
         this.name = userDTO.getName();
         this.password = userDTO.getPassword();
         this.eMail = userDTO.geteMail();
-        this.handyNr = userDTO.getHandyNr();
         this.registerID = userDTO.getRegisterID();
         this.role = userDTO.getRole();
         this.activated = userDTO.getActivated();
@@ -112,118 +86,45 @@ public class User implements Serializable {
         this.date = userDTO.getDate();
     }
 
-    /**
-     * Constructor with all attributes.
-     * 
-     * @param id
-     *            the id
-     * @param userName
-     *            the user name
-     * @param name
-     *            the name
-     * @param password
-     *            the password
-     * @param eMail
-     *            the e mail
-     * @param handyNr
-     *            the handy nr
-     * @param role
-     *            the role
-     * @param activated
-     *            the activated
-     */
-    public User(int id, String userName, String name, String password, String eMail, String handyNr, UserRole role,
+    public User(int id, String userName, String name, String password, String eMail, UserRole role,
             boolean activated) {
         this.id = id;
         this.userName = userName;
         this.name = name;
         this.password = password;
         this.eMail = eMail;
-        this.handyNr = handyNr;
         this.role = role;
         this.activated = activated;
         this.date = new Date();
     }
 
-    /**
-     * Constructor without boolean activated.
-     * 
-     * @param id
-     *            the id
-     * @param userName
-     *            the user name
-     * @param name
-     *            the name
-     * @param password
-     *            the password
-     * @param eMail
-     *            the e mail
-     * @param handyNr
-     *            the handy nr
-     * @param role
-     *            the role
-     */
-    public User(int id, String userName, String name, String password, String eMail, String handyNr, UserRole role) {
+    public User(int id, String userName, String name, String password, String eMail, UserRole role) {
         this.id = id;
         this.userName = userName;
         this.name = name;
         this.password = password;
         this.eMail = eMail;
-        this.handyNr = handyNr;
         this.role = role;
         this.date = new Date();
     }
 
-    /**
-     * Constructor without userID Used while registration.
-     * 
-     * @param userName
-     *            the user name
-     * @param name
-     *            the name
-     * @param password
-     *            the password
-     * @param eMail
-     *            the e mail
-     * @param handyNr
-     *            the handy nr
-     * @param role
-     *            the role
-     * @param activated
-     *            the activated
-     */
-    public User(String userName, String name, String password, String eMail, String handyNr, UserRole role,
+    public User(String userName, String name, String password, String eMail, UserRole role,
             boolean activated) {
         this.userName = userName;
         this.name = name;
         this.password = password;
         this.eMail = eMail;
-        this.handyNr = handyNr;
         this.role = role;
         this.activated = activated;
         this.date = new Date();
     }
 
-    /**
-     * Constructor
-     * 
-     * @param userName
-     * @param name
-     * @param password
-     * @param eMail
-     * @param handyNr
-     * @param role
-     * @param activated
-     * @param wnsSmsmId
-     * @param wnsEmailId
-     */
-    public User(String userName, String name, String password, String eMail, String handyNr, UserRole role,
+    public User(String userName, String name, String password, String eMail, UserRole role,
             boolean activated, String wnsSmsmId, String wnsEmailId) {
         this.userName = userName;
         this.name = name;
         this.password = password;
         this.eMail = eMail;
-        this.handyNr = handyNr;
         this.role = role;
         this.activated = activated;
         this.wnsSmsId = wnsSmsmId;
@@ -231,53 +132,22 @@ public class User implements Serializable {
         this.date = new Date();
     }
 
-    /**
-     * Instantiates a new user.
-     * 
-     * @param userName
-     *            the user name
-     * @param name
-     *            the name
-     * @param password
-     *            the password
-     * @param eMail
-     *            the e mail
-     * @param handyNr
-     *            the handy nr
-     */
-    public User(String userName, String name, String password, String eMail, String handyNr) {
+    public User(String userName, String name, String password, String eMail) {
         this.userName = userName;
         this.name = name;
         this.password = password;
         this.eMail = eMail;
-        this.handyNr = handyNr;
         this.date = new Date();
     }
 
-    /**
-     * Gets the id.
-     * 
-     * @return the id
-     */
     public int getId() {
         return this.id;
     }
 
-    /**
-     * Sets the id.
-     * 
-     * @param id
-     *            the new id
-     */
     public void setId(int id) {
         this.id = id;
     }
 
-    /**
-     * Gets the user name.
-     * 
-     * @return the user name
-     */
     public String getUserName() {
         return this.userName;
     }
@@ -347,27 +217,6 @@ public class User implements Serializable {
      */
     public void seteMail(String eMail) {
         this.eMail = eMail;
-    }
-
-    /**
-     * Gets the handy nr.
-     * 
-     * @return the handy nr
-     */
-    @Deprecated
-    public String getHandyNr() {
-        return this.handyNr;
-    }
-
-    /**
-     * Sets the handy nr.
-     * 
-     * @param handyNr
-     *            the new handy nr
-     */
-    @Deprecated
-    public void setHandyNr(String handyNr) {
-        this.handyNr = handyNr;
     }
 
     /**

@@ -1,12 +1,11 @@
 package org.n52.client.ses.ui.rules;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
-import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
+import static org.n52.client.util.ClientSessionManager.getLoggedInUserId;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.event.CopyEvent;
 
-import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.IButton;
@@ -34,7 +33,7 @@ public class OtherUserRulesListGrid extends ListGrid {
                 copyButton.addClickHandler(new ClickHandler() {
                     public void onClick(ClickEvent event) {
                         System.out.println("copy " + record.getAttribute("name"));
-                        String userID = Cookies.getCookie(COOKIE_USER_ID);
+                        String userID = getLoggedInUserId();
                         EventBus.getMainEventBus().fireEvent(new CopyEvent(userID, record.getAttribute("name")));
                     }
                 });

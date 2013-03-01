@@ -27,71 +27,30 @@ import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.UpdateUserEventHandler;
 import org.n52.shared.serializable.pojos.UserDTO;
 
-/**
- * The Class UpdateUserEvent.
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- */
 public class UpdateUserEvent extends FilteredDispatchGwtEvent<UpdateUserEventHandler> {
 
-    /** The TYPE. */
     public static Type<UpdateUserEventHandler> TYPE = new Type<UpdateUserEventHandler>();
 
-    /** The user. */
     private UserDTO user;
-    private String userID;
-
-    /**
-     * Instantiates a new update user event.
-     * 
-     * @param u
-     *            the u
-     * @param userID 
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
-    public UpdateUserEvent(UserDTO u, String userID, UpdateUserEventHandler... blockedHandlers) {
+    
+    public UpdateUserEvent(UserDTO user, UpdateUserEventHandler... blockedHandlers) {
         super(blockedHandlers);
-        this.user = u;
-        this.userID = userID;
+        this.user = user;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(UpdateUserEventHandler handler) {
         handler.onUpdate(this);
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
     public com.google.gwt.event.shared.GwtEvent.Type<UpdateUserEventHandler> getAssociatedType() {
         return TYPE;
     }
 
-    /**
-     * Gets the user.
-     * 
-     * @return the user
-     */
     public UserDTO getUser() {
         return this.user;
     }
 
-    /**
-     * @return userID
-     */
-    public String getUserID() {
-        return this.userID;
-    }
 }

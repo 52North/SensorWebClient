@@ -86,11 +86,6 @@ public class CreateNewUserWindow {
         nameItem.setName("name");
         nameItem.setLength(length);
 
-        // password
-//        final PasswordItem passwordItem = new PasswordItem();
-//        passwordItem.setTitle(i18nManager.i18nSESClient.password());
-//        passwordItem.setName("password");
-
         // email
         DataSource dataSource = new DataSource();
         DataSourceTextField emailField = new DataSourceTextField("email", i18n.email(), 100, true);
@@ -109,14 +104,6 @@ public class CreateNewUserWindow {
         emailItem.setLength(length);
         emailItem.setRequired(true);
 
-        // handy
-        final TextItem handyItem = new TextItem();
-        handyItem.setName("handy");
-        handyItem.setTitle(i18n.handy());
-        handyItem.setKeyPressFilter("[0-9+]");
-        // this.handyItem.setHint("Numeric only<br>[0-9]");
-        handyItem.setLength(length);
-
         // role
         final SelectItem roleItem = new SelectItem();
         roleItem.setName("role");
@@ -134,17 +121,12 @@ public class CreateNewUserWindow {
                     String name = (String) nameItem.getValue();
                     String password = "";
                     final String email = (String) emailItem.getValue();
-                    String handy = (String) handyItem.getValue();
                     UserRole role;
                     
                     if (name == null || name.equals("")) {
                         name = "";
                     }
                     
-                    if (handy == null || handy.equals("")) {
-                        handy = "";
-                    }
-
                     String roleString = (String) roleItem.getValue();
                     if (roleString.equals(UserRole.ADMIN.toString())) {
                         role = UserRole.ADMIN;
@@ -153,7 +135,7 @@ public class CreateNewUserWindow {
                     }
 
                     // create new User
-                    UserDTO user = new UserDTO(userName, name, password, email, handy, role, false, new Date());
+                    UserDTO user = new UserDTO(userName, name, password, email, role, false, new Date());
                     EventBus.getMainEventBus().fireEvent(new RegisterUserEvent(user));
                     
                     Timer timer = new Timer() {
@@ -167,7 +149,7 @@ public class CreateNewUserWindow {
         });
 
         // set Fields to form
-        form.setFields(spacer, userNameItem, nameItem, emailItem, handyItem, roleItem, createItem);
+        form.setFields(spacer, userNameItem, nameItem, emailItem, roleItem, createItem);
 
         // add form to window
         window.addItem(form);

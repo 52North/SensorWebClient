@@ -28,7 +28,7 @@ import static org.n52.client.ses.ui.layout.LoginLayout.createUserLoginLayout;
 import org.n52.client.ctrl.DataControls;
 import org.n52.client.ses.ctrl.SesTabController;
 import org.n52.client.ses.ui.FormLayout.LayoutType;
-import org.n52.client.ses.ui.layout.ForgotPasswordLayout;
+import org.n52.client.ses.ui.layout.ResetPasswordLayout;
 import org.n52.client.ses.ui.layout.LoginLayout;
 import org.n52.client.ses.ui.layout.RegisterLayout;
 import org.n52.client.ses.ui.layout.SearchLayout;
@@ -56,7 +56,7 @@ public class SesTab extends DataPanelTab {
 
     private LoginLayout loginLayout;
 
-    private ForgotPasswordLayout forgorPasswordLayout;
+    private ResetPasswordLayout forgorPasswordLayout;
 
     private ShowUserLayout allUserLayout;
 
@@ -103,7 +103,7 @@ public class SesTab extends DataPanelTab {
         this.registerLayout = new RegisterLayout();
         this.registerLayout.setCanAcceptDrop(true);
 
-        this.forgorPasswordLayout = new ForgotPasswordLayout();
+        this.forgorPasswordLayout = new ResetPasswordLayout();
         this.forgorPasswordLayout.setCanAcceptDrop(true);
 
         this.allUserLayout = new ShowUserLayout();
@@ -257,9 +257,9 @@ public class SesTab extends DataPanelTab {
     }
 
     /**
-     * @return {@link ForgotPasswordLayout}
+     * @return {@link ResetPasswordLayout}
      */
-    public ForgotPasswordLayout getForgorPasswordLayout() {
+    public ResetPasswordLayout getForgorPasswordLayout() {
         return this.forgorPasswordLayout;
     }
 

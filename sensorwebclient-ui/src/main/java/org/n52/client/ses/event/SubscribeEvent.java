@@ -33,16 +33,13 @@ public class SubscribeEvent extends FilteredDispatchGwtEvent<SubscribeEventHandl
 
     private String uuid;
     
-    private String userId;
-
     private String medium;
 
     private String format;
 
-    public SubscribeEvent(String uuid, String userId, String medium, String format, SubscribeEventHandler... blockedHandlers) {
+    public SubscribeEvent(String uuid, String medium, String format, SubscribeEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.uuid = uuid;
-        this.userId = userId;
         this.medium = medium;
         this.format = format;
     }
@@ -61,10 +58,6 @@ public class SubscribeEvent extends FilteredDispatchGwtEvent<SubscribeEventHandl
         return uuid;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-    
     public String getMedium() {
         return medium;
     }

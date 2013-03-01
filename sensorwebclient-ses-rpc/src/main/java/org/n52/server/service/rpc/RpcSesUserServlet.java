@@ -42,7 +42,7 @@ import org.n52.shared.serializable.pojos.User;
 import org.n52.shared.serializable.pojos.UserDTO;
 import org.n52.shared.serializable.pojos.UserRole;
 import org.n52.shared.service.rpc.RpcSesUserService;
-import org.n52.shared.session.LoginSession;
+import org.n52.shared.session.SessionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -198,13 +198,18 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
     }
 
     @Override
-    public SesClientResponse login(String userName, String password) throws Exception {
-        return service.login(userName, password);
+    public SesClientResponse login(String userName, String password, SessionInfo sessionInfo) throws Exception {
+        return service.login(userName, password, sessionInfo);
     }
     
     @Override
-    public SesClientResponse validateLoginSession(LoginSession loginSession) throws Exception {
-        return service.validateLoginSession(loginSession);
+    public SesClientResponse validateLoginSession(SessionInfo sessionInfo) throws Exception {
+        return service.validateLoginSession(sessionInfo);
+    }
+    
+    @Override
+    public SessionInfo createNotLoggedInSession() throws Exception {
+        return service.createNotLoggedInSession();
     }
 
     @Override
@@ -213,18 +218,18 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
     }
 
     @Override
-    public void logout(LoginSession loginSession) throws Exception {
-        service.logout(loginSession);
+    public void logout(SessionInfo sessioninfo) throws Exception {
+        service.logout(sessioninfo);
     }
 
     @Override
-    public UserDTO getUser(LoginSession loginSession) throws Exception {
-        return service.getUser(loginSession);
+    public SesClientResponse getUser(SessionInfo sessionInfo) throws Exception {
+        return service.getUser(sessionInfo);
     }
 
     @Override
-    public SesClientResponse deleteUser(LoginSession loginSession, String id) throws Exception {
-        return service.deleteUser(loginSession, id);
+    public SesClientResponse deleteUser(SessionInfo sessioninfo, String id) throws Exception {
+        return service.deleteUser(sessioninfo, id);
     }
 
     
@@ -233,18 +238,18 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
     }
 
     @Override
-    public SesClientResponse updateUser(LoginSession loginSession, UserDTO newUser) throws Exception {
-        return service.updateUser(loginSession, newUser);
+    public SesClientResponse updateUser(SessionInfo sessionInfo, UserDTO newUser) throws Exception {
+        return service.updateUser(sessionInfo, newUser);
     }
 
     @Override
-    public List<UserDTO> getAllUsers(LoginSession loginSession) throws Exception {
-       return service.getAllUsers(loginSession);
+    public List<UserDTO> getAllUsers(SessionInfo sessionInfo) throws Exception {
+       return service.getAllUsers(sessionInfo);
     }
 
     @Override
-    public SesClientResponse requestToDeleteProfile(LoginSession loginSession) throws Exception {
-        return service.requestToDeleteProfile(loginSession);
+    public SesClientResponse requestToDeleteProfile(SessionInfo sessionInfo) throws Exception {
+        return service.requestToDeleteProfile(sessionInfo);
     }
 
     @Override

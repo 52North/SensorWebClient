@@ -23,7 +23,6 @@
  */
 package org.n52.client.ses.ctrl;
 
-import static com.google.gwt.user.client.Cookies.getCookie;
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.ABOS;
@@ -35,12 +34,9 @@ import static org.n52.client.ses.ui.FormLayout.LayoutType.PASSWORD;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.REGISTER;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.RULELIST;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.USERLIST;
-import static org.n52.client.ses.ui.FormLayout.LayoutType.USER_SUBSCRIPTIONS;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.WELCOME;
 import static org.n52.client.ui.View.getView;
 import static org.n52.shared.serializable.pojos.UserRole.ADMIN;
-import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
-import static org.n52.shared.session.LoginSession.COOKIE_USER_NAME;
 
 import java.util.ArrayList;
 
@@ -57,7 +53,6 @@ import org.n52.client.ses.event.GetAllRulesEvent;
 import org.n52.client.ses.event.GetAllUsersEvent;
 import org.n52.client.ses.event.GetDataEvent;
 import org.n52.client.ses.event.GetSingleUserEvent;
-import org.n52.client.ses.event.GetUserSubscriptionsEvent;
 import org.n52.client.ses.event.InformUserEvent;
 import org.n52.client.ses.event.SetRoleEvent;
 import org.n52.client.ses.event.ShowAllUserEvent;
@@ -80,9 +75,7 @@ import org.n52.client.ui.legend.LegendElement;
 import org.n52.shared.responses.SesClientResponseType;
 import org.n52.shared.serializable.pojos.UserRole;
 
-import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.util.SC;
-import com.smartgwt.client.widgets.form.FormItemErrorFormatter;
 
 public class SesTabController extends Controller<SesTab> {
     
@@ -136,15 +129,15 @@ public class SesTabController extends Controller<SesTab> {
                 getDataControls().highlightSelectedButton(getDataControls().getCreateComplexRuleButton());
             } else if (layout == EDIT_PROFILE) {
                 getDataControls().highlightSelectedButton(getDataControls().getEditProfileButton());
-                getMainEventBus().fireEvent(new GetSingleUserEvent(getCookie(COOKIE_USER_ID)));
+                getMainEventBus().fireEvent(new GetSingleUserEvent());
             } else if (layout == ABOS) {
                 getDataControls().highlightSelectedButton(getDataControls().getAboRuleButton());
-                getMainEventBus().fireEvent(new GetAllOwnRulesEvent(getCookie(COOKIE_USER_ID), false));
-                getMainEventBus().fireEvent(new GetAllOtherRulesEvent(getCookie(COOKIE_USER_ID), false));
+                getMainEventBus().fireEvent(new GetAllOwnRulesEvent(false));
+                getMainEventBus().fireEvent(new GetAllOtherRulesEvent(false));
             } else if (layout == EDIT_RULES) {
                 getDataControls().highlightSelectedButton(getDataControls().getEditRulesButton());
-                getMainEventBus().fireEvent(new GetAllOwnRulesEvent(getCookie(COOKIE_USER_ID), true));
-                getMainEventBus().fireEvent(new GetAllOtherRulesEvent(getCookie(COOKIE_USER_ID), true));
+                getMainEventBus().fireEvent(new GetAllOwnRulesEvent(true));
+                getMainEventBus().fireEvent(new GetAllOtherRulesEvent(true));
             } else if (layout == RULELIST) {
                 getDataControls().highlightSelectedButton(getDataControls().getManageRulesButton());
                 getMainEventBus().fireEvent(new GetAllRulesEvent());
@@ -194,15 +187,15 @@ public class SesTabController extends Controller<SesTab> {
             SesClientResponseType response = evt.getResponse().getType();
             switch (response) {
 
-            case DATA:
-                getDataControls().setWebAppPath((String) evt.getResponse().getBasicRules().get(0));
-                getDataControls().setWarnUserLongNotification((Boolean) evt.getResponse().getBasicRules().get(1));
-                getDataControls().setMinimumPasswordLength((Integer) evt.getResponse().getBasicRules().get(2));
-                getDataControls().setAvailableWNSMedia(((String)evt.getResponse().getBasicRules().get(3)).split(","));
-                getDataControls().setDefaultMedium((String) evt.getResponse().getBasicRules().get(4));
-                getDataControls().setAvailableFormats(((String)evt.getResponse().getBasicRules().get(5)).split(","));
-                getDataControls().setDefaultFormat((String) evt.getResponse().getBasicRules().get(6));
-                break;
+//            case DATA:
+//                getDataControls().setWebAppPath((String) evt.getResponse().getBasicRules().get(0));
+//                getDataControls().setWarnUserLongNotification((Boolean) evt.getResponse().getBasicRules().get(1));
+//                getDataControls().setMinimumPasswordLength((Integer) evt.getResponse().getBasicRules().get(2));
+//                getDataControls().setAvailableWNSMedia(((String)evt.getResponse().getBasicRules().get(3)).split(","));
+//                getDataControls().setDefaultMedium((String) evt.getResponse().getBasicRules().get(4));
+//                getDataControls().setAvailableFormats(((String)evt.getResponse().getBasicRules().get(5)).split(","));
+//                getDataControls().setDefaultFormat((String) evt.getResponse().getBasicRules().get(6));
+//                break;
 
             case TERMS_OF_USE:
                 getTab().getRegisterLayout().setTermsOfUse(evt.getResponse().getMessage());

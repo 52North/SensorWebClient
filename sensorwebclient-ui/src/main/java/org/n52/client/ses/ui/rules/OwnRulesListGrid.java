@@ -5,7 +5,7 @@ import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.NAME;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.PUBLISHED;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.UUID;
-import static org.n52.client.util.CookieManager.getLoggedInUserRole;
+import static org.n52.client.util.ClientSessionManager.getLoggedInUserRole;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.event.DeleteRuleEvent;

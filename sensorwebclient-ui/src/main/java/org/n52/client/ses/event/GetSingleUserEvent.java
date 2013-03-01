@@ -26,59 +26,23 @@ package org.n52.client.ses.event;
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.GetSingleUserEventHandler;
 
-/**
- * The Class GetSingleUserEvent.
- */
 public class GetSingleUserEvent extends FilteredDispatchGwtEvent<GetSingleUserEventHandler> {
 
-    /** The TYPE. */
     public static Type<GetSingleUserEventHandler> TYPE = new Type<GetSingleUserEventHandler>();
 
-    /** The parameterId. */
-    private String id;
-
-    /**
-     * Instantiates a new gets the single user event.
-     * 
-     * @param parameterId
-     *            the parameterId
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
-    public GetSingleUserEvent(String id, GetSingleUserEventHandler... blockedHandlers) {
+    public GetSingleUserEvent(GetSingleUserEventHandler... blockedHandlers) {
         super(blockedHandlers);
-        this.id = id;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(GetSingleUserEventHandler handler) {
         handler.onGetSingleUser(this);
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
     public com.google.gwt.event.shared.GwtEvent.Type<GetSingleUserEventHandler> getAssociatedType() {
         return TYPE;
     }
 
-    /**
-     * Gets the parameterId.
-     * 
-     * @return the parameterId
-     */
-    public String getId() {
-        return this.id;
-    }
 }

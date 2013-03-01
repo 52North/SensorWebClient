@@ -32,16 +32,13 @@ public class UnsubscribeEvent extends FilteredDispatchGwtEvent<UnsubscribeEventH
 
     private String uuid;
     
-    private String userID;
-    
     private String medium;
     
     private String format;
 
-    public UnsubscribeEvent(String uuid, String userID, String medium, String format, UnsubscribeEventHandler... blockedHandlers) {
+    public UnsubscribeEvent(String uuid, String medium, String format, UnsubscribeEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.uuid = uuid;
-        this.userID = userID;
         this.medium = medium;
         this.format = format;
     }
@@ -58,10 +55,6 @@ public class UnsubscribeEvent extends FilteredDispatchGwtEvent<UnsubscribeEventH
 
     public String getUuid() {
         return uuid;
-    }
-
-    public String getUserID() {
-        return userID;
     }
 
     public String getMedium() {

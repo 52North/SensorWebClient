@@ -8,7 +8,7 @@ import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.NAME;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.OWNERID;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.PUBLISHED;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.UUID;
-import static org.n52.client.util.CookieManager.getLoggedInUser;
+import static org.n52.client.util.ClientSessionManager.getLoggedInUser;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.event.DeleteRuleEvent;

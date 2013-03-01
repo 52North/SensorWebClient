@@ -27,37 +27,38 @@ package org.n52.client.service;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.serializable.pojos.ComplexRuleData;
 import org.n52.shared.serializable.pojos.Rule;
+import org.n52.shared.session.SessionInfo;
 
 public interface SesRuleService {
 
-    public SesClientResponse subscribe(String userID, String uuid, String medium, String eml) throws Exception;
+    public SesClientResponse subscribe(SessionInfo sessionInfo, String uuid, String medium, String eml) throws Exception;
 
-    public SesClientResponse unSubscribe(String uuid, String userID, String medium, String format) throws Exception;
+    public SesClientResponse unSubscribe(SessionInfo sessionInfo, String uuid, String medium, String format) throws Exception;
 
-    public SesClientResponse createBasicRule(Rule rule, boolean edit, String oldRuleName) throws Exception;
+    public SesClientResponse createBasicRule(SessionInfo sessionInfo, Rule rule, boolean edit, String oldRuleName) throws Exception;
 
-    public SesClientResponse getAllOwnRules(String id, boolean edit) throws Exception;
+    public SesClientResponse getAllOwnRules(SessionInfo sessionInfo, boolean edit) throws Exception;
 
-    public SesClientResponse getAllOtherRules(String id, boolean edit) throws Exception;
+    public SesClientResponse getAllOtherRules(SessionInfo sessioninfo, boolean edit) throws Exception;
 
-    public SesClientResponse publishRule(String ruleName, boolean published, String role) throws Exception;
+    public SesClientResponse publishRule(SessionInfo sessioninfo, String ruleName, boolean published) throws Exception;
 
-    public SesClientResponse getAllRules() throws Exception;
+    public SesClientResponse getAllRules(SessionInfo sessioninfo) throws Exception;
 
-    public SesClientResponse deleteRule(String uuid) throws Exception;
+    public SesClientResponse deleteRule(SessionInfo sessioninfo, String uuid) throws Exception;
 
     @Deprecated
     public SesClientResponse getRuleForEditing(String ruleName) throws Exception;
 
-    public SesClientResponse getAllPublishedRules(String userID, int operator) throws Exception;
+    public SesClientResponse getAllPublishedRules(SessionInfo sessioninfo, int operator) throws Exception;
 
     @Deprecated
     public SesClientResponse ruleNameExists(String ruleName) throws Exception;
 
     @Deprecated
-    public SesClientResponse createComplexRule(ComplexRuleData rule, boolean edit, String oldRuleName) throws Exception;
+    public SesClientResponse createComplexRule(SessionInfo sessioninfo, ComplexRuleData rule, boolean edit, String oldRuleName) throws Exception;
 
-    public SesClientResponse getUserSubscriptions(String userID) throws Exception;
+    public SesClientResponse getUserSubscriptions(SessionInfo sessioninfo) throws Exception;
 
     public SesClientResponse search(String text, int criterion, String userID) throws Exception;
 

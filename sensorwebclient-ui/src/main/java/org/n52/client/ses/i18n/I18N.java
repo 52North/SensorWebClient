@@ -438,5 +438,7 @@ public interface I18N extends Constants {
 	String validateTextBoxes();
 
     String loginIsOrHasBecomeInvalid();
+
+    String failedSessionCreation();
     
 }

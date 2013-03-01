@@ -23,9 +23,9 @@
  */
 package org.n52.client.ses.ui.profile;
 
+import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
-import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
-import static org.n52.shared.session.LoginSession.COOKIE_USER_ROLE;
+import static org.n52.client.util.ClientSessionManager.getLoggedInUserId;
 
 import java.util.Date;
 
@@ -35,10 +35,10 @@ import org.n52.client.ses.event.DeleteProfileEvent;
 import org.n52.client.ses.event.LogoutEvent;
 import org.n52.client.ses.event.UpdateUserEvent;
 import org.n52.client.ses.ui.FormLayout;
+import org.n52.client.util.ClientSessionManager;
 import org.n52.shared.serializable.pojos.UserDTO;
 import org.n52.shared.serializable.pojos.UserRole;
 
-import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;
@@ -150,23 +150,22 @@ public class EditProfileLayout extends FormLayout {
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (EditProfileLayout.this.form.validate(false)) {
-                    UserRole userRole;
-                    String role = Cookies.getCookie(COOKIE_USER_ROLE);
-                    if (role.equals(UserRole.ADMIN.toString())) {
+                    UserRole userRole = null;
+                    if (ClientSessionManager.isAdminLogin()) {
                         userRole = UserRole.ADMIN;
-                    } else {
+                    } 
+                    else if (ClientSessionManager.isUserLogin()) {
                         userRole = UserRole.USER;
                     }
                     
                     String password = DataControlsSes.createMD5(EditProfileLayout.this.form.getValueAsString("oldPassword"));
 
                     UserDTO u =
-                        new UserDTO(Integer.parseInt(Cookies.getCookie(COOKIE_USER_ID)),
+                        new UserDTO(Integer.parseInt(getLoggedInUserId()),
                                 EditProfileLayout.this.form.getValueAsString("userName"),
                                 EditProfileLayout.this.form.getValueAsString("name"), 
                                 password, 
                                 EditProfileLayout.this.form.getValueAsString("email"), 
-                                EditProfileLayout.this.form.getValueAsString("handy"), 
                                 userRole, new Date());
                     u.setActivated(true);
 
@@ -174,7 +173,7 @@ public class EditProfileLayout extends FormLayout {
                         u.setNewPassword(DataControlsSes.createMD5(EditProfileLayout.this.newPasswordItem.getValueAsString()));
                     }
 
-                    EventBus.getMainEventBus().fireEvent(new UpdateUserEvent(u, Cookies.getCookie(COOKIE_USER_ID)));
+                    EventBus.getMainEventBus().fireEvent(new UpdateUserEvent(u));
                 }
             }
         });
@@ -187,9 +186,8 @@ public class EditProfileLayout extends FormLayout {
                 SC.ask(i18n.reallyDeleteProfile(), new BooleanCallback() {
                     public void execute(Boolean value) {
                         if (value) {
-                            EventBus.getMainEventBus().fireEvent(
-                                    new DeleteProfileEvent(Cookies.getCookie(COOKIE_USER_ID)));
-                            EventBus.getMainEventBus().fireEvent(new LogoutEvent());
+                            getMainEventBus().fireEvent(new DeleteProfileEvent(getLoggedInUserId()));
+                            getMainEventBus().fireEvent(new LogoutEvent());
                         }
                     }
                 });
@@ -202,12 +200,6 @@ public class EditProfileLayout extends FormLayout {
         addMember(this.form);
     }
 
-    /**
-     * Update.
-     * 
-     * @param user
-     *            the user
-     */
     public void update(UserDTO user) {
         this.form.setValue("userName", user.getUserName());
         this.form.setValue("name", user.getName());
@@ -216,6 +208,5 @@ public class EditProfileLayout extends FormLayout {
         this.form.clearValue("newPassword");
         this.form.clearValue("password2");
         this.form.clearValue("oldPassword");
-        this.form.setValue("handy", user.getHandyNr());
     }
 }

@@ -23,12 +23,10 @@
  */
 package org.n52.client.ses.ui.rules;
 
-import static com.google.gwt.user.client.Cookies.getCookie;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.FORMAT;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.MEDIUM;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.UUID;
-import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
 
 import java.util.ArrayList;
 
@@ -184,8 +182,7 @@ public class UserRuleLayout extends FormLayout {
                                         SC.say(i18n.selectFormat());
                                     } else {
                                         String uuid = record.getAttribute(UUID);
-                                        String userId = getCookie(COOKIE_USER_ID);
-                                        SubscribeEvent subscribeEvent = new SubscribeEvent(uuid, userId, medium, format);
+                                        SubscribeEvent subscribeEvent = new SubscribeEvent(uuid, medium, format);
                                         EventBus.getMainEventBus().fireEvent(subscribeEvent);
                                     }
                                 }
@@ -309,8 +306,7 @@ public class UserRuleLayout extends FormLayout {
                                         SC.say(i18n.selectFormat());
                                     } else {
                                         String uuid = ruleRecord.getUuid();
-                                        String userId = getCookie(COOKIE_USER_ID);
-                                        SubscribeEvent subscribeEvent = new SubscribeEvent(uuid, userId, medium, format);
+                                        SubscribeEvent subscribeEvent = new SubscribeEvent(uuid, medium, format);
                                         EventBus.getMainEventBus().fireEvent(subscribeEvent);
                                     }
                                 }

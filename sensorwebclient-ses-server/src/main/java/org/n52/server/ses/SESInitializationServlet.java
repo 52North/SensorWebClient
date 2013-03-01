@@ -204,7 +204,7 @@ public class SESInitializationServlet extends HttpServlet {
                     // create default admin on start
                     UserDTO admin =
                             SesUserServiceImpl.createUserDTO(new User("admin", "Admin", SesServerUtil.createMD5("admin"),
-                                    SesConfig.SENDER_ADDRESS, "", UserRole.ADMIN, true));
+                                    SesConfig.SENDER_ADDRESS, UserRole.ADMIN, true));
                     admin.setRegisterID(UUID.randomUUID().toString());
 
                     // check if default admin already exists
@@ -227,7 +227,7 @@ public class SESInitializationServlet extends HttpServlet {
                     if (Log.isDebugEnabled()) {
                         UserDTO user =
                             SesUserServiceImpl.createUserDTO(new User("user", "User", SesServerUtil.createMD5("user"),
-                                    "52n.development@googlemail.com", "+456", UserRole.USER, true));
+                                    "52n.development@googlemail.com", UserRole.USER, true));
                         if (!HibernateUtil.existsUserName(user.getUserName())) {
                             user.setRegisterID(UUID.randomUUID().toString());
 

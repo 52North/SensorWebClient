@@ -6,21 +6,12 @@ import static java.lang.System.currentTimeMillis;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * TODO move to a common module
- */
-public class LoginSession implements Serializable {
+public class SessionInfo implements Serializable {
 
     private static final long serialVersionUID = 5076704245184520622L;
 
-    public static final String COOKIE_USER_ID = "n52_sensorweb_client_userId";
-
-    public static final String COOKIE_USER_ROLE = "n52_sensorweb_client_role";
-
-    public static final String COOKIE_USER_NAME = "n52_sensorweb_client_username";
-
     public static final String COOKIE_SESSION_ID = "n52_sensorweb_client_sessionId";
-
+    
     private Date expiringDate;
 
     private String username;
@@ -30,9 +21,14 @@ public class LoginSession implements Serializable {
     private String role;
 
     private String session;
+    
+    SessionInfo() {
+        // for serialization only
+    }
 
-    public LoginSession() {
+    public SessionInfo(String sessionId) {
         this.expiringDate = createExpiringDate();
+        this.session = sessionId;
     }
 
     private Date createExpiringDate() {
@@ -71,11 +67,7 @@ public class LoginSession implements Serializable {
     public String getSession() {
         return session;
     }
-
-    void setSession(String session) {
-        this.session = session;
-    }
-
+    
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -94,9 +86,9 @@ public class LoginSession implements Serializable {
             return true;
         if (obj == null)
             return false;
-        if ( ! (obj instanceof LoginSession))
+        if ( ! (obj instanceof SessionInfo))
             return false;
-        LoginSession other = (LoginSession) obj;
+        SessionInfo other = (SessionInfo) obj;
         if (expiringDate == null) {
             if (other.expiringDate != null)
                 return false;
@@ -113,8 +105,6 @@ public class LoginSession implements Serializable {
             if (other.session != null)
                 return false;
         }
-        else if ( !session.equals(other.session))
-            return false;
         if (userId == null) {
             if (other.userId != null)
                 return false;

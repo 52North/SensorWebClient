@@ -30,11 +30,8 @@ public class GetUserSubscriptionsEvent extends FilteredDispatchGwtEvent<GetUserS
 
     public static Type<GetUserSubscriptionsEventHandler> TYPE = new Type<GetUserSubscriptionsEventHandler>();
     
-    private String userID;
-
-    public GetUserSubscriptionsEvent(String userID, GetUserSubscriptionsEventHandler... blockedHandlers) {
+    public GetUserSubscriptionsEvent(GetUserSubscriptionsEventHandler... blockedHandlers) {
         super(blockedHandlers);
-        this.userID = userID;
     }
 
     @Override
@@ -47,7 +44,4 @@ public class GetUserSubscriptionsEvent extends FilteredDispatchGwtEvent<GetUserS
         return TYPE;
     }
 
-    public String getUserID() {
-        return this.userID;
-    }
 }

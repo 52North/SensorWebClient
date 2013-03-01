@@ -24,8 +24,10 @@
 
 package org.n52.client.ses.ctrl;
 
-import static org.n52.client.util.CookieManager.getCurrentLoginSession;
-import static org.n52.client.util.CookieManager.hasActiveLoginSession;
+import static org.n52.client.bus.EventBus.getMainEventBus;
+import static org.n52.client.util.ClientSessionManager.currentSession;
+import static org.n52.client.util.ClientSessionManager.isPresentSessionInfo;
+import static org.n52.shared.serializable.pojos.UserRole.LOGOUT;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.ServiceController;
@@ -56,6 +58,7 @@ import org.n52.client.ses.event.PublishRuleEvent;
 import org.n52.client.ses.event.RegisterUserEvent;
 import org.n52.client.ses.event.RuleNameExistsEvent;
 import org.n52.client.ses.event.SearchEvent;
+import org.n52.client.ses.event.SetRoleEvent;
 import org.n52.client.ses.event.SubscribeEvent;
 import org.n52.client.ses.event.UnsubscribeEvent;
 import org.n52.client.ses.event.UpdateSensorEvent;
@@ -99,8 +102,11 @@ public class SesController extends ServiceController {
     public SesController() {
         this.setRm(new SesRequestManager());
         new SesControllerEventBroker();
-        if (hasActiveLoginSession()) {
-            rm.validateLoginSession(getCurrentLoginSession());
+        if (isPresentSessionInfo()) {
+            rm.validate(currentSession());
+        } else {
+            getMainEventBus().fireEvent(new SetRoleEvent(LOGOUT));
+            rm.createSessionInfo();
         }
     }
 
@@ -196,7 +202,7 @@ public class SesController extends ServiceController {
         }
 
         public void onGetSingleUser(GetSingleUserEvent evt) {
-            SesController.this.getRm().getUser(evt.getId());
+            SesController.this.getRm().getUser();
         }
 
         public void onDeleteUser(DeleteUserEvent evt) {
@@ -204,11 +210,11 @@ public class SesController extends ServiceController {
         }
 
         public void onUpdate(UpdateUserEvent evt) {
-            SesController.this.getRm().updateUser(evt.getUser(), evt.getUserID());
+            SesController.this.getRm().updateUser(evt.getUser());
         }
 
         public void onSubscribe(SubscribeEvent evt) {
-            SesController.this.getRm().subscribe(evt.getUserId(), evt.getUuid(), evt.getMedium(), evt.getFormat());
+            SesController.this.getRm().subscribe(evt.getUuid(), evt.getMedium(), evt.getFormat());
         }
 
         public void onCreate(CreateSimpleRuleEvent evt) {
@@ -228,11 +234,11 @@ public class SesController extends ServiceController {
         }
 
         public void onGet(GetAllOwnRulesEvent evt) {
-            SesController.this.getRm().getAllOwnRules(evt.getId(), evt.isEdit());
+            SesController.this.getRm().getAllOwnRules(evt.isEdit());
         }
 
         public void onGet(GetAllOtherRulesEvent evt) {
-            SesController.this.getRm().getAllOtherRules(evt.getId(), evt.isEdit());
+            SesController.this.getRm().getAllOtherRules(evt.isEdit());
         }
 
         public void onGet(GetRegisteredSensorsEvent evt) {
@@ -268,7 +274,7 @@ public class SesController extends ServiceController {
         }
 
         public void onUnsubscribe(UnsubscribeEvent evt) {
-            SesController.this.getRm().unsubscribe(evt.getUuid(), evt.getUserID(), evt.getMedium(), evt.getFormat());
+            SesController.this.getRm().unsubscribe(evt.getUuid(), evt.getMedium(), evt.getFormat());
         }
 
         public void onExists(RuleNameExistsEvent evt) {
@@ -280,11 +286,11 @@ public class SesController extends ServiceController {
         }
 
         public void onGet(GetUserSubscriptionsEvent evt) {
-            SesController.this.getRm().getUserSubscriptions(evt.getUserID());
+            SesController.this.getRm().getUserSubscriptions();
         }
 
         public void onDeleteProfile(DeleteProfileEvent evt) {
-            SesController.this.getRm().deleteProfile(evt.getId());
+            SesController.this.getRm().deleteProfile();
         }
 
         public void onGet(GetTermsOfUseEvent evt) {

@@ -29,7 +29,7 @@ import java.util.List;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.serializable.pojos.UserDTO;
 import org.n52.shared.serializable.pojos.UserRole;
-import org.n52.shared.session.LoginSession;
+import org.n52.shared.session.SessionInfo;
 
 /**
  * TODO extract admin operations
@@ -49,26 +49,39 @@ public interface SesUserService {
     public SesClientResponse registerUser(UserDTO userDTO) throws Exception;
 
     /**
-     * Logs in a user with given username and password hash.
+     * Logs in a user with given username and password hash. To prevent logins from external sources an
+     * not-logged-in session has to be provided which can be retrieved by calling
+     * {@link #getNewLoginSessionid()} beforehand.
      * 
      * @param userName
      *        the user's username.
      * @param password
      *        the hashed password.
+     * @param notLoggedInSession
+     *        a not-logged-in session.
      * @return a response object containing login status.
      * @throws Exception
      *         if processing request fails.
      */
-    public SesClientResponse login(String userName, String password) throws Exception;
+    public SesClientResponse login(String userName, String password, SessionInfo notLoggedInSession) throws Exception;
 
     /**
-     * @param loginSession
-     *        the active login session.
+     * @param sessionInfo
+     *        the active session info.
      * @return the user information as data transfer object.
      * @throws Exception
      *         if processing request fails.
      */
-    public SesClientResponse validateLoginSession(LoginSession loginSession) throws Exception;
+    public SesClientResponse validateLoginSession(SessionInfo sessionInfo) throws Exception;
+
+    /**
+     * Lets the server create a session which is considered to be a not-logged-in session. 
+     * 
+     * @return an inactive session info.
+     * @throws Exception
+     *         if processing request fails.
+     */
+    public SessionInfo createNotLoggedInSession() throws Exception;
 
     /**
      * Starts process of resetting a user's password. The given email address has to match with that address
@@ -87,68 +100,68 @@ public interface SesUserService {
     /**
      * Logs out a user and destroys the user's session hold on server side.
      * 
-     * @param loginSession
-     *        the user's login session to destroy.
+     * @param sessionInfo
+     *        the user's session info to destroy.
      * @throws Exception
      *         if processing request fails.
      */
-    public void logout(LoginSession loginSession) throws Exception;
+    public void logout(SessionInfo sessionInfo) throws Exception;
 
     /**
-     * Gets user information from given login session object.
+     * Gets user information from given session info object.
      * 
-     * @param loginSession
-     *        the active login session object.
-     * @return the user information as data transfer object.
+     * @param sessionInfo
+     *        the active session info object.
+     * @return a response object containing process status.
      * @throws Exception
      *         if processing request fails.
      */
-    public UserDTO getUser(LoginSession loginSession) throws Exception;
+    public SesClientResponse getUser(SessionInfo sessionInfo) throws Exception;
 
     /**
      * Deletes a user with the given user id. only user's with {@link UserRole#ADMIN} are allowed to delete a
      * user directly. Deletion of normal users are handled via
-     * {@link #requestToDeleteProfile(LoginSession, String)} as it starts a confirmation process beforehand.<br>
+     * {@link #requestToDeleteProfile(SessionInfo, String)} as it starts a confirmation process beforehand.<br>
      * <br>
      * Note that at least one user with {@link UserRole#ADMIN} has to exist.
      * 
-     * @param loginSession
-     *        the user's active login session object.
+     * @param sessionInfo
+     *        the user's active session info object.
      * @param userId
      *        the id of the user to delete.
      * @return a response object containing process status.
      * @throws Exception
      *         if processing request fails.
      * 
-     * @see #requestToDeleteProfile(LoginSession, String)
+     * @see #requestToDeleteProfile(SessionInfo, String)
      * @see #performUserDelete(String)
      */
-    public SesClientResponse deleteUser(LoginSession loginSession, String userId) throws Exception;
+    public SesClientResponse deleteUser(SessionInfo sessionInfo, String userId) throws Exception;
 
     /**
      * Updates user information of a registered user.
      * 
-     * @param loginSession
-     *        the user's active login session object.
+     * @param sessionInfo
+     *        the user's active session info object.
      * @param userDataToUpdate
      *        the data to update the registered user with.
      * @return a response object containing process status.
      * @throws Exception
      *         if processing request fails.
      */
-    public SesClientResponse updateUser(LoginSession loginSession, UserDTO userDataToUpdate) throws Exception;
+    public SesClientResponse updateUser(SessionInfo sessionInfo, UserDTO userDataToUpdate) throws Exception;
 
     /**
      * Gets all users registered at the system. Only user's with {@link UserRole#ADMIN} are allowed to a list
      * of all users.
      * 
-     * @param loginSession
-     *        the user's active login session object.
+     * @param sessionInfo
+     *        the user's active session info object.
      * @return a response object containing process status.
      * @throws Exception
      *         if processing request fails.
      */
-    public List<UserDTO> getAllUsers(LoginSession loginSession) throws Exception;
+    public List<UserDTO> getAllUsers(SessionInfo sessionInfo) throws Exception;
 
     /**
      * Starts deletion process of a user. The deletion has to be confirmed by email before deletion takes
@@ -156,13 +169,13 @@ public interface SesUserService {
      * <br>
      * Note that at least one user with {@link UserRole#ADMIN} has to exist.
      * 
-     * @param loginSession
-     *        the user's active login session object.
+     * @param sessionInfo
+     *        the user's session info object.
      * @return a response object containing process status.
      * @throws Exception
      *         if processing request fails.
      */
-    public SesClientResponse requestToDeleteProfile(LoginSession loginSession) throws Exception;
+    public SesClientResponse requestToDeleteProfile(SessionInfo sessionInfo) throws Exception;
 
     /**
      * XXX remove this method and integrate terms of use on client side only

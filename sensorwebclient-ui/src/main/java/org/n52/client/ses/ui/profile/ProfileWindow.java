@@ -3,8 +3,8 @@ package org.n52.client.ses.ui.profile;
 
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
-import static org.n52.client.util.CookieManager.getLoggedInUserId;
-import static org.n52.client.util.CookieManager.hasActiveLoginSession;
+import static org.n52.client.util.ClientSessionManager.getLoggedInUserId;
+import static org.n52.client.util.ClientSessionManager.isPresentSessionInfo;
 import static org.n52.shared.responses.SesClientResponseType.USER_SUBSCRIPTIONS;
 
 import org.n52.client.ses.event.GetSingleUserEvent;
@@ -42,19 +42,18 @@ public class ProfileWindow extends LoginWindow {
     }
 
     @Override
-    protected void initializeContent() {
+    protected void loadSubsciptionListContent() {
+        clearContent();
         content = new HLayout();
         content.addMember(createEditProfileLayout());
         content.addMember(createSubcriptionsLayout());
         addItem(content);
         setTitle(i18n.editUserData());
         
-        if (hasActiveLoginSession()) {
-            subscriptionsLayout.clearGrid();
-            String userId = getLoggedInUserId();
-            getMainEventBus().fireEvent(new GetSingleUserEvent(userId));
-            getMainEventBus().fireEvent(new GetUserSubscriptionsEvent(userId));
-        }
+        subscriptionsLayout.clearGrid();
+        getMainEventBus().fireEvent(new GetSingleUserEvent());
+        getMainEventBus().fireEvent(new GetUserSubscriptionsEvent());
+        markForRedraw();
     }
 
     private Canvas createEditProfileLayout() {

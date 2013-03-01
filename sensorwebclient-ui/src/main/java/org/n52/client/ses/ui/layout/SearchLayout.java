@@ -24,7 +24,7 @@
 package org.n52.client.ses.ui.layout;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
-import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
+import static org.n52.client.util.ClientSessionManager.getLoggedInUserId;
 
 import java.util.ArrayList;
 
@@ -37,7 +37,6 @@ import org.n52.client.ses.ui.rules.RuleDataSourceRecord;
 import org.n52.shared.serializable.pojos.BasicRuleDTO;
 import org.n52.shared.serializable.pojos.ComplexRuleDTO;
 
-import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.SortDirection;
 import com.smartgwt.client.types.TitleOrientation;
@@ -192,9 +191,7 @@ public class SearchLayout extends FormLayout {
                     String text = textItem.getValue().toString();
                     String criterion = comboBoxItem.getValue().toString();
                    
-                    String userID = Cookies.getCookie(COOKIE_USER_ID);
                     int operator = 0;
-                    
                     if (criterion.equals(i18n.searchFullText())) {
                         operator = 1;
                     } else if (criterion.equals(i18n.name())) {
@@ -206,7 +203,7 @@ public class SearchLayout extends FormLayout {
                     } else if (criterion.equals(i18n.phenomenon())) {
                         operator = 5;
                     }
-                    EventBus.getMainEventBus().fireEvent(new SearchEvent(text, operator, userID));
+                    EventBus.getMainEventBus().fireEvent(new SearchEvent(text, operator, getLoggedInUserId()));
                 }
             }
         });

@@ -23,18 +23,18 @@
  */
 package org.n52.client.ses.ui.rules;
 
-import static com.google.gwt.user.client.Cookies.getCookie;
 import static java.lang.Integer.parseInt;
+import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.EDIT_RULES;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.RULELIST;
+import static org.n52.client.util.ClientSessionManager.getLoggedInUserId;
+import static org.n52.client.util.ClientSessionManager.isAdminLogin;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.OVER_UNDERSHOOT;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.SENSOR_LOSS;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.SUM_OVER_TIME;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.TENDENCY_OVER_COUNT;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.TENDENCY_OVER_TIME;
-import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
-import static org.n52.shared.session.LoginSession.COOKIE_USER_ROLE;
 import static org.n52.shared.util.MathSymbolUtil.getIndexFor;
 import static org.n52.shared.util.MathSymbolUtil.getInverse;
 import static org.n52.shared.util.MathSymbolUtil.getMathSymbols;
@@ -53,7 +53,6 @@ import org.n52.shared.serializable.pojos.Rule;
 import org.n52.shared.serializable.pojos.RuleBuilder;
 import org.n52.shared.serializable.pojos.TimeseriesMetadata;
 
-import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.TitleOrientation;
@@ -272,11 +271,10 @@ public class CreateSimpleRuleLayout extends FormLayout {
         this.cancelButton.setVisible(false);
         this.cancelButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                String role = Cookies.getCookie(COOKIE_USER_ROLE);
-                if (role.equals("ADMIN")) {
-                    EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(RULELIST));
+                if (isAdminLogin()) {
+                    getMainEventBus().fireEvent(new ChangeLayoutEvent(RULELIST));
                 } else {
-                    EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(EDIT_RULES));
+                    getMainEventBus().fireEvent(new ChangeLayoutEvent(EDIT_RULES));
                 }
             }
         });
@@ -486,17 +484,15 @@ public class CreateSimpleRuleLayout extends FormLayout {
         String rTime = this.entryTimeItem.getValueAsString();
         String rTimeUnit = this.entryTimeUnitItem.getValueAsString();
         
-        int cookieAsInt = Integer.parseInt(Cookies.getCookie(COOKIE_USER_ID));
+        int userId = Integer.parseInt(getLoggedInUserId());
         Rule rule = RuleBuilder.aRule()
                         .setRuleType(ruleTyp)
                         .setTitle(name)
-//                        .setProcedure(procedure)
-//                        .setPhenomenon(phenomenon)
                         .setNotificationType(notificationType)
                         .setDescription(description)
                         .setPublish(publish)
                         .setEnterIsSameAsExitCondition(enterConditionIsSameAsExitCondition)
-                        .setUserId(cookieAsInt)
+                        .setUserId(userId)
                         .setEntryTime(rTime)
                         .setEntryTimeUnit(rTimeUnit)
                         .build();
@@ -546,7 +542,7 @@ public class CreateSimpleRuleLayout extends FormLayout {
                         .setExitOperatorIndex(exitOperatorIndex)
                         .setExitValue(exitValue)
                         .setExitUnit(exitUnit)
-                        .setUserId(parseInt(getCookie(COOKIE_USER_ID)))
+                        .setUserId(parseInt(getLoggedInUserId()))
                         .setEntryCount(entryCount)
                         .build();
 
@@ -602,7 +598,7 @@ public class CreateSimpleRuleLayout extends FormLayout {
                         .setEntryOperatorIndex(entryOperatorIndex)
                         .setEntryValue(entryValue)
                         .setEntryUnit(entryUnit)
-                        .setUserId(parseInt(getCookie(COOKIE_USER_ID)))
+                        .setUserId(parseInt(getLoggedInUserId()))
                         .setEntryTime(entryTime)
                         .setEntryTimeUnit(entryTimeUnit)
                         .setExitTime(exitTime)
@@ -645,12 +641,10 @@ public class CreateSimpleRuleLayout extends FormLayout {
             countCondValue = countValue;
         }
 
-        int cookieAsInt = Integer.parseInt(Cookies.getCookie(COOKIE_USER_ID));
+        int userId = Integer.parseInt(getLoggedInUserId());
         Rule rule = RuleBuilder.aRule()
                         .setRuleType(ruleTyp)
                         .setTitle(name)
-//                        .setProcedure(procedure)
-//                        .setPhenomenon(phenomenon)
                         .setNotificationType(notificationType)
                         .setDescription(description)
                         .setPublish(publish)
@@ -661,7 +655,7 @@ public class CreateSimpleRuleLayout extends FormLayout {
                         .setExitOperatorIndex(operatorIndexCond)
                         .setExitValue(cValue)
                         .setExitUnit(cUnit)
-                        .setUserId(cookieAsInt)
+                        .setUserId(userId)
                         .setExitCount(countValue)
                         .setEntryCount(countCondValue)
                         .build();
@@ -698,12 +692,10 @@ public class CreateSimpleRuleLayout extends FormLayout {
             enterConditionIsSameAsExitCondition = true;
         }
 
-        int cookieAsInt = Integer.parseInt(Cookies.getCookie(COOKIE_USER_ID));
+        int userId = Integer.parseInt(getLoggedInUserId());
         Rule rule = RuleBuilder.aRule()
                         .setRuleType(ruleTyp)
                         .setTitle(name)
-//                        .setProcedure(procedure)
-//                        .setPhenomenon(phenomenon)
                         .setNotificationType(notificationType)
                         .setDescription(description)
                         .setPublish(publish)
@@ -714,7 +706,7 @@ public class CreateSimpleRuleLayout extends FormLayout {
                         .setExitOperatorIndex(exitOperatorIndex)
                         .setExitValue(exitValue)
                         .setExitUnit(exitUnit)
-                        .setUserId(cookieAsInt)
+                        .setUserId(userId)
                         .build();
         
 //        Rule rule =

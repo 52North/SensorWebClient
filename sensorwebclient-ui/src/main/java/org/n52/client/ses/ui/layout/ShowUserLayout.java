@@ -49,26 +49,14 @@ import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 
-/**
- * The Class ShowUserLayout.
- * 
- * This view is for admins and shows a table with all registered and activated
- * users. Here the admin can delete or edit user data.
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- */
 public class ShowUserLayout extends FormLayout {
 
-    /** The user grid. */
     private ListGrid userGrid;
 
     private UserDataSource dataSource;
     
     private boolean first = true;
 
-    /**
-     * Instantiates a new show user layout.
-     */
     public ShowUserLayout() {
         super(i18n.userManagement());
         
@@ -78,9 +66,6 @@ public class ShowUserLayout extends FormLayout {
         init();
     }
 
-    /**
-     * Inits the layout.
-     */
     private void init() {
         this.userGrid = new ListGrid() {
             @Override
@@ -158,8 +143,8 @@ public class ShowUserLayout extends FormLayout {
         ListGridField emailField = new ListGridField("eMail", i18n.emailAddress());
         emailField.setAlign(Alignment.CENTER);
 
-        ListGridField handyField = new ListGridField("handy", i18n.handyNumber());
-        handyField.setAlign(Alignment.CENTER);
+//        ListGridField handyField = new ListGridField("handy", i18n.handyNumber());
+//        handyField.setAlign(Alignment.CENTER);
 
         ListGridField roleField = new ListGridField("role", i18n.role());
         roleField.setWidth(90);
@@ -175,7 +160,7 @@ public class ShowUserLayout extends FormLayout {
         deleteField.setAlign(Alignment.CENTER);
         deleteField.setCanFilter(false);
 
-        this.userGrid.setFields(userNameField, nameField, emailField, handyField, roleField, editField, deleteField);
+        this.userGrid.setFields(userNameField, nameField, emailField, roleField, editField, deleteField);
 
         // createNewUser button
         IButton createUserButton = new IButton(i18n.createNewUser());
@@ -214,7 +199,7 @@ public class ShowUserLayout extends FormLayout {
 
         for (int i = 0; i < list.size(); i++) {
             user = list.get(i);
-            userRecord = new UserDataSourceRecord(String.valueOf(user.getId()), user.getUserName(), user.getName(), user.getPassword(), user.geteMail(), user.getHandyNr(), user.getRole().toString());
+            userRecord = new UserDataSourceRecord(String.valueOf(user.getId()), user.getUserName(), user.getName(), user.getPassword(), user.geteMail(), user.getRole().toString());
 
             this.userGrid.addData(userRecord);
         }

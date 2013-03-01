@@ -9,8 +9,7 @@ import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.MEDIUM;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.NAME;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.SUBSCRIBED;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.UUID;
-import static org.n52.client.util.CookieManager.getLoggedInUserId;
-import static org.n52.client.util.CookieManager.getLoggedInUserRole;
+import static org.n52.client.util.ClientSessionManager.getLoggedInUserRole;
 
 import org.n52.client.ses.event.DeleteRuleEvent;
 import org.n52.client.ses.event.SubscribeEvent;
@@ -100,11 +99,10 @@ public class SubscriptionListGrid extends ListGrid {
                 String medium = ruleRecord.getAttribute(MEDIUM);
                 String format = ruleRecord.getAttribute(FORMAT);
                 ruleRecord.setAttribute(SUBSCRIBED, checked);
-                String userID = getLoggedInUserId();
                 if(checked) {
-                    getMainEventBus().fireEvent(new SubscribeEvent(uuid, userID, medium, format));
+                    getMainEventBus().fireEvent(new SubscribeEvent(uuid, medium, format));
                 } else {
-                    getMainEventBus().fireEvent(new UnsubscribeEvent(uuid, userID, medium, format));
+                    getMainEventBus().fireEvent(new UnsubscribeEvent(uuid, medium, format));
                 }
             }
         };

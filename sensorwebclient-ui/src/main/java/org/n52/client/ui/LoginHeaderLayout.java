@@ -1,11 +1,12 @@
 package org.n52.client.ui;
 
+import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
+import static org.n52.client.util.ClientSessionManager.getLoggedInUser;
+import static org.n52.client.util.ClientSessionManager.getLoggedInUserRole;
 import static org.n52.shared.serializable.pojos.UserRole.ADMIN;
 import static org.n52.shared.serializable.pojos.UserRole.LOGOUT;
 import static org.n52.shared.serializable.pojos.UserRole.USER;
-import static org.n52.shared.session.LoginSession.COOKIE_USER_NAME;
-import static org.n52.shared.session.LoginSession.COOKIE_USER_ROLE;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.event.LogoutEvent;
@@ -13,7 +14,6 @@ import org.n52.client.ses.event.SetRoleEvent;
 import org.n52.client.ses.event.handler.SetRoleEventHandler;
 import org.n52.shared.serializable.pojos.UserRole;
 
-import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Label;
@@ -47,7 +47,7 @@ public class LoginHeaderLayout extends HLayout {
 		logout.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				EventBus.getMainEventBus().fireEvent(new LogoutEvent());
+				getMainEventBus().fireEvent(new LogoutEvent());
 			}
 		});
 		addMember(logout);
@@ -75,16 +75,15 @@ public class LoginHeaderLayout extends HLayout {
 			}
 		});
 		addMember(admin);
-//		setAutoWidth();
 	}
 	
-	public void showUserAsLoggedIn() {
-		String userName = Cookies.getCookie(COOKIE_USER_NAME);
+	private void showUserAsLoggedIn() {
+		String userName = getLoggedInUser();
 		if(userName != null) {
 			show();
 			user.setContents(i18n.loggedInAs() + " " + userName);
-			String roleType = Cookies.getCookie(COOKIE_USER_ROLE);
-			if (roleType.equals(UserRole.ADMIN.name())) {
+			String roleType = getLoggedInUserRole();
+			if (roleType.equals(ADMIN.name())) {
 				admin.show();
 			} else {
 				admin.hide();
@@ -94,7 +93,7 @@ public class LoginHeaderLayout extends HLayout {
 		}
 	}
 	
-	public void showLoggedOutHeader() {
+	private void showLoggedOutHeader() {
 	    admin.hide();
 	    hide();
 	}
@@ -126,10 +125,10 @@ public class LoginHeaderLayout extends HLayout {
 		@Override
 		public void onChangeRole(SetRoleEvent evt) {
 		    UserRole role = evt.getRole();
-		    if (LOGOUT == role) {
+		    if (role == LOGOUT) {
                 loginHeaderLayout.showLoggedOutHeader();
                 SC.say(i18n.logoutSuccessful());
-            } else if (USER == role || ADMIN == role) {
+            } else if (role == USER || role == ADMIN) {
                 loginHeaderLayout.showUserAsLoggedIn();
             }
 		}

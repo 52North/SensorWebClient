@@ -91,7 +91,7 @@ public final class Application {
     
 	public static void start() {
 		// TODO refactor startup to be more explicit
-        getPropertiesManager();
+        getPropertiesManager(); // creates singleton
 	}
 
     public static void continueStartup() {

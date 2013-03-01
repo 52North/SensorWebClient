@@ -24,7 +24,6 @@
 package org.n52.client.ses.ui;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
-import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
 
 import java.util.Date;
 
@@ -34,7 +33,6 @@ import org.n52.client.ses.event.UpdateUserEvent;
 import org.n52.shared.serializable.pojos.UserDTO;
 import org.n52.shared.serializable.pojos.UserRole;
 
-import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.fields.DataSourceTextField;
 import com.smartgwt.client.types.Alignment;
@@ -128,15 +126,6 @@ public class EditUserWindow {
         dataSource.setFields(emailField);
         form.setDataSource(dataSource);
 
-        // handy
-        final TextItem handyItem = new TextItem();
-        handyItem.setName("handy");
-        handyItem.setTitle(i18n.handy());
-        handyItem.setKeyPressFilter("[0-9+]");
-        // this.handyItem.setHint("Numeric only<br>[0-9]");
-        handyItem.setLength(length);
-        handyItem.setValue(record.getHandy());
-
         // role
         final SelectItem roleItem = new SelectItem();
         roleItem.setName("role");
@@ -155,7 +144,6 @@ public class EditUserWindow {
                     String name = (String) nameItem.getValue();
 //                    String password = (String) passwordItem.getValue();
                     String email = (String) emailItem.getValue();
-                    String handy = (String) handyItem.getValue();
                     UserRole role;
 
                     String roleString = (String) roleItem.getValue();
@@ -166,16 +154,16 @@ public class EditUserWindow {
                     }
 
                     // create new User
-                    UserDTO user = new UserDTO(Integer.valueOf(EditUserWindow.record.getId()), userName, name, null, email, handy, role, new Date());
+                    UserDTO user = new UserDTO(Integer.valueOf(EditUserWindow.record.getId()), userName, name, null, email, role, new Date());
                     user.setActivated(true);
-                    EventBus.getMainEventBus().fireEvent(new UpdateUserEvent(user,Cookies.getCookie(COOKIE_USER_ID)));
+                    EventBus.getMainEventBus().fireEvent(new UpdateUserEvent(user));
                     EditUserWindow.window.destroy();
                 }
             }
         });
 
         // set Fields to form
-        form.setFields(spacer, userNameItem, nameItem, emailItem, handyItem, roleItem, editItem);
+        form.setFields(spacer, userNameItem, nameItem, emailItem, roleItem, editItem);
 
         // add form to window
         window.addItem(form);

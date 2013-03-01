@@ -24,12 +24,19 @@
 
 package org.n52.client.ses.ctrl;
 
-import static com.google.gwt.user.client.Cookies.getCookie;
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.ABOS;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.EDIT_RULES;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.LOGIN;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.RULELIST;
 import static org.n52.client.ui.Toaster.getToasterInstance;
-import static org.n52.client.util.CookieManager.destroyCurrentLoginSession;
-import static org.n52.client.util.CookieManager.getCurrentLoginSession;
+import static org.n52.client.util.ClientSessionManager.currentSession;
+import static org.n52.client.util.ClientSessionManager.isAdminLogin;
+import static org.n52.client.util.ClientSessionManager.isUserLogin;
+import static org.n52.client.util.ClientSessionManager.setSessionInfo;
+import static org.n52.shared.responses.SesClientResponseType.DELETE_RULE_SUBSCRIBED;
+import static org.n52.shared.responses.SesClientResponseType.EDIT_COMPLEX_RULE;
 import static org.n52.shared.responses.SesClientResponseType.ERROR;
 import static org.n52.shared.responses.SesClientResponseType.LAST_ADMIN;
 import static org.n52.shared.responses.SesClientResponseType.LOGIN_OK;
@@ -38,14 +45,16 @@ import static org.n52.shared.responses.SesClientResponseType.LOGOUT;
 import static org.n52.shared.responses.SesClientResponseType.MAIL;
 import static org.n52.shared.responses.SesClientResponseType.NEW_PASSWORD_OK;
 import static org.n52.shared.responses.SesClientResponseType.OK;
+import static org.n52.shared.responses.SesClientResponseType.PUBLISH_RULE_USER;
 import static org.n52.shared.responses.SesClientResponseType.REGISTER_HANDY;
 import static org.n52.shared.responses.SesClientResponseType.REGISTER_NAME;
 import static org.n52.shared.responses.SesClientResponseType.REGISTER_OK;
 import static org.n52.shared.responses.SesClientResponseType.REGSITER_EMAIL;
+import static org.n52.shared.responses.SesClientResponseType.REQUIRES_LOGIN;
+import static org.n52.shared.responses.SesClientResponseType.RULE_NAME_EXISTS;
 import static org.n52.shared.responses.SesClientResponseType.RULE_NAME_NOT_EXISTS;
+import static org.n52.shared.responses.SesClientResponseType.USER_INFO;
 import static org.n52.shared.serializable.pojos.UserRole.ADMIN;
-import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
-import static org.n52.shared.session.LoginSession.COOKIE_USER_ROLE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,10 +75,9 @@ import org.n52.client.ses.event.RuleCreatedEvent;
 import org.n52.client.ses.event.SetRoleEvent;
 import org.n52.client.ses.event.ShowAllUserEvent;
 import org.n52.client.ses.event.UpdateProfileEvent;
-import org.n52.client.ses.ui.FormLayout;
 import org.n52.client.ses.ui.FormLayout.LayoutType;
 import org.n52.client.ui.Toaster;
-import org.n52.client.util.CookieManager;
+import org.n52.client.util.ClientSessionManager;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.responses.SesClientResponseType;
 import org.n52.shared.serializable.pojos.ComplexRuleData;
@@ -82,12 +90,13 @@ import org.n52.shared.service.rpc.RpcSesTimeseriesToFeedService;
 import org.n52.shared.service.rpc.RpcSesTimeseriesToFeedServiceAsync;
 import org.n52.shared.service.rpc.RpcSesUserService;
 import org.n52.shared.service.rpc.RpcSesUserServiceAsync;
-import org.n52.shared.session.LoginSession;
+import org.n52.shared.session.SessionInfo;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.util.SC;
+
+// TODO try to transfer LoginRequiredException through the wire
 
 public class SesRequestManager extends RequestManager {
 
@@ -112,12 +121,9 @@ public class SesRequestManager extends RequestManager {
             public void onSuccess(SesClientResponse response) {
                 if (response.getType().equals(REGISTER_OK)) {
 
-                    String userRole = Cookies.getCookie(COOKIE_USER_ROLE);
-
-                    if (userRole == null || !userRole.equals(UserRole.ADMIN.toString())) {
+                    if ( !isAdminLogin()) {
+                        getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
                         SC.say(i18n.emailSent());
-                        // link to loginpage
-                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(FormLayout.LayoutType.LOGIN));
                     }
                     else {
                         SC.say(i18n.createUserSuccessful());
@@ -137,14 +143,6 @@ public class SesRequestManager extends RequestManager {
         this.sesUserService.registerUser(user, callback);
     }
 
-    /**
-     * Login and set cookie with user parameterId.
-     * 
-     * @param name
-     *        the name
-     * @param password
-     *        the password
-     */
     public void login(String name, String password) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
@@ -155,7 +153,7 @@ public class SesRequestManager extends RequestManager {
                 if (response.getType() == LOGIN_OK) {
                     UserDTO user = response.getUser();
 
-                    CookieManager.setCookiesFrom(response.getLoginSession());
+                    ClientSessionManager.setSessionInfo(response.getSessionInfo());
 
                     if ( !user.isEmailVerified()) {
                         SC.say(i18n.validateEMail());
@@ -186,31 +184,51 @@ public class SesRequestManager extends RequestManager {
             }
 
         };
-        this.sesUserService.login(name, password, callback);
+        this.sesUserService.login(name, password, currentSession(), callback);
     }
 
     /**
-     * Validates if given login session is known or has become invalid on server side. This can be the case
-     * after a server restart, or when cookie has been expired on server side.
+     * Validates if given session is known or has become invalid on server side. This can be the case after a
+     * server restart, or when cookie has been expired on server side.
      * 
-     * @param loginSession the login session to check.
+     * @param sessionInfo
+     *        the session info to check.
      */
-    public void validateLoginSession(LoginSession loginSession) {
+    public void validate(SessionInfo sessionInfo) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             @Override
             public void onFailure(Throwable caught) {
-                destroyCurrentLoginSession();
+                getMainEventBus().fireEvent(new SetRoleEvent(UserRole.LOGOUT));
                 getToasterInstance().addErrorMessage(i18n.loginIsOrHasBecomeInvalid());
             }
 
             @Override
             public void onSuccess(SesClientResponse result) {
-                if (result.getType() == LOGOUT) {
+                if (result.getType() == SesClientResponseType.LOGOUT) {
                     getMainEventBus().fireEvent(new LogoutEvent());
+                    createSessionInfo();
                 }
             }
         };
-        sesUserService.validateLoginSession(loginSession, callback);
+        sesUserService.validateLoginSession(sessionInfo, callback);
+    }
+
+    /**
+     * Asks the server to create a new session and sets it at the {@link ClientSessionManager}.
+     */
+    public void createSessionInfo() {
+        AsyncCallback<SessionInfo> callback = new AsyncCallback<SessionInfo>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                getToasterInstance().addErrorMessage(i18n.failedSessionCreation());
+            }
+
+            @Override
+            public void onSuccess(SessionInfo sessionInfo) {
+                setSessionInfo(sessionInfo);
+            }
+        };
+        sesUserService.createNotLoggedInSession(callback);
     }
 
     /**
@@ -234,8 +252,8 @@ public class SesRequestManager extends RequestManager {
                     SC.say(i18n.invalidNewPasswordInputs());
                 }
                 else {
-					SC.say(i18n.passwordSended());
-					getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.LOGIN));
+                    SC.say(i18n.passwordSended());
+                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.LOGIN));
                 }
             }
         };
@@ -251,29 +269,35 @@ public class SesRequestManager extends RequestManager {
 
             @Override
             public void onSuccess(Void result) {
-                destroyCurrentLoginSession();
                 getMainEventBus().fireEvent(new SetRoleEvent(UserRole.LOGOUT));
+                createSessionInfo();
             }
         };
-        sesUserService.logout(getCurrentLoginSession(), callback);
+        sesUserService.logout(currentSession(), callback);
     }
 
-    public void getUser(String id) {
-        AsyncCallback<UserDTO> callback = new AsyncCallback<UserDTO>() {
+    public void getUser() {
+        AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             @Override
             public void onFailure(Throwable arg0) {
                 getToasterInstance().addErrorMessage(i18n.failedGetUser());
             }
 
             @Override
-            public void onSuccess(UserDTO user) {
-                getMainEventBus().fireEvent(new UpdateProfileEvent(user));
+            public void onSuccess(SesClientResponse result) {
+                if (result.getType() == REQUIRES_LOGIN) {
+                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                }
+                else if (result.getType() == USER_INFO) {
+                    UserDTO user = result.getUser();
+                    getMainEventBus().fireEvent(new UpdateProfileEvent(user));
+                }
             }
         };
-        sesUserService.getUser(getCurrentLoginSession(), callback);
+        sesUserService.getUser(currentSession(), callback);
     }
 
-    public void deleteUser(String id) {
+    public void deleteUser(String userIdToDelete) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             @Override
             public void onFailure(Throwable arg0) {
@@ -282,21 +306,24 @@ public class SesRequestManager extends RequestManager {
 
             @Override
             public void onSuccess(SesClientResponse result) {
-                if (result.getType().equals(LAST_ADMIN)) {
+                if (result.getType() == REQUIRES_LOGIN) {
+                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                }
+                else if (result.getType().equals(LAST_ADMIN)) {
                     SC.say(i18n.lastAdmin());
                 }
-                if ( !Cookies.getCookie(COOKIE_USER_ROLE).equals(ADMIN.name())) {
+                if ( !ClientSessionManager.isAdminLogin()) {
                     getMainEventBus().fireEvent(new LogoutEvent());
                 }
-                if (Cookies.getCookie(COOKIE_USER_ROLE).equals(ADMIN.name())) {
+                if (ClientSessionManager.isAdminLogin()) {
                     getMainEventBus().fireEvent(new GetAllUsersEvent());
                 }
             }
         };
-        sesUserService.deleteUser(getCurrentLoginSession(), id, callback);
+        sesUserService.deleteUser(currentSession(), userIdToDelete, callback);
     }
 
-    public void updateUser(UserDTO user, String userID) {
+    public void updateUser(UserDTO user) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             @Override
             public void onFailure(Throwable arg0) {
@@ -305,9 +332,12 @@ public class SesRequestManager extends RequestManager {
 
             @Override
             public void onSuccess(SesClientResponse response) {
-                if (response.getType().equals(OK)) {
+                if (response.getType() == REQUIRES_LOGIN) {
+                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                }
+                else if (response.getType().equals(OK)) {
                     SC.say(i18n.updateSuccessful());
-                    if (Cookies.getCookie(COOKIE_USER_ROLE).equals(ADMIN.toString())) {
+                    if (isAdminLogin()) {
                         getMainEventBus().fireEvent(new GetAllUsersEvent());
                     }
                 }
@@ -334,10 +364,11 @@ public class SesRequestManager extends RequestManager {
                 }
             }
         };
-        sesUserService.updateUser(getCurrentLoginSession(), user, callback);
+        sesUserService.updateUser(currentSession(), user, callback);
     }
 
-    public void subscribe(final String userID, final String uuid, final String medium, final String format) {
+    public void subscribe(final String uuid, final String medium, final String format) {
+        final SessionInfo session = currentSession();
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             @Override
             public void onFailure(Throwable arg0) {
@@ -349,6 +380,9 @@ public class SesRequestManager extends RequestManager {
                 SesClientResponseType type = result.getType();
 
                 switch (type) {
+                case REQUIRES_LOGIN:
+                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                    break;
                 case OK:
                     String message = i18n.subscribeSuccessful1();
                     String[] formats = format.split("_");
@@ -366,11 +400,12 @@ public class SesRequestManager extends RequestManager {
                     finalFormat = finalFormat.trim();
                     finalMedium = finalMedium.trim();
 
-                    String finalMessage = message + i18n.subscribeSuccessful2() + "<br/><br/>" + i18n.subscriptionInfo();
+                    String finalMessage = message + i18n.subscribeSuccessful2() + "<br/><br/>"
+                            + i18n.subscriptionInfo();
                     SC.say(finalMessage);
 
-                    getMainEventBus().fireEvent(new GetAllOwnRulesEvent(userID, false));
-                    getMainEventBus().fireEvent(new GetAllOtherRulesEvent(userID, false));
+                    getMainEventBus().fireEvent(new GetAllOwnRulesEvent(false));
+                    getMainEventBus().fireEvent(new GetAllOtherRulesEvent(false));
                     break;
                 case RULE_NAME_EXISTS:
                     SC.say(i18n.copyExistsSubscribe());
@@ -383,15 +418,15 @@ public class SesRequestManager extends RequestManager {
                     break;
                 case SUBSCRIPTION_EXISTS:
                     SC.say(i18n.subscriptionExists());
-                    EventBus.getMainEventBus().fireEvent(new GetAllOwnRulesEvent(userID, false));
-                    EventBus.getMainEventBus().fireEvent(new GetAllOtherRulesEvent(userID, false));
+                    EventBus.getMainEventBus().fireEvent(new GetAllOwnRulesEvent(false));
+                    EventBus.getMainEventBus().fireEvent(new GetAllOtherRulesEvent(false));
                     break;
                 default:
                     break;
                 }
             }
         };
-        this.sesRulesService.subscribe(userID, uuid, medium, format, callback);
+        this.sesRulesService.subscribe(session, uuid, medium, format, callback);
     }
 
     public void createBasicRule(Rule rule, boolean edit, String oldRuleName) {
@@ -399,8 +434,10 @@ public class SesRequestManager extends RequestManager {
         ServerCallback<SesClientResponse> callback = new CreateSimpleRuleCallback(this, "Could not create rule.") {
             @Override
             public void onSuccess(SesClientResponse result) {
-
-                if (result.getType() == RULE_NAME_NOT_EXISTS) {
+                if (result.getType() == REQUIRES_LOGIN) {
+                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                }
+                else if (result.getType() == RULE_NAME_NOT_EXISTS) {
                     Rule basicRule = result.getBasicRule();
                     EventBus.getMainEventBus().fireEvent(new RuleCreatedEvent(basicRule));
                 }
@@ -410,33 +447,7 @@ public class SesRequestManager extends RequestManager {
                 }
             }
         };
-
-        // TODO remove dead code
-        // AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
-        // public void onFailure(Throwable arg0) {
-        // Toaster.getInstance().addErrorMessage(i18n.failedCreateBR());
-        // }
-        //
-        // public void onSuccess(SesClientResponse result) {
-        // if (result.getType().equals(types.RULE_NAME_NOT_EXISTS)) {
-        // SC.say(i18n.creationSuccessful());
-        // if ((Cookies.getCookie(SesRequestManager.COOKIE_USER_ROLE)).equals("USER")) {
-        // EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.ABOS));
-        // } else {
-        // EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.RULELIST));
-        // }
-        // } else if (result.getType().equals(types.RULE_NAME_EXISTS)) {
-        // SC.say(i18n.ruleExists());
-        // } else if (result.getType().equals(types.EDIT_SIMPLE_RULE)) {
-        // if ((Cookies.getCookie(SesRequestManager.COOKIE_USER_ROLE)).equals("USER")) {
-        // EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.EDIT_RULES));
-        // } else {
-        // EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(Layouts.RULELIST));
-        // }
-        // }
-        // }
-        // };
-        this.sesRulesService.createBasicRule(rule, edit, oldRuleName, callback);
+        this.sesRulesService.createBasicRule(currentSession(), rule, edit, oldRuleName, callback);
     }
 
     public void getAllUsers() {
@@ -451,7 +462,7 @@ public class SesRequestManager extends RequestManager {
                 getMainEventBus().fireEvent(new ShowAllUserEvent(result));
             }
         };
-        sesUserService.getAllUsers(getCurrentLoginSession(), callback);
+        sesUserService.getAllUsers(currentSession(), callback);
     }
 
     public void getStations() {
@@ -484,8 +495,7 @@ public class SesRequestManager extends RequestManager {
         sesTimeseriesService.getPhenomena(sensor, callback);
     }
 
-    public void getAllOwnRules(String id, boolean edit) {
-        // TODO use session cookie
+    public void getAllOwnRules(boolean edit) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             @Override
             public void onFailure(Throwable arg0) {
@@ -494,23 +504,31 @@ public class SesRequestManager extends RequestManager {
 
             @Override
             public void onSuccess(SesClientResponse response) {
-                getMainEventBus().fireEvent(new InformUserEvent(response));
+                if (response.getType() == REQUIRES_LOGIN) {
+                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                }
+                else {
+                    getMainEventBus().fireEvent(new InformUserEvent(response));
+                }
             }
         };
-        sesRulesService.getAllOwnRules(id, edit, callback);
+        sesRulesService.getAllOwnRules(currentSession(), edit, callback);
     }
 
-    public void getAllOtherRules(String id, boolean edit) {
+    public void getAllOtherRules(boolean edit) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
                 Toaster.getToasterInstance().addErrorMessage(arg0.getMessage());
             }
 
             public void onSuccess(SesClientResponse response) {
+                if (response.getType() == REQUIRES_LOGIN) {
+                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                }
                 EventBus.getMainEventBus().fireEvent(new InformUserEvent(response));
             }
         };
-        this.sesRulesService.getAllOtherRules(id, edit, callback);
+        this.sesRulesService.getAllOtherRules(currentSession(), edit, callback);
     }
 
     public void getRegisteredTimeseriesFeeds() {
@@ -546,10 +564,12 @@ public class SesRequestManager extends RequestManager {
             }
 
             public void onSuccess(SesClientResponse response) {
-                // update list
-                if (response.getType().equals(SesClientResponseType.PUBLISH_RULE_USER)) {
-                    EventBus.getMainEventBus().fireEvent(new GetAllOwnRulesEvent(Cookies.getCookie(COOKIE_USER_ID),
-                                                                                 true));
+                if (response.getType() == REQUIRES_LOGIN) {
+                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                }
+                if (response.getType().equals(PUBLISH_RULE_USER)) {
+                    GetAllOwnRulesEvent event = new GetAllOwnRulesEvent(true);
+                    EventBus.getMainEventBus().fireEvent(event);
                 }
                 else {
                     EventBus.getMainEventBus().fireEvent(new GetAllRulesEvent());
@@ -557,7 +577,7 @@ public class SesRequestManager extends RequestManager {
 
             }
         };
-        this.sesRulesService.publishRule(ruleName, published, role, callback);
+        this.sesRulesService.publishRule(currentSession(), ruleName, published, callback);
     }
 
     public void getAllRules() {
@@ -567,10 +587,15 @@ public class SesRequestManager extends RequestManager {
             }
 
             public void onSuccess(SesClientResponse response) {
-                EventBus.getMainEventBus().fireEvent(new InformUserEvent(response));
+                if (response.getType() == REQUIRES_LOGIN) {
+                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                }
+                else {
+                    getMainEventBus().fireEvent(new InformUserEvent(response));
+                }
             }
         };
-        this.sesRulesService.getAllRules(callback);
+        this.sesRulesService.getAllRules(currentSession(), callback);
     }
 
     public void deleteRule(String uuid, final String role) {
@@ -580,21 +605,24 @@ public class SesRequestManager extends RequestManager {
             }
 
             public void onSuccess(SesClientResponse response) {
-                if (response.getType().equals(SesClientResponseType.DELETE_RULE_SUBSCRIBED)) {
+                if (response.getType() == REQUIRES_LOGIN) {
+                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                }
+                else if (response.getType().equals(DELETE_RULE_SUBSCRIBED)) {
                     SC.say(i18n.ruleSubscribed());
                 }
                 else {
                     // update list
                     if (role.equals("ADMIN")) {
-                        EventBus.getMainEventBus().fireEvent(new GetAllRulesEvent());
+                        getMainEventBus().fireEvent(new GetAllRulesEvent());
                     }
                     else {
-                        EventBus.getMainEventBus().fireEvent(new GetAllOwnRulesEvent(getCookie(COOKIE_USER_ID), true));
+                        getMainEventBus().fireEvent(new GetAllOwnRulesEvent(true));
                     }
                 }
             }
         };
-        this.sesRulesService.deleteRule(uuid, callback);
+        this.sesRulesService.deleteRule(currentSession(), uuid, callback);
     }
 
     public void deleteTimeseriesFeed(String timeseriesFeed) {
@@ -604,8 +632,12 @@ public class SesRequestManager extends RequestManager {
             }
 
             public void onSuccess(SesClientResponse response) {
-                // update list
-                EventBus.getMainEventBus().fireEvent(new GetAllRulesEvent());
+                if (response.getType() == REQUIRES_LOGIN) {
+                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                }
+                else {
+                    getMainEventBus().fireEvent(new GetAllRulesEvent());
+                }
             }
         };
         this.sesTimeseriesService.deleteTimeseriesFeed(timeseriesFeed, callback);
@@ -615,7 +647,10 @@ public class SesRequestManager extends RequestManager {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
 
             public void onSuccess(SesClientResponse result) {
-                if (result.getType().equals(SesClientResponseType.EDIT_SIMPLE_RULE)) {
+                if (result.getType() == REQUIRES_LOGIN) {
+                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                }
+                else if (result.getType().equals(SesClientResponseType.EDIT_SIMPLE_RULE)) {
                     EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.CREATE_SIMPLE));
                     EventBus.getMainEventBus().fireEvent(new EditSimpleRuleEvent(result.getBasicRule()));
                 }
@@ -626,7 +661,7 @@ public class SesRequestManager extends RequestManager {
             }
 
             public void onFailure(Throwable caught) {
-                Toaster.getToasterInstance().addErrorMessage(caught.getMessage());
+                getToasterInstance().addErrorMessage(caught.getMessage());
             }
         };
         this.sesRulesService.getRuleForEditing(ruleName, callback);
@@ -640,13 +675,19 @@ public class SesRequestManager extends RequestManager {
             }
 
             public void onSuccess(SesClientResponse response) {
-                EventBus.getMainEventBus().fireEvent(new InformUserEvent(response));
+                if (response.getType() == REQUIRES_LOGIN) {
+                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                }
+                else {
+                    getMainEventBus().fireEvent(new InformUserEvent(response));
+                }
             }
         };
-        this.sesRulesService.getAllPublishedRules(Cookies.getCookie(COOKIE_USER_ID), operator, callback);
+        this.sesRulesService.getAllPublishedRules(currentSession(), operator, callback);
     }
 
-    public void unsubscribe(String uuid, final String userID, String medium, String format) {
+    public void unsubscribe(String uuid, String medium, String format) {
+        final SessionInfo session = currentSession();
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
                 Toaster.getToasterInstance().addErrorMessage(arg0.getMessage());
@@ -656,10 +697,13 @@ public class SesRequestManager extends RequestManager {
                 SesClientResponseType type = response.getType();
 
                 switch (type) {
+                case REQUIRES_LOGIN:
+                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                    break;
                 case OK:
                     SC.say(i18n.unsubscribeSuccessful());
-                    EventBus.getMainEventBus().fireEvent(new GetAllOwnRulesEvent(userID, false));
-                    EventBus.getMainEventBus().fireEvent(new GetAllOtherRulesEvent(userID, false));
+                    EventBus.getMainEventBus().fireEvent(new GetAllOwnRulesEvent(false));
+                    EventBus.getMainEventBus().fireEvent(new GetAllOtherRulesEvent(false));
                     break;
                 case ERROR_UNSUBSCRIBE_SES:
                     Toaster.getToasterInstance().addErrorMessage(i18n.errorUnsubscribeSES());
@@ -669,12 +713,9 @@ public class SesRequestManager extends RequestManager {
                 }
             }
         };
-        this.sesRulesService.unSubscribe(uuid, userID, medium, format, callback);
+        this.sesRulesService.unSubscribe(session, uuid, medium, format, callback);
     }
 
-    /**
-     * @param ruleName
-     */
     public void ruleNameExists(String ruleName) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
@@ -695,45 +736,54 @@ public class SesRequestManager extends RequestManager {
             }
 
             public void onSuccess(SesClientResponse result) {
-                if (result.getType().equals(SesClientResponseType.OK)) {
-                    SC.say(i18n.creationSuccessful());
-                    if ( (Cookies.getCookie(COOKIE_USER_ROLE)).equals("USER")) {
-                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.ABOS));
-                    }
-                    else {
-                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.RULELIST));
-                    }
+
+                if (REQUIRES_LOGIN == result.getType()) {
+                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
                 }
-                else if (result.getType().equals(SesClientResponseType.RULE_NAME_EXISTS)) {
+                else if (result.getType().equals(RULE_NAME_EXISTS)) {
                     SC.say(i18n.ruleExists());
                 }
-                else if (result.getType().equals(SesClientResponseType.EDIT_COMPLEX_RULE)) {
-                    if ( (Cookies.getCookie(COOKIE_USER_ROLE)).equals("USER")) {
-                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.EDIT_RULES));
+                else if (result.getType().equals(OK)) {
+                    SC.say(i18n.creationSuccessful());
+                    if (isUserLogin()) {
+                        getMainEventBus().fireEvent(new ChangeLayoutEvent(ABOS));
                     }
-                    else {
-                        EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.RULELIST));
+                    else if (isAdminLogin()) {
+                        getMainEventBus().fireEvent(new ChangeLayoutEvent(RULELIST));
+                    }
+                }
+                else if (result.getType().equals(EDIT_COMPLEX_RULE)) {
+                    if (isUserLogin()) {
+                        getMainEventBus().fireEvent(new ChangeLayoutEvent(EDIT_RULES));
+                    }
+                    else if (isAdminLogin()) {
+                        getMainEventBus().fireEvent(new ChangeLayoutEvent(RULELIST));
                     }
                 }
             }
         };
-        this.sesRulesService.createComplexRule(rule, edit, oldName, callback);
+        this.sesRulesService.createComplexRule(currentSession(), rule, edit, oldName, callback);
     }
 
-    public void getUserSubscriptions(String userID) {
+    public void getUserSubscriptions() {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
                 Toaster.getToasterInstance().addErrorMessage(arg0.getMessage());
             }
 
             public void onSuccess(SesClientResponse result) {
-                EventBus.getMainEventBus().fireEvent(new InformUserEvent(result));
+                if (result.getType() == REQUIRES_LOGIN) {
+                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                }
+                else {
+                    getMainEventBus().fireEvent(new InformUserEvent(result));
+                }
             }
         };
-        this.sesRulesService.getUserSubscriptions(userID, callback);
+        this.sesRulesService.getUserSubscriptions(currentSession(), callback);
     }
 
-    public void deleteProfile(String id) {
+    public void deleteProfile() {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             @Override
             public void onFailure(Throwable arg0) {
@@ -742,10 +792,13 @@ public class SesRequestManager extends RequestManager {
 
             @Override
             public void onSuccess(SesClientResponse result) {
+                if (result.getType() == REQUIRES_LOGIN) {
+                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                }
                 SC.say(i18n.profileDelete());
             }
         };
-        sesUserService.requestToDeleteProfile(getCurrentLoginSession(), callback);
+        sesUserService.requestToDeleteProfile(currentSession(), callback);
     }
 
     public void getTermsOfUse(String language) {
@@ -782,7 +835,7 @@ public class SesRequestManager extends RequestManager {
 
             public void onSuccess(SesClientResponse result) {
                 if (result.getType().equals(SesClientResponseType.OK)) {
-                    EventBus.getMainEventBus().fireEvent(new GetAllOwnRulesEvent(userID, true));
+                    EventBus.getMainEventBus().fireEvent(new GetAllOwnRulesEvent(true));
                 }
                 else if (result.getType().equals(SesClientResponseType.RULE_NAME_EXISTS)) {
                     SC.say(i18n.copyExists());

@@ -24,11 +24,10 @@
 
 package org.n52.client.ses.ui.subscribe;
 
-import static com.google.gwt.user.client.Cookies.getCookie;
 import static com.smartgwt.client.types.Alignment.RIGHT;
 import static org.n52.client.bus.EventBus.getMainEventBus;
+import static org.n52.client.ses.event.RuleCreatedEvent.TYPE;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
-import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.event.CreateSimpleRuleEvent;
@@ -76,16 +75,15 @@ public class EventSubscriptionWindow extends LoginWindow {
         controller.setEventSubscription(this);
     }
 
-    protected void initializeContent() {
-        if (content != null) {
-            removeItem(content);
-        }
+    protected void loadSubsciptionListContent() {
+        clearContent();
         content = new HLayout();
         content.setStyleName("n52_sensorweb_client_create_abo_window_content");
         content.addMember(createNewEventAbonnementCanvas());
         content.addMember(createContextWindowHelp());
         setTitle(i18n.createAboWindowTitle());
         addItem(content);
+        markForRedraw();
     }
 
     private Canvas createNewEventAbonnementCanvas() {
@@ -194,15 +192,14 @@ public class EventSubscriptionWindow extends LoginWindow {
     private static class EventSubsriptionWindowEventBroker implements RuleCreatedEventHandler {
 
         public EventSubsriptionWindowEventBroker(EventSubscriptionWindow window) {
-            getMainEventBus().addHandler(RuleCreatedEvent.TYPE, this);
+            getMainEventBus().addHandler(TYPE, this);
         }
         
         @Override
         public void onRuleCreated(RuleCreatedEvent evt) {
             Rule createdRule = evt.getCreatedRule();
             String uuid = createdRule.getUuid();
-            String userID = getCookie(COOKIE_USER_ID);
-            getMainEventBus().fireEvent(new SubscribeEvent(uuid, userID, "email", "Text"));
+            getMainEventBus().fireEvent(new SubscribeEvent(uuid, "email", "Text"));
         }
 
     }

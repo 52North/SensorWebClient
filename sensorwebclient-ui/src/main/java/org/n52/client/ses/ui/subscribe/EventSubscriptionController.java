@@ -25,7 +25,7 @@
 package org.n52.client.ses.ui.subscribe;
 
 import static java.lang.Integer.parseInt;
-import static org.n52.client.util.CookieManager.getLoggedInUserId;
+import static org.n52.client.util.ClientSessionManager.getLoggedInUserId;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.OVER_UNDERSHOOT;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.SENSOR_LOSS;
 import static org.n52.shared.util.MathSymbolUtil.getIndexFor;

@@ -26,63 +26,28 @@ package org.n52.client.ses.event;
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.GetAllOtherRulesEventHandler;
 
-/**
- * The Class GetAllOwnRulesEvent.
- */
 public class GetAllOtherRulesEvent extends FilteredDispatchGwtEvent<GetAllOtherRulesEventHandler> {
 
-    /** The TYPE. */
     public static Type<GetAllOtherRulesEventHandler> TYPE = new Type<GetAllOtherRulesEventHandler>();
 
-    private String id;
-    
     private boolean edit;
-    /**
-     * Instantiates a new change layout event.
-     * @param parameterId 
-     * 
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
-    public GetAllOtherRulesEvent(String id, boolean edit, GetAllOtherRulesEventHandler... blockedHandlers) {
+
+    public GetAllOtherRulesEvent(boolean edit, GetAllOtherRulesEventHandler... blockedHandlers) {
         super(blockedHandlers);
-        this.id = id;
         this.edit = edit;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(GetAllOtherRulesEventHandler handler) {
         handler.onGet(this);
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<GetAllOtherRulesEventHandler> getAssociatedType() {
+    public Type<GetAllOtherRulesEventHandler> getAssociatedType() {
         return TYPE;
     }
 
-    /**
-     * @return {@link String}
-     */
-    public String getId() {
-        return this.id;
-    }
-
-    /**
-     * @return {@link Boolean}
-     */
     public boolean isEdit() {
         return this.edit;
     }

@@ -187,11 +187,12 @@ public class LoginLayout extends FormLayout {
             SesClientResponse reponse = evt.getResponse();
             if (reponse.getType() == LOGIN_NAME) {
                 setErrorFormatter(loginLayout);
+                loginLayout.update();
             } else if(reponse.getType() == LOGIN_PASSWORD) {
                 loginLayout.getPasswordField().setValue("");
                 setErrorFormatter(loginLayout);
+                loginLayout.update();
             }
-            loginLayout.update();
         }
 
         private void setErrorFormatter(final LoginLayout loginLayout) {

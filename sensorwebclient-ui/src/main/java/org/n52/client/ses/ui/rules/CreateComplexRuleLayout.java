@@ -23,9 +23,12 @@
  */
 package org.n52.client.ses.ui.rules;
 
+import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
-import static org.n52.shared.session.LoginSession.COOKIE_USER_ID;
-import static org.n52.shared.session.LoginSession.COOKIE_USER_ROLE;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.EDIT_RULES;
+import static org.n52.client.ses.ui.FormLayout.LayoutType.RULELIST;
+import static org.n52.client.util.ClientSessionManager.getLoggedInUserId;
+import static org.n52.client.util.ClientSessionManager.isAdminLogin;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -43,7 +46,6 @@ import org.n52.shared.serializable.pojos.ComplexRuleData;
 import org.n52.shared.serializable.pojos.Rule;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.TitleOrientation;
@@ -234,11 +236,10 @@ public class CreateComplexRuleLayout extends FormLayout {
         this.cancelButton.setVisible(false);
         this.cancelButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                String role = Cookies.getCookie(COOKIE_USER_ROLE);
-                if (role.equals("ADMIN")) {
-                    EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.RULELIST));
+                if (isAdminLogin()) {
+                    getMainEventBus().fireEvent(new ChangeLayoutEvent(RULELIST));
                 } else {
-                    EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.EDIT_RULES));
+                    getMainEventBus().fireEvent(new ChangeLayoutEvent(EDIT_RULES));
                 }
             }
         });
@@ -717,7 +718,7 @@ public class CreateComplexRuleLayout extends FormLayout {
                 }
                 
                 if (valid) {
-                    int userID = Integer.parseInt(Cookies.getCookie(COOKIE_USER_ID));
+                    int userID = Integer.parseInt(getLoggedInUserId());
                     ComplexRuleData data = new ComplexRuleData(finalList, title, description, publish, userID, null, null, null);
 
                     EventBus.getMainEventBus().fireEvent(new CreateComplexRuleEvent(data, this.editCR, this.oldRuleName));
@@ -742,7 +743,7 @@ public class CreateComplexRuleLayout extends FormLayout {
 
             if (valid) {
                 
-                int userID = Integer.parseInt(Cookies.getCookie(COOKIE_USER_ID));
+                int userID = Integer.parseInt(getLoggedInUserId());
 
                 ComplexRuleData data = new ComplexRuleData(null, title, description, publish, userID, this.treeContent, null, null);
 

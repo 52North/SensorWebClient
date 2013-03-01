@@ -24,7 +24,9 @@
 
 package org.n52.server.ses.service;
 
+import static java.lang.Integer.parseInt;
 import static org.n52.server.ses.hibernate.HibernateUtil.getSubscriptionfromUserID;
+import static org.n52.server.util.InjectionContextLoader.load;
 import static org.n52.shared.responses.SesClientResponseType.LAST_ADMIN;
 import static org.n52.shared.responses.SesClientResponseType.LOGIN_ACTIVATED;
 import static org.n52.shared.responses.SesClientResponseType.LOGIN_ADMIN;
@@ -35,6 +37,11 @@ import static org.n52.shared.responses.SesClientResponseType.LOGIN_PASSWORD;
 import static org.n52.shared.responses.SesClientResponseType.LOGOUT;
 import static org.n52.shared.responses.SesClientResponseType.NEW_PASSWORD_ERROR;
 import static org.n52.shared.responses.SesClientResponseType.NEW_PASSWORD_OK;
+import static org.n52.shared.responses.SesClientResponseType.REGISTER_NAME;
+import static org.n52.shared.responses.SesClientResponseType.REGISTER_OK;
+import static org.n52.shared.responses.SesClientResponseType.REGSITER_EMAIL;
+import static org.n52.shared.responses.SesClientResponseType.REQUIRES_LOGIN;
+import static org.n52.shared.responses.SesClientResponseType.USER_INFO;
 import static org.n52.shared.serializable.pojos.UserRole.ADMIN;
 
 import java.io.BufferedReader;
@@ -64,7 +71,7 @@ import org.n52.shared.serializable.pojos.Subscription;
 import org.n52.shared.serializable.pojos.User;
 import org.n52.shared.serializable.pojos.UserDTO;
 import org.n52.shared.serializable.pojos.UserRole;
-import org.n52.shared.session.LoginSession;
+import org.n52.shared.session.SessionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +83,7 @@ public class SesUserServiceImpl implements SesUserService {
     // This list is shown to the admin after the login
     private static ArrayList<String> deletedUser = new ArrayList<String>();
 
-    private LoginSessionStore sessionStore = new LoginSessionStore();
+    private ServerSessionStore sessionStore = load("sessionStore", ServerSessionStore.class);
     
     public static UserDTO createUserDTO(User user) {
 
@@ -106,7 +113,6 @@ public class SesUserServiceImpl implements SesUserService {
                            user.getName(),
                            user.getPassword(),
                            user.geteMail(),
-                           user.getHandyNr(),
                            user.getRegisterID(),
                            user.getRole(),
                            user.getActivated(),
@@ -187,10 +193,10 @@ public class SesUserServiceImpl implements SesUserService {
             // to avoid multiple accounts with the same data
             User user = new User(userDTO);
             if (HibernateUtil.existsUserName(user.getUserName())) {
-                return new SesClientResponse(SesClientResponseType.REGISTER_NAME);
+                return new SesClientResponse(REGISTER_NAME);
             }
             if (HibernateUtil.existsEMail(user.geteMail())) {
-                return new SesClientResponse(SesClientResponseType.REGSITER_EMAIL);
+                return new SesClientResponse(REGSITER_EMAIL);
             }
 
             // generate new userID
@@ -204,7 +210,7 @@ public class SesUserServiceImpl implements SesUserService {
 
             // send registration mail
             MailSender.sendRegisterMail(resultUser.geteMail(), resultUser.getRegisterID(), resultUser.getUserName());
-            return new SesClientResponse(SesClientResponseType.REGISTER_OK, resultUser);
+            return new SesClientResponse(REGISTER_OK, resultUser);
         }
         catch (Exception e) {
             LOGGER.error("Exception occured on server side.", e);
@@ -213,7 +219,7 @@ public class SesUserServiceImpl implements SesUserService {
     }
 
     @Override
-    public SesClientResponse login(String userName, String password) throws Exception {
+    public SesClientResponse login(String userName, String password, SessionInfo unboundSession) throws Exception {
         try {
             LOGGER.debug("login user '{}'.", userName);
             if ( !HibernateUtil.existsUserName(userName)) {
@@ -270,12 +276,12 @@ public class SesUserServiceImpl implements SesUserService {
                     deletedUser.clear();
 
                     SesClientResponse response = new SesClientResponse(LOGIN_OK, user, temp);
-                    response.setLoginCookie(sessionStore.createNewLoginSessionFor(u));
+                    response.setSessionInfo(sessionStore.createLoginSessionFor(u, unboundSession));
                     return response;
                 }
 
                 SesClientResponse response = new SesClientResponse(LOGIN_OK, user);
-                response.setLoginCookie(sessionStore.createNewLoginSessionFor(u));
+                response.setSessionInfo(sessionStore.createLoginSessionFor(u, unboundSession));
                 return response;
 
             }
@@ -287,10 +293,10 @@ public class SesUserServiceImpl implements SesUserService {
         }
     }
     
-    public SesClientResponse validateLoginSession(LoginSession loginSession) throws Exception {
+    public SesClientResponse validateLoginSession(SessionInfo sessionInfo) throws Exception {
         try {
-            if (sessionStore.hasValidLoginSession(loginSession)) {
-                if (sessionStore.isLoggedInAdmin(loginSession)) {
+            if (sessionStore.isActiveSessionInfo(sessionInfo)) {
+                if (sessionStore.isLoggedInAdmin(sessionInfo)) {
                     return new SesClientResponse(LOGIN_ADMIN);
                 } else {
                     return new SesClientResponse(LOGIN_OK);
@@ -304,6 +310,15 @@ public class SesUserServiceImpl implements SesUserService {
         }
     }
     
+    @Override
+    public SessionInfo createNotLoggedInSession() throws Exception {
+        try {
+            return sessionStore.createNotLoggedInSession();
+        } catch (Exception e) {
+            LOGGER.error("Exception occured on server side.", e);
+            throw e; // last chance to log on server side
+        }
+    }
 
     @Override
     public SesClientResponse resetPassword(String userName, String email) throws Exception {
@@ -335,9 +350,9 @@ public class SesUserServiceImpl implements SesUserService {
     }
 
     @Override
-    public void logout(LoginSession loginSession) throws Exception {
+    public void logout(SessionInfo sessionInfo) throws Exception {
         try {
-            sessionStore.removeSession(loginSession);
+            sessionStore.removeSession(sessionInfo);
         }
         catch (Exception e) {
             LOGGER.error("Exception occured on server side.", e);
@@ -346,12 +361,16 @@ public class SesUserServiceImpl implements SesUserService {
     }
 
     @Override
-    public UserDTO getUser(LoginSession loginSession) throws Exception {
+    public SesClientResponse getUser(SessionInfo sessionInfo) throws Exception {
         try {
-            sessionStore.validateIncomingLoginSession(loginSession);
-            LOGGER.debug("Get user with id '{}'", sessionStore.getLoggedInUserId(loginSession));
-            int userID = Integer.valueOf(sessionStore.getLoggedInUserId(loginSession));
-            return createUserDTO(HibernateUtil.getUserBy(userID));
+            if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
+                return new SesClientResponse(REQUIRES_LOGIN);
+            }
+            sessionStore.validateSessionInfo(sessionInfo);
+            LOGGER.debug("Get user with id '{}'", sessionStore.getLoggedInUserId(sessionInfo));
+            int userID = Integer.valueOf(sessionStore.getLoggedInUserId(sessionInfo));
+            UserDTO user = createUserDTO(HibernateUtil.getUserBy(userID));
+            return new SesClientResponse(USER_INFO, user);
         }
         catch (Exception e) {
             LOGGER.error("Exception occured on server side.", e);
@@ -360,12 +379,19 @@ public class SesUserServiceImpl implements SesUserService {
     }
 
     @Override
-    public SesClientResponse deleteUser(LoginSession loginSession, String id) throws Exception {
+    public SesClientResponse deleteUser(SessionInfo sessionInfo, String id) throws Exception {
         try {
+            if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
+                return new SesClientResponse(REQUIRES_LOGIN);
+            }
+            sessionStore.validateSessionInfo(sessionInfo);
             LOGGER.debug("delete user with id '{}'", id);
-            sessionStore.validateIncomingLoginSession(loginSession);
-            
-            return performUserDelete(id);
+            if (HibernateUtil.getUserBy(parseInt(id)) != null) {
+                return performUserDelete(id);
+            } else {
+                LOGGER.info("User could not deleted as id '{}' is not known", id);
+                return new SesClientResponse();
+            }
         }
         catch (Exception e) {
             LOGGER.error("Exception occured on server side.", e);
@@ -383,7 +409,7 @@ public class SesUserServiceImpl implements SesUserService {
      * @throws Exception
      *         if processing request fails.
      * 
-     * @see #requestToDeleteProfile(LoginSession, String)
+     * @see #requestToDeleteProfile(SessionInfo, String)
      */
     public SesClientResponse performUserDelete(String userId) throws Exception {
         int userID = Integer.valueOf(userId);
@@ -466,14 +492,16 @@ public class SesUserServiceImpl implements SesUserService {
 
 
     @Override
-    public SesClientResponse updateUser(LoginSession loginSession, UserDTO newUser) throws Exception {
+    public SesClientResponse updateUser(SessionInfo sessionInfo, UserDTO newUser) throws Exception {
         try {
+            if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
+                return new SesClientResponse(REQUIRES_LOGIN);
+            }
+            sessionStore.validateSessionInfo(sessionInfo);
             LOGGER.debug("update user with id '{}'", newUser.getId());
-            sessionStore.validateIncomingLoginSession(loginSession);
             
             boolean mailChanged = false;
             boolean passwordChanged = false;
-            String newHandy = null;
 
             User oldUser = HibernateUtil.getUserBy(newUser.getId());
             newUser.setWnsEmailId(oldUser.getWnsEmailId());
@@ -529,7 +557,7 @@ public class SesUserServiceImpl implements SesUserService {
                         LOGGER.warn("Deleting user with admin role aborted: At least one admin has to exist!");
                         return new SesClientResponse(LAST_ADMIN);
                     }
-                    else if (oldUser.getId() == Integer.valueOf(sessionStore.getLoggedInUserId(loginSession))) {
+                    else if (oldUser.getId() == Integer.valueOf(sessionStore.getLoggedInUserId(sessionInfo))) {
                         LOGGER.debug("set admin to user and update user data in database");
                         User u = new User(newUser);
                         u.setEmailVerified(newUser.isEmailVerified());
@@ -548,10 +576,6 @@ public class SesUserServiceImpl implements SesUserService {
             u.setActive(oldUser.isActive());
             u.setPasswordChanged(passwordChanged);
 
-            if (newHandy != null) {
-                u.setHandyNr(newHandy);
-            }
-
             // update user data in DB
             HibernateUtil.updateUser(u);
 
@@ -567,10 +591,10 @@ public class SesUserServiceImpl implements SesUserService {
     }
 
     @Override
-    public List<UserDTO> getAllUsers(LoginSession loginSession) throws Exception {
+    public List<UserDTO> getAllUsers(SessionInfo sessionInfo) throws Exception {
         try {
             LOGGER.debug("getAllUsers");
-            sessionStore.validateIncomingLoginSession(loginSession);
+            sessionStore.validateSessionInfo(sessionInfo);
             List<UserDTO> finalList = new ArrayList<UserDTO>();
 
             List<User> list = HibernateUtil.getAllUsers();
@@ -586,11 +610,14 @@ public class SesUserServiceImpl implements SesUserService {
     }
 
     @Override
-    public SesClientResponse requestToDeleteProfile(LoginSession loginSession) throws Exception {
+    public SesClientResponse requestToDeleteProfile(SessionInfo sessionInfo) throws Exception {
         try {
-            LOGGER.debug("prepare user delete with id '{}'", sessionStore.getLoggedInUserId(loginSession));
-            sessionStore.validateIncomingLoginSession(loginSession);
-            String id = sessionStore.getLoggedInUserId(loginSession);
+            if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
+                return new SesClientResponse(REQUIRES_LOGIN);
+            }
+            sessionStore.validateSessionInfo(sessionInfo);
+            LOGGER.debug("prepare user delete with id '{}'", sessionStore.getLoggedInUserId(sessionInfo));
+            String id = sessionStore.getLoggedInUserId(sessionInfo);
             User user = HibernateUtil.getUserBy(Integer.valueOf(id));
             
             LOGGER.debug("prevent user from further logins");
@@ -637,6 +664,7 @@ public class SesUserServiceImpl implements SesUserService {
         }
     }
 
+    @Deprecated
     @Override
     public SesClientResponse getData() throws Exception {
         try {

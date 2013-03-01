@@ -51,47 +51,43 @@ package org.n52.shared.service.rpc;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.serializable.pojos.ComplexRuleData;
 import org.n52.shared.serializable.pojos.Rule;
+import org.n52.shared.session.SessionInfo;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-/**
- * The Interface RpcSesRuleServiceAsync.
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- */
 public interface RpcSesRuleServiceAsync {
 
-    void subscribe(String userID, String uuid, String medium, String eml, AsyncCallback<SesClientResponse> callback);
+    void subscribe(SessionInfo sessionInfo, String uuid, String medium, String eml, AsyncCallback<SesClientResponse> callback);
 
-    void unSubscribe(String uuid, String userID, String medium, String format, AsyncCallback<SesClientResponse> callback);
+    void unSubscribe(SessionInfo sessionInfo, String uuid, String medium, String format, AsyncCallback<SesClientResponse> callback);
 
-    void createBasicRule(Rule rule, boolean edit, String oldRuleName, AsyncCallback<SesClientResponse> callback);
+    void createBasicRule(SessionInfo sessionInfo, Rule rule, boolean edit, String oldRuleName, AsyncCallback<SesClientResponse> callback);
 
-    void getAllOwnRules(String id, boolean edit,  AsyncCallback<SesClientResponse> callback);
-
-    @Deprecated
-    void getAllOtherRules(String id, boolean edit, AsyncCallback<SesClientResponse> callback);
+    void getAllOwnRules(SessionInfo sessionInfo, boolean edit,  AsyncCallback<SesClientResponse> callback);
 
     @Deprecated
-    void publishRule(String ruleName, boolean published, String role, AsyncCallback<SesClientResponse> callback);
+    void getAllOtherRules(SessionInfo sessionInfo, boolean edit, AsyncCallback<SesClientResponse> callback);
 
     @Deprecated
-    void getAllRules(AsyncCallback<SesClientResponse> callback);
+    void publishRule(SessionInfo sessionInfo, String ruleName, boolean published, AsyncCallback<SesClientResponse> callback);
 
-    void deleteRule(String uuid, AsyncCallback<SesClientResponse> callback);
+    @Deprecated
+    void getAllRules(SessionInfo sessionInfo, AsyncCallback<SesClientResponse> callback);
+
+    void deleteRule(SessionInfo sessionInfo, String uuid, AsyncCallback<SesClientResponse> callback);
 
     @Deprecated
     void getRuleForEditing(String ruleName, AsyncCallback<SesClientResponse> callback);
 
-    void getAllPublishedRules(String userID, int operator, AsyncCallback<SesClientResponse> callback);
+    void getAllPublishedRules(SessionInfo sessionInfo, int operator, AsyncCallback<SesClientResponse> callback);
 
     @Deprecated
     void ruleNameExists(String ruleName, AsyncCallback<SesClientResponse> callback);
 
     @Deprecated
-    void createComplexRule(ComplexRuleData rule, boolean edit, String oldRuleName, AsyncCallback<SesClientResponse> callback);
+    void createComplexRule(SessionInfo sessionInfo, ComplexRuleData rule, boolean edit, String oldRuleName, AsyncCallback<SesClientResponse> callback);
 
-    void getUserSubscriptions(String userID, AsyncCallback<SesClientResponse> callback);
+    void getUserSubscriptions(SessionInfo sessionInfo, AsyncCallback<SesClientResponse> callback);
 
     void search(String text, int criterion, String userID, AsyncCallback<SesClientResponse> callback);
 

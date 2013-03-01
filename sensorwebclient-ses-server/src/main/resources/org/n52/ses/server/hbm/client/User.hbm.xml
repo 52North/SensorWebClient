@@ -12,7 +12,6 @@
 		<property name="name" type="string" />
 		<property name="password" type="string" />
 		<property name="eMail" type="string" />
-		<property name="handyNr" type="string" />
 		<property name="registerID" type="string"/>
 		<property name="wnsSmsId" type="string"/>
 		<property name="wnsEmailId" type="string"/>

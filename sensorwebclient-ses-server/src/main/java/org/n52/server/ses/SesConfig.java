@@ -31,6 +31,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// TODO config mechanism should be redesigned
 public class SesConfig {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(SesConfig.class);
@@ -46,12 +47,16 @@ public class SesConfig {
     /** The ses-wns translator endpoint -->consumerReference*/
     public static String consumerReference;
 
+    @Deprecated
     public static boolean warnUserLongNotification;
     
+    @Deprecated
     public static int minimumPasswordLength;
 
 //    /** The delay */
 //    public static long delay;
+    
+    public static String applicationCookieDomain;
 
     public static String URL;
 
@@ -141,15 +146,15 @@ public class SesConfig {
     /** delteUserInterval */
     public static long deleteUserInterval = 100000;
     
+    @Deprecated
     public static String availableWNSmedia;
+    @Deprecated
     public static String defaultMedium;
+    @Deprecated
     public static String availableFormats;
+    @Deprecated
     public static String defaultFormat;
     
-    /**
-     * Init the properties
-     * @param realPath 
-     */
     public synchronized static void init(String realPath){
         LOGGER.debug("init");
         SesConfig.propertiesLocation = realPath + "properties/ses-client.properties";
@@ -163,6 +168,8 @@ public class SesConfig {
                 stream.close();
 
                 path = realPath;
+                
+                applicationCookieDomain = properties.getProperty("applicationCookieDomain");
 
                 serviceVersion = properties.getProperty("serviceVersion");
                 wns = properties.getProperty("wns");

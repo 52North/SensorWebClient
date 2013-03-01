@@ -27,60 +27,27 @@ import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.SetRoleEventHandler;
 import org.n52.shared.serializable.pojos.UserRole;
 
-/**
- * The Class SetRoleEvent.
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- */
 public class SetRoleEvent extends FilteredDispatchGwtEvent<SetRoleEventHandler> {
 
-    /** The TYPE. */
     public static Type<SetRoleEventHandler> TYPE = new Type<SetRoleEventHandler>();
 
-    /** The role. */
     private UserRole role;
 
-    /**
-     * Instantiates a new sets the role event.
-     * 
-     * @param role
-     *            the role
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
     public SetRoleEvent(UserRole role, SetRoleEventHandler... blockedHandlers) {
         super(blockedHandlers);
-
         this.role = role;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(SetRoleEventHandler handler) {
         handler.onChangeRole(this);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<SetRoleEventHandler> getAssociatedType() {
+    public Type<SetRoleEventHandler> getAssociatedType() {
         return TYPE;
     }
 
-    /**
-     * Gets the role.
-     * 
-     * @return the role
-     */
     public UserRole getRole() {
         return this.role;
     }

@@ -44,7 +44,7 @@ import com.smartgwt.client.widgets.form.validator.RegExpValidator;
  * 
  * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
  */
-public class ForgotPasswordLayout extends FormLayout {
+public class ResetPasswordLayout extends FormLayout {
 
     /** The name item. */
     private TextItem nameItem;
@@ -55,7 +55,7 @@ public class ForgotPasswordLayout extends FormLayout {
     /**
      * Instantiates a new forgot password layout.
      */
-    public ForgotPasswordLayout() {
+    public ResetPasswordLayout() {
         super(i18n.forgotPassword());
         
         setStyleName("n52_sensorweb_client_form_content");
@@ -85,9 +85,9 @@ public class ForgotPasswordLayout extends FormLayout {
         validateItem.setTitle(i18n.sendEmail());
         validateItem.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                if (ForgotPasswordLayout.this.form.validate()) {
-                    String name = ForgotPasswordLayout.this.nameItem.getValue().toString();
-                    String email = ForgotPasswordLayout.this.emailItem.getValue().toString();
+                if (ResetPasswordLayout.this.form.validate()) {
+                    String name = ResetPasswordLayout.this.nameItem.getValue().toString();
+                    String email = ResetPasswordLayout.this.emailItem.getValue().toString();
 
                     EventBus.getMainEventBus().fireEvent(new NewPasswordEvent(name, email));
                 }
@@ -117,7 +117,7 @@ public class ForgotPasswordLayout extends FormLayout {
      * update layout
      */
     public void update(){
-        ForgotPasswordLayout.this.form.validate();
+        ResetPasswordLayout.this.form.validate();
     }
 
     /**

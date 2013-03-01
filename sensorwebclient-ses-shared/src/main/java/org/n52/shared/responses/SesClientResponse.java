@@ -31,7 +31,7 @@ import java.util.List;
 
 import org.n52.shared.serializable.pojos.Rule;
 import org.n52.shared.serializable.pojos.UserDTO;
-import org.n52.shared.session.LoginSession;
+import org.n52.shared.session.SessionInfo;
 
 public class SesClientResponse implements Serializable {
 
@@ -43,7 +43,7 @@ public class SesClientResponse implements Serializable {
 
     private SesClientResponseType responseType = ERROR;
     
-    private LoginSession loginCookie;
+    private SessionInfo sessionInfo;
 
     private UserDTO user;
 
@@ -155,11 +155,11 @@ public class SesClientResponse implements Serializable {
         return this.sensorList;
     }
 
-    public LoginSession getLoginSession() {
-        return loginCookie;
+    public SessionInfo getSessionInfo() {
+        return sessionInfo;
     }
 
-    public void setLoginCookie(LoginSession loginCookie) {
-        this.loginCookie = loginCookie;
+    public void setSessionInfo(SessionInfo sessionInfo) {
+        this.sessionInfo = sessionInfo;
     }
 }

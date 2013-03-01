@@ -26,7 +26,6 @@ package org.n52.client.ses.ui.layout;
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.LOGIN;
-import static org.n52.client.util.CookieManager.destroyCurrentLoginSession;
 import static org.n52.shared.serializable.pojos.UserRole.NOT_REGISTERED_USER;
 
 import java.util.Date;
@@ -197,11 +196,8 @@ public class RegisterLayout extends FormLayout {
             if (name == null || name.equals("")) {
                 name = "";
             }
-            
-            destroyCurrentLoginSession();
-            
             // create user without parameterId and register
-            UserDTO u = new UserDTO(userName, name, password, eMail, "", NOT_REGISTERED_USER, activated, new Date());
+            UserDTO u = new UserDTO(userName, name, password, eMail, NOT_REGISTERED_USER, activated, new Date());
             EventBus.getMainEventBus().fireEvent(new RegisterUserEvent(u));
         } else if (RegisterLayout.this.form.validate() && !(Boolean) RegisterLayout.this.acceptBox.getValue()) {
             SC.say(i18n.acceptTermsOfUseInfo());

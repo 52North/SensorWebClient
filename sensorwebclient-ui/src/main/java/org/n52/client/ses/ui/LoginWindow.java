@@ -30,7 +30,6 @@ import static org.n52.client.ses.ui.FormLayout.LayoutType.LOGIN;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.PASSWORD;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.REGISTER;
 import static org.n52.client.ses.ui.layout.LoginLayout.createUserLoginLayout;
-import static org.n52.client.util.CookieManager.hasActiveLoginSession;
 import static org.n52.shared.serializable.pojos.UserRole.ADMIN;
 import static org.n52.shared.serializable.pojos.UserRole.LOGOUT;
 
@@ -38,8 +37,8 @@ import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.SetRoleEvent;
 import org.n52.client.ses.event.handler.ChangeLayoutEventHandler;
 import org.n52.client.ses.event.handler.SetRoleEventHandler;
-import org.n52.client.ses.ui.layout.ForgotPasswordLayout;
 import org.n52.client.ses.ui.layout.RegisterLayout;
+import org.n52.client.ses.ui.layout.ResetPasswordLayout;
 import org.n52.client.ui.DataPanel;
 import org.n52.client.ui.DataPanelTab;
 import org.n52.client.ui.View;
@@ -65,6 +64,7 @@ public abstract class LoginWindow extends Window {
     public LoginWindow(String ID) {
         COMPONENT_ID = ID;
         initializeWindow();
+        loadLoginContent();
         new LoginWindowEventBroker(this);
         addCloseClickHandler(new CloseClickHandler() {
             public void onCloseClick(CloseClickEvent event) {
@@ -94,46 +94,40 @@ public abstract class LoginWindow extends Window {
         });
     }
 
-    @Override
-    public void show() {
-        if (content != null) {
-            removeItem(content);
-        }
-        if ( !hasActiveLoginSession()) {
-            setTitle(i18n.login());
-            content = new VLayout();
-            content.addMember(createUserLoginLayout());
-            addItem(content);
-        }
-        else {
-            initializeContent();
-        }
-        super.show();
+    protected abstract void loadSubsciptionListContent();
+
+    public void loadLoginContent() {
+        clearContent();
+        setTitle(i18n.login());
+        content = new VLayout();
+        content.addMember(createUserLoginLayout());
+        addItem(content);
+        markForRedraw();
     }
 
-    private void loadRegistration() {
-        if (content != null) {
-            removeItem(content);
-        }
+    private void loadRegistrationContent() {
+        clearContent();
         content = new RegisterLayout();
         addItem(content);
         redraw();
     }
 
-    private void loadForgotPassword() {
-    	if (content != null) {
-    		removeItem(content);
-    	}
-    	content = new ForgotPasswordLayout();
-    	addItem(content);
-    	redraw();
-	}
-
-	protected void updateWindowTitle(String newTitle) {
-        setTitle(newTitle);
+    protected void clearContent() {
+        if (content != null) {
+            removeItem(content);
+        }
     }
 
-    protected abstract void initializeContent();
+    private void loadResetPasswordContent() {
+        clearContent();
+        content = new ResetPasswordLayout();
+        addItem(content);
+        redraw();
+    }
+
+    protected void updateWindowTitle(String newTitle) {
+        setTitle(newTitle);
+    }
 
     public String getId() {
         return COMPONENT_ID;
@@ -156,39 +150,36 @@ public abstract class LoginWindow extends Window {
         @Override
         public void onChangeRole(SetRoleEvent evt) {
             if (evt.getRole() == LOGOUT) {
+                window.loadLoginContent();
                 return;
             }
             else if (evt.getRole() == ADMIN) {
-                // switch to admin UI
-                window.hide();
+                window.hide(); // switch to admin UI
                 DataPanel dataPanel = View.getView().getDataPanel();
                 DataPanelTab sesTab = View.getView().getSesTab();
                 dataPanel.getPanel().selectTab(sesTab);
                 dataPanel.setCurrentTab(sesTab);
                 dataPanel.update();
             }
-            if (window.isVisible()) {
+            else {
                 // user stays in modal window
-                reinitializeWindow();
+                window.loadSubsciptionListContent();
             }
-        }
-
-        private void reinitializeWindow() {
-            window.show();
         }
 
         @Override
         public void onChange(ChangeLayoutEvent evt) {
             if (evt.getLayout() == REGISTER) {
-                window.loadRegistration();
+                window.loadRegistrationContent();
                 window.updateWindowTitle(i18n.registration());
-            } else if (evt.getLayout() == PASSWORD) {
-            	window.loadForgotPassword();
-            	window.updateWindowTitle(i18n.forgotPassword());
-            } else if (evt.getLayout() == LOGIN) {
-                reinitializeWindow();
+            }
+            else if (evt.getLayout() == PASSWORD) {
+                window.loadResetPasswordContent();
+                window.updateWindowTitle(i18n.forgotPassword());
+            }
+            else if (evt.getLayout() == LOGIN) {
+                window.show();
             }
         }
     }
-
 }
