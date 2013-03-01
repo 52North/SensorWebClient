@@ -8,6 +8,7 @@ import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.NAME;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.OWNERID;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.PUBLISHED;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.UUID;
+import static org.n52.client.util.ClientSessionManager.currentSession;
 import static org.n52.client.util.ClientSessionManager.getLoggedInUser;
 
 import org.n52.client.bus.EventBus;
@@ -95,7 +96,7 @@ public class AllRulesListGrid extends ListGrid {
             publishButton.setPrompt(i18n.cancelPublication());
             publishButton.addClickHandler(new ClickHandler() {
                 public void onClick(ClickEvent event) {
-                    PublishRuleEvent publishRuleEvent = new PublishRuleEvent(ruleName, !published, "ADMIN");
+                    PublishRuleEvent publishRuleEvent = new PublishRuleEvent(currentSession(), ruleName, !published, "ADMIN");
                     getMainEventBus().fireEvent(publishRuleEvent);
                 }
             });
@@ -107,7 +108,7 @@ public class AllRulesListGrid extends ListGrid {
                 publishButton.setPrompt(i18n.cancelPublication());
                 publishButton.addClickHandler(new ClickHandler() {
                     public void onClick(ClickEvent event) {
-                        EventBus.getMainEventBus().fireEvent(new PublishRuleEvent(ruleName, !published, "ADMIN"));
+                        EventBus.getMainEventBus().fireEvent(new PublishRuleEvent(currentSession(), ruleName, !published, "ADMIN"));
                     }
                 });
             } else {
@@ -115,7 +116,7 @@ public class AllRulesListGrid extends ListGrid {
                 publishButton.setPrompt(i18n.publishThisRule());
                 publishButton.addClickHandler(new ClickHandler() {
                     public void onClick(ClickEvent event) {
-                        getMainEventBus().fireEvent(new PublishRuleEvent(ruleName, !published, "ADMIN"));
+                        getMainEventBus().fireEvent(new PublishRuleEvent(currentSession(), ruleName, !published, "ADMIN"));
                     }
                 });
             }
@@ -161,7 +162,7 @@ public class AllRulesListGrid extends ListGrid {
                         if (value) {
                             String uuid = record.getAttribute(UUID);
                             String userRole = getLoggedInUser();
-                            DeleteRuleEvent deleteRuleEvent = new DeleteRuleEvent(uuid, userRole);
+                            DeleteRuleEvent deleteRuleEvent = new DeleteRuleEvent(currentSession(), uuid, userRole);
                             EventBus.getMainEventBus().fireEvent(deleteRuleEvent);
                         }
                     }

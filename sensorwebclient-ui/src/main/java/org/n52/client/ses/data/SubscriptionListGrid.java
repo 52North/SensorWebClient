@@ -9,6 +9,7 @@ import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.MEDIUM;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.NAME;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.SUBSCRIBED;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.UUID;
+import static org.n52.client.util.ClientSessionManager.currentSession;
 import static org.n52.client.util.ClientSessionManager.getLoggedInUserRole;
 
 import org.n52.client.ses.event.DeleteRuleEvent;
@@ -16,6 +17,7 @@ import org.n52.client.ses.event.SubscribeEvent;
 import org.n52.client.ses.event.UnsubscribeEvent;
 import org.n52.client.ses.ui.rules.RuleDataSource;
 import org.n52.client.ui.btn.SmallButton;
+import org.n52.client.util.ClientSessionManager;
 
 import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;
@@ -100,9 +102,9 @@ public class SubscriptionListGrid extends ListGrid {
                 String format = ruleRecord.getAttribute(FORMAT);
                 ruleRecord.setAttribute(SUBSCRIBED, checked);
                 if(checked) {
-                    getMainEventBus().fireEvent(new SubscribeEvent(uuid, medium, format));
+                    getMainEventBus().fireEvent(new SubscribeEvent(currentSession(), uuid, medium, format));
                 } else {
-                    getMainEventBus().fireEvent(new UnsubscribeEvent(uuid, medium, format));
+                    getMainEventBus().fireEvent(new UnsubscribeEvent(currentSession(), uuid, medium, format));
                 }
             }
         };
@@ -131,7 +133,7 @@ public class SubscriptionListGrid extends ListGrid {
                             if (value) {
                                 String role = getLoggedInUserRole();
                                 String uuid = ruleRecord.getAttribute(UUID);
-                                getMainEventBus().fireEvent(new DeleteRuleEvent(uuid, role));
+                                getMainEventBus().fireEvent(new DeleteRuleEvent(currentSession(), uuid, role));
                                 removeData(ruleRecord);
                             }
                         }

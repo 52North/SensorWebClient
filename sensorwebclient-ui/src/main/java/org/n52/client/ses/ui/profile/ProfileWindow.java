@@ -3,6 +3,7 @@ package org.n52.client.ses.ui.profile;
 
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.client.util.ClientSessionManager.currentSession;
 import static org.n52.client.util.ClientSessionManager.getLoggedInUserId;
 import static org.n52.client.util.ClientSessionManager.isPresentSessionInfo;
 import static org.n52.shared.responses.SesClientResponseType.USER_SUBSCRIPTIONS;
@@ -14,7 +15,9 @@ import org.n52.client.ses.event.UpdateProfileEvent;
 import org.n52.client.ses.event.handler.InformUserEventHandler;
 import org.n52.client.ses.event.handler.UpdateProfileEventHandler;
 import org.n52.client.ses.ui.LoginWindow;
+import org.n52.client.util.ClientSessionManager;
 import org.n52.shared.responses.SesClientResponse;
+import org.n52.shared.session.SessionInfo;
 
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.HLayout;
@@ -42,7 +45,8 @@ public class ProfileWindow extends LoginWindow {
     }
 
     @Override
-    protected void loadSubsciptionListContent() {
+    protected void loadWindowContent() {
+        userDataLayout.clearValues();
         clearContent();
         content = new HLayout();
         content.addMember(createEditProfileLayout());
@@ -51,8 +55,9 @@ public class ProfileWindow extends LoginWindow {
         setTitle(i18n.editUserData());
         
         subscriptionsLayout.clearGrid();
-        getMainEventBus().fireEvent(new GetSingleUserEvent());
-        getMainEventBus().fireEvent(new GetUserSubscriptionsEvent());
+        final SessionInfo sessionInfo = currentSession();
+        getMainEventBus().fireEvent(new GetSingleUserEvent(sessionInfo));
+        getMainEventBus().fireEvent(new GetUserSubscriptionsEvent(sessionInfo));
         markForRedraw();
     }
 

@@ -28,6 +28,7 @@ import static com.smartgwt.client.types.Alignment.RIGHT;
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.event.RuleCreatedEvent.TYPE;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.client.util.ClientSessionManager.currentSession;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.event.CreateSimpleRuleEvent;
@@ -37,6 +38,7 @@ import org.n52.client.ses.event.handler.RuleCreatedEventHandler;
 import org.n52.client.ses.ui.LoginWindow;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.ui.ApplyCancelButtonLayout;
+import org.n52.client.util.ClientSessionManager;
 import org.n52.shared.serializable.pojos.Rule;
 
 import com.smartgwt.client.util.SC;
@@ -75,7 +77,7 @@ public class EventSubscriptionWindow extends LoginWindow {
         controller.setEventSubscription(this);
     }
 
-    protected void loadSubsciptionListContent() {
+    protected void loadWindowContent() {
         clearContent();
         content = new HLayout();
         content.setStyleName("n52_sensorweb_client_create_abo_window_content");
@@ -145,7 +147,7 @@ public class EventSubscriptionWindow extends LoginWindow {
             public void onClick(ClickEvent event) {
                 if (controller.isSelectionValid()) {
                     Rule rule = controller.createSimpleRuleFromSelection();
-                    CreateSimpleRuleEvent createEvt = new CreateSimpleRuleEvent(rule, false, "");
+                    CreateSimpleRuleEvent createEvt = new CreateSimpleRuleEvent(currentSession(), rule, false, "");
                     EventBus.getMainEventBus().fireEvent(createEvt); // broker handles auto-subscribe
                     EventSubscriptionWindow.this.hide();
                 } else {
@@ -199,7 +201,7 @@ public class EventSubscriptionWindow extends LoginWindow {
         public void onRuleCreated(RuleCreatedEvent evt) {
             Rule createdRule = evt.getCreatedRule();
             String uuid = createdRule.getUuid();
-            getMainEventBus().fireEvent(new SubscribeEvent(uuid, "email", "Text"));
+            getMainEventBus().fireEvent(new SubscribeEvent(currentSession(), uuid, "email", "Text"));
         }
 
     }

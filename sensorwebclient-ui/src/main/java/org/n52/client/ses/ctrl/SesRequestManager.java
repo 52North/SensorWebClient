@@ -32,6 +32,7 @@ import static org.n52.client.ses.ui.FormLayout.LayoutType.LOGIN;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.RULELIST;
 import static org.n52.client.ui.Toaster.getToasterInstance;
 import static org.n52.client.util.ClientSessionManager.currentSession;
+import static org.n52.client.util.ClientSessionManager.getLoggedInUserRole;
 import static org.n52.client.util.ClientSessionManager.isAdminLogin;
 import static org.n52.client.util.ClientSessionManager.isUserLogin;
 import static org.n52.client.util.ClientSessionManager.setSessionInfo;
@@ -39,6 +40,7 @@ import static org.n52.shared.responses.SesClientResponseType.DELETE_RULE_SUBSCRI
 import static org.n52.shared.responses.SesClientResponseType.EDIT_COMPLEX_RULE;
 import static org.n52.shared.responses.SesClientResponseType.ERROR;
 import static org.n52.shared.responses.SesClientResponseType.LAST_ADMIN;
+import static org.n52.shared.responses.SesClientResponseType.LOGIN_ADMIN;
 import static org.n52.shared.responses.SesClientResponseType.LOGIN_OK;
 import static org.n52.shared.responses.SesClientResponseType.LOGIN_USER;
 import static org.n52.shared.responses.SesClientResponseType.LOGOUT;
@@ -54,7 +56,6 @@ import static org.n52.shared.responses.SesClientResponseType.REQUIRES_LOGIN;
 import static org.n52.shared.responses.SesClientResponseType.RULE_NAME_EXISTS;
 import static org.n52.shared.responses.SesClientResponseType.RULE_NAME_NOT_EXISTS;
 import static org.n52.shared.responses.SesClientResponseType.USER_INFO;
-import static org.n52.shared.serializable.pojos.UserRole.ADMIN;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,6 +95,7 @@ import org.n52.shared.session.SessionInfo;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.impl.RequestCallbackAdapter.ResponseReader;
 import com.smartgwt.client.util.SC;
 
 // TODO try to transfer LoginRequiredException through the wire
@@ -119,6 +121,9 @@ public class SesRequestManager extends RequestManager {
             }
 
             public void onSuccess(SesClientResponse response) {
+                
+                setSessionInfo(response.getSessionInfo());
+                
                 if (response.getType().equals(REGISTER_OK)) {
 
                     if ( !isAdminLogin()) {
@@ -143,17 +148,16 @@ public class SesRequestManager extends RequestManager {
         this.sesUserService.registerUser(user, callback);
     }
 
-    public void login(String name, String password) {
+    public void login(String name, String password, final SessionInfo sessionInfo) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
                 Toaster.getToasterInstance().addErrorMessage(i18n.failedLogin());
             }
 
             public void onSuccess(SesClientResponse response) {
+                
                 if (response.getType() == LOGIN_OK) {
                     UserDTO user = response.getUser();
-
-                    ClientSessionManager.setSessionInfo(response.getSessionInfo());
 
                     if ( !user.isEmailVerified()) {
                         SC.say(i18n.validateEMail());
@@ -161,30 +165,20 @@ public class SesRequestManager extends RequestManager {
                     if (user.isPasswordChanged()) {
                         SC.say(i18n.passwordChanged());
                     }
-                    if (user.getRole().equals(ADMIN)) {
-                        String names = null;
-                        ArrayList<String> list = response.getComplexRules();
 
-                        for (int i = 0; i < list.size(); i++) {
-                            names = names + list.get(i) + ", ";
-                        }
-                        if (names != null) {
-                            SC.say(i18n.deletedUser() + ": " + names);
-                        }
-                    }
-                    EventBus.getMainEventBus().fireEvent(new InformUserEvent(response));
-                    EventBus.getMainEventBus().fireEvent(new SetRoleEvent(user.getRole()));
+                    SesRequestManager.this.performLogin(response);
+                    
                 }
                 else if (response.getType() == LOGIN_USER) {
                     SC.say(i18n.onlyAdminsAllowedToLogin());
                 }
                 else {
-                    EventBus.getMainEventBus().fireEvent(new InformUserEvent(response));
+                    getMainEventBus().fireEvent(new InformUserEvent(response));
                 }
             }
 
         };
-        this.sesUserService.login(name, password, currentSession(), callback);
+        this.sesUserService.login(name, password, sessionInfo, callback);
     }
 
     /**
@@ -203,14 +197,35 @@ public class SesRequestManager extends RequestManager {
             }
 
             @Override
-            public void onSuccess(SesClientResponse result) {
-                if (result.getType() == SesClientResponseType.LOGOUT) {
-                    getMainEventBus().fireEvent(new LogoutEvent());
-                    createSessionInfo();
+            public void onSuccess(SesClientResponse response) {
+                if (response.getType() == SesClientResponseType.LOGOUT) {
+                    getMainEventBus().fireEvent(new SetRoleEvent(UserRole.LOGOUT));
+                    createSessionInfo(); // get fresh session info
+                } else if (response.getType() == LOGIN_OK || response.getType() == LOGIN_ADMIN) {
+                    SesRequestManager.this.performLogin(response);
                 }
             }
         };
         sesUserService.validateLoginSession(sessionInfo, callback);
+    }
+
+    private void performLogin(SesClientResponse response) {
+        setSessionInfo(response.getSessionInfo());
+        
+//        if (isAdminLogin()) {
+//            String names = null;
+//            ArrayList<String> list = response.getComplexRules();
+//
+//            for (int i = 0; i < list.size(); i++) {
+//                names = names + list.get(i) + ", ";
+//            }
+//            if (names != null) {
+//                SC.say(i18n.deletedUser() + ": " + names);
+//            }
+//        }
+        
+        getMainEventBus().fireEvent(new InformUserEvent(response));
+        getMainEventBus().fireEvent(new SetRoleEvent(response.getUser().getRole()));
     }
 
     /**
@@ -248,7 +263,7 @@ public class SesRequestManager extends RequestManager {
 
             @Override
             public void onSuccess(SesClientResponse response) {
-                if ( ! (response.getType() == NEW_PASSWORD_OK)) {
+                if (response.getType() != NEW_PASSWORD_OK) {
                     SC.say(i18n.invalidNewPasswordInputs());
                 }
                 else {
@@ -260,7 +275,7 @@ public class SesRequestManager extends RequestManager {
         sesUserService.resetPassword(name, email, callback);
     }
 
-    public void logout() {
+    public void logout(final SessionInfo sessionInfo) {
         AsyncCallback<Void> callback = new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable arg0) {
@@ -273,10 +288,10 @@ public class SesRequestManager extends RequestManager {
                 createSessionInfo();
             }
         };
-        sesUserService.logout(currentSession(), callback);
+        sesUserService.logout(sessionInfo, callback);
     }
 
-    public void getUser() {
+    public void getUser(final SessionInfo sessionInfo) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             @Override
             public void onFailure(Throwable arg0) {
@@ -294,10 +309,10 @@ public class SesRequestManager extends RequestManager {
                 }
             }
         };
-        sesUserService.getUser(currentSession(), callback);
+        sesUserService.getUser(sessionInfo, callback);
     }
 
-    public void deleteUser(String userIdToDelete) {
+    public void deleteUser(final SessionInfo sessionInfo, String userIdToDelete) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             @Override
             public void onFailure(Throwable arg0) {
@@ -306,6 +321,7 @@ public class SesRequestManager extends RequestManager {
 
             @Override
             public void onSuccess(SesClientResponse result) {
+                final SessionInfo currentSession = currentSession();
                 if (result.getType() == REQUIRES_LOGIN) {
                     getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
                 }
@@ -313,17 +329,17 @@ public class SesRequestManager extends RequestManager {
                     SC.say(i18n.lastAdmin());
                 }
                 if ( !ClientSessionManager.isAdminLogin()) {
-                    getMainEventBus().fireEvent(new LogoutEvent());
+                    getMainEventBus().fireEvent(new LogoutEvent(currentSession));
                 }
                 if (ClientSessionManager.isAdminLogin()) {
-                    getMainEventBus().fireEvent(new GetAllUsersEvent());
+                    getMainEventBus().fireEvent(new GetAllUsersEvent(currentSession));
                 }
             }
         };
-        sesUserService.deleteUser(currentSession(), userIdToDelete, callback);
+        sesUserService.deleteUser(sessionInfo, userIdToDelete, callback);
     }
 
-    public void updateUser(UserDTO user) {
+    public void updateUser(final SessionInfo sessionInfo, UserDTO user) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             @Override
             public void onFailure(Throwable arg0) {
@@ -338,7 +354,7 @@ public class SesRequestManager extends RequestManager {
                 else if (response.getType().equals(OK)) {
                     SC.say(i18n.updateSuccessful());
                     if (isAdminLogin()) {
-                        getMainEventBus().fireEvent(new GetAllUsersEvent());
+                        getMainEventBus().fireEvent(new GetAllUsersEvent(sessionInfo));
                     }
                 }
                 else if (response.getType().equals(REGISTER_HANDY)) {
@@ -354,7 +370,7 @@ public class SesRequestManager extends RequestManager {
                     SC.say(i18n.lastAdmin());
                 }
                 else if (response.getType().equals(LOGOUT)) {
-                    getMainEventBus().fireEvent(new LogoutEvent());
+                    getMainEventBus().fireEvent(new LogoutEvent(sessionInfo));
                 }
                 else if (response.getType().equals(MAIL)) {
                     SC.say(i18n.mailSent());
@@ -364,11 +380,10 @@ public class SesRequestManager extends RequestManager {
                 }
             }
         };
-        sesUserService.updateUser(currentSession(), user, callback);
+        sesUserService.updateUser(sessionInfo, user, callback);
     }
 
-    public void subscribe(final String uuid, final String medium, final String format) {
-        final SessionInfo session = currentSession();
+    public void subscribe(final SessionInfo sessionInfo, final String uuid, final String medium, final String format) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             @Override
             public void onFailure(Throwable arg0) {
@@ -404,8 +419,8 @@ public class SesRequestManager extends RequestManager {
                             + i18n.subscriptionInfo();
                     SC.say(finalMessage);
 
-                    getMainEventBus().fireEvent(new GetAllOwnRulesEvent(false));
-                    getMainEventBus().fireEvent(new GetAllOtherRulesEvent(false));
+                    getMainEventBus().fireEvent(new GetAllOwnRulesEvent(sessionInfo, false));
+                    getMainEventBus().fireEvent(new GetAllOtherRulesEvent(sessionInfo, false));
                     break;
                 case RULE_NAME_EXISTS:
                     SC.say(i18n.copyExistsSubscribe());
@@ -418,18 +433,18 @@ public class SesRequestManager extends RequestManager {
                     break;
                 case SUBSCRIPTION_EXISTS:
                     SC.say(i18n.subscriptionExists());
-                    EventBus.getMainEventBus().fireEvent(new GetAllOwnRulesEvent(false));
-                    EventBus.getMainEventBus().fireEvent(new GetAllOtherRulesEvent(false));
+                    EventBus.getMainEventBus().fireEvent(new GetAllOwnRulesEvent(sessionInfo, false));
+                    EventBus.getMainEventBus().fireEvent(new GetAllOtherRulesEvent(sessionInfo, false));
                     break;
                 default:
                     break;
                 }
             }
         };
-        this.sesRulesService.subscribe(session, uuid, medium, format, callback);
+        this.sesRulesService.subscribe(sessionInfo, uuid, medium, format, callback);
     }
 
-    public void createBasicRule(Rule rule, boolean edit, String oldRuleName) {
+    public void createBasicRule(final SessionInfo sessionInfo, Rule rule, boolean edit, String oldRuleName) {
 
         ServerCallback<SesClientResponse> callback = new CreateSimpleRuleCallback(this, "Could not create rule.") {
             @Override
@@ -447,10 +462,10 @@ public class SesRequestManager extends RequestManager {
                 }
             }
         };
-        this.sesRulesService.createBasicRule(currentSession(), rule, edit, oldRuleName, callback);
+        this.sesRulesService.createBasicRule(sessionInfo, rule, edit, oldRuleName, callback);
     }
 
-    public void getAllUsers() {
+    public void getAllUsers(final SessionInfo sessionInfo) {
         AsyncCallback<List<UserDTO>> callback = new AsyncCallback<List<UserDTO>>() {
             @Override
             public void onFailure(Throwable arg0) {
@@ -462,7 +477,7 @@ public class SesRequestManager extends RequestManager {
                 getMainEventBus().fireEvent(new ShowAllUserEvent(result));
             }
         };
-        sesUserService.getAllUsers(currentSession(), callback);
+        sesUserService.getAllUsers(sessionInfo, callback);
     }
 
     public void getStations() {
@@ -495,7 +510,7 @@ public class SesRequestManager extends RequestManager {
         sesTimeseriesService.getPhenomena(sensor, callback);
     }
 
-    public void getAllOwnRules(boolean edit) {
+    public void getAllOwnRules(final SessionInfo sessionInfo, boolean edit) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             @Override
             public void onFailure(Throwable arg0) {
@@ -512,10 +527,10 @@ public class SesRequestManager extends RequestManager {
                 }
             }
         };
-        sesRulesService.getAllOwnRules(currentSession(), edit, callback);
+        sesRulesService.getAllOwnRules(sessionInfo, edit, callback);
     }
 
-    public void getAllOtherRules(boolean edit) {
+    public void getAllOtherRules(final SessionInfo sessionInfo, boolean edit) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
                 Toaster.getToasterInstance().addErrorMessage(arg0.getMessage());
@@ -528,7 +543,7 @@ public class SesRequestManager extends RequestManager {
                 EventBus.getMainEventBus().fireEvent(new InformUserEvent(response));
             }
         };
-        this.sesRulesService.getAllOtherRules(currentSession(), edit, callback);
+        this.sesRulesService.getAllOtherRules(sessionInfo, edit, callback);
     }
 
     public void getRegisteredTimeseriesFeeds() {
@@ -557,7 +572,7 @@ public class SesRequestManager extends RequestManager {
         this.sesTimeseriesService.updateTimeseriesFeed(timeseriesFeedId, active, callback);
     }
 
-    public void publishRule(String ruleName, boolean published, String role) {
+    public void publishRule(final SessionInfo sessionInfo, String ruleName, boolean published, String role) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
                 Toaster.getToasterInstance().addErrorMessage(i18n.failedPublishRule());
@@ -568,19 +583,19 @@ public class SesRequestManager extends RequestManager {
                     getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
                 }
                 if (response.getType().equals(PUBLISH_RULE_USER)) {
-                    GetAllOwnRulesEvent event = new GetAllOwnRulesEvent(true);
+                    GetAllOwnRulesEvent event = new GetAllOwnRulesEvent(sessionInfo, true);
                     EventBus.getMainEventBus().fireEvent(event);
                 }
                 else {
-                    EventBus.getMainEventBus().fireEvent(new GetAllRulesEvent());
+                    EventBus.getMainEventBus().fireEvent(new GetAllRulesEvent(sessionInfo));
                 }
 
             }
         };
-        this.sesRulesService.publishRule(currentSession(), ruleName, published, callback);
+        this.sesRulesService.publishRule(sessionInfo, ruleName, published, callback);
     }
 
-    public void getAllRules() {
+    public void getAllRules(final SessionInfo sessionInfo) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
                 Toaster.getToasterInstance().addErrorMessage(i18n.failedGetAllRules());
@@ -595,10 +610,10 @@ public class SesRequestManager extends RequestManager {
                 }
             }
         };
-        this.sesRulesService.getAllRules(currentSession(), callback);
+        this.sesRulesService.getAllRules(sessionInfo, callback);
     }
 
-    public void deleteRule(String uuid, final String role) {
+    public void deleteRule(final SessionInfo sessionInfo, String uuid, final String role) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
                 Toaster.getToasterInstance().addErrorMessage(arg0.getMessage());
@@ -614,15 +629,15 @@ public class SesRequestManager extends RequestManager {
                 else {
                     // update list
                     if (role.equals("ADMIN")) {
-                        getMainEventBus().fireEvent(new GetAllRulesEvent());
+                        getMainEventBus().fireEvent(new GetAllRulesEvent(sessionInfo));
                     }
                     else {
-                        getMainEventBus().fireEvent(new GetAllOwnRulesEvent(true));
+                        getMainEventBus().fireEvent(new GetAllOwnRulesEvent(sessionInfo, true));
                     }
                 }
             }
         };
-        this.sesRulesService.deleteRule(currentSession(), uuid, callback);
+        this.sesRulesService.deleteRule(sessionInfo, uuid, callback);
     }
 
     public void deleteTimeseriesFeed(String timeseriesFeed) {
@@ -636,7 +651,7 @@ public class SesRequestManager extends RequestManager {
                     getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
                 }
                 else {
-                    getMainEventBus().fireEvent(new GetAllRulesEvent());
+                    getMainEventBus().fireEvent(new GetAllRulesEvent(currentSession()));
                 }
             }
         };
@@ -668,7 +683,7 @@ public class SesRequestManager extends RequestManager {
 
     }
 
-    public void getAllPublishedRules(int operator) {
+    public void getAllPublishedRules(final SessionInfo sessionInfo, int operator) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
                 Toaster.getToasterInstance().addErrorMessage(arg0.getMessage());
@@ -683,11 +698,10 @@ public class SesRequestManager extends RequestManager {
                 }
             }
         };
-        this.sesRulesService.getAllPublishedRules(currentSession(), operator, callback);
+        this.sesRulesService.getAllPublishedRules(sessionInfo, operator, callback);
     }
 
-    public void unsubscribe(String uuid, String medium, String format) {
-        final SessionInfo session = currentSession();
+    public void unsubscribe(final SessionInfo sessionInfo, String uuid, String medium, String format) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
                 Toaster.getToasterInstance().addErrorMessage(arg0.getMessage());
@@ -702,8 +716,9 @@ public class SesRequestManager extends RequestManager {
                     break;
                 case OK:
                     SC.say(i18n.unsubscribeSuccessful());
-                    EventBus.getMainEventBus().fireEvent(new GetAllOwnRulesEvent(false));
-                    EventBus.getMainEventBus().fireEvent(new GetAllOtherRulesEvent(false));
+                    final SessionInfo currentSession = currentSession();
+                    EventBus.getMainEventBus().fireEvent(new GetAllOwnRulesEvent(currentSession, false));
+                    EventBus.getMainEventBus().fireEvent(new GetAllOtherRulesEvent(currentSession, false));
                     break;
                 case ERROR_UNSUBSCRIBE_SES:
                     Toaster.getToasterInstance().addErrorMessage(i18n.errorUnsubscribeSES());
@@ -713,7 +728,7 @@ public class SesRequestManager extends RequestManager {
                 }
             }
         };
-        this.sesRulesService.unSubscribe(session, uuid, medium, format, callback);
+        this.sesRulesService.unSubscribe(sessionInfo, uuid, medium, format, callback);
     }
 
     public void ruleNameExists(String ruleName) {
@@ -729,7 +744,7 @@ public class SesRequestManager extends RequestManager {
         this.sesRulesService.ruleNameExists(ruleName, callback);
     }
 
-    public void createComplexRule(ComplexRuleData rule, boolean edit, String oldName) {
+    public void createComplexRule(final SessionInfo sessionInfo, ComplexRuleData rule, boolean edit, String oldName) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
                 Toaster.getToasterInstance().addErrorMessage(arg0.getMessage());
@@ -762,10 +777,10 @@ public class SesRequestManager extends RequestManager {
                 }
             }
         };
-        this.sesRulesService.createComplexRule(currentSession(), rule, edit, oldName, callback);
+        this.sesRulesService.createComplexRule(sessionInfo, rule, edit, oldName, callback);
     }
 
-    public void getUserSubscriptions() {
+    public void getUserSubscriptions(final SessionInfo sessionInfo) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             public void onFailure(Throwable arg0) {
                 Toaster.getToasterInstance().addErrorMessage(arg0.getMessage());
@@ -780,10 +795,10 @@ public class SesRequestManager extends RequestManager {
                 }
             }
         };
-        this.sesRulesService.getUserSubscriptions(currentSession(), callback);
+        this.sesRulesService.getUserSubscriptions(sessionInfo, callback);
     }
 
-    public void deleteProfile() {
+    public void deleteProfile(final SessionInfo sessionInfo) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             @Override
             public void onFailure(Throwable arg0) {
@@ -798,7 +813,7 @@ public class SesRequestManager extends RequestManager {
                 SC.say(i18n.profileDelete());
             }
         };
-        sesUserService.requestToDeleteProfile(currentSession(), callback);
+        sesUserService.requestToDeleteProfile(sessionInfo, callback);
     }
 
     public void getTermsOfUse(String language) {
@@ -835,7 +850,7 @@ public class SesRequestManager extends RequestManager {
 
             public void onSuccess(SesClientResponse result) {
                 if (result.getType().equals(SesClientResponseType.OK)) {
-                    EventBus.getMainEventBus().fireEvent(new GetAllOwnRulesEvent(true));
+                    EventBus.getMainEventBus().fireEvent(new GetAllOwnRulesEvent(currentSession(), true));
                 }
                 else if (result.getType().equals(SesClientResponseType.RULE_NAME_EXISTS)) {
                     SC.say(i18n.copyExists());

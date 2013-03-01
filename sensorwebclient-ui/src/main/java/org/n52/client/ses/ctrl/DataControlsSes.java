@@ -24,6 +24,7 @@
 package org.n52.client.ses.ctrl;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.client.util.ClientSessionManager.currentSession;
 import static org.n52.shared.serializable.pojos.UserRole.LOGOUT;
 import static org.n52.shared.serializable.pojos.UserRole.NOT_REGISTERED_USER;
 
@@ -39,6 +40,7 @@ import org.n52.client.ses.event.GetStationsEvent;
 import org.n52.client.ses.event.LogoutEvent;
 import org.n52.client.ses.ui.SesTab;
 import org.n52.client.ses.ui.FormLayout.LayoutType;
+import org.n52.client.util.ClientSessionManager;
 import org.n52.shared.serializable.pojos.UserRole;
 
 import com.google.gwt.core.client.GWT;
@@ -233,7 +235,7 @@ public class DataControlsSes extends DataControls {
         this.editRulesButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.EDIT_RULES));
-                EventBus.getMainEventBus().fireEvent(new GetAllPublishedRulesEvent(1));
+                EventBus.getMainEventBus().fireEvent(new GetAllPublishedRulesEvent(currentSession(), 1));
                 highlightSelectedButton(editRulesButton);
             }
         });
@@ -281,7 +283,7 @@ public class DataControlsSes extends DataControls {
         this.logoutButton.setShowDown(true);
         this.logoutButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                EventBus.getMainEventBus().fireEvent(new LogoutEvent());
+                EventBus.getMainEventBus().fireEvent(new LogoutEvent(currentSession()));
             }
         });
 

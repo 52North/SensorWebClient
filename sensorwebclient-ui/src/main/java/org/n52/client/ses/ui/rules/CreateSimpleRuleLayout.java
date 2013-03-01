@@ -28,6 +28,7 @@ import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.EDIT_RULES;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.RULELIST;
+import static org.n52.client.util.ClientSessionManager.currentSession;
 import static org.n52.client.util.ClientSessionManager.getLoggedInUserId;
 import static org.n52.client.util.ClientSessionManager.isAdminLogin;
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.OVER_UNDERSHOOT;
@@ -497,7 +498,7 @@ public class CreateSimpleRuleLayout extends FormLayout {
                         .setEntryTimeUnit(rTimeUnit)
                         .build();
         
-        EventBus.getMainEventBus().fireEvent(new CreateSimpleRuleEvent(rule, this.edit, this.oldRuleName));
+        EventBus.getMainEventBus().fireEvent(new CreateSimpleRuleEvent(currentSession(), rule, this.edit, this.oldRuleName));
         
     }
 
@@ -546,7 +547,7 @@ public class CreateSimpleRuleLayout extends FormLayout {
                         .setEntryCount(entryCount)
                         .build();
 
-        EventBus.getMainEventBus().fireEvent(new CreateSimpleRuleEvent(rule, this.edit, this.oldRuleName));
+        EventBus.getMainEventBus().fireEvent(new CreateSimpleRuleEvent(currentSession(), rule, this.edit, this.oldRuleName));
         
     }
 
@@ -605,7 +606,7 @@ public class CreateSimpleRuleLayout extends FormLayout {
                         .setExitTimeUnit(exitTimeUnit)
                         .build();
 
-        EventBus.getMainEventBus().fireEvent(new CreateSimpleRuleEvent(rule, this.edit, this.oldRuleName));
+        EventBus.getMainEventBus().fireEvent(new CreateSimpleRuleEvent(currentSession(), rule, this.edit, this.oldRuleName));
     }
 
     /**
@@ -660,7 +661,7 @@ public class CreateSimpleRuleLayout extends FormLayout {
                         .setEntryCount(countCondValue)
                         .build();
         
-        EventBus.getMainEventBus().fireEvent(new CreateSimpleRuleEvent(rule, this.edit, this.oldRuleName));
+        EventBus.getMainEventBus().fireEvent(new CreateSimpleRuleEvent(currentSession(), rule, this.edit, this.oldRuleName));
 
     }
 
@@ -714,7 +715,7 @@ public class CreateSimpleRuleLayout extends FormLayout {
 //                        this.description, this.publish, this.condition, operatorIndex, rValue, rUnit,
 //                        cOperatorIndex, cValue, cUnit, cookieAsInt);
 
-        EventBus.getMainEventBus().fireEvent(new CreateSimpleRuleEvent(rule, this.edit, this.oldRuleName));
+        getMainEventBus().fireEvent(new CreateSimpleRuleEvent(currentSession(), rule, this.edit, this.oldRuleName));
     }
 
     

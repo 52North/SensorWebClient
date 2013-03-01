@@ -25,55 +25,38 @@ package org.n52.client.ses.event;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.GetAllPublishedRulesEventHandler;
+import org.n52.shared.session.SessionInfo;
 
-/**
- * The Class ChangeLayoutEvent.
- */
 public class GetAllPublishedRulesEvent extends FilteredDispatchGwtEvent<GetAllPublishedRulesEventHandler> {
 
-    /** The TYPE. */
     public static Type<GetAllPublishedRulesEventHandler> TYPE = new Type<GetAllPublishedRulesEventHandler>();
 
     private int operator;
-    /**
-     * Instantiates a new GetAllPublishedRulesEvent.
-     * @param operator 
-     * 
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
-    public GetAllPublishedRulesEvent(int operator, GetAllPublishedRulesEventHandler... blockedHandlers) {
+
+    private SessionInfo sessionInfo;
+
+    public GetAllPublishedRulesEvent(final SessionInfo sessionInfo, int operator, GetAllPublishedRulesEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.operator = operator;
+        this.sessionInfo = sessionInfo;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(GetAllPublishedRulesEventHandler handler) {
         handler.onGet(this);
-
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
     public com.google.gwt.event.shared.GwtEvent.Type<GetAllPublishedRulesEventHandler> getAssociatedType() {
         return TYPE;
     }
 
-    /**
-     * @return operator
-     */
     public int getOperator() {
         return this.operator;
     }
+
+    public SessionInfo getSessionInfo() {
+        return sessionInfo;
+    }
+    
 }

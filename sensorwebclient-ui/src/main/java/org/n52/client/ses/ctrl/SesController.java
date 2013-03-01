@@ -24,10 +24,9 @@
 
 package org.n52.client.ses.ctrl;
 
-import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.util.ClientSessionManager.currentSession;
+import static org.n52.client.util.ClientSessionManager.isNotLoggedIn;
 import static org.n52.client.util.ClientSessionManager.isPresentSessionInfo;
-import static org.n52.shared.serializable.pojos.UserRole.LOGOUT;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.ServiceController;
@@ -58,7 +57,6 @@ import org.n52.client.ses.event.PublishRuleEvent;
 import org.n52.client.ses.event.RegisterUserEvent;
 import org.n52.client.ses.event.RuleNameExistsEvent;
 import org.n52.client.ses.event.SearchEvent;
-import org.n52.client.ses.event.SetRoleEvent;
 import org.n52.client.ses.event.SubscribeEvent;
 import org.n52.client.ses.event.UnsubscribeEvent;
 import org.n52.client.ses.event.UpdateSensorEvent;
@@ -105,7 +103,7 @@ public class SesController extends ServiceController {
         if (isPresentSessionInfo()) {
             rm.validate(currentSession());
         } else {
-            getMainEventBus().fireEvent(new SetRoleEvent(LOGOUT));
+//            getMainEventBus().fireEvent(new SetRoleEvent(LOGOUT));
             rm.createSessionInfo();
         }
     }
@@ -190,7 +188,7 @@ public class SesController extends ServiceController {
         }
 
         public void onLogin(LoginEvent evt) {
-            SesController.this.getRm().login(evt.getName(), evt.getPassword());
+            SesController.this.getRm().login(evt.getName(), evt.getPassword(), evt.getSessionInfo());
         }
 
         public void onNewPassword(NewPasswordEvent evt) {
@@ -198,31 +196,31 @@ public class SesController extends ServiceController {
         }
 
         public void onLogout(LogoutEvent evt) {
-            SesController.this.getRm().logout();
+            SesController.this.getRm().logout(evt.getSessionInfo());
         }
 
         public void onGetSingleUser(GetSingleUserEvent evt) {
-            SesController.this.getRm().getUser();
+            SesController.this.getRm().getUser(evt.getSessionInfo());
         }
 
         public void onDeleteUser(DeleteUserEvent evt) {
-            SesController.this.getRm().deleteUser(evt.getId());
+            SesController.this.getRm().deleteUser(evt.getSessionInfo(), evt.getUserId());
         }
 
         public void onUpdate(UpdateUserEvent evt) {
-            SesController.this.getRm().updateUser(evt.getUser());
+            SesController.this.getRm().updateUser(evt.getSessionInfo(), evt.getUser());
         }
 
         public void onSubscribe(SubscribeEvent evt) {
-            SesController.this.getRm().subscribe(evt.getUuid(), evt.getMedium(), evt.getFormat());
+            SesController.this.getRm().subscribe(evt.getSessionInfo(), evt.getUuid(), evt.getMedium(), evt.getFormat());
         }
 
         public void onCreate(CreateSimpleRuleEvent evt) {
-            SesController.this.getRm().createBasicRule(evt.getRule(), evt.isEdit(), evt.getOldRuleName());
+            SesController.this.getRm().createBasicRule(evt.getSessionInfo(), evt.getRule(), evt.isEdit(), evt.getOldRuleName());
         }
 
         public void onGetAllUser(GetAllUsersEvent evt) {
-            SesController.this.getRm().getAllUsers();
+            SesController.this.getRm().getAllUsers(evt.getSessionInfo());
         }
 
         public void onGet(GetStationsEvent evt) {
@@ -234,11 +232,11 @@ public class SesController extends ServiceController {
         }
 
         public void onGet(GetAllOwnRulesEvent evt) {
-            SesController.this.getRm().getAllOwnRules(evt.isEdit());
+            SesController.this.getRm().getAllOwnRules(evt.getSessionInfo(), evt.isEdit());
         }
 
         public void onGet(GetAllOtherRulesEvent evt) {
-            SesController.this.getRm().getAllOtherRules(evt.isEdit());
+            SesController.this.getRm().getAllOtherRules(evt.getSessionInfo(), evt.isEdit());
         }
 
         public void onGet(GetRegisteredSensorsEvent evt) {
@@ -250,15 +248,15 @@ public class SesController extends ServiceController {
         }
 
         public void onPublish(PublishRuleEvent evt) {
-            SesController.this.getRm().publishRule(evt.getRuleName(), evt.isPublished(), evt.getRole());
+            SesController.this.getRm().publishRule(evt.getSessionInfo(), evt.getRuleName(), evt.isPublished(), evt.getRole());
         }
 
         public void onGet(GetAllRulesEvent evt) {
-            SesController.this.getRm().getAllRules();
+            SesController.this.getRm().getAllRules(evt.getSessionInfo());
         }
 
         public void onDeleteRule(DeleteRuleEvent evt) {
-            SesController.this.getRm().deleteRule(evt.getUuid(), evt.getRole());
+            SesController.this.getRm().deleteRule(evt.getSessionInfo(), evt.getUuid(), evt.getRole());
         }
 
         public void onDeleteSensor(DeleteSensorEvent evt) {
@@ -270,11 +268,11 @@ public class SesController extends ServiceController {
         }
 
         public void onGet(GetAllPublishedRulesEvent evt) {
-            SesController.this.getRm().getAllPublishedRules(evt.getOperator());
+            SesController.this.getRm().getAllPublishedRules(evt.getSessionInfo(), evt.getOperator());
         }
 
         public void onUnsubscribe(UnsubscribeEvent evt) {
-            SesController.this.getRm().unsubscribe(evt.getUuid(), evt.getMedium(), evt.getFormat());
+            SesController.this.getRm().unsubscribe(evt.getSessionInfo(), evt.getUuid(), evt.getMedium(), evt.getFormat());
         }
 
         public void onExists(RuleNameExistsEvent evt) {
@@ -282,15 +280,15 @@ public class SesController extends ServiceController {
         }
 
         public void onCreate(CreateComplexRuleEvent evt) {
-            SesController.this.getRm().createComplexRule(evt.getRule(), evt.isEdit(), evt.getOldName());
+            SesController.this.getRm().createComplexRule(evt.getSessionInfo(), evt.getRule(), evt.isEdit(), evt.getOldName());
         }
 
         public void onGet(GetUserSubscriptionsEvent evt) {
-            SesController.this.getRm().getUserSubscriptions();
+            SesController.this.getRm().getUserSubscriptions(evt.getSessionInfo());
         }
 
         public void onDeleteProfile(DeleteProfileEvent evt) {
-            SesController.this.getRm().deleteProfile();
+            SesController.this.getRm().deleteProfile(evt.getSessionInfo());
         }
 
         public void onGet(GetTermsOfUseEvent evt) {

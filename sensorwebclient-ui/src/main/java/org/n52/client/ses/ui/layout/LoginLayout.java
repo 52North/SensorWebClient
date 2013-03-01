@@ -29,6 +29,7 @@ import static org.n52.client.ses.ctrl.DataControlsSes.createMD5;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.PASSWORD;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.REGISTER;
+import static org.n52.client.util.ClientSessionManager.currentSession;
 import static org.n52.shared.responses.SesClientResponseType.LOGIN_NAME;
 import static org.n52.shared.responses.SesClientResponseType.LOGIN_PASSWORD;
 
@@ -37,6 +38,7 @@ import org.n52.client.ses.event.InformUserEvent;
 import org.n52.client.ses.event.LoginEvent;
 import org.n52.client.ses.event.handler.InformUserEventHandler;
 import org.n52.client.ses.ui.FormLayout;
+import org.n52.client.util.ClientSessionManager;
 import org.n52.shared.responses.SesClientResponse;
 
 import com.smartgwt.client.widgets.form.FormItemErrorFormatter;
@@ -127,7 +129,7 @@ public class LoginLayout extends FormLayout {
     private void login() {
         String name = getUserNameField().getValueAsString();
         String pwd = getPasswordField().getValueAsString();
-    	getMainEventBus().fireEvent(new LoginEvent(name, createMD5(pwd)));
+    	getMainEventBus().fireEvent(new LoginEvent(name, createMD5(pwd), currentSession()));
         clearFields();
     }
 

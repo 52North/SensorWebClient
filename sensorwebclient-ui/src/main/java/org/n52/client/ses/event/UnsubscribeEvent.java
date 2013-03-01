@@ -25,6 +25,7 @@ package org.n52.client.ses.event;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.UnsubscribeEventHandler;
+import org.n52.shared.session.SessionInfo;
 
 public class UnsubscribeEvent extends FilteredDispatchGwtEvent<UnsubscribeEventHandler> {
 
@@ -36,11 +37,14 @@ public class UnsubscribeEvent extends FilteredDispatchGwtEvent<UnsubscribeEventH
     
     private String format;
 
-    public UnsubscribeEvent(String uuid, String medium, String format, UnsubscribeEventHandler... blockedHandlers) {
+    private SessionInfo sessionInfo;
+
+    public UnsubscribeEvent(final SessionInfo sessionInfo, String uuid, String medium, String format, UnsubscribeEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.uuid = uuid;
         this.medium = medium;
         this.format = format;
+        this.sessionInfo = sessionInfo;
     }
 
     @Override
@@ -64,4 +68,9 @@ public class UnsubscribeEvent extends FilteredDispatchGwtEvent<UnsubscribeEventH
     public String getFormat() {
         return format;
     }
+
+    public SessionInfo getSessionInfo() {
+        return sessionInfo;
+    }
+    
 }

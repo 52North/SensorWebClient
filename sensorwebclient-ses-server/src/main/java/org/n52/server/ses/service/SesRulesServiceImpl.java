@@ -37,7 +37,6 @@ import static org.n52.server.ses.hibernate.HibernateUtil.subscribeBasicRule;
 import static org.n52.server.ses.hibernate.HibernateUtil.unsubscribeBasicRule;
 import static org.n52.server.ses.hibernate.HibernateUtil.updateComplexRuleSubscribtion;
 import static org.n52.server.ses.util.SesServerUtil.getTimeseriesIdsFromEML;
-import static org.n52.server.util.InjectionContextLoader.load;
 import static org.n52.shared.responses.SesClientResponseType.REQUIRES_LOGIN;
 import static org.n52.shared.responses.SesClientResponseType.USER_SUBSCRIPTIONS;
 
@@ -81,8 +80,8 @@ import org.slf4j.LoggerFactory;
 public class SesRulesServiceImpl implements SesRuleService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SesRulesServiceImpl.class);
-
-    private ServerSessionStore sessionStore = load("sessionStore", ServerSessionStore.class);
+    
+    private ServerSessionStore sessionStore; // injected
 
     @Override
     public SesClientResponse subscribe(SessionInfo sessionInfo, String uuid, String medium, String eml) throws Exception {
@@ -90,11 +89,10 @@ public class SesRulesServiceImpl implements SesRuleService {
             if (sessionStore.isActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
-            sessionStore.validateSessionInfo(sessionInfo);
             LOGGER.debug("subscribe to rule with UUID: {}", uuid);
             LOGGER.debug("notification type:  {}", medium);
 
-            String userID = sessionInfo.getUserId();
+            String userID = sessionStore.getLoggedInUserId(sessionInfo);
 
             // get EML from DB
             BasicRule basicRule = HibernateUtil.getBasicRuleByUuid(uuid);
@@ -302,10 +300,9 @@ public class SesRulesServiceImpl implements SesRuleService {
             if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
-            sessionStore.validateSessionInfo(sessionInfo);
             LOGGER.debug("unsubscribe from rule with UUID: {}", uuid);
 
-            String userID = sessionInfo.getUserId();
+            String userID = sessionStore.getLoggedInUserId(sessionInfo);
 
             // get rule
             BasicRule basicRule = HibernateUtil.getBasicRuleByUuid(uuid);
@@ -371,7 +368,6 @@ public class SesRulesServiceImpl implements SesRuleService {
             if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
-            sessionStore.validateSessionInfo(sessionInfo);
             
             rule.setUuid(randomUUID().toString());
             LOGGER.debug("createBasicRule with UUID {} and timeseries {}", rule.getUuid(), rule.getTimeseriesMetadata());
@@ -481,8 +477,7 @@ public class SesRulesServiceImpl implements SesRuleService {
             if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
-            sessionStore.validateSessionInfo(sessionInfo);
-            String id = sessionInfo.getUserId();
+            String id = sessionStore.getLoggedInUserId(sessionInfo);
             LOGGER.debug("getAllOwnRules of user: " + id);
 
             ArrayList<BasicRuleDTO> finalBasicList = new ArrayList<BasicRuleDTO>();
@@ -542,8 +537,7 @@ public class SesRulesServiceImpl implements SesRuleService {
             if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
-            sessionStore.validateSessionInfo(sessionInfo);
-            String id = sessionInfo.getUserId();
+            String id = sessionStore.getLoggedInUserId(sessionInfo);
             LOGGER.debug("get all rules except user: " + id);
             ArrayList<BasicRuleDTO> finalBasicList = new ArrayList<BasicRuleDTO>();
             ArrayList<ComplexRuleDTO> finalComplexList = new ArrayList<ComplexRuleDTO>();
@@ -608,9 +602,8 @@ public class SesRulesServiceImpl implements SesRuleService {
             if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
-            sessionStore.validateSessionInfo(sessionInfo);
             LOGGER.debug("publish rule: " + ruleName + ": " + published);
-            if (sessionInfo.getRole().equals("ADMIN")) {
+            if (sessionStore.isLoggedInAdmin(sessionInfo)) {
                 return new SesClientResponse(SesClientResponseType.PUBLISH_RULE_ADMIN);
             }
             return new SesClientResponse(SesClientResponseType.PUBLISH_RULE_USER);
@@ -765,7 +758,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     public SesClientResponse getAllPublishedRules(SessionInfo sessionInfo, int operator) throws Exception {
         try {
             sessionStore.validateSessionInfo(sessionInfo);
-            String userID = sessionInfo.getUserId();
+            String userID = sessionStore.getLoggedInUserId(sessionInfo);
             LOGGER.debug("get all published rules");
             ArrayList<String> finalList = new ArrayList<String>();
 
@@ -835,7 +828,6 @@ public class SesRulesServiceImpl implements SesRuleService {
             if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
-            sessionStore.validateSessionInfo(sessionInfo);
             LOGGER.debug("create complex rule: " + rule.getTitle());
 
             // rule name exists
@@ -974,8 +966,7 @@ public class SesRulesServiceImpl implements SesRuleService {
             if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
-            sessionStore.validateSessionInfo(sessionInfo);
-            String userID = sessionInfo.getUserId();
+            String userID = sessionStore.getLoggedInUserId(sessionInfo);
             LOGGER.debug("get all subscriptions of user with id {}.", userID);
             List<Subscription> subscriptions = HibernateUtil.getUserSubscriptions(userID);
             ArrayList<BasicRuleDTO> basicList = new ArrayList<BasicRuleDTO>();
@@ -1066,4 +1057,12 @@ public class SesRulesServiceImpl implements SesRuleService {
         }
     }
 
+    public ServerSessionStore getSessionStore() {
+        return sessionStore;
+    }
+
+    public void setSessionStore(ServerSessionStore sessionStore) {
+        this.sessionStore = sessionStore;
+    }
+    
 }

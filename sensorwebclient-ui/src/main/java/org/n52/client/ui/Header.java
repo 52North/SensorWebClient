@@ -264,59 +264,6 @@ public class Header extends HLayout {
             Toaster.getToasterInstance().addErrorMessage("Malformed base URL: " + baseUrl);
             return baseUrl;
         }
-
-//        String permalink = "";
-//        if (ts.length > 0) {
-//            // get SERVICES
-//            permalink += "&sos=";
-//            for (int i = 0; i < ts.length; i++) {
-//                permalink += ts[i].getSosUrl();
-//                if (i < ts.length && i != ts.length - 1) {
-//                    permalink += ",";
-//                }
-//            }
-//            // get OFF
-//            permalink += "&offering=";
-//            for (int i = 0; i < ts.length; i++) {
-//                permalink += ts[i].getOfferingId();
-//                if (i < ts.length && i != ts.length - 1) {
-//                    permalink += ",";
-//                }
-//            }
-//            // get FOI
-//            permalink += "&stations=";
-//            for (int i = 0; i < ts.length; i++) {
-//                permalink += ts[i].getFeatureId();
-//                if (i < ts.length && i != ts.length - 1) {
-//                    permalink += ",";
-//                }
-//            }
-//            // get PROC
-//            permalink += "&procedures=";
-//            for (int i = 0; i < ts.length; i++) {
-//                permalink += ts[i].getProcedureId();
-//                if (i < ts.length && i != ts.length - 1) {
-//                    permalink += ",";
-//                }
-//            }
-//            // get PHEN
-//            permalink += "&phenomenons=";
-//            for (int i = 0; i < ts.length; i++) {
-//                permalink += ts[i].getPhenomenonId();
-//                if (i < ts.length && i != ts.length - 1) {
-//                    permalink += ",";
-//                }
-//            }
-//        }
-//        permalink += "&begin="
-//                + .format(new Date(TimeManager.getInst().getBegin()));
-//        permalink += "&end="
-//                + DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss").format(new Date(TimeManager.getInst().getEnd()));
-//        
-        // URL encoding
-//        permalink = permalink.replace("#", "%23");
-//        
-//        return permalink;
     }
 
     private TimeRange createTimeRange() {

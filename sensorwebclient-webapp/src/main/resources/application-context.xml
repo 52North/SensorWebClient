@@ -9,6 +9,14 @@
            http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 
-	<bean id="sessionStore" class="org.n52.server.ses.service.ServerSessionStore" />
+    <bean id="sessionStore" class="org.n52.server.ses.service.ServerSessionStore" scope="singleton" />
+    
+    <bean id="sesUserService" class="org.n52.server.ses.service.SesUserServiceImpl">
+        <property name="sessionStore" ref="sessionStore" />
+    </bean>
+    
+    <bean id="sesRulesService" class="org.n52.server.ses.service.SesRulesServiceImpl">
+        <property name="sessionStore" ref="sessionStore" /> 
+    </bean>
 
 </beans> 

@@ -26,83 +26,52 @@ package org.n52.client.ses.event;
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.CreateSimpleRuleEventHandler;
 import org.n52.shared.serializable.pojos.Rule;
+import org.n52.shared.session.SessionInfo;
 
-/**
- * The Class CreateSimpleRuleEvent.
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- */
 public class CreateSimpleRuleEvent extends FilteredDispatchGwtEvent<CreateSimpleRuleEventHandler> {
 
-    /** The TYPE. */
     public static Type<CreateSimpleRuleEventHandler> TYPE = new Type<CreateSimpleRuleEventHandler>();
 
-    /** The rule. */
     private Rule rule;
     
     private boolean edit;
     
     private String oldRuleName;
 
-    /**
-     * Instantiates a new creates the simple rule event.
-     * 
-     * @param rule
-     *            the rule
-     * @param edit 
-     * @param oldRuleName 
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
-    public CreateSimpleRuleEvent(Rule rule, boolean edit, String oldRuleName, CreateSimpleRuleEventHandler... blockedHandlers) {
+    private SessionInfo sessionInfo;
+
+    public CreateSimpleRuleEvent(final SessionInfo sessionInfo, Rule rule, boolean edit, String oldRuleName, CreateSimpleRuleEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.rule = rule;
         this.edit = edit;
         this.oldRuleName = oldRuleName;
+        this.sessionInfo = sessionInfo;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(CreateSimpleRuleEventHandler handler) {
         handler.onCreate(this);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
     public com.google.gwt.event.shared.GwtEvent.Type<CreateSimpleRuleEventHandler> getAssociatedType() {
         return TYPE;
     }
 
-    /**
-     * Gets the rule.
-     * 
-     * @return the rule
-     */
     public Rule getRule() {
         return this.rule;
     }
 
-    /**
-     * @return edit
-     */
     public boolean isEdit() {
         return this.edit;
     }
 
-    /**
-     * @return old rule name
-     */
     public String getOldRuleName() {
         return this.oldRuleName;
     }
+
+    public SessionInfo getSessionInfo() {
+        return sessionInfo;
+    }
+    
 }

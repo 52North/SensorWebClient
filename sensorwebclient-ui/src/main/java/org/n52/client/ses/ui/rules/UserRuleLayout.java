@@ -27,6 +27,7 @@ import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.FORMAT;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.MEDIUM;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.UUID;
+import static org.n52.client.util.ClientSessionManager.currentSession;
 
 import java.util.ArrayList;
 
@@ -34,6 +35,7 @@ import org.n52.client.bus.EventBus;
 import org.n52.client.ses.ctrl.DataControlsSes;
 import org.n52.client.ses.event.SubscribeEvent;
 import org.n52.client.ses.ui.FormLayout;
+import org.n52.client.util.ClientSessionManager;
 import org.n52.shared.serializable.pojos.BasicRuleDTO;
 import org.n52.shared.serializable.pojos.ComplexRuleDTO;
 
@@ -182,7 +184,7 @@ public class UserRuleLayout extends FormLayout {
                                         SC.say(i18n.selectFormat());
                                     } else {
                                         String uuid = record.getAttribute(UUID);
-                                        SubscribeEvent subscribeEvent = new SubscribeEvent(uuid, medium, format);
+                                        SubscribeEvent subscribeEvent = new SubscribeEvent(currentSession(), uuid, medium, format);
                                         EventBus.getMainEventBus().fireEvent(subscribeEvent);
                                     }
                                 }
@@ -306,7 +308,7 @@ public class UserRuleLayout extends FormLayout {
                                         SC.say(i18n.selectFormat());
                                     } else {
                                         String uuid = ruleRecord.getUuid();
-                                        SubscribeEvent subscribeEvent = new SubscribeEvent(uuid, medium, format);
+                                        SubscribeEvent subscribeEvent = new SubscribeEvent(currentSession(), uuid, medium, format);
                                         EventBus.getMainEventBus().fireEvent(subscribeEvent);
                                     }
                                 }

@@ -25,6 +25,7 @@ package org.n52.client.ses.event;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.LoginEventHandler;
+import org.n52.shared.session.SessionInfo;
 
 public class LoginEvent extends FilteredDispatchGwtEvent<LoginEventHandler> {
 
@@ -34,10 +35,13 @@ public class LoginEvent extends FilteredDispatchGwtEvent<LoginEventHandler> {
 
 	private String password;
 
-	public LoginEvent(String name, String password, LoginEventHandler... blockedHandlers) {
+    private SessionInfo sessionInfo;
+
+	public LoginEvent(String name, String password, final SessionInfo sessionInfo, LoginEventHandler... blockedHandlers) {
 		super(blockedHandlers);
 		this.name = name;
 		this.password = password;
+		this.sessionInfo = sessionInfo;
 	}
 
 	@Override
@@ -57,4 +61,9 @@ public class LoginEvent extends FilteredDispatchGwtEvent<LoginEventHandler> {
 	public String getPassword() {
 		return this.password;
 	}
+
+    public SessionInfo getSessionInfo() {
+        return sessionInfo;
+    }
+	
 }

@@ -5,6 +5,7 @@ import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.NAME;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.PUBLISHED;
 import static org.n52.client.ses.ui.rules.RuleDataSourceRecord.UUID;
+import static org.n52.client.util.ClientSessionManager.currentSession;
 import static org.n52.client.util.ClientSessionManager.getLoggedInUserRole;
 
 import org.n52.client.bus.EventBus;
@@ -76,7 +77,7 @@ public class OwnRulesListGrid extends ListGrid {
                         if (value) {
                             String uuid = ruleRecord.getAttribute(UUID);
                             String userRole = getLoggedInUserRole();
-                            EventBus.getMainEventBus().fireEvent(new DeleteRuleEvent(uuid, userRole));
+                            EventBus.getMainEventBus().fireEvent(new DeleteRuleEvent(currentSession(), uuid, userRole));
                         }
                     }
                 });
@@ -105,7 +106,7 @@ public class OwnRulesListGrid extends ListGrid {
         publishButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 String ruleName = ruleRecord.getAttribute(NAME);
-                EventBus.getMainEventBus().fireEvent(new PublishRuleEvent(ruleName, !published, "USER"));
+                EventBus.getMainEventBus().fireEvent(new PublishRuleEvent(currentSession(), ruleName, !published, "USER"));
             }
         });
 
@@ -123,7 +124,7 @@ public class OwnRulesListGrid extends ListGrid {
         editButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 String name = ruleRecord.getAttribute(NAME);
-                EventBus.getMainEventBus().fireEvent(new GetAllPublishedRulesEvent(1));
+                EventBus.getMainEventBus().fireEvent(new GetAllPublishedRulesEvent(currentSession(), 1));
                 EventBus.getMainEventBus().fireEvent(new EditRuleEvent(name));
             }
         });

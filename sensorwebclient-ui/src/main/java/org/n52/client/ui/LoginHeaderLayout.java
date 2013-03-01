@@ -2,6 +2,7 @@ package org.n52.client.ui;
 
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
+import static org.n52.client.util.ClientSessionManager.currentSession;
 import static org.n52.client.util.ClientSessionManager.getLoggedInUser;
 import static org.n52.client.util.ClientSessionManager.getLoggedInUserRole;
 import static org.n52.shared.serializable.pojos.UserRole.ADMIN;
@@ -12,6 +13,7 @@ import org.n52.client.bus.EventBus;
 import org.n52.client.ses.event.LogoutEvent;
 import org.n52.client.ses.event.SetRoleEvent;
 import org.n52.client.ses.event.handler.SetRoleEventHandler;
+import org.n52.client.util.ClientSessionManager;
 import org.n52.shared.serializable.pojos.UserRole;
 
 import com.smartgwt.client.types.Alignment;
@@ -47,7 +49,7 @@ public class LoginHeaderLayout extends HLayout {
 		logout.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				getMainEventBus().fireEvent(new LogoutEvent());
+				getMainEventBus().fireEvent(new LogoutEvent(currentSession()));
 			}
 		});
 		addMember(logout);

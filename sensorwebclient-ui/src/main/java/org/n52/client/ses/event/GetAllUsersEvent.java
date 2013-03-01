@@ -28,6 +28,7 @@ import java.util.List;
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.GetAllUsersEventHandler;
 import org.n52.shared.serializable.pojos.UserDTO;
+import org.n52.shared.session.SessionInfo;
 
 public class GetAllUsersEvent extends FilteredDispatchGwtEvent<GetAllUsersEventHandler> {
 
@@ -35,8 +36,11 @@ public class GetAllUsersEvent extends FilteredDispatchGwtEvent<GetAllUsersEventH
 
     private List<UserDTO> allUser;
 
-    public GetAllUsersEvent(GetAllUsersEventHandler... blockedHandlers) {
+    private SessionInfo sessionInfo;
+
+    public GetAllUsersEvent(final SessionInfo sessionInfo, GetAllUsersEventHandler... blockedHandlers) {
         super(blockedHandlers);
+        this.sessionInfo = sessionInfo;
     }
 
     @Override
@@ -52,4 +56,9 @@ public class GetAllUsersEvent extends FilteredDispatchGwtEvent<GetAllUsersEventH
     public List<UserDTO> getAllUser() {
         return this.allUser;
     }
+
+    public SessionInfo getSessionInfo() {
+        return sessionInfo;
+    }
+    
 }

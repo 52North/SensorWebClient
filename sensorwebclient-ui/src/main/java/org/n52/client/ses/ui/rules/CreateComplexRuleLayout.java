@@ -27,6 +27,7 @@ import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.EDIT_RULES;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.RULELIST;
+import static org.n52.client.util.ClientSessionManager.currentSession;
 import static org.n52.client.util.ClientSessionManager.getLoggedInUserId;
 import static org.n52.client.util.ClientSessionManager.isAdminLogin;
 
@@ -188,15 +189,15 @@ public class CreateComplexRuleLayout extends FormLayout {
                         if (value) {
                             if (event.getValue().equals(i18n.filterOwn())) {
                                 oldSelectedFilter = i18n.filterOwn();
-                                EventBus.getMainEventBus().fireEvent(new GetAllPublishedRulesEvent(1));
+                                getMainEventBus().fireEvent(new GetAllPublishedRulesEvent(currentSession(), 1));
                                 clearBlock();
                             } else if (event.getValue().equals(i18n.filterOther())) {
                                 oldSelectedFilter = i18n.filterOther();
-                                EventBus.getMainEventBus().fireEvent(new GetAllPublishedRulesEvent(2));
+                                getMainEventBus().fireEvent(new GetAllPublishedRulesEvent(currentSession(), 2));
                                 clearBlock();
                             } else if (event.getValue().equals(i18n.filterBoth())) {
                                 oldSelectedFilter = i18n.filterBoth();
-                                EventBus.getMainEventBus().fireEvent(new GetAllPublishedRulesEvent(3));
+                                getMainEventBus().fireEvent(new GetAllPublishedRulesEvent(currentSession(), 3));
                                 clearBlock();
                             }
                         } else {
@@ -721,7 +722,7 @@ public class CreateComplexRuleLayout extends FormLayout {
                     int userID = Integer.parseInt(getLoggedInUserId());
                     ComplexRuleData data = new ComplexRuleData(finalList, title, description, publish, userID, null, null, null);
 
-                    EventBus.getMainEventBus().fireEvent(new CreateComplexRuleEvent(data, this.editCR, this.oldRuleName));
+                    EventBus.getMainEventBus().fireEvent(new CreateComplexRuleEvent(currentSession(), data, this.editCR, this.oldRuleName));
                 } else {
                     SC.say(i18n.invalidInputs());
                 }
@@ -747,7 +748,7 @@ public class CreateComplexRuleLayout extends FormLayout {
 
                 ComplexRuleData data = new ComplexRuleData(null, title, description, publish, userID, this.treeContent, null, null);
 
-                EventBus.getMainEventBus().fireEvent(new CreateComplexRuleEvent(data, this.editCR, this.oldRuleName));
+                EventBus.getMainEventBus().fireEvent(new CreateComplexRuleEvent(currentSession(), data, this.editCR, this.oldRuleName));
             } else {
                 SC.say(i18n.invalidInputs());
             }

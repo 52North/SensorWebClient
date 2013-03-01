@@ -34,9 +34,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.n52.client.service.SesRuleService;
 import org.n52.client.service.SesUserService;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.service.SesUserServiceImpl;
+import org.n52.server.util.ContextLoader;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.serializable.pojos.User;
 import org.n52.shared.serializable.pojos.UserDTO;
@@ -56,13 +58,12 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
     private static final long serialVersionUID = -682767276044973231L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RpcSesUserServlet.class);
-    
-    private SesUserService service;
+
+    private SesUserService service = ContextLoader.load("sesUserService", SesUserService.class);
     
     @Override
     public void init() throws ServletException {
         LOGGER.debug("Initialize " + getClass().getName() +" Servlet for SES Client");
-        service = new SesUserServiceImpl();
     }
 
     @Override

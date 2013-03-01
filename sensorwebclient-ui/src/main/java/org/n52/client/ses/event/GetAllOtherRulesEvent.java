@@ -25,6 +25,7 @@ package org.n52.client.ses.event;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.GetAllOtherRulesEventHandler;
+import org.n52.shared.session.SessionInfo;
 
 public class GetAllOtherRulesEvent extends FilteredDispatchGwtEvent<GetAllOtherRulesEventHandler> {
 
@@ -32,9 +33,12 @@ public class GetAllOtherRulesEvent extends FilteredDispatchGwtEvent<GetAllOtherR
 
     private boolean edit;
 
-    public GetAllOtherRulesEvent(boolean edit, GetAllOtherRulesEventHandler... blockedHandlers) {
+    private SessionInfo sessionInfo;
+
+    public GetAllOtherRulesEvent(final SessionInfo sessionInfo, boolean edit, GetAllOtherRulesEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.edit = edit;
+        this.sessionInfo = sessionInfo;
     }
 
     @Override
@@ -51,4 +55,10 @@ public class GetAllOtherRulesEvent extends FilteredDispatchGwtEvent<GetAllOtherR
     public boolean isEdit() {
         return this.edit;
     }
+
+    public SessionInfo getSessionInfo() {
+        return sessionInfo;
+    }
+    
+    
 }

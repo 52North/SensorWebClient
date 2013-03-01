@@ -26,83 +26,52 @@ package org.n52.client.ses.event;
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.CreateComplexRuleEventHandler;
 import org.n52.shared.serializable.pojos.ComplexRuleData;
+import org.n52.shared.session.SessionInfo;
 
-/**
- * The Class CreateSimpleRuleEvent.
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- */
 public class CreateComplexRuleEvent extends FilteredDispatchGwtEvent<CreateComplexRuleEventHandler> {
 
-    /** The TYPE. */
     public static Type<CreateComplexRuleEventHandler> TYPE = new Type<CreateComplexRuleEventHandler>();
 
-    /** The rule. */
     private ComplexRuleData rule;
     
     private boolean edit;
     
     private String oldName;
 
-    /**
-     * Instantiates a new creates the complex rule event.
-     * 
-     * @param rule
-     *            the rule
-     * @param edit 
-     * @param oldName 
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
-    public CreateComplexRuleEvent(ComplexRuleData rule, boolean edit, String oldName, CreateComplexRuleEventHandler... blockedHandlers) {
+    private SessionInfo sessionInfo;
+
+    public CreateComplexRuleEvent(final SessionInfo sessionInfo, ComplexRuleData rule, boolean edit, String oldName, CreateComplexRuleEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.rule = rule;
         this.edit = edit;
         this.oldName = oldName;
+        this.sessionInfo = sessionInfo;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(CreateComplexRuleEventHandler handler) {
         handler.onCreate(this);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
     public com.google.gwt.event.shared.GwtEvent.Type<CreateComplexRuleEventHandler> getAssociatedType() {
         return TYPE;
     }
 
-    /**
-     * Gets the rule.
-     * 
-     * @return the rule
-     */
     public ComplexRuleData getRule() {
         return this.rule;
     }
 
-    /**
-     * @return is edit
-     */
     public boolean isEdit() {
         return this.edit;
     }
 
-    /**
-     * @return old name
-     */
     public String getOldName() {
         return this.oldName;
     }
+
+    public SessionInfo getSessionInfo() {
+        return sessionInfo;
+    }
+    
 }

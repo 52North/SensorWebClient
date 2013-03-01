@@ -25,46 +25,31 @@ package org.n52.client.ses.event;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.LogoutEventHandler;
+import org.n52.shared.session.SessionInfo;
 
-/**
- * The Class LogoutEvent.
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- */
 public class LogoutEvent extends FilteredDispatchGwtEvent<LogoutEventHandler> {
 
-    /** The TYPE. */
     public static Type<LogoutEventHandler> TYPE = new Type<LogoutEventHandler>();
+    
+    private SessionInfo sessionInfo;
 
-    /**
-     * Instantiates a new logout event.
-     * 
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
-    public LogoutEvent(LogoutEventHandler... blockedHandlers) {
+    public LogoutEvent(final SessionInfo sessionInfo, LogoutEventHandler... blockedHandlers) {
         super(blockedHandlers);
+        this.sessionInfo = sessionInfo;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(LogoutEventHandler handler) {
         handler.onLogout(this);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<LogoutEventHandler> getAssociatedType() {
+    public Type<LogoutEventHandler> getAssociatedType() {
         return TYPE;
     }
+
+    public SessionInfo getSessionInfo() {
+        return sessionInfo;
+    }
+    
 }

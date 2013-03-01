@@ -25,13 +25,17 @@ package org.n52.client.ses.event;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.GetUserSubscriptionsEventHandler;
+import org.n52.shared.session.SessionInfo;
 
 public class GetUserSubscriptionsEvent extends FilteredDispatchGwtEvent<GetUserSubscriptionsEventHandler> {
 
     public static Type<GetUserSubscriptionsEventHandler> TYPE = new Type<GetUserSubscriptionsEventHandler>();
     
-    public GetUserSubscriptionsEvent(GetUserSubscriptionsEventHandler... blockedHandlers) {
+    private SessionInfo sessionInfo;
+    
+    public GetUserSubscriptionsEvent(final SessionInfo sessionInfo, GetUserSubscriptionsEventHandler... blockedHandlers) {
         super(blockedHandlers);
+        this.sessionInfo = sessionInfo;
     }
 
     @Override
@@ -44,4 +48,8 @@ public class GetUserSubscriptionsEvent extends FilteredDispatchGwtEvent<GetUserS
         return TYPE;
     }
 
+    public SessionInfo getSessionInfo() {
+        return sessionInfo;
+    }
+    
 }

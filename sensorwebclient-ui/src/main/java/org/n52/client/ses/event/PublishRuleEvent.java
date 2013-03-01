@@ -26,6 +26,7 @@ package org.n52.client.ses.event;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.PublishRuleEventHandler;
+import org.n52.shared.session.SessionInfo;
 
 public class PublishRuleEvent extends FilteredDispatchGwtEvent<PublishRuleEventHandler> {
 
@@ -37,11 +38,14 @@ public class PublishRuleEvent extends FilteredDispatchGwtEvent<PublishRuleEventH
 
     private String role;
 
-    public PublishRuleEvent(String ruleName, boolean published, String role, PublishRuleEventHandler... blockedHandlers) {
+    private SessionInfo sessionInfo;
+
+    public PublishRuleEvent(final SessionInfo sessionInfo, String ruleName, boolean published, String role, PublishRuleEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.ruleName = ruleName;
         this.published = published;
         this.role = role;
+        this.sessionInfo = sessionInfo;
     }
 
     @Override
@@ -66,4 +70,9 @@ public class PublishRuleEvent extends FilteredDispatchGwtEvent<PublishRuleEventH
     public String getRole() {
         return this.role;
     }
+
+    public SessionInfo getSessionInfo() {
+        return sessionInfo;
+    }
+    
 }

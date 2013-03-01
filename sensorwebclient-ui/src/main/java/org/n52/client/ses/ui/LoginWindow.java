@@ -30,6 +30,7 @@ import static org.n52.client.ses.ui.FormLayout.LayoutType.LOGIN;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.PASSWORD;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.REGISTER;
 import static org.n52.client.ses.ui.layout.LoginLayout.createUserLoginLayout;
+import static org.n52.client.util.ClientSessionManager.isNotLoggedIn;
 import static org.n52.shared.serializable.pojos.UserRole.ADMIN;
 import static org.n52.shared.serializable.pojos.UserRole.LOGOUT;
 
@@ -64,7 +65,11 @@ public abstract class LoginWindow extends Window {
     public LoginWindow(String ID) {
         COMPONENT_ID = ID;
         initializeWindow();
-        loadLoginContent();
+        if (isNotLoggedIn()) {
+            loadLoginContent();
+        } else {
+            loadWindowContent();
+        }
         new LoginWindowEventBroker(this);
         addCloseClickHandler(new CloseClickHandler() {
             public void onCloseClick(CloseClickEvent event) {
@@ -94,7 +99,7 @@ public abstract class LoginWindow extends Window {
         });
     }
 
-    protected abstract void loadSubsciptionListContent();
+    protected abstract void loadWindowContent();
 
     public void loadLoginContent() {
         clearContent();
@@ -154,16 +159,17 @@ public abstract class LoginWindow extends Window {
                 return;
             }
             else if (evt.getRole() == ADMIN) {
+                window.loadWindowContent(); // load data
                 window.hide(); // switch to admin UI
                 DataPanel dataPanel = View.getView().getDataPanel();
                 DataPanelTab sesTab = View.getView().getSesTab();
                 dataPanel.getPanel().selectTab(sesTab);
                 dataPanel.setCurrentTab(sesTab);
                 dataPanel.update();
-            }
+            } 
             else {
                 // user stays in modal window
-                window.loadSubsciptionListContent();
+                window.loadWindowContent();
             }
         }
 
@@ -178,7 +184,7 @@ public abstract class LoginWindow extends Window {
                 window.updateWindowTitle(i18n.forgotPassword());
             }
             else if (evt.getLayout() == LOGIN) {
-                window.show();
+                window.loadLoginContent();
             }
         }
     }

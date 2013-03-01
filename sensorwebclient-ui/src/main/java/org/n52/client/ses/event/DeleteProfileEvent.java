@@ -25,16 +25,20 @@ package org.n52.client.ses.event;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.DeleteProfileEventHandler;
+import org.n52.shared.session.SessionInfo;
 
 public class DeleteProfileEvent extends FilteredDispatchGwtEvent<DeleteProfileEventHandler> {
 
     public static Type<DeleteProfileEventHandler> TYPE = new Type<DeleteProfileEventHandler>();
 
-    private String id;
+    private String userId;
 
-    public DeleteProfileEvent(String id, DeleteProfileEventHandler... blockedHandlers) {
+    private SessionInfo sessionInfo;
+
+    public DeleteProfileEvent(final SessionInfo sessionInfo, String userId, DeleteProfileEventHandler... blockedHandlers) {
         super(blockedHandlers);
-        this.id = id;
+        this.userId = userId;
+        this.sessionInfo = sessionInfo;
     }
 
     @Override
@@ -47,7 +51,12 @@ public class DeleteProfileEvent extends FilteredDispatchGwtEvent<DeleteProfileEv
         return TYPE;
     }
 
-    public String getId() {
-        return this.id;
+    public String getUserId() {
+        return this.userId;
     }
+
+    public SessionInfo getSessionInfo() {
+        return sessionInfo;
+    }
+    
 }

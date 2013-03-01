@@ -24,12 +24,14 @@
 package org.n52.client.ses.ui;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.client.util.ClientSessionManager.currentSession;
 
 import java.util.Date;
 
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.data.UserDataSourceRecord;
 import org.n52.client.ses.event.UpdateUserEvent;
+import org.n52.client.util.ClientSessionManager;
 import org.n52.shared.serializable.pojos.UserDTO;
 import org.n52.shared.serializable.pojos.UserRole;
 
@@ -156,7 +158,7 @@ public class EditUserWindow {
                     // create new User
                     UserDTO user = new UserDTO(Integer.valueOf(EditUserWindow.record.getId()), userName, name, null, email, role, new Date());
                     user.setActivated(true);
-                    EventBus.getMainEventBus().fireEvent(new UpdateUserEvent(user));
+                    EventBus.getMainEventBus().fireEvent(new UpdateUserEvent(currentSession(), user));
                     EditUserWindow.window.destroy();
                 }
             }

@@ -25,6 +25,7 @@ package org.n52.client.ses.ui.profile;
 
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.client.util.ClientSessionManager.currentSession;
 import static org.n52.client.util.ClientSessionManager.getLoggedInUserId;
 
 import java.util.Date;
@@ -38,6 +39,7 @@ import org.n52.client.ses.ui.FormLayout;
 import org.n52.client.util.ClientSessionManager;
 import org.n52.shared.serializable.pojos.UserDTO;
 import org.n52.shared.serializable.pojos.UserRole;
+import org.n52.shared.session.SessionInfo;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.util.BooleanCallback;
@@ -173,7 +175,7 @@ public class EditProfileLayout extends FormLayout {
                         u.setNewPassword(DataControlsSes.createMD5(EditProfileLayout.this.newPasswordItem.getValueAsString()));
                     }
 
-                    EventBus.getMainEventBus().fireEvent(new UpdateUserEvent(u));
+                    EventBus.getMainEventBus().fireEvent(new UpdateUserEvent(currentSession(), u));
                 }
             }
         });
@@ -186,8 +188,9 @@ public class EditProfileLayout extends FormLayout {
                 SC.ask(i18n.reallyDeleteProfile(), new BooleanCallback() {
                     public void execute(Boolean value) {
                         if (value) {
-                            getMainEventBus().fireEvent(new DeleteProfileEvent(getLoggedInUserId()));
-                            getMainEventBus().fireEvent(new LogoutEvent());
+                            final SessionInfo sessionInfo = currentSession();
+                            getMainEventBus().fireEvent(new DeleteProfileEvent(sessionInfo, getLoggedInUserId()));
+                            getMainEventBus().fireEvent(new LogoutEvent(sessionInfo));
                         }
                     }
                 });
@@ -200,6 +203,10 @@ public class EditProfileLayout extends FormLayout {
         addMember(this.form);
     }
 
+    public void clearValues() {
+        form.clearValues();
+    }
+    
     public void update(UserDTO user) {
         this.form.setValue("userName", user.getUserName());
         this.form.setValue("name", user.getName());

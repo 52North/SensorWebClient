@@ -26,7 +26,6 @@ package org.n52.server.ses.service;
 
 import static java.lang.Integer.parseInt;
 import static org.n52.server.ses.hibernate.HibernateUtil.getSubscriptionfromUserID;
-import static org.n52.server.util.InjectionContextLoader.load;
 import static org.n52.shared.responses.SesClientResponseType.LAST_ADMIN;
 import static org.n52.shared.responses.SesClientResponseType.LOGIN_ACTIVATED;
 import static org.n52.shared.responses.SesClientResponseType.LOGIN_ADMIN;
@@ -83,7 +82,7 @@ public class SesUserServiceImpl implements SesUserService {
     // This list is shown to the admin after the login
     private static ArrayList<String> deletedUser = new ArrayList<String>();
 
-    private ServerSessionStore sessionStore = load("sessionStore", ServerSessionStore.class);
+    private ServerSessionStore sessionStore; // injected
     
     public static UserDTO createUserDTO(User user) {
 
@@ -297,9 +296,15 @@ public class SesUserServiceImpl implements SesUserService {
         try {
             if (sessionStore.isActiveSessionInfo(sessionInfo)) {
                 if (sessionStore.isLoggedInAdmin(sessionInfo)) {
-                    return new SesClientResponse(LOGIN_ADMIN);
+                    UserDTO transferUser = getUserFromValidSession(sessionInfo);
+                    SesClientResponse response = new SesClientResponse(LOGIN_ADMIN, transferUser);
+                    response.setSessionInfo(sessionStore.reNewSession(sessionInfo));
+                    return response;
                 } else {
-                    return new SesClientResponse(LOGIN_OK);
+                    UserDTO transferUser = getUserFromValidSession(sessionInfo);
+                    SesClientResponse response = new SesClientResponse(LOGIN_OK, transferUser);
+                    response.setSessionInfo(sessionStore.reNewSession(sessionInfo));
+                    return response;
                 }
             } else {
                 return new SesClientResponse(LOGOUT);
@@ -308,6 +313,12 @@ public class SesUserServiceImpl implements SesUserService {
             LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
+    }
+
+    private UserDTO getUserFromValidSession(SessionInfo sessionInfo) {
+        String userId = sessionStore.getLoggedInUserId(sessionInfo);
+        User user = HibernateUtil.getUserBy(Integer.valueOf(userId));
+        return createUserDTO(user);
     }
     
     @Override
@@ -352,7 +363,7 @@ public class SesUserServiceImpl implements SesUserService {
     @Override
     public void logout(SessionInfo sessionInfo) throws Exception {
         try {
-            sessionStore.removeSession(sessionInfo);
+            sessionStore.invalidateLoggedInSession(sessionInfo);
         }
         catch (Exception e) {
             LOGGER.error("Exception occured on server side.", e);
@@ -366,7 +377,6 @@ public class SesUserServiceImpl implements SesUserService {
             if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
-            sessionStore.validateSessionInfo(sessionInfo);
             LOGGER.debug("Get user with id '{}'", sessionStore.getLoggedInUserId(sessionInfo));
             int userID = Integer.valueOf(sessionStore.getLoggedInUserId(sessionInfo));
             UserDTO user = createUserDTO(HibernateUtil.getUserBy(userID));
@@ -384,7 +394,6 @@ public class SesUserServiceImpl implements SesUserService {
             if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
-            sessionStore.validateSessionInfo(sessionInfo);
             LOGGER.debug("delete user with id '{}'", id);
             if (HibernateUtil.getUserBy(parseInt(id)) != null) {
                 return performUserDelete(id);
@@ -497,7 +506,6 @@ public class SesUserServiceImpl implements SesUserService {
             if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
-            sessionStore.validateSessionInfo(sessionInfo);
             LOGGER.debug("update user with id '{}'", newUser.getId());
             
             boolean mailChanged = false;
@@ -694,6 +702,14 @@ public class SesUserServiceImpl implements SesUserService {
             LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
+    }
+
+    public ServerSessionStore getSessionStore() {
+        return sessionStore;
+    }
+
+    public void setSessionStore(ServerSessionStore sessionStore) {
+        this.sessionStore = sessionStore;
     }
 
 }

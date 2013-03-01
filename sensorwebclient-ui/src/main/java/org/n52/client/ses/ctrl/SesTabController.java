@@ -36,6 +36,7 @@ import static org.n52.client.ses.ui.FormLayout.LayoutType.RULELIST;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.USERLIST;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.WELCOME;
 import static org.n52.client.ui.View.getView;
+import static org.n52.client.util.ClientSessionManager.currentSession;
 import static org.n52.shared.serializable.pojos.UserRole.ADMIN;
 
 import java.util.ArrayList;
@@ -98,7 +99,7 @@ public class SesTabController extends Controller<SesTab> {
 
     private class SesTabEventBroker extends ATabEventBroker implements ChangeLayoutEventHandler, SetRoleEventHandler,
             UpdateProfileEventHandler, ShowAllUserEventHandler, InformUserEventHandler, TimeSeriesChangedEventHandler, 
-            TabSelectedEventHandler /*, EditSimpleRuleEventHandler*/ {
+            TabSelectedEventHandler {
 
         public SesTabEventBroker() {
             EventBus.getMainEventBus().addHandler(ChangeLayoutEvent.TYPE, this);
@@ -106,7 +107,6 @@ public class SesTabController extends Controller<SesTab> {
             EventBus.getMainEventBus().addHandler(UpdateProfileEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(ShowAllUserEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(InformUserEvent.TYPE, this);
-//            EventBus.getMainEventBus().addHandler(EditSimpleRuleEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(TimeSeriesChangedEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(TabSelectedEvent.TYPE, this);
         }
@@ -120,27 +120,27 @@ public class SesTabController extends Controller<SesTab> {
             }
             SesTabController.this.getTab().setLayout(layout);
             if (layout == USERLIST) {
-                getMainEventBus().fireEvent(new GetAllUsersEvent());
+                getMainEventBus().fireEvent(new GetAllUsersEvent(currentSession()));
                 getDataControls().highlightSelectedButton(getDataControls().getManageUserButton());
             } else if (layout == CREATE_COMPLEX) {
-                getMainEventBus().fireEvent(new GetAllPublishedRulesEvent(1));
+                getMainEventBus().fireEvent(new GetAllPublishedRulesEvent(currentSession(), 1));
                 getTab().getComplexLayout().clearFields();
                 getTab().getComplexLayout().setEditCR(false);
                 getDataControls().highlightSelectedButton(getDataControls().getCreateComplexRuleButton());
             } else if (layout == EDIT_PROFILE) {
                 getDataControls().highlightSelectedButton(getDataControls().getEditProfileButton());
-                getMainEventBus().fireEvent(new GetSingleUserEvent());
+                getMainEventBus().fireEvent(new GetSingleUserEvent(currentSession()));
             } else if (layout == ABOS) {
                 getDataControls().highlightSelectedButton(getDataControls().getAboRuleButton());
-                getMainEventBus().fireEvent(new GetAllOwnRulesEvent(false));
-                getMainEventBus().fireEvent(new GetAllOtherRulesEvent(false));
+                getMainEventBus().fireEvent(new GetAllOwnRulesEvent(currentSession(), false));
+                getMainEventBus().fireEvent(new GetAllOtherRulesEvent(currentSession(), false));
             } else if (layout == EDIT_RULES) {
                 getDataControls().highlightSelectedButton(getDataControls().getEditRulesButton());
-                getMainEventBus().fireEvent(new GetAllOwnRulesEvent(true));
-                getMainEventBus().fireEvent(new GetAllOtherRulesEvent(true));
+                getMainEventBus().fireEvent(new GetAllOwnRulesEvent(currentSession(), true));
+                getMainEventBus().fireEvent(new GetAllOtherRulesEvent(currentSession(), true));
             } else if (layout == RULELIST) {
                 getDataControls().highlightSelectedButton(getDataControls().getManageRulesButton());
-                getMainEventBus().fireEvent(new GetAllRulesEvent());
+                getMainEventBus().fireEvent(new GetAllRulesEvent(currentSession()));
             } else if (layout == PASSWORD) {
                 getDataControls().highlightSelectedButton(getDataControls().getGetPasswordButton());
                 getTab().getForgorPasswordLayout().clearFields();
@@ -151,10 +151,6 @@ public class SesTabController extends Controller<SesTab> {
                 getDataControls().highlightSelectedButton(getDataControls().getLoginButton());
                 getTab().getLoginLayout().clearFields();
             } 
-//            else if (layout == USER_SUBSCRIPTIONS) {
-//                getDataControls().highlightSelectedButton(getDataControls().getSubscriptionsButton());
-//                getMainEventBus().fireEvent(new GetUserSubscriptionsEvent(getCookie(COOKIE_USER_ID)));
-//            }
         }
 
         public void onChangeRole(SetRoleEvent evt) {
@@ -187,77 +183,15 @@ public class SesTabController extends Controller<SesTab> {
             SesClientResponseType response = evt.getResponse().getType();
             switch (response) {
 
-//            case DATA:
-//                getDataControls().setWebAppPath((String) evt.getResponse().getBasicRules().get(0));
-//                getDataControls().setWarnUserLongNotification((Boolean) evt.getResponse().getBasicRules().get(1));
-//                getDataControls().setMinimumPasswordLength((Integer) evt.getResponse().getBasicRules().get(2));
-//                getDataControls().setAvailableWNSMedia(((String)evt.getResponse().getBasicRules().get(3)).split(","));
-//                getDataControls().setDefaultMedium((String) evt.getResponse().getBasicRules().get(4));
-//                getDataControls().setAvailableFormats(((String)evt.getResponse().getBasicRules().get(5)).split(","));
-//                getDataControls().setDefaultFormat((String) evt.getResponse().getBasicRules().get(6));
-//                break;
-
             case TERMS_OF_USE:
                 getTab().getRegisterLayout().setTermsOfUse(evt.getResponse().getMessage());
-                break;
-            case LOGIN_OK:
-                getTab().getWelcomeLayout().setData(evt.getResponse().getUser());
                 break;
             case LOGIN_ACTIVATED:
                 SC.say(i18n.accountNotActivated());
                 break;
-//            case LOGIN_NAME:
-//                getTab().getLoginLayout().getNameItem().setValue("");
-//                getTab().getLoginLayout().update();
-//                getTab().getLoginLayout().getNameItem().setErrorFormatter(new FormItemErrorFormatter() {
-//                    public String getErrorHTML(String[] errors) {
-//                        return "<img src='../img/icons/exclamation.png' alt='invalide name' title='"
-//                                + i18n.invalidName() + "'/>";
-//                    }
-//                });
-//                break;
-//            case LOGIN_PASSWORD:
-//                getTab().getLoginLayout().getPasswordItem().setValue("");
-//                getTab().getLoginLayout().update();
-//                getTab().getLoginLayout().getPasswordItem().setErrorFormatter(new FormItemErrorFormatter() {
-//                    public String getErrorHTML(String[] errors) {
-//                        return "<img src='../img/icons/exclamation.png' alt='invalide password' title='"
-//                                + i18n.invalidPassword() + "'/>";
-//                    }
-//                });
-//                break;
             case LOGIN_LOCKED:
                 SC.say(i18n.accountLocked());
                 break;
-                // TODO remove dead code
-            // case NEW_PASSWORD_NAME:
-            // getTab().getForgorPasswordLayout().getNameItem().setErrorFormatter(new
-            // FormItemErrorFormatter() {
-            // public String getErrorHTML(String[] errors) {
-            // return
-            // "<img src='../img/icons/exclamation.png' alt='invalide name' title='"+
-            // i18nManager.i18nSESClient.invalidName() +"'/>";
-            // }
-            // });
-            // break;
-            // case NEW_PASSWORD_EMAIL:
-            // getTab().getForgorPasswordLayout().getEmailItem().setErrorFormatter(new
-            // FormItemErrorFormatter() {
-            // public String getErrorHTML(String[] errors) {
-            // return
-            // "<img src='../img/icons/exclamation.png' alt='invalide email' title='"+
-            // i18nManager.i18nSESClient.invalidMail() +"'/>";
-            // }
-            // });
-            // break;
-                // TODO remove dead code
-//            case STATIONS:
-//                getTab().getSimpleRuleLayout().setStationsToList(evt.getResponse().getList());
-//                break;
-//            case PHENOMENA:
-//                getTab().getSimpleRuleLayout().setPhenomenonToList(evt.getResponse().getList());
-//                getTab().getSimpleRuleLayout().setUnit(evt.getResponse().getComplexList());
-//                break;
             case OWN_RULES:
                 getTab().getRuleLayout().setDataOwnRules(evt.getResponse().getBasicRules(),
                         evt.getResponse().getComplexRules());
@@ -280,18 +214,6 @@ public class SesTabController extends Controller<SesTab> {
             case ALL_PUBLISHED_RULES:
                 getTab().getComplexLayout().setRules(evt.getResponse().getBasicRules());
                 break;
-                // TODO remove dead code
-//            case RULE_NAME_EXISTS:
-//                getTab().getSimpleRuleLayout().getTitleItem().setErrorFormatter(new FormItemErrorFormatter() {
-//                    public String getErrorHTML(String[] errors) {
-//                        return "<img src='../img/icons/exclamation.png' alt='rule name allready exists' title='rule name allready exists'/>";
-//                    }
-//                });
-//                break;
-//            case USER_SUBSCRIPTIONS:
-//                getTab().getUserSubscriptionsLayout().setData(evt.getResponse().getBasicRules(),
-//                        evt.getResponse().getComplexRules());
-//                break;
             case EDIT_COMPLEX_RULE:
                 getTab().getComplexLayout().editCR(evt.getResponse());
                 break;
@@ -301,33 +223,6 @@ public class SesTabController extends Controller<SesTab> {
             }
         }
 
-        // TODO remove dead code
-//        public void onUpdate(EditSimpleRuleEvent evt) {
-//            getTab().getSimpleRuleLayout().setEditRule(evt.getBasicRule());
-//        }
-
-//        private void setUserLoggedInAsText() {
-//            // get user name from coockie
-//            String userName = Cookies.getCookie(COOKIE_USER_NAME);
-//
-//            if (userName != null) {
-//                // build text string
-//                String text = i18n.loggedinAs() + ": " + userName;
-//
-//                // set string to all views
-//                getTab().getShowUserLayout().getUserNameLabel().setText(text);
-//                getTab().getRuleLayout().getUserNameLabel().setText(text);
-//                getTab().getComplexLayout().getUserNameLabel().setText(text);
-//                getTab().getEditProfileLayout().getUserNameLabel().setText(text);
-//                // TODO remove dead code
-////                getTab().getSimpleRuleLayout().getUserNameLabel().setText(text);
-//                getTab().getAllRulesLayout().getUserNameLabel().setText(text);
-//                getTab().getEditRulesLayout().getUserNameLabel().setText(text);
-//                getTab().getUserSubscriptionsLayout().getUserNameLabel().setText(text);
-//                getTab().getWelcomeLayout().getUserNameLabel().setText(text);
-//                getTab().getSearchLayout().getUserNameLabel().setText(text);
-//            }
-//        }
 
         public void onTimeSeriesChanged(TimeSeriesChangedEvent evt) {
             contributeToLegend();

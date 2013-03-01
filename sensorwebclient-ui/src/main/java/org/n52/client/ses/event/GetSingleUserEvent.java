@@ -25,13 +25,17 @@ package org.n52.client.ses.event;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.GetSingleUserEventHandler;
+import org.n52.shared.session.SessionInfo;
 
 public class GetSingleUserEvent extends FilteredDispatchGwtEvent<GetSingleUserEventHandler> {
 
     public static Type<GetSingleUserEventHandler> TYPE = new Type<GetSingleUserEventHandler>();
+    
+    private SessionInfo sessionInfo;
 
-    public GetSingleUserEvent(GetSingleUserEventHandler... blockedHandlers) {
+    public GetSingleUserEvent(final SessionInfo sessionInfo, GetSingleUserEventHandler... blockedHandlers) {
         super(blockedHandlers);
+        this.sessionInfo = sessionInfo;
     }
 
     @Override
@@ -45,4 +49,8 @@ public class GetSingleUserEvent extends FilteredDispatchGwtEvent<GetSingleUserEv
         return TYPE;
     }
 
+    public SessionInfo getSessionInfo() {
+        return sessionInfo;
+    }
+    
 }

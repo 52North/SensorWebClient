@@ -64,7 +64,7 @@ public class SesClientResponse implements Serializable {
     public SesClientResponse(SesClientResponseType type){
         this.responseType = type;
     }
-
+    
     public SesClientResponse(SesClientResponseType type, UserDTO user){
         this.responseType = type;
         this.user = user;

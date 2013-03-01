@@ -84,6 +84,10 @@ public class ClientSessionManager {
     public static String getLoggedInUserRole() {
         return loggedInUserRole;
     }
+    
+    public static boolean isNotLoggedIn() {
+        return loggedInUser == null || loggedInUserId == null || loggedInUserRole == null;
+    }
 
     public static boolean isAdminLogin() {
         // TODO check if this check is a security issue

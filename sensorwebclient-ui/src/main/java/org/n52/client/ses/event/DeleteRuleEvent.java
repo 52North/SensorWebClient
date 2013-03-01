@@ -25,71 +25,45 @@ package org.n52.client.ses.event;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.DeleteRuleEventHandler;
+import org.n52.shared.session.SessionInfo;
 
-/**
- * The Class DeleteRuleEvent.
- * 
- * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
- */
 public class DeleteRuleEvent extends FilteredDispatchGwtEvent<DeleteRuleEventHandler> {
 
-    /** The TYPE. */
     public static Type<DeleteRuleEventHandler> TYPE = new Type<DeleteRuleEventHandler>();
 
     private String uuid;
     
-    /** The role of user who makes the call */
     private String role;
 
-    /**
-     * Instantiates a new delete rule event.
-     * 
-     * @param ruleName
-     *            the rule name
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
-    public DeleteRuleEvent(String uuid, String role, DeleteRuleEventHandler... blockedHandlers) {
+    private SessionInfo sessionInfo;
+
+    public DeleteRuleEvent(final SessionInfo sessionInfo, String uuid, String role, DeleteRuleEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.uuid = uuid;
         this.role = role;
+        this.sessionInfo = sessionInfo;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(DeleteRuleEventHandler handler) {
         handler.onDeleteRule(this);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
     public com.google.gwt.event.shared.GwtEvent.Type<DeleteRuleEventHandler> getAssociatedType() {
         return TYPE;
     }
 
-    /**
-     * Gets the ruleName.
-     * 
-     * @return the ruleName
-     */
     public String getUuid() {
         return this.uuid;
     }
 
-    /**
-     * @return role
-     */
     public String getRole() {
         return this.role;
     }
+
+    public SessionInfo getSessionInfo() {
+        return sessionInfo;
+    }
+    
 }

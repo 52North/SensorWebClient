@@ -6,12 +6,15 @@ import static java.lang.System.currentTimeMillis;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * 
+ */
 public class SessionInfo implements Serializable {
 
     private static final long serialVersionUID = 5076704245184520622L;
 
     public static final String COOKIE_SESSION_ID = "n52_sensorweb_client_sessionId";
-    
+
     private Date expiringDate;
 
     private String username;
@@ -21,7 +24,7 @@ public class SessionInfo implements Serializable {
     private String role;
 
     private String session;
-    
+
     SessionInfo() {
         // for serialization only
     }
@@ -32,14 +35,31 @@ public class SessionInfo implements Serializable {
     }
 
     private Date createExpiringDate() {
-        long oneDay = 1000 * 60 * 60 * 24;
-        return new Date(currentTimeMillis() + oneDay);
+        long oneHour = 1000 * 60 * 60;
+        return new Date(currentTimeMillis() + oneHour);
     }
-    
+
+    public boolean isExpired() {
+        long delta = expiringDate.getTime() - currentTimeMillis();
+        return delta <= 0;
+    }
+
+    /**
+     * <b>Do not trust items on server side which were sent by the client. Use server's session storage to
+     * retrieve accurate infos by checking and using session id.</b>
+     * 
+     * @return the user's role
+     */
     public Date getExpiringDate() {
         return expiringDate;
     }
 
+    /**
+     * <b>Do not trust items on server side which were sent by the client. Use server's session storage to
+     * retrieve accurate infos by checking and using session id.</b>
+     * 
+     * @return the user name
+     */
     public String getUsername() {
         return username;
     }
@@ -48,6 +68,12 @@ public class SessionInfo implements Serializable {
         this.username = username;
     }
 
+    /**
+     * <b>Do not trust items on server side which were sent by the client. Use server's session storage to
+     * retrieve accurate infos by checking and using session id.</b>
+     * 
+     * @return the user id
+     */
     public String getUserId() {
         return userId;
     }
@@ -56,6 +82,12 @@ public class SessionInfo implements Serializable {
         this.userId = userId;
     }
 
+    /**
+     * <b>Do not trust items on server side which were sent by the client. Use server's session storage to
+     * retrieve accurate infos by checking and using session id.</b>
+     * 
+     * @return the user's role
+     */
     public String getRole() {
         return role;
     }
@@ -64,10 +96,16 @@ public class SessionInfo implements Serializable {
         this.role = role;
     }
 
+    /**
+     * <b>Do not trust items on server side which were sent by the client. Use server's session storage to
+     * retrieve accurate infos by checking and using session id.</b>
+     * 
+     * @return the user's role
+     */
     public String getSession() {
         return session;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;

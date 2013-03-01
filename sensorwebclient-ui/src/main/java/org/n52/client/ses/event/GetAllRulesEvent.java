@@ -25,45 +25,31 @@ package org.n52.client.ses.event;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.GetAllRulesEventHandler;
+import org.n52.shared.session.SessionInfo;
 
-/**
- * The Class GetAllRulesEvent.
- */
 public class GetAllRulesEvent extends FilteredDispatchGwtEvent<GetAllRulesEventHandler> {
 
-    /** The TYPE. */
     public static Type<GetAllRulesEventHandler> TYPE = new Type<GetAllRulesEventHandler>();
+    private SessionInfo sessionInfo;
 
-    /**
-     * Instantiates a new GetAllRulesEvent.
-     * 
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
-    public GetAllRulesEvent(GetAllRulesEventHandler... blockedHandlers) {
+    public GetAllRulesEvent(final SessionInfo sessionInfo, GetAllRulesEventHandler... blockedHandlers) {
         super(blockedHandlers);
+        this.sessionInfo = sessionInfo;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(GetAllRulesEventHandler handler) {
         handler.onGet(this);
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<GetAllRulesEventHandler> getAssociatedType() {
+    public Type<GetAllRulesEventHandler> getAssociatedType() {
         return TYPE;
     }
+
+    public SessionInfo getSessionInfo() {
+        return sessionInfo;
+    }
+    
 }

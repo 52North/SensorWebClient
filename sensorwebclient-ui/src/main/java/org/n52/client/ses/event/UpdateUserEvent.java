@@ -26,16 +26,20 @@ package org.n52.client.ses.event;
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.ses.event.handler.UpdateUserEventHandler;
 import org.n52.shared.serializable.pojos.UserDTO;
+import org.n52.shared.session.SessionInfo;
 
 public class UpdateUserEvent extends FilteredDispatchGwtEvent<UpdateUserEventHandler> {
 
     public static Type<UpdateUserEventHandler> TYPE = new Type<UpdateUserEventHandler>();
 
     private UserDTO user;
+
+    private SessionInfo sessionInfo;
     
-    public UpdateUserEvent(UserDTO user, UpdateUserEventHandler... blockedHandlers) {
+    public UpdateUserEvent(final SessionInfo sessionInfo, UserDTO user, UpdateUserEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.user = user;
+        this.sessionInfo = sessionInfo;
     }
 
     @Override
@@ -53,4 +57,8 @@ public class UpdateUserEvent extends FilteredDispatchGwtEvent<UpdateUserEventHan
         return this.user;
     }
 
+    public SessionInfo getSessionInfo() {
+        return sessionInfo;
+    }
+    
 }

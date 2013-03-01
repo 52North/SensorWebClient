@@ -24,6 +24,7 @@
 package org.n52.client.ses.ui.layout;
 
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
+import static org.n52.client.util.ClientSessionManager.currentSession;
 
 import java.util.List;
 
@@ -36,6 +37,7 @@ import org.n52.client.ses.ui.CreateNewUserWindow;
 import org.n52.client.ses.ui.EditUserWindow;
 import org.n52.client.ses.ui.FormLayout;
 import org.n52.shared.serializable.pojos.UserDTO;
+import org.n52.shared.session.SessionInfo;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.SortDirection;
@@ -104,9 +106,10 @@ public class ShowUserLayout extends FormLayout {
                             SC.ask(i18n.reallyDeleteUser() + ": " + record.getAttribute("userName") +  "?", new BooleanCallback() {
                                 public void execute(Boolean value) {
                                     if (value) {
-                                        EventBus.getMainEventBus().fireEvent(
-                                                new DeleteUserEvent(record.getAttribute("parameterId")));
-                                        EventBus.getMainEventBus().fireEvent(new GetAllUsersEvent());
+                                        String userId = record.getAttribute("parameterId");
+                                        final SessionInfo sessionInfo = currentSession();
+                                        EventBus.getMainEventBus().fireEvent(new DeleteUserEvent(sessionInfo, userId));
+                                        EventBus.getMainEventBus().fireEvent(new GetAllUsersEvent(sessionInfo));
                                     }
                                 }
                             });

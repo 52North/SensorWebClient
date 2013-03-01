@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 
 import org.n52.client.service.SesRuleService;
 import org.n52.server.ses.service.SesRulesServiceImpl;
+import org.n52.server.util.ContextLoader;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.serializable.pojos.ComplexRuleData;
 import org.n52.shared.serializable.pojos.Rule;
@@ -43,12 +44,11 @@ public class RpcSesRuleServlet extends RemoteServiceServlet implements RpcSesRul
     
     private static final Logger LOGGER = LoggerFactory.getLogger(RpcSesRuleServlet.class);
     
-    private SesRuleService service;
+    private SesRuleService service = ContextLoader.load("sesRulesService", SesRuleService.class);
     
     @Override
     public void init() throws ServletException {
         LOGGER.debug("Initialize " + getClass().getName() +" Servlet for SES Client");
-        service = new SesRulesServiceImpl();
     }
     
     public synchronized SesClientResponse subscribe(SessionInfo sessionInfo, String uuid, String medium, String eml) throws Exception {
