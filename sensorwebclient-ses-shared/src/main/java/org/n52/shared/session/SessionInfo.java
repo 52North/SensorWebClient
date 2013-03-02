@@ -7,7 +7,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 
+ * Contains information about a client session. A client has to ask ther server to create a session which is
+ * needed to communicate with the server. Session information other than the session id won't be considered by
+ * the server. The session id acts as a pointer to the accurate session information hold on the server.
  */
 public class SessionInfo implements Serializable {
 
@@ -52,6 +54,14 @@ public class SessionInfo implements Serializable {
      */
     public Date getExpiringDate() {
         return expiringDate;
+    }
+
+    /**
+     * @param expiresAt
+     *        when the session info shall become invalid.
+     */
+    public void setExpiringDate(Date expiresAt) {
+        expiringDate = expiresAt;
     }
 
     /**
@@ -161,11 +171,12 @@ public class SessionInfo implements Serializable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("LoginCookie [ ");
+        sb.append("SessionInfo [ ");
+        sb.append("session: ").append(session).append(", ");
+        sb.append("expires: ").append(expiringDate).append(", ");
         sb.append("user: ").append(username).append(", ");
-        sb.append("userId: ").append(userId).append(", ");
         sb.append("role: ").append(role).append(", ");
-        sb.append("session: ").append(session);
+        sb.append("userId: ").append(userId);
         return sb.append(" ]").toString();
     }
 

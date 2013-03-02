@@ -188,6 +188,7 @@ public class SesUserServiceImpl implements SesUserService {
     @Override
     public SesClientResponse registerUser(UserDTO userDTO) throws Exception {
         try {
+            LOGGER.debug("registerUser: ", userDTO);
             // check whether the user name or email address or (if available) the mobile nr
             // to avoid multiple accounts with the same data
             User user = new User(userDTO);
@@ -220,30 +221,30 @@ public class SesUserServiceImpl implements SesUserService {
     @Override
     public SesClientResponse login(String userName, String password, SessionInfo unboundSession) throws Exception {
         try {
-            LOGGER.debug("login user '{}'.", userName);
+            LOGGER.debug("login '{}' (session {}).", userName, unboundSession);
             if ( !HibernateUtil.existsUserName(userName)) {
                 LOGGER.info("User unknown.");
                 return new SesClientResponse(LOGIN_NAME);
             }
-            User u = HibernateUtil.findUserBy(userName);
-            UserDTO user = createUserDTO(u);
+            User user = HibernateUtil.findUserBy(userName);
+            UserDTO userTransferObject = createUserDTO(user);
             // check entered password
-            if (user.getPassword() != null) {
+            if (userTransferObject.getPassword() != null) {
                 // wrong password
-                if ( !user.getPassword().equals(password)) {
+                if ( !userTransferObject.getPassword().equals(password)) {
                     LOGGER.debug("wrong password");
-                    int count = u.getFalseLoginCount();
+                    int count = user.getFalseLoginCount();
                     if (count < 3) {
                         LOGGER.debug("increase falseLoginCount");
                         // increment the count of false logins
-                        u.setFalseLoginCount(count + 1);
-                        HibernateUtil.updateUser(u);
+                        user.setFalseLoginCount(count + 1);
+                        HibernateUtil.updateUser(user);
                         return new SesClientResponse(LOGIN_PASSWORD);
                     }
                     LOGGER.debug("lock account");
                     // lock the account after entering the wrong password three times in sequence
-                    u.setActive(false);
-                    HibernateUtil.updateUser(u);
+                    user.setActive(false);
+                    HibernateUtil.updateUser(user);
                     return new SesClientResponse(LOGIN_LOCKED);
                 }
             }
@@ -252,35 +253,22 @@ public class SesUserServiceImpl implements SesUserService {
             }
 
             // user account is not activated
-            if ( !user.getActivated()) {
+            if ( !userTransferObject.getActivated()) {
                 return new SesClientResponse(LOGIN_ACTIVATED);
             }
 
-            if (u.isActive()) {
-                user.setEmailVerified(u.isEmailVerified());
-                user.setPasswordChanged(u.isPasswordChanged());
+            if (user.isActive()) {
+                userTransferObject.setEmailVerified(user.isEmailVerified());
+                userTransferObject.setPasswordChanged(user.isPasswordChanged());
                 // set
-                u.setFalseLoginCount(0);
-                HibernateUtil.updateUser(u);
+                user.setFalseLoginCount(0);
+                HibernateUtil.updateUser(user);
 
                 // clear password from user
-                user.setPassword("");
-                /* admin login
-                if ( !u.getRole().equals(ADMIN)) {
-                    return new SesClientResponse(LOGIN_USER);
-                }
-                else */ if (u.getRole().equals(ADMIN)) {
-                    // show the admin all deleted user since last login
-                    ArrayList<String> temp = deletedUser;
-                    deletedUser.clear();
-
-                    SesClientResponse response = new SesClientResponse(LOGIN_OK, user, temp);
-                    response.setSessionInfo(sessionStore.createLoginSessionFor(u, unboundSession));
-                    return response;
-                }
-
-                SesClientResponse response = new SesClientResponse(LOGIN_OK, user);
-                response.setSessionInfo(sessionStore.createLoginSessionFor(u, unboundSession));
+                userTransferObject.setPassword("");
+                
+                SesClientResponse response = new SesClientResponse(LOGIN_OK, userTransferObject);
+                response.setSessionInfo(sessionStore.createLoginSessionFor(user, unboundSession));
                 return response;
 
             }

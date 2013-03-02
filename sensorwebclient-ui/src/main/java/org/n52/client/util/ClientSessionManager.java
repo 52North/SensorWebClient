@@ -38,7 +38,8 @@ public class ClientSessionManager {
     }
 
     /**
-     * Sets session information from received session object. The session id is hold as cookie only.<br/>
+     * Sets session information from received session object. Within the cookie only the session id and
+     * expiration date is stored or updated.<br/>
      * <br/>
      * The {@link ClientSessionManager} listens to logout events to destroy current session information.
      * 
@@ -47,13 +48,20 @@ public class ClientSessionManager {
      */
     public static void setSessionInfo(SessionInfo sessionInfo) {
         Date expires = sessionInfo.getExpiringDate();
-        loggedInUser = sessionInfo.getUsername();
-        loggedInUserRole = sessionInfo.getRole();
-        loggedInUserId = sessionInfo.getUserId();
 
         // gwt sets domain automatically
         String session = sessionInfo.getSession();
         setCookie(COOKIE_SESSION_ID, session, expires, null, "/", false);
+    }
+
+    /**
+     * @param sessionInfo
+     *        the session info containing the user information.
+     */
+    public static void setUserInfo(SessionInfo sessionInfo) {
+        loggedInUser = sessionInfo.getUsername();
+        loggedInUserRole = sessionInfo.getRole();
+        loggedInUserId = sessionInfo.getUserId();
     }
 
     /**
@@ -84,7 +92,7 @@ public class ClientSessionManager {
     public static String getLoggedInUserRole() {
         return loggedInUserRole;
     }
-    
+
     public static boolean isNotLoggedIn() {
         return loggedInUser == null || loggedInUserId == null || loggedInUserRole == null;
     }
@@ -93,12 +101,12 @@ public class ClientSessionManager {
         // TODO check if this check is a security issue
         return "ADMIN".equals(loggedInUserRole);
     }
-    
+
     public static boolean isUserLogin() {
         // TODO check if this check is a security issue
         return "USER".equals(loggedInUserRole);
     }
-    
+
     private static class ClientSessionManagerEventBroker implements SetRoleEventHandler {
 
         ClientSessionManagerEventBroker() {

@@ -32,10 +32,10 @@ import static org.n52.client.ses.ui.FormLayout.LayoutType.LOGIN;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.RULELIST;
 import static org.n52.client.ui.Toaster.getToasterInstance;
 import static org.n52.client.util.ClientSessionManager.currentSession;
-import static org.n52.client.util.ClientSessionManager.getLoggedInUserRole;
 import static org.n52.client.util.ClientSessionManager.isAdminLogin;
 import static org.n52.client.util.ClientSessionManager.isUserLogin;
 import static org.n52.client.util.ClientSessionManager.setSessionInfo;
+import static org.n52.client.util.ClientSessionManager.setUserInfo;
 import static org.n52.shared.responses.SesClientResponseType.DELETE_RULE_SUBSCRIBED;
 import static org.n52.shared.responses.SesClientResponseType.EDIT_COMPLEX_RULE;
 import static org.n52.shared.responses.SesClientResponseType.ERROR;
@@ -57,7 +57,6 @@ import static org.n52.shared.responses.SesClientResponseType.RULE_NAME_EXISTS;
 import static org.n52.shared.responses.SesClientResponseType.RULE_NAME_NOT_EXISTS;
 import static org.n52.shared.responses.SesClientResponseType.USER_INFO;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.n52.client.bus.EventBus;
@@ -95,7 +94,6 @@ import org.n52.shared.session.SessionInfo;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.rpc.impl.RequestCallbackAdapter.ResponseReader;
 import com.smartgwt.client.util.SC;
 
 // TODO try to transfer LoginRequiredException through the wire
@@ -210,20 +208,8 @@ public class SesRequestManager extends RequestManager {
     }
 
     private void performLogin(SesClientResponse response) {
+        setUserInfo(response.getSessionInfo());
         setSessionInfo(response.getSessionInfo());
-        
-//        if (isAdminLogin()) {
-//            String names = null;
-//            ArrayList<String> list = response.getComplexRules();
-//
-//            for (int i = 0; i < list.size(); i++) {
-//                names = names + list.get(i) + ", ";
-//            }
-//            if (names != null) {
-//                SC.say(i18n.deletedUser() + ": " + names);
-//            }
-//        }
-        
         getMainEventBus().fireEvent(new InformUserEvent(response));
         getMainEventBus().fireEvent(new SetRoleEvent(response.getUser().getRole()));
     }

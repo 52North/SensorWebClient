@@ -31,6 +31,20 @@ import java.util.Set;
 public class UserDTO implements Serializable {
 
     private static final long serialVersionUID = 9034725345386455848L;
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("UserDTO [ ");
+        sb.append("userName: ").append(userName).append(", ");
+        sb.append("name: ").append(name).append(", ");
+        sb.append("role: ").append(role).append(", ");
+        sb.append("email: ").append(eMail).append(", ");
+        sb.append("active: ").append(activated).append(", ");
+        sb.append("userId: ").append(id).append(", ");
+        sb.append("wnsId: ").append(wnsEmailId).append(" ]");
+        return sb.toString();
+    }
 
     private int id;
 
@@ -48,6 +62,7 @@ public class UserDTO implements Serializable {
 
     private boolean activated;
 
+    @Deprecated
     private String wnsSmsId;
 
     private String wnsEmailId;

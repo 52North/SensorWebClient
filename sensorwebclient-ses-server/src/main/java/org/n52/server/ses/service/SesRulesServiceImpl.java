@@ -37,6 +37,9 @@ import static org.n52.server.ses.hibernate.HibernateUtil.subscribeBasicRule;
 import static org.n52.server.ses.hibernate.HibernateUtil.unsubscribeBasicRule;
 import static org.n52.server.ses.hibernate.HibernateUtil.updateComplexRuleSubscribtion;
 import static org.n52.server.ses.util.SesServerUtil.getTimeseriesIdsFromEML;
+import static org.n52.shared.responses.SesClientResponseType.ERROR_SUBSCRIBE_FEEDER;
+import static org.n52.shared.responses.SesClientResponseType.ERROR_SUBSCRIBE_SES;
+import static org.n52.shared.responses.SesClientResponseType.OK;
 import static org.n52.shared.responses.SesClientResponseType.REQUIRES_LOGIN;
 import static org.n52.shared.responses.SesClientResponseType.USER_SUBSCRIPTIONS;
 
@@ -86,7 +89,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse subscribe(SessionInfo sessionInfo, String uuid, String medium, String eml) throws Exception {
         try {
-            if (sessionStore.isActiveSessionInfo(sessionInfo)) {
+            if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
             LOGGER.debug("subscribe to rule with UUID: {}", uuid);
@@ -211,7 +214,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                         }
                         catch (Exception e) {
                             LOGGER.error("Error while subscribing to SES", e);
-                            return new SesClientResponse(SesClientResponseType.ERROR_SUBSCRIBE_SES);
+                            return new SesClientResponse(ERROR_SUBSCRIBE_SES);
                         }
 
                         // save subscription in DB
@@ -264,10 +267,10 @@ public class SesRulesServiceImpl implements SesRuleService {
                 }
                 catch (Exception e) {
                     LOGGER.error("Error subscribing to feeder.", e);
-                    return new SesClientResponse(SesClientResponseType.ERROR_SUBSCRIBE_FEEDER);
+                    return new SesClientResponse(ERROR_SUBSCRIBE_FEEDER);
                 }
             }
-            return new SesClientResponse(SesClientResponseType.OK);
+            return new SesClientResponse(OK);
         }
         catch (Exception e) {
             LOGGER.error("Exception occured on server side.", e);
@@ -365,6 +368,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse createBasicRule(SessionInfo sessionInfo, Rule rule, boolean edit, String oldRuleName) throws Exception {
         try {
+            LOGGER.debug("createBasicRule: {} (session {})", rule, sessionInfo);
             if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
