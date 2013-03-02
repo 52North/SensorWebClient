@@ -46,7 +46,9 @@ public class ProfileWindow extends LoginWindow {
 
     @Override
     protected void loadWindowContent() {
-        userDataLayout.clearValues();
+        if (userDataLayout != null) {
+            userDataLayout.clearValues();
+        }
         clearContent();
         content = new HLayout();
         content.addMember(createEditProfileLayout());
