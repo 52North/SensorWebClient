@@ -1,83 +1,63 @@
+<!-- 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<HTML> 
-<HEAD>
-	<TITLE>SES Client Hilfe</TITLE>
-		<style type="text/css">
-<!--
-body, table {font-family: arial,sans-serif; font-size: x-big;}
-th {background: #336699; color: #FFFFFF; text-align: center;}
-p {
-	width: 1024; text-align: justify;
-}
--->
-</style>
-</HEAD>
-<BODY>
-<h1><a name="help">SES Client Hilfe</a></h1>
-
-<h2><a name= "overview">Gliederung</a></h2>
-
-<a href="#introduction">1. Einleitung</a><br>
-<a href="#views">2. Sichten</a><br>
-<a href="#buttons">3. Men&uuml;leiste</a><br>
-<a href="#problems">4. Probleme</a><br>
-<a href="#contact">5. Kontakt</a><br>
-
-<!-- INTRODUCTION -->
-<h3><a name="introduction">1. Einleitung</a></h3>
+<html> 
+<head>
+	<title>Erstellen von Benachrichtigungen</title>
+	<style type="text/css">
+	   img { margin: 1em; }
+	</style>
+</head>
+<body>
+ -->
+<div>
+<h2>Erstellen von Benachrichtigungen</h2>
 
 <p>
-Dieser Client erlaubt das Abonnieren von Benachrichtigungen im Falle bestimmter Sensormesswerte/Messwertkombinationen unter Nutzung eines OGC Sensor Event Service.<br>
-Die Entwicklung dieses Clients erfolgte unter Nutzung des Google Web Tookits. Daher besteht der Client im wesentlichen aus JavaScript-Code.<br>
-Eine Auswertung des Nutzerverhaltens erfolgt nicht. Ebenso werden keine Daten an Google weitergeleitet.<br>
-</p>
-
-<!-- VIEWS -->
-<h3><a name="views">2. Sichten</a></h3>
-
-<a href="#view_login">Anmeldung</a><br>
-<a href="#view_registration">Registration</a><br>
-<a href="#view_password">Passwort vergessen?</a><br>
-<a href="#view_welcome">Willkommensseite</a><br>
-<a href="#view_createBasic">Basis-Regel erstellen</a><br>
-<a href="#view_createComplex">Komplexe Regel erstellen</a><br>
-<a href="#view_subscribe">Regeln abonnieren</a><br>
-<a href="#view_editRules">Regeln editieren</a><br>
-<a href="#view_subscriptions">Abonnements</a><br>
-<a href="#view_editProfile">Profil editieren</a><br>
-<a href="#view_search">Suchen</a><br>
-<a href="#view_userManagement">Nutzerverwaltung</a><br>
-<a href="#view_sensorManagement">Sensorverwaltung</a><br>
-<a href="#view_allRules">Alle Regeln anzeigen</a><br>
-
-<h4><b><a name = "view_login">Anmeldung</a></b></h4>
-<img src="./img/sesClient/DE_view_login.png" alt="login" width="1024" height="768"><br><br>
-<p>
-Nach dem Starten des SES-Clients erscheint die Startseite des Clients. Hier kann sich der Nutzer anmelden, sich ein neues Passwort zuschicken lassen, oder sich als neuer Nutzer registrieren.
+F&uuml;r die Zeitreihe einer ausgew&auml;hlten Messstation k&ouml;nnen nebenstehend Benachrichtigungen erstellt und abonniert werden. 
+Im Falle eintretender Messwerte, bzw. Messwertkombinationen, wird eine Benachrichtigung an die hinterlegte E-Mail Adresse
+des Nutzers versendet.<br>
 </p>
 <p>
-Zum Anmelden ben&ouml;tigt der Nutzer seinen Nutzernamen (nicht den Namen) und das Passwort. Nach dreimaliger Falscheingabe des Passworts wird der Nutzer-Account aus Sicherheitsgr&uuml;nden gesperrt. Dies verhindert das Knacken des Passworts durch fremde Leute. Wird der Account gesperrt, muss sich der Nutzer an dem Systemadministrator wenden, damit dieser den Account wieder freischaltet.
+Es kann zwischen zwei Benachrichtungstypen gew&auml;hlt werden
+<ul>
+<li>&Uuml;berschreitung, bzw. Unterschreitung</li>
+<li>Sensorausfall</li>
+</ul>
+Wann genau eine Zeitreihe ein Benachrichtigungsereignis ausl&ouml;st sollen die folgenden Skizzen verdeutlichen.
 </p>
-<div align="right">
-	<a href="#overview"><font size="1">Zur&uuml;ck zur &Uuml;bersicht</font></a><br>
+
+<h4><b>Messwert&uuml;ber- und unterschreitung</b></h4>
+<p>
+Die betreffende Zeitreihe wird in regelm&auml;&szlig;igen Abst&auml;nden abgefragt und nach den eingegebenen Kritierien &uuml;berpr&uuml;ft.
+Die eingegebenen Grenzwerte werden mit der aktuellen Zeitreihe abgeglichen. Je nach zuletzt eingetretenen Fall innerhalb der Ereigniskette 
+wird entschieden, ob ein Ereignis ausgel&ouml;st, bzw. beendet wird oder nicht. Der Nutzer wird in beiden F&auml;llen informiert.
+</p>
+<div>
+<img src="./img/sesClient/ses-alerts_overshoot_de.png" width="450px" alt="example_overshoot_alert">
 </div>
-<hr>
-
-<h4><b><a name = "view_registration">Registration</a></b></h4>
-<img src="./img/sesClient/DE_view_register.png" alt="registration" width="1024" height="768"><br><br>
-
 <p>
-Bevor man den SES-Client benutzen kann, muss sich jeder zuerst im System registrieren. Dies geschieht &uuml;ber die Registrierungssicht. Zum Anmelden werden
-folgende Daten ben&ouml;tigt: <br>
-Nutzername (dient zum Anmelden des Nutzers), Name, Passwort und eine g&uuml;ltige E-Mail-Adresse. <br><br>
-
-Weiterhin m&uuml;ssen die Nutzungsbedingungen akzeptiert werden. Die Mobiltelefonnummer ist optional und wird nur f&uuml;r die SMS-Alarmierungen ben&ouml;tigt. Nach dem Ausf&uuml;llen aller n&ouml;tigen Felder wird der Nutzer im System angelegt, aber noch nicht freigeschaltet. Der Nutzer erh&auml;lt zun&auml;chst eine Best&auml;tigungsmail, welche einen Link enth&auml;lt. Mit diesem Link muss der Nutzer seine Registrierung innerhalb von 24 Stunden best&auml;tigen. Wird die Registrierung nicht innerhalb von 24 Stunden best&auml;tigt, so verf&auml;llt diese und wird aus dem System gel&ouml;scht.
+Bei Zeitreihen handelt es sich um diskrete Messwerte, welche grafisch interpoliert und visualisiert werden. Beim Zeitreihenmonitoring
+werden allerdings diskrete Zeitmomente als Grundlage genommen. Dies f&uuml;hrt i.d.R dazu, dass eintretende Ereignisse nicht exakt mit dem
+(interpolierten) Kurvenverlauf einer Zeitreihe &uuml;bereinstimmen.
 </p>
-<div align="right">
-	<a href="#overview"><font size="1">Zur&uuml;ck zur &Uuml;bersicht</font></a><br>
-</div>
-<hr>
 
+
+<h4><b>Sensorausfall</b></h4>
+<p>
+Die betreffende Zeitreihe wird in regelm&auml;&szlig;igen Abst&auml;nden abgefragt und nach eingehenden Messdaten &uuml;berpr&uuml;ft,
+ob Messwerte vorliegen oder nicht. Falls keine Messdaten vorliegen, wird ein Ereignis ausgel&ouml;st und der Nutzer dar&uuml;ber informiert. 
+Sobald wieder Messwerte vorliegen, erfolgt eine weitere Benachrichtigung.
+</p>
+<div>
+<img src="./img/sesClient/ses-alerts_sensorloss_de.png" width="450px" alt="example_sensorloss_alert">
+</div>
+<p>
+Bei einem eingegebenen Zeitintervall von z.B. einer Stunden, kann es im Extremfall fast doppelt so lange dauern, bis ein Sensorausfallereignis
+ausl&ouml;st, da letzte Messwert zu Anfang des betrachteten Zeitintervalls liegen kann.
+</p>
+
+
+<!-- 
 <h4><b><a name = "view_password">Passwort vergessen?</a></b></h4>
 <img src="./img/sesClient/DE_view_password.png" alt="password" width="1024" height="768"><br><br>
 
@@ -85,24 +65,14 @@ Weiterhin m&uuml;ssen die Nutzungsbedingungen akzeptiert werden. Die Mobiltelefo
 Diese Funktionalit&auml;t bietet Nutzern, die ihr Passwort vergessen haben, die M&ouml;glichkeit, sich ein neues zuschicken zu lassen. Hierf&uuml;r muss der Nutzer seinen Nutzernamen und die E-Mail-Adresse, welche f&uuml;r die Registrierung verwendet wurde, angeben. Das neue Passwort kann dann im E-Mail-Postfach abgerufen werden. Beim n&auml;chsten Anmelden wird der Nutzer darauf hingewiesen, sein Passwort zu &auml;ndern.
 </p>
 <div align="right">
-	<a href="#overview"><font size="1">Zur&uuml;ck zur &Uuml;bersicht</font></a><br>
+    <a href="#overview"><font size="1">Zur&uuml;ck zur &Uuml;bersicht</font></a><br>
 </div>
 <hr>
+ -->
+ 
 
-<h4><b><a name = "view_welcome">Willkommensseite</a></b></h4>
-<img src="./img/sesClient/DE_view_welcomePage.png" alt="welcome" width="1024" height="768"><br><br>
 
-<p>
-Nach einer erfolgreichen Anmeldung landet der Nutzer auf der Willkommensseite. Hier stehen sein Name und die Rolle des Nutzers. Von hier aus kann er mit dem Client weiterarbeiten.
-</p>
-<div align="right">
-	<a href="#overview"><font size="1">Zur&uuml;ck zur &Uuml;bersicht</font></a><br>
-</div>
-<hr>
-
-<h4><b><a name = "view_createBasic">Basis-Regel erstellen</a></b></h4>
-<img src="./img/sesClient/DE_view_createBasicRule.png" alt="create_simple" width="1024" height="768"><br><br>
-
+<!-- 
 <p>
 Diese Sicht erlaubt es dem Nutzer, einfache Regeln zu erstellen. Damit die Regel erstellt, wird m&uuml;ssen alle angezeigten Felder gef&uuml;llt sein.
 Im Feld &quot;Sensor&quot; wird der Sensor ausgew&auml;hlt f&uuml;r den die Regel gelten soll. Nach der Auswahl erscheint im Feld &quot;Ph&auml;nomen&quot; eine Liste aller verf&uuml;gbaren Ph&auml;nomene f&uuml;r diesen Sensor. Bei &quot;Regeltyp&quot; gibt es insgesamt  f&uuml;nf Typen zur Auswahl:
@@ -224,46 +194,7 @@ Hier kann der Nutzer seine Daten einsehen und editieren.
 </div>
 <hr>
 
-<h4><b><a name = "view_search">Suchen</a></b></h4>
-<p>
-Diese Sicht erlaubt es dem Nutzer alle eigenen und alle von anderen Nutzern freigegebene Regeln nach bestimmten Kriterien zu durchsuchen. Es gibt insgesamt f&uuml;nf Suchkriterien:
-</p>
-<table border="1">
-	<tr>
- 		<th>Suchkriterium</th>
- 	 	<th>Beschreibung</th>
-	</tr>
-	<tr>
-  		<td>Volltextsuche</td>
-  		<td>Hier kann der Nutzer nach bestimmten Zeichenfolgen/Begriffen, wie z.B. &quot;Wasser&quot;, suchen. Dabei spielt es keine Rolle, wo sich die jeweilige Zeichenfolge innerhalb der Regel befindet. Jede Regel, die an irgendeiner Stelle die gesuchte Zeichenfolge enth&auml;lt, wird angezeigt.</td>
-	</tr>
-	<tr>
- 		 <td>Titel</td>
- 		 <td>Die Suche beschr&auml;nkt sich auf den Titel der Regeln, d.h. es werden alle Regeln angezeigt, die die gesuchte Zeichenfolge im Titel enthalten.</td>
-	</tr>
-	<tr>
- 	 	<td>Beschreibung</td>
- 		<td>Die Suche beschr&auml;nkt sich auf die Beschreibung der Regeln, d.h. es werden alle Regeln angezeigt, die die gesuchte Zeichenfolge in ihrer Beschreibung enthalten.</td>
-	</tr>
-	<tr>
- 		 <td>Sensor</td>
- 		 <td>Die Suche beschr&auml;nkt sich auf den in einer  Regel verwendeten Sensor (bei komplexen Regeln: alle verwendeten Sensoren), d.h. es werden alle Regeln angezeigt, die die gesuchte Zeichenfolge als Sensorbezeichnung enthalten. </td>
-	</tr>
-	<tr>
- 	 	<td>Ph&auml;nomen</td>
- 		<td>Die Suche beschr&auml;nkt sich auf das in einer Regel betrachtete Ph&auml;nomen (bei komplexen Regeln: alle betrachteten Ph&auml;nomene), d.h. es werden alle Regeln angezeigt, die die gesuchte Zeichenfolge als Ph&auml;nomenbezeichnung enthalten.</td>
-	</tr>
-</table> 
-
-<p>
-Alle gefundenen Suchtreffer werden in der Liste angezeigt, die weiterhin &uuml;ber die dar&uuml;ber liegende Filterleiste zus&auml;tzlich gefiltert werden kann. 
-</p>
-<div align="right">
-	<a href="#overview"><font size="1">Zur&uuml;ck zur &Uuml;bersicht</font></a><br>
-</div>
-<hr>
-
-<h4><b><a name = "view_userManagement">Nutzerverwaltung</a></b></h4>
+<h4><b><a name = "view_userManagement">Nutzer/Abos</a></b></h4>
 <img src="./img/sesClient/DE_view_userManagement.png" alt="user_management" width="1024" height="768"><br><br>
 <p>
 Diese Sicht ist nur von den Administratoren des SES-Clients erreichbar. In der Tabelle hat der Administrator eine &Uuml;bersicht &uuml;ber alle registrierten Nutzer, die ihre Registrierung best&auml;tigt haben. Er kann auf einen Blick den Namen, E-Mail-Adresse, Handynummer und die Rolle des Nutzers sehen. Ein Nutzer kann hier entweder die Rolle <i>USER</i> oder <i>ADMIN</i> besitzen. Der Administrator kann alle Nutzerdaten editieren, sowie die Rolle &auml;ndern. Dabei ist sichergestellt, dass es zu jeder Zeit mindestens einen Administrator gibt. Weiterhin hat der Administrator die M&ouml;glichkeit, Nutzer zu l&ouml;schen oder neue Nutzer anzulegen. Hierf&uuml;r m&uuml;ssen mindestens der Nutzernamen, die E-Mail-Adresse und die Rolle angegeben werden. Nach der Erstellung wird an die E-Mail-Adresse eine Best&auml;tigungs-E-Mail geschickt, die von dem neuen Nutzer best&auml;tigt werden muss.
@@ -273,6 +204,8 @@ Diese Sicht ist nur von den Administratoren des SES-Clients erreichbar. In der T
 </div>
 <hr>
 
+ -->
+<!-- 
 <h4><b><a name = "view_sensorManagement">Sensorverwaltung</a></b></h4>
 <img src="./img/sesClient/DE_view_sensorManagement.png" alt="sensor_management" width="1024" height="768"><br><br>
 <p>
@@ -292,153 +225,10 @@ Diese Sicht ist nur von den Administratoren des SES-Clients erreichbar. In der T
 	<a href="#overview"><font size="1">Zur&uuml;ck zur &Uuml;bersicht</font></a><br>
 </div>
 <hr>
+ -->
 
 
-<!-- BUTTON BAR -->
-<h3><a name="buttons">3. Men&uuml;leiste</a></h3>
-<table border="1">
-<tr>
-  <th>Titel</th>
-  <th>Beschreibung</th>
-</tr>
-<tr>
-  <td><a href="#view_login">Anmeldung</a></td>
-  <td>Anmeldungssicht, in welcher Nutzer Name und Passwort angeben k&ouml;nnen</td>
-</tr>
-<tr>
-  <td><a href="#view_registration">Registrierung</a></td>
-  <td>&Ouml;ffnen der Registrierungssicht um sich im System anzumelden</td>
-</tr>
-<tr>
-  <td><a href="#help">Hilfe</a></td>
-  <td>&Ouml;ffnen des Hilfefensters</td>
-</tr>
-<tr>
-  <td><a href="#view_password">Passwort vergessen?</a></td>
-  <td>Hier hat der Nutzer die M&ouml;glichkeit sich ein Passwort zuschicken zu lassen, wenn er seines vergessen hat</td>
-</tr>
-</table> 
-<br>
-<img src="./img/sesClient/DE_buttons_unknownUser.png" alt="not registered" width="400" height="50">
-
-<br>
-<br>
-<b>Registrierter Nutzer:</b><br>
-
-<table border="1">
-<tr>
-  <th>Titel</th>
-  <th>Beschreibung</th>
-</tr>
-<tr>
-  <td><a href="#view_subscribe">Regeln abonnieren</a></td>
-  <td>Hier kann der Nutzer seine ohne von anderen Nutzern freigegebene Regeln abonnieren</td>
-</tr>
-<tr>
-  <td><a href="#view_editRules">Regeln editieren</a></td>
-  <td>&Ouml;ffnen der Sicht, in welcher der Nutzer die von ihm erstellten Regeln editieren kann</td>
-</tr>
-<tr>
-  <td><a href="#view_createBasic">Basis-Regel erstellen </a></td>
-  <td>&Ouml;ffnen der Sicht, in welcher der Nutzer Basis-Regeln erstellen kann</td>
-</tr>
-<tr>
-  <td><a href="#view_createComplex">Komplexe Regel erstellen</a></td>
-  <td>&Ouml;ffnen der Sicht, in welcher der Nutzer komplexe Regeln erstellen kann</td>
-<tr>
-  <td><a href="#view_subscriptions">Abonnements</a></td>
-  <td>&Ouml;ffnen der Sicht mit einer Liste aller Abonnements des Nutzers. Hier kann er diese auch beenden</td>
-</tr>
-<tr>
-  <td><a href="#view_editProfile">Profil editieren</a></td>
-  <td>&Ouml;ffnen der Sicht, in welcher der Nutzer seine Profildaten, wie z.B. die E-Mail-Adresse &auml;ndern kann</td>
-</tr>
-<tr>
-  <td><a href="#help">Hilfe</a></td>
-  <td>&Ouml;ffnen des Hilfefensters</td>
-</tr>
-<tr>
-  <td>Logout</td>
-  <td>Nutzer ausloggen</td>
-</tr>
-</table> 
-<br>
-<img src="./img/sesClient/DE_buttons_user.png" alt="user" width="1024" height="50">
-<br>
-<br>
-<b>Administrator:</b><br>
-<table border="1">
-<tr>
-  <th>Titel</th>
-  <th>Beschreibung</th>
-</tr>
-<tr>
-  <td><a href="#view_userManagement">Nutzerverwaltung</a></td>
-  <td>&Ouml;ffnen einer Sicht mit einer Liste aller registrierten Nutzer. Hier kann der Administrator Nutzer l&ouml;schen, editieren oder neu anlegen</td>
-</tr>
-<tr>
-  <td><a href="#view_sensorManagement">Sensorverwaltung</a></td>
-  <td>&Ouml;ffnen einer Sicht, in welcher der Administrator Sensoren aktivieren/deaktivieren oder l&ouml;schen kann</td>
-</tr>
-<tr>
-  <td><a href="#view_createBasic">Basis-Regel erstellen</a></td>
-  <td>&Ouml;ffnen der Sicht, in welcher der Nutzer Basis-Regeln erstellen kann</td>
-</tr>
-<tr>
-  <td><a href="#view_createComplex">Komplexe Regel erstellen</a></td>
-  <td>&Ouml;ffnen der Sicht, in welcher der Nutzer Komplexe Regeln erstellen kann</td>
-</tr>
-<tr>
-  <td><a href="#view_allRules">Alle Regeln anzeigen</a></td>
-  <td>&Ouml;ffnen einer Sicht mit einer Liste aller erstellten Regeln. Hier werden auch nicht freigegebende Regeln angezeigt</td>
-</tr>
-<tr>
-  <td><a href="#help">Hilfe</a></td>
-  <td>&Ouml;ffnen des Hilfefensters</td>
-</tr>
-<tr>
-  <td>Logout</td>
-  <td>Administrator ausloggen</td>
-</tr>
-</table>
-<br>
-<img src="./img/sesClient/DE_buttons_admin.png" alt="admin" width="1024" height="50">
-<br>
-
-
-<ul>
-  <li>Medium
-       <ul>
-    	<li>E-Mail</li>
-    	<li>SMS</li>
-    </ul>
-  </li>
-  <li>Format
-    <ul>
-    	<li>Text</li>
-    	<li>XML</li>
-    	<li>EML</li>
-    </ul>
-  </li>
-</ul>
-<div align="right">
-	<a href="#overview"><font size="1">Zur&uuml;ck zur &Uuml;bersicht</font></a><br>
-</div>
-<hr>
-
-<!-- PROBLEMS -->
-<h2><a name="problems">4. Probleme</a></h2>
-
-<ol type="I">
- <li>Mein Account wurde gesperrt!
-     <ul>
-    	<li>Sie oder jemand anders hat drei mal das falsche Passwort eingegeben. Aus Sicherheitsgr&uuml;nden wurde Ihr Account gesperrt. Bitte kontaktieren Sie den Administrator</li>
-    </ul>
- </li>
-</ol>
-
-
-<!-- CONTACT -->
+<!-- CONTACT 
 <h2><a name="contact">5. Kontakt</a></h2>
 <form action="MAILTO:52n.development@gmail.com" method="post" enctype="text/plain">
 Name:<br>
@@ -451,6 +241,7 @@ Kommentar:<br>
 <input type="submit" value="Send">
 <input type="reset" value="Reset">
 </form>
-
 </BODY>
 </HTML>	
+-->
+</div>

@@ -25,6 +25,7 @@
 package org.n52.client.ses.ui.subscribe;
 
 import static com.smartgwt.client.types.Alignment.RIGHT;
+import static com.smartgwt.client.types.ContentsType.PAGE;
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.event.RuleCreatedEvent.TYPE;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
@@ -41,8 +42,10 @@ import org.n52.client.ui.ApplyCancelButtonLayout;
 import org.n52.client.util.ClientSessionManager;
 import org.n52.shared.serializable.pojos.Rule;
 
+import com.smartgwt.client.types.ContentsType;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.HTMLPane;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
@@ -72,7 +75,7 @@ public class EventSubscriptionWindow extends LoginWindow {
         return instance;
     }
 
-    public EventSubscriptionWindow(EventSubscriptionController controller) {
+    private EventSubscriptionWindow(EventSubscriptionController controller) {
     	super(COMPONENT_ID);
         controller.setEventSubscription(this);
     }
@@ -169,12 +172,15 @@ public class EventSubscriptionWindow extends LoginWindow {
     }
 
     private Canvas createContextWindowHelp() {
-        Layout contextHelpContent = new VLayout();
-        contextHelpContent.setStyleName("n52_sensorweb_client_create_abo_context_help");
-            
-            // TODO Auto-generated method stub
+        Layout contextHelp = new VLayout();
+        contextHelp.setStyleName("n52_sensorweb_client_create_abo_context_help");
         
-        return contextHelpContent;
+        HTMLPane htmlPane = new HTMLPane();
+        htmlPane.setContentsURL(i18n.helpPath());
+        
+        contextHelp.setHeight100();
+        contextHelp.addMember(htmlPane);
+        return contextHelp;
     }
 
     public void setTimeseries(TimeSeries timeseries) {

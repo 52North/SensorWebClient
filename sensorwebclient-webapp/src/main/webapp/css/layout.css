@@ -173,6 +173,7 @@ tr.sensorInfo:hover {
 .n52_sensorweb_client_create_abo_form_content {
   float: left;
   margin: 1em;
+  width: 45%;
 }
 .n52_sensorweb_client_create_abo_info {
   margin-bottom: 1em;
@@ -218,6 +219,7 @@ table.n52_sensorweb_client_create_abo_metadata_table tr:hover {
 .n52_sensorweb_client_create_abo_context_help {
   float: right;
   border-left: #ffb;
+  width: 45%;
 }
 .n52_sensorweb_client_create_abo_applycancel {
   margin-bottom: 1em;
