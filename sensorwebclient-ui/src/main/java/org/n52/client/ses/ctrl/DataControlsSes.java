@@ -102,6 +102,7 @@ public class DataControlsSes extends DataControls {
     @Deprecated
     private IButton manageRulesButton;
 
+    @Deprecated
     private IButton searchRulesButton;
 
     private IButton helpButton;
@@ -288,16 +289,16 @@ public class DataControlsSes extends DataControls {
         });
 
         // manageRulesButton
-        this.searchRulesButton = new IButton(i18n.search());
-        this.searchRulesButton.setWidth(this.buttonWidth);
-        this.searchRulesButton.setShowRollOver(true);
-        this.searchRulesButton.setShowDown(true);
-        this.searchRulesButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.SEARCH));
-                highlightSelectedButton(searchRulesButton);
-            }
-        });
+//        this.searchRulesButton = new IButton(i18n.search());
+//        this.searchRulesButton.setWidth(this.buttonWidth);
+//        this.searchRulesButton.setShowRollOver(true);
+//        this.searchRulesButton.setShowDown(true);
+//        this.searchRulesButton.addClickHandler(new ClickHandler() {
+//            public void onClick(ClickEvent event) {
+//                EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.SEARCH));
+//                highlightSelectedButton(searchRulesButton);
+//            }
+//        });
 
         // helpButton
         this.helpButton = new IButton(i18n.help());
@@ -309,9 +310,9 @@ public class DataControlsSes extends DataControls {
                 String helpUrl = GWT.getHostPageBaseURL();
                 highlightSelectedButton(helpButton);
                 if (PropertiesManager.language.equals("en")) {
-                    Window.open(helpUrl + "help_en.html", "help", "");
+                    Window.open(helpUrl + "help_ses_en.html", "help", "");
                 } else {
-                    Window.open(helpUrl + "help_de.html", "help", "");
+                    Window.open(helpUrl + "help_ses_de.html", "help", "");
                 }
             }
         });
@@ -339,7 +340,7 @@ public class DataControlsSes extends DataControls {
 //            this.topLayout.addMember(this.createSimpleRuleButton);
 //            this.topLayout.addMember(this.aboRuleButton);
 //            this.topLayout.addMember(this.manageRulesButton);
-            this.topLayout.addMember(this.searchRulesButton);
+//            this.topLayout.addMember(this.searchRulesButton);
 
 //            this.bottomLayout.addMember(this.createComplexRuleButton);
             this.topLayout.addMember(this.helpButton);
@@ -396,7 +397,7 @@ public class DataControlsSes extends DataControls {
         this.editRulesButton.setSelected(false);
         this.manageUserButton.setSelected(false);
         this.manageRulesButton.setSelected(false);
-        this.searchRulesButton.setSelected(false);
+//        this.searchRulesButton.setSelected(false);
         this.helpButton.setSelected(false);
 
         selectedButton.setSelected(true);
@@ -512,14 +513,6 @@ public class DataControlsSes extends DataControls {
 
     public void setManageRulesButton(IButton manageRulesButton) {
         this.manageRulesButton = manageRulesButton;
-    }
-
-    public IButton getSearchRulesButton() {
-        return searchRulesButton;
-    }
-
-    public void setSearchRulesButton(IButton searchRulesButton) {
-        this.searchRulesButton = searchRulesButton;
     }
 
     public IButton getHelpButton() {
