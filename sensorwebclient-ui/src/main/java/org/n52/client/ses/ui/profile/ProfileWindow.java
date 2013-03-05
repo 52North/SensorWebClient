@@ -4,8 +4,6 @@ package org.n52.client.ses.ui.profile;
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.util.ClientSessionManager.currentSession;
-import static org.n52.client.util.ClientSessionManager.getLoggedInUserId;
-import static org.n52.client.util.ClientSessionManager.isPresentSessionInfo;
 import static org.n52.shared.responses.SesClientResponseType.USER_SUBSCRIPTIONS;
 
 import org.n52.client.ses.event.GetSingleUserEvent;
@@ -15,7 +13,6 @@ import org.n52.client.ses.event.UpdateProfileEvent;
 import org.n52.client.ses.event.handler.InformUserEventHandler;
 import org.n52.client.ses.event.handler.UpdateProfileEventHandler;
 import org.n52.client.ses.ui.LoginWindow;
-import org.n52.client.util.ClientSessionManager;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.session.SessionInfo;
 
@@ -26,22 +23,14 @@ public class ProfileWindow extends LoginWindow {
 
     private static final String COMPONENT_ID = "UserProfileWindow";
 
-    private static ProfileWindow instance;
-
     private EditProfileLayout userDataLayout;
 
     private SubscriptionsLayout subscriptionsLayout;
 
-    public static ProfileWindow getProfileWindow() {
-        if (instance == null) {
-            instance = new ProfileWindow();
-        }
-        return instance;
-    }
-
-    private ProfileWindow() {
+    public ProfileWindow() {
         super(COMPONENT_ID);
         new ProfileWindowEventBroker(this);
+        initializeContent();
     }
 
     @Override

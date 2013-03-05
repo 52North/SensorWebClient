@@ -25,7 +25,6 @@
 package org.n52.client.ses.ui.subscribe;
 
 import static com.smartgwt.client.types.Alignment.RIGHT;
-import static com.smartgwt.client.types.ContentsType.PAGE;
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.event.RuleCreatedEvent.TYPE;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
@@ -39,10 +38,8 @@ import org.n52.client.ses.event.handler.RuleCreatedEventHandler;
 import org.n52.client.ses.ui.LoginWindow;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.ui.ApplyCancelButtonLayout;
-import org.n52.client.util.ClientSessionManager;
 import org.n52.shared.serializable.pojos.Rule;
 
-import com.smartgwt.client.types.ContentsType;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.HTMLPane;
@@ -59,25 +56,16 @@ public class EventSubscriptionWindow extends LoginWindow {
 	
 	private static final String COMPONENT_ID = "eventSubscriptionWindow";
 
-    private static EventSubscriptionController controller;
-
-    private static EventSubscriptionWindow instance;
+    private EventSubscriptionController controller = new EventSubscriptionController();
 
     private Layout ruleTemplateEditCanvas;
 
-    public static EventSubscriptionWindow getInst(TimeSeries dataItem) {
-        if (instance == null) {
-            controller = new EventSubscriptionController();
-            instance = new EventSubscriptionWindow(controller);
-            new EventSubsriptionWindowEventBroker(instance);
-        }
-        controller.setTimeseries(dataItem);
-        return instance;
-    }
-
-    private EventSubscriptionWindow(EventSubscriptionController controller) {
+    public EventSubscriptionWindow(TimeSeries dataItem) {
     	super(COMPONENT_ID);
+        new EventSubsriptionWindowEventBroker(this);
         controller.setEventSubscription(this);
+        controller.setTimeseries(dataItem);
+        initializeContent();
     }
 
     protected void loadWindowContent() {
@@ -172,15 +160,10 @@ public class EventSubscriptionWindow extends LoginWindow {
     }
 
     private Canvas createContextWindowHelp() {
-        Layout contextHelp = new VLayout();
-        contextHelp.setStyleName("n52_sensorweb_client_create_abo_context_help");
-        
         HTMLPane htmlPane = new HTMLPane();
         htmlPane.setContentsURL(i18n.helpPath());
-        
-        contextHelp.setHeight100();
-        contextHelp.addMember(htmlPane);
-        return contextHelp;
+        htmlPane.setStyleName("n52_sensorweb_client_create_abo_context_help");
+        return htmlPane;
     }
 
     public void setTimeseries(TimeSeries timeseries) {
@@ -199,7 +182,7 @@ public class EventSubscriptionWindow extends LoginWindow {
     
     private static class EventSubsriptionWindowEventBroker implements RuleCreatedEventHandler {
 
-        public EventSubsriptionWindowEventBroker(EventSubscriptionWindow window) {
+        public EventSubsriptionWindowEventBroker(LoginWindow window) {
             getMainEventBus().addHandler(TYPE, this);
         }
         

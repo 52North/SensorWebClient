@@ -539,8 +539,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 			@Override
 			public void onClick(ClickEvent event) {
 			    TimeSeries dataItem = DataStoreTimeSeriesImpl.getInst().getDataItem(timeseriesID);
-			    EventSubscriptionWindow window = EventSubscriptionWindow.getInst(dataItem);
-				window.show();
+			    new EventSubscriptionWindow(dataItem).show();
 			}
 		});
 	}

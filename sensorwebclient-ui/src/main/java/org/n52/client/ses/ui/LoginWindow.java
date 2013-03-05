@@ -65,26 +65,20 @@ public abstract class LoginWindow extends Window {
     public LoginWindow(String ID) {
         COMPONENT_ID = ID;
         initializeWindow();
-        if (isNotLoggedIn()) {
-            loadLoginContent();
-        } else {
-            loadWindowContent();
-        }
         new LoginWindowEventBroker(this);
         addCloseClickHandler(new CloseClickHandler() {
             public void onCloseClick(CloseClickEvent event) {
-                hide();
+                destroy(); // re-create window once it is closed
             }
         });
     }
-
+    
     protected void initializeWindow() {
-        setID(COMPONENT_ID);
-        setShowModalMask(true);
-        setIsModal(true);
-        setTitle(i18n.login());
         setWidth(WIDTH);
         setHeight(HEIGHT);
+        setTitle(i18n.login());
+        setShowModalMask(true);
+        setIsModal(true);
         centerInPage();
         setCanDragResize(true);
         setShowMaximizeButton(true);
@@ -97,6 +91,14 @@ public abstract class LoginWindow extends Window {
                 HEIGHT = LoginWindow.this.getHeight();
             }
         });
+    }
+
+    protected void initializeContent() {
+        if (isNotLoggedIn()) {
+            loadLoginContent();
+        } else {
+            loadWindowContent();
+        }
     }
 
     protected abstract void loadWindowContent();
