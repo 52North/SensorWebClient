@@ -68,8 +68,6 @@ public class EditUserWindow {
 
         // init window
         Window window = new Window();
-        window.setWidth(300);
-        window.setHeight(250);
         window.setAutoSize(true);
         window.setTitle(i18n.editUserData());
         window.setCanDragReposition(true);
@@ -79,14 +77,12 @@ public class EditUserWindow {
 
         // init form
         final DynamicForm form = new DynamicForm();
+        form.setStyleName("n52_sensorweb_client_form_content");
         form.setHeight100();
         form.setWidth100();
         form.setAlign(Alignment.CENTER);
 
         // init widgets
-
-        // label
-        SpacerItem spacer = new SpacerItem();
 
         // user name
         final TextItem userNameItem = new TextItem();
@@ -165,7 +161,7 @@ public class EditUserWindow {
         });
 
         // set Fields to form
-        form.setFields(spacer, userNameItem, nameItem, emailItem, roleItem, editItem);
+        form.setFields(userNameItem, nameItem, emailItem, roleItem, editItem);
 
         // add form to window
         window.addItem(form);

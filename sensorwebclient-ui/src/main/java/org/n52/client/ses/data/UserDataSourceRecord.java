@@ -26,7 +26,14 @@ package org.n52.client.ses.data;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 public class UserDataSourceRecord extends ListGridRecord {
-
+	
+	public static final String PARAMETERID = "parameterId";
+	public static final String USERNAME = "userName";
+	public static final String NAME = "name";
+	public static final String EMAIL = "eMail";
+	public static final String ROLE = "role";
+	public static final String PASSWORD = "password";
+	
     public UserDataSourceRecord() {
         //
     }
@@ -41,45 +48,43 @@ public class UserDataSourceRecord extends ListGridRecord {
     }
 
     public String getId() {
-        return getAttributeAsString("parameterId");
+        return getAttributeAsString(PARAMETERID);
     }
 
     public void setId(String id) {
-        setAttribute("parameterId", id);
+        setAttribute(PARAMETERID, id);
     }
 
     public String getUserName() {
-        return getAttributeAsString("userName");
+        return getAttributeAsString(USERNAME);
     }
 
     private void setUserName(String userName) {
-        setAttribute("userName", userName);
-
+        setAttribute(USERNAME, userName);
     }
 
     public String getName() {
-        return getAttributeAsString("name");
+        return getAttributeAsString(NAME);
     }
 
     public void setName(String name) {
-        setAttribute("name", name);
+        setAttribute(NAME, name);
     }
 
     public void setEMail(String eMail) {
-        setAttribute("eMail", eMail);
+        setAttribute(EMAIL, eMail);
     }
 
     public String getEMail() {
-        return getAttributeAsString("eMail");
+        return getAttributeAsString(EMAIL);
     }
 
-
     public void setRole(String role) {
-        setAttribute("role", role);
+        setAttribute(ROLE, role);
     }
 
     public String getRole() {
-        return getAttributeAsString("role");
+        return getAttributeAsString(ROLE);
     }
 
     public String getFieldValue(String field) {
@@ -87,10 +92,10 @@ public class UserDataSourceRecord extends ListGridRecord {
     }
 
     public void setPassword(String password) {
-        setAttribute("password", password);
+        setAttribute(PASSWORD, password);
     }
 
     public String getPassword() {
-        return getAttributeAsString("password");
+        return getAttributeAsString(PASSWORD);
     }
 }

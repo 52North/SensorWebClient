@@ -23,6 +23,12 @@
  */
 package org.n52.client.ses.ui.layout;
 
+import static org.n52.client.ses.data.UserDataSourceRecord.EMAIL;
+import static org.n52.client.ses.data.UserDataSourceRecord.NAME;
+import static org.n52.client.ses.data.UserDataSourceRecord.PARAMETERID;
+import static org.n52.client.ses.data.UserDataSourceRecord.PASSWORD;
+import static org.n52.client.ses.data.UserDataSourceRecord.ROLE;
+import static org.n52.client.ses.data.UserDataSourceRecord.USERNAME;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.util.ClientSessionManager.currentSession;
 
@@ -86,7 +92,13 @@ public class ShowUserLayout extends FormLayout {
                     editButton.setHeight(16);
                     editButton.addClickHandler(new ClickHandler() {
                         public void onClick(ClickEvent event) {
-                            EditUserWindow.init((UserDataSourceRecord)record);
+                        	String id = record.getAttributeAsString(PARAMETERID);
+                            String userName = record.getAttributeAsString(USERNAME);
+							String name = record.getAttributeAsString(NAME);
+							String password = record.getAttributeAsString(PASSWORD);
+							String eMail = record.getAttributeAsString(EMAIL);
+							String role = record.getAttributeAsString(ROLE);
+							EditUserWindow.init(new UserDataSourceRecord(id, userName, name, password, eMail, role));
                         }
                     });
 
@@ -103,10 +115,10 @@ public class ShowUserLayout extends FormLayout {
                     deleteButton.setHeight(16);
                     deleteButton.addClickHandler(new ClickHandler() {
                         public void onClick(ClickEvent event) {
-                            SC.ask(i18n.reallyDeleteUser() + ": " + record.getAttribute("userName") +  "?", new BooleanCallback() {
+                            SC.ask(i18n.reallyDeleteUser() + ": " + record.getAttribute(USERNAME) +  "?", new BooleanCallback() {
                                 public void execute(Boolean value) {
                                     if (value) {
-                                        String userId = record.getAttribute("parameterId");
+                                        String userId = record.getAttribute(PARAMETERID);
                                         final SessionInfo sessionInfo = currentSession();
                                         EventBus.getMainEventBus().fireEvent(new DeleteUserEvent(sessionInfo, userId));
                                         EventBus.getMainEventBus().fireEvent(new GetAllUsersEvent(sessionInfo));
