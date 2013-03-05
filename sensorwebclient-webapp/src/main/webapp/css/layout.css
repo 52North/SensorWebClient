@@ -221,6 +221,11 @@ table.n52_sensorweb_client_create_abo_metadata_table tr:hover {
   border-left: #ffb;
   width: 45%;
 }
+.n52_sensorweb_client_create_abo_context_help {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  text-align: left;
+  font-size: 10pt;
+}
 .n52_sensorweb_client_create_abo_applycancel {
   margin-bottom: 1em;
   align: right;
