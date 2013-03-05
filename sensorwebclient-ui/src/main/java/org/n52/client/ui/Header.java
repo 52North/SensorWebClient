@@ -175,11 +175,12 @@ public class Header extends HLayout {
                     url += "?locale=de" + permaLink;
                 }
                 else {
-                	if (GWT.isProdMode()) {
-                        url = href + "?" + permaLink.substring(1);
-					} else {
-						url = href + permaLink;
-					}
+                	url = permaLink;
+//                	if (GWT.isProdMode()) {
+//                        url = href + "?" + permaLink.substring(1);
+//					} else {
+//						url = permaLink;
+//					}
                 }
                 Window.Location.assign(url);
             }

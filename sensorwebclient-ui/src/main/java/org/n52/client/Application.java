@@ -193,7 +193,12 @@ public final class Application {
     }
 
     private static String[] getDecodedParameters(PermalinkParameter parameter) {
-        return Window.Location.getParameter(parameter.nameLowerCase()).split(",");
+    	String value = Window.Location.getParameter(parameter.nameLowerCase());
+    	if (value.isEmpty()) {
+    		return new String[]{};
+    	} else {
+    		return value.split(",");
+    	}
     }
 
     private static void fireNewTimeRangeEvent(TimeRange timeRange) {
