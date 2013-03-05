@@ -6,10 +6,10 @@ import static java.util.UUID.randomUUID;
 import static org.n52.shared.serializable.pojos.UserRole.isAdmin;
 import static org.n52.shared.session.SessionInfoBuilder.aSessionInfo;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.n52.shared.serializable.pojos.User;
 import org.n52.shared.serializable.pojos.UserRole;
@@ -26,9 +26,9 @@ public class ServerSessionStore {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerSessionStore.class);
 
-    private Map<String, SessionInfo> notLoggedInSessions = new HashMap<String, SessionInfo>();
+    private Map<String, SessionInfo> notLoggedInSessions = new ConcurrentHashMap<String, SessionInfo>();
 
-    private Map<String, SessionInfo> loggedInSessions = new HashMap<String, SessionInfo>();
+    private Map<String, SessionInfo> loggedInSessions = new ConcurrentHashMap<String, SessionInfo>();
 
     public ServerSessionStore() {
         scheduleSessionCleanup();
