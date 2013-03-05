@@ -1,247 +1,45 @@
-<!-- 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html> 
-<head>
-	<title>Erstellen von Benachrichtigungen</title>
-	<style type="text/css">
-	   img { margin: 1em; }
-	</style>
-</head>
+<html>
 <body>
- -->
-<div>
-<h2>Erstellen von Benachrichtigungen</h2>
+<div class="help">
 
-<p>
-F&uuml;r die Zeitreihe einer ausgew&auml;hlten Messstation k&ouml;nnen nebenstehend Benachrichtigungen erstellt und abonniert werden. 
-Im Falle eintretender Messwerte, bzw. Messwertkombinationen, wird eine Benachrichtigung an die hinterlegte E-Mail Adresse
-des Nutzers versendet.<br>
-</p>
-<p>
-Es kann zwischen zwei Benachrichtungstypen gew&auml;hlt werden
-<ul>
-<li>&Uuml;berschreitung, bzw. Unterschreitung</li>
-<li>Sensorausfall</li>
-</ul>
-Wann genau eine Zeitreihe ein Benachrichtigungsereignis ausl&ouml;st sollen die folgenden Skizzen verdeutlichen.
-</p>
+    <h3>Erstellen von Benachrichtigungen</h3>
 
-<h4><b>Messwert&uuml;ber- und unterschreitung</b></h4>
-<p>
-Die betreffende Zeitreihe wird in regelm&auml;&szlig;igen Abst&auml;nden abgefragt und nach den eingegebenen Kritierien &uuml;berpr&uuml;ft.
-Die eingegebenen Grenzwerte werden mit der aktuellen Zeitreihe abgeglichen. Je nach zuletzt eingetretenen Fall innerhalb der Ereigniskette 
-wird entschieden, ob ein Ereignis ausgel&ouml;st, bzw. beendet wird oder nicht. Der Nutzer wird in beiden F&auml;llen informiert.
-</p>
-<div>
-<img src="./img/sesClient/ses-alerts_overshoot_de.png" width="450px" alt="example_overshoot_alert">
+    <p>F&uuml;r die Zeitreihe einer ausgew&auml;hlten Messstation k&ouml;nnen nebenstehend Benachrichtigungen erstellt
+        und abonniert werden. Im Falle eintretender Messwerte, bzw. Messwertkombinationen, wird eine Benachrichtigung an die
+        hinterlegte E-Mail Adresse des Nutzers versendet.</p>
+    <p>Es kann zwischen zwei Benachrichtungstypen gew&auml;hlt werden</p>
+    <ul>
+        <li>&Uuml;berschreitung, bzw. Unterschreitung</li>
+        <li>Sensorausfall</li>
+    </ul>
+    <p>Wann genau eine Zeitreihe ein Benachrichtigungsereignis ausl&ouml;st sollen die folgenden Skizzen verdeutlichen.
+    </p>
+
+    <h4>Messwert&uuml;ber- und unterschreitung</h4>
+    <p>Die betreffende Zeitreihe wird in regelm&auml;&szlig;igen Abst&auml;nden abgefragt und nach den eingegebenen
+        Kritierien &uuml;berpr&uuml;ft. Die eingegebenen Grenzwerte werden mit der aktuellen Zeitreihe abgeglichen. Je nach
+        zuletzt eingetretenen Fall innerhalb der Ereigniskette wird entschieden, ob ein Ereignis ausgel&ouml;st, bzw. beendet
+        wird oder nicht. Der Nutzer wird in beiden F&auml;llen informiert.</p>
+    <div>
+        <img src="./img/sesClient/ses-alerts_overshoot_de.png" width="400px" alt="example_overshoot_alert">
+    </div>
+    <p>Bei Zeitreihen handelt es sich um diskrete Messwerte, welche grafisch interpoliert und visualisiert werden. Beim
+        Zeitreihenmonitoring werden allerdings diskrete Zeitmomente als Grundlage genommen. Dies f&uuml;hrt i.d.R dazu, dass
+        eintretende Ereignisse nicht exakt mit dem (interpolierten) Kurvenverlauf einer Zeitreihe &uuml;bereinstimmen.</p>
+
+
+    <h4>Sensorausfall</h4>
+    <p>Die betreffende Zeitreihe wird in regelm&auml;&szlig;igen Abst&auml;nden abgefragt und nach eingehenden
+        Messdaten &uuml;berpr&uuml;ft, ob Messwerte vorliegen oder nicht. Falls keine Messdaten vorliegen, wird ein Ereignis
+        ausgel&ouml;st und der Nutzer dar&uuml;ber informiert. Sobald wieder Messwerte vorliegen, erfolgt eine weitere
+        Benachrichtigung.</p>
+    <div>
+        <img src="./img/sesClient/ses-alerts_sensorloss_de.png" width="400px" alt="example_sensorloss_alert">
+    </div>
+    <p>Bei einem eingegebenen Zeitintervall von z.B. einer Stunden, kann es im Extremfall fast doppelt so lange dauern,
+        bis ein Sensorausfallereignis ausl&ouml;st, da letzte Messwert zu Anfang des betrachteten Zeitintervalls liegen kann.
+    </p>
+
 </div>
-<p>
-Bei Zeitreihen handelt es sich um diskrete Messwerte, welche grafisch interpoliert und visualisiert werden. Beim Zeitreihenmonitoring
-werden allerdings diskrete Zeitmomente als Grundlage genommen. Dies f&uuml;hrt i.d.R dazu, dass eintretende Ereignisse nicht exakt mit dem
-(interpolierten) Kurvenverlauf einer Zeitreihe &uuml;bereinstimmen.
-</p>
-
-
-<h4><b>Sensorausfall</b></h4>
-<p>
-Die betreffende Zeitreihe wird in regelm&auml;&szlig;igen Abst&auml;nden abgefragt und nach eingehenden Messdaten &uuml;berpr&uuml;ft,
-ob Messwerte vorliegen oder nicht. Falls keine Messdaten vorliegen, wird ein Ereignis ausgel&ouml;st und der Nutzer dar&uuml;ber informiert. 
-Sobald wieder Messwerte vorliegen, erfolgt eine weitere Benachrichtigung.
-</p>
-<div>
-<img src="./img/sesClient/ses-alerts_sensorloss_de.png" width="450px" alt="example_sensorloss_alert">
-</div>
-<p>
-Bei einem eingegebenen Zeitintervall von z.B. einer Stunden, kann es im Extremfall fast doppelt so lange dauern, bis ein Sensorausfallereignis
-ausl&ouml;st, da letzte Messwert zu Anfang des betrachteten Zeitintervalls liegen kann.
-</p>
-
-
-<!-- 
-<h4><b><a name = "view_password">Passwort vergessen?</a></b></h4>
-<img src="./img/sesClient/DE_view_password.png" alt="password" width="1024" height="768"><br><br>
-
-<p>
-Diese Funktionalit&auml;t bietet Nutzern, die ihr Passwort vergessen haben, die M&ouml;glichkeit, sich ein neues zuschicken zu lassen. Hierf&uuml;r muss der Nutzer seinen Nutzernamen und die E-Mail-Adresse, welche f&uuml;r die Registrierung verwendet wurde, angeben. Das neue Passwort kann dann im E-Mail-Postfach abgerufen werden. Beim n&auml;chsten Anmelden wird der Nutzer darauf hingewiesen, sein Passwort zu &auml;ndern.
-</p>
-<div align="right">
-    <a href="#overview"><font size="1">Zur&uuml;ck zur &Uuml;bersicht</font></a><br>
-</div>
-<hr>
- -->
- 
-
-
-<!-- 
-<p>
-Diese Sicht erlaubt es dem Nutzer, einfache Regeln zu erstellen. Damit die Regel erstellt, wird m&uuml;ssen alle angezeigten Felder gef&uuml;llt sein.
-Im Feld &quot;Sensor&quot; wird der Sensor ausgew&auml;hlt f&uuml;r den die Regel gelten soll. Nach der Auswahl erscheint im Feld &quot;Ph&auml;nomen&quot; eine Liste aller verf&uuml;gbaren Ph&auml;nomene f&uuml;r diesen Sensor. Bei &quot;Regeltyp&quot; gibt es insgesamt  f&uuml;nf Typen zur Auswahl:
-</p>
-<ol>
-  <li>&Uuml;berschreitung/Unterschreitung</li>
-  <li>Tendenz &uuml;ber Zeit</li>
-  <li>Tendenz &uuml;ber Anzahl</li>
-  <li>Summe &uuml;ber Zeit</li>
-  <li>Sensorausfall</li>
-</ol>
-<p>
-Je nach ausgew&auml;hltem Regeltyp erscheinen regelspezifische Eingabefelder, die ausgef&uuml;llt werden m&uuml;ssen. Bei manchen Regeln kann der Nutzer zus&auml;tzlich bestimmen, ob die Einstiegsklausel (Warnung) gleich der Ausstiegsklausel (Entwarnung) sein soll. Standardm&auml;&szlig;ig ist &quot;ja&quot; ausgew&auml;hlt. Dabei wird bei der Ausstiegsklausel der Inverse Operator ausgew&auml;hlt.  Bei &quot;nein&quot; erscheinen weitere Eingabefelder, in denen man die Ausstiegsbedingungen definieren muss.
-</p>
-<p>
-<b><i>Beispiel:</i></b> Der Nutzer w&auml;hlt einen Sensor und &quot;Wasserstand&quot; als Ph&auml;nomen aus. Der Regeltyp ist &quot;&Uuml;berschreitung/Unterschreitung&quot;. Als Operator wird &quot;&gt;&quot; ausgew&auml;hlt und die restlichen Felder mit &quot;450&quot; und &quot;cm&quot; gef&uuml;llt. Das bedeutet, dass die Einstiegsklausel erf&uuml;llt ist wenn der Wasserstand am ausgew&auml;hlten Sensor 450 cm &uuml;berschreitet und somit gr&ouml;&szlig;er (&quot;&gt;&quot;) als 450 cm ist. Die Ausstiegsklausel ist erst dann erf&uuml;llt, wenn es vorher eine Warnung gab und der Wasserstand danach auf 450 cm oder weniger f&auml;llt (&lt;=).
-</p>
-<p>
-Weiterhin muss der Nutzer eine Beschreibung der Regel angeben. Diese wird dann in den Listen der vorhandenen Regeln zusammen mit dem Regelnamen angezeigt und erleichtert die Identifikation der Regel.
-</p>
-<p>
-Zum Schluss kann der Nutzer sich entscheiden, ob er die Regel freigibt und diese den anderen Nutzern zur Verf&uuml;gung stellt. Ist die Regel freigegeben, erscheint sie bei anderen Nutzern unter &quot;Regeln anderer Nutzer&quot;.
-</p>
-<p>
-Nach dem Dr&uuml;cken der Taste &quot;Erstellen&quot; wird die Regel erstellt und der Nutzer zu der Sicht &quot;Regeln abonnieren&quot; weitergeleitet. Es kann sein, dass der gew&auml;hlte Regelname schon anderweitig vorhanden ist. Der Nutzer wird dann darauf hingewiesen diesen zu &auml;ndern, damit die Regel erstellt werden kann.
-</p>
-<div align="right">
-	<a href="#overview"><font size="1">Zur&uuml;ck zur &Uuml;bersicht</font></a><br>
-</div>
-<hr>
-
-<h4><b><a name = "view_createComplex">Komplexe Regel erstellen</a></b></h4>
-<img src="./img/sesClient/DE_view_createComplexRule.png" alt="create_complex" width="1024" height="768"><br><br>
-
-<p>
-Diese Sicht erlaub es dem Nutzer eine komplexe Regel zu erstellen. Eine komplexe Regel besteht aus mindestens zwei Basis-Regeln und/oder komplexen Regeln, die mit einem logischen Operator verkn&uuml;pft werden. Die maximale Anzahl der zu verkn&uuml;pfenden Regeln betr&auml;gt sechs. Man kann aber die erstellte komplexe Regel als eine von sechs Regeln zur Erstellung einer weiteren komplexen Regel benutzen und somit theoretisch unendlich viele Regeln miteinander verkn&uuml;pfen.
-</p>
-<p>
-Am Anfang kann der Nutzer die zu verwendenden Regeln eingrenzen, in dem er ausw&auml;hlt welche Regeln angezeigt werden sollen (eigene Regeln, Regeln anderer Nutzer oder alle Regeln). Nach der Auswahl wird das Regelfeld zur&uuml;ckgesetzt. Im Regelfeld kann der Nutzer Regeln und die Operatoren ausw&auml;hlen. Mit &quot;Block hinzuf&uuml;gen&quot; wird ein Block mit zwei verkn&uuml;pften Regeln der aktuellen Sicht angeh&auml;ngt. Bei &quot;Regel hinzuf&uuml;gen&quot; wird nur ein einzelnes Regelfeld hinzugef&uuml;gt.
-</p>
-<p>
-&Auml;hnlich wie bei Basis-Regel erstellen m&uuml;ssen noch Beschreibung und die Freigabe der Regel definiert werden.
-</p>
-<div align="right">
-	<a href="#overview"><font size="1">Zur&uuml;ck zur &Uuml;bersicht</font></a><br>
-</div>
-<hr>
-
-<h4><b><a name = "view_subscribe">Regeln abonnieren</a></b></h4>
-<img src="./img/sesClient/DE_view_subscribeRules.png" alt="subscribe" width="1024" height="768"><br><br>
-
-<p>
-Diese Sicht besteht aus zwei Tabellen. In der oberen Tabelle werden alle eigenen Regeln angezeigt. In der zweiten Tabelle werden alle, von anderen Nutzern, freigegebene Regeln angezeigt.  Hier kann der Nutzer Regeln abonnieren. Dazu muss es nur das gew&uuml;nschte Medium (SMS, E-Mail) und das Format (Text, XML, EML) w&auml;hlen. Es k&ouml;nnen mehrere Abonnements gleichzeitig abgeschlossen werden.
-</p>
-
-<table border="1">
-	<tr>
- 		<th>Format</th>
- 		<th>Beschreibung</th>
-	</tr>
-	<tr>
- 		<td>Text</td>
- 		<td>Die Benachrichtigung wird als Flie&szlig;text erstellt</td>
-	</tr>
-	<tr>
- 		<td>XML</td>
-  		<td>Die Nachricht besteht aus XML-Elementen </td>
-	</tr>
-	<tr>
-  		<td>EML</td>
- 	 	<td>Der SES-Output wird direkt weitergeleitet</td>
-	</tr>
-</table> 
-
-<p>
-Das Abonnieren der Regeln anderer Nutzer ist analog. Der Unterschied ist nur, dass die zu abonnierende Regeln vorher in den eigenen Bestand kopiert werden. Es werden also die Kopien der Regeln abonniert.
-</p>
-<div align="right">
-	<a href="#overview"><font size="1">Zur&uuml;ck zur &Uuml;bersicht</font></a><br>
-</div>
-<hr>
-
-<h4><b><a name = "view_editRules">Regeln editieren</a></b></h4>
-<img src="./img/sesClient/DE_view_editRules.png" alt="edit_rules" width="1024" height="768"><br><br>
-<p>
-Diese Sicht erlaubt dem Nutzer seine Regeln zu verwalten. Hier kann man seine Regeln editieren, Regeln freigeben bzw. die Freigabe aufheben oder Regeln l&ouml;schen.
-</p>
-<p>
-<b><i>Achtung:</i></b> Will man eine Regel editieren, die schon abonniert wurde, dann wird das aktuelle Abonnement beendet und ein neues f&uuml;r die ge&auml;nderte Regel angelegt.
-</p>
-<p>
-Diese Sicht enth&auml;lt eine zweite Tabelle, in welcher alle freigegebene Regeln anderer Nutzer aufgelistet sind. Diese kann man in den eigenen Bestand kopieren. Dabei wird der Name der Regel um den eigenen Nutzernamen erweitert. 
-</p>
-<p>
-<b><i>Beispiel:</i></b> Der Nutzer &quot;beispielNutzer&quot; m&ouml;chte die Regel &quot;Beispiel_Regel&quot; in den eigenen Bestand kopieren.  Nach dem Kopieren wird die Regel im eigenen Bestand unter &quot;Beispiel_Regel_beispielNutzer&quot; gelistet.
-</p>
-<div align="right">
-	<a href="#overview"><font size="1">Zur&uuml;ck zur &Uuml;bersicht</font></a><br>
-</div>
-<hr>
-
-<h4><b><a name = "view_subscriptions">Abonnements</a></b></h4>
-<img src="./img/sesClient/DE_view_subscriptions.png" alt="subscriptions" width="1024" height="768"><br><br>
-<p>
-In dieser Tabelle hat der Nutzer einen &Uuml;berblick &uuml;ber alle seine Abonnements. Zu jedem Abonnement wird das ausgew&auml;hlte Medium und Format angezeigt. Hier kann der Nutzer seine Abonnements beenden.
-</p>
-<div align="right">
-	<a href="#overview"><font size="1">Zur&uuml;ck zur &Uuml;bersicht</font></a><br>
-</div>
-<hr>
-
-<h4><b><a name = "view_editProfile">Profil editieren</a></b></h4>
-<img src="./img/sesClient/DE_view_editProfile.png" alt="editProfile" width="1024" height="768"><br><br>
-<p>
-Hier kann der Nutzer seine Daten einsehen und editieren.
-</p>
-<div align="right">
-	<a href="#overview"><font size="1">Zur&uuml;ck zur &Uuml;bersicht</font></a><br>
-</div>
-<hr>
-
-<h4><b><a name = "view_userManagement">Nutzer/Abos</a></b></h4>
-<img src="./img/sesClient/DE_view_userManagement.png" alt="user_management" width="1024" height="768"><br><br>
-<p>
-Diese Sicht ist nur von den Administratoren des SES-Clients erreichbar. In der Tabelle hat der Administrator eine &Uuml;bersicht &uuml;ber alle registrierten Nutzer, die ihre Registrierung best&auml;tigt haben. Er kann auf einen Blick den Namen, E-Mail-Adresse, Handynummer und die Rolle des Nutzers sehen. Ein Nutzer kann hier entweder die Rolle <i>USER</i> oder <i>ADMIN</i> besitzen. Der Administrator kann alle Nutzerdaten editieren, sowie die Rolle &auml;ndern. Dabei ist sichergestellt, dass es zu jeder Zeit mindestens einen Administrator gibt. Weiterhin hat der Administrator die M&ouml;glichkeit, Nutzer zu l&ouml;schen oder neue Nutzer anzulegen. Hierf&uuml;r m&uuml;ssen mindestens der Nutzernamen, die E-Mail-Adresse und die Rolle angegeben werden. Nach der Erstellung wird an die E-Mail-Adresse eine Best&auml;tigungs-E-Mail geschickt, die von dem neuen Nutzer best&auml;tigt werden muss.
-</p>
-<div align="right">
-	<a href="#overview"><font size="1">Zur&uuml;ck zur &Uuml;bersicht</font></a><br>
-</div>
-<hr>
-
- -->
-<!-- 
-<h4><b><a name = "view_sensorManagement">Sensorverwaltung</a></b></h4>
-<img src="./img/sesClient/DE_view_sensorManagement.png" alt="sensor_management" width="1024" height="768"><br><br>
-<p>
-Diese Sicht ist nur von den Administratoren des SES-Clients erreichbar. In der Tabelle hat der Administrator eine &Uuml;bersicht &uuml;ber alle registrierten Sensoren im SES. Es wird die SensorID, der Status (aktiv/inaktiv) und ob der Sensor in irgendeiner erstellten Regel benutzt wird, angezeigt. Durch das Aktivieren/Deaktivieren der Sensoren, stehen bei der Erzeugung von neuen Regeln nicht mehr zur Verf&uuml;gungdiese, werden aber nicht aus dem SES entfernt. Wird ein Sensor deaktiviert, so erhalten alle Nutzer, die diesen Sensor in einem Abonnement benutzen, eine E-Mail mit der Benachrichtigung dar&uuml;ber. Die Abonnements sind weiterhin aktiv.
-</p>
-<div align="right">
-	<a href="#overview"><font size="1">Zur&uuml;ck zur &Uuml;bersicht</font></a><br>
-</div>
-<hr>
-
-<h4><b><a name = "view_allRules">Alle Regeln anzeigen</a></b></h4>
-<img src="./img/sesClient/DE_view_allRules.png" alt="all_rules" width="1024" height="768"><br><br>
-<p>
-Diese Sicht ist nur von den Administratoren des SES-Clients erreichbar. In der Tabelle hat der Administrator eine  &Uuml;bersicht &uuml;ber alle erstellten Regeln im SES-Client. Bei Regeln anderer Nutzer kann der Administrator die Freigabe der Regel aufheben. Sind diese nicht freigegeben, dann darf der Administrator diese auch nicht freigeben. Das Editieren der Regeln ist hier nur m&ouml;glich, wenn dies auch eine eigene Regel ist. Unerw&uuml;nschte Regeln kann der Administrator l&ouml;schen.
-</p>
-<div align="right">
-	<a href="#overview"><font size="1">Zur&uuml;ck zur &Uuml;bersicht</font></a><br>
-</div>
-<hr>
- -->
-
-
-<!-- CONTACT 
-<h2><a name="contact">5. Kontakt</a></h2>
-<form action="MAILTO:52n.development@gmail.com" method="post" enctype="text/plain">
-Name:<br>
-<input type="text" name="name" value="Name"><br>
-E-mail:<br>
-<input type="text" name="mail" value="E-Mail"><br>
-Kommentar:<br>
-<input type="text" name="comment" value="Kommentar" size="50">
-<br><br>
-<input type="submit" value="Send">
-<input type="reset" value="Reset">
-</form>
-</BODY>
-</HTML>	
--->
-</div>
+</body>
+</html>
