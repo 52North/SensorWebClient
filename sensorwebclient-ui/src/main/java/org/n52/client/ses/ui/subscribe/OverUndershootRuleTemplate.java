@@ -24,7 +24,7 @@ import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
-public class OverUndershootRuleTemplate extends RuleTemplate {
+public class OverUndershootRuleTemplate extends SubscriptionTemplate {
     
     private SelectItem exitOperatorItem;
     private TextItem exitValueItem;

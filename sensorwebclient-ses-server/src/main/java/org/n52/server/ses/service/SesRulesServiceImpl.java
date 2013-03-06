@@ -89,7 +89,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse subscribe(SessionInfo sessionInfo, String uuid, String medium, String eml) throws Exception {
         try {
-            if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
+            if ( !sessionStore.isKnownActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
             LOGGER.debug("subscribe to rule with UUID: {}", uuid);
@@ -300,7 +300,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse unSubscribe(SessionInfo sessionInfo, String uuid, String medium, String eml) throws Exception {
         try {
-            if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
+            if ( !sessionStore.isKnownActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
             LOGGER.debug("unsubscribe from rule with UUID: {}", uuid);
@@ -369,7 +369,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     public SesClientResponse createBasicRule(SessionInfo sessionInfo, Rule rule, boolean edit, String oldRuleName) throws Exception {
         try {
             LOGGER.debug("createBasicRule: {} (session {})", rule, sessionInfo);
-            if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
+            if ( !sessionStore.isKnownActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
             
@@ -478,7 +478,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse getAllOwnRules(SessionInfo sessionInfo, boolean edit) throws Exception {
         try {
-            if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
+            if ( !sessionStore.isKnownActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
             String id = sessionStore.getLoggedInUserId(sessionInfo);
@@ -538,7 +538,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse getAllOtherRules(SessionInfo sessionInfo, boolean edit) throws Exception {
         try {
-            if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
+            if ( !sessionStore.isKnownActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
             String id = sessionStore.getLoggedInUserId(sessionInfo);
@@ -603,7 +603,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse publishRule(SessionInfo sessionInfo, String ruleName, boolean published) throws Exception {
         try {
-            if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
+            if ( !sessionStore.isKnownActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
             LOGGER.debug("publish rule: " + ruleName + ": " + published);
@@ -622,7 +622,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse getAllRules(SessionInfo sessionInfo) throws Exception {
         try {
-            if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
+            if ( !sessionStore.isKnownActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
             LOGGER.debug("get all rules");
@@ -659,7 +659,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse deleteRule(SessionInfo sessionInfo, String uuid) throws Exception {
         try {
-            if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
+            if ( !sessionStore.isKnownActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
             LOGGER.debug("delete rule with uuid " + uuid);
@@ -829,7 +829,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                                                boolean edit,
                                                String oldRuleName) throws Exception {
         try {
-            if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
+            if ( !sessionStore.isKnownActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
             LOGGER.debug("create complex rule: " + rule.getTitle());
@@ -967,7 +967,7 @@ public class SesRulesServiceImpl implements SesRuleService {
     @Override
     public SesClientResponse getUserSubscriptions(SessionInfo sessionInfo) throws Exception {
         try {
-            if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
+            if ( !sessionStore.isKnownActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
             String userID = sessionStore.getLoggedInUserId(sessionInfo);

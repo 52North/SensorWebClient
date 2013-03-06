@@ -22,7 +22,7 @@ import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 
-public class SensorLossRuleTemplate extends RuleTemplate {
+public class SensorLossRuleTemplate extends SubscriptionTemplate {
 
     private DynamicForm conditionForm;
 

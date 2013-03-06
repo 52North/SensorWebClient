@@ -38,7 +38,6 @@ public class ProfileWindow extends LoginWindow {
         if (userDataLayout != null) {
             userDataLayout.clearValues();
         }
-        clearContent();
         content = new HLayout();
         content.addMember(createEditProfileLayout());
         content.addMember(createSubcriptionsLayout());

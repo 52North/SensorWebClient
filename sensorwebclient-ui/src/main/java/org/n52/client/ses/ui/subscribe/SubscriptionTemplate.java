@@ -15,13 +15,13 @@ import com.smartgwt.client.widgets.layout.LayoutSpacer;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 
-public abstract class RuleTemplate {
+public abstract class SubscriptionTemplate {
     
     protected static final int EDIT_ITEMS_WIDTH = 50;
     protected EventSubscriptionController controller;
     private Canvas content;
 
-    public RuleTemplate(final EventSubscriptionController controller) {
+    public SubscriptionTemplate(final EventSubscriptionController controller) {
         this.controller = controller;
         this.content = createEditCanvas();
     }

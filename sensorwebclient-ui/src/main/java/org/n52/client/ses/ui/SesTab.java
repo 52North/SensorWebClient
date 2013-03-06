@@ -64,7 +64,7 @@ public class SesTab extends DataPanelTab {
 
     private CreateComplexRuleLayout complexLayout;
 
-    private EditProfileLayout editProfileLayout;
+//    private EditProfileLayout editProfileLayout;
 
     private AllRulesLayout allRulesLayout;
 
@@ -115,8 +115,8 @@ public class SesTab extends DataPanelTab {
         this.complexLayout = new CreateComplexRuleLayout();
         this.complexLayout.setCanAcceptDrop(true);
 
-        this.editProfileLayout = new EditProfileLayout();
-        this.editProfileLayout.setCanAcceptDrop(true);
+//        this.editProfileLayout = new EditProfileLayout();
+//        this.editProfileLayout.setCanAcceptDrop(true);
 
 //        this.simpleRuleLayout = new CreateSimpleRuleLayout();
 //        this.simpleRuleLayout.setCanAcceptDrop(true);
@@ -178,9 +178,9 @@ public class SesTab extends DataPanelTab {
             this.layout.setMembers(this.ruleLayout);
             break;
 
-        case EDIT_PROFILE:
-            this.layout.setMembers(this.editProfileLayout);
-            break;
+//        case EDIT_PROFILE:
+//            this.layout.setMembers(this.editProfileLayout);
+//            break;
 
             // TODO remove dead code
 //        case CREATE_SIMPLE:
@@ -224,15 +224,6 @@ public class SesTab extends DataPanelTab {
     @Override
     public DataControls getDataControls() {
         return this.controller.getControls();
-    }
-
-    /**
-     * Gets the edits the profile layout.
-     * 
-     * @return the edits the profile layout
-     */
-    public EditProfileLayout getEditProfileLayout() {
-        return this.editProfileLayout;
     }
 
     /**

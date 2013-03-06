@@ -25,6 +25,7 @@
 package org.n52.client.ses.ui.subscribe;
 
 import static com.smartgwt.client.types.Alignment.RIGHT;
+import static com.smartgwt.client.types.Overflow.VISIBLE;
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.event.RuleCreatedEvent.TYPE;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
@@ -60,6 +61,9 @@ public class EventSubscriptionWindow extends LoginWindow {
 
     private Layout ruleTemplateEditCanvas;
 
+    /**
+     * @param dataItem the timeseries item to create a subscription for.
+     */
     public EventSubscriptionWindow(TimeSeries dataItem) {
     	super(COMPONENT_ID);
         new EventSubsriptionWindowEventBroker(this);
@@ -68,15 +72,22 @@ public class EventSubscriptionWindow extends LoginWindow {
         initializeContent();
     }
 
+    @Override
     protected void loadWindowContent() {
-        clearContent();
         content = new HLayout();
         content.setStyleName("n52_sensorweb_client_create_abo_window_content");
-        content.addMember(createNewEventAbonnementCanvas());
-        content.addMember(createContextWindowHelp());
+        content.addMember(createSubscribeAndHelpContent());
         setTitle(i18n.createAboWindowTitle());
         addItem(content);
         markForRedraw();
+    }
+
+    private Canvas createSubscribeAndHelpContent() {
+        Layout layout = new HLayout();
+        layout.addMember(createNewEventAbonnementCanvas());
+        layout.addMember(createContextWindowHelp());
+        layout.setOverflow(VISIBLE);
+        return layout;
     }
 
     private Canvas createNewEventAbonnementCanvas() {
@@ -92,31 +103,51 @@ public class EventSubscriptionWindow extends LoginWindow {
 
     private Canvas createStationInfo() {
         TimeSeries timeSeries = controller.getTimeSeries();
+        StaticTextItem stationName = createStationNameItem(timeSeries);
+        StaticTextItem parameter = createPhenomenonItem(timeSeries);
+        HeaderItem header = createHeaderItem();
+        DynamicForm form = createStationInfoForm();
+        form.setFields(header, stationName, parameter);
+        return form;
+    }
+
+    private StaticTextItem createStationNameItem(TimeSeries timeSeries) {
         StaticTextItem stationName = new StaticTextItem();
         stationName.setTitle(i18n.station());
         stationName.setValue(timeSeries.getStationName());
+        return stationName;
+    }
+
+    private StaticTextItem createPhenomenonItem(TimeSeries timeSeries) {
         StaticTextItem parameter = new StaticTextItem();
         parameter.setTitle(i18n.phenomenon());
         parameter.setValue(timeSeries.getPhenomenonId());
-        HeaderItem header = new HeaderItem();
-        header.setDefaultValue(i18n.createBasicRule());
+        return parameter;
+    }
+
+    private DynamicForm createStationInfoForm() {
         DynamicForm form = new DynamicForm();
         form.setStyleName("n52_sensorweb_client_create_abo_info");
-        form.setFields(header, stationName, parameter);
         return form;
+    }
+
+    private HeaderItem createHeaderItem() {
+        HeaderItem header = new HeaderItem();
+        header.setDefaultValue(i18n.createBasicRule());
+        return header;
     }
 
     private Canvas createRuleTemplateSelectionCanvas() {
         Layout selectionCanvas = new VLayout();
         SelectSubscriptionForm selectionRadioForm = new SelectSubscriptionForm(controller);
-        RuleTemplate template = selectionRadioForm.getDefaultRuleTemplate();
+        SubscriptionTemplate template = selectionRadioForm.getDefaultSubscriptionTemplate();
         Canvas ruleTemplateEditCanvas = createRuleTemplateEditorCanvas(template);
         selectionCanvas.addMember(selectionRadioForm);
         selectionCanvas.addMember(ruleTemplateEditCanvas);
         return selectionCanvas;
     }
 
-    private Canvas createRuleTemplateEditorCanvas(RuleTemplate template) {
+    private Canvas createRuleTemplateEditorCanvas(SubscriptionTemplate template) {
         ruleTemplateEditCanvas = new VLayout();
         ruleTemplateEditCanvas.setStyleName("n52_sensorweb_client_edit_create_abo_edit");
         ruleTemplateEditCanvas.addMember(template.getTemplateContent());
@@ -163,6 +194,7 @@ public class EventSubscriptionWindow extends LoginWindow {
         HTMLPane htmlPane = new HTMLPane();
         htmlPane.setContentsURL(i18n.helpPath());
         htmlPane.setStyleName("n52_sensorweb_client_create_abo_context_help");
+        htmlPane.setHeight(1050);
         return htmlPane;
     }
 
@@ -170,14 +202,14 @@ public class EventSubscriptionWindow extends LoginWindow {
         controller.setTimeseries(timeseries);
     }
 
-    public void updateRuleEditCanvas(RuleTemplate template) {
+    public void updateSubscriptionEditingCanvas(SubscriptionTemplate template) {
         for (Canvas canvas : ruleTemplateEditCanvas.getMembers()) {
             canvas.removeFromParent();
-            canvas.destroy();
+            canvas.markForDestroy();
         }
         Canvas ruleEditCanvas = template.getTemplateContent();
         ruleTemplateEditCanvas.addMember(ruleEditCanvas);
-        ruleTemplateEditCanvas.redraw();
+        ruleTemplateEditCanvas.markForRedraw();
     }
     
     private static class EventSubsriptionWindowEventBroker implements RuleCreatedEventHandler {

@@ -270,8 +270,8 @@ public class SesRequestManager extends RequestManager {
 
             @Override
             public void onSuccess(Void result) {
-                getMainEventBus().fireEvent(new SetRoleEvent(UserRole.LOGOUT));
                 createSessionInfo();
+                getMainEventBus().fireEvent(new SetRoleEvent(UserRole.LOGOUT));
             }
         };
         sesUserService.logout(sessionInfo, callback);

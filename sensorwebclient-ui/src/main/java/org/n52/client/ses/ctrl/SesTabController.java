@@ -57,12 +57,10 @@ import org.n52.client.ses.event.GetSingleUserEvent;
 import org.n52.client.ses.event.InformUserEvent;
 import org.n52.client.ses.event.SetRoleEvent;
 import org.n52.client.ses.event.ShowAllUserEvent;
-import org.n52.client.ses.event.UpdateProfileEvent;
 import org.n52.client.ses.event.handler.ChangeLayoutEventHandler;
 import org.n52.client.ses.event.handler.InformUserEventHandler;
 import org.n52.client.ses.event.handler.SetRoleEventHandler;
 import org.n52.client.ses.event.handler.ShowAllUserEventHandler;
-import org.n52.client.ses.event.handler.UpdateProfileEventHandler;
 import org.n52.client.ses.ui.FormLayout.LayoutType;
 import org.n52.client.ses.ui.SesTab;
 import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
@@ -98,59 +96,60 @@ public class SesTabController extends Controller<SesTab> {
     }
 
     private class SesTabEventBroker extends ATabEventBroker implements ChangeLayoutEventHandler, SetRoleEventHandler,
-            UpdateProfileEventHandler, ShowAllUserEventHandler, InformUserEventHandler, TimeSeriesChangedEventHandler, 
+            ShowAllUserEventHandler,/* InformUserEventHandler,*/ TimeSeriesChangedEventHandler, 
             TabSelectedEventHandler {
 
         public SesTabEventBroker() {
             EventBus.getMainEventBus().addHandler(ChangeLayoutEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(SetRoleEvent.TYPE, this);
-            EventBus.getMainEventBus().addHandler(UpdateProfileEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(ShowAllUserEvent.TYPE, this);
-            EventBus.getMainEventBus().addHandler(InformUserEvent.TYPE, this);
+//            EventBus.getMainEventBus().addHandler(InformUserEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(TimeSeriesChangedEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(TabSelectedEvent.TYPE, this);
         }
 
         public void onChange(ChangeLayoutEvent evt) {
-            // layout to show
             LayoutType layout = evt.getLayout();
             UserRole role = getDataControls().getRole();
             if (role != ADMIN) {
                 return; // only admin shall use old UI
             }
+            
             SesTabController.this.getTab().setLayout(layout);
             if (layout == USERLIST) {
                 getMainEventBus().fireEvent(new GetAllUsersEvent(currentSession()));
                 getDataControls().highlightSelectedButton(getDataControls().getManageUserButton());
-            } else if (layout == CREATE_COMPLEX) {
-                getMainEventBus().fireEvent(new GetAllPublishedRulesEvent(currentSession(), 1));
-                getTab().getComplexLayout().clearFields();
-                getTab().getComplexLayout().setEditCR(false);
-                getDataControls().highlightSelectedButton(getDataControls().getCreateComplexRuleButton());
-            } else if (layout == EDIT_PROFILE) {
-                getDataControls().highlightSelectedButton(getDataControls().getEditProfileButton());
-                getMainEventBus().fireEvent(new GetSingleUserEvent(currentSession()));
-            } else if (layout == ABOS) {
-                getDataControls().highlightSelectedButton(getDataControls().getAboRuleButton());
-                getMainEventBus().fireEvent(new GetAllOwnRulesEvent(currentSession(), false));
-                getMainEventBus().fireEvent(new GetAllOtherRulesEvent(currentSession(), false));
-            } else if (layout == EDIT_RULES) {
-                getDataControls().highlightSelectedButton(getDataControls().getEditRulesButton());
-                getMainEventBus().fireEvent(new GetAllOwnRulesEvent(currentSession(), true));
-                getMainEventBus().fireEvent(new GetAllOtherRulesEvent(currentSession(), true));
-            } else if (layout == RULELIST) {
-                getDataControls().highlightSelectedButton(getDataControls().getManageRulesButton());
-                getMainEventBus().fireEvent(new GetAllRulesEvent(currentSession()));
-            } else if (layout == PASSWORD) {
-                getDataControls().highlightSelectedButton(getDataControls().getGetPasswordButton());
-                getTab().getForgorPasswordLayout().clearFields();
-            } else if (layout == REGISTER) {
-                getDataControls().highlightSelectedButton(getDataControls().getRegisterButton());
-                getTab().getRegisterLayout().clearFields();
-            } else if (layout == LOGIN) {
-                getDataControls().highlightSelectedButton(getDataControls().getLoginButton());
-                getTab().getLoginLayout().clearFields();
             } 
+            
+//            else if (layout == CREATE_COMPLEX) {
+//                getMainEventBus().fireEvent(new GetAllPublishedRulesEvent(currentSession(), 1));
+//                getTab().getComplexLayout().clearFields();
+//                getTab().getComplexLayout().setEditCR(false);
+//                getDataControls().highlightSelectedButton(getDataControls().getCreateComplexRuleButton());
+//            } else if (layout == EDIT_PROFILE) {
+//                getDataControls().highlightSelectedButton(getDataControls().getEditProfileButton());
+//                getMainEventBus().fireEvent(new GetSingleUserEvent(currentSession()));
+//            } else if (layout == ABOS) {
+//                getDataControls().highlightSelectedButton(getDataControls().getAboRuleButton());
+//                getMainEventBus().fireEvent(new GetAllOwnRulesEvent(currentSession(), false));
+//                getMainEventBus().fireEvent(new GetAllOtherRulesEvent(currentSession(), false));
+//            } else if (layout == EDIT_RULES) {
+//                getDataControls().highlightSelectedButton(getDataControls().getEditRulesButton());
+//                getMainEventBus().fireEvent(new GetAllOwnRulesEvent(currentSession(), true));
+//                getMainEventBus().fireEvent(new GetAllOtherRulesEvent(currentSession(), true));
+//            } else if (layout == RULELIST) {
+//                getDataControls().highlightSelectedButton(getDataControls().getManageRulesButton());
+//                getMainEventBus().fireEvent(new GetAllRulesEvent(currentSession()));
+//            } else if (layout == PASSWORD) {
+//                getDataControls().highlightSelectedButton(getDataControls().getGetPasswordButton());
+//                getTab().getForgorPasswordLayout().clearFields();
+//            } else if (layout == REGISTER) {
+//                getDataControls().highlightSelectedButton(getDataControls().getRegisterButton());
+//                getTab().getRegisterLayout().clearFields();
+//            } else if (layout == LOGIN) {
+//                getDataControls().highlightSelectedButton(getDataControls().getLoginButton());
+//                getTab().getLoginLayout().clearFields();
+//            } 
         }
 
         public void onChangeRole(SetRoleEvent evt) {
@@ -171,57 +170,53 @@ public class SesTabController extends Controller<SesTab> {
             }
         }
 
-        public void onUpdate(UpdateProfileEvent evt) {
-            getTab().getEditProfileLayout().update(evt.getUser());
-        }
-
         public void onShow(ShowAllUserEvent evt) {
             getTab().getShowUserLayout().setData(evt.getAllUser());
         }
 
-        public void onInform(InformUserEvent evt) {
-            SesClientResponseType response = evt.getResponse().getType();
-            switch (response) {
-
-            case TERMS_OF_USE:
-                getTab().getRegisterLayout().setTermsOfUse(evt.getResponse().getMessage());
-                break;
-            case LOGIN_ACTIVATED:
-                SC.say(i18n.accountNotActivated());
-                break;
-            case LOGIN_LOCKED:
-                SC.say(i18n.accountLocked());
-                break;
-            case OWN_RULES:
-                getTab().getRuleLayout().setDataOwnRules(evt.getResponse().getBasicRules(),
-                        evt.getResponse().getComplexRules());
-                break;
-            case OTHER_RULES:
-                getTab().getRuleLayout().setDataOtherRules(evt.getResponse().getBasicRules(),
-                        evt.getResponse().getComplexRules());
-                break;
-            case EDIT_OWN_RULES:
-                getTab().getEditRulesLayout().setOwnData(evt.getResponse().getBasicRules(),
-                        evt.getResponse().getComplexRules());
-                break;
-            case EDIT_OTHER_RULES:
-                getTab().getEditRulesLayout().setOtherData(evt.getResponse().getBasicRules(),
-                        evt.getResponse().getComplexRules());
-                break;
-            case All_RULES:
-                getTab().getAllRulesLayout().setData(evt.getResponse().getBasicRules(), evt.getResponse().getComplexRules());
-                break;
-            case ALL_PUBLISHED_RULES:
-                getTab().getComplexLayout().setRules(evt.getResponse().getBasicRules());
-                break;
-            case EDIT_COMPLEX_RULE:
-                getTab().getComplexLayout().editCR(evt.getResponse());
-                break;
-            case SEARCH_RESULT:
-                getTab().getSearchLayout().setData(evt.getResponse().getBasicRules(), evt.getResponse().getComplexRules());
-                break;
-            }
-        }
+//        public void onInform(InformUserEvent evt) {
+//            SesClientResponseType response = evt.getResponse().getType();
+//            switch (response) {
+//
+//            case TERMS_OF_USE:
+//                getTab().getRegisterLayout().setTermsOfUse(evt.getResponse().getMessage());
+//                break;
+//            case LOGIN_ACTIVATED:
+//                SC.say(i18n.accountNotActivated());
+//                break;
+//            case LOGIN_LOCKED:
+//                SC.say(i18n.accountLocked());
+//                break;
+//            case OWN_RULES:
+//                getTab().getRuleLayout().setDataOwnRules(evt.getResponse().getBasicRules(),
+//                        evt.getResponse().getComplexRules());
+//                break;
+//            case OTHER_RULES:
+//                getTab().getRuleLayout().setDataOtherRules(evt.getResponse().getBasicRules(),
+//                        evt.getResponse().getComplexRules());
+//                break;
+//            case EDIT_OWN_RULES:
+//                getTab().getEditRulesLayout().setOwnData(evt.getResponse().getBasicRules(),
+//                        evt.getResponse().getComplexRules());
+//                break;
+//            case EDIT_OTHER_RULES:
+//                getTab().getEditRulesLayout().setOtherData(evt.getResponse().getBasicRules(),
+//                        evt.getResponse().getComplexRules());
+//                break;
+//            case All_RULES:
+//                getTab().getAllRulesLayout().setData(evt.getResponse().getBasicRules(), evt.getResponse().getComplexRules());
+//                break;
+//            case ALL_PUBLISHED_RULES:
+//                getTab().getComplexLayout().setRules(evt.getResponse().getBasicRules());
+//                break;
+//            case EDIT_COMPLEX_RULE:
+//                getTab().getComplexLayout().editCR(evt.getResponse());
+//                break;
+//            case SEARCH_RESULT:
+//                getTab().getSearchLayout().setData(evt.getResponse().getBasicRules(), evt.getResponse().getComplexRules());
+//                break;
+//            }
+//        }
 
 
         public void onTimeSeriesChanged(TimeSeriesChangedEvent evt) {

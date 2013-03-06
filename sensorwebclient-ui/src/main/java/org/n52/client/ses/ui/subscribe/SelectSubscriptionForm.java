@@ -46,7 +46,7 @@ public class SelectSubscriptionForm extends DynamicForm {
         this.setStyleName("n52_sensorweb_client_create_abo_selection");
         this.controller = controller;
         setFields(createPredefinedEventSelectionItem());
-        controller.setSelectedRuleTemplate(getDefaultRuleTemplate());
+        controller.setSelectedSubscriptionTemplate(getDefaultSubscriptionTemplate());
     }
 
     private RadioGroupItem createPredefinedEventSelectionItem() {
@@ -82,11 +82,11 @@ public class SelectSubscriptionForm extends DynamicForm {
         return valueMap;
     }
     
-    RuleTemplate getDefaultRuleTemplate() {
+    SubscriptionTemplate getDefaultSubscriptionTemplate() {
         return createRuleTemplateFor(controller.getDefaultTemplate());
     }
     
-    private RuleTemplate createRuleTemplateFor(SimpleRuleType template) {
+    private SubscriptionTemplate createRuleTemplateFor(SimpleRuleType template) {
         if (template == NONE) {
             GWT.log("Unknown template selected!");
             return null;
@@ -100,11 +100,11 @@ public class SelectSubscriptionForm extends DynamicForm {
         }
     }
 
-    private RuleTemplate createOverUndershootRuleTemplate() {
+    private SubscriptionTemplate createOverUndershootRuleTemplate() {
         return new OverUndershootRuleTemplate(controller);
     }
 
-    private RuleTemplate createSensorLossRuleTemplate() {
+    private SubscriptionTemplate createSensorLossRuleTemplate() {
         return new SensorLossRuleTemplate(controller);
     }
 

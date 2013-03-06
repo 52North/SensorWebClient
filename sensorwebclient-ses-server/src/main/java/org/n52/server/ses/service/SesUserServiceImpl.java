@@ -282,7 +282,7 @@ public class SesUserServiceImpl implements SesUserService {
     
     public SesClientResponse validateLoginSession(SessionInfo sessionInfo) throws Exception {
         try {
-            if (sessionStore.isActiveSessionInfo(sessionInfo)) {
+            if (sessionStore.isKnownActiveSessionInfo(sessionInfo)) {
                 if (sessionStore.isLoggedInAdmin(sessionInfo)) {
                     UserDTO transferUser = getUserFromValidSession(sessionInfo);
                     SesClientResponse response = new SesClientResponse(LOGIN_ADMIN, transferUser);
@@ -362,7 +362,7 @@ public class SesUserServiceImpl implements SesUserService {
     @Override
     public SesClientResponse getUser(SessionInfo sessionInfo) throws Exception {
         try {
-            if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
+            if ( !sessionStore.isKnownActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
             LOGGER.debug("Get user with id '{}'", sessionStore.getLoggedInUserId(sessionInfo));
@@ -379,7 +379,7 @@ public class SesUserServiceImpl implements SesUserService {
     @Override
     public SesClientResponse deleteUser(SessionInfo sessionInfo, String id) throws Exception {
         try {
-            if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
+            if ( !sessionStore.isKnownActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
             LOGGER.debug("delete user with id '{}'", id);
@@ -491,7 +491,7 @@ public class SesUserServiceImpl implements SesUserService {
     @Override
     public SesClientResponse updateUser(SessionInfo sessionInfo, UserDTO newUser) throws Exception {
         try {
-            if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
+            if ( !sessionStore.isKnownActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
             LOGGER.debug("update user with id '{}'", newUser.getId());
@@ -608,7 +608,7 @@ public class SesUserServiceImpl implements SesUserService {
     @Override
     public SesClientResponse requestToDeleteProfile(SessionInfo sessionInfo) throws Exception {
         try {
-            if ( !sessionStore.isActiveSessionInfo(sessionInfo)) {
+            if ( !sessionStore.isKnownActiveSessionInfo(sessionInfo)) {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
             sessionStore.validateSessionInfo(sessionInfo);

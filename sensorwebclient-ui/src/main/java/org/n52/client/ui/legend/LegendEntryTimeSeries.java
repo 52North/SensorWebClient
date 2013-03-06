@@ -37,6 +37,7 @@ import org.eesgmbh.gimv.client.event.LoadImageDataEvent;
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ctrl.TimeManager;
+import org.n52.client.ses.ui.LoginWindow;
 import org.n52.client.ses.ui.subscribe.EventSubscriptionWindow;
 import org.n52.client.sos.ctrl.SOSController;
 import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
@@ -170,6 +171,8 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 	protected boolean wasDragged = false;
 
 	private DateTimeFormat formatter = DateTimeFormat.getFormat("dd.MM.yyyy HH:mm");
+
+    private LoginWindow subsriptionWindow;
 
 	public LegendEntryTimeSeries(TimeSeries ts, String width, String height) {
 		this.width = width;
@@ -539,12 +542,19 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 			@Override
 			public void onClick(ClickEvent event) {
 			    TimeSeries dataItem = DataStoreTimeSeriesImpl.getInst().getDataItem(timeseriesID);
-			    new EventSubscriptionWindow(dataItem).show();
+			    LegendEntryTimeSeries.this.showSubscriptionWindow(dataItem);
 			}
 		});
 	}
 
-	private void createColorChangeButton() {
+	private void showSubscriptionWindow(TimeSeries dataItem) {
+	    if (subsriptionWindow == null) {
+            subsriptionWindow = new EventSubscriptionWindow(dataItem);
+        }
+        subsriptionWindow.show();
+    }
+
+    private void createColorChangeButton() {
 		this.titleCol = new SmallButton(new Label(), i18n.changeColor(),
 				i18n.changeColorExtended());
 		this.titleCol.hide();

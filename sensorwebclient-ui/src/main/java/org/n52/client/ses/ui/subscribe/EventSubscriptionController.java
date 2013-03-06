@@ -48,7 +48,7 @@ class EventSubscriptionController {
 
     private String selectedAbonnementName;
 
-    private RuleTemplate selectedRuleTemplate;
+    private SubscriptionTemplate selectedSubsciptionTemplate;
 
     private OverUndershootSelectionData overUndershootEntryConditions;
 
@@ -103,13 +103,13 @@ class EventSubscriptionController {
 	public boolean isSelectionValid() {
 		// TODO validate template
 //		 return selectedRuleTemplate.validateTemplate();
-		if (selectedRuleTemplate instanceof OverUndershootRuleTemplate) {
+		if (selectedSubsciptionTemplate instanceof OverUndershootRuleTemplate) {
 			if (overUndershootEntryConditions.getValue() != null
 					&& overUndershootExitConditions.getValue() != null
 					&& selectedAbonnementName != null) {
 				return true;
 			}
-		} else if (selectedRuleTemplate instanceof SensorLossRuleTemplate) {
+		} else if (selectedSubsciptionTemplate instanceof SensorLossRuleTemplate) {
 			if (sensorLossConditions != null
 					&& sensorLossConditions.getUnit() != null
 					&& sensorLossConditions.getValue() != null) {
@@ -119,13 +119,13 @@ class EventSubscriptionController {
 		return false;
 	}
     
-    public void setSelectedRuleTemplate(RuleTemplate template) {
-        selectedRuleTemplate = template;
+    public void setSelectedSubscriptionTemplate(SubscriptionTemplate template) {
+        selectedSubsciptionTemplate = template;
     }
     
-    public void updateSelectedRuleTemplate(RuleTemplate template) {
-        setSelectedRuleTemplate(template);
-        eventSubscriptionWindow.updateRuleEditCanvas(template);
+    public void updateSelectedRuleTemplate(SubscriptionTemplate template) {
+        setSelectedSubscriptionTemplate(template);
+        eventSubscriptionWindow.updateSubscriptionEditingCanvas(template);
         eventNameForm.updateSuggestedAbonnementName(createSuggestedAbonnementName());
     }
     
@@ -171,9 +171,9 @@ class EventSubscriptionController {
     }
 
     public SimpleRuleType getSelectedRuleTemplate() {
-        return selectedRuleTemplate == null 
+        return selectedSubsciptionTemplate == null 
                     ? DEFAULT_RULE_TEMPLATE
-                    : selectedRuleTemplate.getRuleType();
+                    : selectedSubsciptionTemplate.getRuleType();
     }
 
     public OverUndershootSelectionData getOverUndershootEntryConditions() {

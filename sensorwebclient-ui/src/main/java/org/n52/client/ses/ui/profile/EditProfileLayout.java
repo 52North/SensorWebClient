@@ -60,9 +60,6 @@ public class EditProfileLayout extends FormLayout {
 
     private TextItem emailItem;
 
-    @Deprecated
-    private TextItem handyItem;
-
     private TextItem userNameItem;
     
     private TextItem nameItem;
@@ -135,15 +132,6 @@ public class EditProfileLayout extends FormLayout {
         RegExpValidator regExpValidator = new RegExpValidator();  
         regExpValidator.setExpression("^([+])+([0-9\\])");
         
-        // handy item
-        this.handyItem = new TextItem();
-        this.handyItem.setName("handy");
-        this.handyItem.setTitle(i18n.handy());
-        this.handyItem.setKeyPressFilter("[0-9+]");
-        this.handyItem.setLength(250);
-        this.handyItem.setWidth(this.fieldWidth);
-//        this.handyItem.setValidators(regExpValidator);
-
         // save button
         ButtonItem saveButton = new ButtonItem();
         saveButton.setTitle(i18n.saveChanges());
@@ -198,7 +186,7 @@ public class EditProfileLayout extends FormLayout {
         });
 
         this.form.setFields(this.headerItem, this.userNameItem, this.nameItem, this.newPasswordItem, newPasswordAgainItem, this.currentPasswordItem, this.emailItem,
-                emailItem2, /* this.handyItem,*/ saveButton, deleteButton);
+                emailItem2, saveButton, deleteButton);
 
         addMember(this.form);
     }

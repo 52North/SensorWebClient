@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.gwtopenmaps.openlayers.client.MapWidget;
+import org.n52.client.ses.ui.LoginWindow;
 import org.n52.client.ses.ui.profile.ProfileWindow;
 import org.n52.client.sos.event.data.ExportEvent.ExportType;
 import org.n52.client.sos.ui.StationSelector;
@@ -78,6 +79,8 @@ public class Legend extends VLayout {
     private VLayout exportMenu;
 
     private HLayout exportLoadingSpinner;
+
+    private LoginWindow profileWindow;
 
     public Legend(String id) {
         this.elemID = id;
@@ -418,13 +421,20 @@ public class Legend extends VLayout {
         sesTabLabelButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                new ProfileWindow().show();
+                Legend.this.showProfileWindow();
             }
         });
         sesTabLabelButton.setVisible(true);
         return sesTabLabelButton;
     }
     
+    private void showProfileWindow() {
+        if (profileWindow == null) {
+            profileWindow = new ProfileWindow();
+        }
+        profileWindow.show();
+    }
+
     public void switchToDiagramTab() {
         DataPanel dataPanel = View.getView().getDataPanel();
         DataPanelTab diagramTab = View.getView().getDiagramTab();

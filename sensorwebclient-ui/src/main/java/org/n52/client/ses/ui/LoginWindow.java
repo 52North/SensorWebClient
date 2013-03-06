@@ -68,11 +68,13 @@ public abstract class LoginWindow extends Window {
         new LoginWindowEventBroker(this);
         addCloseClickHandler(new CloseClickHandler() {
             public void onCloseClick(CloseClickEvent event) {
-                destroy(); // re-create window once it is closed
+//                clearContent();
+//                markForDestroy(); // re-create window once it is closed
+                hide();
             }
         });
     }
-    
+
     protected void initializeWindow() {
         setWidth(WIDTH);
         setHeight(HEIGHT);
@@ -93,14 +95,28 @@ public abstract class LoginWindow extends Window {
         });
     }
 
+    /**
+     * Must be called from the subclass instance constructor (after this {@link LoginWindow} parent has
+     * created) to render either login or the actual window content.
+     */
     protected void initializeContent() {
         if (isNotLoggedIn()) {
             loadLoginContent();
-        } else {
+        }
+        else {
             loadWindowContent();
         }
     }
+    
+    private void clearAndLoadWindowContent() {
+        clearContent();
+        loadWindowContent();
+    }
 
+    /**
+     * Loads the actual window content after successful login. Make sure you have called
+     * {@link #clearContent()} beforehand.
+     */
     protected abstract void loadWindowContent();
 
     public void loadLoginContent() {
@@ -116,20 +132,20 @@ public abstract class LoginWindow extends Window {
         clearContent();
         content = new RegisterLayout();
         addItem(content);
-        redraw();
+        markForRedraw();
     }
 
     protected void clearContent() {
         if (content != null) {
             removeItem(content);
-        }
+        } 
     }
 
     private void loadResetPasswordContent() {
         clearContent();
         content = new ResetPasswordLayout();
         addItem(content);
-        redraw();
+        markForRedraw();
     }
 
     protected void updateWindowTitle(String newTitle) {
@@ -161,17 +177,17 @@ public abstract class LoginWindow extends Window {
                 return;
             }
             else if (evt.getRole() == ADMIN) {
-                window.loadWindowContent(); // load data
+                window.clearAndLoadWindowContent();
                 window.hide(); // switch to admin UI
                 DataPanel dataPanel = View.getView().getDataPanel();
                 DataPanelTab sesTab = View.getView().getSesTab();
                 dataPanel.getPanel().selectTab(sesTab);
                 dataPanel.setCurrentTab(sesTab);
                 dataPanel.update();
-            } 
+            }
             else {
                 // user stays in modal window
-                window.loadWindowContent();
+                window.clearAndLoadWindowContent();
             }
         }
 
