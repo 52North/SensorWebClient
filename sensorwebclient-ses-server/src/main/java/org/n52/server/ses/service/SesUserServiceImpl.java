@@ -220,6 +220,7 @@ public class SesUserServiceImpl implements SesUserService {
     @Override
     public SesClientResponse login(String userName, String password, SessionInfo unboundSession) throws Exception {
         try {
+            
             LOGGER.debug("login '{}' (session {}).", userName, unboundSession);
             if ( !HibernateUtil.existsUserName(userName)) {
                 LOGGER.info("User unknown.");

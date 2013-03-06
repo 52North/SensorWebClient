@@ -91,6 +91,10 @@ public class SessionInfo implements Serializable {
     void setUserId(String userId) {
         this.userId = userId;
     }
+    
+    public boolean hasUserLoginInfo() {
+        return userId != null && username != null && role != null;
+    }
 
     /**
      * <b>Do not trust items on server side which were sent by the client. Use server's session storage to

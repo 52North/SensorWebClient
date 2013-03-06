@@ -41,7 +41,9 @@ public abstract class HibernateDaoUtil {
             return criteria.execute(session);
         }
         finally {
-            session.getTransaction().commit();
+            if (session != null) {
+                session.getTransaction().commit();
+            }
         }
     }
 

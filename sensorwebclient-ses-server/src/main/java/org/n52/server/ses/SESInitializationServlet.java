@@ -91,12 +91,7 @@ public class SESInitializationServlet extends HttpServlet {
             // init the servlet sesUserService. This servlet handle user registrations
             // and creation
             LOGGER.info("init sesUserService");
-            Thread t2 = new Thread(new Runnable() {
-                public void run() {
-                    sesUserService();
-                }
-            });
-            t2.start();
+            startInitializingSesUserService();
         } catch (Exception e) {
             LOGGER.error("Could not initialize servlet appropriatly", e);
             return;
@@ -185,7 +180,7 @@ public class SESInitializationServlet extends HttpServlet {
 
     }
 
-    private void sesUserService() {
+    private void startInitializingSesUserService() {
 
         Thread sesUserThread = new Thread(new Runnable() {
             public void run() {

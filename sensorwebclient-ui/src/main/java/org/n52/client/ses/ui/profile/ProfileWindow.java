@@ -43,12 +43,20 @@ public class ProfileWindow extends LoginWindow {
         content.addMember(createSubcriptionsLayout());
         addItem(content);
         setTitle(i18n.editUserData());
-        
+        markForRedraw();
+    }
+    
+    @Override
+    public void show() {
+        requestUserData();
+        super.show();
+    }
+
+    private void requestUserData() {
         subscriptionsLayout.clearGrid();
         final SessionInfo sessionInfo = currentSession();
         getMainEventBus().fireEvent(new GetSingleUserEvent(sessionInfo));
         getMainEventBus().fireEvent(new GetUserSubscriptionsEvent(sessionInfo));
-        markForRedraw();
     }
 
     private Canvas createEditProfileLayout() {

@@ -25,7 +25,6 @@
 package org.n52.client.ses.ctrl;
 
 import static org.n52.client.util.ClientSessionManager.currentSession;
-import static org.n52.client.util.ClientSessionManager.isNotLoggedIn;
 import static org.n52.client.util.ClientSessionManager.isPresentSessionInfo;
 
 import org.n52.client.bus.EventBus;

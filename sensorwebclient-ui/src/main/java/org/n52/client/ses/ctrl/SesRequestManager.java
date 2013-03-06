@@ -122,7 +122,7 @@ public class SesRequestManager extends RequestManager {
 
             public void onSuccess(SesClientResponse response) {
                 
-                setSessionInfo(response.getSessionInfo());
+//                setSessionInfo(response.getSessionInfo());
                 
                 if (response.getType().equals(REGISTER_OK)) {
 
@@ -133,9 +133,6 @@ public class SesRequestManager extends RequestManager {
                     else {
                         SC.say(i18n.createUserSuccessful());
                     }
-                }
-                else if (response.getType().equals(REGISTER_HANDY)) {
-                    SC.say(i18n.registerHandy());
                 }
                 else if (response.getType().equals(REGISTER_NAME)) {
                     SC.say(i18n.registerName());
@@ -272,8 +269,9 @@ public class SesRequestManager extends RequestManager {
 
             @Override
             public void onSuccess(Void result) {
-                createSessionInfo();
                 getMainEventBus().fireEvent(new SetRoleEvent(UserRole.LOGOUT));
+                createSessionInfo(); // get new session id
+                // TODO get session id from a SesClientResponse
             }
         };
         sesUserService.logout(sessionInfo, callback);

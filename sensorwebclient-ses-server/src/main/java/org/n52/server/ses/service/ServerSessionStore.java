@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 public class ServerSessionStore {
 
-    static long CLEANUP_INTERVAL_IN_MILLISECONDS = 1000 * 60 * 10; // 10 min.
+    static long CLEANUP_INTERVAL_IN_MILLISECONDS = 1000 * 60 * 60 * 6; // 6h
 
     // TODO extent session store to touch active sessions (expand expiration)
 
@@ -52,7 +52,7 @@ public class ServerSessionStore {
             }
         }
     }
-    
+
     private void cleanupNotLoggedInSessions() {
         for (SessionInfo sessionInfo : notLoggedInSessions.values()) {
             if (sessionInfo.isExpired()) {
@@ -61,7 +61,7 @@ public class ServerSessionStore {
             }
         }
     }
-    
+
     /**
      * Creates an active session for the given user. If the given (inactive) session object was not generated
      * by this server instance an exception will be thrown.<br>
@@ -105,7 +105,7 @@ public class ServerSessionStore {
         saveLoggedInSession(newSessionInfo);
         return newSessionInfo;
     }
-    
+
     /**
      * Creates and remembers a session object. Once created the server knows the session and considers it to
      * be a not-logged-in session. A user can be bound to a session object via
@@ -176,11 +176,14 @@ public class ServerSessionStore {
     /**
      * @param sessionInfo
      *        the session info to check for validity.
-     * @return <code>true</code> when session info is known and valid, <code>false</code> otherwise.
+     * @return <code>true</code> when session info is known, valid and has not been expired yet,
+     *         <code>false</code> otherwise.
      */
     public boolean isKnownActiveSessionInfo(SessionInfo sessionInfo) {
         String sessionid = sessionInfo.getSession();
-        return sessionid != null && loggedInSessions.containsKey(sessionid);
+        return sessionid != null 
+                && loggedInSessions.containsKey(sessionid)
+                && !loggedInSessions.get(sessionid).isExpired();
     }
 
     /**

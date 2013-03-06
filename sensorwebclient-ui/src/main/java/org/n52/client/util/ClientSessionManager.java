@@ -20,6 +20,8 @@ public class ClientSessionManager {
     static {
         new ClientSessionManagerEventBroker();
     }
+    
+    private static String notLoggedInSessionId;
 
     private static String loggedInUser;
 
@@ -34,7 +36,10 @@ public class ClientSessionManager {
         // we do not trust any information from client, using
         // the session id only as a pointer to accurate infos
         // hold on server side.
-        return aSessionInfo(getCookie(COOKIE_SESSION_ID)).build();
+        String cookieSessionId = getCookie(COOKIE_SESSION_ID);
+        return cookieSessionId == null 
+                ? aSessionInfo(notLoggedInSessionId).build() 
+                : aSessionInfo(cookieSessionId).build();
     }
 
     /**
@@ -51,7 +56,11 @@ public class ClientSessionManager {
 
         // gwt sets domain automatically
         String session = sessionInfo.getSession();
-        setCookie(COOKIE_SESSION_ID, session, expires, null, "/", false);
+        if (sessionInfo.hasUserLoginInfo()) {
+            setCookie(COOKIE_SESSION_ID, session, expires, null, "/", false);
+        } else {
+            notLoggedInSessionId = session;
+        }
     }
 
     /**
@@ -94,7 +103,7 @@ public class ClientSessionManager {
     }
 
     public static boolean isNotLoggedIn() {
-        return loggedInUser == null || loggedInUserId == null || loggedInUserRole == null;
+        return notLoggedInSessionId != null;
     }
 
     public static boolean isAdminLogin() {
