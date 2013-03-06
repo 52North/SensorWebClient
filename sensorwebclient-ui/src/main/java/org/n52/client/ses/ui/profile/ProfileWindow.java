@@ -4,6 +4,8 @@ package org.n52.client.ses.ui.profile;
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 import static org.n52.client.util.ClientSessionManager.currentSession;
+import static org.n52.client.util.ClientSessionManager.isLoggedIn;
+import static org.n52.client.util.ClientSessionManager.isNotLoggedIn;
 import static org.n52.shared.responses.SesClientResponseType.USER_SUBSCRIPTIONS;
 
 import org.n52.client.ses.event.GetSingleUserEvent;
@@ -13,6 +15,7 @@ import org.n52.client.ses.event.UpdateProfileEvent;
 import org.n52.client.ses.event.handler.InformUserEventHandler;
 import org.n52.client.ses.event.handler.UpdateProfileEventHandler;
 import org.n52.client.ses.ui.LoginWindow;
+import org.n52.client.util.ClientSessionManager;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.session.SessionInfo;
 
@@ -43,12 +46,15 @@ public class ProfileWindow extends LoginWindow {
         content.addMember(createSubcriptionsLayout());
         addItem(content);
         setTitle(i18n.editUserData());
+        requestUserData();
         markForRedraw();
     }
     
     @Override
     public void show() {
-        requestUserData();
+        if (isLoggedIn()) {
+            requestUserData();
+        }
         super.show();
     }
 

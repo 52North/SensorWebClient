@@ -534,19 +534,18 @@ public class HibernateUtil extends HibernateDaoUtil {
         return null;
     }
     
-    public static String getSubscriptionIdByRuleIdAndUserId(final int ruleID, final int userID) {
-    	return execute(new CriteriaExecution<String>() {
+    public static Subscription getSubscriptionIdByRuleIdAndUserId(final int ruleID, final int userID) {
+    	return execute(new CriteriaExecution<Subscription>() {
 			@Override
-			public String execute(Session session) {
+			public Subscription execute(Session session) {
 				Criteria crit = session.createCriteria(Subscription.class);
-				Subscription subscription = (Subscription) crit.add(
+				return (Subscription) crit.add(
 						Restrictions.and(Restrictions.eq(RULE_ID, ruleID),
 								Restrictions.eq(USER_ID, userID))).uniqueResult();
-				return subscription.getSubscriptionID();
 			}
 		});
     }
-
+    
     public static boolean deleteRule(String uuid) {
         BasicRule basicRule = HibernateUtil.getBasicRuleByUuid(uuid);
         ComplexRule complexRule = HibernateUtil.getComplexRuleByName(uuid);

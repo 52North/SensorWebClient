@@ -37,8 +37,8 @@ public class SessionInfo implements Serializable {
     }
 
     private Date createExpiringDate() {
-        long oneHour = 1000 * 60 * 60;
-        return new Date(currentTimeMillis() + oneHour);
+        long threeHours = 1000 * 60 * 60 * 3;
+        return new Date(currentTimeMillis() + threeHours);
     }
 
     public boolean isExpired() {

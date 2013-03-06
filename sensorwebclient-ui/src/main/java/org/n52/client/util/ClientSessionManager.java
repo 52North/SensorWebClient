@@ -103,9 +103,13 @@ public class ClientSessionManager {
     }
 
     public static boolean isNotLoggedIn() {
-        return notLoggedInSessionId != null;
+        return !isLoggedIn();
     }
 
+    public static boolean isLoggedIn() {
+        return loggedInUser != null && loggedInUserId != null && loggedInUserRole != null;
+    }
+    
     public static boolean isAdminLogin() {
         // TODO check if this check is a security issue
         return "ADMIN".equals(loggedInUserRole);
