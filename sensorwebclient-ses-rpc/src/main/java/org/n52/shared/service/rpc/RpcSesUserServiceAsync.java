@@ -49,8 +49,6 @@
 
 package org.n52.shared.service.rpc;
 
-import java.util.List;
-
 import org.n52.client.service.SesUserService;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.serializable.pojos.UserDTO;
@@ -150,7 +148,7 @@ public interface RpcSesUserServiceAsync {
      *        a callback handling the server response.
      * @see SesUserService#getAllUsers(SessionInfo)
      */
-    void getAllUsers(SessionInfo sessionInfo, AsyncCallback<List<UserDTO>> callback);
+    void getAllUsers(SessionInfo sessionInfo, AsyncCallback<SesClientResponse> callback);
 
     /**
      * See {@link SesUserService#requestToDeleteProfile(SessionInfo)} for documentation.

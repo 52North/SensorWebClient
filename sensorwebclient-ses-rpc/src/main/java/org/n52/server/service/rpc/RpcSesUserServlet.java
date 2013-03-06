@@ -28,13 +28,11 @@ import static org.n52.shared.responses.SesClientResponseType.LAST_ADMIN;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.n52.client.service.SesRuleService;
 import org.n52.client.service.SesUserService;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.service.SesUserServiceImpl;
@@ -244,7 +242,7 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
     }
 
     @Override
-    public List<UserDTO> getAllUsers(SessionInfo sessionInfo) throws Exception {
+    public SesClientResponse getAllUsers(SessionInfo sessionInfo) throws Exception {
        return service.getAllUsers(sessionInfo);
     }
 

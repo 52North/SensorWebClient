@@ -36,6 +36,7 @@ import static org.n52.client.util.ClientSessionManager.isAdminLogin;
 import static org.n52.client.util.ClientSessionManager.isUserLogin;
 import static org.n52.client.util.ClientSessionManager.setSessionInfo;
 import static org.n52.client.util.ClientSessionManager.setUserInfo;
+import static org.n52.shared.responses.SesClientResponseType.ALL_USERS;
 import static org.n52.shared.responses.SesClientResponseType.DELETE_RULE_SUBSCRIBED;
 import static org.n52.shared.responses.SesClientResponseType.EDIT_COMPLEX_RULE;
 import static org.n52.shared.responses.SesClientResponseType.ERROR;
@@ -72,6 +73,7 @@ import org.n52.client.ses.event.GetAllUsersEvent;
 import org.n52.client.ses.event.InformUserEvent;
 import org.n52.client.ses.event.LogoutEvent;
 import org.n52.client.ses.event.RuleCreatedEvent;
+import org.n52.client.ses.event.SessionExpiredEvent;
 import org.n52.client.ses.event.SetRoleEvent;
 import org.n52.client.ses.event.ShowAllUserEvent;
 import org.n52.client.ses.event.UpdateProfileEvent;
@@ -157,7 +159,7 @@ public class SesRequestManager extends RequestManager {
                 if (response.getType() == LOGIN_OK) {
                     UserDTO user = response.getUser();
 
-                    if ( !user.isEmailVerified()) {
+                    if (!user.isEmailVerified()) {
                         SC.say(i18n.validateEMail());
                     }
                     if (user.isPasswordChanged()) {
@@ -287,7 +289,7 @@ public class SesRequestManager extends RequestManager {
             @Override
             public void onSuccess(SesClientResponse result) {
                 if (result.getType() == REQUIRES_LOGIN) {
-                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                	handleRelogin();
                 }
                 else if (result.getType() == USER_INFO) {
                     UserDTO user = result.getUser();
@@ -298,7 +300,13 @@ public class SesRequestManager extends RequestManager {
         sesUserService.getUser(sessionInfo, callback);
     }
 
-    public void deleteUser(final SessionInfo sessionInfo, String userIdToDelete) {
+    protected void handleRelogin() {
+		getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+		getMainEventBus().fireEvent(new SessionExpiredEvent());
+		SC.say(i18n.relogin());
+	}
+
+	public void deleteUser(final SessionInfo sessionInfo, String userIdToDelete) {
         AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             @Override
             public void onFailure(Throwable arg0) {
@@ -309,7 +317,7 @@ public class SesRequestManager extends RequestManager {
             public void onSuccess(SesClientResponse result) {
                 final SessionInfo currentSession = currentSession();
                 if (result.getType() == REQUIRES_LOGIN) {
-                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                	handleRelogin();
                 }
                 else if (result.getType().equals(LAST_ADMIN)) {
                     SC.say(i18n.lastAdmin());
@@ -335,7 +343,7 @@ public class SesRequestManager extends RequestManager {
             @Override
             public void onSuccess(SesClientResponse response) {
                 if (response.getType() == REQUIRES_LOGIN) {
-                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                	handleRelogin();
                 }
                 else if (response.getType().equals(OK)) {
                     SC.say(i18n.updateSuccessful());
@@ -382,7 +390,7 @@ public class SesRequestManager extends RequestManager {
 
                 switch (type) {
                 case REQUIRES_LOGIN:
-                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                	handleRelogin();
                     break;
                 case OK:
                     String message = i18n.subscribeSuccessful1();
@@ -436,7 +444,7 @@ public class SesRequestManager extends RequestManager {
             @Override
             public void onSuccess(SesClientResponse result) {
                 if (result.getType() == REQUIRES_LOGIN) {
-                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                	handleRelogin();
                 }
                 else if (result.getType() == RULE_NAME_NOT_EXISTS) {
                     Rule basicRule = result.getBasicRule();
@@ -452,15 +460,21 @@ public class SesRequestManager extends RequestManager {
     }
 
     public void getAllUsers(final SessionInfo sessionInfo) {
-        AsyncCallback<List<UserDTO>> callback = new AsyncCallback<List<UserDTO>>() {
+        AsyncCallback<SesClientResponse> callback = new AsyncCallback<SesClientResponse>() {
             @Override
             public void onFailure(Throwable arg0) {
                 getToasterInstance().addErrorMessage(i18n.failedGetAllUser());
             }
 
             @Override
-            public void onSuccess(List<UserDTO> result) {
-                getMainEventBus().fireEvent(new ShowAllUserEvent(result));
+            public void onSuccess(SesClientResponse result) {
+            	if (result.getType() == REQUIRES_LOGIN) {
+                	handleRelogin();
+                }
+                else if (result.getType() == ALL_USERS) {
+                    List<UserDTO> users = result.getObjectList();
+                    getMainEventBus().fireEvent(new ShowAllUserEvent(users));
+                }
             }
         };
         sesUserService.getAllUsers(sessionInfo, callback);
@@ -506,7 +520,7 @@ public class SesRequestManager extends RequestManager {
             @Override
             public void onSuccess(SesClientResponse response) {
                 if (response.getType() == REQUIRES_LOGIN) {
-                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                	handleRelogin();
                 }
                 else {
                     getMainEventBus().fireEvent(new InformUserEvent(response));
@@ -524,7 +538,7 @@ public class SesRequestManager extends RequestManager {
 
             public void onSuccess(SesClientResponse response) {
                 if (response.getType() == REQUIRES_LOGIN) {
-                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                	handleRelogin();
                 }
                 EventBus.getMainEventBus().fireEvent(new InformUserEvent(response));
             }
@@ -566,7 +580,7 @@ public class SesRequestManager extends RequestManager {
 
             public void onSuccess(SesClientResponse response) {
                 if (response.getType() == REQUIRES_LOGIN) {
-                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                	handleRelogin();
                 }
                 if (response.getType().equals(PUBLISH_RULE_USER)) {
                     GetAllOwnRulesEvent event = new GetAllOwnRulesEvent(sessionInfo, true);
@@ -589,7 +603,7 @@ public class SesRequestManager extends RequestManager {
 
             public void onSuccess(SesClientResponse response) {
                 if (response.getType() == REQUIRES_LOGIN) {
-                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                	handleRelogin();
                 }
                 else {
                     getMainEventBus().fireEvent(new InformUserEvent(response));
@@ -607,7 +621,7 @@ public class SesRequestManager extends RequestManager {
 
             public void onSuccess(SesClientResponse response) {
                 if (response.getType() == REQUIRES_LOGIN) {
-                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                	handleRelogin();
                 }
                 else if (response.getType().equals(DELETE_RULE_SUBSCRIBED)) {
                     SC.say(i18n.ruleSubscribed());
@@ -634,7 +648,7 @@ public class SesRequestManager extends RequestManager {
 
             public void onSuccess(SesClientResponse response) {
                 if (response.getType() == REQUIRES_LOGIN) {
-                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                	handleRelogin();
                 }
                 else {
                     getMainEventBus().fireEvent(new GetAllRulesEvent(currentSession()));
@@ -649,7 +663,7 @@ public class SesRequestManager extends RequestManager {
 
             public void onSuccess(SesClientResponse result) {
                 if (result.getType() == REQUIRES_LOGIN) {
-                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                	handleRelogin();
                 }
                 else if (result.getType().equals(SesClientResponseType.EDIT_SIMPLE_RULE)) {
                     EventBus.getMainEventBus().fireEvent(new ChangeLayoutEvent(LayoutType.CREATE_SIMPLE));
@@ -677,7 +691,7 @@ public class SesRequestManager extends RequestManager {
 
             public void onSuccess(SesClientResponse response) {
                 if (response.getType() == REQUIRES_LOGIN) {
-                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                	handleRelogin();
                 }
                 else {
                     getMainEventBus().fireEvent(new InformUserEvent(response));
@@ -698,7 +712,7 @@ public class SesRequestManager extends RequestManager {
 
                 switch (type) {
                 case REQUIRES_LOGIN:
-                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                    handleRelogin();
                     break;
                 case OK:
                     SC.say(i18n.unsubscribeSuccessful());
@@ -739,7 +753,7 @@ public class SesRequestManager extends RequestManager {
             public void onSuccess(SesClientResponse result) {
 
                 if (REQUIRES_LOGIN == result.getType()) {
-                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                	handleRelogin();
                 }
                 else if (result.getType().equals(RULE_NAME_EXISTS)) {
                     SC.say(i18n.ruleExists());
@@ -774,7 +788,7 @@ public class SesRequestManager extends RequestManager {
 
             public void onSuccess(SesClientResponse result) {
                 if (result.getType() == REQUIRES_LOGIN) {
-                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                	handleRelogin();
                 }
                 else {
                     getMainEventBus().fireEvent(new InformUserEvent(result));
@@ -794,7 +808,7 @@ public class SesRequestManager extends RequestManager {
             @Override
             public void onSuccess(SesClientResponse result) {
                 if (result.getType() == REQUIRES_LOGIN) {
-                    getMainEventBus().fireEvent(new ChangeLayoutEvent(LOGIN));
+                	handleRelogin();
                 }
                 SC.say(i18n.profileDelete());
             }

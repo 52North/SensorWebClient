@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 public class ServerSessionStore {
 
-    static long CLEANUP_INTERVAL_IN_MILLISECONDS = 1000 * 60 * 60 * 10; // 10 min.
+    static long CLEANUP_INTERVAL_IN_MILLISECONDS = 1000 * 60 * 10; // 10 min.
 
     // TODO extent session store to touch active sessions (expand expiration)
 

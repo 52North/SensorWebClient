@@ -10,8 +10,12 @@ import static org.n52.shared.serializable.pojos.UserRole.LOGOUT;
 import static org.n52.shared.serializable.pojos.UserRole.USER;
 
 import org.n52.client.bus.EventBus;
+import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.LogoutEvent;
+import org.n52.client.ses.event.SessionExpiredEvent;
 import org.n52.client.ses.event.SetRoleEvent;
+import org.n52.client.ses.event.handler.ChangeLayoutEventHandler;
+import org.n52.client.ses.event.handler.SessionExpiredEventHandler;
 import org.n52.client.ses.event.handler.SetRoleEventHandler;
 import org.n52.client.util.ClientSessionManager;
 import org.n52.shared.serializable.pojos.UserRole;
@@ -115,12 +119,13 @@ public class LoginHeaderLayout extends HLayout {
         return pipe;
     }
     
-    private static class LoginHeaderEventBroker implements SetRoleEventHandler {
+    private static class LoginHeaderEventBroker implements SetRoleEventHandler, SessionExpiredEventHandler {
 
     	private final LoginHeaderLayout loginHeaderLayout;
     	
 		public LoginHeaderEventBroker(LoginHeaderLayout loginHeaderLayout) {
 			EventBus.getMainEventBus().addHandler(SetRoleEvent.TYPE, this);
+			EventBus.getMainEventBus().addHandler(SessionExpiredEvent.TYPE, this);
 			this.loginHeaderLayout = loginHeaderLayout;
 		}
 
@@ -133,6 +138,11 @@ public class LoginHeaderLayout extends HLayout {
             } else if (role == USER || role == ADMIN) {
                 loginHeaderLayout.showUserAsLoggedIn();
             }
+		}
+
+		@Override
+		public void onSessionExpired(SessionExpiredEvent evt) {
+			loginHeaderLayout.showLoggedOutHeader();
 		}
     }
 

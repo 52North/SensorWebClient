@@ -442,5 +442,7 @@ public interface I18N extends Constants {
     String failedSessionCreation();
 
     String helpPath();
+
+	String relogin();
     
 }

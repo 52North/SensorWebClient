@@ -51,11 +51,13 @@ public class SesClientResponse implements Serializable {
     
     private ArrayList complexList;
     
+    private ArrayList<UserDTO> userList;
+    
     private Rule rule;
     
     private String message;
     
-    private List sensorList;
+    private List objectList;
     
     public SesClientResponse() {
         // empty constructor
@@ -75,7 +77,7 @@ public class SesClientResponse implements Serializable {
         this.user = user;
         this.complexList = list;
     }
-
+    
     public SesClientResponse(SesClientResponseType type, ArrayList list){
         this.responseType = type;
         this.basicList = list;
@@ -83,7 +85,7 @@ public class SesClientResponse implements Serializable {
     
     public SesClientResponse(SesClientResponseType type, List list){
         this.responseType = type;
-        this.sensorList = list;
+        this.objectList = list;
     }
     
     public SesClientResponse(SesClientResponseType type, ArrayList list, ArrayList complexList){
@@ -151,8 +153,8 @@ public class SesClientResponse implements Serializable {
         this.rule = rule;
     }
 
-    public List getSensorList() {
-        return this.sensorList;
+    public List getObjectList() {
+        return this.objectList;
     }
 
     public SessionInfo getSessionInfo() {

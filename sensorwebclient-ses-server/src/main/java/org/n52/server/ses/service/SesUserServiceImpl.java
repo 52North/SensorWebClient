@@ -41,7 +41,6 @@ import static org.n52.shared.responses.SesClientResponseType.REGISTER_OK;
 import static org.n52.shared.responses.SesClientResponseType.REGSITER_EMAIL;
 import static org.n52.shared.responses.SesClientResponseType.REQUIRES_LOGIN;
 import static org.n52.shared.responses.SesClientResponseType.USER_INFO;
-import static org.n52.shared.serializable.pojos.UserRole.ADMIN;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -587,17 +586,19 @@ public class SesUserServiceImpl implements SesUserService {
     }
 
     @Override
-    public List<UserDTO> getAllUsers(SessionInfo sessionInfo) throws Exception {
+    public SesClientResponse getAllUsers(SessionInfo sessionInfo) throws Exception {
         try {
+        	if ( !sessionStore.isKnownActiveSessionInfo(sessionInfo)) {
+                return new SesClientResponse(REQUIRES_LOGIN);
+            }
             LOGGER.debug("getAllUsers");
-            sessionStore.validateSessionInfo(sessionInfo);
-            List<UserDTO> finalList = new ArrayList<UserDTO>();
+            List<UserDTO> userList = new ArrayList<UserDTO>();
 
             List<User> list = HibernateUtil.getAllUsers();
             for (int i = 0; i < list.size(); i++) {
-                finalList.add(createUserDTO(list.get(i)));
+                userList.add(createUserDTO(list.get(i)));
             }
-            return finalList;
+            return new SesClientResponse(SesClientResponseType.ALL_USERS, userList);
         }
         catch (Exception e) {
             LOGGER.error("Exception occured on server side.", e);

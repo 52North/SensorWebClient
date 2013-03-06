@@ -24,8 +24,6 @@
 
 package org.n52.client.service;
 
-import java.util.List;
-
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.serializable.pojos.UserDTO;
 import org.n52.shared.serializable.pojos.UserRole;
@@ -161,7 +159,7 @@ public interface SesUserService {
      * @throws Exception
      *         if processing request fails.
      */
-    public List<UserDTO> getAllUsers(SessionInfo sessionInfo) throws Exception;
+    public SesClientResponse getAllUsers(SessionInfo sessionInfo) throws Exception;
 
     /**
      * Starts deletion process of a user. The deletion has to be confirmed by email before deletion takes
