@@ -24,19 +24,24 @@
 
 package org.n52.server.ses.service;
 
+import static java.lang.String.valueOf;
 import static java.util.UUID.randomUUID;
 import static org.n52.server.ses.feeder.SosSesFeeder.getSosSesFeederInstance;
 import static org.n52.server.ses.hibernate.HibernateUtil.activateTimeseriesFeed;
+import static org.n52.server.ses.hibernate.HibernateUtil.deactivateSubscription;
 import static org.n52.server.ses.hibernate.HibernateUtil.deactivateTimeseriesFeed;
+import static org.n52.server.ses.hibernate.HibernateUtil.deleteSubscription;
 import static org.n52.server.ses.hibernate.HibernateUtil.existsBasicRule;
 import static org.n52.server.ses.hibernate.HibernateUtil.existsComplexRuleName;
 import static org.n52.server.ses.hibernate.HibernateUtil.existsSubscription;
+import static org.n52.server.ses.hibernate.HibernateUtil.getSubscriptionIdByRuleIdAndUserId;
 import static org.n52.server.ses.hibernate.HibernateUtil.getTimeseriesFeedById;
 import static org.n52.server.ses.hibernate.HibernateUtil.getTimeseriesMetadata;
 import static org.n52.server.ses.hibernate.HibernateUtil.subscribeBasicRule;
 import static org.n52.server.ses.hibernate.HibernateUtil.unsubscribeBasicRule;
 import static org.n52.server.ses.hibernate.HibernateUtil.updateComplexRuleSubscribtion;
 import static org.n52.server.ses.util.SesServerUtil.getTimeseriesIdsFromEML;
+import static org.n52.shared.responses.SesClientResponseType.DELETE_RULE_OK;
 import static org.n52.shared.responses.SesClientResponseType.ERROR_SUBSCRIBE_FEEDER;
 import static org.n52.shared.responses.SesClientResponseType.ERROR_SUBSCRIBE_SES;
 import static org.n52.shared.responses.SesClientResponseType.OK;
@@ -316,11 +321,13 @@ public class SesRulesServiceImpl implements SesRuleService {
 
             String museID = "";
             if (basicRule != null) {
-                museID = HibernateUtil.getSubscriptionIdByRuleIdAndUserId(basicRule.getId(), Integer.valueOf(userID));
+                Subscription subscription = getSubscriptionIdByRuleIdAndUserId(basicRule.getId(), Integer.valueOf(userID));
+                museID = subscription.getSubscriptionID();
                 ruleAsEML = basicRule.getEml();
             }
             else if (complexRule != null) {
-                museID = HibernateUtil.getSubscriptionIdByRuleIdAndUserId(complexRule.getId(), Integer.valueOf(userID));
+                Subscription subscription = getSubscriptionIdByRuleIdAndUserId(complexRule.getId(), Integer.valueOf(userID));
+                museID = subscription.getSubscriptionID();
                 ruleAsEML = complexRule.getEml();
             }
 
@@ -345,7 +352,7 @@ public class SesRulesServiceImpl implements SesRuleService {
 
             try {
                 // TODO couple subscription and rules in DB model
-                HibernateUtil.deactivateSubscription(museID, userID);
+                deactivateSubscription(museID, userID);
                 if (basicRule != null) {
                     unsubscribeBasicRule(uuid);
                 }
@@ -669,7 +676,9 @@ public class SesRulesServiceImpl implements SesRuleService {
             ComplexRule complexRule = HibernateUtil.getComplexRuleByName(uuid);
 
             if (basicRule != null) {
-                if (HibernateUtil.ruleIsSubscribed(basicRule.getId())) {
+//                if (HibernateUtil.ruleIsSubscribed(basicRule.getId())) {
+                Subscription subscription = getSubscriptionForRule(basicRule);
+                if (subscription.isActive()) {
                     return new SesClientResponse(SesClientResponseType.DELETE_RULE_SUBSCRIBED);
                 }
             }
@@ -680,7 +689,9 @@ public class SesRulesServiceImpl implements SesRuleService {
             }
 
             if (HibernateUtil.deleteRule(uuid)) {
-                return new SesClientResponse(SesClientResponseType.DELETE_RULE_OK);
+                Subscription subscription = getSubscriptionForRule(basicRule);
+                deleteSubscription(subscription.getSubscriptionID(), valueOf(subscription.getUserID()));
+                return new SesClientResponse(DELETE_RULE_OK);
             }
             else {
                 LOGGER.error("Error occured while deleting a rule");
@@ -691,6 +702,12 @@ public class SesRulesServiceImpl implements SesRuleService {
             LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
+    }
+
+    private Subscription getSubscriptionForRule(BasicRule basicRule) {
+        int ruleID = basicRule.getId();
+        int userID = basicRule.getOwnerID();
+        return getSubscriptionIdByRuleIdAndUserId(ruleID, userID);
     }
 
     @Override
@@ -941,7 +958,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                             catch (Exception e) {
                                 LOGGER.error("Error occured while unsubscribing a rule from SES: " + e.getMessage(), e);
                             }
-                            HibernateUtil.deleteSubscription(subscription.getSubscriptionID(),
+                            deleteSubscription(subscription.getSubscriptionID(),
                                                              String.valueOf(subscription.getUserID()));
                         }
                     }

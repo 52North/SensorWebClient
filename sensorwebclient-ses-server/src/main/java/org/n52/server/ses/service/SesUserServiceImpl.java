@@ -25,7 +25,9 @@
 package org.n52.server.ses.service;
 
 import static java.lang.Integer.parseInt;
+import static org.n52.server.ses.hibernate.HibernateUtil.deleteSubscription;
 import static org.n52.server.ses.hibernate.HibernateUtil.getSubscriptionfromUserID;
+import static org.n52.server.ses.util.SesServerUtil.unSubscribe;
 import static org.n52.shared.responses.SesClientResponseType.LAST_ADMIN;
 import static org.n52.shared.responses.SesClientResponseType.LOGIN_ACTIVATED;
 import static org.n52.shared.responses.SesClientResponseType.LOGIN_ADMIN;
@@ -435,9 +437,9 @@ public class SesUserServiceImpl implements SesUserService {
                 String subscriptionID = subscriptions.get(i).getSubscriptionID();
 
                 // delete from DB
-                HibernateUtil.deleteSubscription(subscriptionID, String.valueOf(userID));
+                deleteSubscription(subscriptionID, String.valueOf(userID));
                 // delete from SES
-                SesServerUtil.unSubscribe(SesConfig.serviceVersion, SesConfig.sesEndpoint, subscriptionID);
+                unSubscribe(SesConfig.serviceVersion, SesConfig.sesEndpoint, subscriptionID);
             }
         }
         catch (Exception e) {
