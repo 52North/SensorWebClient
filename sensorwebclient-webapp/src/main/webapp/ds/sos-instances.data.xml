@@ -44,10 +44,10 @@
         <metadataHandler>org.n52.server.oxf.util.parser.DefaultMetadataHandler</metadataHandler>
         <adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension</adapter>
         <waterML>false</waterML>
-        <llEasting>6.61</llEasting>
-        <llNorthing>51.246</llNorthing>
-        <urEasting>7.81</urEasting>
-        <urNorthing>51.793</urNorthing>
+        <llEasting>6</llEasting>
+        <llNorthing>51</llNorthing>
+        <urEasting>8</urEasting>
+        <urNorthing>52</urNorthing>
         <defaultZoom>15</defaultZoom>
         <requestChunk>200</requestChunk>
         <autoZoom>true</autoZoom>
