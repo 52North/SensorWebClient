@@ -706,7 +706,7 @@
 
 				<application.title>Sensor Web Client</application.title>
 
-				<config.logger.fileappender.filepath>${catalina.home:-${user.home}}/logs/${project.artifactId}-${project.version}</config.logger.fileappender.filepath>
+				<config.logger.fileappender.filepath>${catalina.base:-.}/logs/${project.artifactId}-${project.version}</config.logger.fileappender.filepath>
 				<config.logger.level>DEBUG</config.logger.level>
 				<config.logger.level.oxf>WARN</config.logger.level.oxf>
 				<config.logger.level.client>DEBUG</config.logger.level.client>
