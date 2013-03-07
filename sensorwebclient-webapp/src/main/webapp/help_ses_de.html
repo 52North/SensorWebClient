@@ -1,46 +1,43 @@
 <html>
 <body>
-<div class="help">
+	<div class="help">
 
-    <h3>Erstellen von Benachrichtigungen</h3>
+		<h3>Erstellen von Benachrichtigungen</h3>
 
-    <p>F&uuml;r die Zeitreihe einer ausgew&auml;hlten Messstation k&ouml;nnen nebenstehend Benachrichtigungen erstellt
-        und abonniert werden. Im Falle eintretender Messwerte, bzw. Messwertkombinationen, wird eine Benachrichtigung an die
-        hinterlegte E-Mail Adresse des Nutzers versendet.</p>
-    <p>Es kann zwischen zwei Benachrichtungstypen gew&auml;hlt werden</p>
-    <ul>
-        <li>&Uuml;berschreitung, bzw. Unterschreitung</li>
-        <li>Sensorausfall</li>
-    </ul>
-    <p>Benachrichtigungen bei ausschlie&szlig;lich historischen Daten machen wenig Sinn. Wann genau eine Zeitreihe ein 
-    Benachrichtigungsereignis ausl&ouml;st, soll in den folgenden Skizzen verdeutlicht werden.
-    </p>
+		<p>F&uuml;r die Zeitreihe einer ausgew&auml;hlten Messstation k&ouml;nnen nebenstehend Benachrichtigungen erstellt
+			und abonniert werden. Im Falle eintretender Messwerte, bzw. Messwertkombinationen wird eine Benachrichtigung an die
+			hinterlegte E-Mail Adresse des Nutzers versendet.</p>
+		<p>Es kann zwischen zwei Benachrichtungstypen gew&auml;hlt werden</p>
+		<ul>
+			<li>&Uuml;berschreitung, bzw. Unterschreitung</li>
+			<li>Sensorausfall</li>
+		</ul>
+		<p>Benachrichtigungen bei ausschlie&szlig;lich historischen Daten machen wenig Sinn. Wann genau eine Zeitreihe ein
+			Benachrichtigungsereignis ausl&ouml;st, soll in den folgenden Skizzen verdeutlicht werden.</p>
 
-    <h4>Messwert&uuml;ber- und unterschreitung</h4>
-    <p>Die betreffende Zeitreihe wird in regelm&auml;&szlig;igen Abst&auml;nden abgefragt und nach den eingegebenen
-        Kritierien &uuml;berpr&uuml;ft. Die eingegebenen Grenzwerte werden mit der aktuellen Zeitreihe abgeglichen. Je nach
-        zuletzt eingetretenen Fall innerhalb der Ereigniskette wird entschieden, ob ein Ereignis ausgel&ouml;st, bzw. beendet
-        wird oder nicht. Der Nutzer wird in beiden F&auml;llen informiert.</p>
-    <div>
-        <img src="./img/sesClient/ses-alerts_overshoot_de.png" width="400px" alt="example_overshoot_alert">
-    </div>
-    <p>Bei Zeitreihen handelt es sich um diskrete Messwerte, welche grafisch interpoliert und visualisiert werden. Beim
-        Zeitreihenmonitoring werden allerdings diskrete Zeitmomente als Grundlage genommen. Dies f&uuml;hrt i.d.R dazu, dass
-        eintretende Ereignisse nicht exakt mit dem (interpolierten) Kurvenverlauf einer Zeitreihe &uuml;bereinstimmen.</p>
+		<h4>Messwert&uuml;ber- und unterschreitung</h4>
+		<p>Die betreffende Zeitreihe wird in regelm&auml;&szlig;igen Abst&auml;nden abgefragt und nach den eingegebenen
+			Kritierien &uuml;berpr&uuml;ft. Die eingegebenen Grenzwerte werden mit der aktuellen Zeitreihe abgeglichen. Je nach
+			Fall in der Ereigniskette wird entschieden, ob ein Ereignis ausgel&ouml;st, beendet wird oder nicht. Der Nutzer wird
+			in beiden F&auml;llen informiert.</p>
+		<div>
+			<img src="./img/sesClient/ses-alerts_overshoot_de.png" width="400px" alt="example_overshoot_alert">
+		</div>
+		<p>Bei Zeitreihen handelt es sich um diskrete Messwerte, welche grafisch interpoliert und visualisiert werden.
+			Beim Zeitreihenmonitoring werden diskrete Zeitmomente als Grundlage genommen. Dies f&uuml;hrt i.d.R dazu, dass
+			eintretende Ereignisse nicht exakt mit dem (interpolierten) Kurvenverlauf einer Zeitreihe &uuml;bereinstimmen.</p>
 
+		<h4>Sensorausfall</h4>
+		<p>Die betreffende Zeitreihe wird in regelm&auml;&szlig;igen Abst&auml;nden abgefragt &uuml;berpr&uuml;ft, ob
+			Messwerte vorliegen oder nicht. Falls keine Messdaten vorliegen, wird ein Sensorausfallereignis ausgel&ouml;st und
+			der Nutzer dar&uuml;ber informiert. Sobald wieder Messwerte vorliegen, erfolgt eine weitere Benachrichtigung.</p>
+		<div>
+			<img src="./img/sesClient/ses-alerts_sensorloss_de.png" width="400px" alt="example_sensorloss_alert">
+		</div>
+		<p>Bei einem eingegebenen Zeitintervall von z.B. einer Stunde, kann es im Extremfall fast doppelt so lange dauern,
+			bis ein Sensorausfallereignis ausl&ouml;st, da letzte der Messwert zu Anfang des betrachteten Zeitintervalls liegen
+			kann.</p>
 
-    <h4>Sensorausfall</h4>
-    <p>Die betreffende Zeitreihe wird in regelm&auml;&szlig;igen Abst&auml;nden abgefragt und nach eingehenden
-        Messdaten &uuml;berpr&uuml;ft, ob Messwerte vorliegen oder nicht. Falls keine Messdaten vorliegen, wird ein Ereignis
-        ausgel&ouml;st und der Nutzer dar&uuml;ber informiert. Sobald wieder Messwerte vorliegen, erfolgt eine weitere
-        Benachrichtigung.</p>
-    <div>
-        <img src="./img/sesClient/ses-alerts_sensorloss_de.png" width="400px" alt="example_sensorloss_alert">
-    </div>
-    <p>Bei einem eingegebenen Zeitintervall von z.B. einer Stunden, kann es im Extremfall fast doppelt so lange dauern,
-        bis ein Sensorausfallereignis ausl&ouml;st, da letzte Messwert zu Anfang des betrachteten Zeitintervalls liegen kann.
-    </p>
-
-</div>
+	</div>
 </body>
 </html>

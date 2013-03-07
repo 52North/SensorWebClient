@@ -1,239 +1,40 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<HTML> 
-<HEAD>
-	<TITLE>SES Client Help</TITLE>
-	<style type="text/css">
-<!--
-body, table {font-family: arial,sans-serif; font-size: x-big;}
-th {background: #336699; color: #FFFFFF; text-align: left;}
--->
-</style>
-</HEAD>
-<BODY>
-<h2><a name="help">SES Client Help</a></h2>
-<h3>Overview</h3>
-<a href="#introduction">1. Introduction</a><br>
-<a href="#buttons">2. Buttons Bar</a><br>
-<a href="#views">3. Views</a><br>
-<a href="#problems">4. Problems</a><br>
-<a href="#contact">5. Contact</a><br>
+<html>
+<body>
+	<div class="help">
 
+		<h3>Subscribe to Events</h3>
 
-<!-- INTRODUCTION -->
-<h2><a name="introduction">1. Introduction</a></h2>
+		<p>On the left you can define and subscribe events for which you want to be notified. Once an event occured
+			(regarding incoming measurements and their combinations) a notification alert is sent to the user's email address</p>
 
-<p>
-This client allows subscribing to notifications in case of certain sensor measurements or combinations of measured values. The system ist based on the OGC Sensor Event Service.<br>
-The development of this client has been performed using the Google Web Toolkit. Thus, this clients consists mainly of JavaScript code.<br>
-The user behaviour is not analysed by this client. Furthermore, no data are sent to Google.<br>
-</p>
+		<p>The following event types are defined:</p>
+		<ul>
+			<li>Over-/Undershoot</li>
+			<li>Sensorloss</li>
+		</ul>
+		<p>Events on historic data makes no sense. The following images shall explain exemplarily when exactly a
+			timeseries will trigger what kind of event notification.</p>
 
-<!-- BUTTONS -->
-<h2><a name="buttons">2. Buttons Bar</a></h2>
+		<h4>Over- and Undershoot</h4>
+		<p>The timeseries where you defined an event subscription on will be checked regularly for new measurement data.
+			If there is new observation data available it is check against the thresholds defined by the user. Depending on the
+			current state of the eventing chain an event is triggered or not. If so the user will be notified.</p>
+		<div>
+			<img src="./img/sesClient/ses-alerts_overshoot_en.png" width="400px" alt="example_overshoot_alert">
+		</div>
+		<p>Timeseries are visualisations interpolated by discrete measurements. While monitoring a timeseries the point in
+			time when a notification is triggered will be after the one of the real event which has happened.</p>
 
-Short description of available buttons in the buttons bar. <br>
-The visibility depends on user role: not registered user/registered user/administrator.<br><br>
-
-<b>Not registered user:</b><br>
-
-<table border="1">
-<tr>
-  <th>Title</th>
-  <th>Description</th>
-</tr>
-<tr>
-  <td><a href="#view_login">Login</a></td>
-  <td>Opens the login perspective where user can enter user name and password</td>
-</tr>
-<tr>
-  <td><a href="#view_registration">Register</a></td>
-  <td>Opens the register view where user can register to SES client</td>
-</tr>
-<tr>
-  <td><a href="#help">Help</a></td>
-  <td>Open the Help Window</td>
-</tr>
-<tr>
-  <td><a href="#view_password">Forgot your password?</a></td>
-  <td>Here the user can request a new password if he forgot his password</td>
-</tr>
-</table> 
-<br>
-<img src="./img/sesClient/EN_buttons_unknownUser.png" alt="not registered" width="400" height="50">
-
-<br><br>
-<b>Registered user:</b><br>
-
-<table border="1">
-<tr>
-  <th>Title</th>
-  <th>Description</th>
-</tr>
-<tr>
-  <td><a href="#view_subscribe">Subscribe to rules</a></td>
-  <td>Opens a view where the user can subscribe to his own or published rules</td>
-</tr>
-<tr>
-  <td><a href="#view_editRules">Edit rules</a></td>
-  <td>Opens a view where the user can edit his rules</td>
-</tr>
-<tr>
-  <td><a href="#view_createBasic">Create basic rule</a></td>
-  <td>Opens a view where the user can create basic rules</td>
-</tr>
-<tr>
-  <td><a href="#view_createComplex">Create complex rule</a></td>
-  <td>Opens a view where the user can create complex rules</td>
-<tr>
-  <td><a href="#view_subscriptions">Subscriptions</a></td>
-  <td>Opens a list of all rules the user has subscribed to. Here the user can also unsubscribe from rules</td>
-</tr>
-<tr>
-  <td><a href="#view_editProfile">Edit profile</a></td>
-  <td>Opens a view where user can change his personal data like name, mobile phone number or email address</td>
-</tr>
-<tr>
-  <td><a href="#help">Help</a></td>
-  <td>Opens the help window</td>
-</tr>
-<tr>
-  <td>Logout</td>
-  <td>Logout current user from client</td>
-</tr>
-</table> 
-<br>
-<img src="./img/sesClient/EN_buttons_user.png" alt="user" width="1024" height="50">
-<br>
-<br>
-<b>Administrator:</b><br>
-<table border="1">
-<tr>
-  <th>Title</th>
-  <th>Description</th>
-</tr>
-<tr>
-  <td><a href="#view_userManagement">User management</a></td>
-  <td>Management of registered user. The administrator can edit, delete or create new user</td>
-</tr>
-<tr>
-  <td><a href="#view_sensorManagement">Sensor management</a></td>
-  <td>Management of registered sensors. The administrator can activate/deactivate or delete sensors from the system</td>
-</tr>
-<tr>
-  <td><a href="#view_createBasic">Create basic rule</a></td>
-  <td>Creating a basic rule</td>
-</tr>
-<tr>
-  <td><a href="#view_createComplex">Create complex rule</a></td>
-  <td>Creating a complex rule</td>
-</tr>
-<tr>
-  <td><a href="#view_allRules">Show all rules</a></td>
-  <td>Shows a table with all created rules. The administrator can also see not published rules</td>
-</tr>
-<tr>
-  <td><a href="#help">Help</a></td>
-  <td>Opens the Help window</td>
-</tr>
-<tr>
-  <td>Logout</td>
-  <td>Logout the administrator from the client</td>
-</tr>
-</table>
-<br>
-<img src="./img/sesClient/EN_buttons_admin.png" alt="admin" width="1024" height="50">
-<br>
-
-
-<!-- VIEWS -->
-<h2><a name="views">3. Views</a></h2>
-
-<p><b><a name = "view_login">Login</a></b></p>
-<img src="./img/sesClient/EN_view_login.png" alt="login" width="1024" height="768"><br>
-This is the default view when the user starts the SES Client. The user can login, register or let the system send him a new password if he forgot it.
-
-<p><b><a name = "view_registration">Registration</a></b></p>
-<img src="./img/sesClient/EN_view_register.png" alt="registration" width="1024" height="768"><br>
-By filling all required fields the user can register to the client. After the registration is completed the user receives an enail to verify his registration.
-
-<p><b><a name = "view_password">Forgot your password</a></b></p>
-<img src="./img/sesClient/EN_view_password.png" alt="password" width="1024" height="768"><br>
-In case user forgot his password, he can use this option to request a new password from the client.
-
-<p><b><a name = "view_subscribe">Subscribe to rules</a></b></p>
-<img src="./img/sesClient/EN_view_subscribe.png" alt="subscribe" width="1024" height="768"><br>
-This is the default view when the user logs in. This view has two tables where the user can see all his rules and rules published by other users.
-Here the user can subscribe to rules.
-
-<p><b><a name = "view_editRules">Edit rules</a></b></p>
-<img src="./img/sesClient/EN_view_editRules.png" alt="edit_rules" width="1024" height="768"><br>
-Here the user can edit, publish or delete his (user is the owner/creator) rules.
-
-<p><b><a name = "view_createBasic">Create basic rules</a></b></p>
-<img src="./img/sesClient/EN_view_createBasicRule.png" alt="create_simple" width="1024" height="768"><br>
-Here user can create simple rules. The user has the choice between five different types of rules: <br>
-
-<ol>
-  <li>Overshoot/Undershoot</li>
-  <li>Trend over tme</li>
-  <li>Trend over count</li>
-  <li>Sum over time</li>
-  <li>Sensor failure</li>
-</ol>
-
-Inputs are case sensitive!<br>
-
-<p><b><a name = "view_createComplex">Create complex rules</a></b></p>
-<img src="./img/sesClient/EN_view_createComplexRule.png" alt="create_complex" width="1024" height="768"><br>
-Here the user can create complex rules. By adding a block the user can add two rules to the combination.
-
-<p><b><a name = "view_subscriptions">Subscriptions</a></b></p>
-<img src="./img/sesClient/EN_view_subscriptions.png" alt="subscriptions" width="1024" height="768"><br>
-A list of all subscriptions of the current user is displayed. The user can unsubscribe from each rule.
-
-<p><b><a name = "view_editProfile">Edit profile</a></b></p>
-<img src="./img/sesClient/EN_view_editProfile.png" alt="editProfile" width="1024" height="768"><br>
-Here the user can change his personal data like email address or password.
-
-<p><b><a name = "view_userManagement">User management</a></b></p>
-<img src="./img/sesClient/EN_view_userManagement.png" alt="user_management" width="1024" height="768"><br>
-A list of all registered users in the SES Client is displayed. The administrator can edit, delete or create new user.
-
-<p><b><a name = "view_sensorManagement">Sensor management</a></b></p>
-<img src="./img/sesClient/EN_view_sensorManagement.png" alt="sensor_management" width="1024" height="768"><br>
-A list of all registered sensors in the SES Client is displayed. The administrator can see whether sensors are in use and can activate or deactivate them.
-Deactivated sensors are not listed in the list of possible sensors for creating basic rules.
-
-<p><b><a name = "view_allRules">Show all rules</a></b></p>
-<img src="./img/sesClient/EN_view_allRules.png" alt="all_rules" width="1024" height="768"><br>
-A list of all created basic and complex rules is displayed. The administrator can see published and not published rules and delete or publish them.
-
-
-
-<!-- PROBLEMS -->
-<h2><a name="problems">4. Problems</a></h2>
-
-<ol type="I">
- <li>My Account was locked
-     <ul>
-    	<li>You entered three times the wrong password or someone tried to hack your account password. For security reasons your password was locked. Please contact the administrator of the client</li>
-    </ul>
- </li>
-</ol>
-
-<!-- CONTACT -->
-<h2><a name="contact">5. Contact</a></h2>
-<form action="MAILTO:52n.development@gmail.com" method="post" enctype="text/plain">
-Name:<br>
-<input type="text" name="name" value="your name"><br>
-E-mail:<br>
-<input type="text" name="mail" value="your email"><br>
-Comment:<br>
-<input type="text" name="comment" value="your comment" size="50">
-<br><br>
-<input type="submit" value="Send">
-<input type="reset" value="Reset">
-</form>
-
-</BODY>
-</HTML>	
+		<h4>Sensorloss</h4>
+		<p>The monitored timeseries will be regularly checked for new measurements. If there are no measurements within
+			the checked time interval a sensorloss event is being triggered. A subscriber gets notified. After new measurements
+			are available again another notification is being sent.</p>
+		<div>
+			<img src="./img/sesClient/ses-alerts_sensorloss_en.png" width="400px" alt="example_sensorloss_alert">
+		</div>
+		<p>In extreme cases (e.g. when a user picks a time interval of an hour) the event notification may be deferred up
+			to twice as the given interval, as the last considered time interval contains one measurement value at the beginning.
+		</p>
+	</div>
+</body>
+</html>
