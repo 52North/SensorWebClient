@@ -13,11 +13,8 @@ import static org.n52.oxf.ses.adapter.SESAdapter.REGISTER_PUBLISHER;
 import static org.n52.server.ses.feeder.FeederConfig.getFeederConfig;
 import static org.n52.server.ses.util.SesServerUtil.getBrokerUrl;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -178,12 +175,12 @@ public class SESConnector {
             if (doOperation == null) {
                 return; // SES responds with HTTP 204 when successful
             }
-            InputStream responseStream = new BufferedInputStream(doOperation.getIncomingResultAsStream());
-            BufferedReader reader = new BufferedReader(new InputStreamReader(responseStream));
             StringBuilder sb = new StringBuilder();
-            while (reader.ready()) {
-                sb.append(reader.readLine());
+            Scanner scanner = new Scanner(doOperation.getIncomingResultAsStream());
+            while (scanner.hasNextLine()) {
+                sb.append(scanner.nextLine());
             }
+            scanner.close();
             if (sb.length() > 0) {
                 LOGGER.warn("SES Reponse: " + sb.toString());
             }
@@ -193,9 +190,6 @@ public class SESConnector {
         }
         catch (NullPointerException e) {
             LOGGER.debug("Response of notify is null.", e);
-        }
-        catch (IOException e) {
-            LOGGER.debug("Cannot read notification response.", e);
         }
     }
 
