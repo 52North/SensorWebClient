@@ -109,27 +109,34 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
             // user data from DB
             String id = registerID.substring(5);
             user = HibernateUtil.getUserBy(id);
-
-            if (activateUser(user)) {
-                LOGGER.debug("register user: " + user.getName() + " to WNS");
-                try {
-                    user.setWnsEmailId(sendToWNSMail(user.getName(), user.geteMail()));
-                    HibernateUtil.updateUser(user);
-                } catch (Exception e) {
-                    LOGGER.error("Registration to WNS failed!", e);
-                    writeHtmlResponse("Registration to WNS failed!", e, response);
-                }
-                writeHtmlResponse("Registration successful!", response);
+            
+            if (user != null) {
+            	if (activateUser(user)) {
+            		LOGGER.debug("register user: " + user.getName() + " to WNS");
+                    try {
+                        user.setWnsEmailId(sendToWNSMail(user.getName(), user.geteMail()));
+                        HibernateUtil.updateUser(user);
+                    } catch (Exception e) {
+                        LOGGER.error("Registration to WNS failed!", e);
+                        writeHtmlResponse("Registration to WNS failed!", e, response);
+                    }
+                    writeHtmlResponse("Registration successful!", response);
+            	} else {
+            		String userActiv = "User activation is still done!"; 
+                	LOGGER.error(userActiv);
+                	writeHtmlResponse(userActiv, response);
+            	}
             } else {
-                LOGGER.error("Activation of user '{}' failed!", user.getId());
-                writeHtmlResponse("User activation failed!", response);
+            	String noUserToActivationID = "No user for this activation link!"; 
+            	LOGGER.error(noUserToActivationID);
+            	writeHtmlResponse(noUserToActivationID, response);
             }
         }
     }
 
     protected boolean activateUser(User user) {
         // check user role to avoid changing admin role to user
-        if (user != null) {
+        if (!user.getActivated()) {
             try {
                 if (user.getRole() != UserRole.ADMIN) {
                 	// set user role to USER
@@ -139,13 +146,13 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
                 	// admin account is activated
                     user.setActivated(true);
                 }
+                return true;
             } catch (NumberFormatException nfe) {
                 return false;
             }
         } else {
             return false;
         }
-        return false;
     }
     
     private void writeHtmlResponse(String message, HttpServletResponse response) {
@@ -160,10 +167,9 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
 
     private String includeExceptionInfoTo(String message, Exception e) {
         StringBuilder sb = new StringBuilder(message);
-        sb.append("<html><body>");
-        sb.append("<h1>An exception occured</h1>");
-        sb.append("<div>").append(message).append("</div>");
         if (e != null) {
+        	sb.append("<html><body>");
+            sb.append("<h1>An exception occured</h1>");
             sb.append("<h2>Details</h2>");
             sb.append("<div>").append(e.getMessage()).append("</div>");
             sb.append("<ul style=\"list-style-type:none;\">");
@@ -172,8 +178,8 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
                 sb.append("<li>").append(trace.toString()).append("</li>");
             }
             sb.append("</ul>");
+            sb.append("</body></html>");
         }
-        sb.append("</body></html>");
         return sb.toString();
     }
 
