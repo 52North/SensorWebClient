@@ -162,7 +162,7 @@ tr.sensorInfo:hover {
   background-color: #3f8566;
 }
 .n52_sensorweb_client_form_content {
-  margin: 2em;
+  margin: 20px;
 }
 .n52_sensorweb_client_admin_login headerItem {
   text-color: red;
