@@ -42,7 +42,6 @@ public class SubscriptionsLayout extends FormLayout {
     
     public SubscriptionsLayout() {
         super(i18n.subscriptions());
-        setStyleName("n52_sensorweb_client_form_content");
         subscriptionsGrid = createSubscriptionListGrid();
         form.setFields(headerItem);
 

@@ -17,7 +17,6 @@ import org.n52.client.ses.event.SubscribeEvent;
 import org.n52.client.ses.event.UnsubscribeEvent;
 import org.n52.client.ses.ui.rules.RuleDataSource;
 import org.n52.client.ui.btn.SmallButton;
-import org.n52.client.util.ClientSessionManager;
 
 import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;

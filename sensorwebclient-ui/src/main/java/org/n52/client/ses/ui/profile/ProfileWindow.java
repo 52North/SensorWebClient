@@ -44,6 +44,7 @@ public class ProfileWindow extends LoginWindow {
         content = new HLayout();
         content.addMember(createEditProfileLayout());
         content.addMember(createSubcriptionsLayout());
+        content.setStyleName("n52_sensorweb_client_form_content");
         addItem(content);
         setTitle(i18n.editUserData());
         requestUserData();
@@ -68,6 +69,7 @@ public class ProfileWindow extends LoginWindow {
     private Canvas createEditProfileLayout() {
         if (userDataLayout == null) {
             userDataLayout = new EditProfileLayout();
+            userDataLayout.setWidth("40%");
         }
         return userDataLayout;
     }
@@ -75,6 +77,7 @@ public class ProfileWindow extends LoginWindow {
     private Canvas createSubcriptionsLayout() {
         if (subscriptionsLayout == null) {
             subscriptionsLayout = new SubscriptionsLayout();
+            subscriptionsLayout.setWidth("60%");
         }
         return subscriptionsLayout;
     }

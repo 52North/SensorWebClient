@@ -45,7 +45,7 @@ public abstract class FormLayout extends VLayout {
 
     protected LayoutSpacer spacer;
 
-    private HLayout loggedInAsLayout;
+//    private HLayout loggedInAsLayout;
 
     protected Label userNameLabel;
 
@@ -64,16 +64,16 @@ public abstract class FormLayout extends VLayout {
         this.spacer = new LayoutSpacer();
         this.spacer.setHeight(20);
 
-        this.loggedInAsLayout = new HLayout();
-        this.loggedInAsLayout.setWidth100();
-        this.loggedInAsLayout.setAlign(Alignment.RIGHT);
-        this.loggedInAsLayout.setHeight(20);
+//        this.loggedInAsLayout = new HLayout();
+//        this.loggedInAsLayout.setWidth100();
+//        this.loggedInAsLayout.setAlign(Alignment.RIGHT);
+//        this.loggedInAsLayout.setHeight(20);
 
         this.userNameLabel = new Label("");
         this.userNameLabel.setWordWrap(false);
 
-        this.loggedInAsLayout.addMember(this.userNameLabel);
-        addMember(this.loggedInAsLayout);
+//        this.loggedInAsLayout.addMember(this.userNameLabel);
+//        addMember(this.loggedInAsLayout);
     }
 
     public Label getUserNameLabel() {

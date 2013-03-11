@@ -68,7 +68,6 @@ public class EditProfileLayout extends FormLayout {
 
     public EditProfileLayout() {
         super(i18n.editProfile());
-        setStyleName("n52_sensorweb_client_form_content");
 
         DataSource dataSource = new DataSource();
         this.form.setDataSource(dataSource);
