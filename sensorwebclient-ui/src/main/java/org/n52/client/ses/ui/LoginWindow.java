@@ -76,16 +76,16 @@ public abstract class LoginWindow extends Window {
     }
 
     protected void initializeWindow() {
-        setWidth(WIDTH);
-        setHeight(HEIGHT);
-        setTitle(i18n.login());
         setShowModalMask(true);
         setIsModal(true);
+        setTitle(i18n.login());
+        setWidth(WIDTH);
+        setHeight(HEIGHT);
         centerInPage();
         setCanDragResize(true);
         setShowMaximizeButton(true);
         setShowMinimizeButton(false);
-        setMargin(10);
+//        setMargin(10);
         addResizedHandler(new ResizedHandler() {
             @Override
             public void onResized(ResizedEvent event) {
