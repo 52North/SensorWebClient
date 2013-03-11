@@ -68,7 +68,7 @@ public abstract class SubscriptionTemplate {
         TextItem valueItem = new TextItem();
         valueItem.setTitle(i18n.value());
         valueItem.setTitleOrientation(TOP);
-        valueItem.setKeyPressFilter("[0-9\\.]");
+        valueItem.setKeyPressFilter("[0-9\\.\\-]");
         return valueItem;
     }
 
