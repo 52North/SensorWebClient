@@ -307,14 +307,17 @@ public class DefaultMetadataHandler extends MetadataHandler {
                     }
 
                     Set<Station> stations = metadata.getStationsByProcedure(procedure.getId());
-                    if (fois.size() == stations.size()) {
+                    
+                    if (fois.size() <= stations.size()) {
                         /*
                          * Amount of sampling locations already matches amount of stations. A station update
                          * is sufficient.
                          */
                         for (String foi : fois) {
                             for (String phenomenon : phenomenons) {
-                                for (Station station : stations) {
+                                for (Iterator<Station> iterator = stations.iterator(); iterator
+										.hasNext();) {
+									Station station = (Station) iterator.next();
                                     if (station.isPhenomenonEqual(phenomenon)) {
                                         if (metadata.getFeatureHashMap().containsKey(foi)) {
                                             // TODO
@@ -327,6 +330,8 @@ public class DefaultMetadataHandler extends MetadataHandler {
                                             station.setFeature(foi);
                                             station.setLocation(eastingNorthing, srs);
                                         }
+                                    } else {
+                                    	iterator.remove();
                                     }
                                 }
                             }
@@ -437,7 +442,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
         Iterator<Station> iterator = stations.iterator();
         while (iterator.hasNext()) {
             Station station = iterator.next();
-            if ( !station.hasAllEntries()) {
+            if (!station.hasAllEntries()) {
                 iterator.remove();
             }
         }
