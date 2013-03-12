@@ -270,8 +270,14 @@ public class BasicRule_4_Builder extends BasicRuleBuilder {
         QuantityDocument quantityDoc = QuantityDocument.Factory.newInstance();
         Quantity quantity = quantityDoc.addNewQuantity();
         quantity.setValue(Double.parseDouble(ruleFilter.getValue()));
-        quantity.addNewUom().setCode(ruleFilter.getUnit());
+        if (isValidUom(ruleFilter.getUnit())) {
+            quantity.addNewUom().setCode(ruleFilter.getUnit());
+        }
         return quantityDoc;
+    }
+
+    private boolean isValidUom(String unit) {
+        return !unit.isEmpty() && !"--".equals(unit);
     }
 
     /**
