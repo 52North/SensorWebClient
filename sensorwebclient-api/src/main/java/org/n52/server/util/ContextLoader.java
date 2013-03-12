@@ -9,7 +9,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class ContextLoader {
 
-    private static ApplicationContext context = new ClassPathXmlApplicationContext("/application-context.xml");
+    private static ApplicationContext context = new ClassPathXmlApplicationContext("/spring-*-config.xml");
 
     /**
      * Loads a bean from the {@link ApplicationContext}.
