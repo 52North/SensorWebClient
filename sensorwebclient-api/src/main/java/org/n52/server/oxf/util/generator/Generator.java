@@ -56,6 +56,7 @@ import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeSeriesProperties;
 import org.n52.shared.serializable.pojos.sos.Offering;
+import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,15 +107,16 @@ public abstract class Generator {
         for (TimeSeriesProperties con : options.getProperties()) {
             SOSMetadata meta = ConfigurationContext.getSOSMetadata(con.getSosUrl());
             if (meta.canGeneralize() && generalize) {
-                String phenomenonURN = con.getPhenomenon().getId();
+                String phenomenon = con.getPhenomenon().getId();
                 try {
-                    String gen = GeneralizationConfiguration.getProperty(phenomenonURN);
-                    if (gen != null) {
-                        LOGGER.debug("Generalizer found for: " + phenomenonURN);
-                        con.getProcedure().setId(con.getProcedure().getId()+","+gen);
+                    String generalizer = GeneralizationConfiguration.getProperty(phenomenon);
+                    if (generalizer != null) {
+                        Procedure procedure = con.getProcedure();
+                        LOGGER.debug("Using generalizer '{}' for phenomenon '{}' and procedure '{}'", generalizer, phenomenon, procedure);
+                        procedure.setId(procedure.getId() + "," + generalizer);
                     }
                 } catch (PropertyException e) {
-                    LOGGER.error("Error loading generalizer property for '{}'.", phenomenonURN, e);
+                    LOGGER.error("Error loading generalizer property for '{}'.", phenomenon, e);
                 }
             }
         }
