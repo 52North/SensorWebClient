@@ -81,7 +81,6 @@ public abstract class OpenLayersMapWrapper {
     }
 
     private void initializeMapWidget(String cssHeight) {
-        this.height = Integer.valueOf(cssHeight);
         initializeDefaultMapOptions();
         mapWidget = new MapWidget("100%", cssHeight, defaultMapOptions);
         map = mapWidget.getMap();
