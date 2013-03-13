@@ -36,7 +36,6 @@ import org.gwtopenmaps.openlayers.client.MapOptions;
 import org.gwtopenmaps.openlayers.client.MapUnits;
 import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.gwtopenmaps.openlayers.client.Projection;
-import org.gwtopenmaps.openlayers.client.control.AttributionOptions;
 import org.gwtopenmaps.openlayers.client.control.Navigation;
 import org.gwtopenmaps.openlayers.client.layer.LayerOptions;
 import org.gwtopenmaps.openlayers.client.layer.OSM;
