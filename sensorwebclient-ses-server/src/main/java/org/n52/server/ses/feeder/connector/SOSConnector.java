@@ -162,18 +162,19 @@ public class SOSConnector {
                                                   procedures,
                                                   time);
         OperationResult operationResult = obsAccessor.sendRequest(request);
-        XmlObject response = XmlObject.Factory.parse(operationResult.getIncomingResultAsStream());
-
-        LOGGER.trace("GetObservation Response: \n{} ", response);
-        if (response instanceof ObservationCollectionDocument) {
-            return (ObservationCollectionDocument) response;
+        if (operationResult != null) {
+            XmlObject response = XmlObject.Factory.parse(operationResult.getIncomingResultAsStream());
+            LOGGER.trace("GetObservation Response: \n{} ", response);
+            if (response instanceof ExceptionReportDocument) {
+                ExceptionReportDocument exRepDoc = (ExceptionReportDocument) response;
+                ExceptionType[] exceptionArray = exRepDoc.getExceptionReport().getExceptionArray();
+                throw new Exception(exceptionArray[0].getExceptionTextArray(0));
+            } 
+            else if (response instanceof ObservationCollectionDocument) {
+                return (ObservationCollectionDocument) response;
+            }
+            LOGGER.warn("Unexpected response: {}", response.schemaType());
         }
-        else if (response instanceof ExceptionReportDocument) {
-            ExceptionReportDocument exRepDoc = (ExceptionReportDocument) response;
-            ExceptionType[] exceptionArray = exRepDoc.getExceptionReport().getExceptionArray();
-            throw new Exception(exceptionArray[0].getExceptionTextArray(0));
-        }
-        LOGGER.warn("Unexpected response: {}", response.schemaType());
         ObservationCollectionDocument emptyCollection = ObservationCollectionDocument.Factory.newInstance();
         emptyCollection.addNewObservationCollection(); // adds an empty member array
         return emptyCollection;
