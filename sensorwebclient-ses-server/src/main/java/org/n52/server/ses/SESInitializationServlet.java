@@ -76,9 +76,6 @@ public class SESInitializationServlet extends HttpServlet {
             SesConfig.PORT = this.getServletContext().getInitParameter("MAIL_PORT");
             SesConfig.AUTH = this.getServletContext().getInitParameter("MAIL_AUTH");
             SesConfig.SSL_ENABLE = this.getServletContext().getInitParameter("MAIL_SSL_ENABLE");
-
-            boolean startAutomatically = true;
-            createSosSesFeeder(startAutomatically);
             
             LOGGER.info("ckeck availability of SES and WNS");
             Thread t = new Thread(new Runnable() {
@@ -139,9 +136,9 @@ public class SESInitializationServlet extends HttpServlet {
                     }
                 }
                 
-                // set InitServlet to TRUE
                 SESInitializationServlet.initialized = true;
-
+                boolean startAutomatically = true;
+                createSosSesFeeder(startAutomatically);
             }
         });
         checkThread.run();
