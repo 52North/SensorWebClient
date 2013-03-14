@@ -76,9 +76,6 @@ public class SESInitializationServlet extends HttpServlet {
             SesConfig.PORT = this.getServletContext().getInitParameter("MAIL_PORT");
             SesConfig.AUTH = this.getServletContext().getInitParameter("MAIL_AUTH");
             SesConfig.SSL_ENABLE = this.getServletContext().getInitParameter("MAIL_SSL_ENABLE");
-
-            boolean startAutomatically = true;
-            createSosSesFeeder(startAutomatically);
             
             LOGGER.info("ckeck availability of SES and WNS");
             Thread t = new Thread(new Runnable() {
@@ -123,39 +120,44 @@ public class SESInitializationServlet extends HttpServlet {
                         // check if SES is available
                         if (!SESInitializationServlet.SESavailable) {
                             SESInitializationServlet.SESavailable = SesServerUtil.isAvailable();
-                            LOGGER.trace("SES (\"" + SesConfig.sesEndpoint + "\") is available = " + SESInitializationServlet.SESavailable);
+                            if (!SESInitializationServlet.SESavailable) {
+                                LOGGER.warn("SES (\"" + SesConfig.sesEndpoint + "\") is not (yet) available.");
+                            }
                         }
 
                         // check if WNS is available
                         if (!SESInitializationServlet.WNSavailable) {
                             SESInitializationServlet.WNSavailable = WnsUtil.isAvailable();
-                            LOGGER.trace("WNS (\"" + SesConfig.wns + "\") is available = " + SESInitializationServlet.WNSavailable);
-                        }
-                        // check all 20 seconds
-                        Thread.yield();
+                            if (!SESInitializationServlet.WNSavailable) {
+                                LOGGER.warn("WNS (\"" + SesConfig.wns + "\") is not (yet) available.");
+                            }
+                        } 
+                        
                         Thread.sleep(20000);
                     } catch (InterruptedException e) {
                         LOGGER.trace("Checking service was interrupted.", e);
                     }
                 }
-
                 SESInitializationServlet.initialized = true;
                 boolean startAutomatically = true;
                 createSosSesFeeder(startAutomatically);
-
             }
         });
-        checkThread.run();
+        checkThread.start();
     }
 
     /**
      * This method cheks whether it is possible to build rules without exceptions.
      * If one exception is thrown --> template is not valid
      */
-    private void templatesValidation() throws Exception {
-    	// wait until servlet is initialized
+    private void templatesValidation() {
         while (!SESInitializationServlet.initialized) {
-            Thread.yield();
+            try {
+                Thread.sleep(20000);
+            }
+            catch (InterruptedException e) {
+                LOGGER.trace("Checking service was interrupted.", e);
+            }
         }
         String ruleName = "DUMMY_RULE";
         String medium = "E-Mail";
@@ -193,53 +195,51 @@ public class SESInitializationServlet extends HttpServlet {
                         LOGGER.trace("Checking service was interrupted.", e);
                     }
                 }
+                
                 // run only if the init servlet is initialized
-                if (SESInitializationServlet.initialized) {
-                    LOGGER.info("create admin user");
+                LOGGER.info("create admin user");
 
-                    // create default admin on start
-                    UserDTO admin =
-                            SesUserServiceImpl.createUserDTO(new User("admin", "Admin", SesServerUtil.createMD5("admin"),
-                                    SesConfig.SENDER_ADDRESS, UserRole.ADMIN, true));
-                    admin.setRegisterID(UUID.randomUUID().toString());
+                // create default admin on start
+                UserDTO admin =
+                        SesUserServiceImpl.createUserDTO(new User("admin", "Admin", SesServerUtil.createMD5("admin"),
+                                SesConfig.SENDER_ADDRESS, UserRole.ADMIN, true));
+                admin.setRegisterID(UUID.randomUUID().toString());
 
-                    // check if default admin already exists
-                    if (!HibernateUtil.existsUserName(admin.getUserName())) {
-                        try {
-                            LOGGER.debug("get IDs from WNS for admin");
-                            admin.setWnsEmailId(WnsUtil.sendToWNSMail(admin.getName(), admin.geteMail()));
+                // check if default admin already exists
+                if (!HibernateUtil.existsUserName(admin.getUserName())) {
+                    try {
+                        LOGGER.debug("get IDs from WNS for admin");
+                        admin.setWnsEmailId(WnsUtil.sendToWNSMail(admin.getName(), admin.geteMail()));
 //                            admin.setWnsSmsId(WnsUtil
 //                                    .sendToWNSSMS(admin.getName(), String.valueOf(admin.getHandyNr())));
 
-                            HibernateUtil.save(new User(admin));
-                        } catch (Exception e) {
-                            LOGGER.debug("WNS is not available.", e);
-                        }
-                    } else {
-                        LOGGER.debug("default admin already exists");
+                        HibernateUtil.save(new User(admin));
+                    } catch (Exception e) {
+                        LOGGER.debug("WNS is not available.", e);
                     }
+                } else {
+                    LOGGER.debug("default admin already exists");
+                }
 
-                    // in debug-mode. check if default user already exists
-                    if (Log.isDebugEnabled()) {
-                        UserDTO user =
-                            SesUserServiceImpl.createUserDTO(new User("user", "User", SesServerUtil.createMD5("user"),
-                                    "52n.development@googlemail.com", UserRole.USER, true));
-                        if (!HibernateUtil.existsUserName(user.getUserName())) {
-                            user.setRegisterID(UUID.randomUUID().toString());
+                // in debug-mode. check if default user already exists
+                if (LOGGER.isDebugEnabled()) {
+                    UserDTO user =
+                        SesUserServiceImpl.createUserDTO(new User("user", "User", SesServerUtil.createMD5("user"),
+                                "52n.development@googlemail.com", UserRole.USER, true));
+                    if (!HibernateUtil.existsUserName(user.getUserName())) {
+                        user.setRegisterID(UUID.randomUUID().toString());
 
-                            try {
-                                user.setWnsEmailId(WnsUtil.sendToWNSMail(user.getName(), user.geteMail()));
-                                HibernateUtil.save(new User(user));
-                            } catch (Exception e) {
-                                LOGGER.debug("WNS is not available.",e);
-                            }
+                        try {
+                            user.setWnsEmailId(WnsUtil.sendToWNSMail(user.getName(), user.geteMail()));
+                            HibernateUtil.save(new User(user));
+                        } catch (Exception e) {
+                            LOGGER.debug("WNS is not available.",e);
                         }
                     }
                 }
-                return;
             }
         });
-        sesUserThread.run();
+        sesUserThread.start();
     }
 
     @Override
