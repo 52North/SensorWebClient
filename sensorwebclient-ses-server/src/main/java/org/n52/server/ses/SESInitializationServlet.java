@@ -109,7 +109,7 @@ public class SESInitializationServlet extends HttpServlet {
     }
 
     /**
-     * This method checks all 20 seconds the availability of the SES and the WNS.
+     * This method checks all 10 seconds the availability of the SES and the WNS.
      * After both services are available, the registered sensors from SES are stored in DB
      */
     private void checkAvailability() {
@@ -120,28 +120,30 @@ public class SESInitializationServlet extends HttpServlet {
                         // check if SES is available
                         if (!SESInitializationServlet.SESavailable) {
                             SESInitializationServlet.SESavailable = SesServerUtil.isAvailable();
-                            LOGGER.trace("SES (\"" + SesConfig.sesEndpoint + "\") is available = " + SESInitializationServlet.SESavailable);
+                            if (!SESInitializationServlet.SESavailable) {
+                                LOGGER.warn("SES (\"" + SesConfig.sesEndpoint + "\") is not (yet) available.");
+                            }
                         }
 
                         // check if WNS is available
                         if (!SESInitializationServlet.WNSavailable) {
                             SESInitializationServlet.WNSavailable = WnsUtil.isAvailable();
-                            LOGGER.trace("WNS (\"" + SesConfig.wns + "\") is available = " + SESInitializationServlet.WNSavailable);
-                        }
-                        // check all 20 seconds
-                        Thread.yield();
-                        Thread.sleep(20000);
+                            if (!SESInitializationServlet.WNSavailable) {
+                                LOGGER.warn("WNS (\"" + SesConfig.wns + "\") is not (yet) available.");
+                            }
+                        } 
+                        
+                        Thread.sleep(10000);
                     } catch (InterruptedException e) {
                         LOGGER.trace("Checking service was interrupted.", e);
                     }
                 }
-                
                 SESInitializationServlet.initialized = true;
                 boolean startAutomatically = true;
                 createSosSesFeeder(startAutomatically);
             }
         });
-        checkThread.run();
+        checkThread.start();
     }
 
     /**
