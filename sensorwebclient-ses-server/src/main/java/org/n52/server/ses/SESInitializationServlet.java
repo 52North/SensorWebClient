@@ -133,7 +133,7 @@ public class SESInitializationServlet extends HttpServlet {
                             }
                         } 
                         
-                        Thread.sleep(10000);
+                        Thread.sleep(20000);
                     } catch (InterruptedException e) {
                         LOGGER.trace("Checking service was interrupted.", e);
                     }
