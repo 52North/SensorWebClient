@@ -138,9 +138,10 @@ public class SESInitializationServlet extends HttpServlet {
                         LOGGER.trace("Checking service was interrupted.", e);
                     }
                 }
-                
-                // set InitServlet to TRUE
+
                 SESInitializationServlet.initialized = true;
+                boolean startAutomatically = true;
+                createSosSesFeeder(startAutomatically);
 
             }
         });
