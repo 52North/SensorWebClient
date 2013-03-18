@@ -36,7 +36,7 @@
 	<logger name="org.n52.server" level="${config.logger.level.server}" />
 	
 	<logger name="org.geotools" level="WARN" />
-	<logger name="org.apache.commons.httpclient" level="WARN" />
+	<logger name="org.apache" level="WARN" />
 	
 	<logger name="com.sun.xml" level="ERROR" />
 	<logger name="org.geotools" level="WARN" />
