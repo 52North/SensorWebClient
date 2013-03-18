@@ -26,15 +26,19 @@ package org.n52.server.oxf.util.parser;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
+import org.joda.time.DateTime;
 import org.n52.oxf.feature.OXFFeature;
 import org.n52.oxf.feature.sos.ObservationSeriesCollection;
 import org.n52.oxf.feature.sos.ObservedValueTuple;
 import org.n52.oxf.valueDomains.time.ITimePosition;
+import org.n52.oxf.valueDomains.time.TimePosition;
 import org.n52.server.oxf.util.ConfigurationContext;
+import org.n52.server.util.TimeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -374,7 +378,7 @@ public class TimeseriesFactory {
             ObservedValueTuple prevObservation;
             ObservedValueTuple nextObservation =
             // FIXME aufräumen in der compression wenn benötigt
-                    coll.getTuple(new OXFFeature(foiID, null), timeArray[0]);
+            coll.getTuple(new OXFFeature(foiID, null), timeArray[0]);
             ObservedValueTuple observation = nextObservation;
 
             int counter = 0;
@@ -394,26 +398,9 @@ public class TimeseriesFactory {
                 } catch (NullPointerException e) {
                     obsVal = "no Data available"; // TODO finish
                 }
-                // String prevObsVal = prevObservation.getValue(0).toString();
-                // String nextObsVal = nextObservation.getValue(0).toString();
-
-                // if ((i == 0) || // first observation --> in
-                // (i == timeArray.length - 1) || // last
-                // // observation
-                // // -->
-                // // in
-                // (!(prevObsVal.equals(obsVal) && nextObsVal.equals(obsVal))))
-                // {
-
-                // insert here
-                DateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ssZ");
-                // TODO dirty fix
-                String tmp = observation.getTime().toISO8601Format() + "00";
-
-                // DateTime d =
-                // DateTimeFormat.forPattern("yyyy-MM-dd'T'kk:mm:ssZ").
-                // parseDateTime(observation.getTime().toISO8601Format());
-                data.put(f.parse(tmp).getTime(), obsVal);
+                
+                TimePosition timePosition = (TimePosition) observation.getTime();
+                data.put(timePosition.getCalendar().getTimeInMillis(), obsVal);
                 counter++;
             }
             // }
