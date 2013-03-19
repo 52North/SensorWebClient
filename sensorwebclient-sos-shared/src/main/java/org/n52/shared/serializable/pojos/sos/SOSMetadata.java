@@ -376,4 +376,8 @@ public class SOSMetadata implements Serializable {
     public Station getStation(String id) {
         return stations.get(id);
     }
+
+	public void removeProcedure(String procedure) {
+		this.procedures.remove(procedure);
+	}
 }

@@ -27,6 +27,8 @@ package org.n52.server.oxf.util.connector.eea;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.n52.server.oxf.util.ConfigurationContext.SERVER_TIMEOUT;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -66,10 +68,7 @@ import org.n52.server.oxf.util.parser.utils.ParsedPoint;
 import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
-import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
-import org.n52.shared.serializable.pojos.sos.Phenomenon;
-import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.slf4j.Logger;
@@ -87,71 +86,17 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 	public SOSMetadataResponse performMetadataCompletion(String sosUrl, String sosVersion) throws Exception {
 		SOSMetadata metadata = initMetadata(sosUrl, sosVersion);
 		
-        IBoundingBox sosBbox = null;
-		Map<ParameterConstellation, FutureTask<OperationResult>> futureTasks = new ConcurrentHashMap<ParameterConstellation, FutureTask<OperationResult>>();
-		Contents contents = getServiceDescriptorContent();
-        for (String dataIdent : contents.getDataIdentificationIDArray()) {
-			ObservationOffering Observationoffering = (ObservationOffering) contents.getDataIdentification(dataIdent);
-			String offeringId = Observationoffering.getIdentifier();
-
-			sosBbox = ConnectorUtils.createBbox(sosBbox, Observationoffering);
-
-			String[] phenArray = Observationoffering.getObservedProperties();
-			String[] procArray = Observationoffering.getProcedures();
-			
-			// add offering
-			Offering offering = new Offering(offeringId);
-			offering.setLabel(Observationoffering.getTitle());
-            metadata.addOffering(offering);
-			
-			// add phenomenons
-			for (String phenomenonId : phenArray) {
-				Phenomenon phenomenon = new Phenomenon(phenomenonId);
-				phenomenon.setLabel(phenomenonId.substring(phenomenonId.indexOf("#") + 1));
-                metadata.addPhenomenon(phenomenon);
-			}
-			
-			// add procedures
-			for (String procedureId : procArray) {
-				metadata.addProcedure(new Procedure(procedureId));
-			}
-
-	        AReferencingHelper referenceHelper = createReferencingHelper(metadata); 
-			String bboxString = createBboxString(ConnectorUtils.createBbox(null, Observationoffering), referenceHelper);
-			// add station
-			for (String procedure : procArray) {
-				for (String phenomenon : phenArray) {
-					ParameterConstellation paramConst = new ParameterConstellation();
-					paramConst.setPhenomenon(phenomenon);
-					paramConst.setProcedure(procedure);
-					paramConst.setOffering(offeringId);
-					futureTasks
-							.put(paramConst,
-									new FutureTask<OperationResult>(
-											createGetFoiAccess(sosUrl,
-													sosVersion, bboxString,
-													paramConst)));
-				}
-			}
-        }
-
-        // add srs
-        try {
-            if (!sosBbox.getCRS().startsWith("EPSG")) {
-                String[] crsParts = sosBbox.getCRS().split(":");
-                String epsgCode = "EPSG:" + crsParts[crsParts.length - 1];
-                metadata.setSrs(epsgCode);
-            } else {
-                metadata.setSrs(sosBbox.getCRS());
-            }
-        } catch (Exception e) {
-            LOGGER.error("Could not insert spatial metadata", e);
-        }
+        Collection<ParameterConstellation> parameterConstellations = createParameterConstellations();
         
         // TODO send DescribeSensor for every procedure to get the UOM, when the EEA-SOS deliver the uom
 
-        AReferencingHelper referenceHelper = createReferencingHelper(metadata); 
-        
+        AReferencingHelper referenceHelper = createReferencingHelper();
+        Map<String, String> offeringBBoxMap = getOfferingBBoxMap();
+        Map<ParameterConstellation, FutureTask<OperationResult>> futureTasks = new ConcurrentHashMap<ParameterConstellation, FutureTask<OperationResult>>();
+        for (ParameterConstellation paramConst : parameterConstellations) {
+        	String bboxString = offeringBBoxMap.get(paramConst.getOffering());
+        	futureTasks.put(paramConst,	new FutureTask<OperationResult>(createGetFoiAccess(sosUrl, sosVersion, bboxString, paramConst)));
+		}
 		// execute the GetFeatureOfInterest requests
 		LOGGER.debug("Sending " + futureTasks.size() + " GetFeatureOfInterest requests");
 		for (ParameterConstellation paramConst : futureTasks.keySet()) {
@@ -211,10 +156,9 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 		LOGGER.info("Retrieved #{} stations from SOS '{}'", metadata.getStations().size(), sosUrl);
 		metadata.setHasDonePositionRequest(true);
 		return new SOSMetadataResponse(metadata);
-
 	}
 
-	ParsedPoint getPointOfSamplingFeatureType(SFSamplingFeatureType sfSamplingFeature, AReferencingHelper referenceHelper) throws XmlException {
+	public ParsedPoint getPointOfSamplingFeatureType(SFSamplingFeatureType sfSamplingFeature, AReferencingHelper referenceHelper) throws XmlException {
 		ParsedPoint point = new ParsedPoint();
 		XmlCursor cursor = sfSamplingFeature.newCursor();
 		if (cursor.toChild(new QName("http://www.opengis.net/samplingSpatial/2.0", "shape"))) {
@@ -249,8 +193,20 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 		}
 		return point;
 	}
+	
+	private Map<String, String> getOfferingBBoxMap() throws OXFException {
+		Map<String, String> offeringBBox = new HashMap<String, String>();
+		Contents contents = getServiceDescriptorContent();
+		for (String dataIdent : contents.getDataIdentificationIDArray()) {
+			ObservationOffering offering = (ObservationOffering) contents.getDataIdentification(dataIdent);
+			String key = offering.getIdentifier(); 
+			String bboxString = createBboxString(ConnectorUtils.createBbox(null, offering), createReferencingHelper());
+			offeringBBox.put(key, bboxString);
+		}
+		return offeringBBox;
+	}
 
-	String createBboxString(IBoundingBox bbox, AReferencingHelper referenceHelper) {
+	public String createBboxString(IBoundingBox bbox, AReferencingHelper referenceHelper) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("om:featureOfInterest/*/sams:shape,");
 		sb.append(bbox.getLowerCorner()[0]).append(",");

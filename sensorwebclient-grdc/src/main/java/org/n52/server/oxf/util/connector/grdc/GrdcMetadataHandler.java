@@ -170,7 +170,7 @@ public class GrdcMetadataHandler extends MetadataHandler {
             LOGGER.error("Could not insert spatial metadata", e);
         }
 
-        AReferencingHelper referenceHelper = createReferencingHelper(metadata);
+        AReferencingHelper referenceHelper = createReferencingHelper();
         
         while (!futureTasks.isEmpty()) {
         	Set<String> keys = new HashSet<String>();

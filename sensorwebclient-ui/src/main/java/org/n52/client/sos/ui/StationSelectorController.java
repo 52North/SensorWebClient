@@ -360,7 +360,8 @@ class StationSelectorController implements MapController {
         return mostCommonCategory;
     }
 
-    private void increaseAmountOf(String category, Map<String, Integer> countResults) {
+    @SuppressWarnings("unused")
+	private void increaseAmountOf(String category, Map<String, Integer> countResults) {
         if (countResults.containsKey(category)) {
             Integer counter = countResults.get(category);
             countResults.put(category, ++counter);
