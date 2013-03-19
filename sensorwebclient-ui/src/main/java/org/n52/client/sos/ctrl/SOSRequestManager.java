@@ -194,12 +194,13 @@ public class SOSRequestManager extends RequestManager {
         int width = evt.getWidth();
         int height = evt.getHeight();
         String url = evt.getSos();
-        
+
+        SOSMetadata meta = DataManagerSosImpl.getInst().getServiceMetadata(url);
         Station station = evt.getStation();
-        Offering offering = evt.getOffering();
-        FeatureOfInterest foi = evt.getFeature();
-        Procedure procedure = evt.getProcedure();
-        Phenomenon phenomenon = evt.getPhenomenon();
+        Offering offering = meta.getOffering(evt.getParameterConstellation().getOffering());
+        FeatureOfInterest foi = meta.getFeature(evt.getParameterConstellation().getFeatureOfInterest());
+        Procedure procedure = meta.getProcedure(evt.getParameterConstellation().getProcedure());
+        Phenomenon phenomenon = meta.getPhenomenon(evt.getParameterConstellation().getPhenomenon());
 
         TimeSeriesProperties props = new TimeSeriesProperties(url, station, offering, foi, procedure, phenomenon, width, height);
         TimeSeries timeSeries = new TimeSeries("TS_" + System.currentTimeMillis(), props);

@@ -81,7 +81,7 @@ public class ReferencingFacadeTest {
         LOGGER.warn("Make Referencing Facade Test more flexible!");
         // TODO make random station within bbox
         // TODO add different epsg codes!
-        Station stationWithin = new Station();
+        Station stationWithin = new Station("test");
         stationWithin.setLocation(new EastingNorthing(7.0, 52.0), "EPSG:4326");
         return stationWithin;
     }
@@ -90,7 +90,7 @@ public class ReferencingFacadeTest {
         LOGGER.warn("Make Referencing Facade Test more flexible!");
         // TODO make random station within bbox
         // TODO add different epsg codes!
-        Station stationOutside = new Station();
+        Station stationOutside = new Station("test");
         stationOutside.setLocation(new EastingNorthing(10.4, 52.0), "EPSG:4326");
         return stationOutside;
     }

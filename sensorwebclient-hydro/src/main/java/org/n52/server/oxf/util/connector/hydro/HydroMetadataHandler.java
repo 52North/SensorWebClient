@@ -31,6 +31,7 @@ import static org.n52.server.oxf.util.ConfigurationContext.SERVER_TIMEOUT;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -54,13 +55,10 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
-import org.n52.oxf.ows.ServiceDescriptor;
 import org.n52.oxf.ows.capabilities.Contents;
 import org.n52.oxf.ows.capabilities.IBoundingBox;
 import org.n52.oxf.ows.capabilities.Operation;
-import org.n52.oxf.sos.adapter.SOSAdapter;
 import org.n52.oxf.sos.capabilities.ObservationOffering;
-import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.access.AccessorThreadPool;
 import org.n52.server.oxf.util.access.OperationAccessor;
 import org.n52.server.oxf.util.connector.MetadataHandler;
@@ -71,6 +69,7 @@ import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
 import org.n52.shared.serializable.pojos.sos.Offering;
+import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -85,29 +84,28 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 
 public class HydroMetadataHandler extends MetadataHandler {
 	
-	private static final String FOI_WILDCARD = "FOI_WILDCARD";
-    
     private static final Logger LOGGER = LoggerFactory.getLogger(HydroMetadataHandler.class);
     
-    private SOSAdapter adapter;
-	
 	@Override
 	public SOSMetadataResponse performMetadataCompletion(String sosUrl, String sosVersion) throws Exception {
-		this.adapter = new SOSwithSoapAdapter(sosVersion);
-		ServiceDescriptor serviceDesc = ConnectorUtils.getServiceDescriptor(sosUrl, this.adapter);
-
-        String sosTitle = serviceDesc.getServiceIdentification().getTitle();
-//		String omFormat = ConnectorUtils.getOMFormat(serviceDesc);
-		String omFormat = "http://www.opengis.net/om/2.0";
-//		String smlVersion = ConnectorUtils.getSMLVersion(serviceDesc, sosVersion);
-		String smlVersion = "http://www.opengis.net/sensorML/1.0.1";
-		ConnectorUtils.setVersionNumbersToMetadata(sosUrl, sosTitle, sosVersion, omFormat, smlVersion);
 		
-		SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosUrl);
+		SOSMetadata metadata = initMetadata(sosUrl, sosVersion);
 
-        Map<Station, FutureTask<OperationResult>> futureTasks = new HashMap<Station, FutureTask<OperationResult>>();
+		Contents contents = getServiceDescriptorContent();
+	
 		
-		Contents contents = serviceDesc.getContents();
+//		this.adapter = new SOSwithSoapAdapter(sosVersion);
+//		ServiceDescriptor serviceDesc = ConnectorUtils.getServiceDescriptor(sosUrl, this.adapter);
+//
+//        String sosTitle = serviceDesc.getServiceIdentification().getTitle();
+////		String omFormat = ConnectorUtils.getOMFormat(serviceDesc);
+//		String omFormat = "http://www.opengis.net/om/2.0";
+////		String smlVersion = ConnectorUtils.getSMLVersion(serviceDesc, sosVersion);
+//		String smlVersion = "http://www.opengis.net/sensorML/1.0.1";
+//		ConnectorUtils.setVersionNumbersToMetadata(sosUrl, sosTitle, sosVersion, omFormat, smlVersion);
+		
+        Collection<ParameterConstellation> parameterConstellations = new ArrayList<ParameterConstellation>();
+        
 		for (String dataIdent : contents.getDataIdentificationIDArray()) {
 			ObservationOffering observationOffering = (ObservationOffering) contents.getDataIdentification(dataIdent);
 			String offeringID = observationOffering.getIdentifier();
@@ -149,43 +147,47 @@ public class HydroMetadataHandler extends MetadataHandler {
 				}
 			}
 			// set foi wildcard to add them later
-			if (fois.isEmpty()) {
-				fois.add(FOI_WILDCARD);
-			}
+//			if (fois.isEmpty()) {
+//				fois.add(FOI_WILDCARD);
+//			}
 			
 			// add station
 			for (String procedure : procedures) {
 				for (String phenomenon : phenomenons) {
-					for (String foi : fois) {
-						Station station = new Station();
-						station.setPhenomenon(phenomenon);
-						station.setProcedure(procedure);
-						station.setOffering(offeringID);
-						station.setFeature(foi);
-                        String filter = getLastPartOf(phenomenon) + " (" + getLastPartOf(procedure) + ")";
-                        station.setStationCategory(filter);
-						metadata.addStation(station);
-						if (fois.contains(FOI_WILDCARD)) {
-							futureTasks.put(station, new FutureTask<OperationResult>(createGetFoiAccess(sosUrl, sosVersion, station)));
-						}
-					}
+						ParameterConstellation paramConst = new ParameterConstellation();
+						paramConst.setPhenomenon(phenomenon);
+						paramConst.setProcedure(procedure);
+						paramConst.setOffering(offeringID);
+						paramConst.setCategory(getLastPartOf(phenomenon) + " (" + getLastPartOf(procedure) + ")");
+						
+						parameterConstellations.add(paramConst);
+//						metadata.addStation(station);
+//						if (fois.contains(FOI_WILDCARD)) {
+//							futureTasks.put(station, new FutureTask<OperationResult>(createGetFoiAccess(sosUrl, sosVersion, station)));
+//						}
 				}
 			}
 		}
         
+		
 		// execute the GetFeatureOfInterest requests
+		Map<ParameterConstellation, FutureTask<OperationResult>> futureTasks = new HashMap<ParameterConstellation, FutureTask<OperationResult>>();
+		for (ParameterConstellation paramConst : parameterConstellations) {
+			futureTasks.put(paramConst, new FutureTask<OperationResult>(createGetFoiAccess(sosUrl, sosVersion, paramConst)));
+		}
+		
         int counter = futureTasks.size();
         AReferencingHelper referenceHelper = createReferencingHelper(metadata);
 		LOGGER.info("Sending " + counter + " GetFeatureOfInterest requests");
-		for (Station station: futureTasks.keySet()) {
-			LOGGER.info("Sending #{} GetFeatureOfInterest request for Offering " + station.getOffering(), counter--);
-			AccessorThreadPool.execute(futureTasks.get(station));
+		for (ParameterConstellation paramConst: futureTasks.keySet()) {
+			LOGGER.info("Sending #{} GetFeatureOfInterest request for Offering " + paramConst.getOffering(), counter--);
+			AccessorThreadPool.execute(futureTasks.get(paramConst));
 			try {
-				FutureTask<OperationResult> futureTask = futureTasks.get(station);
+				FutureTask<OperationResult> futureTask = futureTasks.get(paramConst);
 				OperationResult opRes = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
-				metadata.removeStation(station);
+//				metadata.removeStation(station);
 				if (opRes == null) {
-					LOGGER.error("Get no result for GetFeatureOfInterest " + station + "!");
+					LOGGER.error("Get no result for GetFeatureOfInterest with parameter constellation: " + paramConst + "!");
 				}
 				GetFeatureOfInterestResponseDocument foiResDoc = getFOIResponseOfOpResult(opRes);
 				for (FeaturePropertyType featurePropertyType : foiResDoc.getGetFeatureOfInterestResponse().getFeatureMemberArray()) {
@@ -202,16 +204,25 @@ public class HydroMetadataHandler extends MetadataHandler {
 					if (point == null) {
 						LOGGER.warn("The foi with ID {} has no valid point", id);
 					} else {
+						// add feature
 						FeatureOfInterest feature = new FeatureOfInterest(id);
 						feature.setLabel(label);
 	                    metadata.addFeature(feature);
-						Station clone = station.clone();
-						double lat = Double.parseDouble(point.getLat());
-	                    double lng = Double.parseDouble(point.getLon());
-	                    EastingNorthing coords = new EastingNorthing(lng, lat);
-						clone.setLocation(coords, point.getSrs());
-	                    clone.setFeature(id);
-						metadata.addStation(clone);
+	                    
+	                    // create station if not exists
+	                    Station station = metadata.getStation(id);
+	                    if (station == null) {
+	                        double lat = Double.parseDouble(point.getLat());
+		                    double lng = Double.parseDouble(point.getLon());
+		                    EastingNorthing coords = new EastingNorthing(lng, lat);
+	                        station = new Station(id);
+	                        station.setLocation(coords, point.getSrs());
+	                        metadata.addStation(station);
+	                    }
+	                    
+	                    ParameterConstellation tmp = paramConst.clone();
+	                    tmp.setFeatureOfInterest(id);
+	                    station.addParameterConstellation(tmp);
 					}
 				}
 			} catch (TimeoutException e) {
@@ -219,6 +230,8 @@ public class HydroMetadataHandler extends MetadataHandler {
 			}
 
 		}
+		
+		LOGGER.info("{} stations are created", metadata.getStations().size());
 		
 		metadata.setHasDonePositionRequest(true);
 		return new SOSMetadataResponse(metadata);
@@ -288,14 +301,14 @@ public class HydroMetadataHandler extends MetadataHandler {
 		}
 	}
 
-	private Callable<OperationResult> createGetFoiAccess(String sosUrl, String sosVersion, Station station) throws OXFException {
+	private Callable<OperationResult> createGetFoiAccess(String sosUrl, String sosVersion, ParameterConstellation paramConst) throws OXFException {
 		ParameterContainer container = new ParameterContainer();
 		container.addParameterShell(GET_FOI_SERVICE_PARAMETER, "SOS");
         container.addParameterShell(GET_FOI_VERSION_PARAMETER, sosVersion);
-        container.addParameterShell("phenomenon", station.getPhenomenon());
-        container.addParameterShell("procedure", station.getProcedure());
+        container.addParameterShell("phenomenon", paramConst.getPhenomenon());
+        container.addParameterShell("procedure", paramConst.getProcedure());
         Operation operation = new Operation(GET_FEATURE_OF_INTEREST, sosUrl, sosUrl);
-		return new OperationAccessor(adapter, operation, container);
+		return new OperationAccessor(getSosAdapter(), operation, container);
 	}
 
 }

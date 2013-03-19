@@ -132,18 +132,18 @@ public class GrdcMetadataHandler extends MetadataHandler {
 			}
 			
 			// add station
-			for (String procedure : procArray) {
-				for (String phenomenon : phenArray) {
-					for (String foi : fois) {
-						Station station = new Station();
-						station.setPhenomenon(phenomenon);
-						station.setProcedure(procedure);
-						station.setOffering(offeringID);
-						station.setFeature(foi);
-						metadata.addStation(station);	
-					}
-				}
-			}
+//			for (String procedure : procArray) {
+//				for (String phenomenon : phenArray) {
+//					for (String foi : fois) {
+//						Station station = new Station();
+//						station.setPhenomenon(phenomenon);
+//						station.setProcedure(procedure);
+//						station.setOffering(offeringID);
+//						station.setFeature(foi);
+//						metadata.addStation(station);	
+//					}
+//				}
+//			}
 		
 			for (String foi : fois) {
 				// create GetFeatureOfInterest
@@ -179,8 +179,8 @@ public class GrdcMetadataHandler extends MetadataHandler {
 				try {
 					FutureTask<OperationResult> futureTask = futureTasks.get(foi);
 					OperationResult opRes = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
-					Set<Station> stations = metadata.getStationsByFeatureID(foi);
-					metadata.removeStations(stations);
+//					Set<Station> stations = metadata.getStationsByFeatureID(foi);
+//					metadata.removeStations(stations);
 					if (opRes == null) {
 						LOGGER.error("Get no result for GetFeatureOfInterest " + foi + "!");
 					}
@@ -203,16 +203,16 @@ public class GrdcMetadataHandler extends MetadataHandler {
 							feature.setLabel(label);
 							metadata.addFeature(feature);
 							// add position and foiID to a new station
-							for (Station station : stations) {
-								Station clone = station.clone();
-								clone.setFeature(featureId);
-								ParsedPoint point = getPositionOfGRDCSamplingPoint(grdcSamplingPoint, referenceHelper);
-	                            double lat = Double.parseDouble(point.getLat());
-	                            double lng = Double.parseDouble(point.getLon());
-	                            EastingNorthing coords = new EastingNorthing(lng, lat);
-	                            clone.setLocation(coords, point.getSrs());
-								metadata.addStation(clone);
-							}
+//							for (Station station : stations) {
+//								Station clone = station.clone();
+//								clone.setFeature(featureId);
+//								ParsedPoint point = getPositionOfGRDCSamplingPoint(grdcSamplingPoint, referenceHelper);
+//	                            double lat = Double.parseDouble(point.getLat());
+//	                            double lng = Double.parseDouble(point.getLon());
+//	                            EastingNorthing coords = new EastingNorthing(lng, lat);
+//	                            clone.setLocation(coords, point.getSrs());
+//								metadata.addStation(clone);
+//							}
 						}
 					}
 				} catch (TimeoutException e) {

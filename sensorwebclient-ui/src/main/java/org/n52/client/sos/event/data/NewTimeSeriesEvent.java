@@ -26,10 +26,7 @@ package org.n52.client.sos.event.data;
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.data.handler.NewTimeSeriesEventHandler;
 import org.n52.client.ui.View;
-import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
-import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.Phenomenon;
-import org.n52.shared.serializable.pojos.sos.Procedure;
+import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
 import org.n52.shared.serializable.pojos.sos.Station;
 
 public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEventHandler> {
@@ -40,14 +37,8 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
     
     private Station station;
     
-    private Offering offering;
-
-    private FeatureOfInterest feature;
-
-    private Procedure procedure;
-
-    private Phenomenon phenomenon;
-
+    private ParameterConstellation parameterConstellation;
+    
     private int width;
 
     private int height;
@@ -57,10 +48,7 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
     public static class Builder {
 		private String serviceURL; // required
 		private Station station; // required
-		private Offering offering; // required
-		private FeatureOfInterest feature; // required
-		private Procedure procedure; // required
-		private Phenomenon phenomenon; // required
+		private ParameterConstellation parameterConstellation; // required
 		private int width = View.getView().getDataPanelWidth();
 		private int height = View.getView().getDataPanelHeight();
 		private boolean requestSensorData = true;
@@ -76,24 +64,9 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
     		this.station = station;
     		return this;
     	}
-    	public Builder addOffering(final Offering offering) {
-    		assert(offering != null);
-    		this.offering = offering;
-    		return this;
-    	}
-    	public Builder addFOI(final FeatureOfInterest foi) {
-    		assert(foi != null);
-    		this.feature = foi;
-    		return this;
-    	}
-    	public Builder addProcedure(final Procedure procedure) {
-    		assert(procedure != null);
-    		this.procedure = procedure;
-    		return this;
-    	}
-    	public Builder addPhenomenon(final Phenomenon phenomenon) {
-    		assert(phenomenon != null);
-    		this.phenomenon = phenomenon;
+    	public Builder addParameterConstellation(final ParameterConstellation paramConst) {
+    		assert(paramConst != null);
+    		this.parameterConstellation = paramConst;
     		return this;
     	}
     	public Builder addWidth(final int width) {
@@ -124,17 +97,8 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
     	Station getStation() {
     		return this.station;
     	}
-    	Offering getOffering() {
-    		return this.offering;
-    	}
-    	FeatureOfInterest getFeatureOfInterest() {
-    		return this.feature;
-    	}
-    	Procedure getProcedure() {
-    		return this.procedure;
-    	}
-    	Phenomenon getPhenomenon() {
-    		return this.phenomenon;
+    	ParameterConstellation getParameterConstellation() {
+    		return this.parameterConstellation;
     	}
     	int getWidth() {
     		return this.width;
@@ -153,10 +117,7 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
     private NewTimeSeriesEvent(Builder builder) {
     	this.sos = builder.getServiceURL();
     	this.station = builder.getStation();
-    	this.offering = builder.getOffering();
-    	this.feature = builder.getFeatureOfInterest();
-    	this.procedure = builder.getProcedure();
-    	this.phenomenon = builder.getPhenomenon();
+    	this.parameterConstellation = builder.getParameterConstellation();
     	this.width = builder.getWidth();
     	this.height = builder.getHeight();
     	this.requestSensorData = builder.isRequestSensordata();
@@ -174,20 +135,8 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
     	return this.station;
     }
 
-    public Offering getOffering() {
-        return this.offering;
-    }
-
-    public FeatureOfInterest getFeature() {
-        return this.feature;
-    }
-
-    public Procedure getProcedure() {
-        return this.procedure;
-    }
-
-    public Phenomenon getPhenomenon() {
-        return this.phenomenon;
+    public ParameterConstellation getParameterConstellation() {
+        return this.parameterConstellation;
     }
 
     public int getWidth() {

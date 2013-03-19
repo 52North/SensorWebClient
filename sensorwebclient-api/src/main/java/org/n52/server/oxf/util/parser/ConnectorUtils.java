@@ -36,6 +36,7 @@ import org.jfree.util.Log;
 import org.n52.oxf.ows.ServiceDescriptor;
 import org.n52.oxf.ows.capabilities.IBoundingBox;
 import org.n52.oxf.ows.capabilities.Operation;
+import org.n52.oxf.ows.capabilities.OperationsMetadata;
 import org.n52.oxf.ows.capabilities.Parameter;
 import org.n52.oxf.sos.adapter.SOSAdapter;
 import org.n52.oxf.sos.capabilities.ObservationOffering;
@@ -98,12 +99,15 @@ public class ConnectorUtils {
 
     public static String getOMFormat(ServiceDescriptor serviceDesc) {
         String respFormat = null;
-        Operation op = serviceDesc.getOperationsMetadata().getOperationByName("GetObservation");
-        Parameter parameter = op.getParameter("responseFormat");
-        StringValueDomain respDomain = (StringValueDomain) parameter.getValueDomain();
-        for (String elem : respDomain.getPossibleValues()) {
-            if (elem.contains("OM") || elem.contains("om")) {
-                respFormat = elem;
+        OperationsMetadata metadata = serviceDesc.getOperationsMetadata();
+        if (metadata != null) {
+        	Operation op = metadata.getOperationByName("GetObservation");
+            Parameter parameter = op.getParameter("responseFormat");
+            StringValueDomain respDomain = (StringValueDomain) parameter.getValueDomain();
+            for (String elem : respDomain.getPossibleValues()) {
+                if (elem.contains("OM") || elem.contains("om")) {
+                    respFormat = elem;
+                }
             }
         }
         return respFormat;
@@ -111,18 +115,21 @@ public class ConnectorUtils {
 
     public static String getSMLVersion(ServiceDescriptor serviceDesc, String sosVersion) {
         String smlVersion = null;
-        Operation opSensorML = serviceDesc.getOperationsMetadata().getOperationByName("DescribeSensor");
-        Parameter outputFormat = null;
-        if (SosUtil.isVersion100(sosVersion)) { // SOS 1.0
-            outputFormat = opSensorML.getParameter("outputFormat");
-        } else if (SosUtil.isVersion200(sosVersion)) { // SOS 2.0
-            outputFormat = opSensorML.getParameter("procedureDescriptionFormat");
-        }
-        StringValueDomain sensorMLDomain = (StringValueDomain) outputFormat.getValueDomain();
-        for (String elem : sensorMLDomain.getPossibleValues()) {
-            if (elem.contains("sensorML")) {
-                smlVersion = elem;
+        OperationsMetadata metadata = serviceDesc.getOperationsMetadata();
+        if (metadata != null) {
+        	Operation opSensorML = metadata.getOperationByName("DescribeSensor");
+            Parameter outputFormat = null;
+            if (SosUtil.isVersion100(sosVersion)) { // SOS 1.0
+                outputFormat = opSensorML.getParameter("outputFormat");
+            } else if (SosUtil.isVersion200(sosVersion)) { // SOS 2.0
+                outputFormat = opSensorML.getParameter("procedureDescriptionFormat");
             }
+            StringValueDomain sensorMLDomain = (StringValueDomain) outputFormat.getValueDomain();
+            for (String elem : sensorMLDomain.getPossibleValues()) {
+                if (elem.contains("sensorML")) {
+                    smlVersion = elem;
+                }
+            }        	
         }
         return smlVersion;
     }

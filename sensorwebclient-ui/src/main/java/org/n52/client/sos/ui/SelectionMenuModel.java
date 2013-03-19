@@ -109,6 +109,7 @@ class SelectionMenuModel {
 	
 	private void setListGridSelectionBehavior() {
 		listGrid.addSelectionChangedHandler(parent.getSOSSelectionHandler());
+		listGrid.addClickHandler(parent.getSOSClickedHandler());
 		listGrid.setSelectionType(SelectionStyle.SINGLE);
 		listGrid.setCanExpandMultipleRecords(false);
 	}

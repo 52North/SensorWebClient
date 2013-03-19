@@ -25,13 +25,13 @@
 package org.n52.client.sos.ui;
 
 import static com.smartgwt.client.types.Overflow.HIDDEN;
-import static com.smartgwt.client.types.Overflow.VISIBLE;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -43,16 +43,12 @@ import org.n52.client.ui.InteractionWindow;
 import org.n52.client.ui.LoadingSpinner;
 import org.n52.client.ui.Toaster;
 import org.n52.client.ui.map.InfoMarker;
-import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
-import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.Phenomenon;
-import org.n52.shared.serializable.pojos.sos.Procedure;
+import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.AnimationEffect;
-import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.HTMLPane;
 import com.smartgwt.client.widgets.Img;
@@ -64,8 +60,10 @@ import com.smartgwt.client.widgets.events.CloseClickEvent;
 import com.smartgwt.client.widgets.events.CloseClickHandler;
 import com.smartgwt.client.widgets.events.ResizedEvent;
 import com.smartgwt.client.widgets.events.ResizedHandler;
+import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
+import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
 import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
@@ -107,6 +105,8 @@ public class StationSelector extends Window {
 	private Img stationLoadingSpinner;
 	
     private ApplyCancelButtonLayout applyCancel;
+
+	private SelectItem phenomenonBox;
 	
     public static StationSelector getInst() {
         if (instance == null) {
@@ -276,11 +276,22 @@ public class StationSelector extends Window {
     private Canvas createInformationFieldForSelectedProcedure() {
         VLayout layout = new VLayout();
         procedureDetailsHTMLPane = new HTMLPane();
-        phenomenonInfoLabel = new Label();
-        phenomenonInfoLabel.setAutoHeight();
+        phenomenonBox = new SelectItem(i18n.phenomenonLabel());
+        phenomenonBox.addChangedHandler(new ChangedHandler() {
+			@Override
+			public void onChanged(ChangedEvent event) {
+				String category = (String) event.getItem().getValue();
+				controller.loadParameterConstellationByCategory(category);
+			}
+		});
+        DynamicForm form = new DynamicForm();
+        form.setItems(phenomenonBox);
+//        phenomenonInfoLabel = new Label();
+//        phenomenonInfoLabel.setAutoHeight();
         stationInfoLabel = new Label();
         stationInfoLabel.setAutoHeight();
-        layout.addMember(phenomenonInfoLabel);
+//        layout.addMember(phenomenonInfoLabel);
+        layout.addMember(form);
         layout.addMember(stationInfoLabel);
         layout.addMember(procedureDetailsHTMLPane);
         return layout;
@@ -300,6 +311,10 @@ public class StationSelector extends Window {
 
 	SelectionChangedHandler getSOSSelectionHandler() {
 		return new SOSSelectionChangedHandler(controller);
+	}
+
+	public ClickHandler getSOSClickedHandler() {
+		return new SOSClickedHandler(controller);
 	}
 
 	private MapWidget createMapContent() {
@@ -331,27 +346,13 @@ public class StationSelector extends Window {
 	}
 
 	private void loadTimeSeries() {
-		final SOSMetadata metadata = controller.getCurrentMetadata();
         final String selectedServiceURL = controller.getSelectedServiceURL();
 		final Station station = controller.getSelectedStation();
+		ParameterConstellation parameterConstellation = controller.getSelectedParameterConstellation();
 		
-		final String offeringId = station.getOffering();
-		final String featureId = station.getFeature();
-		final String procedureId = station.getProcedure();
-		final String phenomenonId = station.getPhenomenon();
-		
-		Offering offering = metadata.getOffering(offeringId);
-		FeatureOfInterest feature = metadata.getFeature(featureId);
-		Phenomenon phenomenon = metadata.getPhenomenon(phenomenonId);
-		Procedure procedure = metadata.getProcedure(procedureId);
-		
-		// TODO delegate just Station
 		NewTimeSeriesEvent event = new NewTimeSeriesEvent.Builder(selectedServiceURL)
 				.addStation(station)
-				.addOffering(offering)
-				.addFOI(feature)
-				.addProcedure(procedure)
-				.addPhenomenon(phenomenon)
+				.addParameterConstellation(parameterConstellation)
 				.build();
 		EventBus.getMainEventBus().fireEvent(event);
 	}
@@ -376,9 +377,10 @@ public class StationSelector extends Window {
 		hideInfoWindow();
 		Map<String, String> sortedCategories = getAlphabeticallySortedMap();
 		for (Station station : currentMetadata.getStations()) {
-//		    Phenomenon phenomenon = currentMetadata.getPhenomenon(station.getPhenomenon());
-//          sortedPhenomenons.put(phenonmenon.getId(), phenomenon.getLabel());
-			sortedCategories.put(station.getStationCategory(), station.getStationCategory());
+			Set<String> categories = station.getStationCategories();
+			for (String category : categories) {
+				sortedCategories.put(category, category);
+			}
 		}
 		String serviceUrl = currentMetadata.getId();
 		RadioGroupItem selector = stationFilterGroups.get(serviceUrl);
@@ -408,9 +410,12 @@ public class StationSelector extends Window {
         return COMPONENT_ID;
     }
 
-	public void showInfoWindow(InfoMarker infoMarker) {
+	public void showInfoWindow(InfoMarker infoMarker, String header) {
 		updateInfoLabels();
-		infoWindow.setWindowTitle(infoMarker.getStation().getProcedure());
+		String[] array = infoMarker.getStation().getStationCategories().toArray(new String[0]);
+		phenomenonBox.setValueMap(array);
+		phenomenonBox.clearValue();
+		infoWindow.setWindowTitle(header);
 		infoWindow.show();
 		applyCancel.setLoading();
 	}
@@ -433,14 +438,15 @@ public class StationSelector extends Window {
 			phenDesc = controller.getSelectedPhenomenon().getLabel();
 		}
 		String foiDesc = null;
-		if (controller.getSelectedFeature() != null) {
-			foiDesc = controller.getSelectedFeature().getLabel();
-		}
+//		if (controller.getSelectedFeature() != null) {
+//			foiDesc = controller.getSelectedFeature().getLabel();
+//		}
 		if (phenDesc != null && !phenDesc.isEmpty()) {
-			phenomenonInfoLabel.setContents(i18n.phenomenonLabel() + ": " + phenDesc);
-			phenomenonInfoLabel.show();
+			phenomenonBox.setValue(phenDesc);
+//			phenomenonInfoLabel.setContents(i18n.phenomenonLabel() + ": " + phenDesc);
+//			phenomenonInfoLabel.show();
 		} else {
-			phenomenonInfoLabel.hide();
+//			phenomenonInfoLabel.hide();
 		}
 		if (foiDesc != null && !foiDesc.isEmpty()) {
 			stationInfoLabel.setContents(i18n.foiLabel() + ": " + foiDesc);
