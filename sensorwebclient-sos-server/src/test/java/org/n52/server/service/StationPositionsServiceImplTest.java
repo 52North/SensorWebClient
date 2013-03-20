@@ -43,7 +43,7 @@ public class StationPositionsServiceImplTest {
         service = new StationPositionsServiceImpl();
         stations = new ArrayList<Station>();
         for (int i = 0; i < COUNT_STATIONS; i++) {
-            stations.add(new Station());
+            stations.add(new Station("test"));
         }
     }
 

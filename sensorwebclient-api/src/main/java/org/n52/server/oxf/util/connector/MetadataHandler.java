@@ -24,30 +24,251 @@
 
 package org.n52.server.oxf.util.connector;
 
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER;
+import static org.n52.oxf.sos.adapter.SOSAdapter.GET_FEATURE_OF_INTEREST;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
+import net.opengis.gml.x32.FeaturePropertyType;
+import net.opengis.sampling.x20.SFSamplingFeatureDocument;
+import net.opengis.sampling.x20.SFSamplingFeatureType;
+import net.opengis.sos.x20.GetFeatureOfInterestResponseDocument;
+
+import org.apache.xmlbeans.XmlObject;
+import org.n52.oxf.OXFException;
+import org.n52.oxf.adapter.OperationResult;
+import org.n52.oxf.adapter.ParameterContainer;
+import org.n52.oxf.ows.ServiceDescriptor;
+import org.n52.oxf.ows.capabilities.Contents;
+import org.n52.oxf.ows.capabilities.IBoundingBox;
+import org.n52.oxf.ows.capabilities.Operation;
+import org.n52.oxf.sos.adapter.SOSAdapter;
+import org.n52.oxf.sos.capabilities.ObservationOffering;
+import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.crs.AReferencingHelper;
+import org.n52.server.oxf.util.parser.ConnectorUtils;
+import org.n52.server.util.SosAdapterFactory;
 import org.n52.shared.responses.SOSMetadataResponse;
+import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
+import org.n52.shared.serializable.pojos.sos.Offering;
+import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
+import org.n52.shared.serializable.pojos.sos.Phenomenon;
+import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class MetadataHandler {
-    
-    // TODO pull up general methods and technics from extending handlers.
 
-    public abstract SOSMetadataResponse performMetadataCompletion(String sosUrl, String sosVersion) throws Exception;
+	private static final Logger LOGGER = LoggerFactory.getLogger(MetadataHandler.class);
+	
+	private ServiceDescriptor serviceDescriptor;
 
-    /**
-     * Creates an {@link AReferencingHelper} according to metadata settings (e.g. if XY axis order shall be
-     * enforced during coordinate transformation).
-     * 
-     * @param metadata
-     *        the SOS metadata containing SOS instance configuration.
-     */
-    protected AReferencingHelper createReferencingHelper(SOSMetadata metadata) {
-        if (metadata.isForceXYAxisOrder()) {
-            return AReferencingHelper.createEpsgForcedXYAxisOrder();
-        }
-        else {
-            return AReferencingHelper.createEpsgStrictAxisOrder();
-        }
-    }
-    
+	private SOSAdapter adapter;
+	
+	private SOSMetadata sosMetadata;
+
+	public abstract SOSMetadataResponse performMetadataCompletion(
+			String sosUrl, String sosVersion) throws Exception;
+
+	protected SOSMetadata initMetadata(String sosUrl, String sosVersion) {
+		sosMetadata = ConfigurationContext.getServiceMetadatas()
+				.get(sosUrl);
+		adapter = SosAdapterFactory.createSosAdapter(sosMetadata);
+		serviceDescriptor = ConnectorUtils
+				.getServiceDescriptor(sosUrl, adapter);
+		String sosTitle = serviceDescriptor.getServiceIdentification()
+				.getTitle();
+		String omFormat = ConnectorUtils.getOMFormat(serviceDescriptor);
+		String smlVersion = ConnectorUtils.getSMLVersion(serviceDescriptor,
+				sosVersion);
+		// TODO check why no omFormat and smlVersion exists
+		if (omFormat == null) {
+			omFormat = "http://www.opengis.net/om/2.0";
+		}
+		if (smlVersion == null) {
+			smlVersion = "http://www.opengis.net/sensorML/1.0.1";
+		}
+
+		ConnectorUtils.setVersionNumbersToMetadata(sosUrl, sosTitle,
+				sosVersion, omFormat, smlVersion);
+		return sosMetadata;
+	}
+
+	protected Collection<ParameterConstellation> createParameterConstellations()
+			throws OXFException {
+		// association: Offering - FOIs
+		Map<String, String[]> offeringFoiMap = new HashMap<String, String[]>();
+
+		// association: Offering - Procedures
+		Map<String, String[]> offeringProcMap = new HashMap<String, String[]>();
+
+		// association: Offering - Phenomenons
+		Map<String, String[]> offeringPhenMap = new HashMap<String, String[]>();
+
+		
+		HashSet<String> featureIds = new HashSet<String>();
+
+		Contents contents = getServiceDescriptorContent();
+		for (int i = 0; i < contents.getDataIdentificationCount(); i++) {
+			ObservationOffering offering = (ObservationOffering) contents
+					.getDataIdentification(i);
+
+			updateBBox(offering);
+
+			String offeringID = offering.getIdentifier();
+
+			// associate:
+			String[] procArray = offering.getProcedures();
+			offeringProcMap.put(offeringID, procArray);
+
+			// associate:
+			String[] phenArray = offering.getObservedProperties();
+			offeringPhenMap.put(offeringID, phenArray);
+
+			// associate:
+			String[] foiArray = offering.getFeatureOfInterest();
+			offeringFoiMap.put(offeringID, foiArray);
+			
+			// iterate over fois to delete double entries for the request
+			for (int j = 0; j < foiArray.length; j++) {
+				featureIds.add(foiArray[j]);
+			}
+		}
+
+		// add fois
+		for (String featureId : featureIds) {
+			sosMetadata.addFeature(new FeatureOfInterest(featureId));
+		}
+
+		Collection<ParameterConstellation> parameterConstellations = new ArrayList<ParameterConstellation>();
+		// FOI -> Procedure -> Phenomenon
+		for (String offeringId : offeringFoiMap.keySet()) {
+			for (String procedure : offeringProcMap.get(offeringId)) {
+				if (procedure.contains("urn:ogc:generalizationMethod:")) {
+					sosMetadata.setCanGeneralize(true);
+				} else {
+					for (String phenomenon : offeringPhenMap.get(offeringId)) {
+						/*
+						 * add a station for a procedure expecting that there is
+						 * only one for each right now. Further stations may be
+						 * added later when additional information is parsed
+						 * from getFeatureOfInterest of describeSensor
+						 * operations.
+						 */
+						ParameterConstellation paramConst = new ParameterConstellation();
+						paramConst.setPhenomenon(phenomenon);
+						paramConst.setProcedure(procedure);
+						paramConst.setOffering(offeringId);
+						parameterConstellations.add(paramConst);
+					}
+					// add procedures
+					sosMetadata.addProcedure(new Procedure(procedure));
+					for (String phenomenonId : offeringPhenMap.get(offeringId)) {
+						sosMetadata.addPhenomenon(new Phenomenon(phenomenonId));
+					}
+				}
+			}
+			// add offering
+			Offering offering = new Offering(offeringId);
+			sosMetadata.addOffering(offering);
+		}
+		return parameterConstellations;
+	}
+	
+	protected void refactorCategoriesInConstellations(Collection<ParameterConstellation> constellations) {
+		for (ParameterConstellation constellation : constellations) {
+			String phenomenon = constellation.getPhenomenon();
+			String category = phenomenon.substring(phenomenon.lastIndexOf(":")+1);
+			constellation.setCategory(category);
+		}
+	}
+
+	protected void updateBBox(ObservationOffering offering) {
+		IBoundingBox sosBbox = null;
+		sosBbox = ConnectorUtils.createBbox(sosBbox, offering);
+
+		try {
+			if (sosBbox != null && !sosBbox.getCRS().startsWith("EPSG")) {
+				String tmp = "EPSG:"
+						+ sosBbox.getCRS().split(":")[sosBbox.getCRS()
+								.split(":").length - 1];
+				sosMetadata.setSrs(tmp);
+			} else {
+				sosMetadata.setSrs(sosBbox.getCRS());
+			}
+		} catch (Exception e) {
+			LOGGER.error("Could not insert spatial metadata", e);
+		}
+	}
+	
+	protected Contents getServiceDescriptorContent() throws OXFException {
+		if (serviceDescriptor != null) {
+			return serviceDescriptor.getContents();
+		} else {
+			throw new OXFException("No valid GetFeatureOfInterestREsponse");
+		}
+	}
+
+	protected SOSAdapter getSosAdapter() {
+		return adapter;
+	}
+
+	/**
+	 * Creates an {@link AReferencingHelper} according to metadata settings
+	 * (e.g. if XY axis order shall be enforced during coordinate
+	 * transformation).
+	 * 
+	 * @param metadata
+	 *            the SOS metadata containing SOS instance configuration.
+	 */
+	protected AReferencingHelper createReferencingHelper() {
+		if (sosMetadata.isForceXYAxisOrder()) {
+			return AReferencingHelper.createEpsgForcedXYAxisOrder();
+		} else {
+			return AReferencingHelper.createEpsgStrictAxisOrder();
+		}
+	}
+	
+	protected Collection<String> getFoisByProcedure(String procedure)
+			throws OXFException {
+		ArrayList<String> fois = new ArrayList<String>();
+		String url = sosMetadata.getServiceUrl();
+		try {
+			ParameterContainer container = new ParameterContainer();
+			container.addParameterShell(GET_FOI_SERVICE_PARAMETER, "SOS");
+			container.addParameterShell(GET_FOI_VERSION_PARAMETER, sosMetadata.getVersion());
+			container.addParameterShell("procedure", procedure);
+			Operation operation = new Operation(GET_FEATURE_OF_INTEREST, url, url);
+			OperationResult result = adapter.doOperation(operation, container);
+			XmlObject foiResponse = XmlObject.Factory.parse(result
+					.getIncomingResultAsStream());
+			if (foiResponse instanceof GetFeatureOfInterestResponseDocument) {
+				GetFeatureOfInterestResponseDocument foiResDoc = (GetFeatureOfInterestResponseDocument) foiResponse;
+				for (FeaturePropertyType featurePropertyType : foiResDoc
+						.getGetFeatureOfInterestResponse()
+						.getFeatureMemberArray()) {
+					SFSamplingFeatureDocument samplingFeature = SFSamplingFeatureDocument.Factory
+							.parse(featurePropertyType.xmlText());
+					SFSamplingFeatureType sfSamplingFeature = samplingFeature
+							.getSFSamplingFeature();
+					fois.add(sfSamplingFeature.getIdentifier()
+							.getStringValue());
+				}
+			} else {
+				throw new OXFException("No valid GetFeatureOfInterestREsponse");
+			}
+		} catch (Exception e) {
+			LOGGER.error("Error while send GetFeatureOfInterest: "
+					+ e.getCause());
+			throw new OXFException(e);
+		}
+		return fois;
+	}
+
 }

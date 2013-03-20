@@ -125,7 +125,7 @@ public class ServiceMetadataServiceImpl implements ServiceMetadataService {
                 LOG.debug(String.format(msgTemplate, serviceURL, offeringID, procedureID, phenomenonID, featureID));
             }
             SOSMetadata meta = ConfigurationContext.getSOSMetadata(serviceURL);
-            Station station = meta.getStation(offeringID, featureID, procedureID, phenomenonID);
+            Station station = meta.getStationByParameterConstellation(offeringID, featureID, procedureID, phenomenonID);
             return new GetStationResponse(serviceURL, station);
         } catch (Exception e) {
             LOG.error("Exception occured on server side.", e);

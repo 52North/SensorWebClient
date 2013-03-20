@@ -38,7 +38,7 @@ public class InfoMarker extends Marker {
     
     private static final String MARKER_IMG_HOVER = "img/icons/marker_hover.png";
 
-    private Station station = new Station();
+    private Station station;
 
 	private MapController controller;
 	

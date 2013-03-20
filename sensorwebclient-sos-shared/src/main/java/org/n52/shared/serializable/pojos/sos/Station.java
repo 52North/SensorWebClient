@@ -26,6 +26,8 @@ package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.n52.shared.serializable.pojos.EastingNorthing;
 
@@ -47,19 +49,13 @@ public class Station implements Serializable {
     private EastingNorthing location;
     
     private ArrayList<ParameterConstellation> parameterConstellations; 
-
-    private String feature;
-    
-    private String phenomenon;
-
-    private String procedure;
-
-    private String offering;
-
-    private String stationCategory;
     
     public Station() {
-        id = IdGenerator.generate();
+    	// zero-argument contructor for GWT
+    }
+
+    public Station(String stationId) {
+    	this.id = stationId;
         parameterConstellations = new ArrayList<ParameterConstellation>();
     }
 
@@ -109,126 +105,53 @@ public class Station implements Serializable {
         this.parameterConstellations = parameterConstellations;
     }
     
-    public boolean hasAllEntries() {
-        // XXX remove when Station refactoring is complete
-        if (this.srs == null || this.feature == null || this.offering == null || this.phenomenon == null
-                || this.procedure == null || this.location == null) {
-            return false;
-        }
-        return true;
-    }
-
-    public boolean isProcedureEqual(String procedure) {
-        // XXX remove when Station refactoring is complete
-        return this.procedure.equals(procedure);
-    }
-
-    public boolean isPhenomenonEqual(String phenomenon) {
-        // XXX remove when Station refactoring is complete
-        return this.phenomenon.equals(phenomenon);
-    }
-
-    public boolean isFeatureEqual(String feature) {
-        // XXX remove when Station refactoring is complete
-        return this.feature.equals(feature);
-    }
-
-    public boolean isOfferingEqual(String offering) {
-        // XXX remove when Station refactoring is complete
-        return this.offering.equals(offering);
-    }
-
-    public String getFeature() {
-        // XXX remove when Station refactoring is complete
-        return this.feature;
-    }
-
-    public void setFeature(String feature) {
-        // XXX remove when Station refactoring is complete
-        this.feature = feature;
-    }
-
-    public String getPhenomenon() {
-        // XXX remove when Station refactoring is complete
-        return this.phenomenon;
-    }
-
-    public void setPhenomenon(String phenomenon) {
-        // XXX remove when Station refactoring is complete
-        this.phenomenon = phenomenon;
-    }
-
-    public String getProcedure() {
-        // XXX remove when Station refactoring is complete
-        return this.procedure;
-    }
-
-    public void setProcedure(String procedure) {
-        // XXX remove when Station refactoring is complete
-        this.procedure = procedure;
-    }
-
-    public String getOffering() {
-        // XXX remove when Station refactoring is complete
-        return this.offering;
-    }
-
-    public void setOffering(String offering) {
-        // XXX remove when Station refactoring is complete
-        this.offering = offering;
-    }
-
-    /**
-     * A label to categorize stations. If not set, station's {@link #phenomenon} is returned. Can be used to
-     * filter a set of stations according a common category.
-     * 
-     * @return a label to categorize stations on which filtering can take place.
-     */
-    public String getStationCategory() {
-        return stationCategory == null ? phenomenon : stationCategory;
-    }
-
-    /**
-     * @param stationCategory
-     *        a filter to categorize stations.
-     */
-    public void setStationCategory(String stationCategory) {
-        this.stationCategory = stationCategory;
-    }
-
-    public Station clone() {
-        // XXX cleanup when Station refactoring is complete
-        Station station = new Station();
-        station.setLocation(location, srs);
-        station.setStationCategory(stationCategory);
-        station.setPhenomenon(phenomenon);
-        station.setProcedure(procedure);
-        station.setOffering(offering);
-        station.setFeature(feature);
-        return station;
-    }
-
     @Override
     public String toString() {
-        // XXX cleanup when Station refactoring is complete
         StringBuffer sb = new StringBuffer();
         // TODO wait for fix: http://code.google.com/p/google-web-toolkit/issues/detail?id=3404
         // sb.append(getClass().getSimpleName()).append(" [ ");
         sb.append("Station: [ ").append("\n");
-        sb.append("Location: ").append(location).append("\n");
-        sb.append("Feature: ").append(feature).append("\n");
-        sb.append("Offering: ").append(offering).append("\n");
-        sb.append("Procedure: ").append(procedure).append("\n");
-        sb.append("Phenomenon: ").append(phenomenon).append(" ]");
+        sb.append("\tLocation: ").append(location).append("\n");
+        sb.append("\tParameterConstellation-Count: ").append(parameterConstellations.size()).append(" ]\n");
         return sb.toString();
     }
 
-    private static class IdGenerator {
-        private static int id = 0;
-    
-        public static String generate() {
-            return String.valueOf(++id);
-        }
-    }
+	public boolean hasParameterConstellation(String offeringId, String featureId,
+			String procedureId, String phenomenonId) {
+		if(id.equals(featureId)) {
+			for (ParameterConstellation paramConst : parameterConstellations) {
+				if (paramConst.hasOffering(offeringId) && paramConst.hasFoi(featureId) && paramConst.hasProcedure(procedureId) && paramConst.hasPhenomenon(phenomenonId)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
+	public Set<String> getStationCategories() {
+		Set<String> categories = new HashSet<String>();
+		for (ParameterConstellation paramConst : parameterConstellations) {
+			categories.add(paramConst.getCategory());
+		}
+		return categories;
+	}
+
+	public boolean hasStationCategory(String filterCategory) {
+		for (ParameterConstellation paramConst : parameterConstellations) {
+			if (paramConst.getCategory().equals(filterCategory)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public ParameterConstellation getParameterConstellationByCategory(
+			String category) {
+		for (ParameterConstellation paramConst : parameterConstellations) {
+			if (paramConst.getCategory().equals(category)){
+				return paramConst;
+			}
+		}
+		return null;
+	}
 }

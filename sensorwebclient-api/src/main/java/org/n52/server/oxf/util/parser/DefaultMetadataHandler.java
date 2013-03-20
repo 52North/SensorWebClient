@@ -26,9 +26,6 @@ package org.n52.server.oxf.util.parser;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.n52.server.oxf.util.ConfigurationContext.SERVER_TIMEOUT;
-import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER;
-import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER;
-import static org.n52.oxf.sos.adapter.SOSAdapter.GET_FEATURE_OF_INTEREST;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -36,33 +33,21 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeoutException;
 
-import net.opengis.gml.x32.FeaturePropertyType;
-import net.opengis.sampling.x20.SFSamplingFeatureDocument;
-import net.opengis.sampling.x20.SFSamplingFeatureType;
-import net.opengis.sos.x20.GetFeatureOfInterestResponseDocument;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
-import org.n52.oxf.ows.ServiceDescriptor;
-import org.n52.oxf.ows.capabilities.Contents;
-import org.n52.oxf.ows.capabilities.IBoundingBox;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.sos.adapter.SOSAdapter;
-import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.oxf.sos.util.SosUtil;
 import org.n52.oxf.xmlbeans.parser.XMLHandlingException;
 import org.n52.server.oxf.util.ConfigurationContext;
@@ -70,12 +55,10 @@ import org.n52.server.oxf.util.access.AccessorThreadPool;
 import org.n52.server.oxf.util.access.OperationAccessor;
 import org.n52.server.oxf.util.connector.MetadataHandler;
 import org.n52.server.oxf.util.parser.utils.ParsedPoint;
-import org.n52.server.util.SosAdapterFactory;
 import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
-import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.Phenomenon;
+import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
@@ -87,133 +70,28 @@ public class DefaultMetadataHandler extends MetadataHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultMetadataHandler.class);
 
     public SOSMetadataResponse performMetadataCompletion(String sosUrl, String sosVersion) throws OXFException, InterruptedException, XMLHandlingException {
-    	SOSMetadata sosMetadata = ConfigurationContext.getServiceMetadatas().get(sosUrl);
-    	SOSAdapter adapter = SosAdapterFactory.createSosAdapter(sosMetadata);  
     	
-        ServiceDescriptor serviceDesc = ConnectorUtils.getServiceDescriptor(sosUrl, adapter);
+    	SOSMetadata sosMetadata = initMetadata(sosUrl, sosVersion);
 
-        String sosTitle = serviceDesc.getServiceIdentification().getTitle();
-        String omFormat = ConnectorUtils.getOMFormat(serviceDesc);
-        String smlVersion = ConnectorUtils.getSMLVersion(serviceDesc, sosVersion);
-        ConnectorUtils.setVersionNumbersToMetadata(sosUrl, sosTitle, sosVersion, omFormat, smlVersion);
-
-        Map<String, SOSMetadata> sosMetadatas = ConfigurationContext.getServiceMetadatas();
+        Collection<ParameterConstellation> constellations = createParameterConstellations();
         
-        //
-        // build up associations:
-        //
+        refactorCategoriesInConstellations(constellations);
 
-        // association: Offering - FOIs
-        Map<String, String[]> offeringFoiMap = new HashMap<String, String[]>();
-
-        // association: Offering - Procedures
-        Map<String, String[]> offeringProcMap = new HashMap<String, String[]>();
-
-        // association: Offering - Phenomenons
-        Map<String, String[]> offeringPhenMap = new HashMap<String, String[]>();
-
-        IBoundingBox sosBbox = null;
-        HashSet<String> featureIds = new HashSet<String>();
-        Contents contents = serviceDesc.getContents();
-        SOSMetadata meta = (SOSMetadata) sosMetadatas.get(sosUrl);
-
-        for (int i = 0; i < contents.getDataIdentificationCount(); i++) {
-            ObservationOffering offering = (ObservationOffering) contents.getDataIdentification(i);
-
-            sosBbox = ConnectorUtils.createBbox(sosBbox, offering);
-
-            try {
-                if ( sosBbox != null && !sosBbox.getCRS().startsWith("EPSG")) {
-                    String tmp = "EPSG:" + sosBbox.getCRS().split(":")[sosBbox.getCRS().split(":").length - 1];
-                    meta.setSrs(tmp);
-                }
-                else {
-                    meta.setSrs(sosBbox.getCRS());
-                }
-            }
-            catch (Exception e) {
-                LOGGER.error("Could not insert spatial metadata", e);
-            }
-
-            String offeringID = offering.getIdentifier();
-
-            // associate:
-            String[] procArray = offering.getProcedures();
-            offeringProcMap.put(offeringID, procArray);
-
-            // associate:
-            String[] phenArray = offering.getObservedProperties();
-            offeringPhenMap.put(offeringID, phenArray);
-
-            // associate:
-            String[] foiArray = new String[]{};
-            if (SosUtil.isVersion100(sosVersion)) {
-                foiArray = offering.getFeatureOfInterest();
-            } else if (SosUtil.isVersion200(sosVersion)) {
-            	for (String procedure : procArray) {
-            		foiArray = getFoisByProcedure(adapter, sosUrl, sosVersion, procedure).toArray(foiArray);
-				}
-            }
-            offeringFoiMap.put(offeringID, foiArray);
-
-            // iterate over fois to delete double entries for the request
-            for (int j = 0; j < foiArray.length; j++) {
-                featureIds.add(foiArray[j]);
-            }
-        }
-        
-        LOGGER.debug("There are " + featureIds.size() + " FOIs registered in the SOS");
-
-        // add fois
-        for (String featureId : featureIds) {
-            meta.addFeature(new FeatureOfInterest(featureId));
-        }
-
-        // FOI -> Procedure -> Phenomenon
-        for (String offeringId : offeringFoiMap.keySet()) {
-            for (String procedure : offeringProcMap.get(offeringId)) {
-                if (procedure.contains("urn:ogc:generalizationMethod:")) {
-                    meta.setCanGeneralize(true);
-                }
-                else {
-                    for (String phenomenon : offeringPhenMap.get(offeringId)) {
-                        /*
-                         * add a station for a procedure expecting that there is only one for each right now.
-                         * Further stations may be added later when additional information is parsed from
-                         * getFeatureOfInterest of describeSensor operations.
-                         */
-                        Station station = new Station();
-                        station.setPhenomenon(phenomenon);
-                        station.setProcedure(procedure);
-                        station.setOffering(offeringId);
-                        meta.addStation(station);
-                    }
-                    // add procedures
-                    meta.addProcedure(new Procedure(procedure));
-                    for (String phenomenonId : offeringPhenMap.get(offeringId)) {
-                        meta.addPhenomenon(new Phenomenon(phenomenonId));
-                    }
-                }
-            }
-            // add offering
-            Offering offering = new Offering(offeringId);
-            meta.addOffering(offering);
-        }
-
-        meta.setInitialized(true);
+        // TODO check version 2.0.0 sos's
 
         // XXX hack to get conjunctions between procedures and fois
-        if ( !meta.hasDonePositionRequest()) {
+        if ( !sosMetadata.hasDonePositionRequest()) {
             try {
-                performMetadataInterlinking(sosUrl);
+                performMetadataInterlinking(sosUrl, constellations);
             }
             catch (IOException e) {
                 LOGGER.warn("Could not retrieve relations between procedures and fois", e);
             }
         }
 
-        LOGGER.debug("Got metadata for SOS " + meta.getId());
-        return new SOSMetadataResponse(meta);
+        LOGGER.debug("Got metadata for SOS " + sosMetadata.getId());
+        sosMetadata.setInitialized(true);
+        return new SOSMetadataResponse(sosMetadata);
     }
 
     /**
@@ -226,6 +104,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
      * 
      * @param sosUrl
      *        the SOS service URL.
+     * @param parameterConstellations 
      * @throws OXFException
      *         when request creation fails.
      * @throws InterruptedException if getting the DescribeSensor result gets interrupted.
@@ -234,7 +113,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
      * @throws IllegalStateException
      *         if SOS version is not supported.
      */
-    private void performMetadataInterlinking(String sosUrl) throws OXFException, InterruptedException, XMLHandlingException, IOException {
+    private void performMetadataInterlinking(String sosUrl, Collection<ParameterConstellation> parameterConstellations) throws OXFException, InterruptedException, XMLHandlingException, IOException {
         SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosUrl);
         ArrayList<Procedure> procedures = metadata.getProcedures();
 
@@ -243,22 +122,8 @@ public class DefaultMetadataHandler extends MetadataHandler {
         String smlVersion = metadata.getSensorMLVersion();
         Map<String, FutureTask<OperationResult>> futureTasks = new ConcurrentHashMap<String, FutureTask<OperationResult>>();
         for (Procedure proc : procedures) {
-        	SOSAdapter adapter = SosAdapterFactory.createSosAdapter(metadata);
-            Operation operation = new Operation(SOSAdapter.DESCRIBE_SENSOR, sosUrl, sosUrl);
-            ParameterContainer paramCon = new ParameterContainer();
-            paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_SERVICE_PARAMETER, "SOS");
-            paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_VERSION_PARAMETER, sosVersion);
-            paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_PARAMETER, proc.getId());
-            if (SosUtil.isVersion100(sosVersion)) {
-                paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_OUTPUT_FORMAT, smlVersion);
-            }
-            else if (SosUtil.isVersion200(sosVersion)) {
-                paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_DESCRIPTION_FORMAT, smlVersion);
-            }
-            else {
-                throw new IllegalStateException("SOS Version (" + sosVersion + ") is not supported!");
-            }
-            OperationAccessor opAccessorCallable = new OperationAccessor(adapter, operation, paramCon);
+            OperationAccessor opAccessorCallable = createDescribeSensorAccessor(
+					sosUrl, sosVersion, smlVersion, proc);
             futureTasks.put(proc.getId(), new FutureTask<OperationResult>(opAccessorCallable));
         }
 
@@ -289,13 +154,8 @@ public class DefaultMetadataHandler extends MetadataHandler {
                     double lat = Double.parseDouble(point.getLat());
                     double lng = Double.parseDouble(point.getLon());
 
-                    
                     String srs = point.getSrs();
                     EastingNorthing eastingNorthing = new EastingNorthing(lng, lat);
-
-                    // TODO
-//                    Station station = new Station();
-//                    station.setLocation(eastingNorthing, srs);
 
                     if (fois.isEmpty()) {
                         Collection<FeatureOfInterest> features = metadata.getFeatures();
@@ -306,58 +166,26 @@ public class DefaultMetadataHandler extends MetadataHandler {
                         }
                     }
 
-                    Set<Station> stations = metadata.getStationsByProcedure(procedure.getId());
-                    
-                    if (fois.size() <= stations.size()) {
-                        /*
-                         * Amount of sampling locations already matches amount of stations. A station update
-                         * is sufficient.
-                         */
-                        for (String foi : fois) {
-                            for (String phenomenon : phenomenons) {
-                                for (Iterator<Station> iterator = stations.iterator(); iterator
-										.hasNext();) {
-									Station station = (Station) iterator.next();
-                                    if (station.isPhenomenonEqual(phenomenon)) {
-                                        if (metadata.getFeatureHashMap().containsKey(foi)) {
-                                            // TODO
-//                                            ParameterConstellation constellation = new ParameterConstellation();
-//                                            constellation.setFeatureOfInterest(foi);
-//                                            constellation.setPhenomenon(phenomenon);
-//                                            constellation.setProcedure(procedureId);
-//                                            constellation.setOffering(offering);
-//                                            station.addParameterConstellation(constellation);
-                                            station.setFeature(foi);
-                                            station.setLocation(eastingNorthing, srs);
-                                        }
-                                    } else {
-                                    	iterator.remove();
-                                    }
-                                }
-                            }
-                            LOGGER.trace("Got Procedure data for '{}'.", procedure);
-                        }
-                    }
-                    else {
-                        /*
-                         * Not all stations linked with the procedure are created yet. (Re-)Create new
-                         * stations for each new parameter constellation coming from the linked FOIs parsed
-                         * from sensorML.
-                         */
-                        for (Station station : stations) {
-                            station.setLocation(eastingNorthing, srs);
-                            for (String foi : fois) {
-                                if (station.getFeature() == null) {
-                                    station.setFeature(foi);
-                                    metadata.addStation(station.clone());
-                                } else {
-                                    Station clone = station.clone();
-                                    clone.setFeature(foi);
-                                    metadata.addStation(clone);
-                                }
-                            }
-                        }
-                    }
+					for (String foi : fois) {
+						Station station = metadata.getStation(foi);
+						if (station == null) {
+							station = new Station(foi);
+							station.setLocation(eastingNorthing, point.getSrs());
+							metadata.addStation(station);
+						}
+						for (String phenomenon : phenomenons) {
+							Collection<ParameterConstellation> paramConstellations = getMatchingConstellations(
+									parameterConstellations, procedureId,
+									phenomenon);
+
+							station.setLocation(eastingNorthing, srs);
+							for (ParameterConstellation paraCon : paramConstellations) {
+								paraCon.setFeatureOfInterest(foi);
+								station.addParameterConstellation(paraCon);
+							}
+						}
+					}
+					LOGGER.trace("Got Procedure data for '{}'.", procedure);
                 }
             }
             catch (TimeoutException e) {
@@ -406,13 +234,11 @@ public class DefaultMetadataHandler extends MetadataHandler {
             }
         }
 
-        removeIncompleteStations(metadata);
-
         if ( !illegalProcedures.isEmpty()) {
             StringBuilder sb = new StringBuilder();
             sb.append("Removed procedures: \n");
             for (String procedure : illegalProcedures) {
-                metadata.removeProcedure(procedure);
+            	metadata.removeProcedure(procedure);
                 sb.append("Removed ==> ");
                 sb.append(procedure);
                 sb.append("\n");
@@ -422,69 +248,39 @@ public class DefaultMetadataHandler extends MetadataHandler {
 
         LOGGER.info("Retrieved #{} stations from SOS '{}'", metadata.getStations().size(), sosUrl);
         metadata.setHasDonePositionRequest(true);
-
     }
 
-    /**
-     * Cleans up incomplete information containers from metadata. <br>
-     * <br>
-     * Incomplete stations do not necessarily indicate false service modelling. Because of linking parameter
-     * information over several steps (GetCapabilities, DescribeSensor) some information snippets are used to
-     * complete parameter linking but also for using such snippets as a template for more complex paramater
-     * setups (like 1:n relationships between procesure and FOI).
-     * 
-     * @param metadata
-     *        the stations containing metadata
-     */
-    private static void removeIncompleteStations(SOSMetadata metadata) {
-    	// TODO check why the stations are not really removed (Belgium-SOS)
-        Collection<Station> stations = metadata.getStations();
-        Iterator<Station> iterator = stations.iterator();
-        while (iterator.hasNext()) {
-            Station station = iterator.next();
-            if (!station.hasAllEntries()) {
-                iterator.remove();
-            }
-        }
-    }
-    
-	protected Collection<String> getFoisByProcedure(SOSAdapter adapter,
-			String sosUrl, String sosVersion, String procedure)
+	private OperationAccessor createDescribeSensorAccessor(String sosUrl,
+			String sosVersion, String smlVersion, Procedure proc)
 			throws OXFException {
-		ArrayList<String> fois = new ArrayList<String>();
-		try {
-			ParameterContainer container = new ParameterContainer();
-			container.addParameterShell(GET_FOI_SERVICE_PARAMETER, "SOS");
-			container.addParameterShell(GET_FOI_VERSION_PARAMETER, sosVersion);
-			container.addParameterShell("procedure", procedure);
-			Operation operation = new Operation(GET_FEATURE_OF_INTEREST,
-					sosUrl, sosUrl);
-			OperationResult result = adapter.doOperation(operation, container);
-			XmlObject foiResponse = XmlObject.Factory.parse(result
-					.getIncomingResultAsStream());
-			if (foiResponse instanceof GetFeatureOfInterestResponseDocument) {
-				GetFeatureOfInterestResponseDocument foiResDoc = (GetFeatureOfInterestResponseDocument) foiResponse;
-				for (FeaturePropertyType featurePropertyType : foiResDoc
-						.getGetFeatureOfInterestResponse()
-						.getFeatureMemberArray()) {
-					SFSamplingFeatureDocument samplingFeature = SFSamplingFeatureDocument.Factory
-							.parse(featurePropertyType.xmlText());
-					SFSamplingFeatureType sfSamplingFeature = samplingFeature
-							.getSFSamplingFeature();
-					fois.add(sfSamplingFeature.getIdentifier()
-							.getStringValue());
-				}
-			} else {
-				throw new OXFException("No valid GetFeatureOfInterestREsponse");
-			}
-		} catch (Exception e) {
-			LOGGER.error("Error while send GetFeatureOfInterest: "
-					+ e.getCause());
-			throw new OXFException(e);
-
+		Operation operation = new Operation(SOSAdapter.DESCRIBE_SENSOR, sosUrl, sosUrl);
+		ParameterContainer paramCon = new ParameterContainer();
+		paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_SERVICE_PARAMETER, "SOS");
+		paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_VERSION_PARAMETER, sosVersion);
+		paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_PARAMETER, proc.getId());
+		if (SosUtil.isVersion100(sosVersion)) {
+		    paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_OUTPUT_FORMAT, smlVersion);
 		}
-		return fois;
+		else if (SosUtil.isVersion200(sosVersion)) {
+		    paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_DESCRIPTION_FORMAT, smlVersion);
+		}
+		else {
+		    throw new IllegalStateException("SOS Version (" + sosVersion + ") is not supported!");
+		}
+		OperationAccessor opAccessorCallable = new OperationAccessor(getSosAdapter(), operation, paramCon);
+		return opAccessorCallable;
 	}
 
+    private Collection<ParameterConstellation> getMatchingConstellations(
+			Collection<ParameterConstellation> parameterConstellations,
+			String procedure, String phenomenon) {
+		Collection<ParameterConstellation> result = new ArrayList<ParameterConstellation>();
+    	for (ParameterConstellation paraCon : parameterConstellations) {
+    		if (paraCon.hasProcedure(procedure) && paraCon.hasPhenomenon(phenomenon)) {
+				result.add(paraCon);
+			}
+		}
+		return result;
+	}
     
 }

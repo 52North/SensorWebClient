@@ -199,7 +199,7 @@
 		client.
      -->
 
-	<servlet>
+	<!-- <servlet>
 		<servlet-name>SESInitializationServlet</servlet-name>
 		<servlet-class>
 			org.n52.server.ses.SESInitializationServlet
@@ -249,6 +249,6 @@
 	<servlet-mapping>
 		<servlet-name>SesUserService</servlet-name>
 		<url-pattern>/client/SesUserService</url-pattern>
-	</servlet-mapping>
+	</servlet-mapping> -->
 	
 </web-app>

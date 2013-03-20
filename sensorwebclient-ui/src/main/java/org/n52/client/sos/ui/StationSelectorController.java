@@ -52,12 +52,14 @@ import org.n52.client.sos.event.data.handler.PropagateOfferingFullEventHandler;
 import org.n52.client.sos.event.data.handler.StoreFeatureEventHandler;
 import org.n52.client.sos.event.data.handler.StoreProcedureDetailsUrlEventHandler;
 import org.n52.client.sos.event.handler.AddMarkerEventHandler;
+import org.n52.client.ui.Toaster;
 import org.n52.client.ui.map.InfoMarker;
 import org.n52.client.ui.map.MapController;
 import org.n52.shared.Constants;
 import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
 import org.n52.shared.serializable.pojos.sos.Offering;
+import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -76,6 +78,8 @@ class StationSelectorController implements MapController {
     private Map<String, String> selectedStationFilterByServiceUrl;
 
     private Station selectedStation;
+    
+    private String selectedCategory;
 
     public StationSelectorController() {
         map = new StationSelectorMap(this);
@@ -147,33 +151,53 @@ class StationSelectorController implements MapController {
     }
 
     public void handleInfoMarkerClicked(InfoMarker infoMarker) {
-        if (isSelectionRequired()) {
-            // TODO inform user to first select a phenomenon from radio buttons
+        if (isServiceSelected()) {
+        	Toaster.getToasterInstance().addErrorMessage("No service selected");
             return;
         }
 
         selectedStation = infoMarker.getStation();
-
-        GetProcedureEvent getProcEvent = new GetProcedureEvent(selectedServiceUrl, selectedStation.getProcedure());
-        EventBus.getMainEventBus().fireEvent(getProcEvent);
-        GetOfferingEvent getOffEvent = new GetOfferingEvent(selectedServiceUrl, selectedStation.getOffering());
-        EventBus.getMainEventBus().fireEvent(getOffEvent);
-        GetFeatureEvent getFoiEvent = new GetFeatureEvent(selectedServiceUrl, selectedStation.getFeature());
-        EventBus.getMainEventBus().fireEvent(getFoiEvent);
-
-        // Get procedure details
-        GetProcedureDetailsUrlEvent getProcDetailsEvent = new GetProcedureDetailsUrlEvent(selectedServiceUrl,
-                                                                                          selectedStation.getProcedure());
-        EventBus.getMainEventBus().fireEvent(getProcDetailsEvent);
+        
+        String category = getSelectedStationFilter();
+        if(category != null) {
+        	loadParameterConstellationByCategory(category);
+        }
 
         map.selectMarker(infoMarker);
 
         // open info window for the marker
-        stationSelector.showInfoWindow(infoMarker);
+        stationSelector.showInfoWindow(infoMarker, selectedStation.getId());
+    }
+    
+    public void loadParameterConstellationByCategory(String category) {
+    	selectedCategory = category;
+    	ParameterConstellation paramConst = selectedStation.getParameterConstellationByCategory(selectedCategory);
+    	if (paramConst != null) {
+    		fireGetParameterConstellation(paramConst);
+    	}
     }
 
-    private boolean isSelectionRequired() {
-        return selectedServiceUrl == null || selectedStationFilterByServiceUrl.get(selectedServiceUrl) == null;
+	private void fireGetParameterConstellation(ParameterConstellation paramConst) {
+		GetProcedureEvent getProcEvent = new GetProcedureEvent(
+				selectedServiceUrl,
+				paramConst.getProcedure());
+		EventBus.getMainEventBus().fireEvent(getProcEvent);
+		GetOfferingEvent getOffEvent = new GetOfferingEvent(selectedServiceUrl,
+				paramConst.getOffering());
+		EventBus.getMainEventBus().fireEvent(getOffEvent);
+		GetFeatureEvent getFoiEvent = new GetFeatureEvent(selectedServiceUrl,
+				paramConst.getFeatureOfInterest());
+		EventBus.getMainEventBus().fireEvent(getFoiEvent);
+
+		// Get procedure details
+		GetProcedureDetailsUrlEvent getProcDetailsEvent = new GetProcedureDetailsUrlEvent(
+				selectedServiceUrl,
+				paramConst.getProcedure());
+		EventBus.getMainEventBus().fireEvent(getProcDetailsEvent);
+	}
+
+	private boolean isServiceSelected() {
+    	return selectedServiceUrl == null;
     }
 
     void clearMarkerSelection() {
@@ -197,25 +221,25 @@ class StationSelectorController implements MapController {
     public String getSelectedStationFilter() {
         return selectedStationFilterByServiceUrl.get(selectedServiceUrl);
     }
-
-    public String getSelectedProcedureId() {
-        return selectedStation.getProcedure();
-    }
-
-    public String getSelectedOfferingId() {
-        return selectedStation.getOffering();
+    
+    public void removeSelectedStationFilter(String url) {
+    	selectedStationFilterByServiceUrl.remove(url);
     }
 
     public String getSelectedFeatureId() {
-        return selectedStation.getFeature();
+        return selectedCategory;
     }
 
     public Station getSelectedStation() {
         return selectedStation;
     }
+    
+    public ParameterConstellation getSelectedParameterConstellation() {
+		return selectedStation.getParameterConstellationByCategory(selectedCategory);
+	}
 
     public Phenomenon getSelectedPhenomenon() {
-        return getCurrentMetadata().getPhenomenon(getSelectedStationFilter());
+        return getCurrentMetadata().getPhenomenon(selectedCategory);
     }
 
     public FeatureOfInterest getSelectedFeature() {
@@ -320,9 +344,10 @@ class StationSelectorController implements MapController {
      */
     public String getMostCommonStationCategory(List<Station> stations) {
         Map<String, Integer> countResults = new HashMap<String, Integer>();
-        for (Station station : stations) {
-            increaseAmountOf(station.getStationCategory(), countResults);
-        }
+//        for (Station station : stations) {
+//            increaseAmountOf(station.getStationCategory(), countResults);
+//        }
+        // TODO get most Common StationCategory
         int maxCount = 0;
         String mostCommonCategory = null;
         for (Entry<String, Integer> currentValue : countResults.entrySet()) {
@@ -335,7 +360,8 @@ class StationSelectorController implements MapController {
         return mostCommonCategory;
     }
 
-    private void increaseAmountOf(String category, Map<String, Integer> countResults) {
+    @SuppressWarnings("unused")
+	private void increaseAmountOf(String category, Map<String, Integer> countResults) {
         if (countResults.containsKey(category)) {
             Integer counter = countResults.get(category);
             countResults.put(category, ++counter);

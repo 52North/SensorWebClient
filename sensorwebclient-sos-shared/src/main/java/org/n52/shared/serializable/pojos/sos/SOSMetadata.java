@@ -28,13 +28,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.n52.shared.Constants;
 import org.n52.shared.serializable.pojos.BoundingBox;
-import org.n52.shared.serializable.pojos.EastingNorthing;
 
 /**
  * A shared metadata representation for an SOS instance. An {@link SOSMetadata} is used from both (!) Client
@@ -72,8 +68,6 @@ public class SOSMetadata implements Serializable {
 
     private HashMap<String, Offering> offerings = new HashMap<String, Offering>();
 
-    private HashMap<EastingNorthing, Station> availableStations = new HashMap<EastingNorthing, Station>();
-    
     private HashMap<String, Station> stations = new HashMap<String, Station>();
 
     private boolean hasDonePositionRequest = false;
@@ -94,7 +88,8 @@ public class SOSMetadata implements Serializable {
 
     private BoundingBox configuredExtent;
 
-    private SOSMetadata() {
+    @SuppressWarnings("unused")
+	private SOSMetadata() {
         // for serialization
     }
 
@@ -204,51 +199,6 @@ public class SOSMetadata implements Serializable {
         this.srs = srs;
     }
 
-    public void removeProcedure(String ID) {
-        Set<Entry<String, Station>> entrySet = stations.entrySet();
-        for (Entry<String, Station> entry : entrySet) {
-            if ( !entry.getValue().isProcedureEqual(ID)) {
-                stations.remove(entry.getKey());
-                return;
-            }
-        }
-    }
-
-    public HashMap<String, Procedure> getProceduresHashMap() {
-        return this.procedures;
-    }
-
-    public HashMap<String, FeatureOfInterest> getFeatureHashMap() {
-        return this.features;
-    }
-
-    public HashMap<String, Phenomenon> getPhenomenonHashMap() {
-        return this.phenomenons;
-    }
-
-    public SOSMetadata getOfferingChunk() {
-        SOSMetadata meta = new SOSMetadata(getId(), getSosVersion(), sensorMLVersion, omVersion, title);
-
-        // insert only offerings
-        for (Offering o : offerings.values()) {
-            Offering off = new Offering(o.getId());
-            meta.addOffering(off);
-        }
-        return meta;
-    }
-
-    public SOSMetadata getFeatureChunk() {
-        SOSMetadata meta = new SOSMetadata(getId(), getSosVersion(), sensorMLVersion, omVersion, title);
-
-        // insert only features references
-        for (Offering o : this.offerings.values()) {
-            Offering off = new Offering(o.getId());
-            meta.addOffering(off);
-        }
-
-        return meta;
-    }
-
     public String toDebugString() {
         StringBuilder sb = new StringBuilder();
         sb.append("\nSOS URL: ").append(getId()).append("\n");
@@ -280,10 +230,6 @@ public class SOSMetadata implements Serializable {
     public ArrayList<Offering> getOfferings() {
         ArrayList<Offering> offs = new ArrayList<Offering>(this.offerings.values());
         return offs;
-    }
-
-    public HashMap<String, Offering> getOfferingHashMap() {
-        return this.offerings;
     }
 
     public Offering getOffering(String ID) {
@@ -394,16 +340,6 @@ public class SOSMetadata implements Serializable {
     }
 
     /**
-     * Used to set the sos extent from Client side.
-     * 
-     * @param configuredExtent
-     *        the parsed extent.
-     */
-    public void setConfiguredExtent(BoundingBox configuredExtent) {
-        this.configuredExtent = configuredExtent;
-    }
-
-    /**
      * @return the service's extent or the {@link Constants#FALLBACK_EXTENT} if it was not configured.
      */
     public BoundingBox getConfiguredExtent() {
@@ -429,63 +365,10 @@ public class SOSMetadata implements Serializable {
         return new ArrayList<Station>(this.stations.values());
     }
 
-    public void addAvailableStation(Station station) {
-        availableStations.put(station.getLocation(), station);
-    }
-    
-    public boolean containsStationByLocation(EastingNorthing eastingNorthing) {
-        return availableStations.containsKey(eastingNorthing);
-    }
-
-    /**
-     * Returns the {@link Station} available at given location.<br>
-     * 
-     * @param eastingNorthing
-     *        the location where the station shall should be.
-     * @return the station at given {@link EastingNorthing} location, or <code>null</code> if no station is
-     *         available.
-     */
-    public Station getStationByLocation(EastingNorthing eastingNorthing) {
-        return availableStations.get(eastingNorthing);
-    }
-
-    public Set<Station> getStationsByProcedure(String procedureID) {
-        // XXX remove when station refactoring is complete
-        Set<Station> result = new HashSet<Station>();
+    public Station getStationByParameterConstellation(String offeringId, String featureId, String procedureId, String phenomenonId) {
         for (Station station : stations.values()) {
-            if (station.isProcedureEqual(procedureID)) {
-                result.add(station);
-            }
-        }
-        return result;
-    }
-
-    public Set<Station> getStationsByFeatureID(String foi) {
-        Set<Station> result = new HashSet<Station>();
-        for (Station station : stations.values()) {
-            if (station.isFeatureEqual(foi)) {
-                result.add(station);
-            }
-        }
-        return result;
-    }
-
-    public Set<Station> getStations(String phenomenon, String feature) {
-        Set<Station> result = new HashSet<Station>();
-        for (Station station : stations.values()) {
-            if (station.isPhenomenonEqual(phenomenon) && station.isFeatureEqual(feature)) {
-                result.add(station);
-            }
-        }
-        return result;
-    }
-
-    public Station getStation(String offeringId, String featureId, String procedureId, String phenomenonId) {
-        for (Station station : stations.values()) {
-            if (station.isOfferingEqual(offeringId) && station.isFeatureEqual(featureId)
-                    && station.isProcedureEqual(procedureId) && station.isPhenomenonEqual(phenomenonId)) {
-                return station;
-            }
+        	station.hasParameterConstellation(offeringId, featureId, procedureId, phenomenonId);
+        	return station;
         }
         return null;
     }
@@ -494,14 +377,7 @@ public class SOSMetadata implements Serializable {
         return stations.get(id);
     }
 
-    public void removeStations(Set<Station> stations) {
-        for (Station station : stations) {
-            this.stations.remove(station.getId());
-        }
-    }
-
-    public void removeStation(Station station) {
-        this.stations.remove(station.getId());
-    }
-
+	public void removeProcedure(String procedure) {
+		this.procedures.remove(procedure);
+	}
 }

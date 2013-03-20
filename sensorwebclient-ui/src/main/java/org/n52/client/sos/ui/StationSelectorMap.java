@@ -179,7 +179,7 @@ public class StationSelectorMap extends OpenLayersMapWrapper {
     public void updateStations(final SOSMetadata metadata) {
         clearMap();
         for (Station station : metadata.getStations()) {
-        	if (station.hasAllEntries()) {
+        	if (station.getParameterConstellations().size() >= 0) {
         		addStationToMap(station);
 			}
         }
@@ -212,7 +212,7 @@ public class StationSelectorMap extends OpenLayersMapWrapper {
     public void applyFilterToStationsOnMap(String filterCategory) {
         clearMarkerLayer();
         for (InfoMarker marker : markersOnMap) {
-            if (marker.getStation().getStationCategory().equals(filterCategory)) {
+            if (marker.getStation().hasStationCategory(filterCategory)) {
                 markerLayer.addMarker(marker);
             }
         }

@@ -35,10 +35,7 @@ import org.n52.client.sos.event.data.handler.StoreOfferingEventHandler;
 import org.n52.client.sos.event.data.handler.StoreProcedureEventHandler;
 import org.n52.client.sos.event.data.handler.StoreStationEventHandler;
 import org.n52.client.ui.Toaster;
-import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
-import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.Phenomenon;
-import org.n52.shared.serializable.pojos.sos.Procedure;
+import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
 
@@ -113,22 +110,20 @@ public class PermaLinkController {
 
 	public void check() {
 		if (!permalinkLoaded && featureReady && procedureReady && offeringReady && stationReady) {
-            SOSMetadata metadata = DataManagerSosImpl.getInst().getServiceMetadata(url);        
-            Phenomenon phen = metadata.getPhenomenon(phenomenon);
-            FeatureOfInterest f = metadata.getFeature(foi);
-            Offering o = metadata.getOffering(offering);
-            Procedure p = metadata.getProcedure(procedure);
-            Station station = metadata.getStation(offering, foi, procedure, phenomenon);
+            SOSMetadata metadata = DataManagerSosImpl.getInst().getServiceMetadata(url);
+            ParameterConstellation paramConst = new ParameterConstellation();
+            paramConst.setPhenomenon(phenomenon);
+            paramConst.setFeatureOfInterest(foi);
+            paramConst.setOffering(offering);
+            paramConst.setProcedure(procedure);
+            Station station = metadata.getStationByParameterConstellation(offering, foi, procedure, phenomenon);
             
             Toaster.getToasterInstance().addMessage("load session from permalink");
             permalinkLoaded = true;
             
             NewTimeSeriesEvent event = new NewTimeSeriesEvent.Builder(url)
             		.addStation(station)
-            		.addOffering(o)
-    				.addFOI(f)
-    				.addProcedure(p)
-    				.addPhenomenon(phen)
+            		.addParameterConstellation(paramConst)
     				.build();
             EventBus.getMainEventBus().fireEvent(event);
 		}
