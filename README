@@ -1,0 +1,45 @@
+
+About
+=====
+The SensorWebClient provides easy access to timeseries data stored within 
+Sensor Observation Services (SOS). A station measuring the phenomenon of 
+interest can easily be picked from a map, discovered by station's metadata. 
+After a station has been chosen, the data can be loaded and displayed in 
+the client as diagram for further investigation.
+
+There is a Wiki page describing the Sensor Web Client in general and give
+access points to more resources of interest:
+
+  https://wiki.52north.org/bin/view/SensorWeb/SensorWebClient
+
+Installation
+============
+Configure the sensorwebclient-build-example.properties file and build the
+client from command line using Apache Maven. You can separate several 
+configuration contexts by renaming (the <new-context> part) and saving it
+
+  sensorwebclient-build-<new-context>.properties
+  
+into your ${user.home}-folder. Build your context dependent Client instance
+by running  
+
+  mvn clean install -P env-dev -Denv=<context>
+
+For detailed installation and configuration explanation, please consult 
+the Wiki page
+
+  https://wiki.52north.org/bin/view/SensorWeb/SensorWebClientInstallationGuide
+
+
+General Infos:
+==============
+project = 52North Sensor Web Client (${project.artifactId})
+version = ${project.version}
+builddate = ${timestamp}
+
+Subversion Infos:
+=================
+repository = ${svn.info.repository}
+path = ${svn.info.path}
+revision = ${svn.info.revision}
+committedDate = ${svn.info.committedDate}
