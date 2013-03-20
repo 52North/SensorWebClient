@@ -117,7 +117,6 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 						SFSamplingFeatureDocument samplingFeature = SFSamplingFeatureDocument.Factory.parse(featurePropType.xmlText());
 						SFSamplingFeatureType sfSamplingFeature = samplingFeature.getSFSamplingFeature();
 						String id = sfSamplingFeature.getId();
-
 						// create station if not exists
 						Station station = metadata.getStation(id);
 						if (station == null) {
@@ -129,7 +128,6 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 	                        station.setLocation(coords, point.getSrs());
 	                        metadata.addStation(station);
 						}
-
                         // add feature
 						String label;
 						if (sfSamplingFeature.getNameArray().length > 0) {
