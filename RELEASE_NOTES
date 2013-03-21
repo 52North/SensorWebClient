@@ -1,0 +1,14 @@
+Release Notes for Sensor Web Client 3.1.0
+=========================================
+ * face lift of the SES module
+ * align SES workflow in UI to the SOS UI
+ * drop complex rule subscription creation and use a one click create approach
+ * reduce event subscription types to only support sensor loss and over-/undershoot events
+ * support of email messaging
+ * update eventing architecture to use current stable versions of
+    * 52n-ses-1.1.0
+    * 52n-notification-translator-1.1.1
+    * 52n-wns-2.1.1
+ * SOS-SES-Feeder and management has been integrated into the SES server logic of the Sensor Web Client
+ * Improved login security and session handling
+ 
