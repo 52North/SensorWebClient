@@ -69,9 +69,15 @@ the client is available at
 
 Plugins/Ext API
 ===============
-By default the Sensor Web Client includes all SOS connectors available (at
-this time a Hydro Connector and an ArcGIS SOS SOE connector). These are
-shipped in an extra directory.
+By default the Sensor Web Client includes only the default SOS connector. The 
+release provides further connectors: 
+
+ * sensorwebclient-eea 
+ * sensorwebclient-hydro
+ 
+These are shipped in their own directories and can be placed into WEB-INF/lib
+folder so that those SOS dialects/profiles are also supported. Have a look at
+the ds/sos-instances.data.xml file for SOS instance examples.
 
 The sensorwebclient-ext module provides an API which can be used to create
 permalinks to access to the Sensor Web Client. Please note that new SOS

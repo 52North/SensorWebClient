@@ -21,9 +21,9 @@
       <directory>${project.basedir}</directory>
       <outputDirectory>/bin</outputDirectory>
       <includes>
-        <include>**/sensorwebclient-ext-${project.version}.jar</include>
-        <include>**/sensorwebclient-eea-${project.version}.jar</include>
-        <include>**/sensorwebclient-hydro-${project.version}.jar</include>
+        <include>**/${project.build.directory}/sensorwebclient-ext-${project.version}.jar</include>
+        <include>**/${project.build.directory}/sensorwebclient-eea-${project.version}.jar</include>
+        <include>**/${project.build.directory}/sensorwebclient-hydro-${project.version}.jar</include>
         <include>**/${project.build.directory}/*.war</include>
       </includes>
     </fileSet>
