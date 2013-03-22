@@ -80,6 +80,7 @@ import com.smartgwt.client.widgets.layout.VLayout;
  * 
  * @author <a href="mailto:osmanov@52north.org">Artur Osmanov</a>
  */
+@Deprecated
 public class CreateSimpleRuleLayout extends FormLayout {
 
     /** The selected type. */
