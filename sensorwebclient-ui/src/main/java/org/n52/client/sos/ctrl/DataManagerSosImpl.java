@@ -27,6 +27,7 @@ package org.n52.client.sos.ctrl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -95,9 +96,10 @@ public class DataManagerSosImpl implements DataManager<SOSMetadata> {
 				return;
 			}
 
-			Set<String> phenomenonIds = evt.getPhenomena().keySet();
-			for (String phenomenonId : phenomenonIds) {
-				meta.addPhenomenon(new Phenomenon(phenomenonId));
+			Set<String> phenomenonIds = new HashSet<String>();
+			for (Phenomenon phenomenon : evt.getPhenomenons()) {
+				meta.addPhenomenon(phenomenon);
+				phenomenonIds.add(phenomenon.getId());
 			}
 			EventBus.getMainEventBus().fireEvent(new NewPhenomenonsEvent(meta.getId(), phenomenonIds));
 		}
@@ -113,7 +115,6 @@ public class DataManagerSosImpl implements DataManager<SOSMetadata> {
 
 			try {
 				ArrayList<Station> stations = new ArrayList<Station>();
-				metadata.setSrs(evt.getSrs());
 				for (Station station : evt.getStations()) {
 					if (station == null) {
 						GWT.log("StoreProcedurePositionsEvent contained a 'null' station.");

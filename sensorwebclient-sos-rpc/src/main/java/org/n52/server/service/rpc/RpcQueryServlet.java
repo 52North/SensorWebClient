@@ -25,33 +25,36 @@ package org.n52.server.service.rpc;
 
 import javax.servlet.ServletException;
 
-import org.n52.client.service.StationPositionsService;
+import org.n52.client.service.QueryService;
 import org.n52.server.oxf.util.logging.Statistics;
-import org.n52.server.service.StationPositionsServiceImpl;
-import org.n52.shared.responses.StationPositionsResponse;
-import org.n52.shared.serializable.pojos.BoundingBox;
-import org.n52.shared.service.rpc.RpcStationPositionsService;
+import org.n52.server.service.QueryServiceImpl;
+import org.n52.shared.requests.query.QueryRequest;
+import org.n52.shared.requests.query.responses.QueryResponse;
+import org.n52.shared.service.rpc.RpcQueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-public class RpcStationPositionsServlet extends RemoteServiceServlet implements RpcStationPositionsService {
+public class RpcQueryServlet extends RemoteServiceServlet implements RpcQueryService {
 
-    private static final long serialVersionUID = -7915385111187214262L;
+    private static final long serialVersionUID = -4732808888038989869L;
 
-    private static final Logger LOG = LoggerFactory.getLogger(RpcStationPositionsServlet.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RpcQueryServlet.class);
     
-    private StationPositionsService service;
+    private QueryService service;
 
     @Override
     public void init() throws ServletException {
         LOG.debug("Initialize " + getClass().getName() +" Servlet for SOS Client");
-        service = new StationPositionsServiceImpl();
+        service = new QueryServiceImpl();
     }
     
-    public StationPositionsResponse getStationPositions(String sosURL, int start, int interval, BoundingBox boundingBox) throws Exception {
-        Statistics.saveHostRequest(this.getThreadLocalRequest().getRemoteHost());
-        return service.getStationPositions(sosURL, start, interval, boundingBox);
-    }
+	@Override
+	public QueryResponse doQuery(QueryRequest request)
+			throws Exception {
+		Statistics.saveHostRequest(this.getThreadLocalRequest().getRemoteHost());
+		return service.doQuery(request);
+	}
+
 }

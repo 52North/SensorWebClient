@@ -21,26 +21,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.shared.requests;
+package org.n52.shared.service.rpc;
 
-import java.io.Serializable;
+import org.n52.client.service.QueryService;
 
-public class FirstLastRequest implements Serializable {
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-    private static final long serialVersionUID = -1168171279446201492L;
-
-    private String param;
-
-    private FirstLastRequest() {
-        // for serialization
-    }
-
-    public FirstLastRequest(String param) {
-        this.param = param;
-    }
-
-    public String getParam() {
-        return this.param;
-    }
+/**
+ * Utility interface to establish GWT RPC binding.
+ */
+@RemoteServiceRelativePath("QueryService")
+public interface RpcQueryService extends RemoteService, QueryService {
 
 }

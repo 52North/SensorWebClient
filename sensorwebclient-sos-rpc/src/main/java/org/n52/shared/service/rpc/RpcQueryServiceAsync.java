@@ -21,18 +21,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.ctrl.callbacks;
+package org.n52.shared.service.rpc;
 
-import org.n52.client.ctrl.RequestManager;
-import org.n52.client.ctrl.ServerCallback;
-import org.n52.shared.responses.GetFeatureResponse;
+import org.n52.shared.requests.query.QueryRequest;
+import org.n52.shared.requests.query.responses.QueryResponse;
 
-public abstract class GetFeatureCallback extends
-		ServerCallback<GetFeatureResponse> {
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
-	public GetFeatureCallback(RequestManager requestMgr,
-			String errorMsg) {
-		super(requestMgr, errorMsg);
-	}
+public interface RpcQueryServiceAsync {
 
+    void doQuery(QueryRequest request, AsyncCallback<QueryResponse> callback);
+    
 }

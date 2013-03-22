@@ -21,16 +21,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.client.ctrl.callbacks;
+package org.n52.client.service;
 
-import org.n52.client.ctrl.RequestManager;
-import org.n52.client.ctrl.ServerCallback;
-import org.n52.shared.responses.GetOfferingResponse;
+import org.n52.shared.requests.query.QueryRequest;
+import org.n52.shared.requests.query.responses.QueryResponse;
 
-public abstract class GetOfferingCallback extends ServerCallback<GetOfferingResponse> {
+public interface QueryService {
 
-	public GetOfferingCallback(RequestManager requestMgr, String errorMsg) {
-		super(requestMgr, errorMsg);
-	}
+    public QueryResponse doQuery(QueryRequest request) throws Exception;
 
 }

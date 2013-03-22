@@ -21,28 +21,18 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.shared.requests;
+package org.n52.client.ctrl.callbacks;
 
-import java.io.Serializable;
+import org.n52.client.ctrl.RequestManager;
+import org.n52.client.ctrl.ServerCallback;
+import org.n52.shared.requests.query.responses.QueryResponse;
 
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
+public abstract class QueryCallback extends
+		ServerCallback<QueryResponse> {
 
-public class SensorMetadataRequest implements Serializable {
-
-    private static final long serialVersionUID = 800783228424623836L;
-    
-    private TimeSeriesProperties props;
-
-    private SensorMetadataRequest() {
-        // IsSerializable needs default constructor
-    }
-
-    public SensorMetadataRequest(TimeSeriesProperties props) {
-        this.props = props;
-    }
-
-    public TimeSeriesProperties getProperties() {
-        return this.props;
-    }
+	public QueryCallback(RequestManager requestMgr,
+			String errorMsg) {
+		super(requestMgr, errorMsg);
+	}
 
 }

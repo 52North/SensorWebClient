@@ -26,7 +26,9 @@ package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.n52.shared.serializable.pojos.EastingNorthing;
@@ -51,7 +53,7 @@ public class Station implements Serializable {
     private ArrayList<ParameterConstellation> parameterConstellations; 
     
     public Station() {
-    	// zero-argument contructor for GWT
+    	// zero-argument constructor for GWT
     }
 
     public Station(String stationId) {
@@ -153,5 +155,18 @@ public class Station implements Serializable {
 			}
 		}
 		return null;
+	}
+
+	public void removeUnmatchedConstellations(Collection<String> offeringFilter, Collection<String> phenomenonFilter, Collection<String> procedureFilter, Collection<String> featureFilter) {
+		for (Iterator<ParameterConstellation> iterator = parameterConstellations.iterator(); iterator.hasNext();) {
+			ParameterConstellation constellation = (ParameterConstellation) iterator.next();
+			if (!constellation.matchFilter(offeringFilter, phenomenonFilter,procedureFilter,featureFilter)) {
+				iterator.remove();
+			}
+		}
+	}
+
+	public boolean hasAtLeastOneParameterconstellation() {
+		return parameterConstellations.size() > 0 ? true : false;
 	}
 }

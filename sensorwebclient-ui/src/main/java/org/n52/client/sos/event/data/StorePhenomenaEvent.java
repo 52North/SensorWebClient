@@ -23,10 +23,11 @@
  */
 package org.n52.client.sos.event.data;
 
-import java.util.HashMap;
+import java.util.Collection;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.data.handler.StorePhenomenaEventHandler;
+import org.n52.shared.serializable.pojos.sos.Phenomenon;
 
 /**
  * The Class StorePhenomenaEvent.
@@ -45,7 +46,7 @@ public class StorePhenomenaEvent extends FilteredDispatchGwtEvent<StorePhenomena
     private String offID;
 
     /** The phenomena. */
-    private HashMap<String, String> phenomena;
+    private Collection<Phenomenon> phenomenons;
 
     /**
      * Instantiates a new store phenomena event.
@@ -59,12 +60,12 @@ public class StorePhenomenaEvent extends FilteredDispatchGwtEvent<StorePhenomena
      * @param blockedhandlers
      *            the blockedhandlers
      */
-    public StorePhenomenaEvent(String sosURL, String offID, HashMap<String, String> phenomena,
+    public StorePhenomenaEvent(String sosURL, String offID, Collection<Phenomenon> phenomenons,
             StorePhenomenaEventHandler... blockedhandlers) {
         super(blockedhandlers);
         this.sosURL = sosURL;
         this.offID = offID;
-        this.phenomena = phenomena;
+        this.phenomenons = phenomenons;
     }
 
     /**
@@ -90,8 +91,8 @@ public class StorePhenomenaEvent extends FilteredDispatchGwtEvent<StorePhenomena
      * 
      * @return the phenomena
      */
-    public HashMap<String, String> getPhenomena() {
-        return this.phenomena;
+    public Collection<Phenomenon> getPhenomenons() {
+        return this.phenomenons;
     }
 
     /*

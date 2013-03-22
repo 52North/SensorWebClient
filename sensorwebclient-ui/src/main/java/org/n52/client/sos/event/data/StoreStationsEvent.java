@@ -47,9 +47,6 @@ public class StoreStationsEvent extends
     /** The procedures. */
     private final List<Station> stations;
 
-    /** The srs. */
-    private final String srs;
-
     /**
      * Instantiates a new store procedure positions event.
      * 
@@ -62,21 +59,11 @@ public class StoreStationsEvent extends
      * @param blockedHandlers
      *            the blocked handlers
      */
-    public StoreStationsEvent(String sosURL, List<Station> stations, String srs,
+    public StoreStationsEvent(String sosURL, List<Station> stations, 
             StoreStationsEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.sosURL = sosURL;
         this.stations = stations;
-        this.srs = srs;
-    }
-
-    /**
-     * Gets the srs.
-     * 
-     * @return the srs
-     */
-    public String getSrs() {
-        return this.srs;
     }
 
     /**

@@ -24,6 +24,7 @@
 package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * Represents a valid parameter constellation to retrieve timeseries data from
@@ -192,6 +193,59 @@ public class ParameterConstellation implements Serializable {
 		paramConst.setProcedure(procedure);
 		paramConst.setCategory(category);
 		return paramConst;
+	}
+
+	public boolean matchFilter(Collection<String> offeringFilter, Collection<String> phenomenonFilter,
+			Collection<String> procedureFilter, Collection<String> featureFilter) {
+		return matchOffering(offeringFilter) && matchPhenomenon(phenomenonFilter) && matchProcedure(procedureFilter) && matchFeature(featureFilter);
+	}
+
+	private boolean matchFeature(Collection<String> featureFilter) {
+		if(featureFilter.size() == 0) {
+			return true;
+		}
+		for (String featureID : featureFilter) {
+			if (featureID == null || featureID.equals(this.featureOfInterest)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean matchProcedure(Collection<String> procedureFilter) {
+		if(procedureFilter.size() == 0) {
+			return true;
+		}
+		for (String procedureID : procedureFilter) {
+			if (procedureID == null || procedureID.equals(this.procedure)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean matchPhenomenon(Collection<String> phenomenonFilter) {
+		if(phenomenonFilter.size() == 0) {
+			return true;
+		}
+		for (String phenomenonID : phenomenonFilter) {
+			if (phenomenonID == null || phenomenonID.equals(this.phenomenon)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean matchOffering(Collection<String> offeringFilter) {
+		if(offeringFilter.size() == 0) {
+			return true;
+		}
+		for (String offeringID : offeringFilter) {
+			if (offeringID == null || offeringID.equals(this.offering)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
