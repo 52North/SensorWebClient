@@ -79,21 +79,18 @@ public class SubscriptionsLayout extends FormLayout {
     }
 
     public void setData(ArrayList<BasicRuleDTO> basicRules, ArrayList<ComplexRuleDTO> complexRules) {
-        RuleDataSourceRecord rule;
-        BasicRuleDTO ruleDTO;
-        ComplexRuleDTO complexDTO;
-        
+        clearGrid();
         for (int i = 0; i < basicRules.size(); i++) {
-            ruleDTO = basicRules.get(i);
-            rule = new RuleDataSourceRecord(i18n.basic(), "", "", ruleDTO.getName(), ruleDTO.getDescription(), ruleDTO.getMedium(), ruleDTO.getFormat(), ruleDTO.isRelease(), ruleDTO.isSubscribed(), ruleDTO.getUuid());
+            BasicRuleDTO ruleDTO = basicRules.get(i);
+            RuleDataSourceRecord rule = new RuleDataSourceRecord(i18n.basic(), "", "", ruleDTO.getName(), ruleDTO.getDescription(), ruleDTO.getMedium(), ruleDTO.getFormat(), ruleDTO.isRelease(), ruleDTO.isSubscribed(), ruleDTO.getUuid());
             this.subscriptionsGrid.addData(rule);
         }
 
-        for (int i = 0; i < complexRules.size(); i++) {
-            complexDTO = complexRules.get(i);
-            rule = new RuleDataSourceRecord(i18n.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), complexDTO.getMedium(), complexDTO.getFormat(), complexDTO.isRelease(), complexDTO.isSubscribed(), "UUID"); // TODO add UUID to complex rule
-            this.subscriptionsGrid.addData(rule);
-        }
+//        for (int i = 0; i < complexRules.size(); i++) {
+//            ComplexRuleDTO complexDTO = complexRules.get(i);
+//            RuleDataSourceRecord rule = new RuleDataSourceRecord(i18n.complex(), "", "", complexDTO.getName(), complexDTO.getDescription(), complexDTO.getMedium(), complexDTO.getFormat(), complexDTO.isRelease(), complexDTO.isSubscribed(), "UUID"); // TODO add UUID to complex rule
+//            this.subscriptionsGrid.addData(rule);
+//        }
         
         subscriptionsGrid.fetchData();
     }
