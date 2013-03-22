@@ -47,7 +47,6 @@ public class ProfileWindow extends LoginWindow {
         content.setStyleName("n52_sensorweb_client_form_content");
         addItem(content);
         setTitle(i18n.editUserData());
-        requestUserData();
         markForRedraw();
     }
     
@@ -60,7 +59,6 @@ public class ProfileWindow extends LoginWindow {
     }
 
     private void requestUserData() {
-        subscriptionsLayout.clearGrid();
         final SessionInfo sessionInfo = currentSession();
         getMainEventBus().fireEvent(new GetSingleUserEvent(sessionInfo));
         getMainEventBus().fireEvent(new GetUserSubscriptionsEvent(sessionInfo));
