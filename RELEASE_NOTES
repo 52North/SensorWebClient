@@ -1,0 +1,16 @@
+For a complete Release Notes overview visit
+
+  https://wiki.52north.org/bin/view/SensorWeb/SensorWebClientReleaseNotes
+ 
+
+Release Notes for Sensor Web Client 3.2.0
+=========================================
+This release contains new features and bugfixes from versions 3.1.x.
+
+Features:
+---------
+
+3.1.x Bugfixes:
+---------------
+ * #875: First time opening profile/user window an error occurs
+ 
