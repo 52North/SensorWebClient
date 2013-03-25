@@ -19,7 +19,7 @@
 		<defaultZoom>13</defaultZoom>
 	</instance> -->
 	
-	<instance>
+	<!-- <instance>
         <itemName>EO2HEAVEN</itemName>
         <url>http://141.30.100.135/eo2heavenSOS_V2/sos</url>
         <version>1.0.0</version>
@@ -33,7 +33,7 @@
         <defaultZoom>13</defaultZoom>
         <requestChunk>150</requestChunk>
         <autoZoom>false</autoZoom>
-    </instance>
+    </instance> -->
 	
 	<instance>
         <itemName>Wupperverband</itemName>
