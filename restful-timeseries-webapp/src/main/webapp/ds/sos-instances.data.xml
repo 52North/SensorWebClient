@@ -3,21 +3,51 @@
 	web interface -->
 <!-- Some of these properties are not implemented yet! -->
 <instances>
-	<instance>
-		<itemName>EO2HEAVEN</itemName>
-		<url>http://141.30.100.135/eo2heavenSOS_V2/sos</url>
+	<!-- <instance>
+		<itemName>PEGELONLINE</itemName>
+		<url>http://pegelonline.wsv.de/webservices/gis/gdi-sos</url>
 		<version>1.0.0</version>
 		<waterML>false</waterML>
-		<connector>org.n52.server.oxf.util.parser.DefaultSOSConnector</connector>
-		<adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension</adapter>
-		<cached>true</cached>
-	    <requestChunk>150</requestChunk>
-	    <autoZoom>false</autoZoom>
-		<!-- coordinates in EPSG:4326 -->
-		<llEasting>6.65</llEasting>
-		<llNorthing>50.00</llNorthing>
-	    <urEasting>7.66</urEasting>
-	    <urNorthing>51.35</urNorthing>
-	    <defaultZoom>13</defaultZoom>
-	</instance>
+		<metadataHandler>org.n52.server.oxf.util.parser.DefaultMetadataHandler</metadataHandler>
+        <adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension</adapter>
+		<requestChunk>300</requestChunk>
+		<autoZoom>false</autoZoom>
+		<llEasting>5</llEasting>
+		<llNorthing>46.00</llNorthing>
+		<urEasting>16</urEasting>
+		<urNorthing>56.0</urNorthing>
+		<defaultZoom>13</defaultZoom>
+	</instance> -->
+	
+	<instance>
+        <itemName>EO2HEAVEN</itemName>
+        <url>http://141.30.100.135/eo2heavenSOS_V2/sos</url>
+        <version>1.0.0</version>
+        <metadataHandler>org.n52.server.oxf.util.parser.DefaultMetadataHandler</metadataHandler>
+        <adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension</adapter>
+        <waterML>false</waterML>
+        <llEasting>6.65</llEasting>
+        <llNorthing>50.00</llNorthing>
+        <urEasting>7.66</urEasting>
+        <urNorthing>51.35</urNorthing>
+        <defaultZoom>13</defaultZoom>
+        <requestChunk>150</requestChunk>
+        <autoZoom>false</autoZoom>
+    </instance>
+	
+	<instance>
+        <itemName>Wupperverband</itemName>
+        <url>http://fluggs.wupperverband.de/sos/sos</url>
+        <version>1.0.0</version>
+        <metadataHandler>org.n52.server.oxf.util.parser.DefaultMetadataHandler</metadataHandler>
+        <adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension</adapter>
+        <waterML>false</waterML>
+        <llEasting>6</llEasting>
+        <llNorthing>51</llNorthing>
+        <urEasting>8</urEasting>
+        <urNorthing>52</urNorthing>
+        <defaultZoom>15</defaultZoom>
+        <requestChunk>200</requestChunk>
+        <autoZoom>true</autoZoom>
+    </instance>
 </instances>

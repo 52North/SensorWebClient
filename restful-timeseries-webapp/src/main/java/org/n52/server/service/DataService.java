@@ -66,8 +66,8 @@ public abstract class DataService {
         for (ParameterConstellation constellation : parameterSet.getParameters()) {
             try {
                 Station station = getStationFromParameters(metadata, constellation);
-                TimeSeriesProperties timeSeriesProperties = createTimeSeriesProperties(metadata, station);
-                timeSeriesProperties.setTsID(constellation.getClientId());
+            	TimeSeriesProperties timeSeriesProperties = createTimeSeriesProperties(metadata, station, constellation);
+            	timeSeriesProperties.setTsID(constellation.getClientId());
                 props.add(decorateProperties(timeSeriesProperties, parameterSet));
                 TimeSeriesdataResult result = createTimeSeriesResult(timeSeriesProperties);
                 timeSeriesResults.put(constellation.getClientId(), result);
@@ -86,21 +86,21 @@ public abstract class DataService {
     private Station getStationFromParameters(SOSMetadata metadata, ParameterConstellation constellation) throws InvalidParameterConstallationException {
         String offeringId = constellation.getOffering();
         String procedureId = constellation.getProcedure();
-        String phenomeonId = constellation.getPhenomenon();
+        String phenomenonId = constellation.getPhenomenon();
         String foiId = constellation.getFeatureOfInterest();
-        Station station = metadata.getStation(offeringId, foiId, procedureId, phenomeonId);
+        Station station = metadata.getStationByParameterConstellation(offeringId, foiId, procedureId, phenomenonId);
         if (station == null) {
             throw new InvalidParameterConstallationException(constellation);
         }
         return station;
     }
 
-    private TimeSeriesProperties createTimeSeriesProperties(SOSMetadata metadata, Station station) {
+    private TimeSeriesProperties createTimeSeriesProperties(SOSMetadata metadata, Station station, ParameterConstellation constellation) {
         String sosUrl = metadata.getServiceUrl();
-        Offering offering = metadata.getOffering(station.getOffering());
-        Procedure procedure = metadata.getProcedure(station.getProcedure());
-        Phenomenon phenomenon = metadata.getPhenomenon(station.getPhenomenon());
-        FeatureOfInterest foi = metadata.getFeature(station.getFeature());
+        Offering offering = metadata.getOffering(constellation.getOffering());
+        Procedure procedure = metadata.getProcedure(constellation.getProcedure());
+        Phenomenon phenomenon = metadata.getPhenomenon(constellation.getPhenomenon());
+        FeatureOfInterest foi = metadata.getFeature(constellation.getFeatureOfInterest());
         return new TimeSeriesProperties(sosUrl, station, offering, foi, procedure, phenomenon, 0, 0, "???", true);
     }
 
