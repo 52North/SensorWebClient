@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
+@RequestMapping(value = "/sos/{instance}/timeseries")
 public class RestfulTimeSeriesController {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(RestfulTimeSeriesController.class);
@@ -45,8 +46,8 @@ public class RestfulTimeSeriesController {
     private GetDataService dataService;
     
     private GetImageService imageService;
-
-    @RequestMapping(value = "/sos/{instance}/timeseries", method = RequestMethod.POST)
+    
+    @RequestMapping(method = RequestMethod.POST)
     public ModelAndView getData(@RequestBody ParameterSet parameterSet, @PathVariable("instance") String instance) {
         try {
             ModelAndView mav = new ModelAndView();
@@ -58,7 +59,7 @@ public class RestfulTimeSeriesController {
         }
     }
     
-    @RequestMapping(value = "/sos/{instance}/timeseries/image", method = RequestMethod.POST)
+    @RequestMapping(value = "/image", method = RequestMethod.POST)
     public ModelAndView getImage(@RequestBody ParameterSet parameterSet, @PathVariable("instance") String instance) {
         try {
             ModelAndView mav = new ModelAndView();
@@ -69,7 +70,7 @@ public class RestfulTimeSeriesController {
             throw new InternalServiceException();
         }
     }
-
+    
     public GetDataService getDataService() {
         return dataService;
     }

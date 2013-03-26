@@ -47,8 +47,8 @@ public class InfoMarker extends Marker {
     private String id;
 
     public static InfoMarker createInfoMarker(Station station, MapController controller) {
-		double lng = station.getLon();
-		double lat = station.getLat();
+		double lng = station.getLocation().getNorthing();
+		double lat = station.getLocation().getEasting();
 		String srs = station.getSrs();
 		String proj = controller.getMapProjection();
 		final Coordinate coords = new Coordinate(lng, lat, proj, srs);

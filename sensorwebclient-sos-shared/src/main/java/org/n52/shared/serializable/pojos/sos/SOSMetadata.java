@@ -367,8 +367,9 @@ public class SOSMetadata implements Serializable {
 
     public Station getStationByParameterConstellation(String offeringId, String featureId, String procedureId, String phenomenonId) {
         for (Station station : stations.values()) {
-        	station.hasParameterConstellation(offeringId, featureId, procedureId, phenomenonId);
-        	return station;
+        	if (station.hasParameterConstellation(offeringId, featureId, procedureId, phenomenonId)) {
+        		return station;
+        	}
         }
         return null;
     }

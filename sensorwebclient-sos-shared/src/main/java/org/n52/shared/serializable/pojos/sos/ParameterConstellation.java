@@ -201,7 +201,7 @@ public class ParameterConstellation implements Serializable {
 	}
 
 	private boolean matchFeature(Collection<String> featureFilter) {
-		if(featureFilter.size() == 0) {
+		if(featureFilter == null || featureFilter.size() == 0) {
 			return true;
 		}
 		for (String featureID : featureFilter) {
@@ -213,7 +213,7 @@ public class ParameterConstellation implements Serializable {
 	}
 
 	private boolean matchProcedure(Collection<String> procedureFilter) {
-		if(procedureFilter.size() == 0) {
+		if(procedureFilter == null || procedureFilter.size() == 0) {
 			return true;
 		}
 		for (String procedureID : procedureFilter) {
@@ -225,7 +225,7 @@ public class ParameterConstellation implements Serializable {
 	}
 
 	private boolean matchPhenomenon(Collection<String> phenomenonFilter) {
-		if(phenomenonFilter.size() == 0) {
+		if(phenomenonFilter == null || phenomenonFilter.size() == 0) {
 			return true;
 		}
 		for (String phenomenonID : phenomenonFilter) {
@@ -237,7 +237,7 @@ public class ParameterConstellation implements Serializable {
 	}
 
 	private boolean matchOffering(Collection<String> offeringFilter) {
-		if(offeringFilter.size() == 0) {
+		if(offeringFilter == null || offeringFilter.size() == 0) {
 			return true;
 		}
 		for (String offeringID : offeringFilter) {

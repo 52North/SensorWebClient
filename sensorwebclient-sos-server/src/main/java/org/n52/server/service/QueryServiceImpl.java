@@ -55,16 +55,16 @@ public class QueryServiceImpl implements QueryService {
 	@Override
 	public QueryResponse doQuery(QueryRequest request)
 			throws Exception {
-		// TODO optimize sever side
+		// TODO refactor
 		if (request instanceof FeatureQuery) {
 			return getFeatureResponse((FeatureQuery) request);
 		} else if (request instanceof PhenomenonQuery) {
-			return getPhenomenons((PhenomenonQuery)request);
+			return getPhenomenons((PhenomenonQuery) request);
 		} else if (request instanceof ProcedureQuery) {
-			return getProcedure((ProcedureQuery)request);
+			return getProcedure((ProcedureQuery) request);
 		} else if (request instanceof OfferingQuery) {
 			return getOffering((OfferingQuery) request);
-		} else if (request instanceof StationQuery) {
+		} else if (request instanceof StationQuery) { 
 			return getStations((StationQuery) request);
 		}
 		return null;
@@ -99,7 +99,7 @@ public class QueryServiceImpl implements QueryService {
             
             int endIndex = 0;
             for(int i = startIndex; i < stations.size() && finalStations.size() < interval; i++) {
-            	Station station = stations.get(i);
+            	Station station = stations.get(i).clone();
                 if (referencing.isStationContainedByBBox(spatialFilter, station)) {
                 	station.removeUnmatchedConstellations(offeringFilter, phenomenonFilter, procedureFilter, featureFilter);
                 	if(station.hasAtLeastOneParameterconstellation()) {
@@ -146,9 +146,13 @@ public class QueryServiceImpl implements QueryService {
             SOSMetadata meta = ConfigurationContext.getSOSMetadata(serviceUrl);
             OfferingQueryResponse response = new OfferingQueryResponse();
             response.setServiceUrl(serviceUrl);
-            for (String offering : offeringFilter) {
-				response.addOffering(meta.getOffering(offering));
-			}
+            if (offeringFilter == null || offeringFilter.size() == 0) {
+            	response.setOffering(meta.getOfferings());
+            } else {
+            	for (String offering : offeringFilter) {
+    				response.addOffering(meta.getOffering(offering));
+    			}
+            }
             return response;
         } catch (Exception e) {
             LOG.error("Exception occured on server side.", e);
@@ -168,9 +172,13 @@ public class QueryServiceImpl implements QueryService {
             SOSMetadata meta = ConfigurationContext.getSOSMetadata(serviceUrl);
             ProcedureQueryResponse response = new ProcedureQueryResponse();
             response.setServiceUrl(serviceUrl);
-            for (String procedure : procedureFilter) {
-				response.addProcedure(meta.getProcedure(procedure));
-			}
+            if (procedureFilter == null || procedureFilter.size() == 0) {
+            	response.setProcedure(meta.getProcedures());
+            } else {
+            	for (String procedure : procedureFilter) {
+    				response.addProcedure(meta.getProcedure(procedure));
+    			}
+            }
             return response;
         } catch (Exception e) {
             LOG.error("Exception occured on server side.", e);
@@ -181,13 +189,20 @@ public class QueryServiceImpl implements QueryService {
 	private QueryResponse getPhenomenons(PhenomenonQuery query) throws Exception {
 		try {
 			String serviceUrl = query.getServiceUrl();
+			Collection<String> phenomenonFilter = query.getPhenomenonFilter();
             if (LOG.isDebugEnabled()) {
                 String msgTemplate = "Request -> getPhen4SOS(sosUrl: %s)";
                 LOG.debug(String.format(msgTemplate, serviceUrl));
             }
             SOSMetadata meta = ConfigurationContext.getSOSMetadata(serviceUrl);
             PhenomenonQueryResponse response = new PhenomenonQueryResponse();
-            response.setPhenomenons(meta.getPhenomenons());
+            if (phenomenonFilter == null || phenomenonFilter.size() == 0) {
+            	response.setPhenomenons(meta.getPhenomenons());
+            } else {
+            	for (String phenomenon : phenomenonFilter) {
+    				response.addPhenoemon(meta.getPhenomenon(phenomenon));
+    			}
+            }
             response.setServiceUrl(serviceUrl);
             return response;
         } catch (Exception e) {
@@ -206,9 +221,13 @@ public class QueryServiceImpl implements QueryService {
 	        }
 	        SOSMetadata meta = ConfigurationContext.getSOSMetadata(serviceUrl);
 	        FeatureQueryResponse response = new FeatureQueryResponse();
-	        for (String feature : featureFilter) {
-				response.addFeature(meta.getFeature(feature));
-			}
+	        if (featureFilter == null || featureFilter.size() == 0) {
+	        	response.setFeature(meta.getFeatures());
+	        } else {
+	        	for (String feature : featureFilter) {
+					response.addFeature(meta.getFeature(feature));
+				}
+	        }
 	        response.setServiceUrl(serviceUrl);
 	        return response;
 	    } catch (Exception e) {

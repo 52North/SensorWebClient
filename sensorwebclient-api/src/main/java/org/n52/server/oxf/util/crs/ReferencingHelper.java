@@ -74,7 +74,7 @@ public class ReferencingHelper extends AReferencingHelper {
 //            CoordinateReferenceSystem sourceCrs = CRS.decode(sourceSrs);
 //            CoordinateReferenceSystem targetCrs = CRS.decode(targetSrs);
             GeometryFactory geometryFactory = createGeometryFactory(sourceSrs);
-            Coordinate coordinate = createCoordinate(sourceCrs, station.getLon(), station.getLat(), null);
+            Coordinate coordinate = createCoordinate(sourceCrs, station.getLocation().getNorthing(), station.getLocation().getEasting(), null);
             Point point = geometryFactory.createPoint(coordinate);
             point = transform(point, sourceCrs, targetCrs);
             if (isAxesSwitched(sourceCrs, targetCrs)) {

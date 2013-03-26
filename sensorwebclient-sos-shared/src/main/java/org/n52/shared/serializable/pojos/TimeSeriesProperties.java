@@ -503,11 +503,11 @@ public class TimeSeriesProperties implements Serializable {
 	}
 
 	public double getLat() {
-		return this.station.getLat();
+		return this.station.getLocation().getNorthing();
 	}
 
 	public double getLon() {
-		return this.station.getLon();
+		return this.station.getLocation().getEasting();
 	}
 
     /**

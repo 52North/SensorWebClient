@@ -27,9 +27,7 @@ package org.n52.shared.serializable.pojos.sos;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.n52.shared.serializable.pojos.EastingNorthing;
 
@@ -73,14 +71,6 @@ public class Station implements Serializable {
     
     public EastingNorthing getLocation() {
         return location;
-    }
-
-    public double getLat() {
-        return location.getNorthing();
-    }
-
-    public double getLon() {
-        return location.getEasting();
     }
 
     public void setSrs(String srs) {
@@ -130,14 +120,6 @@ public class Station implements Serializable {
 		return false;
 	}
 
-	public Set<String> getStationCategories() {
-		Set<String> categories = new HashSet<String>();
-		for (ParameterConstellation paramConst : parameterConstellations) {
-			categories.add(paramConst.getCategory());
-		}
-		return categories;
-	}
-
 	public boolean hasStationCategory(String filterCategory) {
 		for (ParameterConstellation paramConst : parameterConstellations) {
 			if (paramConst.getCategory().equals(filterCategory)){
@@ -168,5 +150,12 @@ public class Station implements Serializable {
 
 	public boolean hasAtLeastOneParameterconstellation() {
 		return parameterConstellations.size() > 0 ? true : false;
+	}
+	
+	public Station clone(){
+		Station station = new Station(id);
+		station.setLocation(location, srs);
+		station.setParameterConstellations(new ArrayList<ParameterConstellation>(parameterConstellations));
+		return station;
 	}
 }

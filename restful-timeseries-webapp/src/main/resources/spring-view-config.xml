@@ -14,11 +14,13 @@
 		<property name="mediaTypes">
 			<map>
 				<entry key="json" value="application/json" />
+				<entry key="html" value="text/html" />
 			</map>
 		</property>
 		<property name="viewResolvers">
 			<list>
 				<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
+				<!-- <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"/> -->
 			</list>
 		</property>
 		<property name="defaultViews">

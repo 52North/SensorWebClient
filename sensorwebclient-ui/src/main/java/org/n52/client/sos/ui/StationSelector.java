@@ -29,6 +29,7 @@ import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -377,7 +378,7 @@ public class StationSelector extends Window {
 		hideInfoWindow();
 		Map<String, String> sortedCategories = getAlphabeticallySortedMap();
 		for (Station station : currentMetadata.getStations()) {
-			Set<String> categories = station.getStationCategories();
+			Set<String> categories = getStationCategories(station);
 			for (String category : categories) {
 				sortedCategories.put(category, category);
 			}
@@ -388,6 +389,14 @@ public class StationSelector extends Window {
 		selector.setValueMap(categories);
 	}
 	
+	private Set<String> getStationCategories(Station station) {
+		Set<String> categories = new HashSet<String>();
+		for (ParameterConstellation paramConst : station.getParameterConstellations()) {
+			categories.add(paramConst.getCategory());
+		}
+		return categories;
+	}
+
 	public void setSelectedFilter(String serviceURL, String filter) {
 		RadioGroupItem selector = stationFilterGroups.get(serviceURL);
 		if (selector == null) {
@@ -412,7 +421,7 @@ public class StationSelector extends Window {
 
 	public void showInfoWindow(InfoMarker infoMarker, String header) {
 		updateInfoLabels();
-		String[] array = infoMarker.getStation().getStationCategories().toArray(new String[0]);
+		String[] array = getStationCategories(infoMarker.getStation()).toArray(new String[0]);
 		phenomenonBox.setValueMap(array);
 		phenomenonBox.clearValue();
 		infoWindow.setWindowTitle(header);

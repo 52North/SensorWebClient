@@ -2,7 +2,7 @@ package org.n52.shared.requests.query.responses;
 
 import java.io.Serializable;
 
-public class QueryResponse implements Serializable {
+public abstract class QueryResponse implements Serializable {
 
 	private static final long serialVersionUID = 8964914430932650368L;
 	
