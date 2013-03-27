@@ -25,22 +25,24 @@ package org.n52.shared.serializable.pojos;
 
 import java.io.Serializable;
 
-public class EastingNorthing implements Serializable {
+public class EastingNorthing extends Geometry implements Serializable {
 
     private static final long serialVersionUID = 4080241800833286545L;
     
-    String easting;
-    String northing;
+    private String easting;
+    private String northing;
     
-    private EastingNorthing() {
+    @SuppressWarnings("unused")
+	private EastingNorthing() {
         // client requires class to be default instantiable
     }
 
-    public EastingNorthing(double easting, double northing) {
+    public EastingNorthing(double easting, double northing, String srs) {
+    	super(srs);
         this.easting = Double.toString(easting);
         this.northing = Double.toString(northing);
     }
-
+    
     public double getEasting() {
         return Double.parseDouble(easting);
     }
@@ -90,6 +92,4 @@ public class EastingNorthing implements Serializable {
         sb.append("Northing: ").append(northing).append(" ]");
         return sb.toString();
     }
-
-    
 }

@@ -123,9 +123,9 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 							ParsedPoint point = getPointOfSamplingFeatureType(sfSamplingFeature, referenceHelper);
 	                        double lat = Double.parseDouble(point.getLat());
 		                    double lng = Double.parseDouble(point.getLon());
-		                    EastingNorthing coords = new EastingNorthing(lat, lng);
+		                    EastingNorthing coords = new EastingNorthing(lat, lng, point.getSrs());
 	                        station = new Station(id);
-	                        station.setLocation(coords, point.getSrs());
+	                        station.setLocation(coords);
 	                        metadata.addStation(station);
 						}
                         // add feature

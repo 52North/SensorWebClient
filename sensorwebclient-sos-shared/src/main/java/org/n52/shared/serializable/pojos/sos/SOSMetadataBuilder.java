@@ -223,9 +223,9 @@ public class SOSMetadataBuilder {
         if ( !sosSpecificBboxConfigured) {
             return Constants.FALLBACK_EXTENT;
         }
-        EastingNorthing ll = new EastingNorthing(llEasting, llNorthing);
-        EastingNorthing ur = new EastingNorthing(urEasting, urNorthing);
-        return new BoundingBox(ll, ur, "EPSG:4326");
+        EastingNorthing ll = new EastingNorthing(llEasting, llNorthing, "EPSG:4326");
+        EastingNorthing ur = new EastingNorthing(urEasting, urNorthing, "EPSG:4326");
+        return new BoundingBox(ll, ur);
     }
     
 }

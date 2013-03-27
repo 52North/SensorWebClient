@@ -131,9 +131,9 @@ public class HydroMetadataHandler extends MetadataHandler {
 	                    if (station == null) {
 	                        double lat = Double.parseDouble(point.getLat());
 		                    double lng = Double.parseDouble(point.getLon());
-		                    EastingNorthing coords = new EastingNorthing(lng, lat);
+		                    EastingNorthing coords = new EastingNorthing(lng, lat, point.getSrs());
 	                        station = new Station(id);
-	                        station.setLocation(coords, point.getSrs());
+	                        station.setLocation(coords);
 	                        metadata.addStation(station);
 	                    }
 	                    

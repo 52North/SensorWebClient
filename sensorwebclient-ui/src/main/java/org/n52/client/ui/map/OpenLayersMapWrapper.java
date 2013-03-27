@@ -185,9 +185,9 @@ public abstract class OpenLayersMapWrapper {
             GWT.log(sb.toString());
         }
         
-        EastingNorthing ll2 = new EastingNorthing(ll.lon(), ll.lat());
-        EastingNorthing ur2 = new EastingNorthing(ur.lon(), ur.lat());
-        return new BoundingBox(ll2, ur2, EPSG_4326);
+        EastingNorthing ll2 = new EastingNorthing(ll.lon(), ll.lat(), EPSG_4326);
+        EastingNorthing ur2 = new EastingNorthing(ur.lon(), ur.lat(), EPSG_4326);
+        return new BoundingBox(ll2, ur2);
     }
 
     private String getAsString(LonLat lonlat) {

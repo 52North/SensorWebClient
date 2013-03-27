@@ -26,18 +26,15 @@ package org.n52.shared.serializable.pojos;
 
 import java.io.Serializable;
 
-import org.n52.shared.Constants;
-
-public class BoundingBox implements Serializable {
+public class BoundingBox extends Geometry implements Serializable {
 	
     private static final long serialVersionUID = -674668726920006020L;
-
-    private String srs = Constants.DISPLAY_PROJECTION;
 
     private EastingNorthing ll;
 
     private EastingNorthing ur;
 
+	@SuppressWarnings("unused")
 	private BoundingBox() {
         // client requires to be default instantiable
     }
@@ -47,18 +44,18 @@ public class BoundingBox implements Serializable {
      * @param ur the upper right corner
      * @param srs the srs code (e.g. EPSG:4326)
      */
-    public BoundingBox(EastingNorthing ll, EastingNorthing ur, String srs) {
-        this.ll = ll;
+    public BoundingBox(EastingNorthing ll, EastingNorthing ur) {
+    	setSrs(ll.getSrs());
+    	this.ll = ll;
         this.ur = ur;
-        this.srs = srs;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("BBOX [ (");
-        sb.append(ll.easting).append(",").append(ll.northing).append(");(");
-        sb.append(ur.easting).append(",").append(ur.northing).append(") ");
-        sb.append("srs: ").append(srs).append(" ]");
+        sb.append(ll.getEasting()).append(",").append(ll.getNorthing()).append(");(");
+        sb.append(ur.getEasting()).append(",").append(ur.getNorthing()).append(") ");
+        sb.append("srs: ").append(getSrs()).append(" ]");
         return sb.toString();
     }
     
@@ -83,13 +80,6 @@ public class BoundingBox implements Serializable {
 	private boolean isWithinVerticalRange(double northing) {
 		return ll.getNorthing() <= northing && northing <= ur.getNorthing();
 	}
-
-    /**
-     * @return the CRS's code including authority, eg 'EPSG:4326'.
-     */
-    public String getSrs() {
-        return this.srs;
-    }
 
     /**
      * @return the lower left corner coordinate.

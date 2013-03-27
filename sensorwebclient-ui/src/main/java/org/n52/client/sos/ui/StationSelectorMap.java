@@ -76,9 +76,9 @@ public class StationSelectorMap extends OpenLayersMapWrapper {
                 double lleftY = new Double(propertiesMgr.getParameterAsString("lleftY"));
                 double urightX = new Double(propertiesMgr.getParameterAsString("urightX"));
                 double urightY = new Double(propertiesMgr.getParameterAsString("urightY"));
-                EastingNorthing ll = new EastingNorthing(lleftX, lleftY);
-                EastingNorthing ur = new EastingNorthing(urightX, urightY);
-                defaultExtent = new BoundingBox(ll, ur, DISPLAY_PROJECTION);
+                EastingNorthing ll = new EastingNorthing(lleftX, lleftY, DISPLAY_PROJECTION);
+                EastingNorthing ur = new EastingNorthing(urightX, urightY, DISPLAY_PROJECTION);
+                defaultExtent = new BoundingBox(ll, ur);
             }
             else {
                 GWT.log("No global extent configured. Zooming to: " + Constants.FALLBACK_EXTENT);

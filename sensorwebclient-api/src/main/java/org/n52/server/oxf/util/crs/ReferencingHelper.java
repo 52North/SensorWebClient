@@ -66,7 +66,7 @@ public class ReferencingHelper extends AReferencingHelper {
     }
     
     public boolean isStationContainedByBBox(BoundingBox bbox, Station station) throws NoSuchAuthorityCodeException, FactoryException, TransformException {
-        String sourceSrs = station.getSrs();
+        String sourceSrs = station.getLocation().getSrs();
         String targetSrs = bbox.getSrs();
         if (sourceSrs != null) {
             CoordinateReferenceSystem sourceCrs = crsFactory.createCoordinateReferenceSystem(sourceSrs);
@@ -74,7 +74,7 @@ public class ReferencingHelper extends AReferencingHelper {
 //            CoordinateReferenceSystem sourceCrs = CRS.decode(sourceSrs);
 //            CoordinateReferenceSystem targetCrs = CRS.decode(targetSrs);
             GeometryFactory geometryFactory = createGeometryFactory(sourceSrs);
-            Coordinate coordinate = createCoordinate(sourceCrs, station.getLocation().getNorthing(), station.getLocation().getEasting(), null);
+            Coordinate coordinate = createCoordinate(sourceCrs, station.getLocation().getEasting(), station.getLocation().getNorthing(), null);
             Point point = geometryFactory.createPoint(coordinate);
             point = transform(point, sourceCrs, targetCrs);
             if (isAxesSwitched(sourceCrs, targetCrs)) {

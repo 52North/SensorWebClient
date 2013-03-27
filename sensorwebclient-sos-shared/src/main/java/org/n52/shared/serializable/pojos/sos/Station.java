@@ -45,7 +45,7 @@ public class Station implements Serializable {
 
     private String id;
 
-    private String srs; // TODO srs and location into one object!
+//    private String srs; // TODO srs and location into one object!
     private EastingNorthing location;
     
     private ArrayList<ParameterConstellation> parameterConstellations; 
@@ -63,23 +63,23 @@ public class Station implements Serializable {
         return id;
     }
 
-    public void setLocation(EastingNorthing location, String srs) {
+    public void setLocation(EastingNorthing location) {
         // TODO should be made private as we never should change the equals attributes when having objects in a HashSet
         this.location = location;
-        this.srs = srs;
+//        this.srs = srs;
     }
     
     public EastingNorthing getLocation() {
         return location;
     }
 
-    public void setSrs(String srs) {
-        this.srs = srs;
-    }
-
-    public String getSrs() {
-        return srs;
-    }
+//    public void setSrs(String srs) {
+//        this.srs = srs;
+//    }
+//
+//    public String getSrs() {
+//        return srs;
+//    }
 
     public void addParameterConstellation(ParameterConstellation parameterConstellation) {
         parameterConstellations.add(parameterConstellation);
@@ -154,7 +154,7 @@ public class Station implements Serializable {
 	
 	public Station clone(){
 		Station station = new Station(id);
-		station.setLocation(location, srs);
+		station.setLocation(location);
 		station.setParameterConstellations(new ArrayList<ParameterConstellation>(parameterConstellations));
 		return station;
 	}

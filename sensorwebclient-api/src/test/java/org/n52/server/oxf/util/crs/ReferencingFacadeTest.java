@@ -52,9 +52,9 @@ public class ReferencingFacadeTest {
     public void setUp() throws Exception {
         ConfigurationContext.IS_DEV_MODE = false;
         referencingFacade = AReferencingHelper.createEpsgStrictAxisOrder();
-        EastingNorthing ll = new EastingNorthing(6.4, 51.9);
-        EastingNorthing ur = new EastingNorthing(8.9, 53.4);
-        bbox = new BoundingBox(ll, ur, "EPSG:4326");
+        EastingNorthing ll = new EastingNorthing(6.4, 51.9, "EPSG:4326");
+        EastingNorthing ur = new EastingNorthing(8.9, 53.4, "EPSG:4326");
+        bbox = new BoundingBox(ll, ur);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class ReferencingFacadeTest {
         // TODO make random station within bbox
         // TODO add different epsg codes!
         Station stationWithin = new Station("test");
-        stationWithin.setLocation(new EastingNorthing(7.0, 52.0), "EPSG:4326");
+        stationWithin.setLocation(new EastingNorthing(7.0, 52.0, "EPSG:4326"));
         return stationWithin;
     }
     
@@ -91,7 +91,7 @@ public class ReferencingFacadeTest {
         // TODO make random station within bbox
         // TODO add different epsg codes!
         Station stationOutside = new Station("test");
-        stationOutside.setLocation(new EastingNorthing(10.4, 52.0), "EPSG:4326");
+        stationOutside.setLocation(new EastingNorthing(10.4, 52.0, "EPSG:4326"));
         return stationOutside;
     }
 

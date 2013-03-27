@@ -100,7 +100,7 @@ public class QueryServiceImpl implements QueryService {
             int endIndex = 0;
             for(int i = startIndex; i < stations.size() && finalStations.size() < interval; i++) {
             	Station station = stations.get(i).clone();
-                if (referencing.isStationContainedByBBox(spatialFilter, station)) {
+                if (spatialFilter == null || referencing.isStationContainedByBBox(spatialFilter, station)) {
                 	station.removeUnmatchedConstellations(offeringFilter, phenomenonFilter, procedureFilter, featureFilter);
                 	if(station.hasAtLeastOneParameterconstellation()) {
                 		finalStations.add(station);

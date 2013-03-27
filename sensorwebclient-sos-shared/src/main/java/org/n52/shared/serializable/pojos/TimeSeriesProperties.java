@@ -101,6 +101,7 @@ public class TimeSeriesProperties implements Serializable {
 		this.isHasData = hasData;
 	}
 
+	@SuppressWarnings("unused")
 	private TimeSeriesProperties() {
 		// do nothing
 	}
@@ -516,11 +517,11 @@ public class TimeSeriesProperties implements Serializable {
      * @return the srs
      */
     public String getSrs() {
-        return this.station.getSrs();
+        return this.station.getLocation().getSrs();
     }
 
     public void setSrs(String srs) {
-        this.station.setSrs(srs);
+        this.station.getLocation().setSrs(srs);
     }
 
 	/**

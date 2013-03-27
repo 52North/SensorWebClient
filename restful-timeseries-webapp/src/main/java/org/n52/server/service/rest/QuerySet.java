@@ -25,6 +25,8 @@ package org.n52.server.service.rest;
 
 import java.util.Collection;
 
+import org.n52.server.service.rest.objects.BoundingBox;
+
 public class QuerySet {
 
 	private Collection<String> offeringFilter;
@@ -39,7 +41,7 @@ public class QuerySet {
 
 	private int pagingInterval;
 
-	private String spatialFilter;
+	private BoundingBox spatialFilter;
 
 	public QuerySet() {
 		// for serialization
@@ -93,11 +95,11 @@ public class QuerySet {
 		this.pagingInterval = pagingInterval;
 	}
 
-	public String getSpatialFilter() {
+	public BoundingBox getSpatialFilter() {
 		return spatialFilter;
 	}
 
-	public void setSpatialFilter(String spatialFilter) {
+	public void setSpatialFilter(BoundingBox spatialFilter) {
 		this.spatialFilter = spatialFilter;
 	}
 

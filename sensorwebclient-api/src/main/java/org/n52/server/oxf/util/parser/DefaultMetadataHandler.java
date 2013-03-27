@@ -155,7 +155,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
                     double lng = Double.parseDouble(point.getLon());
 
                     String srs = point.getSrs();
-                    EastingNorthing eastingNorthing = new EastingNorthing(lng, lat);
+                    EastingNorthing eastingNorthing = new EastingNorthing(lng, lat, srs);
 
                     if (fois.isEmpty()) {
                         Collection<FeatureOfInterest> features = metadata.getFeatures();
@@ -170,7 +170,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
 						Station station = metadata.getStation(foi);
 						if (station == null) {
 							station = new Station(foi);
-							station.setLocation(eastingNorthing, point.getSrs());
+							station.setLocation(eastingNorthing);
 							metadata.addStation(station);
 						}
 						for (String phenomenon : phenomenons) {
@@ -178,7 +178,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
 									parameterConstellations, procedureId,
 									phenomenon);
 
-							station.setLocation(eastingNorthing, srs);
+							station.setLocation(eastingNorthing);
 							for (ParameterConstellation paraCon : paramConstellations) {
 								paraCon.setFeatureOfInterest(foi);
 								station.addParameterConstellation(paraCon);
