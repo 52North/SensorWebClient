@@ -25,6 +25,7 @@
 package org.n52.server.service.rest.control;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +37,7 @@ import org.n52.shared.requests.query.responses.OfferingQueryResponse;
 import org.n52.shared.requests.query.responses.PhenomenonQueryResponse;
 import org.n52.shared.requests.query.responses.ProcedureQueryResponse;
 import org.n52.shared.requests.query.responses.StationQueryResponse;
+import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -46,16 +48,37 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping(value = "/sos/{instance}/metadata")
+@RequestMapping(value = "/sos")
 public class RestfulMetadataController {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(RestfulMetadataController.class);
     
     private GetMetadataService metadataService;
     
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public ModelAndView getInstances(){
+    	ModelAndView mav = new ModelAndView();
+    	Collection<SOSMetadata> instances = metadataService.getInstances();
+    	mav.addAllObjects(createMav(instances));
+    	return mav;
+    }
+    
     // phenomenon handler methods
 
-    @RequestMapping(value = "/phenomenon", method = RequestMethod.POST)
+    private Map<String, ?> createMav(Collection<SOSMetadata> instances) {
+    	HashMap<String, Object> map = new HashMap<String, Object>();
+    	Collection<Object> services = new ArrayList<Object>();
+    	for (SOSMetadata sosMetadata : instances) {
+    		HashMap<String, String> sos = new HashMap<String, String>();
+    		sos.put("id", sosMetadata.getConfiguredItemName());
+    		sos.put("url", sosMetadata.getServiceUrl());
+    		services.add(sos);
+		}
+    	map.put("services", services);
+		return map;
+	}
+
+	@RequestMapping(value = "/{instance}/metadata/phenomenon", method = RequestMethod.POST)
     public ModelAndView getPhenomenon(@RequestBody QuerySet querySet, @PathVariable("instance") String instance) {
         try {
             ModelAndView mav = new ModelAndView();
@@ -76,13 +99,13 @@ public class RestfulMetadataController {
 		return map;
 	}
 
-	@RequestMapping(value = "/phenomenon")
+	@RequestMapping(value = "/{instance}/metadata/phenomenon")
     public ModelAndView getPhenomenonByGET(@PathVariable("instance") String instance) {
     	ModelAndView mav = getPhenomenon(new QuerySet(), instance);
     	return mav;
     }
     
-    @RequestMapping(value = "/phenomenon/{id}")
+    @RequestMapping(value = "/{instance}/metadata/phenomenon/{id}")
     public ModelAndView getPhenomenonByGET(@PathVariable("instance") String instance, @PathVariable("id") String id) {
     	QuerySet query = new QuerySet();
     	ArrayList<String> phenomenonFilter = new ArrayList<String>();
@@ -94,7 +117,7 @@ public class RestfulMetadataController {
     
     // procedure handler methods
 
-    @RequestMapping(value = "/procedure", method = RequestMethod.POST)
+    @RequestMapping(value = "/{instance}/metadata/procedure", method = RequestMethod.POST)
     public ModelAndView getProcedure(@RequestBody QuerySet querySet, @PathVariable("instance") String instance) {
         try {
             ModelAndView mav = new ModelAndView();
@@ -115,13 +138,13 @@ public class RestfulMetadataController {
 		return map;
 	}
 
-	@RequestMapping(value = "/procedure")
+	@RequestMapping(value = "/{instance}/metadata/procedure")
     public ModelAndView getProcedureByGET(@PathVariable("instance") String instance) {
     	ModelAndView mav = getProcedure(new QuerySet(), instance);
     	return mav;
     }
     
-    @RequestMapping(value = "/procedure/{id}")
+    @RequestMapping(value = "/{instance}/metadata/procedure/{id}")
     public ModelAndView getProcedureByGET(@PathVariable("instance") String instance, @PathVariable("id") String id) {
     	QuerySet query = new QuerySet();
     	ArrayList<String> procedureFilter = new ArrayList<String>();
@@ -133,7 +156,7 @@ public class RestfulMetadataController {
     
     // offering handler methods
     
-    @RequestMapping(value = "/offering", method = RequestMethod.POST)
+    @RequestMapping(value = "/{instance}/metadata/offering", method = RequestMethod.POST)
     public ModelAndView getOffering(@RequestBody QuerySet querySet, @PathVariable("instance") String instance) {
         try {
             ModelAndView mav = new ModelAndView();
@@ -154,13 +177,13 @@ public class RestfulMetadataController {
 		return map;
 	}
 
-	@RequestMapping(value = "/offering")
+	@RequestMapping(value = "/{instance}/metadata/offering")
     public ModelAndView getOfferingByGET(@PathVariable("instance") String instance) {
     	ModelAndView mav = getOffering(new QuerySet(), instance);
     	return mav;
     }
     
-    @RequestMapping(value = "/offering/{id}")
+    @RequestMapping(value = "/{instance}/metadata/offering/{id}")
     public ModelAndView getOfferingByGET(@PathVariable("instance") String instance, @PathVariable("id") String id) {
     	QuerySet query = new QuerySet();
     	ArrayList<String> offeringFilter = new ArrayList<String>();
@@ -172,7 +195,7 @@ public class RestfulMetadataController {
 
     // feature handler methods
     
-    @RequestMapping(value = "/feature", method = RequestMethod.POST) 
+    @RequestMapping(value = "/{instance}/metadata/feature", method = RequestMethod.POST) 
     public ModelAndView getFeature(@RequestBody QuerySet querySet, @PathVariable("instance") String instance) {
         try {
             ModelAndView mav = new ModelAndView();
@@ -193,13 +216,13 @@ public class RestfulMetadataController {
 		return map;
 	}
 
-	@RequestMapping(value = "/feature")
+	@RequestMapping(value = "/{instance}/metadata/feature")
     public ModelAndView getFeatureByGET(@PathVariable("instance") String instance) {
     	ModelAndView mav = getFeature(new QuerySet(), instance);
     	return mav;
     }
     
-    @RequestMapping(value = "/feature/{id}")
+    @RequestMapping(value = "/{instance}/metadata/feature/{id}")
     public ModelAndView getFeatureByGET(@PathVariable("instance") String instance, @PathVariable("id") String id) {
     	QuerySet query = new QuerySet();
     	ArrayList<String> featureFilter = new ArrayList<String>();
@@ -211,7 +234,7 @@ public class RestfulMetadataController {
 
     // station handler methods
     
-    @RequestMapping(value = "/station", method = RequestMethod.POST)
+    @RequestMapping(value = "/{instance}/metadata/station", method = RequestMethod.POST)
     public ModelAndView getStation(@RequestBody QuerySet querySet, @PathVariable("instance") String instance) {
         try {
             ModelAndView mav = new ModelAndView();
@@ -232,13 +255,13 @@ public class RestfulMetadataController {
 		return map;
 	}
 
-	@RequestMapping(value = "/station")
+	@RequestMapping(value = "/{instance}/metadata/station")
     public ModelAndView getStationByGET(@PathVariable("instance") String instance) {
     	ModelAndView mav = getStation(new QuerySet(), instance);
     	return mav;
     }
     
-    @RequestMapping(value = "/station/{id}")
+    @RequestMapping(value = "/{instance}/metadata/station/{id}")
     public ModelAndView getStationByGET(@PathVariable("instance") String instance, @PathVariable("id") String id) {
     	QuerySet query = new QuerySet();
     	ArrayList<String> stationFilter = new ArrayList<String>();

@@ -1,5 +1,7 @@
 package org.n52.server.service;
 
+import java.util.Collection;
+
 import org.n52.client.service.QueryService;
 import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.service.rest.QuerySet;
@@ -11,6 +13,7 @@ import org.n52.shared.requests.query.PhenomenonQuery;
 import org.n52.shared.requests.query.ProcedureQuery;
 import org.n52.shared.requests.query.QueryRequest;
 import org.n52.shared.requests.query.StationQuery;
+import org.n52.shared.requests.query.responses.QueryResponse;
 import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -23,29 +26,33 @@ public class GetMetadataService {
 	
 	private QueryService queryService;
 
-	public Object getPhenomenons(QuerySet query, String instance) throws Exception {
+	public QueryResponse getPhenomenons(QuerySet query, String instance) throws Exception {
 		PhenomenonQuery request = (PhenomenonQuery) createQuery(query, instance, new PhenomenonQuery()); 
 		return queryService.doQuery(request);
 	}
 
-	public Object getProcedures(QuerySet query, String instance) throws Exception {
+	public QueryResponse getProcedures(QuerySet query, String instance) throws Exception {
 		ProcedureQuery request = (ProcedureQuery) createQuery(query, instance, new ProcedureQuery()); 
 		return queryService.doQuery(request);
 	}
 	
-	public Object getOfferings(QuerySet query, String instance) throws Exception {
+	public QueryResponse getOfferings(QuerySet query, String instance) throws Exception {
 		OfferingQuery request = (OfferingQuery) createQuery(query, instance, new OfferingQuery()); 
 		return queryService.doQuery(request);
 	}
 	
-	public Object getFeatures(QuerySet query, String instance) throws Exception {
+	public QueryResponse getFeatures(QuerySet query, String instance) throws Exception {
 		FeatureQuery request = (FeatureQuery) createQuery(query, instance, new FeatureQuery()); 
 		return queryService.doQuery(request);
 	}
 	
-	public Object getStations(QuerySet query, String instance) throws Exception {
+	public QueryResponse getStations(QuerySet query, String instance) throws Exception {
 		StationQuery request = (StationQuery) createQuery(query, instance, new StationQuery()); 
 		return queryService.doQuery(request);
+	}
+	
+	public Collection<SOSMetadata> getInstances() {
+		return ConfigurationContext.getSOSMetadatas();
 	}
 	
 	/**

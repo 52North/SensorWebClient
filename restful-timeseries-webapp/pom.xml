@@ -109,6 +109,7 @@
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>sensorwebclient-sos-shared</artifactId>
 		</dependency>
+						
 		<!-- ### EXTERNAL DEPENDENCIES ### -->
 		<dependency>
 			<groupId>joda-time</groupId>
@@ -213,6 +214,24 @@
 					<filter>${local.configfile}</filter>
 				</filters>
 			</build>
+		</profile>
+		<profile>
+			<id>connector-eea</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.n52.sensorweb</groupId>
+					<artifactId>sensorwebclient-eea</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>connector-hydro</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.n52.sensorweb</groupId>
+					<artifactId>sensorwebclient-hydro</artifactId>
+				</dependency>
+			</dependencies>
 		</profile>
 	</profiles>
 
