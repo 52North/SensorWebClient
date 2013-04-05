@@ -88,7 +88,7 @@ public class GrdcMetadataHandler extends MetadataHandler {
 		ServiceDescriptor serviceDesc = ConnectorUtils.getServiceDescriptor(sosUrl, adapter);
 
         String sosTitle = serviceDesc.getServiceIdentification().getTitle();
-		String omFormat = ConnectorUtils.getOMFormat(serviceDesc);
+		String omFormat = ConnectorUtils.getResponseFormat(serviceDesc, "om");
 		String smlVersion = ConnectorUtils.getSMLVersion(serviceDesc, sosVersion);
 		ConnectorUtils.setVersionNumbersToMetadata(sosUrl, sosTitle, sosVersion, omFormat, smlVersion);
 		

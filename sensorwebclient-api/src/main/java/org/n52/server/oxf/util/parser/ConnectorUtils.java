@@ -96,7 +96,7 @@ public class ConnectorUtils {
         return null; 
     }
 
-    public static String getOMFormat(ServiceDescriptor serviceDesc) {
+    public static String getResponseFormat(ServiceDescriptor serviceDesc, String matchingPattern) {
         String respFormat = null;
         OperationsMetadata metadata = serviceDesc.getOperationsMetadata();
         if (metadata != null) {
@@ -104,7 +104,7 @@ public class ConnectorUtils {
             Parameter parameter = op.getParameter("responseFormat");
             StringValueDomain respDomain = (StringValueDomain) parameter.getValueDomain();
             for (String elem : respDomain.getPossibleValues()) {
-                if (elem.contains("OM") || elem.contains("om")) {
+                if (elem.toLowerCase().contains(matchingPattern.toLowerCase())) {
                     respFormat = elem;
                 }
             }

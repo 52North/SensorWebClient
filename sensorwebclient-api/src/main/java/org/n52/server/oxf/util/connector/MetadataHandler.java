@@ -84,19 +84,19 @@ public abstract class MetadataHandler {
 				.getServiceDescriptor(sosUrl, adapter);
 		String sosTitle = serviceDescriptor.getServiceIdentification()
 				.getTitle();
-		String omFormat = ConnectorUtils.getOMFormat(serviceDescriptor);
+		String omResponseFormat = ConnectorUtils.getResponseFormat(serviceDescriptor, "om");
 		String smlVersion = ConnectorUtils.getSMLVersion(serviceDescriptor,
 				sosVersion);
 		// TODO check why no omFormat and smlVersion exists
-		if (omFormat == null) {
-			omFormat = "http://www.opengis.net/om/2.0";
+		if (omResponseFormat == null) {
+			omResponseFormat = "http://www.opengis.net/om/2.0";
 		}
 		if (smlVersion == null) {
 			smlVersion = "http://www.opengis.net/sensorML/1.0.1";
 		}
 
 		ConnectorUtils.setVersionNumbersToMetadata(sosUrl, sosTitle,
-				sosVersion, omFormat, smlVersion);
+				sosVersion, omResponseFormat, smlVersion);
 		return sosMetadata;
 	}
 
@@ -269,6 +269,10 @@ public abstract class MetadataHandler {
 			throw new OXFException(e);
 		}
 		return fois;
+	}
+	
+	public ServiceDescriptor getServiceDescriptor() {
+		return serviceDescriptor;
 	}
 
 }

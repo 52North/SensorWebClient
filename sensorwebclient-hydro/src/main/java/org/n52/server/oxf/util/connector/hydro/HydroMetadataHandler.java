@@ -47,6 +47,8 @@ import net.opengis.sampling.x20.SFSamplingFeatureDocument;
 import net.opengis.sampling.x20.SFSamplingFeatureType;
 import net.opengis.samplingSpatial.x20.ShapeDocument;
 import net.opengis.sos.x20.GetFeatureOfInterestResponseDocument;
+import net.opengis.waterml.x20.MonitoringPointDocument;
+import net.opengis.waterml.x20.MonitoringPointType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
@@ -59,6 +61,7 @@ import org.n52.server.oxf.util.access.AccessorThreadPool;
 import org.n52.server.oxf.util.access.OperationAccessor;
 import org.n52.server.oxf.util.connector.MetadataHandler;
 import org.n52.server.oxf.util.crs.AReferencingHelper;
+import org.n52.server.oxf.util.parser.ConnectorUtils;
 import org.n52.server.oxf.util.parser.utils.ParsedPoint;
 import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.serializable.pojos.EastingNorthing;
@@ -82,6 +85,12 @@ public class HydroMetadataHandler extends MetadataHandler {
 	public SOSMetadataResponse performMetadataCompletion(String sosUrl, String sosVersion) throws Exception {
 		
 		SOSMetadata metadata = initMetadata(sosUrl, sosVersion);
+		
+		// get a waterml specific responseFormat if set
+		String responseFormat = ConnectorUtils.getResponseFormat(getServiceDescriptor(), "waterml");
+		if (responseFormat != null) {
+			metadata.setOmVersion(responseFormat);
+		}
 
 		Collection<ParameterConstellation> parameterConstellations = createParameterConstellations();
 		
@@ -107,17 +116,34 @@ public class HydroMetadataHandler extends MetadataHandler {
 					LOGGER.error("Get no result for GetFeatureOfInterest with parameter constellation: " + paramConst + "!");
 				}
 				GetFeatureOfInterestResponseDocument foiResDoc = getFOIResponseOfOpResult(opRes);
+				String id = null;
+				String label = null;
+				ParsedPoint point = null;
 				for (FeaturePropertyType featurePropertyType : foiResDoc.getGetFeatureOfInterestResponse().getFeatureMemberArray()) {
-					SFSamplingFeatureDocument samplingFeature = SFSamplingFeatureDocument.Factory.parse(featurePropertyType.xmlText());
-					SFSamplingFeatureType sfSamplingFeature = samplingFeature.getSFSamplingFeature();
-					String id = sfSamplingFeature.getIdentifier().getStringValue();
-					String label;
-					if (sfSamplingFeature.getNameArray().length > 0) {
-						label = sfSamplingFeature.getNameArray(0).getStringValue();
+					XmlCursor xmlCursor = featurePropertyType.newCursor();
+					if (xmlCursor.toChild(new QName("http://www.opengis.net/samplingSpatial/2.0", "SF_SpatialSamplingFeature"))){
+						SFSamplingFeatureDocument samplingFeature = SFSamplingFeatureDocument.Factory.parse(xmlCursor.getDomNode());
+						SFSamplingFeatureType sfSamplingFeature = samplingFeature.getSFSamplingFeature();
+						id = sfSamplingFeature.getIdentifier().getStringValue();
+						if (sfSamplingFeature.getNameArray().length > 0) {
+							label = sfSamplingFeature.getNameArray(0).getStringValue();
+						} else {
+							label = id;
+						}
+						point = createParsedPoint(sfSamplingFeature, referenceHelper);
+					} else if (xmlCursor.toChild(new QName("http://www.opengis.net/waterml/2.0", "MonitoringPoint"))){
+						MonitoringPointDocument monitoringPointDoc = MonitoringPointDocument.Factory.parse(xmlCursor.getDomNode());
+						MonitoringPointType monitoringPoint = monitoringPointDoc.getMonitoringPoint();
+						id = monitoringPoint.getIdentifier().getStringValue();
+						if(monitoringPoint.getNameArray().length > 0) {
+							label = monitoringPoint.getNameArray(0).getStringValue();
+						} else {
+							label = id;
+						}
+						point = createParsedPoint(monitoringPoint, referenceHelper);
 					} else {
-						label = id;
+						LOGGER.error("Don't find supported feature members in the GetFeatureOfInterest response");
 					}
-					ParsedPoint point = getPointOfSamplingFeatureType(sfSamplingFeature, referenceHelper);
 					if (point == null) {
 						LOGGER.warn("The foi with ID {} has no valid point", id);
 					} else {
@@ -153,14 +179,14 @@ public class HydroMetadataHandler extends MetadataHandler {
 		metadata.setHasDonePositionRequest(true);
 		return new SOSMetadataResponse(metadata);
 	}
-
-    private String getLastPartOf(String phenomenonId) {
+	
+	private String getLastPartOf(String phenomenonId) {
         return phenomenonId.substring(phenomenonId.lastIndexOf("/") + 1);
     }
 
-	private ParsedPoint getPointOfSamplingFeatureType(SFSamplingFeatureType sfSamplingFeature, AReferencingHelper referenceHelper) throws XmlException {
+	private ParsedPoint createParsedPoint(XmlObject feature, AReferencingHelper referenceHelper) throws XmlException {
 		ParsedPoint point = new ParsedPoint();
-		XmlCursor cursor = sfSamplingFeature.newCursor();
+		XmlCursor cursor = feature.newCursor();
 		if (cursor.toChild(new QName("http://www.opengis.net/samplingSpatial/2.0", "shape"))) {
 			ShapeDocument shapeDoc = ShapeDocument.Factory.parse(cursor.getDomNode());
 			AbstractGeometryType abstractGeometry = shapeDoc.getShape().getAbstractGeometry();
@@ -174,9 +200,9 @@ public class HydroMetadataHandler extends MetadataHandler {
 				}
 				Double lon = Double.parseDouble(lonLat[1]);
 				Double lat = Double.parseDouble(lonLat[0]);
-		        String wgs84 = "EPSG:4326";
-                point.setLon(lonLat[0]);
-                point.setLat(lonLat[1]);
+				String wgs84 = "EPSG:4326";
+                point.setLon(lonLat[1]);
+                point.setLat(lonLat[0]);
                 point.setSrs(wgs84);
 		        try {
 					String srs = referenceHelper.extractSRSCode(srsName); 
