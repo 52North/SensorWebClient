@@ -59,29 +59,17 @@
 	</servlet-mapping>
 	
 	<servlet>
-		<servlet-name>ServiceMetadataService</servlet-name>
+		<servlet-name>QueryService</servlet-name>
 		<servlet-class>
-			org.n52.server.service.rpc.RpcServiceMetadataServlet
+			org.n52.server.service.rpc.RpcQueryServlet
 		</servlet-class>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>ServiceMetadataService</servlet-name>
-		<url-pattern>/client/ServiceMetadataService</url-pattern>
+		<servlet-name>QueryService</servlet-name>
+		<url-pattern>/client/QueryService</url-pattern>
 	</servlet-mapping>
 	
-	<servlet>
-		<servlet-name>StationPositionsService</servlet-name>
-		<servlet-class>
-			org.n52.server.service.rpc.RpcStationPositionsServlet
-		</servlet-class>
-		<load-on-startup>2</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>StationPositionsService</servlet-name>
-		<url-pattern>/client/StationPositionsService</url-pattern>
-	</servlet-mapping>
-
 	<servlet>
 		<servlet-name>TimerTask</servlet-name>
 		<servlet-class>
