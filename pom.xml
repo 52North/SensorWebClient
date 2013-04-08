@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.n52</groupId>
@@ -134,13 +135,8 @@
 				<artifactId>52n-xml-xlink-v110</artifactId>
 				<version>1.0.0</version>
 			</dependency>
-			<!-- 
-	        <dependency>
-	            <groupId>org.n52.security</groupId>
-	            <artifactId>52n-security-ssoservice</artifactId>
-	            <version>2.2.14</version>
-	        </dependency>
-	         -->
+			<!-- <dependency> <groupId>org.n52.security</groupId> <artifactId>52n-security-ssoservice</artifactId> 
+				<version>2.2.14</version> </dependency> -->
 			<!-- ### GWT DEPENDENCIES ### -->
 			<dependency>
 				<groupId>com.google.gwt</groupId>
@@ -153,11 +149,11 @@
 				<version>${gwt.version}</version>
 				<scope>provided</scope>
 			</dependency>
-            <dependency>
-                <groupId>com.google.gwt</groupId>
-                <artifactId>gwt-dev</artifactId>
-                <version>${gwt.version}</version>
-            </dependency>
+			<dependency>
+				<groupId>com.google.gwt</groupId>
+				<artifactId>gwt-dev</artifactId>
+				<version>${gwt.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>com.smartgwt</groupId>
 				<artifactId>smartgwt</artifactId>
@@ -227,12 +223,12 @@
 				<version>4.8.2</version>
 				<scope>test</scope>
 			</dependency>
-	        <dependency>
-	            <groupId>org.hamcrest</groupId>
-	            <artifactId>hamcrest-all</artifactId>
-	            <version>1.3</version>
-	            <scope>test</scope>
-	        </dependency>
+			<dependency>
+				<groupId>org.hamcrest</groupId>
+				<artifactId>hamcrest-all</artifactId>
+				<version>1.3</version>
+				<scope>test</scope>
+			</dependency>
 			<dependency>
 				<groupId>javax.servlet</groupId>
 				<artifactId>servlet-api</artifactId>
@@ -337,21 +333,15 @@
 				<version>8.7</version>
 				<scope>runtime</scope>
 			</dependency>
-			<!-- ### TEMPORAL LOCAL DEPENDENCIES ### -->
 			<dependency>
-				<groupId>org.n52.sensorweb.sweclient-old</groupId>
+				<groupId>org.vast</groupId>
+				<artifactId>swe-common-data-framework</artifactId>
+				<version>0.8.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eesgmbh</groupId>
 				<artifactId>gimv</artifactId>
 				<version>0.4.2</version>
-			</dependency>
-			<dependency>
-				<groupId>org.n52.sensorweb.sweclient-old</groupId>
-				<artifactId>unitConversion</artifactId>
-				<version>1.0</version>
-			</dependency>
-			<dependency>
-				<groupId>org.n52.sensorweb.oxf-old.ses</groupId>
-				<artifactId>soap-envelope-beans</artifactId>
-				<version>0.0.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -602,21 +592,30 @@
 						</execution>
 					</executions>
 				</plugin>
-				
+
 				<plugin>
-					<!-- NOTE: We don't need a groupId specification because the group is
-						 org.apache.maven.plugins ...which is assumed by default.
-					 -->
+					<!-- NOTE: We don't need a groupId specification because the group is 
+						org.apache.maven.plugins ...which is assumed by default. -->
 					<artifactId>maven-assembly-plugin</artifactId>
 					<version>2.4</version>
 					<configuration>
-					  <descriptors>
-						<descriptor>src/main/assembly/release.xml</descriptor>
-					  </descriptors>
+						<descriptors>
+							<descriptor>src/main/assembly/release.xml</descriptor>
+						</descriptors>
 					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+		</plugins>
 	</build>
 
 	<profiles>
@@ -677,15 +676,15 @@
 						<artifactId>maven-release-plugin</artifactId>
 						<version>2.3.2</version>
 						<configuration>
-							<!-- no build in release:prepare (takes too long time), so in bad cases 
-								release fails on perform -->
+							<!-- no build in release:prepare (takes too long time), so in bad 
+								cases release fails on perform -->
 							<preparationGoals>clean</preparationGoals>
 							<autoVersionSubmodules>true</autoVersionSubmodules>
 							<tagBase>https://svn.52north.org/svn/swe/main/Clients/SensorWebClient/tags/</tagBase>
 							<connectionUrl>
-                                scm:svn:https://svn.52north.org/svn/swe/main/Clients/SensorWebClient/trunk/
-                            </connectionUrl>
-                            <goals>deploy, assembly:single</goals>
+								scm:svn:https://svn.52north.org/svn/swe/main/Clients/SensorWebClient/trunk/
+							</connectionUrl>
+							<goals>deploy, assembly:single</goals>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -701,11 +700,11 @@
 					PROJECT, COPY build-example.properties to ${user.home}/sensorwebclient-build-dev.properties 
 					CUSTOMIZE PROPERTIES AND TRIGGER MAVEN BUILD WITH `mvn install -Penv-dev'. -->
 
-                <ses.eml.resources.url>http://localhost/sensorwebclient-webapp/eml/</ses.eml.resources.url>
+				<ses.eml.resources.url>http://localhost/sensorwebclient-webapp/eml/</ses.eml.resources.url>
 				<ses.client.user.service.url>http://localhost/sensorwebclient-webapp/client/SesUserService</ses.client.user.service.url>
-                <ses.services.url>http://localhost/52n-ses-1.1.0/services</ses.services.url>
+				<ses.services.url>http://localhost/52n-ses-1.1.0/services</ses.services.url>
 				<ses.outgoing.notification.consumer.url>http://localhost/52n-notification-translator-1.1.0/Translator_Servlet</ses.outgoing.notification.consumer.url>
-                <wns.service.url>http://localhost/52n-wns-2.1.0/wns</wns.service.url>
+				<wns.service.url>http://localhost/52n-wns-2.1.0/wns</wns.service.url>
 
 				<mail.username>WNS_MAIL_USERNAME</mail.username>
 				<mail.password>WNS_MAIL_PASSWORD</mail.password>
@@ -837,7 +836,7 @@
 	<properties>
 		<dev.mode>false</dev.mode>
 		<gwt.version>2.5.0</gwt.version>
-        <slf4j.version>1.7.2</slf4j.version>
+		<slf4j.version>1.7.2</slf4j.version>
 		<smartgwt.version>3.1</smartgwt.version>
 		<geotools.version>8.2</geotools.version>
 		<oxf.version>2.0.0-alpha.2</oxf.version>

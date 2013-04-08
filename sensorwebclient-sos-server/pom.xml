@@ -87,23 +87,10 @@
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-metadata</artifactId>
 		</dependency>
-		<!-- ### TEMPORAL LOCAL DEPENDENCIES ### -->
 		<dependency>
-			<groupId>org.n52.sensorweb.sweclient-old</groupId>
+			<groupId>org.eesgmbh</groupId>
 			<artifactId>gimv</artifactId>
 		</dependency>
 	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
 </project>
 

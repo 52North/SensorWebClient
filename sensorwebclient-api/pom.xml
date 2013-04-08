@@ -116,7 +116,7 @@
 		</dependency>
 		<!-- ### TEMPORAL LOCAL DEPENDENCIES ### -->
 		<dependency>
-			<groupId>org.n52.sensorweb.sweclient-old</groupId>
+			<groupId>org.eesgmbh</groupId>
 			<artifactId>gimv</artifactId>
 		</dependency>
 	</dependencies>

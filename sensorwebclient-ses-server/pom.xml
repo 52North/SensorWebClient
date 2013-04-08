@@ -71,24 +71,10 @@
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
 		</dependency>
-		<!-- ### TEMPORAL LOCAL DEPENDENCIES ### -->
 		<dependency>
-			<groupId>org.n52.sensorweb.sweclient-old</groupId>
-			<artifactId>unitConversion</artifactId>
+			<groupId>org.vast</groupId>
+			<artifactId>swe-common-data-framework</artifactId>
 		</dependency>
 	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
-
 </project>
 
