@@ -9,6 +9,7 @@ This release contains new features and bugfixes from versions 3.1.x.
 
 Features:
 ---------
+ * Removed local repository from root pom.xml as all old dependencies are available from 52n repo now
 
 3.1.x Bugfixes:
 ---------------
