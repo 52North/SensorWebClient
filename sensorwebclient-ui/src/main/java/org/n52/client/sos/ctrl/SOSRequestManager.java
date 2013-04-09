@@ -24,9 +24,9 @@
 
 package org.n52.client.sos.ctrl;
 
-import static org.n52.client.sos.ctrl.SOSController.SOS_PARAM_FIRST;
-import static org.n52.client.sos.ctrl.SOSController.SOS_PARAM_LAST;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
+import static org.n52.shared.serializable.pojos.DesignOptions.SOS_PARAM_FIRST;
+import static org.n52.shared.serializable.pojos.DesignOptions.SOS_PARAM_LAST;
 
 import java.util.ArrayList;
 import java.util.Collection;

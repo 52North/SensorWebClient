@@ -70,10 +70,6 @@ import com.google.gwt.core.client.GWT;
 
 public class SOSController extends ServiceController {
 
-    public static final String SOS_PARAM_FIRST = "getFirst";
-
-    public static final String SOS_PARAM_LAST = "latest";
-
     protected boolean isAddingNewTimeSeries;
     
     public static boolean isDeletingTS;

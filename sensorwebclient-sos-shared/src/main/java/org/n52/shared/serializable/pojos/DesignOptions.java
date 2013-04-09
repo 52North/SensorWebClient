@@ -30,6 +30,10 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class DesignOptions implements Serializable {
+	
+	public static final String SOS_PARAM_FIRST = "getFirst";
+
+	public static final String SOS_PARAM_LAST = "latest";
 
     private static final long serialVersionUID = -3922742599500705640L;
 
@@ -49,7 +53,8 @@ public class DesignOptions implements Serializable {
 
     private boolean grid;
 
-    private DesignOptions() {
+    @SuppressWarnings("unused")
+	private DesignOptions() {
         // do nothin
     }
 
