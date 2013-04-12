@@ -48,7 +48,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping(value = "/sos")
+@RequestMapping(value = "/service")
 public class RestfulMetadataController {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(RestfulMetadataController.class);
@@ -78,7 +78,7 @@ public class RestfulMetadataController {
 		return map;
 	}
 
-	@RequestMapping(value = "/{instance}/metadata/phenomenon", method = RequestMethod.POST)
+	@RequestMapping(value = "/{instance}/phenomenon", method = RequestMethod.POST)
     public ModelAndView getPhenomenon(@RequestBody QuerySet querySet, @PathVariable("instance") String instance) {
         try {
             ModelAndView mav = new ModelAndView();
@@ -99,13 +99,13 @@ public class RestfulMetadataController {
 		return map;
 	}
 
-	@RequestMapping(value = "/{instance}/metadata/phenomenon")
+	@RequestMapping(value = "/{instance}/phenomenon")
     public ModelAndView getPhenomenonByGET(@PathVariable("instance") String instance) {
     	ModelAndView mav = getPhenomenon(new QuerySet(), instance);
     	return mav;
     }
     
-    @RequestMapping(value = "/{instance}/metadata/phenomenon/{id}")
+    @RequestMapping(value = "/{instance}/phenomenon/{id}")
     public ModelAndView getPhenomenonByGET(@PathVariable("instance") String instance, @PathVariable("id") String id) {
     	QuerySet query = new QuerySet();
     	ArrayList<String> phenomenonFilter = new ArrayList<String>();
@@ -117,7 +117,7 @@ public class RestfulMetadataController {
     
     // procedure handler methods
 
-    @RequestMapping(value = "/{instance}/metadata/procedure", method = RequestMethod.POST)
+    @RequestMapping(value = "/{instance}/procedure", method = RequestMethod.POST)
     public ModelAndView getProcedure(@RequestBody QuerySet querySet, @PathVariable("instance") String instance) {
         try {
             ModelAndView mav = new ModelAndView();
@@ -138,13 +138,13 @@ public class RestfulMetadataController {
 		return map;
 	}
 
-	@RequestMapping(value = "/{instance}/metadata/procedure")
+	@RequestMapping(value = "/{instance}/procedure")
     public ModelAndView getProcedureByGET(@PathVariable("instance") String instance) {
     	ModelAndView mav = getProcedure(new QuerySet(), instance);
     	return mav;
     }
     
-    @RequestMapping(value = "/{instance}/metadata/procedure/{id}")
+    @RequestMapping(value = "/{instance}/procedure/{id}")
     public ModelAndView getProcedureByGET(@PathVariable("instance") String instance, @PathVariable("id") String id) {
     	QuerySet query = new QuerySet();
     	ArrayList<String> procedureFilter = new ArrayList<String>();
@@ -156,7 +156,7 @@ public class RestfulMetadataController {
     
     // offering handler methods
     
-    @RequestMapping(value = "/{instance}/metadata/offering", method = RequestMethod.POST)
+    @RequestMapping(value = "/{instance}/offering", method = RequestMethod.POST)
     public ModelAndView getOffering(@RequestBody QuerySet querySet, @PathVariable("instance") String instance) {
         try {
             ModelAndView mav = new ModelAndView();
@@ -177,13 +177,13 @@ public class RestfulMetadataController {
 		return map;
 	}
 
-	@RequestMapping(value = "/{instance}/metadata/offering")
+	@RequestMapping(value = "/{instance}/offering")
     public ModelAndView getOfferingByGET(@PathVariable("instance") String instance) {
     	ModelAndView mav = getOffering(new QuerySet(), instance);
     	return mav;
     }
     
-    @RequestMapping(value = "/{instance}/metadata/offering/{id}")
+    @RequestMapping(value = "/{instance}/offering/{id}")
     public ModelAndView getOfferingByGET(@PathVariable("instance") String instance, @PathVariable("id") String id) {
     	QuerySet query = new QuerySet();
     	ArrayList<String> offeringFilter = new ArrayList<String>();
@@ -195,7 +195,7 @@ public class RestfulMetadataController {
 
     // feature handler methods
     
-    @RequestMapping(value = "/{instance}/metadata/feature", method = RequestMethod.POST) 
+    @RequestMapping(value = "/{instance}/feature", method = RequestMethod.POST) 
     public ModelAndView getFeature(@RequestBody QuerySet querySet, @PathVariable("instance") String instance) {
         try {
             ModelAndView mav = new ModelAndView();
@@ -216,13 +216,13 @@ public class RestfulMetadataController {
 		return map;
 	}
 
-	@RequestMapping(value = "/{instance}/metadata/feature")
+	@RequestMapping(value = "/{instance}/feature")
     public ModelAndView getFeatureByGET(@PathVariable("instance") String instance) {
     	ModelAndView mav = getFeature(new QuerySet(), instance);
     	return mav;
     }
     
-    @RequestMapping(value = "/{instance}/metadata/feature/{id}")
+    @RequestMapping(value = "/{instance}/feature/{id}")
     public ModelAndView getFeatureByGET(@PathVariable("instance") String instance, @PathVariable("id") String id) {
     	QuerySet query = new QuerySet();
     	ArrayList<String> featureFilter = new ArrayList<String>();
@@ -234,7 +234,7 @@ public class RestfulMetadataController {
 
     // station handler methods
     
-    @RequestMapping(value = "/{instance}/metadata/station", method = RequestMethod.POST)
+    @RequestMapping(value = "/{instance}/station", method = RequestMethod.POST)
     public ModelAndView getStation(@RequestBody QuerySet querySet, @PathVariable("instance") String instance) {
         try {
             ModelAndView mav = new ModelAndView();
@@ -255,13 +255,13 @@ public class RestfulMetadataController {
 		return map;
 	}
 
-	@RequestMapping(value = "/{instance}/metadata/station")
+	@RequestMapping(value = "/{instance}/station")
     public ModelAndView getStationByGET(@PathVariable("instance") String instance) {
     	ModelAndView mav = getStation(new QuerySet(), instance);
     	return mav;
     }
     
-    @RequestMapping(value = "/{instance}/metadata/station/{id}")
+    @RequestMapping(value = "/{instance}/station/{id}")
     public ModelAndView getStationByGET(@PathVariable("instance") String instance, @PathVariable("id") String id) {
     	QuerySet query = new QuerySet();
     	ArrayList<String> stationFilter = new ArrayList<String>();

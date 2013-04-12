@@ -3,7 +3,7 @@
 	web interface -->
 <!-- Some of these properties are not implemented yet! -->
 <instances>
-	<instance>
+	<!-- <instance>
 		<itemName>PEGELONLINE</itemName>
 		<url>http://pegelonline.wsv.de/webservices/gis/gdi-sos</url>
 		<version>1.0.0</version>
@@ -66,8 +66,8 @@
 		<urNorthing>0.0</urNorthing>
 		<defaultZoom>5</defaultZoom>
 	</instance>
-
-	<instance>
+ -->
+	<!-- <instance>
 		<itemName>Syke_Snow</itemName>
 		<url>http://paikkatieto.ymparisto.fi/arcgis/rest/services/InSitu/SYKE_SnowCoursesInSitu/MapServer/exts/SOSExtension/</url>
 		<version>2.0.0</version>
@@ -81,9 +81,9 @@
 		<urNorthing>70.0</urNorthing>
 		<defaultZoom>13</defaultZoom>
 		<requestChunk>500</requestChunk>
-	</instance>
+	</instance> -->
 		
-	<instance>
+	<!-- <instance>
 		<itemName>GRDC (Kisters SOS)</itemName>
 		<url>http://kiwis.kisters.de/KiWIS/KiWIS?datasource=3</url>
 		<version>2.0.0</version>
@@ -95,6 +95,22 @@
 		<urEasting>180</urEasting>
 		<urNorthing>90</urNorthing>
 		<defaultZoom>15</defaultZoom>
+		<requestChunk>200</requestChunk>
+		<autoZoom>true</autoZoom>
+	</instance> -->
+	
+	<instance>
+		<itemName>GRDC-SOS_GEOWOW</itemName>
+		<url>http://geowow.dev.52north.org:8080/52n-sos-grdc-webapp-4.0.0-SNAPSHOT/sos/soap</url>
+		<version>2.0.0</version>
+		<metadataHandler>org.n52.server.oxf.util.connector.hydro.HydroMetadataHandler</metadataHandler>
+		<adapter>org.n52.server.oxf.util.connector.hydro.SOSwithSoapAdapter</adapter>
+		<waterML>true</waterML>
+		<llEasting>-180</llEasting>
+		<llNorthing>-80</llNorthing>
+		<urEasting>180</urEasting>
+		<urNorthing>90</urNorthing>
+		<defaultZoom>10</defaultZoom>
 		<requestChunk>200</requestChunk>
 		<autoZoom>true</autoZoom>
 	</instance>
