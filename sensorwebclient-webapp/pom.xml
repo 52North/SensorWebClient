@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.n52.sensorweb</groupId>
@@ -52,8 +53,8 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-		  	<groupId>javax.servlet</groupId>
-		  	<artifactId>jstl</artifactId>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -72,14 +73,37 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
 			</plugin>
+
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>gwt-maven-plugin</artifactId>
 			</plugin>
 
 			<plugin>
+				<groupId>com.google.code.maven-svn-revision-number-plugin</groupId>
+				<artifactId>svn-revision-number-maven-plugin</artifactId>
+				<version>1.13</version> <!-- please use the latest version -->
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<entries>
+						<entry>
+							<prefix>svn.info</prefix>
+						</entry>
+					</entries>
+				</configuration>
+			</plugin>
+
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>lesscss-maven-plugin</artifactId>
+				<version>1.0-beta-3</version>
 				<configuration>
 					<sourceDirectory>src/main/less</sourceDirectory>
 					<outputDirectory>src/main/webapp/css</outputDirectory>
@@ -87,11 +111,21 @@
 						<include>layout.less</include>
 					</includes>
 				</configuration>
+				<executions>
+					<execution>
+						<id>less-compile</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 
 			<plugin>
 				<groupId>com.samaxes.maven</groupId>
 				<artifactId>minify-maven-plugin</artifactId>
+				<version>1.5.2</version>
 				<configuration>
 					<cssSourceDir>css</cssSourceDir>
 					<cssSourceFiles>
@@ -99,6 +133,15 @@
 					</cssSourceFiles>
 					<cssFinalFile>layout.min.css</cssFinalFile>
 				</configuration>
+				<executions>
+					<execution>
+						<id>minify</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>minify</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 
 			<plugin>
