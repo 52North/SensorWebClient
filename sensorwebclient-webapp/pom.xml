@@ -56,6 +56,12 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
 		</dependency>
+		<dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+            <scope>runtime</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -158,11 +164,6 @@
 					</webResources>
 					<warName>${sensorwebclient.webapp.name}</warName>
 				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>com.google.code.maven-svn-revision-number-plugin</groupId>
-				<artifactId>svn-revision-number-maven-plugin</artifactId>
 			</plugin>
 
 		</plugins>
