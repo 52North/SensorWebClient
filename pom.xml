@@ -242,9 +242,9 @@
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
-			  	<groupId>javax.servlet</groupId>
-			  	<artifactId>jstl</artifactId>
-			  	<version>1.2</version>
+				<groupId>javax.servlet</groupId>
+				<artifactId>jstl</artifactId>
+				<version>1.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.geotools</groupId>
@@ -889,37 +889,85 @@
 			<id>n52-releases</id>
 			<name>52n Releases</name>
 			<url>http://52north.org/maven/repo/releases/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
 		</repository>
 		<repository>
 			<id>n52-snapshots</id>
 			<name>52n Snapshots</name>
 			<url>http://52north.org/maven/repo/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
 		</repository>
 		<repository>
 			<id>geotools-new</id>
 			<url>http://repo.opengeo.org/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
 		</repository>
 		<repository>
 			<id>smartgwt</id>
 			<url>http://www.smartclient.com/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
 		</repository>
 		<repository>
 			<id>jboss</id>
 			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
 		</repository>
 		<repository>
 			<id>java</id>
 			<url>http://java.net/projects/maven-repository/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
 		</repository>
 		<repository>
 			<id>spring-central</id>
 			<name>spring-release-remote</name>
 			<url>http://repo.springsource.org/release</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
 		</repository>
 		<repository>
 			<id>Apache</id>
 			<name>Apache repository</name>
 			<url>http://repo1.maven.org/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
 		</repository>
 	</repositories>
 
