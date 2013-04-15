@@ -32,7 +32,7 @@ import java.util.LinkedHashMap;
 
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 
-import com.google.gwt.core.shared.GWT;
+import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
 import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
