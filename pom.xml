@@ -148,12 +148,13 @@
 				<groupId>com.google.gwt</groupId>
 				<artifactId>gwt-servlet</artifactId>
 				<version>${gwt.version}</version>
+				<scope>runtime</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.google.gwt</groupId>
 				<artifactId>gwt-user</artifactId>
 				<version>${gwt.version}</version>
-				<!-- <scope>provided</scope> -->
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.google.gwt</groupId>
@@ -325,6 +326,12 @@
 				<groupId>org.vast</groupId>
 				<artifactId>swe-common-data-framework</artifactId>
 				<version>0.8.2</version>
+				<exclusions>
+				    <exclusion>
+				        <groupId>junit</groupId>
+				        <artifactId>junit</artifactId>
+				    </exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.eesgmbh</groupId>
@@ -361,7 +368,7 @@
 			<!-- each application using OXF shall choose its favorite logging implementation -->
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.0.11</version>
+			<version>${logback.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -421,9 +428,9 @@
 					<version>${gwt.version}</version>
 					<configuration>
 						<module>org.n52.SensorWebClient</module>
-						<runTarget>org.n52.SensorWebClient/Client.jsp</runTarget>
+						<runTarget>Client.jsp</runTarget>
 						<compileSourcesArtifacts>
-							<artifact>org.n52.sensorweb:sensorwebclient-ext</artifact>
+                            <artifact>org.n52.sensorweb:sensorwebclient-ext</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-sos-rpc</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-sos-shared</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-ses-rpc</artifact>
@@ -522,10 +529,11 @@
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
-					<meminitial>256</meminitial>
-					<maxmem>512</maxmem>
+					<meminitial>256m</meminitial>
+					<maxmem>512m</maxmem>
 				</configuration>
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -568,7 +576,6 @@
 				<property>
 					<name>debug</name>
 				</property>
-				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
 				<!-- Compilation settings -->
@@ -629,14 +636,6 @@
 		</profile>
 		<profile>
 			<id>release</id>
-			<properties>
-				<!-- Compilation settings -->
-				<gwt.compile.level>INFO</gwt.compile.level>
-				<gwt.compile.style>OBF</gwt.compile.style>
-				<gwt.compile.report>true</gwt.compile.report>
-				<gwt.compile.draft>false</gwt.compile.draft>
-				<gwt.compile.optimization.level>9</gwt.compile.optimization.level>
-			</properties>
 			<build>
 				<plugins>
 					<plugin>
@@ -817,9 +816,17 @@
 	</profiles>
 
 	<properties>
+        <!-- Compilation default settings -->
+        <gwt.compile.level>INFO</gwt.compile.level>
+        <gwt.compile.style>OBF</gwt.compile.style>
+        <gwt.compile.report>true</gwt.compile.report>
+        <gwt.compile.draft>false</gwt.compile.draft>
+        <gwt.compile.optimization.level>9</gwt.compile.optimization.level>
+        
 		<dev.mode>false</dev.mode>
-        <gwt.version>2.4.0</gwt.version>
+        <gwt.version>2.5.0</gwt.version>
 		<slf4j.version>1.7.2</slf4j.version>
+		<logback.version>1.0.11</logback.version>
 		<smartgwt.version>3.1</smartgwt.version>
 		<geotools.version>8.2</geotools.version>
 		<oxf.version>2.0.0-alpha.3-SNAPSHOT</oxf.version>
