@@ -7,11 +7,9 @@
 <body>
 	<h3>Services: </h3>
 	<ul>
-	<%
-		for(int i = 0; i < "<%=${services}.size()%>" ; i++) {
-    		<li>"<%=${services}.item(i).getId()%>"<br>${service.url}</li>
-		}
-	%>
+	<c:forEach items="${services}" var="service">
+        <li>${service.id}</li>
+    </c:forEach>
 	</ul>
 </body>
 </html>
