@@ -6,17 +6,18 @@
 		If SES is not available or required comment out the 'SesTab'. Then the SES Tab 
 		will not be rendered in the client NOTE: Do not forget to comment out the SES 
 		related Servlet declared in the web.xml also.
-		  -->
-		<tab>SesTab</tab>
+          -->
+		<!-- <tab>SesTab</tab> -->
 	</tabs>
 	
-	<imprint>properties/imprint.html</imprint> 
-	<helpfile>properties/help.html</helpfile>
-	<defaultLocale>de</defaultLocale>
+	<!-- default time frame for loading timeseries data in days -->
 	<defaultInterval>1</defaultInterval>
+	<!-- default time frame for loading timeseries data for overview diagram in days -->
 	<defaultOverviewInterval>5</defaultOverviewInterval>
-	<toasterFadeout>5000</toasterFadeout>
-	<showStationPickerAtStartup>true</showStationPickerAtStartup>
+	<!-- default delay before hiding message toaster in seconds -->
+	<toasterFadeout>5</toasterFadeout>
+	<!-- if map selection modal window shall show up at client start -->
+	<showStationSelectorAtStartup>true</showStationSelectorAtStartup>
 	
 	<!-- Default styles for the line and sumline 
 	Possible values: 1=line, 2=area, 3=dots, 4=dashed-->
@@ -34,8 +35,12 @@
     <!-- Minimum zoom in the timeframe in the diagram in minutes -->
     <minTimeFrameZoom>1</minTimeFrameZoom>
 	
+	<!-- default map projection used on maps -->
     <mapSrs>EPSG:4326</mapSrs>
+    <!-- a WMS URL or just OSM -->
     <mapUrl>OSM</mapUrl>
+    
+    
 	<!-- 
 	<mapUrl>http://wsvmapserv.wsv.bund.de/wmsdbwk1000</mapUrl> 
     <wmsLayerName>WmsDBWK1000</wmsLayerName>
@@ -45,7 +50,8 @@
     <wmsBGColor>0xffffff</wmsBGColor>
      -->
      
-    <!-- Optional Extent -->
+    <!-- Extent where StationSelector is active -->
+    <!-- Fallback is lon/lat BBOX [(-90.0,-45.0);(90.0,45.0) srs: EPSG:4326] -->
     <!-- 
     <defaultExtent>
 	    <lleftX>5.8667</lleftX>
@@ -54,10 +60,4 @@
 	    <urightY>55.0556</urightY>
     </defaultExtent>
      -->
-     
-    <!-- Default zoom level for the popup of a timeseries entry and for the map tab, when one station is under consideration -->
-    <!-- Choose a level between 0 and 18, all others are the extend of the whole world -->
-    <defaultZoomLevel>13</defaultZoomLevel>
-    <!-- Indicates how many procedure positions are requested at once (stationpicker) -->
-    <requestProcedurePositionsChunk>100</requestProcedurePositionsChunk>
 </props>
