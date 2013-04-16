@@ -22,7 +22,6 @@
 		<module>sensorwebclient-ses-server</module>
 		<module>sensorwebclient-ses-shared</module>
 		<module>sensorwebclient-sos-rpc</module>
-		<module>sensorwebclient-sos-rest</module>
 		<module>sensorwebclient-sos-server</module>
 		<module>sensorwebclient-sos-shared</module>
 		<module>sensorwebclient-ui</module>
@@ -154,7 +153,6 @@
 				<groupId>com.google.gwt</groupId>
 				<artifactId>gwt-user</artifactId>
 				<version>${gwt.version}</version>
-				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.google.gwt</groupId>
@@ -327,10 +325,10 @@
 				<artifactId>swe-common-data-framework</artifactId>
 				<version>0.8.2</version>
 				<exclusions>
-				    <exclusion>
-				        <groupId>junit</groupId>
-				        <artifactId>junit</artifactId>
-				    </exclusion>
+					<exclusion>
+						<groupId>junit</groupId>
+						<artifactId>junit</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -342,7 +340,10 @@
 	</dependencyManagement>
 
 	<dependencies>
-		<!-- dependencies active by default -->
+
+		<!-- ==================================================== -->
+		<!-- ======== DEBENDENCIES ACTIVE BY DEFAULT ============ -->
+		<!-- ==================================================== -->
 
 		<!-- LOGGING DEPENDENCIES -->
 		<dependency>
@@ -430,7 +431,7 @@
 						<module>org.n52.SensorWebClient</module>
 						<runTarget>Client.jsp</runTarget>
 						<compileSourcesArtifacts>
-                            <artifact>org.n52.sensorweb:sensorwebclient-ext</artifact>
+							<artifact>org.n52.sensorweb:sensorwebclient-ext</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-sos-rpc</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-sos-shared</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-ses-rpc</artifact>
@@ -520,7 +521,9 @@
 
 		<plugins>
 
-			<!-- plugins active by default -->
+			<!-- ==================================================== -->
+			<!-- =========== PLUGINS ACTIVE BY DEFAULT ============== -->
+			<!-- ==================================================== -->
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -586,6 +589,20 @@
 				<gwt.compile.optimization.level>0</gwt.compile.optimization.level>
 			</properties>
 		</profile>
+		
+		<profile>
+			<id>rest</id>
+			<activation>
+				<property>
+					<name>rest</name>
+				</property>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>sensorwebclient-sos-rest</module>
+			</modules>
+		</profile>
+		
 		<profile>
 			<id>connector-eea</id>
 			<modules>
@@ -602,6 +619,7 @@
 				</dependencies>
 			</dependencyManagement>
 		</profile>
+		
 		<profile>
 			<id>connector-grdc</id>
 			<modules>
@@ -618,6 +636,7 @@
 				</dependencies>
 			</dependencyManagement>
 		</profile>
+		
 		<profile>
 			<id>connector-hydro</id>
 			<modules>
@@ -634,6 +653,7 @@
 				</dependencies>
 			</dependencyManagement>
 		</profile>
+		
 		<profile>
 			<id>release</id>
 			<build>
@@ -657,6 +677,7 @@
 				</plugins>
 			</build>
 		</profile>
+		
 		<profile>
 			<id>env-example</id>
 			<activation>
@@ -715,6 +736,7 @@
 				<gwt.compile.optimization.level>0</gwt.compile.optimization.level>
 			</properties>
 		</profile>
+		
 		<profile>
 			<id>env-dev</id>
 			<properties>
@@ -728,103 +750,18 @@
 				</filters>
 			</build>
 		</profile>
-		<profile>
-			<id>hosted-mode</id>
-			<dependencyManagement>
-				<dependencies>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-ui</artifactId>
-						<version>${project.version}</version>
-						<scope>provided</scope>
-					</dependency>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-ext</artifactId>
-						<version>${project.version}</version>
-						<scope>provided</scope>
-					</dependency>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-api</artifactId>
-						<version>${project.version}</version>
-						<scope>provided</scope>
-					</dependency>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-sos-shared</artifactId>
-						<version>${project.version}</version>
-						<scope>provided</scope>
-					</dependency>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-sos-server</artifactId>
-						<version>${project.version}</version>
-						<scope>provided</scope>
-					</dependency>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-sos-rpc</artifactId>
-						<version>${project.version}</version>
-						<scope>provided</scope>
-					</dependency>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-sos-rest</artifactId>
-						<version>${project.version}</version>
-						<scope>provided</scope>
-					</dependency>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-ses-server</artifactId>
-						<version>${project.version}</version>
-						<scope>provided</scope>
-					</dependency>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-ses-shared</artifactId>
-						<version>${project.version}</version>
-						<scope>provided</scope>
-					</dependency>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-ses-rpc</artifactId>
-						<version>${project.version}</version>
-						<scope>provided</scope>
-					</dependency>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-eea</artifactId>
-						<version>${project.version}</version>
-						<scope>provided</scope>
-					</dependency>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-grdc</artifactId>
-						<version>${project.version}</version>
-						<scope>provided</scope>
-					</dependency>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-hydro</artifactId>
-						<version>${project.version}</version>
-						<scope>provided</scope>
-					</dependency>
-				</dependencies>
-			</dependencyManagement>
-		</profile>
 	</profiles>
 
 	<properties>
-        <!-- Compilation default settings -->
-        <gwt.compile.level>INFO</gwt.compile.level>
-        <gwt.compile.style>OBF</gwt.compile.style>
-        <gwt.compile.report>true</gwt.compile.report>
-        <gwt.compile.draft>false</gwt.compile.draft>
-        <gwt.compile.optimization.level>9</gwt.compile.optimization.level>
-        
+		<!-- Compilation default settings -->
+		<gwt.compile.level>INFO</gwt.compile.level>
+		<gwt.compile.style>OBF</gwt.compile.style>
+		<gwt.compile.report>true</gwt.compile.report>
+		<gwt.compile.draft>false</gwt.compile.draft>
+		<gwt.compile.optimization.level>9</gwt.compile.optimization.level>
+
 		<dev.mode>false</dev.mode>
-        <gwt.version>2.5.0</gwt.version>
+		<gwt.version>2.5.0</gwt.version>
 		<slf4j.version>1.7.2</slf4j.version>
 		<logback.version>1.0.11</logback.version>
 		<smartgwt.version>3.1</smartgwt.version>
