@@ -22,12 +22,12 @@
 		<module>sensorwebclient-ses-server</module>
 		<module>sensorwebclient-ses-shared</module>
 		<module>sensorwebclient-sos-rpc</module>
+        <module>sensorwebclient-sos-rest</module>
 		<module>sensorwebclient-sos-server</module>
 		<module>sensorwebclient-sos-shared</module>
 		<module>sensorwebclient-ui</module>
-		<module>xml-pdf-format</module>
-		<!-- <module>restful-timeseries-webapp</module> -->
 		<module>sensorwebclient-webapp</module>
+        <module>xml-pdf-format</module>
 	</modules>
 
 	<dependencyManagement>
@@ -588,19 +588,6 @@
 				<gwt.compile.draft>true</gwt.compile.draft>
 				<gwt.compile.optimization.level>0</gwt.compile.optimization.level>
 			</properties>
-		</profile>
-		
-		<profile>
-			<id>rest</id>
-			<activation>
-				<property>
-					<name>rest</name>
-				</property>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<modules>
-				<module>sensorwebclient-sos-rest</module>
-			</modules>
 		</profile>
 		
 		<profile>
