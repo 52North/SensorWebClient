@@ -22,12 +22,12 @@
 		<module>sensorwebclient-ses-server</module>
 		<module>sensorwebclient-ses-shared</module>
 		<module>sensorwebclient-sos-rpc</module>
-        <module>sensorwebclient-sos-rest</module>
+		<module>sensorwebclient-sos-rest</module>
 		<module>sensorwebclient-sos-server</module>
 		<module>sensorwebclient-sos-shared</module>
 		<module>sensorwebclient-ui</module>
 		<module>sensorwebclient-webapp</module>
-        <module>xml-pdf-format</module>
+		<module>xml-pdf-format</module>
 	</modules>
 
 	<dependencyManagement>
@@ -443,6 +443,7 @@
 						<draftCompile>${gwt.compile.draft}</draftCompile>
 						<compileReport>${gwt.compile.report}</compileReport>
 						<optimizationLevel>${gwt.compile.optimization.level}</optimizationLevel>
+						<extraJvmArgs>-XX:MaxPermSize=512m -Xmx1024m</extraJvmArgs>
 					</configuration>
 					<executions>
 						<execution>
@@ -589,7 +590,7 @@
 				<gwt.compile.optimization.level>0</gwt.compile.optimization.level>
 			</properties>
 		</profile>
-		
+
 		<profile>
 			<id>connector-eea</id>
 			<modules>
@@ -606,7 +607,7 @@
 				</dependencies>
 			</dependencyManagement>
 		</profile>
-		
+
 		<profile>
 			<id>connector-grdc</id>
 			<modules>
@@ -623,7 +624,7 @@
 				</dependencies>
 			</dependencyManagement>
 		</profile>
-		
+
 		<profile>
 			<id>connector-hydro</id>
 			<modules>
@@ -640,7 +641,7 @@
 				</dependencies>
 			</dependencyManagement>
 		</profile>
-		
+
 		<profile>
 			<id>release</id>
 			<build>
@@ -664,7 +665,7 @@
 				</plugins>
 			</build>
 		</profile>
-		
+
 		<profile>
 			<id>env-example</id>
 			<activation>
@@ -723,7 +724,7 @@
 				<gwt.compile.optimization.level>0</gwt.compile.optimization.level>
 			</properties>
 		</profile>
-		
+
 		<profile>
 			<id>env-dev</id>
 			<properties>
