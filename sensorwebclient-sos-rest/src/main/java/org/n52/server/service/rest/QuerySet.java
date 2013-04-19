@@ -23,76 +23,85 @@
  */
 package org.n52.server.service.rest;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
-import org.n52.server.service.rest.objects.BoundingBox;
+import org.n52.server.service.rest.model.BoundingBox;
 
 public class QuerySet {
 
-	private Collection<String> offeringFilter;
+	private Collection<String> offerings = new ArrayList<String>();
 
-	private Collection<String> procedureFilter;
+	private Collection<String> procedures = new ArrayList<String>();
 
-	private Collection<String> phenomenonFilter;
+	private Collection<String> phenomenons = new ArrayList<String>();
 
-	private Collection<String> featureOfInterestFilter;
+	private Collection<String> featureOfInterests = new ArrayList<String>();
 
-	private int pagingStartIndex;
+    private BoundingBox spatialFilter;
 
-	private int pagingInterval;
+	private int offset;
 
-	private BoundingBox spatialFilter;
+	private int size;
 
 	public QuerySet() {
 		// for serialization
 	}
 
-	public Collection<String> getOfferingFilter() {
-		return offeringFilter;
+	public Collection<String> getOfferings() {
+		return offerings;
+	}
+	
+	public void addOffering(String offering) {
+	    offerings.add(offering);
 	}
 
-	public void setOfferingFilter(Collection<String> offeringFilter) {
-		this.offeringFilter = offeringFilter;
+	public void addAllOfferings(Collection<String> offerings) {
+		this.offerings.addAll(offerings);
 	}
 
-	public Collection<String> getProcedureFilter() {
-		return procedureFilter;
+	public Collection<String> getProcedures() {
+		return procedures;
+	}
+	
+	public void addProcedure(String procedure) {
+	    procedures.add(procedure);
 	}
 
-	public void setProcedureFilter(Collection<String> procedureFilter) {
-		this.procedureFilter = procedureFilter;
+	public void addAllProcedures(Collection<String> procedures) {
+		this.procedures.addAll(procedures);
 	}
 
-	public Collection<String> getPhenomenonFilter() {
-		return phenomenonFilter;
+	public Collection<String> getPhenomenonS() {
+		return phenomenons;
 	}
 
-	public void setPhenomenonFilter(Collection<String> phenomenonFilter) {
-		this.phenomenonFilter = phenomenonFilter;
+	public void addAllPhenomenons(Collection<String> phenomenons) {
+		this.phenomenons.addAll(phenomenons);
 	}
 
-	public Collection<String> getFeatureOfInterestFilter() {
-		return featureOfInterestFilter;
+	public Collection<String> getFeatureOfInterests() {
+		return featureOfInterests;
 	}
 
-	public void setFeatureOfInterestFilter(Collection<String> featureOfInterestFilter) {
-		this.featureOfInterestFilter = featureOfInterestFilter;
+	public void addAllFeatureOfInterests(Collection<String> featureOfInterests) {
+		this.featureOfInterests.addAll(featureOfInterests);
 	}
 
-	public int getPagingStartIndex() {
-		return pagingStartIndex;
+	public int getOffset() {
+		return offset;
 	}
 
-	public void setPagingStartIndex(int pagingStartIndex) {
-		this.pagingStartIndex = pagingStartIndex;
+	public void setOffset(int offset) {
+		this.offset = offset;
 	}
 
-	public int getPagingInterval() {
-		return pagingInterval;
+	public int getTotal() {
+		return size;
 	}
 
-	public void setPagingInterval(int pagingInterval) {
-		this.pagingInterval = pagingInterval;
+	public void setTotal(int size) {
+		this.size = size;
 	}
 
 	public BoundingBox getSpatialFilter() {

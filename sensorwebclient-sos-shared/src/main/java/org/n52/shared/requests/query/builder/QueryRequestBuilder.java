@@ -18,13 +18,13 @@ public abstract class QueryRequestBuilder {
 	private Collection<String> phenomenonFilter = new ArrayList<String>();
 	
 	private Collection<String> featureOfInterestFilter = new ArrayList<String>();
-	
-	private int pagingStartIndex;
-	
-	private int pagingInterval;
 
-	private BoundingBox spatialFilter;
+    private BoundingBox spatialFilter;
+    
+	private int offset;
 	
+	private int size;
+
 	public abstract QueryRequest build();
 	
 	public QueryRequestBuilder addServiceUrl(String serviceUrl){
@@ -71,18 +71,18 @@ public abstract class QueryRequestBuilder {
 		this.featureOfInterestFilter.addAll(featureOfInterestFilter);
 		return this;
 	}
-	public QueryRequestBuilder addPagingStartIndex(int start) {
-		this.pagingStartIndex = start;
+	public QueryRequestBuilder setOffset(int offset) {
+		this.offset = offset;
 		return this;
 	}
-	
-	public QueryRequestBuilder addPagingInterval(int interval) {
-		this.pagingInterval = interval;
-		return this;
-	}
-	
-	public QueryRequestBuilder addSpatialFilter(BoundingBox boundingBox) {
-		this.spatialFilter = boundingBox;
+    
+    public QueryRequestBuilder addSpatialFilter(BoundingBox boundingBox) {
+        this.spatialFilter = boundingBox;
+        return this;
+    }
+    
+	public QueryRequestBuilder setSize(int size) {
+		this.size = size;
 		return this;
 	}
 	
@@ -105,16 +105,17 @@ public abstract class QueryRequestBuilder {
 	public Collection<String> getFeatureOfInterestFilter() {
 		return featureOfInterestFilter;
 	}
-	
-	public int getPagingStartIndex() {
-		return pagingStartIndex;
+
+    public BoundingBox getSpatialFilter() {
+        return spatialFilter;
+    }
+    
+	public int getOffset() {
+		return offset;
 	}
 	
-	public int getPagingInteval() {
-		return pagingInterval;
+	public int getSize() {
+		return size;
 	}
 
-	public BoundingBox getSpatialFilter() {
-		return spatialFilter;
-	}
 }

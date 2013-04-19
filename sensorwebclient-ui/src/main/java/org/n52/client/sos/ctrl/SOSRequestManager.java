@@ -29,6 +29,7 @@ import static org.n52.shared.serializable.pojos.DesignOptions.SOS_PARAM_FIRST;
 import static org.n52.shared.serializable.pojos.DesignOptions.SOS_PARAM_LAST;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -88,6 +89,7 @@ import org.n52.shared.exceptions.ServerException;
 import org.n52.shared.exceptions.TimeoutException;
 import org.n52.shared.requests.EESDataRequest;
 import org.n52.shared.requests.TimeSeriesDataRequest;
+import org.n52.shared.requests.query.Page;
 import org.n52.shared.requests.query.QueryRequest;
 import org.n52.shared.requests.query.builder.FeatureQueryRequestBuilder;
 import org.n52.shared.requests.query.builder.OfferingQueryRequestBuilder;
@@ -845,92 +847,93 @@ public class SOSRequestManager extends RequestManager {
 		return callback;
 	}
 	
-	protected void handlePhenomenonQuery(QueryResponse result) {
+	protected void handlePhenomenonQuery(QueryResponse<?> result) {
 		PhenomenonQueryResponse response = (PhenomenonQueryResponse) result;
-		Collection<Phenomenon> phenomenons = response.getPhenomenons();
+		Collection<Phenomenon> phenomenons = Arrays.asList(response.getPhenomenons());
         String serviceUrl = response.getServiceUrl();
 		StorePhenomenaEvent event = new StorePhenomenaEvent(serviceUrl, null, phenomenons);
         EventBus.getMainEventBus().fireEvent(event);
 	}
 
 	void getPositions(final String sosURL, int startIdx, final int interval, final BoundingBox boundingBox) throws Exception {
-		    final long begin = System.currentTimeMillis();
-		    QueryCallback callback = new QueryCallback(this, "Could not get positions.") {
-		        @Override
-		        public void onSuccess(final QueryResponse result) {
-		            try {
-		                removeRequest();
-		                StationQueryResponse response = (StationQueryResponse) result;
-		                String url = response.getServiceUrl();
-		                if (response.isPagingEnd()) {
-		                    requestMgr.removeRequest(System.currentTimeMillis() - begin);
-		                    EventBus.getMainEventBus().fireEvent(new GetProcedurePositionsFinishedEvent());
-		                } else {
-		                    getNextChunk(sosURL, response.getPagingEndIndex(), interval, boundingBox);
-		                }
-		                List<Station> stations = response.getStations();
-		                StoreStationsEvent event = new StoreStationsEvent(url, stations);
-		                EventBus.getMainEventBus().fireEvent(event);
-		            }
-		            catch (Exception e) {
-		                ExceptionHandler.handleUnexpectedException(e);
-		                removeRequest();
-		            }
-		        }
-		
-		        private void getNextChunk(final String sosURL, final int start, final int interval, final BoundingBox boundingBox) {
-		            try {
-		                getPositions(sosURL, start, interval, boundingBox);
-		            } catch (Exception e) {
-		                ExceptionHandler.handleUnexpectedException(e);
-		                removeRequest();
-		            }
-		        }
-		    };
-		    addRequest();
-			QueryRequest request = new StationQueryRequestBuilder()
-					.addServiceUrl(sosURL)
-					.addPagingStartIndex(startIdx)
-	//				.addPhenomenonFilter("Wasserstand")
-	//				.addPhenomenonFilter("Abfluss")
-					.addPagingInterval(interval)
-					.addSpatialFilter(boundingBox)
-					.build();
-		    this.queryService.doQuery(request, callback);
-		}
+	    final long begin = System.currentTimeMillis();
+	    QueryCallback callback = new QueryCallback(this, "Could not get positions.") {
+	        @Override
+	        public void onSuccess(final QueryResponse<?> queryResponse) {
+	            try {
+	                removeRequest();
+	                Page<Station> resultPage = (Page<Station>) queryResponse.getResults();
+                    String url = queryResponse.getServiceUrl();
+                    if (resultPage.isLast()) {
+	                    requestMgr.removeRequest(System.currentTimeMillis() - begin);
+	                    EventBus.getMainEventBus().fireEvent(new GetProcedurePositionsFinishedEvent());
+	                } else {
+	                    int newOffset = resultPage.getOffset() + interval;
+	                    getNextChunk(sosURL, newOffset, interval, boundingBox);
+	                }
+	                List<Station> stations = Arrays.asList(resultPage.getResults());
+	                StoreStationsEvent event = new StoreStationsEvent(url, stations);
+	                EventBus.getMainEventBus().fireEvent(event);
+	            }
+	            catch (Exception e) {
+	                ExceptionHandler.handleUnexpectedException(e);
+	                removeRequest();
+	            }
+	        }
+	
+            private void getNextChunk(final String sosURL, final int start, final int interval, final BoundingBox boundingBox) {
+	            try {
+	                getPositions(sosURL, start, interval, boundingBox);
+	            } catch (Exception e) {
+	                ExceptionHandler.handleUnexpectedException(e);
+	                removeRequest();
+	            }
+	        }
+	    };
+		QueryRequest request = new StationQueryRequestBuilder()
+				.addServiceUrl(sosURL)
+				.setOffset(startIdx)
+				.setSize(interval)
+				.addSpatialFilter(boundingBox)
+				.build();
+	    this.queryService.doQuery(request, callback);
+        addRequest();
+	}
 
-	protected void handleStationQuery(QueryResponse result) {
+    
+
+	protected void handleStationQuery(QueryResponse<?> result) {
 		StationQueryResponse response = (StationQueryResponse) result;
-		Station station = response.getStations().iterator().next();
+		Station station = response.getStations()[0];
 		String serviceUrl = response.getServiceUrl();
 		StoreStationEvent event = new StoreStationEvent(serviceUrl, station);
 		EventBus.getMainEventBus().fireEvent(event);
 	}
 	
-	protected void handleProcedureQuery(QueryResponse result) {
+	protected void handleProcedureQuery(QueryResponse<?> result) {
 		ProcedureQueryResponse response = (ProcedureQueryResponse) result;
-		Procedure procedure = response.getProcedure().iterator().next();
+		Procedure procedure = response.getProcedure()[0];
 		String serviceUrl = response.getServiceUrl();
 		StoreProcedureEvent event = new StoreProcedureEvent(serviceUrl, procedure);
 		EventBus.getMainEventBus().fireEvent(event);
 	}
 
-	protected void handleOfferingQuery(QueryResponse result) {
+	protected void handleOfferingQuery(QueryResponse<?> result) {
 		OfferingQueryResponse response = (OfferingQueryResponse) result;
-		Offering offering = response.getOffering().iterator().next();
+		Offering offering = response.getOfferings()[0];
 		StoreOfferingEvent event = new StoreOfferingEvent(response.getServiceUrl(), offering);
 		EventBus.getMainEventBus().fireEvent(event);
 	}
 	
-	protected void handleFeatureQuery(QueryResponse result) {
+	protected void handleFeatureQuery(QueryResponse<?> result) {
 		FeatureQueryResponse response = (FeatureQueryResponse) result;
-		FeatureOfInterest feature = response.getFeature().iterator().next();
+		FeatureOfInterest feature = response.getFeatures()[0];
 		StoreFeatureEvent event = new StoreFeatureEvent(response.getServiceUrl(), feature);
 		EventBus.getMainEventBus().fireEvent(event);
 	}
 	
 	private void doQuery(QueryRequest request, QueryCallback callback) {
-		addRequest();
 		this.queryService.doQuery(request, callback);
+        addRequest();
 	}
 }

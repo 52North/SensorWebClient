@@ -25,6 +25,7 @@ package org.n52.server.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.n52.client.service.QueryService;
 import org.n52.server.oxf.util.ConfigurationContext;
@@ -32,6 +33,7 @@ import org.n52.server.oxf.util.crs.AReferencingHelper;
 import org.n52.shared.exceptions.ServiceOccupiedException;
 import org.n52.shared.requests.query.FeatureQuery;
 import org.n52.shared.requests.query.OfferingQuery;
+import org.n52.shared.requests.query.PageResult;
 import org.n52.shared.requests.query.PhenomenonQuery;
 import org.n52.shared.requests.query.ProcedureQuery;
 import org.n52.shared.requests.query.QueryRequest;
@@ -43,6 +45,10 @@ import org.n52.shared.requests.query.responses.ProcedureQueryResponse;
 import org.n52.shared.requests.query.responses.QueryResponse;
 import org.n52.shared.requests.query.responses.StationQueryResponse;
 import org.n52.shared.serializable.pojos.BoundingBox;
+import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
+import org.n52.shared.serializable.pojos.sos.Offering;
+import org.n52.shared.serializable.pojos.sos.Phenomenon;
+import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.slf4j.Logger;
@@ -53,7 +59,7 @@ public class QueryServiceImpl implements QueryService {
     private static final Logger LOG = LoggerFactory.getLogger(QueryServiceImpl.class);
 
 	@Override
-	public QueryResponse doQuery(QueryRequest request)
+	public QueryResponse<?> doQuery(QueryRequest request)
 			throws Exception {
 		// TODO refactor
 		if (request instanceof FeatureQuery) {
@@ -70,7 +76,7 @@ public class QueryServiceImpl implements QueryService {
 		return null;
 	}
 	
-    private QueryResponse getStations(StationQuery query) throws Exception {
+    private QueryResponse<?> getStations(StationQuery query) throws Exception {
         try {
         	// check if update process is still running
         	if (ConfigurationContext.UPDATE_TASK_RUNNING) {
@@ -80,14 +86,13 @@ public class QueryServiceImpl implements QueryService {
 			}
         	String serviceUrl = query.getServiceUrl();
         	SOSMetadata metadata = ConfigurationContext.getSOSMetadata(serviceUrl);
-        	ArrayList<Station> finalStations = new ArrayList<Station>();
             ArrayList<Station> stations = (ArrayList<Station>) metadata.getStations();
             Collection<String> offeringFilter = query.getOfferingFilter();
             Collection<String> phenomenonFilter = query.getPhenomenonFilter();
             Collection<String> procedureFilter = query.getProcedureFilter();
             Collection<String> featureFilter = query.getFeatureOfInterestFilter();
-        	int startIndex = getStartIndex(query.getPagingStartIndex());
-        	int interval = getInterval(query.getPagingInterval(), stations.size());
+        	int startIndex = getStartIndex(query.getOffset());
+        	int interval = getInterval(query.getSize(), stations.size());
         	BoundingBox spatialFilter = query.getSpatialFilter();
             if (LOG.isDebugEnabled()) {
                 String msgTemplate = "Request -> getStations(sosUrl: %s, offeringID: %s, procedureID: %s, phenomenonID: %s, featureID: %s, Start: %s, Interval: %s, Spatial: %s)";
@@ -98,23 +103,21 @@ public class QueryServiceImpl implements QueryService {
             AReferencingHelper referencing = createReferenceHelper(shallForceXYAxisOrder);
             
             int endIndex = 0;
-            for(int i = startIndex; i < stations.size() && finalStations.size() < interval; i++) {
+            Station[] finalStations = new Station[interval];
+            for(int i = startIndex; i < stations.size() && i < interval; i++) {
             	Station station = stations.get(i).clone();
                 if (spatialFilter == null || referencing.isStationContainedByBBox(spatialFilter, station)) {
                 	station.removeUnmatchedConstellations(offeringFilter, phenomenonFilter, procedureFilter, featureFilter);
                 	if(station.hasAtLeastOneParameterconstellation()) {
-                		finalStations.add(station);
+                		finalStations[i] = station;
                         endIndex = i + 1;
                 	}
                 }
             }
             
-            boolean finished = isFinished(endIndex, finalStations);
             StationQueryResponse response = new StationQueryResponse();
             response.setServiceUrl(serviceUrl);
-			response.setPagingEnd(finished);
-            response.setPagingEndIndex(endIndex);
-            response.setStations(finalStations);
+            response.setResultSubset(new PageResult<Station>(startIndex, stations.size(), finalStations));
             return response;
         } catch (Exception e) {
             LOG.error("Exception occured on server side.", e);
@@ -130,12 +133,12 @@ public class QueryServiceImpl implements QueryService {
 		return pagingStartIndex != 0 ? pagingStartIndex : 0;
 	}
 	
-	private boolean isFinished(int endIndex, ArrayList<Station> stations) {
+	private boolean isFinished(int endIndex, Station[] stations) {
         boolean devMode = ConfigurationContext.IS_DEV_MODE;
-        return devMode || endIndex >= stations.size();
+        return devMode || endIndex >= stations.length;
     }
 
-	private QueryResponse getOffering(OfferingQuery query) throws Exception {
+	private QueryResponse<?> getOffering(OfferingQuery query) throws Exception {
         try {
         	String serviceUrl = query.getServiceUrl();
         	Collection<String> offeringFilter = query.getOfferingFilter();
@@ -147,11 +150,13 @@ public class QueryServiceImpl implements QueryService {
             OfferingQueryResponse response = new OfferingQueryResponse();
             response.setServiceUrl(serviceUrl);
             if (offeringFilter == null || offeringFilter.size() == 0) {
-            	response.setOffering(meta.getOfferings());
+            	response.setOffering(meta.getOfferings().toArray(new Offering[0]));
             } else {
+                List<Offering> offerings = new ArrayList<Offering>();
             	for (String offering : offeringFilter) {
-    				response.addOffering(meta.getOffering(offering));
+    				offerings.add(meta.getOffering(offering));
     			}
+            	response.setOffering(offerings.toArray(new Offering[0]));
             }
             return response;
         } catch (Exception e) {
@@ -161,7 +166,7 @@ public class QueryServiceImpl implements QueryService {
     }
 
 	
-	private QueryResponse getProcedure(ProcedureQuery query) throws Exception {
+	private QueryResponse<?> getProcedure(ProcedureQuery query) throws Exception {
         try {
         	String serviceUrl = query.getServiceUrl();
         	Collection<String> procedureFilter = query.getProcedureFilter();
@@ -173,11 +178,13 @@ public class QueryServiceImpl implements QueryService {
             ProcedureQueryResponse response = new ProcedureQueryResponse();
             response.setServiceUrl(serviceUrl);
             if (procedureFilter == null || procedureFilter.size() == 0) {
-            	response.setProcedure(meta.getProcedures());
+            	response.setProcedure(meta.getProcedures().toArray(new Procedure[0]));
             } else {
+                List<Procedure> procedures = new ArrayList<Procedure>();
             	for (String procedure : procedureFilter) {
-    				response.addProcedure(meta.getProcedure(procedure));
+    				procedures.add(meta.getProcedure(procedure));
     			}
+            	response.setProcedure(procedures.toArray(new Procedure[0]));
             }
             return response;
         } catch (Exception e) {
@@ -186,7 +193,7 @@ public class QueryServiceImpl implements QueryService {
         }
     }
 	
-	private QueryResponse getPhenomenons(PhenomenonQuery query) throws Exception {
+	private QueryResponse<?> getPhenomenons(PhenomenonQuery query) throws Exception {
 		try {
 			String serviceUrl = query.getServiceUrl();
 			Collection<String> phenomenonFilter = query.getPhenomenonFilter();
@@ -197,11 +204,13 @@ public class QueryServiceImpl implements QueryService {
             SOSMetadata meta = ConfigurationContext.getSOSMetadata(serviceUrl);
             PhenomenonQueryResponse response = new PhenomenonQueryResponse();
             if (phenomenonFilter == null || phenomenonFilter.size() == 0) {
-            	response.setPhenomenons(meta.getPhenomenons());
+            	response.setPhenomenons(meta.getPhenomenons().toArray(new Phenomenon[0]));
             } else {
+                List<Phenomenon> phenomenons = new ArrayList<Phenomenon>();
             	for (String phenomenon : phenomenonFilter) {
-    				response.addPhenoemon(meta.getPhenomenon(phenomenon));
+            	    phenomenons.add(meta.getPhenomenon(phenomenon));
     			}
+            	response.setPhenomenons(phenomenons.toArray(new Phenomenon[0]));
             }
             response.setServiceUrl(serviceUrl);
             return response;
@@ -211,7 +220,7 @@ public class QueryServiceImpl implements QueryService {
         }
 	}
 	
-	private QueryResponse getFeatureResponse(FeatureQuery query) throws Exception {
+	private QueryResponse<?> getFeatureResponse(FeatureQuery query) throws Exception {
 	    try {
 	    	String serviceUrl = query.getServiceUrl();
 	    	Collection<String> featureFilter = query.getFeatureOfInterestFilter();
@@ -222,11 +231,13 @@ public class QueryServiceImpl implements QueryService {
 	        SOSMetadata meta = ConfigurationContext.getSOSMetadata(serviceUrl);
 	        FeatureQueryResponse response = new FeatureQueryResponse();
 	        if (featureFilter == null || featureFilter.size() == 0) {
-	        	response.setFeature(meta.getFeatures());
+	        	response.setFeatures(meta.getFeatures().toArray(new FeatureOfInterest[0]));
 	        } else {
+	            List<FeatureOfInterest> fois = new ArrayList<FeatureOfInterest>();
 	        	for (String feature : featureFilter) {
-					response.addFeature(meta.getFeature(feature));
+					fois.add(meta.getFeature(feature));
 				}
+	        	response.setFeatures(fois.toArray(new FeatureOfInterest[0]));
 	        }
 	        response.setServiceUrl(serviceUrl);
 	        return response;

@@ -1,12 +1,10 @@
 package org.n52.server.service;
 
-import java.util.Collection;
-
 import org.n52.client.service.QueryService;
 import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.service.rest.QuerySet;
 import org.n52.server.service.rest.control.ResourceNotFoundException;
-import org.n52.server.service.rest.objects.Point;
+import org.n52.server.service.rest.model.Point;
 import org.n52.shared.requests.query.FeatureQuery;
 import org.n52.shared.requests.query.OfferingQuery;
 import org.n52.shared.requests.query.PhenomenonQuery;
@@ -25,7 +23,7 @@ public class GetMetadataService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(GetMetadataService.class);
 	
 	private QueryService queryService;
-
+ 
 	public QueryResponse getPhenomenons(QuerySet query, String instance) throws Exception {
 		PhenomenonQuery request = (PhenomenonQuery) createQuery(query, instance, new PhenomenonQuery()); 
 		return queryService.doQuery(request);
@@ -37,8 +35,7 @@ public class GetMetadataService {
 	}
 	
 	public QueryResponse getOfferings(QuerySet query, String instance) throws Exception {
-		OfferingQuery request = (OfferingQuery) createQuery(query, instance, new OfferingQuery()); 
-		return queryService.doQuery(request);
+		return queryService.doQuery(createQuery(query, instance, new OfferingQuery()));
 	}
 	
 	public QueryResponse getFeatures(QuerySet query, String instance) throws Exception {
@@ -51,25 +48,15 @@ public class GetMetadataService {
 		return queryService.doQuery(request);
 	}
 	
-	public Collection<SOSMetadata> getInstances() {
-		return ConfigurationContext.getSOSMetadatas();
-	}
-	
-	/**
-	 * @param query
-	 * @param instance
-	 * @param request
-	 * @return
-	 */
 	private QueryRequest createQuery(QuerySet query, String instance, QueryRequest request) {
 		SOSMetadata metadata = getServiceMetadata(instance);
 		request.setServiceUrl(metadata.getServiceUrl());
-		request.setOfferingFilter(query.getOfferingFilter());
-		request.setProcedureFilter(query.getProcedureFilter());
-		request.setFeatureOfInterestFilter(query.getFeatureOfInterestFilter());
-		request.setPhenomenonFilter(query.getPhenomenonFilter());
-		request.setPagingInterval(query.getPagingInterval());
-		request.setPagingStartIndex(query.getPagingStartIndex());
+		request.setOfferingFilter(query.getOfferings());
+		request.setProcedureFilter(query.getProcedures());
+		request.setFeatureOfInterestFilter(query.getFeatureOfInterests());
+		request.setPhenomenonFilter(query.getPhenomenonS());
+		request.setSize(query.getTotal());
+		request.setOffset(query.getOffset());
 		if (query.getSpatialFilter() != null) {
 			Point lowerLeft = query.getSpatialFilter().getLowerLeft();
 			EastingNorthing ll = new EastingNorthing(lowerLeft.getEasting(), lowerLeft.getNorthing(), query.getSpatialFilter().getSrs());

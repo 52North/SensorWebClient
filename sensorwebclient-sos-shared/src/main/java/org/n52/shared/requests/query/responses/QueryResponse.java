@@ -2,18 +2,22 @@ package org.n52.shared.requests.query.responses;
 
 import java.io.Serializable;
 
-public abstract class QueryResponse implements Serializable {
+import org.n52.shared.requests.query.Page;
+
+public abstract class QueryResponse<T> implements Serializable {
 
 	private static final long serialVersionUID = 8964914430932650368L;
 	
 	private String serviceUrl;
 	
-	private boolean pagingEnd;
-	
-	private int pagingEndIndex;
+	private Page<T> resultSubset;
 	
 	public QueryResponse() {
 		// for serialization
+	}
+	
+	public QueryResponse(Page<T> resultSubset) {
+	    this.resultSubset = resultSubset;
 	}
 
 	public String getServiceUrl() {
@@ -24,20 +28,12 @@ public abstract class QueryResponse implements Serializable {
 		this.serviceUrl = serviceUrl;
 	}
 
-	public boolean isPagingEnd() {
-		return pagingEnd;
-	}
+    public Page<T> getResults() {
+        return resultSubset;
+    }
 
-	public void setPagingEnd(boolean pagingEnd) {
-		this.pagingEnd = pagingEnd;
-	}
-
-	public int getPagingEndIndex() {
-		return pagingEndIndex;
-	}
-
-	public void setPagingEndIndex(int pagingEndIndex) {
-		this.pagingEndIndex = pagingEndIndex;
-	}
+    public void setResultSubset(Page<T> resultSubset) {
+        this.resultSubset = resultSubset;
+    }
 
 }

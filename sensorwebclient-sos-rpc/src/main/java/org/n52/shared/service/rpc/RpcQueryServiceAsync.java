@@ -30,6 +30,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface RpcQueryServiceAsync {
 
-    void doQuery(QueryRequest request, AsyncCallback<QueryResponse> callback);
+    void doQuery(QueryRequest request, AsyncCallback<QueryResponse<?>> callback);
     
 }

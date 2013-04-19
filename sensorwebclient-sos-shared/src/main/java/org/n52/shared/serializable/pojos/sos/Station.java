@@ -103,6 +103,7 @@ public class Station implements Serializable {
         // TODO wait for fix: http://code.google.com/p/google-web-toolkit/issues/detail?id=3404
         // sb.append(getClass().getSimpleName()).append(" [ ");
         sb.append("Station: [ ").append("\n");
+        sb.append("\tId: ").append(id).append("\n");
         sb.append("\tLocation: ").append(location).append("\n");
         sb.append("\tParameterConstellation-Count: ").append(parameterConstellations.size()).append(" ]\n");
         return sb.toString();

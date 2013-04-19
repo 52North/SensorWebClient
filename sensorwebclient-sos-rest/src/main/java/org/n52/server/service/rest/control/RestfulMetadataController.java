@@ -56,14 +56,6 @@ public class RestfulMetadataController {
     
     private GetMetadataService metadataService;
     
-    @RequestMapping(value = "")
-    public ModelAndView getInstances(){
-    	ModelAndView mav = new ModelAndView("services");
-    	Collection<SOSMetadata> instances = metadataService.getInstances();
-    	mav.addAllObjects(createServices(instances));
-    	return mav;
-    }
-    
     // phenomenon handler methods
 
 	@RequestMapping(value = "/{instance}/phenomenons", method = RequestMethod.POST)
@@ -71,7 +63,7 @@ public class RestfulMetadataController {
         try {
             ModelAndView mav = new ModelAndView("phenomenons");
             PhenomenonQueryResponse phenomenons = (PhenomenonQueryResponse) metadataService.getPhenomenons(querySet, instance);
-            mav.addAllObjects(createPhenomenons(phenomenons));
+            mav.addObject(phenomenons.getPhenomenons());
             return mav;
         } catch (Exception e) {
             LOGGER.error("Could not create response.", e);
@@ -102,7 +94,7 @@ public class RestfulMetadataController {
         try {
             ModelAndView mav = new ModelAndView("procedures");
             ProcedureQueryResponse procedures = (ProcedureQueryResponse) metadataService.getProcedures(querySet, instance);
-            mav.addAllObjects(createProcedures(procedures));
+            mav.addObject(procedures.getProcedure());
             mav.addObject("test", "check");
             return mav;
         } catch (Exception e) {
@@ -134,8 +126,7 @@ public class RestfulMetadataController {
         try {
             ModelAndView mav = new ModelAndView("offerings");
             OfferingQueryResponse offerings = (OfferingQueryResponse) metadataService.getOfferings(querySet, instance);
-            mav.addAllObjects(createOfferings(offerings));
-            return mav;
+            return mav.addObject(offerings.getOfferings());
         } catch (Exception e) {
             LOGGER.error("Could not create response.", e);
             throw new InternalServiceException();
@@ -165,8 +156,7 @@ public class RestfulMetadataController {
         try {
             ModelAndView mav = new ModelAndView("features");
             FeatureQueryResponse features = (FeatureQueryResponse) metadataService.getFeatures(querySet, instance);
-            mav.addAllObjects(createFeatures(features));
-            return mav;
+            return mav.addObject(features.getFeatures());
         } catch (Exception e) {
             LOGGER.error("Could not create response.", e);
             throw new InternalServiceException();
@@ -196,8 +186,7 @@ public class RestfulMetadataController {
         try {
             ModelAndView mav = new ModelAndView("stations");
             StationQueryResponse stations = (StationQueryResponse) metadataService.getStations(querySet, instance);
-            mav.addAllObjects(createStations(stations));
-            return mav;
+            return mav.addObject(stations.getStations());
         } catch (Exception e) {
             LOGGER.error("Could not create response.", e);
             throw new InternalServiceException();
@@ -221,7 +210,7 @@ public class RestfulMetadataController {
     	QuerySet query = createQuerySet(null, null, id, null);
     	ArrayList<String> stationFilter = new ArrayList<String>();
     	stationFilter.add(id);
-    	query.setFeatureOfInterestFilter(stationFilter);
+    	query.addAllFeatureOfInterests(stationFilter);
     	ModelAndView mav = getStation(query, instance);
     	return mav;
     }
@@ -247,46 +236,6 @@ public class RestfulMetadataController {
 		return map;
 	}
 
-	private Map<String, ?> createOfferings(OfferingQueryResponse offerings) {
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("offerings", offerings.getOffering());
-		map.put("pagingEndReached", offerings.isPagingEnd());
-		map.put("pagingEndIndex", offerings.getPagingEndIndex());
-		return map;
-	}
-
-	private Map<String, ?> createPhenomenons(PhenomenonQueryResponse phenomenons) {
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("phenomenons", phenomenons.getPhenomenons());
-		map.put("pagingEndReached", phenomenons.isPagingEnd());
-		map.put("pagingEndIndex", phenomenons.getPagingEndIndex());
-		return map;
-	}
-
-	private Map<String, ?> createProcedures(ProcedureQueryResponse procedures) {
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("procedures", procedures.getProcedure());
-		map.put("pagingEndReached", procedures.isPagingEnd());
-		map.put("pagingEndIndex", procedures.getPagingEndIndex());
-		return map;
-	}
-
-	private Map<String, ?> createFeatures(FeatureQueryResponse features) {
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("features", features.getFeature());
-		map.put("pagingEndReached", features.isPagingEnd());
-		map.put("pagingEndIndex", features.getPagingEndIndex());
-		return map;
-	}
-
-	private Map<String, ?> createStations(StationQueryResponse stations) {
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("stations", stations.getStations());
-		map.put("pagingEndReached", stations.isPagingEnd());
-		map.put("pagingEndIndex", stations.getPagingEndIndex());
-		return map;
-	}
-
 	private QuerySet createQuerySet(String offering, String phenomenon,
 			String feature, String procedure) {
 		QuerySet query = new QuerySet();
@@ -294,25 +243,25 @@ public class RestfulMetadataController {
 		if (offering != null) {
 			ArrayList<String> offeringFilter = new ArrayList<String>();
 	    	offeringFilter.add(offering);
-	    	query.setOfferingFilter(offeringFilter);
+	    	query.addAllOfferings(offeringFilter);
 		}
 		
 		if (phenomenon != null) {
 			ArrayList<String> phenomenonFilter = new ArrayList<String>();
 	    	phenomenonFilter.add(phenomenon);
-	    	query.setPhenomenonFilter(phenomenonFilter);
+	    	query.addAllPhenomenons(phenomenonFilter);
 		}
 		
 		if (feature != null) {
 			ArrayList<String> featureFilter = new ArrayList<String>();
 	    	featureFilter.add(feature);
-	    	query.setFeatureOfInterestFilter(featureFilter);
+	    	query.addAllFeatureOfInterests(featureFilter);
 		}
 		
 		if (procedure != null){
 			ArrayList<String> procedureFilter = new ArrayList<String>();
 	    	procedureFilter.add(procedure);
-	    	query.setProcedureFilter(procedureFilter);
+	    	query.addAllProcedures(procedureFilter);
 		}
 	
 		return query;

@@ -20,9 +20,9 @@ public class QueryRequest implements Serializable {
 	
 	private Collection<String> featureOfInterestFilter;
 	
-	private int pagingStartIndex;
+	private int offset;
 	
-	private int pagingInterval;
+	private int size;
 
 	private BoundingBox spatialFilter;
 	
@@ -36,8 +36,8 @@ public class QueryRequest implements Serializable {
 		this.procedureFilter = queryBuilder.getProcedureFilter();
 		this.phenomenonFilter = queryBuilder.getPhenomenonFilter();
 		this.featureOfInterestFilter = queryBuilder.getFeatureOfInterestFilter();
-		this.pagingStartIndex = queryBuilder.getPagingStartIndex();
-		this.pagingInterval = queryBuilder.getPagingInteval();
+		this.offset = queryBuilder.getOffset();
+		this.size = queryBuilder.getSize();
 		this.spatialFilter = queryBuilder.getSpatialFilter();
 	}
 	
@@ -81,20 +81,20 @@ public class QueryRequest implements Serializable {
 		this.serviceUrl = serviceUrl;
 	}
 
-	public int getPagingStartIndex() {
-		return pagingStartIndex;
+	public int getOffset() {
+		return offset;
 	}
 
-	public void setPagingStartIndex(int pagingStartIndex) {
-		this.pagingStartIndex = pagingStartIndex;
+	public void setOffset(int offset) {
+		this.offset = offset;
 	}
 
-	public int getPagingInterval() {
-		return pagingInterval;
+	public int getSize() {
+		return size;
 	}
 
-	public void setPagingInterval(int pagingInterval) {
-		this.pagingInterval = pagingInterval;
+	public void setSize(int size) {
+		this.size = size;
 	}
 
 	public BoundingBox getSpatialFilter() {

@@ -1,4 +1,4 @@
-<configuration scan="true">
+<configuration scan="false">
 
 	<!-- refer to http://logback.qos.ch/manual/appenders.html -->
 

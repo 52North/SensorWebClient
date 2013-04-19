@@ -9,25 +9,33 @@
 
 	<mvc:annotation-driven />
 	
-	<bean class="org.n52.server.service.rest.control.RestfulTimeSeriesController">
-		<property name="dataService" ref="dataService" />
-		<property name="imageService" ref="imageService" />
-	</bean>
-	
+    <bean class="org.n52.server.service.rest.control.RestfulTimeSeriesController">
+        <property name="dataService" ref="dataService" />
+        <property name="imageService" ref="imageService" />
+    </bean>
+    
 	<bean class="org.n52.server.service.rest.control.RestfulMetadataController">
 		<property name="metadataService" ref="metadataService"/>
 	</bean>
 	
-	<bean id="service" class="org.n52.server.service.DataService" abstract="true">
-		<property name="sensorMetadataService" ref="sensorMetadataService" />
-	</bean>
+	<bean class="org.n52.server.service.rest.control.RestfulServiceInstancesController">
+        <property name="serviceInstancesService" ref="serviceInstancesService"/>
+    </bean>
 	
+	
+	
+	
+    <bean id="service" class="org.n52.server.service.DataService" abstract="true">
+        <property name="sensorMetadataService" ref="sensorMetadataService" />
+    </bean>
+    
+	
+    <bean id="metadataService" class="org.n52.server.service.GetMetadataService">
+        <property name="queryService" ref="queryServiceImpl"/>
+    </bean>
+    
 	<bean id="dataService" class="org.n52.server.service.GetDataService" parent="service">
 		<property name="timeSeriesDataService" ref="tsDataService" />
-	</bean>
-	
-	<bean id="metadataService" class="org.n52.server.service.GetMetadataService">
-		<property name="queryService" ref="queryServiceImpl"/>
 	</bean>
 	
 	<bean id="imageService" class="org.n52.server.service.GetImageService" parent="service">
@@ -37,6 +45,8 @@
 		<property name="renderGrid" value="true" />
 	</bean>
 	
+    <bean id="serviceInstancesService" class="org.n52.server.service.DefaultServiceInstancesService" />
+    
 	<bean id="tsDataService" class="org.n52.server.service.TimeSeriesDataServiceImpl" />
 	
 	<bean id="sensorMetadataService" class="org.n52.server.service.SensorMetadataServiceImpl" />
