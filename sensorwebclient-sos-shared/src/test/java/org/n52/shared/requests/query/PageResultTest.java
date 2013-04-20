@@ -30,21 +30,21 @@ public class PageResultTest {
     shouldIndicateThatMorePagesAreAvailable() 
     {
         PageResult<String> firstPage = getFirstPage();
-        assertThat(firstPage.isLast(), is(false));
+        assertThat(firstPage.isLastPage(), is(false));
     }
     
     @Test public void
     shouldIndicateLastPageWithOverlappingSize() 
     {
         PageResult<String> lastPage = getLastPageOverlapping();
-        assertThat(lastPage.isLast(), is(true));
+        assertThat(lastPage.isLastPage(), is(true));
     }
     
     @Test public void
     shouldIndicateLastPageWhenMatchingSize() 
     {
         PageResult<String> lastPage = getLastPageWithMatchingSize();
-        assertThat(lastPage.isLast(), is(true));
+        assertThat(lastPage.isLastPage(), is(true));
     }
     
     private PageResult<String> getFirstPage() {

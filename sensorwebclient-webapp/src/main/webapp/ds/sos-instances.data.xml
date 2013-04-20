@@ -19,7 +19,7 @@
 		<defaultZoom>13</defaultZoom>
 	</instance>
 	
-	<!-- <instance>
+	<instance>
 		<itemName>CSIR</itemName>
 		<url>http://ict4eo.meraka.csir.co.za/AMD_SOS/sos</url>
 		<version>1.0.0</version>
@@ -33,7 +33,7 @@
 		<urEasting>30.0</urEasting>
 		<urNorthing>0.0</urNorthing>
 		<defaultZoom>5</defaultZoom>
-	</instance> -->
+	</instance><!--  -->
 	
 	
     <!-- <instance>
@@ -53,7 +53,7 @@
     </instance> -->
     
     
-    <!-- <instance>
+    <instance>
         <itemName>Wupperverband</itemName>
         <url>http://fluggs.wupperverband.de/sos/sos</url>
         <version>1.0.0</version>
@@ -67,7 +67,7 @@
         <defaultZoom>15</defaultZoom>
         <requestChunk>200</requestChunk>
         <autoZoom>true</autoZoom>
-    </instance>
+    </instance> <!--  -->
 
 	<instance>
 		<itemName>GRDC (Kisters SOS)</itemName>
@@ -85,6 +85,7 @@
 		<autoZoom>true</autoZoom>
 	</instance>
 	
+	<!-- 
 	<instance>
 		<itemName>GRDC-SOS_GEOWOW</itemName>
 		<url>http://geowow.dev.52north.org:8080/52n-sos-grdc-webapp-4.0.0-SNAPSHOT/sos/soap</url>
@@ -99,7 +100,8 @@
 		<defaultZoom>10</defaultZoom>
 		<requestChunk>200</requestChunk>
 		<autoZoom>true</autoZoom>
-	</instance> -->
+	</instance>
+	 -->
 	
 	<!-- <instance>
 		<itemName>EEA-SOS</itemName>

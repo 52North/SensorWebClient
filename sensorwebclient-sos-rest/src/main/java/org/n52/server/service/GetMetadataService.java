@@ -24,28 +24,24 @@ public class GetMetadataService {
 	
 	private QueryService queryService;
  
-	public QueryResponse getPhenomenons(QuerySet query, String instance) throws Exception {
-		PhenomenonQuery request = (PhenomenonQuery) createQuery(query, instance, new PhenomenonQuery()); 
-		return queryService.doQuery(request);
+	public QueryResponse<?> getPhenomenons(QuerySet query, String instance) throws Exception {
+		return queryService.doQuery(createQuery(query, instance, new PhenomenonQuery()));
 	}
 
-	public QueryResponse getProcedures(QuerySet query, String instance) throws Exception {
-		ProcedureQuery request = (ProcedureQuery) createQuery(query, instance, new ProcedureQuery()); 
-		return queryService.doQuery(request);
+	public QueryResponse<?> getProcedures(QuerySet query, String instance) throws Exception {
+		return queryService.doQuery(createQuery(query, instance, new ProcedureQuery()));
 	}
 	
-	public QueryResponse getOfferings(QuerySet query, String instance) throws Exception {
+	public QueryResponse<?> getOfferings(QuerySet query, String instance) throws Exception {
 		return queryService.doQuery(createQuery(query, instance, new OfferingQuery()));
 	}
 	
-	public QueryResponse getFeatures(QuerySet query, String instance) throws Exception {
-		FeatureQuery request = (FeatureQuery) createQuery(query, instance, new FeatureQuery()); 
-		return queryService.doQuery(request);
+	public QueryResponse<?> getFeatures(QuerySet query, String instance) throws Exception {
+		return queryService.doQuery(createQuery(query, instance, new FeatureQuery()));
 	}
 	
-	public QueryResponse getStations(QuerySet query, String instance) throws Exception {
-		StationQuery request = (StationQuery) createQuery(query, instance, new StationQuery()); 
-		return queryService.doQuery(request);
+	public QueryResponse<?> getStations(QuerySet query, String instance) throws Exception {
+		return queryService.doQuery(createQuery(query, instance, new StationQuery()));
 	}
 	
 	private QueryRequest createQuery(QuerySet query, String instance, QueryRequest request) {
@@ -57,16 +53,21 @@ public class GetMetadataService {
 		request.setPhenomenonFilter(query.getPhenomenonS());
 		request.setSize(query.getTotal());
 		request.setOffset(query.getOffset());
-		if (query.getSpatialFilter() != null) {
+		createSpatialFilter(query, request);
+		return request;
+	}
+
+    private void createSpatialFilter(QuerySet query, QueryRequest request) {
+        if (query.getSpatialFilter() != null) {
 			Point lowerLeft = query.getSpatialFilter().getLowerLeft();
-			EastingNorthing ll = new EastingNorthing(lowerLeft.getEasting(), lowerLeft.getNorthing(), query.getSpatialFilter().getSrs());
-			Point upperRight = query.getSpatialFilter().getUpperRight();
-			EastingNorthing ur = new EastingNorthing(upperRight.getEasting(), upperRight.getNorthing(), query.getSpatialFilter().getSrs());
+            Point upperRight = query.getSpatialFilter().getUpperRight();
+			String srs = query.getSpatialFilter().getSrs();
+            EastingNorthing ll = new EastingNorthing(lowerLeft.getEasting(), lowerLeft.getNorthing(), srs);
+			EastingNorthing ur = new EastingNorthing(upperRight.getEasting(), upperRight.getNorthing(), srs);
 			BoundingBox spatialFilter = new BoundingBox(ll, ur);
 			request.setSpatialFilter(spatialFilter);
 		}
-		return request;
-	}
+    }
 
 	protected SOSMetadata getServiceMetadata(String instance) {
         SOSMetadata metadata = ConfigurationContext.getSOSMetadataForItemName(instance);

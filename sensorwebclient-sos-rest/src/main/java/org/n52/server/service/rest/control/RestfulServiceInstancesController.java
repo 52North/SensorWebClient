@@ -20,8 +20,12 @@ public class RestfulServiceInstancesController {
     @RequestMapping(value = "/services/{id}")
     public ModelAndView getInstances(@PathVariable(value="id") String id, 
                                      @RequestParam(value="filter", required=false) String filter) {
+        ServiceInstance serviceInstance = serviceInstancesService.getServiceInstance(id);
+        if (serviceInstance == null) {
+            throw new ResourceNotFoundException();
+        }
         ModelAndView mav = new ModelAndView("services");
-        mav.addObject(serviceInstancesService.getServiceInstance(id));
+        mav.addObject(serviceInstance);
         return mav;
     }
     
@@ -37,11 +41,18 @@ public class RestfulServiceInstancesController {
             ModelAndView mav = new ModelAndView("services");
             return mav.addObject(createResultSubset(0, instances.size(), instances));
         } else {
-            ModelAndViewPager mavPage = new ModelAndViewPager("services");
-            ServiceInstance[] results = createResultSubset(offset, size, instances);
-            mavPage.setPage(new PageResult<ServiceInstance>(offset, size, results));
+            ModelAndViewPager mavPage = pageResults(offset.intValue(), size.intValue(), instances);
             return mavPage.getPagedModelAndView();
         }
+    }
+
+    private ModelAndViewPager pageResults(int offset, int size, Collection<ServiceInstance> instances) {
+        ModelAndViewPager mavPage = new ModelAndViewPager("services");
+        if (offset <= instances.size()) {
+            ServiceInstance[] results = createResultSubset(offset, size, instances);
+            mavPage.setPage(new PageResult<ServiceInstance>(offset, instances.size(), results));
+        }
+        return mavPage;
     }
 
     private ServiceInstance[] createResultSubset(int offset, int size, Collection<ServiceInstance> instances) {

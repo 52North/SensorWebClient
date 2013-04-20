@@ -6,8 +6,8 @@
 <body>
 	<h3>Services: </h3>
 	<ul>
-	<c:forEach items="${services}" var="service">
-        <li>${service.id}</li>
+	<c:forEach items="${serviceInstances}" var="service">
+        <li>${service.itemName}</li>
     </c:forEach>
 	</ul>
 </body>
