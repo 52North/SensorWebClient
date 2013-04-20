@@ -1,13 +1,15 @@
 
 package org.n52.shared.requests.query;
 
+import java.io.Serializable;
+
 /**
  * Represents a read-only subset of totally available results.
  * 
  * @param <T>
  *        the type of the results to scroll.
  */
-public interface Page<T> {
+public interface Page<T> extends Serializable {
 
     /**
      * @return the offset index of the first result available.
@@ -30,6 +32,6 @@ public interface Page<T> {
     /**
      * @return <code>true</code> if no more results are available, <code>false</code> otherwise.
      */
-    public boolean isLast();
+    public boolean isLastPage();
 
 }
