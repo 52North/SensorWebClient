@@ -123,7 +123,7 @@ public class ConfigurationContext extends HttpServlet {
         }
 
         GEN_DIR_ZIP = GEN_DIR + "/zipped";
-        USE_DEVEL_CACHING = IS_DEV_MODE;
+//        USE_DEVEL_CACHING = IS_DEV_MODE;
 
         LOGGER.info("INITIALIZED SERVER APPLICATION SUCESSFULLY");
         if (IS_DEV_MODE) {

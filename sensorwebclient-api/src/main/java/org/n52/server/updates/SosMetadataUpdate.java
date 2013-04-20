@@ -66,7 +66,7 @@ public class SosMetadataUpdate {
 
     public static void updateService(String serviceUrl) throws Exception {
         LOGGER.debug("Update service metadata for '{}'", serviceUrl);
-        if (ConfigurationContext.USE_DEVEL_CACHING) {
+//        if (ConfigurationContext.USE_DEVEL_CACHING) {
             File cache = getCacheTarget(serviceUrl);
             if (isCacheAvailable(cache)) {
                 try {
@@ -80,10 +80,10 @@ public class SosMetadataUpdate {
                 prepareCacheTargetDirectory();
                 cacheMetadata(cache, serviceUrl);
             }
-        } else {
-            // XXX refactor COnfiguration COntext in combiniation of this class and timerupdate
-            ConfigurationContext.getServiceMetadata(serviceUrl);
-        }
+//        } else {
+//            // XXX refactor COnfiguration COntext in combiniation of this class and timerupdate
+//            ConfigurationContext.getServiceMetadata(serviceUrl);
+//        }
     }
 
     protected static File getCacheTarget(String serviceUrl) {
@@ -106,7 +106,7 @@ public class SosMetadataUpdate {
     }
 
     private static boolean isCacheAvailable(File file) {
-        return ConfigurationContext.USE_DEVEL_CACHING && file.exists();
+        return /*ConfigurationContext.USE_DEVEL_CACHING &&*/ file.exists();
     }
 
     protected static void loadMetadataFromCache(File file) throws IOException, ClassNotFoundException {
