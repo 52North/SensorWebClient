@@ -864,7 +864,7 @@ public class SOSRequestManager extends RequestManager {
 	                removeRequest();
 	                Page<Station> resultPage = (Page<Station>) queryResponse.getResults();
                     String url = queryResponse.getServiceUrl();
-                    if (resultPage.isLast()) {
+                    if (resultPage.isLastPage()) {
 	                    requestMgr.removeRequest(System.currentTimeMillis() - begin);
 	                    EventBus.getMainEventBus().fireEvent(new GetProcedurePositionsFinishedEvent());
 	                } else {

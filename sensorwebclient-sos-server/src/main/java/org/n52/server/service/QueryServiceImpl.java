@@ -104,13 +104,12 @@ public class QueryServiceImpl implements QueryService {
             
             int endIndex = 0;
             Station[] finalStations = new Station[interval];
-            for(int i = startIndex; i < stations.size() && i < interval; i++) {
+            for(int i = startIndex; i < stations.size() && endIndex < interval; i++) {
             	Station station = stations.get(i).clone();
                 if (spatialFilter == null || referencing.isStationContainedByBBox(spatialFilter, station)) {
                 	station.removeUnmatchedConstellations(offeringFilter, phenomenonFilter, procedureFilter, featureFilter);
                 	if(station.hasAtLeastOneParameterconstellation()) {
-                		finalStations[i] = station;
-                        endIndex = i + 1;
+                		finalStations[endIndex++] = station;
                 	}
                 }
             }
