@@ -862,7 +862,7 @@ public class SOSRequestManager extends RequestManager {
 	        public void onSuccess(final QueryResponse<?> queryResponse) {
 	            try {
 	                removeRequest();
-	                Page<Station> resultPage = (Page<Station>) queryResponse.getResults();
+	                Page<Station> resultPage = (Page<Station>) queryResponse.getResultSubset();
                     String url = queryResponse.getServiceUrl();
                     if (resultPage.isLastPage()) {
 	                    requestMgr.removeRequest(System.currentTimeMillis() - begin);

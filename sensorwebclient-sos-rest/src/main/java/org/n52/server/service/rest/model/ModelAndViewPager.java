@@ -11,7 +11,7 @@ public class ModelAndViewPager {
         this.mav = new ModelAndView(viewName);
     }
 
-    public void setPage(PageResult pageResult) {
+    public void setPage(PageResult<?> pageResult) {
         mav.addObject(pageResult);
     }
     

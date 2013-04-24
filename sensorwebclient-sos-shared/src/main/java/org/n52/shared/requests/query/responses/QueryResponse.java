@@ -28,7 +28,7 @@ public abstract class QueryResponse<T> implements Serializable {
 		this.serviceUrl = serviceUrl;
 	}
 
-    public Page<T> getResults() {
+    public Page<T> getResultSubset() {
         return resultSubset;
     }
 
