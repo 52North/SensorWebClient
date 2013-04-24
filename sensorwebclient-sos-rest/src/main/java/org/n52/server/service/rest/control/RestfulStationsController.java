@@ -1,16 +1,10 @@
 package org.n52.server.service.rest.control;
 
-import java.util.Map;
-
-import org.n52.client.service.QueryService;
 import org.n52.server.service.GetMetadataService;
 import org.n52.server.service.rest.InternalServiceException;
-import org.n52.server.service.rest.QuerySet;
-import org.n52.shared.requests.query.responses.StationQueryResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;

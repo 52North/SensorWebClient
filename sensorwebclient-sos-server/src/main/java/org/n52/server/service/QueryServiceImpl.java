@@ -63,13 +63,13 @@ public class QueryServiceImpl implements QueryService {
 			throws Exception {
 		// TODO refactor
 		if (request instanceof FeatureQuery) {
-			return getFeatureResponse((FeatureQuery) request);
+			return getFeatures((FeatureQuery) request);
 		} else if (request instanceof PhenomenonQuery) {
 			return getPhenomenons((PhenomenonQuery) request);
 		} else if (request instanceof ProcedureQuery) {
-			return getProcedure((ProcedureQuery) request);
+			return getProcedures((ProcedureQuery) request);
 		} else if (request instanceof OfferingQuery) {
-			return getOffering((OfferingQuery) request);
+			return getOfferings((OfferingQuery) request);
 		} else if (request instanceof StationQuery) { 
 			return getStations((StationQuery) request);
 		}
@@ -91,8 +91,8 @@ public class QueryServiceImpl implements QueryService {
             Collection<String> phenomenonFilter = query.getPhenomenonFilter();
             Collection<String> procedureFilter = query.getProcedureFilter();
             Collection<String> featureFilter = query.getFeatureOfInterestFilter();
-        	int startIndex = getStartIndex(query.getOffset());
-        	int interval = getInterval(query.getSize(), stations.size());
+        	int startIndex = getOffset(query.getOffset());
+        	int interval = getSize(query.getSize(), stations.size());
         	BoundingBox spatialFilter = query.getSpatialFilter();
             if (LOG.isDebugEnabled()) {
                 String msgTemplate = "Request -> getStations(sosUrl: %s, offeringID: %s, procedureID: %s, phenomenonID: %s, featureID: %s, Start: %s, Interval: %s, Spatial: %s)";
@@ -124,127 +124,126 @@ public class QueryServiceImpl implements QueryService {
         }
     }
 
-    private int getInterval(int pagingInterval, int size) {
+    private int getSize(int pagingInterval, int size) {
 		return pagingInterval != 0 ? pagingInterval : size;
 	}
 
-	private int getStartIndex(int pagingStartIndex) {
-		return pagingStartIndex != 0 ? pagingStartIndex : 0;
+	private int getOffset(int offset) {
+		return offset != 0 ? offset : 0;
 	}
 	
-	private boolean isFinished(int endIndex, Station[] stations) {
-        boolean devMode = ConfigurationContext.IS_DEV_MODE;
-        return devMode || endIndex >= stations.length;
-    }
-
-	private QueryResponse<?> getOffering(OfferingQuery query) throws Exception {
+	private QueryResponse<?> getOfferings(OfferingQuery query) throws Exception {
         try {
         	String serviceUrl = query.getServiceUrl();
         	Collection<String> offeringFilter = query.getOfferingFilter();
-            if (LOG.isDebugEnabled()) {
-                String msgTemplate = "Request -> getOffering(sosUrl: %s, offeringID: %s)";
-                LOG.debug(String.format(msgTemplate, serviceUrl, offeringFilter));
-            }
-            SOSMetadata meta = ConfigurationContext.getSOSMetadata(serviceUrl);
-            OfferingQueryResponse response = new OfferingQueryResponse();
-            response.setServiceUrl(serviceUrl);
-            if (offeringFilter == null || offeringFilter.size() == 0) {
-            	response.setOffering(meta.getOfferings().toArray(new Offering[0]));
-            } else {
-                List<Offering> offerings = new ArrayList<Offering>();
-            	for (String offering : offeringFilter) {
-    				offerings.add(meta.getOffering(offering));
-    			}
-            	response.setOffering(offerings.toArray(new Offering[0]));
-            }
-            return response;
+            LOG.debug("Request -> getOfferings(sosUrl: {}, offeringIDs: {})", serviceUrl, offeringFilter);
+            return queryByOfferings(serviceUrl, offeringFilter);
         } catch (Exception e) {
             LOG.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
 
+    private OfferingQueryResponse queryByOfferings(String serviceUrl, Collection<String> filter) {
+        SOSMetadata meta = ConfigurationContext.getSOSMetadata(serviceUrl);
+        OfferingQueryResponse response = new OfferingQueryResponse();
+        response.setServiceUrl(serviceUrl);
+        if (filter == null || filter.size() == 0) {
+        	response.setOffering(meta.getOfferings().toArray(new Offering[0]));
+        } else {
+            List<Offering> offerings = new ArrayList<Offering>();
+        	for (String offering : filter) {
+        		offerings.add(meta.getOffering(offering));
+        	}
+        	response.setOffering(offerings.toArray(new Offering[0]));
+        }
+        return response;
+    }
+
 	
-	private QueryResponse<?> getProcedure(ProcedureQuery query) throws Exception {
+	private QueryResponse<?> getProcedures(ProcedureQuery query) throws Exception {
         try {
         	String serviceUrl = query.getServiceUrl();
         	Collection<String> procedureFilter = query.getProcedureFilter();
-            if (LOG.isDebugEnabled()) {
-                String msgTemplate = "Request -> getProcedure(sosUrl: %s, procedureID: %s)";
-                LOG.debug(String.format(msgTemplate, serviceUrl, procedureFilter));
-            }
-            SOSMetadata meta = ConfigurationContext.getSOSMetadata(serviceUrl);
-            ProcedureQueryResponse response = new ProcedureQueryResponse();
-            response.setServiceUrl(serviceUrl);
-            if (procedureFilter == null || procedureFilter.size() == 0) {
-            	response.setProcedure(meta.getProcedures().toArray(new Procedure[0]));
-            } else {
-                List<Procedure> procedures = new ArrayList<Procedure>();
-            	for (String procedure : procedureFilter) {
-    				procedures.add(meta.getProcedure(procedure));
-    			}
-            	response.setProcedure(procedures.toArray(new Procedure[0]));
-            }
-            return response;
+            LOG.debug("Request -> getProcedure(sosUrl: {}, procedureIDs: {})", serviceUrl, procedureFilter);
+            return queryByProcedures(serviceUrl, procedureFilter);
         } catch (Exception e) {
             LOG.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
+    }
+
+    private ProcedureQueryResponse queryByProcedures(String serviceUrl, Collection<String> filter) {
+        SOSMetadata meta = ConfigurationContext.getSOSMetadata(serviceUrl);
+        ProcedureQueryResponse response = new ProcedureQueryResponse();
+        if (filter == null || filter.size() == 0) {
+        	response.setProcedure(meta.getProcedures().toArray(new Procedure[0]));
+        } else {
+            List<Procedure> procedures = new ArrayList<Procedure>();
+        	for (String procedure : filter) {
+        		procedures.add(meta.getProcedure(procedure));
+        	}
+        	response.setProcedure(procedures.toArray(new Procedure[0]));
+        }
+        response.setServiceUrl(serviceUrl);
+        return response;
     }
 	
 	private QueryResponse<?> getPhenomenons(PhenomenonQuery query) throws Exception {
 		try {
 			String serviceUrl = query.getServiceUrl();
 			Collection<String> phenomenonFilter = query.getPhenomenonFilter();
-            if (LOG.isDebugEnabled()) {
-                String msgTemplate = "Request -> getPhen4SOS(sosUrl: %s)";
-                LOG.debug(String.format(msgTemplate, serviceUrl));
-            }
-            SOSMetadata meta = ConfigurationContext.getSOSMetadata(serviceUrl);
-            PhenomenonQueryResponse response = new PhenomenonQueryResponse();
-            if (phenomenonFilter == null || phenomenonFilter.size() == 0) {
-            	response.setPhenomenons(meta.getPhenomenons().toArray(new Phenomenon[0]));
-            } else {
-                List<Phenomenon> phenomenons = new ArrayList<Phenomenon>();
-            	for (String phenomenon : phenomenonFilter) {
-            	    phenomenons.add(meta.getPhenomenon(phenomenon));
-    			}
-            	response.setPhenomenons(phenomenons.toArray(new Phenomenon[0]));
-            }
-            response.setServiceUrl(serviceUrl);
-            return response;
+            LOG.debug("Request -> getPhen4SOS(sosUrl: {})", serviceUrl);
+            return queryByPhenomenons(serviceUrl, phenomenonFilter);
         } catch (Exception e) {
             LOG.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
 	}
+
+    private PhenomenonQueryResponse queryByPhenomenons(String serviceUrl, Collection<String> filter) {
+        SOSMetadata metadata = ConfigurationContext.getSOSMetadata(serviceUrl);
+        PhenomenonQueryResponse response = new PhenomenonQueryResponse();
+        if (filter == null || filter.size() == 0) {
+        	response.setPhenomenons(metadata.getPhenomenonsAsArray());
+        } else {
+            List<Phenomenon> phenomenons = new ArrayList<Phenomenon>();
+        	for (String phenomenon : filter) {
+        	    phenomenons.add(metadata.getPhenomenon(phenomenon));
+        	}
+        	response.setPhenomenons(phenomenons.toArray(new Phenomenon[0]));
+        }
+        response.setServiceUrl(serviceUrl);
+        return response;
+    }
 	
-	private QueryResponse<?> getFeatureResponse(FeatureQuery query) throws Exception {
+	private QueryResponse<?> getFeatures(FeatureQuery query) throws Exception {
 	    try {
 	    	String serviceUrl = query.getServiceUrl();
 	    	Collection<String> featureFilter = query.getFeatureOfInterestFilter();
-	        if (LOG.isDebugEnabled()) {
-	            String msgTemplate = "Request -> getFeature(sosUrl: %s, featureID: %s)";
-	            LOG.debug(String.format(msgTemplate, serviceUrl, featureFilter));
-	        }
-	        SOSMetadata meta = ConfigurationContext.getSOSMetadata(serviceUrl);
-	        FeatureQueryResponse response = new FeatureQueryResponse();
-	        if (featureFilter == null || featureFilter.size() == 0) {
-	        	response.setFeatures(meta.getFeatures().toArray(new FeatureOfInterest[0]));
-	        } else {
-	            List<FeatureOfInterest> fois = new ArrayList<FeatureOfInterest>();
-	        	for (String feature : featureFilter) {
-					fois.add(meta.getFeature(feature));
-				}
-	        	response.setFeatures(fois.toArray(new FeatureOfInterest[0]));
-	        }
-	        response.setServiceUrl(serviceUrl);
-	        return response;
+            LOG.debug("Request -> getFeatures(sosUrl: {}, featureIDs: {})", serviceUrl, featureFilter);
+	        return queryByFeatures(serviceUrl, featureFilter);
 	    } catch (Exception e) {
 	        LOG.error("Exception occured on server side.", e);
 	        throw e; // last chance to log on server side
 	    }
 	}
+
+    private FeatureQueryResponse queryByFeatures(String serviceUrl, Collection<String> filter) {
+        SOSMetadata metadata = ConfigurationContext.getSOSMetadata(serviceUrl);
+        FeatureQueryResponse response = new FeatureQueryResponse();
+        if (filter == null || filter.size() == 0) {
+        	response.setFeatures(metadata.getFeaturesAsArray());
+        } else {
+            List<FeatureOfInterest> fois = new ArrayList<FeatureOfInterest>();
+        	for (String feature : filter) {
+        		fois.add(metadata.getFeature(feature));
+        	}
+        	response.setFeatures(fois.toArray(new FeatureOfInterest[0]));
+        }
+        response.setServiceUrl(serviceUrl);
+        return response;
+    }
 	
     private AReferencingHelper createReferenceHelper(boolean forceXYAxisOrder) {
         if (forceXYAxisOrder) {

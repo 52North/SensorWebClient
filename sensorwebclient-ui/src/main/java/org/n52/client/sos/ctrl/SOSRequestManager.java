@@ -824,7 +824,7 @@ public class SOSRequestManager extends RequestManager {
 	private QueryCallback createQueryCallback(String errorMessage) {
 		QueryCallback callback = new QueryCallback(this, errorMessage) {
 			@Override
-			public void onSuccess(QueryResponse result) {
+			public void onSuccess(QueryResponse<?> result) {
 				removeRequest();
 				try {
 					// TODO refactor
@@ -855,23 +855,23 @@ public class SOSRequestManager extends RequestManager {
         EventBus.getMainEventBus().fireEvent(event);
 	}
 
-	void getPositions(final String sosURL, int startIdx, final int interval, final BoundingBox boundingBox) throws Exception {
+	void getPositions(final String sosURL, int offset, final int size, final BoundingBox boundingBox) throws Exception {
 	    final long begin = System.currentTimeMillis();
 	    QueryCallback callback = new QueryCallback(this, "Could not get positions.") {
 	        @Override
 	        public void onSuccess(final QueryResponse<?> queryResponse) {
 	            try {
 	                removeRequest();
-	                Page<Station> resultPage = (Page<Station>) queryResponse.getResultSubset();
+	                Page<?> resultPage = queryResponse.getResultSubset();
                     String url = queryResponse.getServiceUrl();
                     if (resultPage.isLastPage()) {
 	                    requestMgr.removeRequest(System.currentTimeMillis() - begin);
 	                    EventBus.getMainEventBus().fireEvent(new GetProcedurePositionsFinishedEvent());
 	                } else {
-	                    int newOffset = resultPage.getOffset() + interval;
-	                    getNextChunk(sosURL, newOffset, interval, boundingBox);
+	                    int nextOffset = resultPage.getOffset() + size;
+	                    getNextChunk(sosURL, nextOffset, size, boundingBox);
 	                }
-	                List<Station> stations = Arrays.asList(resultPage.getResults());
+	                List<Station> stations = (List<Station>) Arrays.asList(resultPage.getResults());
 	                StoreStationsEvent event = new StoreStationsEvent(url, stations);
 	                EventBus.getMainEventBus().fireEvent(event);
 	            }
@@ -892,8 +892,8 @@ public class SOSRequestManager extends RequestManager {
 	    };
 		QueryRequest request = new StationQueryRequestBuilder()
 				.addServiceUrl(sosURL)
-				.setOffset(startIdx)
-				.setSize(interval)
+				.setOffset(offset)
+				.setSize(size)
 				.addSpatialFilter(boundingBox)
 				.build();
 	    this.queryService.doQuery(request, callback);

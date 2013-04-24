@@ -49,11 +49,11 @@ public class GetMetadataService {
 		request.setServiceUrl(metadata.getServiceUrl());
 		request.setOfferingFilter(query.getOfferings());
 		request.setProcedureFilter(query.getProcedures());
+        request.setPhenomenonFilter(query.getPhenomenonS());
 		request.setFeatureOfInterestFilter(query.getFeatureOfInterests());
-		request.setPhenomenonFilter(query.getPhenomenonS());
-		request.setSize(query.getTotal());
+        createSpatialFilter(query, request);
 		request.setOffset(query.getOffset());
-		createSpatialFilter(query, request);
+        request.setSize(query.getTotal());
 		return request;
 	}
 
@@ -69,10 +69,10 @@ public class GetMetadataService {
 		}
     }
 
-	protected SOSMetadata getServiceMetadata(String instance) {
-        SOSMetadata metadata = ConfigurationContext.getSOSMetadataForItemName(instance);
+	private SOSMetadata getServiceMetadata(String itemName) {
+        SOSMetadata metadata = ConfigurationContext.getSOSMetadataForItemName(itemName);
         if (metadata == null) {
-            LOGGER.warn("Could not find configured SOS instance for itemName '{}'" + instance);
+            LOGGER.warn("Could not find configured SOS instance for itemName '{}'" + itemName);
             throw new ResourceNotFoundException();
         }
         return metadata;

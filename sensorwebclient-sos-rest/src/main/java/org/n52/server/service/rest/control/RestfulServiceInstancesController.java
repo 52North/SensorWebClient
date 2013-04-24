@@ -1,5 +1,7 @@
 package org.n52.server.service.rest.control;
 
+import static org.n52.server.service.rest.control.RestfulKvp.*;
+
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -13,13 +15,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @RequestMapping(produces = {"text/html", "application/*"})
-public class RestfulServiceInstancesController {
+public class RestfulServiceInstancesController implements RestfulKvp {
     
     private ServiceInstancesService serviceInstancesService;
     
     @RequestMapping(value = "/services/{id}")
     public ModelAndView getInstances(@PathVariable(value="id") String id, 
-                                     @RequestParam(value="filter", required=false) String filter) {
+                                     @RequestParam(value=KVP_SHOW, required=false) String filter) {
         ServiceInstance serviceInstance = serviceInstancesService.getServiceInstance(id);
         if (serviceInstance == null) {
             throw new ResourceNotFoundException();
@@ -30,11 +32,11 @@ public class RestfulServiceInstancesController {
     }
     
     @RequestMapping(value = "/services")
-    public ModelAndView getInstances(@RequestParam(value="details", required=false) String details,
-                                     @RequestParam(value="offset", required=false) Integer offset,
-                                     @RequestParam(value="size", required=false, defaultValue="10") Integer size) {
+    public ModelAndView getInstances(@RequestParam(value=KVP_SHOW, required=false) String details,
+                                     @RequestParam(value=KVP_OFFSET, required=false) Integer offset,
+                                     @RequestParam(value=KVP_SIZE, required=false, defaultValue=KVP_DEFAULT_SIZE) Integer size) {
         
-        // TODO condense output depending on 'details' parameter
+        // TODO condense output depending on 'show' parameter
         
         Collection<ServiceInstance> instances = serviceInstancesService.getServiceInstances();
         if (offset == null) {

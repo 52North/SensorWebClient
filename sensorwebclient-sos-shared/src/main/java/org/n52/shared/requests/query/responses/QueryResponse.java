@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.n52.shared.requests.query.Page;
 
-public abstract class QueryResponse<T> implements Serializable {
+public  class QueryResponse<T> implements Serializable {
 
 	private static final long serialVersionUID = 8964914430932650368L;
 	
@@ -35,5 +35,5 @@ public abstract class QueryResponse<T> implements Serializable {
     public void setResultSubset(Page<T> resultSubset) {
         this.resultSubset = resultSubset;
     }
-
+    
 }

@@ -28,6 +28,6 @@ import org.n52.shared.requests.query.responses.QueryResponse;
 
 public interface QueryService {
 
-    public QueryResponse doQuery(QueryRequest request) throws Exception;
+    public QueryResponse<?> doQuery(QueryRequest request) throws Exception;
 
 }
