@@ -61,7 +61,7 @@ public class DataManagerSosImpl implements DataManager<SOSMetadata> {
         new SOSEventBroker();
     }
 
-    public static DataManagerSosImpl getInst() {
+    public static DataManagerSosImpl getDataManager() {
         if (instance == null) {
             instance = new DataManagerSosImpl();
         }

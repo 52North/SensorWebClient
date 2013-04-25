@@ -110,7 +110,7 @@ public class PermaLinkController {
 
 	public void check() {
 		if (!permalinkLoaded && featureReady && procedureReady && offeringReady && stationReady) {
-            SOSMetadata metadata = DataManagerSosImpl.getInst().getServiceMetadata(url);
+            SOSMetadata metadata = DataManagerSosImpl.getDataManager().getServiceMetadata(url);
             ParameterConstellation paramConst = new ParameterConstellation();
             paramConst.setPhenomenon(phenomenon);
             paramConst.setFeatureOfInterest(foi);

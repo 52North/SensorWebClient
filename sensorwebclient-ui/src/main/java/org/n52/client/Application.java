@@ -97,7 +97,7 @@ public final class Application {
     public static void continueStartup() {
 
         // init handlers before throwing events
-        DataManagerSosImpl.getInst();
+        DataManagerSosImpl.getDataManager();
         new SOSController();
         if (ClientUtils.isSesEnabled()) {
             new SesController();
