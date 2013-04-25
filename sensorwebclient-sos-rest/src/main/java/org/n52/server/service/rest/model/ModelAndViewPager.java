@@ -1,6 +1,6 @@
 package org.n52.server.service.rest.model;
 
-import org.n52.shared.requests.query.PageResult;
+import org.n52.shared.requests.query.ResultPage;
 import org.springframework.web.servlet.ModelAndView;
 
 public class ModelAndViewPager {
@@ -11,7 +11,7 @@ public class ModelAndViewPager {
         this.mav = new ModelAndView(viewName);
     }
 
-    public void setPage(PageResult<?> pageResult) {
+    public void setPage(ResultPage<?> pageResult) {
         mav.addObject(pageResult);
     }
     

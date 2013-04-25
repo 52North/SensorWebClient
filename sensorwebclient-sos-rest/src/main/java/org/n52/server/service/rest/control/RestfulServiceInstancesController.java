@@ -1,15 +1,12 @@
 package org.n52.server.service.rest.control;
 
-import static org.n52.server.service.rest.control.RestfulKvp.*;
-
 import java.util.Arrays;
 import java.util.Collection;
 
 import org.n52.server.service.ServiceInstancesService;
 import org.n52.server.service.rest.model.ModelAndViewPager;
 import org.n52.server.service.rest.model.ServiceInstance;
-import org.n52.shared.requests.query.PageResult;
-import org.springframework.http.HttpMethod;
+import org.n52.shared.requests.query.ResultPage;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,7 +40,7 @@ public class RestfulServiceInstancesController implements RestfulKvp {
         Collection<ServiceInstance> instances = serviceInstancesService.getServiceInstances();
         if (offset == null) {
             ModelAndView mav = new ModelAndView("services");
-            return mav.addObject(createResultSubset(0, instances.size(), instances));
+            return mav.addObject(createResultSubset(instances, 0, instances.size()));
         } else {
             ModelAndViewPager mavPage = createResultPage(offset.intValue(), size.intValue(), instances);
             return mavPage.getPagedModelAndView();
@@ -52,14 +49,11 @@ public class RestfulServiceInstancesController implements RestfulKvp {
 
     private ModelAndViewPager createResultPage(int offset, int size, Collection<ServiceInstance> instances) {
         ModelAndViewPager mavPage = new ModelAndViewPager("services");
-        if (offset <= instances.size()) {
-            ServiceInstance[] results = createResultSubset(offset, size, instances);
-            mavPage.setPage(new PageResult<ServiceInstance>(offset, instances.size(), results));
-        }
+        mavPage.setPage(ResultPage.createPageFrom(instances, offset, size));
         return mavPage;
     }
 
-    private ServiceInstance[] createResultSubset(int offset, int size, Collection<ServiceInstance> instances) {
+    private ServiceInstance[] createResultSubset(Collection<ServiceInstance> instances, int offset, int size) {
         return Arrays.copyOfRange(instances.toArray(new ServiceInstance[0]), offset, offset + size);
     }
 

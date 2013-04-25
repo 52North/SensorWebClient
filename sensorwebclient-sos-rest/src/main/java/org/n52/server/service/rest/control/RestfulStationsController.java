@@ -1,50 +1,60 @@
 package org.n52.server.service.rest.control;
 
-import org.n52.server.service.GetMetadataService;
-import org.n52.server.service.rest.InternalServiceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.server.service.rest.QueryParameters;
+import org.n52.server.service.rest.model.ModelAndViewPager;
+import org.n52.shared.requests.query.ResultPage;
+import org.n52.shared.requests.query.responses.QueryResponse;
+import org.n52.shared.serializable.pojos.sos.Station;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-public class RestfulStationsController {
+@Controller
+@RequestMapping(value = "/services", produces = {"text/html", "application/*"})
+public class RestfulStationsController extends TimeseriesParameterController implements RestfulKvp, RestfulUrls {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestfulStationsController.class);
-    
-    private static final String KVP_FILTER = "filter";
-    
-    private GetMetadataService metadataService;
-    
-    @RequestMapping(value = "/{instance}/stations", method = RequestMethod.GET)
-    public ModelAndView getStation(@PathVariable(value="instance") String instance, 
-                                   @RequestParam(value=KVP_FILTER, required=false) String filter,
-                                   @RequestParam(value="offset", required=false) int offset,
-                                   @RequestParam(value="size", required=false) int size) {
-        try {
+    @RequestMapping(value = "/{instance}/" + PATH_STATIONS)
+    public ModelAndView getProcedureByGET(@PathVariable("instance") String instance, 
+                                          @RequestParam(value = KVP_SHOW, required = false) String details, 
+                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset, 
+                                          @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
+
+        // TODO condense output depending on 'show' parameter
+
+        QueryParameters parameters = QueryParameters.createEmptyFilterQuery();
+        QueryResponse< ? > result = doQuery(createProcedureQuery(parameters, instance));
+        Station[] stations = (Station[]) result.getResults();
+
+        if (offset == null) {
             ModelAndView mav = new ModelAndView("stations");
-            if (filter != null) {
-                if ("full".equalsIgnoreCase(filter)) {
-//                    metadataService.getStations(query, instance);
-                } 
-            }
-//            StationQueryResponse stations = (StationQueryResponse) metadataService.getStations(querySet, instance);
-//            mav.addAllObjects(createStations(stations));
-            return mav;
-        } catch (Exception e) {
-            LOGGER.error("Could not create response.", e);
-            throw new InternalServiceException();
+            return mav.addObject(stations);
+        }
+        else {
+            ModelAndViewPager mavPage = createResultPage(offset.intValue(), size.intValue(), stations);
+            return mavPage.getPagedModelAndView();
         }
     }
-
-    public GetMetadataService getMetadataService() {
-        return metadataService;
+    
+    private ModelAndViewPager createResultPage(int offset, int size, Station[] procedures) {
+        ModelAndViewPager mavPage = new ModelAndViewPager("stations");
+        mavPage.setPage(ResultPage.createPageFrom(procedures, offset, size));
+        return mavPage;
     }
 
-    public void setMetadataService(GetMetadataService metadataService) {
-        this.metadataService = metadataService;
+    @RequestMapping(value = "/{instance}/" + PATH_STATIONS + "/{id}")
+    public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance, 
+                                         @PathVariable(value = "id") String procedure) throws Exception {
+        ModelAndView mav = new ModelAndView("procedures");
+        QueryParameters parameters = new QueryParameters().addProcedure(procedure);
+        QueryResponse< ? > result = doQuery(createProcedureQuery(parameters, instance));
+        Station[] stations = (Station[]) result.getResults();
+        if (stations == null || stations.length == 0) {
+            throw new ResourceNotFoundException();
+        }
+        mav.addObject(stations[0]);
+        return mav;
     }
 
 }

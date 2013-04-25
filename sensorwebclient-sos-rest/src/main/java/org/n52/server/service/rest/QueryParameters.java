@@ -48,10 +48,6 @@ public class QueryParameters {
 	    return new QueryParameters();
 	}
 
-	public QueryParameters() {
-		// for serialization
-	}
-
 	public Collection<String> getOfferings() {
 		return offerings;
 	}

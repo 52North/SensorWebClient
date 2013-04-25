@@ -127,7 +127,7 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
         return this.requestSensorData;
     }
 
-    public String getSos() {
+    public String getServiceUrl() {
         return this.sos;
     }
     

@@ -33,5 +33,10 @@ public interface RestfulUrls {
      * Subpath identifying a collection of features available.
      */
     static final String PATH_FEATUES = "features";
+    
+    /**
+     * Subpath identifying a collection of stations available.
+     */
+    static final String PATH_STATIONS = "stations";
 
 }

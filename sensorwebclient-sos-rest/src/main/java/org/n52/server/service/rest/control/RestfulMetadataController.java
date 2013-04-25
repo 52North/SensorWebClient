@@ -35,7 +35,6 @@ import org.n52.server.service.rest.QueryParameters;
 import org.n52.shared.requests.query.responses.FeatureQueryResponse;
 import org.n52.shared.requests.query.responses.OfferingQueryResponse;
 import org.n52.shared.requests.query.responses.PhenomenonQueryResponse;
-import org.n52.shared.requests.query.responses.ProcedureQueryResponse;
 import org.n52.shared.requests.query.responses.StationQueryResponse;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;

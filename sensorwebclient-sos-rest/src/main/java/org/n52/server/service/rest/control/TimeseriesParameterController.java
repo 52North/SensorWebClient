@@ -1,3 +1,4 @@
+
 package org.n52.server.service.rest.control;
 
 import org.n52.client.service.QueryService;
@@ -13,23 +14,27 @@ import org.n52.shared.requests.query.responses.QueryResponse;
 import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class TimeseriesParameterController {
-    
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TimeseriesParameterController.class);
+
     private QueryService queryService;
-    
+
     protected QueryRequest createOfferingQuery(QueryParameters parameters, String instance) {
         return createQuery(parameters, instance, new OfferingQuery());
     }
-    
+
     protected QueryRequest createProcedureQuery(QueryParameters parameters, String instance) {
         return createQuery(parameters, instance, new ProcedureQuery());
     }
-    
+
     protected QueryRequest createPhenomenonQuery(QueryParameters parameters, String instance) {
         return createQuery(parameters, instance, new PhenomenonQuery());
     }
-    
+
     protected QueryRequest createFeatureQuery(QueryParameters parameters, String instance) {
         return createQuery(parameters, instance, new FeatureQuery());
     }
@@ -42,8 +47,8 @@ public abstract class TimeseriesParameterController {
         request.setPhenomenonFilter(parameters.getPhenomenons());
         request.setFeatureOfInterestFilter(parameters.getFeatureOfInterests());
         createSpatialFilter(parameters, request);
-//        request.setOffset(parameters.getOffset());
-//        request.setSize(parameters.getTotal());
+        // request.setOffset(parameters.getOffset());
+        // request.setSize(parameters.getTotal());
         return request;
     }
 
@@ -54,7 +59,7 @@ public abstract class TimeseriesParameterController {
         }
         return metadata;
     }
-    
+
     private void createSpatialFilter(QueryParameters query, QueryRequest request) {
         if (query.getSpatialFilter() != null) {
             Point lowerLeft = query.getSpatialFilter().getLowerLeft();
@@ -67,10 +72,10 @@ public abstract class TimeseriesParameterController {
         }
     }
 
-    protected QueryResponse<?> doQuery(QueryRequest queryRequest) throws Exception {
+    protected QueryResponse< ? > doQuery(QueryRequest queryRequest) throws Exception {
         return queryService.doQuery(queryRequest);
     }
-    
+
     public QueryService getQueryService() {
         return queryService;
     }
@@ -78,7 +83,5 @@ public abstract class TimeseriesParameterController {
     public void setQueryService(QueryService queryService) {
         this.queryService = queryService;
     }
-    
-    
 
 }

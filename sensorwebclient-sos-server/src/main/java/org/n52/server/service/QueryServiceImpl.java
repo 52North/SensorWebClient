@@ -24,6 +24,7 @@
 package org.n52.server.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,7 +34,6 @@ import org.n52.server.oxf.util.crs.AReferencingHelper;
 import org.n52.shared.exceptions.ServiceOccupiedException;
 import org.n52.shared.requests.query.FeatureQuery;
 import org.n52.shared.requests.query.OfferingQuery;
-import org.n52.shared.requests.query.PageResult;
 import org.n52.shared.requests.query.PhenomenonQuery;
 import org.n52.shared.requests.query.ProcedureQuery;
 import org.n52.shared.requests.query.QueryRequest;
@@ -41,9 +41,7 @@ import org.n52.shared.requests.query.StationQuery;
 import org.n52.shared.requests.query.responses.FeatureQueryResponse;
 import org.n52.shared.requests.query.responses.OfferingQueryResponse;
 import org.n52.shared.requests.query.responses.PhenomenonQueryResponse;
-import org.n52.shared.requests.query.responses.ProcedureQueryResponse;
 import org.n52.shared.requests.query.responses.QueryResponse;
-import org.n52.shared.requests.query.responses.StationQueryResponse;
 import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
 import org.n52.shared.serializable.pojos.sos.Offering;
@@ -114,11 +112,9 @@ public class QueryServiceImpl implements QueryService {
                 	}
                 }
             }
-            
-            StationQueryResponse response = new StationQueryResponse();
-            response.setServiceUrl(serviceUrl);
-            response.setResultSubset(new PageResult<Station>(startIndex, stations.size(), finalStations));
-            return response;
+
+            Station[] pagedStations = Arrays.copyOfRange(finalStations, startIndex, interval);
+            return new QueryResponse<Station>(serviceUrl, pagedStations);
         } catch (Exception e) {
             LOG.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
@@ -150,7 +146,7 @@ public class QueryServiceImpl implements QueryService {
         OfferingQueryResponse response = new OfferingQueryResponse();
         response.setServiceUrl(serviceUrl);
         if (filter == null || filter.size() == 0) {
-        	response.setOffering(lookup.getOfferings().toArray(new Offering[0]));
+        	response.setOffering(lookup.getOfferingsAsArray());
         } else {
             List<Offering> offerings = new ArrayList<Offering>();
         	for (String offering : filter) {
@@ -174,19 +170,18 @@ public class QueryServiceImpl implements QueryService {
         }
     }
 
-    private ProcedureQueryResponse queryByProcedures(String serviceUrl, Collection<String> filter) {
+    private QueryResponse<Procedure> queryByProcedures(String serviceUrl, Collection<String> filter) {
+        QueryResponse<Procedure> response = new QueryResponse<Procedure>(serviceUrl);
         TimeseriesParametersLookup lookup = getParametersLookupFor(serviceUrl);
-        ProcedureQueryResponse response = new ProcedureQueryResponse();
         if (filter == null || filter.size() == 0) {
-        	response.setProcedure(lookup.getProcedures().toArray(new Procedure[0]));
+        	response.setResults(lookup.getProceduresAsArray());
         } else {
             List<Procedure> procedures = new ArrayList<Procedure>();
         	for (String procedure : filter) {
         		procedures.add(lookup.getProcedure(procedure));
         	}
-        	response.setProcedure(procedures.toArray(new Procedure[0]));
+        	response.setResults(procedures.toArray(new Procedure[0]));
         }
-        response.setServiceUrl(serviceUrl);
         return response;
     }
 	

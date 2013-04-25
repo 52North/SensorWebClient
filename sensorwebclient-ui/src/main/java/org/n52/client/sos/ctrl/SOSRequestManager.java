@@ -24,6 +24,7 @@
 
 package org.n52.client.sos.ctrl;
 
+import static org.n52.client.sos.ctrl.DataManagerSosImpl.getDataManager;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 import static org.n52.shared.serializable.pojos.DesignOptions.SOS_PARAM_FIRST;
 import static org.n52.shared.serializable.pojos.DesignOptions.SOS_PARAM_LAST;
@@ -111,10 +112,12 @@ import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeSeriesProperties;
 import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
 import org.n52.shared.serializable.pojos.sos.Offering;
+import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.n52.shared.service.rpc.RpcEESDataService;
 import org.n52.shared.service.rpc.RpcEESDataServiceAsync;
 import org.n52.shared.service.rpc.RpcFileDataService;
@@ -189,18 +192,7 @@ public class SOSRequestManager extends RequestManager {
     }
 
     public void requestSensorMetadata(NewTimeSeriesEvent evt) throws Exception {
-        int width = evt.getWidth();
-        int height = evt.getHeight();
-        String url = evt.getSos();
-
-        SOSMetadata meta = DataManagerSosImpl.getDataManager().getServiceMetadata(url);
-        Station station = evt.getStation();
-        Offering offering = meta.getOffering(evt.getParameterConstellation().getOffering());
-        FeatureOfInterest foi = meta.getFeature(evt.getParameterConstellation().getFeatureOfInterest());
-        Procedure procedure = meta.getProcedure(evt.getParameterConstellation().getProcedure());
-        Phenomenon phenomenon = meta.getPhenomenon(evt.getParameterConstellation().getPhenomenon());
-
-        TimeSeriesProperties props = new TimeSeriesProperties(url, station, offering, foi, procedure, phenomenon, width, height);
+        TimeSeriesProperties props = createTimeseriesProperties(evt, evt.getServiceUrl());
         TimeSeries timeSeries = new TimeSeries("TS_" + System.currentTimeMillis(), props);
 
         try {
@@ -219,6 +211,24 @@ public class SOSRequestManager extends RequestManager {
                 ExceptionHandler.handleException(new RequestFailedException("Server did not respond!", e));
             }
         }
+    }
+
+    private TimeSeriesProperties createTimeseriesProperties(NewTimeSeriesEvent evt, String serviceUrl) {
+        int width = evt.getWidth();
+        int height = evt.getHeight();
+        Station station = evt.getStation();
+        TimeseriesParametersLookup lookup = getTimeseriesParameterLookupFor(serviceUrl);
+        ParameterConstellation parameterConstellation = evt.getParameterConstellation();
+        FeatureOfInterest foi = lookup.getFeature(parameterConstellation.getFeatureOfInterest());
+        Phenomenon phenomenon = lookup.getPhenomenon(parameterConstellation.getPhenomenon());
+        Procedure procedure = lookup.getProcedure(parameterConstellation.getProcedure());
+        Offering offering = lookup.getOffering(parameterConstellation.getOffering());
+        return new TimeSeriesProperties(serviceUrl, station, offering, foi, procedure, phenomenon, width, height);
+    }
+
+    private TimeseriesParametersLookup getTimeseriesParameterLookupFor(String serviceUrl) {
+        SOSMetadata meta = getDataManager().getServiceMetadata(serviceUrl);
+        return meta.getTimeseriesParamtersLookup();
     }
 
     public void requestFirstValueOf(TimeSeries timeSeries) {
@@ -862,7 +872,7 @@ public class SOSRequestManager extends RequestManager {
 	        public void onSuccess(final QueryResponse<?> queryResponse) {
 	            try {
 	                removeRequest();
-	                Page<?> resultPage = queryResponse.getResultSubset();
+	                Page<?> resultPage = queryResponse.getPagedResults();
                     String url = queryResponse.getServiceUrl();
                     if (resultPage.isLastPage()) {
 	                    requestMgr.removeRequest(System.currentTimeMillis() - begin);
@@ -912,7 +922,7 @@ public class SOSRequestManager extends RequestManager {
 	
 	protected void handleProcedureQuery(QueryResponse<?> result) {
 		ProcedureQueryResponse response = (ProcedureQueryResponse) result;
-		Procedure procedure = response.getProcedure()[0]; // TODO fragile!
+		Procedure procedure = response.getResults()[0]; // TODO fragile!
 		String serviceUrl = response.getServiceUrl();
 		StoreProcedureEvent event = new StoreProcedureEvent(serviceUrl, procedure);
 		EventBus.getMainEventBus().fireEvent(event);
