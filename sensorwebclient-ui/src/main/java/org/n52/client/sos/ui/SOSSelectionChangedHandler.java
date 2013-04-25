@@ -56,7 +56,7 @@ final class SOSSelectionChangedHandler implements SelectionChangedHandler {
 
 	private void parseAndStoreSOSMetadata(String serviceURL, Record record) {
 		SOSMetadataBuilder builder = new SOSMetadataBuilder();
-		DataManagerSosImpl dataManager = DataManagerSosImpl.getInst();
+		DataManagerSosImpl dataManager = DataManagerSosImpl.getDataManager();
 		if (!dataManager.contains(serviceURL)) {
 	        parseAndSetServiceConfiguration(builder, record);
 			dataManager.storeData(serviceURL, builder.build());
@@ -95,7 +95,7 @@ final class SOSSelectionChangedHandler implements SelectionChangedHandler {
 	     * based rendering of stations!
 	     */
 //		BoundingBox bbox = controller.getCurrentExtent();
-	    DataManagerSosImpl dataManager = DataManagerSosImpl.getInst();
+	    DataManagerSosImpl dataManager = DataManagerSosImpl.getDataManager();
 	    SOSMetadata metadata = dataManager.getServiceMetadata(serviceURL);
         BoundingBox bbox = metadata.getConfiguredExtent();
 		GetStationsEvent getStations = new GetStationsEvent(serviceURL, bbox);

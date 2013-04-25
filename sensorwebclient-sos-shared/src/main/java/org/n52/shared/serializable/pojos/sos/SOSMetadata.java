@@ -60,7 +60,7 @@ public class SOSMetadata implements Serializable {
 
     private String omVersion;
     
-    private TimeseriesParametersLookup timeseriesParamtersLookup = new TimeseriesParametersLookup();
+    private TimeseriesParametersLookup timeseriesParamtersLookup;
 
     private HashMap<String, Station> stations = new HashMap<String, Station>();
 
@@ -321,6 +321,9 @@ public class SOSMetadata implements Serializable {
 
 
     public TimeseriesParametersLookup getTimeseriesParamtersLookup() {
+        timeseriesParamtersLookup = timeseriesParamtersLookup == null 
+                ? new TimeseriesParametersLookup()
+                : timeseriesParamtersLookup;
         return timeseriesParamtersLookup;
     }
 
@@ -328,8 +331,8 @@ public class SOSMetadata implements Serializable {
      * @deprecated use {@link #getTimeseriesParamtersLookup()}
      */
     @Deprecated
-    public void addOffering(Offering offering) {
-        timeseriesParamtersLookup.addOffering(offering);
+    private void addOffering(Offering offering) {
+        getTimeseriesParamtersLookup().addOffering(offering);
     }
     
     /**
@@ -337,7 +340,7 @@ public class SOSMetadata implements Serializable {
      */
     @Deprecated
     public Collection<Offering> getOfferings() {
-        return timeseriesParamtersLookup.getOfferings();
+        return getTimeseriesParamtersLookup().getOfferings();
     }
     
     /**
@@ -345,7 +348,7 @@ public class SOSMetadata implements Serializable {
      */
     @Deprecated
     public Offering[] getOfferingsAsArray() {
-        return timeseriesParamtersLookup.getOfferingsAsArray();
+        return getTimeseriesParamtersLookup().getOfferingsAsArray();
     }
     
     /**

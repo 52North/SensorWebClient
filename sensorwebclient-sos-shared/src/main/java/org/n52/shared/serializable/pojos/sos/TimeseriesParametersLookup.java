@@ -1,6 +1,7 @@
 
 package org.n52.shared.serializable.pojos.sos;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,7 +17,9 @@ import java.util.HashMap;
  * 
  * @see ParameterConstellation
  */
-public class TimeseriesParametersLookup {
+public class TimeseriesParametersLookup implements Serializable {
+
+    private static final long serialVersionUID = 7232653582909270958L;
 
     private HashMap<String, FeatureOfInterest> features = new HashMap<String, FeatureOfInterest>();
 
