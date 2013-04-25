@@ -2,7 +2,7 @@ package org.n52.server.service;
 
 import org.n52.client.service.QueryService;
 import org.n52.server.oxf.util.ConfigurationContext;
-import org.n52.server.service.rest.QuerySet;
+import org.n52.server.service.rest.QueryParameters;
 import org.n52.server.service.rest.control.ResourceNotFoundException;
 import org.n52.server.service.rest.model.Point;
 import org.n52.shared.requests.query.FeatureQuery;
@@ -24,32 +24,32 @@ public class GetMetadataService {
 	
 	private QueryService queryService;
  
-	public QueryResponse<?> getPhenomenons(QuerySet query, String instance) throws Exception {
+	public QueryResponse<?> getPhenomenons(QueryParameters query, String instance) throws Exception {
 		return queryService.doQuery(createQuery(query, instance, new PhenomenonQuery()));
 	}
 
-	public QueryResponse<?> getProcedures(QuerySet query, String instance) throws Exception {
-		return queryService.doQuery(createQuery(query, instance, new ProcedureQuery()));
-	}
+//	public QueryResponse<?> getProcedures(QuerySet query, String instance) throws Exception {
+//		return queryService.doQuery(createQuery(query, instance, new ProcedureQuery()));
+//	}
 	
-	public QueryResponse<?> getOfferings(QuerySet query, String instance) throws Exception {
+	public QueryResponse<?> getOfferings(QueryParameters query, String instance) throws Exception {
 		return queryService.doQuery(createQuery(query, instance, new OfferingQuery()));
 	}
 	
-	public QueryResponse<?> getFeatures(QuerySet query, String instance) throws Exception {
+	public QueryResponse<?> getFeatures(QueryParameters query, String instance) throws Exception {
 		return queryService.doQuery(createQuery(query, instance, new FeatureQuery()));
 	}
 	
-	public QueryResponse<?> getStations(QuerySet query, String instance) throws Exception {
+	public QueryResponse<?> getStations(QueryParameters query, String instance) throws Exception {
 		return queryService.doQuery(createQuery(query, instance, new StationQuery()));
 	}
 	
-	private QueryRequest createQuery(QuerySet query, String instance, QueryRequest request) {
+	private QueryRequest createQuery(QueryParameters query, String instance, QueryRequest request) {
 		SOSMetadata metadata = getServiceMetadata(instance);
 		request.setServiceUrl(metadata.getServiceUrl());
 		request.setOfferingFilter(query.getOfferings());
 		request.setProcedureFilter(query.getProcedures());
-        request.setPhenomenonFilter(query.getPhenomenonS());
+        request.setPhenomenonFilter(query.getPhenomenons());
 		request.setFeatureOfInterestFilter(query.getFeatureOfInterests());
         createSpatialFilter(query, request);
 		request.setOffset(query.getOffset());
@@ -57,7 +57,16 @@ public class GetMetadataService {
 		return request;
 	}
 
-    private void createSpatialFilter(QuerySet query, QueryRequest request) {
+    private SOSMetadata getServiceMetadata(String itemName) {
+        SOSMetadata metadata = ConfigurationContext.getSOSMetadataForItemName(itemName);
+        if (metadata == null) {
+            LOGGER.warn("Could not find configured SOS instance for itemName '{}'" + itemName);
+            throw new ResourceNotFoundException();
+        }
+        return metadata;
+    }
+    
+    private void createSpatialFilter(QueryParameters query, QueryRequest request) {
         if (query.getSpatialFilter() != null) {
 			Point lowerLeft = query.getSpatialFilter().getLowerLeft();
             Point upperRight = query.getSpatialFilter().getUpperRight();
@@ -69,15 +78,6 @@ public class GetMetadataService {
 		}
     }
 
-	private SOSMetadata getServiceMetadata(String itemName) {
-        SOSMetadata metadata = ConfigurationContext.getSOSMetadataForItemName(itemName);
-        if (metadata == null) {
-            LOGGER.warn("Could not find configured SOS instance for itemName '{}'" + itemName);
-            throw new ResourceNotFoundException();
-        }
-        return metadata;
-    }
-	
 	public QueryService getQueryService() {
 		return queryService;
 	}
