@@ -21,6 +21,10 @@
 	<bean class="org.n52.server.service.rest.control.RestfulServiceInstancesController">
         <property name="serviceInstancesService" ref="serviceInstancesService"/>
     </bean>
+    
+    <bean class="org.n52.server.service.rest.control.RestfulProceduresController">
+        <property name="queryService" ref="queryServiceImpl"/>
+    </bean>
 	
 	
 	
