@@ -193,7 +193,7 @@ public class SOSRequestManager extends RequestManager {
         int height = evt.getHeight();
         String url = evt.getSos();
 
-        SOSMetadata meta = DataManagerSosImpl.getInst().getServiceMetadata(url);
+        SOSMetadata meta = DataManagerSosImpl.getDataManager().getServiceMetadata(url);
         Station station = evt.getStation();
         Offering offering = meta.getOffering(evt.getParameterConstellation().getOffering());
         FeatureOfInterest foi = meta.getFeature(evt.getParameterConstellation().getFeatureOfInterest());
@@ -628,7 +628,7 @@ public class SOSRequestManager extends RequestManager {
 
     private void getProcedurePositions(String sosURL, BoundingBox boundingBox) throws Exception {
 
-        SOSMetadata meta = DataManagerSosImpl.getInst().getServiceMetadata(sosURL);
+        SOSMetadata meta = DataManagerSosImpl.getDataManager().getServiceMetadata(sosURL);
         EventBus.getMainEventBus().fireEvent(new DeleteMarkersEvent());
 
         int chunkSize = meta.getRequestChunk() > 0 ? meta.getRequestChunk() : 25;
@@ -904,7 +904,7 @@ public class SOSRequestManager extends RequestManager {
 
 	protected void handleStationQuery(QueryResponse<?> result) {
 		StationQueryResponse response = (StationQueryResponse) result;
-		Station station = response.getStations()[0];
+		Station station = response.getStations()[0]; // TODO fragile!
 		String serviceUrl = response.getServiceUrl();
 		StoreStationEvent event = new StoreStationEvent(serviceUrl, station);
 		EventBus.getMainEventBus().fireEvent(event);
@@ -912,7 +912,7 @@ public class SOSRequestManager extends RequestManager {
 	
 	protected void handleProcedureQuery(QueryResponse<?> result) {
 		ProcedureQueryResponse response = (ProcedureQueryResponse) result;
-		Procedure procedure = response.getProcedure()[0];
+		Procedure procedure = response.getProcedure()[0]; // TODO fragile!
 		String serviceUrl = response.getServiceUrl();
 		StoreProcedureEvent event = new StoreProcedureEvent(serviceUrl, procedure);
 		EventBus.getMainEventBus().fireEvent(event);
@@ -920,14 +920,14 @@ public class SOSRequestManager extends RequestManager {
 
 	protected void handleOfferingQuery(QueryResponse<?> result) {
 		OfferingQueryResponse response = (OfferingQueryResponse) result;
-		Offering offering = response.getOfferings()[0];
+		Offering offering = response.getOfferings()[0]; // TODO fragile!
 		StoreOfferingEvent event = new StoreOfferingEvent(response.getServiceUrl(), offering);
 		EventBus.getMainEventBus().fireEvent(event);
 	}
 	
 	protected void handleFeatureQuery(QueryResponse<?> result) {
 		FeatureQueryResponse response = (FeatureQueryResponse) result;
-		FeatureOfInterest feature = response.getFeatures()[0];
+		FeatureOfInterest feature = response.getFeatures()[0]; // TODO fragile!
 		StoreFeatureEvent event = new StoreFeatureEvent(response.getServiceUrl(), feature);
 		EventBus.getMainEventBus().fireEvent(event);
 	}
