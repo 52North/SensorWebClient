@@ -28,7 +28,7 @@ import java.util.Collection;
 
 import org.n52.server.service.rest.model.BoundingBox;
 
-public class QuerySet {
+public class QueryParameters {
 
 	private Collection<String> offerings = new ArrayList<String>();
 
@@ -43,8 +43,12 @@ public class QuerySet {
 	private int offset;
 
 	private int size;
+	
+	public static QueryParameters createEmptyFilterQuery() {
+	    return new QueryParameters();
+	}
 
-	public QuerySet() {
+	public QueryParameters() {
 		// for serialization
 	}
 
@@ -52,40 +56,52 @@ public class QuerySet {
 		return offerings;
 	}
 	
-	public void addOffering(String offering) {
+	public QueryParameters addOffering(String offering) {
 	    offerings.add(offering);
+	    return this;
 	}
 
 	public void addAllOfferings(Collection<String> offerings) {
-		this.offerings.addAll(offerings);
+		offerings.addAll(offerings);
 	}
 
 	public Collection<String> getProcedures() {
 		return procedures;
 	}
 	
-	public void addProcedure(String procedure) {
+	public QueryParameters addProcedure(String procedure) {
 	    procedures.add(procedure);
+	    return this;
 	}
 
 	public void addAllProcedures(Collection<String> procedures) {
-		this.procedures.addAll(procedures);
+		procedures.addAll(procedures);
 	}
 
-	public Collection<String> getPhenomenonS() {
+	public Collection<String> getPhenomenons() {
 		return phenomenons;
+	}
+	
+	public QueryParameters addPhenomenon(String phenomenon) {
+	    phenomenons.add(phenomenon);
+	    return this;
 	}
 
 	public void addAllPhenomenons(Collection<String> phenomenons) {
-		this.phenomenons.addAll(phenomenons);
+		phenomenons.addAll(phenomenons);
 	}
 
 	public Collection<String> getFeatureOfInterests() {
 		return featureOfInterests;
 	}
+	
+	public QueryParameters addFeatureOfInterest(String feature) {
+	    featureOfInterests.add(feature);
+	    return this;
+	}
 
 	public void addAllFeatureOfInterests(Collection<String> featureOfInterests) {
-		this.featureOfInterests.addAll(featureOfInterests);
+		featureOfInterests.addAll(featureOfInterests);
 	}
 
 	public int getOffset() {
