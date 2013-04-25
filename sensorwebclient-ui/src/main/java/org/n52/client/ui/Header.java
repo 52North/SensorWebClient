@@ -280,7 +280,7 @@ public class Header extends HLayout {
         String procedure = timeSeries.getProcedureId();
         String phenomenon = timeSeries.getPhenomenonId();
         String feature = timeSeries.getFeatureId();
-        SOSMetadata metadata = DataManagerSosImpl.getInst().getServiceMetadata(sos);
+        SOSMetadata metadata = DataManagerSosImpl.getDataManager().getServiceMetadata(sos);
         String sosVersion = metadata.getSosVersion();
         return new TimeSeriesParameters(sos, sosVersion, offering, procedure, phenomenon, feature);
     }
