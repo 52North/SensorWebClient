@@ -51,6 +51,7 @@ import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,15 +146,15 @@ public class QueryServiceImpl implements QueryService {
     }
 
     private OfferingQueryResponse queryByOfferings(String serviceUrl, Collection<String> filter) {
-        SOSMetadata meta = ConfigurationContext.getSOSMetadata(serviceUrl);
+        TimeseriesParametersLookup lookup = getParametersLookupFor(serviceUrl);
         OfferingQueryResponse response = new OfferingQueryResponse();
         response.setServiceUrl(serviceUrl);
         if (filter == null || filter.size() == 0) {
-        	response.setOffering(meta.getOfferings().toArray(new Offering[0]));
+        	response.setOffering(lookup.getOfferings().toArray(new Offering[0]));
         } else {
             List<Offering> offerings = new ArrayList<Offering>();
         	for (String offering : filter) {
-        		offerings.add(meta.getOffering(offering));
+        		offerings.add(lookup.getOffering(offering));
         	}
         	response.setOffering(offerings.toArray(new Offering[0]));
         }
@@ -174,14 +175,14 @@ public class QueryServiceImpl implements QueryService {
     }
 
     private ProcedureQueryResponse queryByProcedures(String serviceUrl, Collection<String> filter) {
-        SOSMetadata meta = ConfigurationContext.getSOSMetadata(serviceUrl);
+        TimeseriesParametersLookup lookup = getParametersLookupFor(serviceUrl);
         ProcedureQueryResponse response = new ProcedureQueryResponse();
         if (filter == null || filter.size() == 0) {
-        	response.setProcedure(meta.getProcedures().toArray(new Procedure[0]));
+        	response.setProcedure(lookup.getProcedures().toArray(new Procedure[0]));
         } else {
             List<Procedure> procedures = new ArrayList<Procedure>();
         	for (String procedure : filter) {
-        		procedures.add(meta.getProcedure(procedure));
+        		procedures.add(lookup.getProcedure(procedure));
         	}
         	response.setProcedure(procedures.toArray(new Procedure[0]));
         }
@@ -202,14 +203,14 @@ public class QueryServiceImpl implements QueryService {
 	}
 
     private PhenomenonQueryResponse queryByPhenomenons(String serviceUrl, Collection<String> filter) {
-        SOSMetadata metadata = ConfigurationContext.getSOSMetadata(serviceUrl);
+        TimeseriesParametersLookup lookup = getParametersLookupFor(serviceUrl);
         PhenomenonQueryResponse response = new PhenomenonQueryResponse();
         if (filter == null || filter.size() == 0) {
-        	response.setPhenomenons(metadata.getPhenomenonsAsArray());
+        	response.setPhenomenons(lookup.getPhenomenonsAsArray());
         } else {
             List<Phenomenon> phenomenons = new ArrayList<Phenomenon>();
         	for (String phenomenon : filter) {
-        	    phenomenons.add(metadata.getPhenomenon(phenomenon));
+        	    phenomenons.add(lookup.getPhenomenon(phenomenon));
         	}
         	response.setPhenomenons(phenomenons.toArray(new Phenomenon[0]));
         }
@@ -230,19 +231,25 @@ public class QueryServiceImpl implements QueryService {
 	}
 
     private FeatureQueryResponse queryByFeatures(String serviceUrl, Collection<String> filter) {
-        SOSMetadata metadata = ConfigurationContext.getSOSMetadata(serviceUrl);
+        TimeseriesParametersLookup lookup = getParametersLookupFor(serviceUrl);
         FeatureQueryResponse response = new FeatureQueryResponse();
         if (filter == null || filter.size() == 0) {
-        	response.setFeatures(metadata.getFeaturesAsArray());
+        	response.setFeatures(lookup.getFeaturesAsArray());
         } else {
             List<FeatureOfInterest> fois = new ArrayList<FeatureOfInterest>();
         	for (String feature : filter) {
-        		fois.add(metadata.getFeature(feature));
+        		fois.add(lookup.getFeature(feature));
         	}
         	response.setFeatures(fois.toArray(new FeatureOfInterest[0]));
         }
         response.setServiceUrl(serviceUrl);
         return response;
+    }
+
+    private TimeseriesParametersLookup getParametersLookupFor(String serviceUrl) {
+        SOSMetadata metadata = ConfigurationContext.getSOSMetadata(serviceUrl);
+        TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
+        return lookup;
     }
 	
     private AReferencingHelper createReferenceHelper(boolean forceXYAxisOrder) {
