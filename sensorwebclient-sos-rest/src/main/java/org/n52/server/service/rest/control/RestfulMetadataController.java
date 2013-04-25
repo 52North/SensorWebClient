@@ -31,7 +31,7 @@ import java.util.Map;
 
 import org.n52.server.service.GetMetadataService;
 import org.n52.server.service.rest.InternalServiceException;
-import org.n52.server.service.rest.QuerySet;
+import org.n52.server.service.rest.QueryParameters;
 import org.n52.shared.requests.query.responses.FeatureQueryResponse;
 import org.n52.shared.requests.query.responses.OfferingQueryResponse;
 import org.n52.shared.requests.query.responses.PhenomenonQueryResponse;
@@ -59,7 +59,7 @@ public class RestfulMetadataController {
     // phenomenon handler methods
 
 	@RequestMapping(value = "/{instance}/phenomenons", method = RequestMethod.POST)
-    public ModelAndView getPhenomenon(@RequestBody QuerySet querySet, @PathVariable("instance") String instance) {
+    public ModelAndView getPhenomenon(@RequestBody QueryParameters querySet, @PathVariable("instance") String instance) {
         try {
             ModelAndView mav = new ModelAndView("phenomenons");
             PhenomenonQueryResponse phenomenons = (PhenomenonQueryResponse) metadataService.getPhenomenons(querySet, instance);
@@ -75,54 +75,54 @@ public class RestfulMetadataController {
     public ModelAndView getPhenomenonByGET(
     		@PathVariable("instance") String instance, 
     		@RequestParam(value="phenomenon", required=false) String phenomenon) {
-		QuerySet query = createQuerySet(null,phenomenon,null,null);
+		QueryParameters query = createQuerySet(null,phenomenon,null,null);
     	ModelAndView mav = getPhenomenon(query, instance);
     	return mav;
     }
     
     @RequestMapping(value = "/{instance}/phenomenons/{id}")
     public ModelAndView getPhenomenonByID(@PathVariable("instance") String instance, @PathVariable("id") String id) {
-    	QuerySet query = createQuerySet(null, id, null, null);
+    	QueryParameters query = createQuerySet(null, id, null, null);
     	ModelAndView mav = getPhenomenon(query, instance);
     	return mav;
     }
     
     // procedure handler methods
 
-    @RequestMapping(value = "/{instance}/procedures", method = RequestMethod.POST)
-    public ModelAndView getProcedure(@RequestBody QuerySet querySet, @PathVariable("instance") String instance) {
-        try {
-            ModelAndView mav = new ModelAndView("procedures");
-            ProcedureQueryResponse procedures = (ProcedureQueryResponse) metadataService.getProcedures(querySet, instance);
-            mav.addObject(procedures.getProcedure());
-            mav.addObject("test", "check");
-            return mav;
-        } catch (Exception e) {
-            LOGGER.error("Could not create response.", e);
-            throw new InternalServiceException();
-        }
-    }
-    
-    @RequestMapping(value = "/{instance}/procedures")
-    public ModelAndView getProcedureByGET(
-    		@PathVariable("instance") String instance,
-    		@RequestParam(value="procedure", required=false) String procedure) {
-    	QuerySet query = createQuerySet(null, null, null, procedure);
-    	ModelAndView mav = getProcedure(query, instance);
-    	return mav;
-    }
-    
-    @RequestMapping(value = "/{instance}/procedures/{id}")
-    public ModelAndView getProcedureByID(@PathVariable("instance") String instance, @PathVariable("id") String id) {
-    	QuerySet query = createQuerySet(null, null, null, id);
-    	ModelAndView mav = getProcedure(query, instance);
-    	return mav;
-    }
+//    @RequestMapping(value = "/{instance}/procedures", method = RequestMethod.POST)
+//    public ModelAndView getProcedure(@RequestBody QuerySet querySet, @PathVariable("instance") String instance) {
+//        try {
+//            ModelAndView mav = new ModelAndView("procedures");
+//            ProcedureQueryResponse procedures = (ProcedureQueryResponse) metadataService.getProcedures(querySet, instance);
+//            mav.addObject(procedures.getProcedure());
+//            mav.addObject("test", "check");
+//            return mav;
+//        } catch (Exception e) {
+//            LOGGER.error("Could not create response.", e);
+//            throw new InternalServiceException();
+//        }
+//    }
+//    
+//    @RequestMapping(value = "/{instance}/procedures")
+//    public ModelAndView getProcedureByGET(
+//    		@PathVariable("instance") String instance,
+//    		@RequestParam(value="procedure", required=false) String procedure) {
+//    	QuerySet query = createQuerySet(null, null, null, procedure);
+//    	ModelAndView mav = getProcedure(query, instance);
+//    	return mav;
+//    }
+//    
+//    @RequestMapping(value = "/{instance}/procedures/{id}")
+//    public ModelAndView getProcedureByID(@PathVariable("instance") String instance, @PathVariable("id") String id) {
+//    	QuerySet query = createQuerySet(null, null, null, id);
+//    	ModelAndView mav = getProcedure(query, instance);
+//    	return mav;
+//    }
     
     // offering handler methods
     
     @RequestMapping(value = "/{instance}/offerings", method = RequestMethod.POST)
-    public ModelAndView getOffering(@RequestBody QuerySet querySet, @PathVariable("instance") String instance) {
+    public ModelAndView getOffering(@RequestBody QueryParameters querySet, @PathVariable("instance") String instance) {
         try {
             ModelAndView mav = new ModelAndView("offerings");
             OfferingQueryResponse offerings = (OfferingQueryResponse) metadataService.getOfferings(querySet, instance);
@@ -137,14 +137,14 @@ public class RestfulMetadataController {
     public ModelAndView getOfferingByGET(
     		@PathVariable("instance") String instance,
     		@RequestParam(value="offering", required=false) String offering) {
-    	QuerySet query = createQuerySet(offering, null, null, null);
+    	QueryParameters query = createQuerySet(offering, null, null, null);
     	ModelAndView mav = getOffering(query, instance);
     	return mav;
     }
     
     @RequestMapping(value = "/{instance}/offerings/{id}")
     public ModelAndView getOfferingByID(@PathVariable("instance") String instance, @PathVariable("id") String id) {
-    	QuerySet query = createQuerySet(id, null, null, null);
+    	QueryParameters query = createQuerySet(id, null, null, null);
     	ModelAndView mav = getOffering(query, instance);
     	return mav;
     }
@@ -152,7 +152,7 @@ public class RestfulMetadataController {
     // feature handler methods
     
     @RequestMapping(value = "/{instance}/features", method = RequestMethod.POST) 
-    public ModelAndView getFeature(@RequestBody QuerySet querySet, @PathVariable("instance") String instance) {
+    public ModelAndView getFeature(@RequestBody QueryParameters querySet, @PathVariable("instance") String instance) {
         try {
             ModelAndView mav = new ModelAndView("features");
             FeatureQueryResponse features = (FeatureQueryResponse) metadataService.getFeatures(querySet, instance);
@@ -167,14 +167,14 @@ public class RestfulMetadataController {
     public ModelAndView getFeatureByGET(
     		@PathVariable("instance") String instance,
     		@RequestParam(value="feature", required=false) String feature) {
-    	QuerySet query = createQuerySet(null, null, feature, null);
+    	QueryParameters query = createQuerySet(null, null, feature, null);
     	ModelAndView mav = getFeature(query, instance);
     	return mav;
     }
     
     @RequestMapping(value = "/{instance}/features/{id}")
     public ModelAndView getFeatureByID(@PathVariable("instance") String instance, @PathVariable("id") String id) {
-    	QuerySet query = createQuerySet(null, null, id, null);
+    	QueryParameters query = createQuerySet(null, null, id, null);
     	ModelAndView mav = getFeature(query, instance);
     	return mav;
     }
@@ -182,7 +182,7 @@ public class RestfulMetadataController {
     // station handler methods
     
     @RequestMapping(value = "/{instance}/stations", method = RequestMethod.POST)
-    public ModelAndView getStation(@RequestBody QuerySet querySet, @PathVariable("instance") String instance) {
+    public ModelAndView getStation(@RequestBody QueryParameters querySet, @PathVariable("instance") String instance) {
         try {
             ModelAndView mav = new ModelAndView("stations");
             StationQueryResponse stations = (StationQueryResponse) metadataService.getStations(querySet, instance);
@@ -200,14 +200,14 @@ public class RestfulMetadataController {
     		@RequestParam(value="procedure", required=false) String procedure,
     		@RequestParam(value="phenomenon", required=false) String phenomenon,
     		@RequestParam(value="feature", required=false) String feature) {
-    	QuerySet query = createQuerySet(offering, phenomenon, feature, procedure);
+    	QueryParameters query = createQuerySet(offering, phenomenon, feature, procedure);
     	ModelAndView mav = getStation(query, instance);
     	return mav;
     }
     
     @RequestMapping(value = "/{instance}/stations/{id}")
     public ModelAndView getStationByID(@PathVariable("instance") String instance, @PathVariable("id") String id) {
-    	QuerySet query = createQuerySet(null, null, id, null);
+    	QueryParameters query = createQuerySet(null, null, id, null);
     	ArrayList<String> stationFilter = new ArrayList<String>();
     	stationFilter.add(id);
     	query.addAllFeatureOfInterests(stationFilter);
@@ -236,9 +236,9 @@ public class RestfulMetadataController {
 		return map;
 	}
 
-	private QuerySet createQuerySet(String offering, String phenomenon,
+	private QueryParameters createQuerySet(String offering, String phenomenon,
 			String feature, String procedure) {
-		QuerySet query = new QuerySet();
+		QueryParameters query = new QueryParameters();
 		
 		if (offering != null) {
 			ArrayList<String> offeringFilter = new ArrayList<String>();

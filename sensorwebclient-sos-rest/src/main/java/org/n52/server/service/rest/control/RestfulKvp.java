@@ -3,7 +3,9 @@ package org.n52.server.service.rest.control;
 
 /**
  * The {@link RestfulKvp} serves as markup interface, so that each controller instance uses the same KVP
- * parameter names.
+ * parameter names.<br/>
+ * <br/>
+ * <b>Note:</b> Do not code against this type.
  */
 public interface RestfulKvp {
 
