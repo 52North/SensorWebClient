@@ -23,44 +23,21 @@
  */
 package org.n52.client.sos.event.data;
 
-import java.util.Collection;
-
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.data.handler.StorePhenomenaEventHandler;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 
-/**
- * The Class StorePhenomenaEvent.
- * 
- * @author <a href="mailto:f.bache@52north.de">Felix Bache</a>
- */
 public class StorePhenomenaEvent extends FilteredDispatchGwtEvent<StorePhenomenaEventHandler> {
 
-    /** The TYPE. */
     public static Type<StorePhenomenaEventHandler> TYPE = new Type<StorePhenomenaEventHandler>();
 
-    /** The sos url. */
     private String sosURL;
 
-    /** The off parameterId. */
     private String offID;
 
-    /** The phenomena. */
-    private Collection<Phenomenon> phenomenons;
+    private Phenomenon[] phenomenons;
 
-    /**
-     * Instantiates a new store phenomena event.
-     * 
-     * @param sosURL
-     *            the sos url
-     * @param offID
-     *            the off parameterId
-     * @param phenomena
-     *            the phenomena
-     * @param blockedhandlers
-     *            the blockedhandlers
-     */
-    public StorePhenomenaEvent(String sosURL, String offID, Collection<Phenomenon> phenomenons,
+    public StorePhenomenaEvent(String sosURL, String offID, Phenomenon[] phenomenons,
             StorePhenomenaEventHandler... blockedhandlers) {
         super(blockedhandlers);
         this.sosURL = sosURL;
@@ -68,52 +45,25 @@ public class StorePhenomenaEvent extends FilteredDispatchGwtEvent<StorePhenomena
         this.phenomenons = phenomenons;
     }
 
-    /**
-     * Gets the sos url.
-     * 
-     * @return the sos url
-     */
     public String getSosURL() {
         return this.sosURL;
     }
 
-    /**
-     * Gets the off parameterId.
-     * 
-     * @return the off parameterId
-     */
     public String getOffID() {
         return this.offID;
     }
 
-    /**
-     * Gets the phenomena.
-     * 
-     * @return the phenomena
-     */
-    public Collection<Phenomenon> getPhenomenons() {
+    public Phenomenon[] getPhenomenons() {
         return this.phenomenons;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(StorePhenomenaEventHandler handler) {
         handler.onStore(this);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<StorePhenomenaEventHandler> getAssociatedType() {
+    public Type<StorePhenomenaEventHandler> getAssociatedType() {
         return TYPE;
     }
 

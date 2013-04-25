@@ -6,18 +6,16 @@ public class FeatureQueryResponse extends QueryResponse<FeatureOfInterest> {
 	
 	private static final long serialVersionUID = -2689753333997419445L;
 	
-	private FeatureOfInterest[] features = new FeatureOfInterest[0];
-	
-	public FeatureQueryResponse() {
+	public FeatureQueryResponse(String serviceUrl, FeatureOfInterest[] results) {
+        super(serviceUrl, results);
+    }
+
+    public FeatureQueryResponse(String serviceUrl) {
+        super(serviceUrl);
+    }
+
+    FeatureQueryResponse() {
 		// for serialization
-	}
-
-	public FeatureOfInterest[] getFeatures() {
-		return features;
-	}
-
-	public void setFeatures(FeatureOfInterest[] features) {
-		this.features = features;
 	}
 
 }

@@ -24,7 +24,7 @@
 package org.n52.client.sos.ui;
 
 import org.n52.client.bus.EventBus;
-import org.n52.client.sos.ctrl.DataManagerSosImpl;
+import org.n52.client.sos.ctrl.SosDataManager;
 import org.n52.client.sos.event.data.GetPhenomenonsEvent;
 import org.n52.client.sos.event.data.GetStationsEvent;
 import org.n52.shared.serializable.pojos.BoundingBox;
@@ -56,7 +56,7 @@ final class SOSSelectionChangedHandler implements SelectionChangedHandler {
 
 	private void parseAndStoreSOSMetadata(String serviceURL, Record record) {
 		SOSMetadataBuilder builder = new SOSMetadataBuilder();
-		DataManagerSosImpl dataManager = DataManagerSosImpl.getDataManager();
+		SosDataManager dataManager = SosDataManager.getDataManager();
 		if (!dataManager.contains(serviceURL)) {
 	        parseAndSetServiceConfiguration(builder, record);
 			dataManager.storeData(serviceURL, builder.build());
@@ -95,7 +95,7 @@ final class SOSSelectionChangedHandler implements SelectionChangedHandler {
 	     * based rendering of stations!
 	     */
 //		BoundingBox bbox = controller.getCurrentExtent();
-	    DataManagerSosImpl dataManager = DataManagerSosImpl.getDataManager();
+	    SosDataManager dataManager = SosDataManager.getDataManager();
 	    SOSMetadata metadata = dataManager.getServiceMetadata(serviceURL);
         BoundingBox bbox = metadata.getConfiguredExtent();
 		GetStationsEvent getStations = new GetStationsEvent(serviceURL, bbox);

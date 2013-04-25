@@ -24,7 +24,7 @@
 
 package org.n52.client.sos.ui;
 
-import static org.n52.client.sos.ctrl.DataManagerSosImpl.getDataManager;
+import static org.n52.client.sos.ctrl.SosDataManager.getDataManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,7 +35,7 @@ import java.util.Map.Entry;
 
 import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.n52.client.bus.EventBus;
-import org.n52.client.sos.ctrl.DataManagerSosImpl;
+import org.n52.client.sos.ctrl.SosDataManager;
 import org.n52.client.sos.event.AddMarkerEvent;
 import org.n52.client.sos.event.data.GetFeatureEvent;
 import org.n52.client.sos.event.data.GetOfferingEvent;

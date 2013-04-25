@@ -1,8 +1,11 @@
+
 package org.n52.server.service.rest.control;
 
-import org.n52.server.service.rest.QueryParameters;
 import org.n52.server.service.rest.model.ModelAndViewPager;
+import org.n52.shared.requests.query.QueryFactory;
+import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.requests.query.ResultPage;
+import org.n52.shared.requests.query.queries.QueryRequest;
 import org.n52.shared.requests.query.responses.QueryResponse;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.springframework.stereotype.Controller;
@@ -14,19 +17,28 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping(value = "/services", produces = {"text/html", "application/*"})
 public class RestfulStationsController extends TimeseriesParameterController implements RestfulKvp, RestfulUrls {
-    
+
     @RequestMapping(value = "/{instance}/" + PATH_STATIONS)
-    public ModelAndView getProcedureByGET(@PathVariable("instance") String instance, 
-                                          @RequestParam(value = KVP_SHOW, required = false) String details, 
-                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset, 
-                                          @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
+    public ModelAndView getProcedureByGET(@PathVariable("instance") String instance,
+                                          @RequestParam(value = KVP_SHOW, required = false) String details,
+                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
+                                          @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size,
+                                          @RequestParam(value = KVP_FEATURE, required = false) String feature,
+                                          @RequestParam(value = KVP_PHENOMENON, required = false) String phenomenon,
+                                          @RequestParam(value = KVP_PROCEDURE, required = false) String procedure,
+                                          @RequestParam(value = KVP_OFFERING, required = false) String offering) throws Exception {
 
         // TODO condense output depending on 'show' parameter
-
-        QueryParameters parameters = QueryParameters.createEmptyFilterQuery();
-        QueryResponse< ? > result = doQuery(createProcedureQuery(parameters, instance));
+        
+        QueryParameters parameters = new QueryParameters()
+                .setPhenomenon(phenomenon)
+                .setProcedure(procedure)
+                .setOffering(offering)
+                .setFeature(feature);
+        
+        QueryResponse< ? > result = performQuery(instance, parameters);
         Station[] stations = (Station[]) result.getResults();
-
+        
         if (offset == null) {
             ModelAndView mav = new ModelAndView("stations");
             return mav.addObject(stations);
@@ -36,25 +48,32 @@ public class RestfulStationsController extends TimeseriesParameterController imp
             return mavPage.getPagedModelAndView();
         }
     }
-    
-    private ModelAndViewPager createResultPage(int offset, int size, Station[] procedures) {
-        ModelAndViewPager mavPage = new ModelAndViewPager("stations");
-        mavPage.setPage(ResultPage.createPageFrom(procedures, offset, size));
-        return mavPage;
-    }
 
     @RequestMapping(value = "/{instance}/" + PATH_STATIONS + "/{id}")
-    public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance, 
-                                         @PathVariable(value = "id") String procedure) throws Exception {
-        ModelAndView mav = new ModelAndView("procedures");
-        QueryParameters parameters = new QueryParameters().addProcedure(procedure);
-        QueryResponse< ? > result = doQuery(createProcedureQuery(parameters, instance));
+    public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
+                                         @PathVariable(value = "id") String station) throws Exception {
+        ModelAndView mav = new ModelAndView("stations");
+        QueryParameters parameters = new QueryParameters().setStation(station);
+        QueryResponse< ? > result = performQuery(instance, parameters);
         Station[] stations = (Station[]) result.getResults();
         if (stations == null || stations.length == 0) {
             throw new ResourceNotFoundException();
         }
         mav.addObject(stations[0]);
         return mav;
+    }
+
+    private ModelAndViewPager createResultPage(int offset, int size, Station[] procedures) {
+        ModelAndViewPager mavPage = new ModelAndViewPager("stations");
+        mavPage.setPage(ResultPage.createPageFrom(procedures, offset, size));
+        return mavPage;
+    }
+
+    @Override
+    protected QueryResponse< ? > performQuery(String instance, QueryParameters parameters) throws Exception {
+        QueryFactory factory = getQueryFactoryFor(instance);
+        QueryRequest query = factory.createFilteredStationQuery(parameters);
+        return doQuery(query);
     }
 
 }

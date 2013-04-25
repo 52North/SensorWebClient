@@ -48,22 +48,23 @@ import org.n52.client.sos.event.data.handler.StoreStationsEventHandler;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
 import com.google.gwt.core.client.GWT;
 
-public class DataManagerSosImpl implements DataManager<SOSMetadata> {
+public class SosDataManager implements DataManager<SOSMetadata> {
 
-    private static DataManagerSosImpl instance;
+    private static SosDataManager instance;
 
     private Map<String, SOSMetadata> metadatas = new HashMap<String, SOSMetadata>();
     
-    private DataManagerSosImpl() {
+    private SosDataManager() {
         new SOSEventBroker();
     }
 
-    public static DataManagerSosImpl getDataManager() {
+    public static SosDataManager getDataManager() {
         if (instance == null) {
-            instance = new DataManagerSosImpl();
+            instance = new SosDataManager();
         }
         return instance;
     }
@@ -97,8 +98,9 @@ public class DataManagerSosImpl implements DataManager<SOSMetadata> {
 			}
 
 			Set<String> phenomenonIds = new HashSet<String>();
+			TimeseriesParametersLookup lookup = meta.getTimeseriesParamtersLookup();
 			for (Phenomenon phenomenon : evt.getPhenomenons()) {
-				meta.addPhenomenon(phenomenon);
+				lookup.addPhenomenon(phenomenon);
 				phenomenonIds.add(phenomenon.getId());
 			}
 			EventBus.getMainEventBus().fireEvent(new NewPhenomenonsEvent(meta.getId(), phenomenonIds));

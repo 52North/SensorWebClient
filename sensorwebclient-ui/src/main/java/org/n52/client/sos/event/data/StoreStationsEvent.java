@@ -23,8 +23,6 @@
  */
 package org.n52.client.sos.event.data;
 
-import java.util.List;
-
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.data.handler.StoreStationsEventHandler;
 import org.n52.shared.serializable.pojos.sos.Station;
@@ -36,10 +34,9 @@ public class StoreStationsEvent extends
 
     private final String sosURL;
 
-    private final List<Station> stations;
+    private final Station[] stations;
 
-    public StoreStationsEvent(String sosURL, List<Station> stations, 
-            StoreStationsEventHandler... blockedHandlers) {
+    public StoreStationsEvent(String sosURL, Station[] stations,  StoreStationsEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.sosURL = sosURL;
         this.stations = stations;
@@ -49,7 +46,7 @@ public class StoreStationsEvent extends
         return this.sosURL;
     }
 
-    public List<Station> getStations() {
+    public Station[] getStations() {
         return this.stations;
     }
 

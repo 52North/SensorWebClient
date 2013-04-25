@@ -28,18 +28,12 @@ public class ResultPage<T> implements Page<T> {
      * @return a paged subset of the given results.
      */
     public static <T> ResultPage<T> createPageFrom(Collection<T> resultsToPage, int offset, int pageSize) {
-        if (offset <= resultsToPage.size()) {
-            pageSize = normalizePageSize(offset, resultsToPage.size(), pageSize);
-            T[] resultSubset = createResultSubset(getArrayFrom(resultsToPage), offset, pageSize);
-            return new ResultPage<T>(resultSubset, offset, resultsToPage.size());
-        }
-        else {
+        if (resultsToPage == null || isIllegalOffset(offset, resultsToPage.size())) {
             return createEmptyPage();
         }
-    }
-    
-    private static int normalizePageSize(int offset, int total, int pageSize) {
-        return (offset + pageSize > total) ? total - offset : pageSize;
+        pageSize = normalizePageSize(offset, resultsToPage.size(), pageSize);
+        T[] resultSubset = createResultSubset(getArrayFrom(resultsToPage), offset, pageSize);
+        return new ResultPage<T>(resultSubset, offset, resultsToPage.size());
     }
     
     /**
@@ -54,23 +48,29 @@ public class ResultPage<T> implements Page<T> {
      * @return a paged subset of the given results.
      */
     public static <T> ResultPage<T> createPageFrom(T[] resultsToPage, int offset, int pageSize) {
-        if (resultsToPage == null) {
+        if (resultsToPage == null || isIllegalOffset(offset, resultsToPage.length)) {
             return createEmptyPage();
         }
-        else {
-            pageSize = normalizePageSize(offset, resultsToPage.length, pageSize);
-            T[] resultSubset = createResultSubset(resultsToPage, offset, pageSize);
-            return new ResultPage<T>(resultSubset, offset, resultsToPage.length);
-        }
+        pageSize = normalizePageSize(offset, resultsToPage.length, pageSize);
+        T[] resultSubset = createResultSubset(resultsToPage, offset, pageSize);
+        return new ResultPage<T>(resultSubset, offset, resultsToPage.length);
     }
 
+    private static boolean isIllegalOffset(int offset, int max) {
+        return offset > max;
+    }
+
+    private static int normalizePageSize(int offset, int total, int pageSize) {
+        return (offset + pageSize > total) ? total - offset : pageSize;
+    }
+    
     private static <T> T[] createResultSubset(T[] results, int offset, int size) {
         return Arrays.copyOfRange(results, offset, offset + size);
     }
 
     private static <T> ResultPage<T> createEmptyPage() {
         List<T> emptyList = Collections.emptyList();
-        return createPageFrom(getArrayFrom(emptyList), 0, 0);
+        return createPageFrom(getArrayFrom(emptyList), 0, 1);
     }
 
     @SuppressWarnings("unchecked")

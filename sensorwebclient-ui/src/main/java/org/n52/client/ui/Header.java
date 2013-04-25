@@ -30,7 +30,7 @@ import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 import java.util.Date;
 
 import org.n52.client.ctrl.TimeManager;
-import org.n52.client.sos.ctrl.DataManagerSosImpl;
+import org.n52.client.sos.ctrl.SosDataManager;
 import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.util.ClientUtils;
@@ -280,7 +280,7 @@ public class Header extends HLayout {
         String procedure = timeSeries.getProcedureId();
         String phenomenon = timeSeries.getPhenomenonId();
         String feature = timeSeries.getFeatureId();
-        SOSMetadata metadata = DataManagerSosImpl.getDataManager().getServiceMetadata(sos);
+        SOSMetadata metadata = SosDataManager.getDataManager().getServiceMetadata(sos);
         String sosVersion = metadata.getSosVersion();
         return new TimeSeriesParameters(sos, sosVersion, offering, procedure, phenomenon, feature);
     }

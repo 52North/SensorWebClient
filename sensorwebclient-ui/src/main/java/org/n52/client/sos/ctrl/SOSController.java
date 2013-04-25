@@ -238,7 +238,7 @@ public class SOSController extends ServiceController {
         }
 
         private TimeseriesParametersLookup getParametersLookup(String serviceUrl) {
-            DataManagerSosImpl dataManager = DataManagerSosImpl.getDataManager();
+            SosDataManager dataManager = SosDataManager.getDataManager();
             SOSMetadata serviceMetadata = dataManager.getServiceMetadata(serviceUrl);
             return serviceMetadata.getTimeseriesParamtersLookup();
         }
@@ -255,7 +255,7 @@ public class SOSController extends ServiceController {
 
 		@Override
 		public void onStore(StoreStationEvent evt) {
-			SOSMetadata serviceMetadata = DataManagerSosImpl.getDataManager().getServiceMetadata(evt.getServiceURL());
+			SOSMetadata serviceMetadata = SosDataManager.getDataManager().getServiceMetadata(evt.getServiceURL());
 			serviceMetadata.addStation(evt.getStation());
 		}
     }

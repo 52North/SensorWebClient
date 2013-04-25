@@ -35,5 +35,15 @@ public interface RestfulKvp {
      * @see #KVP_SIZE
      */
     static final String KVP_DEFAULT_SIZE = "10";
+    
+    static final String KVP_FEATURE = "feature";
+    
+    static final String KVP_OFFERING = "offering";
+    
+    static final String KVP_PROCEDURE = "procedure";
+    
+    static final String KVP_PHENOMENON = "phenomenon";
+    
+    
 
 }

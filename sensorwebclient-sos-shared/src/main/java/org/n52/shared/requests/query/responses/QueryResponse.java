@@ -4,14 +4,14 @@ package org.n52.shared.requests.query.responses;
 import java.io.Serializable;
 
 import org.n52.shared.requests.query.Page;
-import org.n52.shared.requests.query.QueryRequest;
 import org.n52.shared.requests.query.ResultPage;
+import org.n52.shared.requests.query.queries.QueryRequest;
 
 /**
  * A response object containing the results of a {@link QueryRequest}. The results can be either paged (a
  * sub-collection of all available results) or a complete collection of all results available.
  */
-public class QueryResponse<T> implements Serializable {
+public abstract class QueryResponse<T> implements Serializable {
 
     private static final long serialVersionUID = 8964914430932650368L;
 

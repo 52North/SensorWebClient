@@ -3,74 +3,45 @@ package org.n52.server.service.rest.control;
 
 import org.n52.client.service.QueryService;
 import org.n52.server.oxf.util.ConfigurationContext;
-import org.n52.server.service.rest.QueryParameters;
-import org.n52.server.service.rest.model.Point;
-import org.n52.shared.requests.query.FeatureQuery;
-import org.n52.shared.requests.query.OfferingQuery;
-import org.n52.shared.requests.query.PhenomenonQuery;
-import org.n52.shared.requests.query.ProcedureQuery;
-import org.n52.shared.requests.query.QueryRequest;
+import org.n52.shared.requests.query.QueryFactory;
+import org.n52.shared.requests.query.QueryParameters;
+import org.n52.shared.requests.query.queries.QueryRequest;
 import org.n52.shared.requests.query.responses.QueryResponse;
-import org.n52.shared.serializable.pojos.BoundingBox;
-import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class TimeseriesParameterController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TimeseriesParameterController.class);
-
     private QueryService queryService;
 
-    protected QueryRequest createOfferingQuery(QueryParameters parameters, String instance) {
-        return createQuery(parameters, instance, new OfferingQuery());
+    /**
+     * Creates a query factory for the given service instance.
+     * 
+     * @param serviceInstance
+     *        the service instance to create queries for.
+     * @return a query factory for a given service instance to create queries for.
+     * @throws ResourceNotFoundException
+     *         if no service is configured with the given item name.
+     */
+    public QueryFactory getQueryFactoryFor(String serviceInstance) {
+        return new QueryFactory(findServiceMetadataForItemName(serviceInstance));
     }
 
-    protected QueryRequest createProcedureQuery(QueryParameters parameters, String instance) {
-        return createQuery(parameters, instance, new ProcedureQuery());
-    }
-
-    protected QueryRequest createPhenomenonQuery(QueryParameters parameters, String instance) {
-        return createQuery(parameters, instance, new PhenomenonQuery());
-    }
-
-    protected QueryRequest createFeatureQuery(QueryParameters parameters, String instance) {
-        return createQuery(parameters, instance, new FeatureQuery());
-    }
-
-    private QueryRequest createQuery(QueryParameters parameters, String instance, QueryRequest request) {
-        SOSMetadata metadata = getServiceMetadata(instance);
-        request.setServiceUrl(metadata.getServiceUrl());
-        request.setOfferingFilter(parameters.getOfferings());
-        request.setProcedureFilter(parameters.getProcedures());
-        request.setPhenomenonFilter(parameters.getPhenomenons());
-        request.setFeatureOfInterestFilter(parameters.getFeatureOfInterests());
-        createSpatialFilter(parameters, request);
-        // request.setOffset(parameters.getOffset());
-        // request.setSize(parameters.getTotal());
-        return request;
-    }
-
-    private SOSMetadata getServiceMetadata(String itemName) {
-        SOSMetadata metadata = ConfigurationContext.getSOSMetadataForItemName(itemName);
+    /**
+     * @param serviceInstance
+     *        the item name of the configured service instance.
+     * @return returns the metadata associated to the service instance.
+     * @throws ResourceNotFoundException
+     *         if no service is configured with the given item name.
+     */
+    private SOSMetadata findServiceMetadataForItemName(String serviceInstance) {
+        SOSMetadata metadata = ConfigurationContext.getSOSMetadataForItemName(serviceInstance);
         if (metadata == null) {
             throw new ResourceNotFoundException();
         }
         return metadata;
     }
-
-    private void createSpatialFilter(QueryParameters query, QueryRequest request) {
-        if (query.getSpatialFilter() != null) {
-            Point lowerLeft = query.getSpatialFilter().getLowerLeft();
-            Point upperRight = query.getSpatialFilter().getUpperRight();
-            String srs = query.getSpatialFilter().getSrs();
-            EastingNorthing ll = new EastingNorthing(lowerLeft.getEasting(), lowerLeft.getNorthing(), srs);
-            EastingNorthing ur = new EastingNorthing(upperRight.getEasting(), upperRight.getNorthing(), srs);
-            BoundingBox spatialFilter = new BoundingBox(ll, ur);
-            request.setSpatialFilter(spatialFilter);
-        }
-    }
+    
+    protected abstract QueryResponse< ? > performQuery(String instance, QueryParameters parameters) throws Exception;
 
     protected QueryResponse< ? > doQuery(QueryRequest queryRequest) throws Exception {
         return queryService.doQuery(queryRequest);

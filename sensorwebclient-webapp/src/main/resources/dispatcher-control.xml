@@ -9,15 +9,6 @@
 
 	<mvc:annotation-driven />
 	
-    <bean class="org.n52.server.service.rest.control.RestfulTimeSeriesController">
-        <property name="dataService" ref="dataService" />
-        <property name="imageService" ref="imageService" />
-    </bean>
-    
-	<bean class="org.n52.server.service.rest.control.RestfulMetadataController">
-		<property name="metadataService" ref="metadataService"/>
-	</bean>
-	
 	<bean class="org.n52.server.service.rest.control.RestfulServiceInstancesController">
         <property name="serviceInstancesService" ref="serviceInstancesService"/>
     </bean>
@@ -25,19 +16,32 @@
     <bean class="org.n52.server.service.rest.control.RestfulProceduresController">
         <property name="queryService" ref="queryServiceImpl"/>
     </bean>
-	
-	
-	
-	
-    <bean id="service" class="org.n52.server.service.DataService" abstract="true">
-        <property name="sensorMetadataService" ref="sensorMetadataService" />
-    </bean>
     
-	
-    <bean id="metadataService" class="org.n52.server.service.GetMetadataService">
+    <bean class="org.n52.server.service.rest.control.RestfulStationsController">
         <property name="queryService" ref="queryServiceImpl"/>
     </bean>
     
+    
+    <bean class="org.n52.server.service.rest.control.RestfulPhenomenonsController">
+        <property name="queryService" ref="queryServiceImpl"/>
+    </bean>
+    
+    
+    <bean class="org.n52.server.service.rest.control.RestfulOfferingsController">
+        <property name="queryService" ref="queryServiceImpl"/>
+    </bean>
+	
+	
+	
+	
+	
+	
+    <bean class="org.n52.server.service.rest.control.RestfulTimeSeriesController">
+        <property name="dataService" ref="dataService" />
+        <property name="imageService" ref="imageService" />
+    </bean>
+    
+	
 	<bean id="dataService" class="org.n52.server.service.GetDataService" parent="service">
 		<property name="timeSeriesDataService" ref="tsDataService" />
 	</bean>
@@ -49,12 +53,16 @@
 		<property name="renderGrid" value="true" />
 	</bean>
 	
+    <bean id="service" class="org.n52.server.service.DataService" abstract="true">
+        <property name="sensorMetadataService" ref="sensorMetadataService" />
+    </bean>
+    
     <bean id="serviceInstancesService" class="org.n52.server.service.DefaultServiceInstancesService" />
     
-	<bean id="tsDataService" class="org.n52.server.service.TimeSeriesDataServiceImpl" />
-	
 	<bean id="sensorMetadataService" class="org.n52.server.service.SensorMetadataServiceImpl" />
 	
+    <bean id="tsDataService" class="org.n52.server.service.TimeSeriesDataServiceImpl" />
+    
 	<bean id="imageDataService" class="org.n52.server.service.EESDataServiceImpl" />
 	
 	<bean id="queryServiceImpl" class="org.n52.server.service.QueryServiceImpl"/>

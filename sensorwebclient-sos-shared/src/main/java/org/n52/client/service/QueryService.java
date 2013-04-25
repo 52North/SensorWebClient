@@ -23,7 +23,7 @@
  */
 package org.n52.client.service;
 
-import org.n52.shared.requests.query.QueryRequest;
+import org.n52.shared.requests.query.queries.QueryRequest;
 import org.n52.shared.requests.query.responses.QueryResponse;
 
 public interface QueryService {

@@ -40,6 +40,16 @@ public class TimeseriesParametersLookup implements Serializable {
     }
 
     /**
+     * @param offering
+     *        the offering id to check
+     * @return <code>true</code> if an offering exists which is associated to the given id, <code>false</code>
+     *         otherwise.
+     */
+    public boolean containsOffering(String offering) {
+        return offering.contains(offering);
+    }
+
+    /**
      * @return all <code>Offering</code>s or an empty collection if no offerings are available.
      */
     public Collection<Offering> getOfferings() {
@@ -75,6 +85,16 @@ public class TimeseriesParametersLookup implements Serializable {
      */
     public void addFeature(FeatureOfInterest feature) {
         this.features.put(feature.getId(), feature);
+    }
+
+    /**
+     * @param feature
+     *        the feature id to check
+     * @return <code>true</code> if an feature exists which is associated to the given id, <code>false</code>
+     *         otherwise.
+     */
+    public boolean containsFeature(String feature) {
+        return feature.contains(feature);
     }
 
     /**
@@ -116,6 +136,16 @@ public class TimeseriesParametersLookup implements Serializable {
     }
 
     /**
+     * @param phenomenon
+     *        the phenomenon id to check
+     * @return <code>true</code> if an phenomenon exists which is associated to the given id,
+     *         <code>false</code> otherwise.
+     */
+    public boolean containsPhenomenon(String phenomenon) {
+        return phenomenon.contains(phenomenon);
+    }
+
+    /**
      * @return all <code>Phenomenon</code>s or an empty collection if no phenomenons are available.
      */
     public Collection<Phenomenon> getPhenomenons() {
@@ -151,6 +181,16 @@ public class TimeseriesParametersLookup implements Serializable {
      */
     public void addProcedure(Procedure procedure) {
         procedures.put(procedure.getId(), procedure);
+    }
+
+    /**
+     * @param procedure
+     *        the procedure id to check
+     * @return <code>true</code> if an procedure exists which is associated to the given id,
+     *         <code>false</code> otherwise.
+     */
+    public boolean containsProcedure(String procedure) {
+        return procedure.contains(procedure);
     }
 
     /**

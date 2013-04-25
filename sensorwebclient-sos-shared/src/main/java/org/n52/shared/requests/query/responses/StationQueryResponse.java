@@ -6,18 +6,16 @@ public class StationQueryResponse extends QueryResponse<Station> {
 	
 	private static final long serialVersionUID = -2689753333997419445L;
 
-	private Station[] stations = new Station[0];
-	
-	public StationQueryResponse() {
+	public StationQueryResponse(String serviceUrl, Station[] results) {
+        super(serviceUrl, results);
+    }
+
+    public StationQueryResponse(String serviceUrl) {
+        super(serviceUrl);
+    }
+
+    StationQueryResponse() {
 		// for serialization
-	}
-
-	public Station[] getStations() {
-		return stations;
-	}
-
-	public void setStations(Station[] stations) {
-		this.stations = stations;
 	}
 
 }
