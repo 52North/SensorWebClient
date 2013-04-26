@@ -56,7 +56,7 @@ public class RestfulOfferingsController extends TimeseriesParameterController im
     }
 
     private ModelAndView pageResults(Offering[] offerings, int offset, int size) {
-        ModelAndViewPager mavPage = new ModelAndViewPager("phenomenons");
+        ModelAndViewPager mavPage = new ModelAndViewPager("offerings");
         return mavPage.createPagedModelAndViewFrom(offerings, offset, size);
     }
 

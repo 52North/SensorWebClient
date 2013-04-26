@@ -9,6 +9,9 @@
 <body>
 
 	<c:if test="${not empty stationList}">
+		<a href="${url}stations.json">as Json</a>
+		<a href="${url}stations?offset=0">Paging</a>
+		
 		<h3>Stations:</h3>
 		<ul>
 			<c:forEach items="${stationList}" var="station">
@@ -19,6 +22,7 @@
 	</c:if>
 
 	<c:if test="${not empty station}">
+		<a href="${url}stations/${station.id}.json">as Json</a>
 		<table>
 			<tr>
 				<td>ID</td>
@@ -26,6 +30,39 @@
 			</tr>
 		</table>
 		<a href="${url}stations">back</a>
+	</c:if>
+	
+	<c:if test="${not empty resultPage}">
+		<a href="${url}stations.json">as Json</a>
+		<a href="${url}stations">All</a>
+		<h3>Stations ${resultPage.offset + 1} - ${resultPage.offset + fn:length(resultPage.results)} of ${resultPage.total}</h3>
+		<ul>
+			<c:forEach items="${resultPage.results}" var="station">
+				<li><a href="${url}stations/${station.id}">${station.id}</a></li>
+			</c:forEach>
+		</ul>
+		
+		<c:choose>
+			<c:when test="${(resultPage.offset - 10) ge 0}">
+				<a href="${url}stations?offset=${resultPage.offset - 10}">previous 10</a>	
+			</c:when>
+			<c:otherwise>
+				<a href="${url}stations?offset=0">previous 10</a>
+			</c:otherwise>
+		</c:choose>
+		
+		<c:choose>
+			<c:when test="${resultPage.offset + 10 le resultPage.total}">
+				<a href="${url}stations?offset=${resultPage.offset + 10}">next 10</a>	
+			</c:when>
+			<c:otherwise>
+				<a href="${url}stations?offset=${resultPage.offset}">next 10</a>
+			</c:otherwise>
+		</c:choose>
+		  
+		<br>
+		
+		<a href="${url}">back</a>
 	</c:if>
 	
 </body>
