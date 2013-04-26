@@ -21,6 +21,9 @@
         <property name="queryService" ref="queryServiceImpl"/>
     </bean>
     
+    <bean class="org.n52.server.service.rest.control.RestfulFeaturesController">
+        <property name="queryService" ref="queryServiceImpl"/>
+    </bean>
     
     <bean class="org.n52.server.service.rest.control.RestfulPhenomenonsController">
         <property name="queryService" ref="queryServiceImpl"/>

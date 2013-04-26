@@ -271,7 +271,7 @@ public class QueryServiceImpl implements QueryService {
             response.setResults(lookup.getFeaturesAsArray());
         } else {
             String featureId = parameters.getFeature();
-            if (lookup.containsPhenomenon(featureId)) {
+            if (lookup.containsFeature(featureId)) {
                 FeatureOfInterest feature = lookup.getFeature(featureId);
                 response.setResults(new FeatureOfInterest[] { feature });
             }

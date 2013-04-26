@@ -46,7 +46,7 @@ public class RestfulPhenomenonsController extends TimeseriesParameterController 
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance, 
                                          @PathVariable(value = "id") String phenomenon) throws Exception {
         ModelAndView mav = new ModelAndView("phenomenons");
-        QueryParameters parameters = new QueryParameters().setOffering(phenomenon);
+        QueryParameters parameters = new QueryParameters().setPhenomenon(phenomenon);
         QueryResponse< ? > result = performQuery(instance, parameters);
         
         Phenomenon[] phenomenons = (Phenomenon[]) result.getResults();

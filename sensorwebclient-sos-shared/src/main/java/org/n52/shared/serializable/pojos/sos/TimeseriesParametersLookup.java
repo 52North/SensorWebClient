@@ -46,7 +46,7 @@ public class TimeseriesParametersLookup implements Serializable {
      *         otherwise.
      */
     public boolean containsOffering(String offering) {
-        return offering.contains(offering);
+        return offerings.containsKey(offering);
     }
 
     /**
@@ -94,7 +94,7 @@ public class TimeseriesParametersLookup implements Serializable {
      *         otherwise.
      */
     public boolean containsFeature(String feature) {
-        return feature.contains(feature);
+        return features.containsKey(feature);
     }
 
     /**
@@ -142,7 +142,7 @@ public class TimeseriesParametersLookup implements Serializable {
      *         <code>false</code> otherwise.
      */
     public boolean containsPhenomenon(String phenomenon) {
-        return phenomenon.contains(phenomenon);
+        return phenomenons.containsKey(phenomenon);
     }
 
     /**
@@ -190,7 +190,7 @@ public class TimeseriesParametersLookup implements Serializable {
      *         <code>false</code> otherwise.
      */
     public boolean containsProcedure(String procedure) {
-        return procedure.contains(procedure);
+        return procedures.containsKey(procedure);
     }
 
     /**

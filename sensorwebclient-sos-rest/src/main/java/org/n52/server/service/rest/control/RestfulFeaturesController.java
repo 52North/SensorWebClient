@@ -21,7 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class RestfulFeaturesController extends TimeseriesParameterController implements RestfulKvp, RestfulUrls {
 
     @RequestMapping(value = "/{instance}/" + PATH_FEATURES)
-    public ModelAndView getProcedureByGET(@PathVariable("instance") String instance, 
+    public ModelAndView getFeaturesByGET(@PathVariable("instance") String instance, 
                                           @RequestParam(value = KVP_SHOW, required = false) String details, 
                                           @RequestParam(value = KVP_OFFSET, required = false) Integer offset, 
                                           @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
@@ -43,7 +43,7 @@ public class RestfulFeaturesController extends TimeseriesParameterController imp
     }
     
     @RequestMapping(value = "/{instance}/" + PATH_FEATURES + "/{id}")
-    public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance, 
+    public ModelAndView getFeatureByGET(@PathVariable(value = "instance") String instance, 
                                          @PathVariable(value = "id") String feature) throws Exception {
         ModelAndView mav = new ModelAndView("features");
         QueryParameters parameters = new QueryParameters().setFeature(feature);
@@ -67,7 +67,7 @@ public class RestfulFeaturesController extends TimeseriesParameterController imp
     @Override
     protected QueryResponse< ? > performQuery(String instance, QueryParameters parameters) throws Exception {
         QueryFactory factory = getQueryFactoryFor(instance);
-        QueryRequest query = factory.createFilteredOfferingQuery(parameters);
+        QueryRequest query = factory.createFilteredFeaturesQuery(parameters);
         return doQuery(query);
     }
 
