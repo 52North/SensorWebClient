@@ -23,11 +23,15 @@
  */
 package org.n52.shared.requests.query;
 
+import java.io.Serializable;
+
 import org.n52.shared.serializable.pojos.BoundingBox;
 
 
-public class QueryParameters {
+public class QueryParameters implements Serializable {
     
+    private static final long serialVersionUID = 4433261855040379401L;
+
     private String station;
 
 	private String offering;
