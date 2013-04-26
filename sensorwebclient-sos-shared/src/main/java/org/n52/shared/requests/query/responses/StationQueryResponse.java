@@ -1,33 +1,21 @@
 package org.n52.shared.requests.query.responses;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.n52.shared.serializable.pojos.sos.Station;
 
-public class StationQueryResponse extends QueryResponse {
+public class StationQueryResponse extends QueryResponse<Station> {
 	
 	private static final long serialVersionUID = -2689753333997419445L;
 
-	private List<Station> stations;
-	
-	public StationQueryResponse() {
+	public StationQueryResponse(String serviceUrl, Station[] results) {
+        super(serviceUrl, results);
+    }
+
+    public StationQueryResponse(String serviceUrl) {
+        super(serviceUrl);
+    }
+
+    StationQueryResponse() {
 		// for serialization
-	}
-
-	public List<Station> getStations() {
-		return stations;
-	}
-
-	public void setStations(List<Station> stations) {
-		this.stations = stations;
-	}
-
-	public void addStation(Station station) {
-		if (stations == null) {
-			stations = new ArrayList<Station>();
-		}
-		stations.add(station);		
 	}
 
 }

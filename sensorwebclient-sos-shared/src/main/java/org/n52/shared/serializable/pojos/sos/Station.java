@@ -26,7 +26,6 @@ package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 
 import org.n52.shared.serializable.pojos.EastingNorthing;
@@ -36,8 +35,8 @@ import org.n52.shared.serializable.pojos.EastingNorthing;
  * 
  * (TODO put more infos here)<br>
  * <br>
- * A Station belongs to a category (by default to its {@link #phenomenon} field. It can be used to filter a common set 
- * of stations according to a predefined category.
+ * A Station belongs to a category (by default to its {@link #phenomenon} field. It can be used to filter a
+ * common set of stations according to a predefined category.
  */
 public class Station implements Serializable {
 
@@ -45,17 +44,17 @@ public class Station implements Serializable {
 
     private String id;
 
-//    private String srs; // TODO srs and location into one object!
+    // private String srs; // TODO srs and location into one object!
     private EastingNorthing location;
-    
-    private ArrayList<ParameterConstellation> parameterConstellations; 
-    
+
+    private ArrayList<ParameterConstellation> parameterConstellations;
+
     public Station() {
-    	// zero-argument constructor for GWT
+        // for serialization
     }
 
     public Station(String stationId) {
-    	this.id = stationId;
+        this.id = stationId;
         parameterConstellations = new ArrayList<ParameterConstellation>();
     }
 
@@ -64,98 +63,100 @@ public class Station implements Serializable {
     }
 
     public void setLocation(EastingNorthing location) {
-        // TODO should be made private as we never should change the equals attributes when having objects in a HashSet
+        // TODO should be made private as we never should change the equals attributes when having objects in
+        // a HashSet
         this.location = location;
-//        this.srs = srs;
+        // this.srs = srs;
     }
-    
+
     public EastingNorthing getLocation() {
         return location;
     }
 
-//    public void setSrs(String srs) {
-//        this.srs = srs;
-//    }
-//
-//    public String getSrs() {
-//        return srs;
-//    }
+    // public void setSrs(String srs) {
+    // this.srs = srs;
+    // }
+    //
+    // public String getSrs() {
+    // return srs;
+    // }
 
     public void addParameterConstellation(ParameterConstellation parameterConstellation) {
         parameterConstellations.add(parameterConstellation);
     }
-    
+
     public ArrayList<ParameterConstellation> getParameterConstellations() {
         return parameterConstellations;
     }
-    
+
     public boolean contains(ParameterConstellation parameterConstellation) {
         return parameterConstellations.contains(parameterConstellation);
     }
-    
+
     public void setParameterConstellations(ArrayList<ParameterConstellation> parameterConstellations) {
         this.parameterConstellations = parameterConstellations;
     }
-    
+
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         // TODO wait for fix: http://code.google.com/p/google-web-toolkit/issues/detail?id=3404
         // sb.append(getClass().getSimpleName()).append(" [ ");
         sb.append("Station: [ ").append("\n");
+        sb.append("\tId: ").append(id).append("\n");
         sb.append("\tLocation: ").append(location).append("\n");
         sb.append("\tParameterConstellation-Count: ").append(parameterConstellations.size()).append(" ]\n");
         return sb.toString();
     }
 
-	public boolean hasParameterConstellation(String offeringId, String featureId,
-			String procedureId, String phenomenonId) {
-		if(id.equals(featureId)) {
-			for (ParameterConstellation paramConst : parameterConstellations) {
-				if (paramConst.hasOffering(offeringId) && paramConst.hasFoi(featureId) && paramConst.hasProcedure(procedureId) && paramConst.hasPhenomenon(phenomenonId)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    public boolean hasParameterConstellation(String offeringId, String featureId,
+                                             String procedureId, String phenomenonId) {
+        if (id.equals(featureId)) {
+            for (ParameterConstellation paramConst : parameterConstellations) {
+                if (paramConst.hasOffering(offeringId) && paramConst.hasFoi(featureId)
+                        && paramConst.hasProcedure(procedureId) && paramConst.hasPhenomenon(phenomenonId)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-	public boolean hasStationCategory(String filterCategory) {
-		for (ParameterConstellation paramConst : parameterConstellations) {
-			if (paramConst.getCategory().equals(filterCategory)){
-				return true;
-			}
-		}
-		return false;
-	}
+    public boolean hasStationCategory(String filterCategory) {
+        for (ParameterConstellation paramConst : parameterConstellations) {
+            if (paramConst.getCategory().equals(filterCategory)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	public ParameterConstellation getParameterConstellationByCategory(
-			String category) {
-		for (ParameterConstellation paramConst : parameterConstellations) {
-			if (paramConst.getCategory().equals(category)){
-				return paramConst;
-			}
-		}
-		return null;
-	}
+    public ParameterConstellation getParameterConstellationByCategory(String category) {
+        for (ParameterConstellation paramConst : parameterConstellations) {
+            if (paramConst.getCategory().equals(category)) {
+                return paramConst;
+            }
+        }
+        return null;
+    }
 
-	public void removeUnmatchedConstellations(Collection<String> offeringFilter, Collection<String> phenomenonFilter, Collection<String> procedureFilter, Collection<String> featureFilter) {
-		for (Iterator<ParameterConstellation> iterator = parameterConstellations.iterator(); iterator.hasNext();) {
-			ParameterConstellation constellation = (ParameterConstellation) iterator.next();
-			if (!constellation.matchFilter(offeringFilter, phenomenonFilter,procedureFilter,featureFilter)) {
-				iterator.remove();
-			}
-		}
-	}
+    public void removeUnmatchedConstellations(String offering, String phenomenon, String procedure, String feature) {
+        for (Iterator<ParameterConstellation> iterator = parameterConstellations.iterator(); iterator.hasNext();) {
+            ParameterConstellation constellation = (ParameterConstellation) iterator.next();
+            if ( !constellation.matchFilter(offering, phenomenon, procedure, feature)) {
+                iterator.remove();
+            }
+        }
+    }
 
-	public boolean hasAtLeastOneParameterconstellation() {
-		return parameterConstellations.size() > 0 ? true : false;
-	}
-	
-	public Station clone(){
-		Station station = new Station(id);
-		station.setLocation(location);
-		station.setParameterConstellations(new ArrayList<ParameterConstellation>(parameterConstellations));
-		return station;
-	}
+    public boolean hasAtLeastOneParameterConstellation() {
+        return parameterConstellations.size() > 0 ? true : false;
+    }
+
+    public Station clone() {
+        Station station = new Station(id);
+        station.setLocation(location);
+        station.setParameterConstellations(new ArrayList<ParameterConstellation>(parameterConstellations));
+        return station;
+    }
 }

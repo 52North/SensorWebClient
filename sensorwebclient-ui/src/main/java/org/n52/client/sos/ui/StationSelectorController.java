@@ -24,6 +24,8 @@
 
 package org.n52.client.sos.ui;
 
+import static org.n52.client.sos.ctrl.SosDataManager.getDataManager;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,7 +35,7 @@ import java.util.Map.Entry;
 
 import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.n52.client.bus.EventBus;
-import org.n52.client.sos.ctrl.DataManagerSosImpl;
+import org.n52.client.sos.ctrl.SosDataManager;
 import org.n52.client.sos.event.AddMarkerEvent;
 import org.n52.client.sos.event.data.GetFeatureEvent;
 import org.n52.client.sos.event.data.GetOfferingEvent;
@@ -64,6 +66,7 @@ import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
 import com.google.gwt.core.client.GWT;
 
@@ -239,20 +242,26 @@ class StationSelectorController implements MapController {
 	}
 
     public Phenomenon getSelectedPhenomenon() {
-        return getCurrentMetadata().getPhenomenon(selectedCategory);
+        return getParametersLookup().getPhenomenon(selectedCategory);
     }
 
     public FeatureOfInterest getSelectedFeature() {
-        return getCurrentMetadata().getFeature(getSelectedFeatureId());
+        return getParametersLookup().getFeature(getSelectedFeatureId());
     }
 
     public BoundingBox getCurrentExtent() {
         return map.getCurrentExtent();
     }
+    
+    private TimeseriesParametersLookup getParametersLookup() {
+        final SOSMetadata metadata = getCurrentMetadata();
+        return metadata.getTimeseriesParamtersLookup();
+    }
 
     public SOSMetadata getCurrentMetadata() {
-        return DataManagerSosImpl.getInst().getServiceMetadata(selectedServiceUrl);
+        return getDataManager().getServiceMetadata(selectedServiceUrl);
     }
+    
 
     private class StationPickerControllerEventBroker implements
             NewPhenomenonsEventHandler,
@@ -272,25 +281,25 @@ class StationSelectorController implements MapController {
             bus.addHandler(NewStationPositionsEvent.TYPE, this);
             bus.addHandler(PropagateOfferingsFullEvent.TYPE, this);
             bus.addHandler(StoreProcedureDetailsUrlEvent.TYPE, this);
+            bus.addHandler(GetProcedurePositionsFinishedEvent.TYPE, this);
             bus.addHandler(StoreFeatureEvent.TYPE, this);
             bus.addHandler(AddMarkerEvent.TYPE, this);
-            bus.addHandler(GetProcedurePositionsFinishedEvent.TYPE, this);
         }
 
         @Override
         public void onNewPhenomenons(NewPhenomenonsEvent evt) {
             if ( !GWT.isProdMode()) {
-                final SOSMetadata metadata = controller.getCurrentMetadata();
-                Collection<Phenomenon> phenomenons = metadata.getPhenomenons();
+                TimeseriesParametersLookup lookup = controller.getParametersLookup();
+                Collection<Phenomenon> phenomenons = lookup.getPhenomenons();
                 GWT.log("#" + phenomenons.size() + " new Phenomenons");
             }
         }
 
         @Override
         public void onNewStationPositions(NewStationPositionsEvent evt) {
-            final SOSMetadata metadata = controller.getCurrentMetadata();
             if ( !GWT.isProdMode()) {
-                ArrayList<Procedure> procedures = metadata.getProcedures();
+                TimeseriesParametersLookup lookup = controller.getParametersLookup();
+                ArrayList<Procedure> procedures = lookup.getProcedures();
                 int proceduresSize = procedures.size();
                 GWT.log("#" + proceduresSize + " new Procedures");
             }
@@ -302,8 +311,8 @@ class StationSelectorController implements MapController {
         @Override
         public void onNewFullOfferings(PropagateOfferingsFullEvent evt) {
             if ( !GWT.isProdMode()) {
-                final SOSMetadata metadata = controller.getCurrentMetadata();
-                ArrayList<Offering> offerings = metadata.getOfferings();
+                TimeseriesParametersLookup lookup = controller.getParametersLookup();
+                Collection<Offering> offerings = lookup.getOfferings();
                 int offeringsSize = offerings.size();
                 GWT.log("#" + offeringsSize + " new Offerings");
             }

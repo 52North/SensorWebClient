@@ -24,11 +24,13 @@
 
 package org.n52.client.sos.ctrl;
 
+import static org.n52.client.sos.ctrl.SosDataManager.getDataManager;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 import static org.n52.shared.serializable.pojos.DesignOptions.SOS_PARAM_FIRST;
 import static org.n52.shared.serializable.pojos.DesignOptions.SOS_PARAM_LAST;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -88,12 +90,10 @@ import org.n52.shared.exceptions.ServerException;
 import org.n52.shared.exceptions.TimeoutException;
 import org.n52.shared.requests.EESDataRequest;
 import org.n52.shared.requests.TimeSeriesDataRequest;
-import org.n52.shared.requests.query.QueryRequest;
-import org.n52.shared.requests.query.builder.FeatureQueryRequestBuilder;
-import org.n52.shared.requests.query.builder.OfferingQueryRequestBuilder;
-import org.n52.shared.requests.query.builder.PhenomenonQueryRequestBuilder;
-import org.n52.shared.requests.query.builder.ProcedureQueryRequestBuilder;
-import org.n52.shared.requests.query.builder.StationQueryRequestBuilder;
+import org.n52.shared.requests.query.Page;
+import org.n52.shared.requests.query.QueryFactory;
+import org.n52.shared.requests.query.QueryParameters;
+import org.n52.shared.requests.query.queries.QueryRequest;
 import org.n52.shared.requests.query.responses.FeatureQueryResponse;
 import org.n52.shared.requests.query.responses.OfferingQueryResponse;
 import org.n52.shared.requests.query.responses.PhenomenonQueryResponse;
@@ -109,10 +109,12 @@ import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeSeriesProperties;
 import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
 import org.n52.shared.serializable.pojos.sos.Offering;
+import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.n52.shared.service.rpc.RpcEESDataService;
 import org.n52.shared.service.rpc.RpcEESDataServiceAsync;
 import org.n52.shared.service.rpc.RpcFileDataService;
@@ -187,18 +189,7 @@ public class SOSRequestManager extends RequestManager {
     }
 
     public void requestSensorMetadata(NewTimeSeriesEvent evt) throws Exception {
-        int width = evt.getWidth();
-        int height = evt.getHeight();
-        String url = evt.getSos();
-
-        SOSMetadata meta = DataManagerSosImpl.getInst().getServiceMetadata(url);
-        Station station = evt.getStation();
-        Offering offering = meta.getOffering(evt.getParameterConstellation().getOffering());
-        FeatureOfInterest foi = meta.getFeature(evt.getParameterConstellation().getFeatureOfInterest());
-        Procedure procedure = meta.getProcedure(evt.getParameterConstellation().getProcedure());
-        Phenomenon phenomenon = meta.getPhenomenon(evt.getParameterConstellation().getPhenomenon());
-
-        TimeSeriesProperties props = new TimeSeriesProperties(url, station, offering, foi, procedure, phenomenon, width, height);
+        TimeSeriesProperties props = createTimeseriesProperties(evt, evt.getServiceUrl());
         TimeSeries timeSeries = new TimeSeries("TS_" + System.currentTimeMillis(), props);
 
         try {
@@ -217,6 +208,24 @@ public class SOSRequestManager extends RequestManager {
                 ExceptionHandler.handleException(new RequestFailedException("Server did not respond!", e));
             }
         }
+    }
+
+    private TimeSeriesProperties createTimeseriesProperties(NewTimeSeriesEvent evt, String serviceUrl) {
+        int width = evt.getWidth();
+        int height = evt.getHeight();
+        Station station = evt.getStation();
+        TimeseriesParametersLookup lookup = getTimeseriesParameterLookupFor(serviceUrl);
+        ParameterConstellation parameterConstellation = evt.getParameterConstellation();
+        FeatureOfInterest foi = lookup.getFeature(parameterConstellation.getFeatureOfInterest());
+        Phenomenon phenomenon = lookup.getPhenomenon(parameterConstellation.getPhenomenon());
+        Procedure procedure = lookup.getProcedure(parameterConstellation.getProcedure());
+        Offering offering = lookup.getOffering(parameterConstellation.getOffering());
+        return new TimeSeriesProperties(serviceUrl, station, offering, foi, procedure, phenomenon, width, height);
+    }
+
+    private TimeseriesParametersLookup getTimeseriesParameterLookupFor(String serviceUrl) {
+        SOSMetadata meta = getDataManager().getServiceMetadata(serviceUrl);
+        return meta.getTimeseriesParamtersLookup();
     }
 
     public void requestFirstValueOf(TimeSeries timeSeries) {
@@ -624,15 +633,15 @@ public class SOSRequestManager extends RequestManager {
         }
     }
 
-    private void getProcedurePositions(String sosURL, BoundingBox boundingBox) throws Exception {
+    private void getProcedurePositions(String serviceUrl, BoundingBox boundingBox) throws Exception {
 
-        SOSMetadata meta = DataManagerSosImpl.getInst().getServiceMetadata(sosURL);
         EventBus.getMainEventBus().fireEvent(new DeleteMarkersEvent());
 
+        SOSMetadata meta = getDataManager().getServiceMetadata(serviceUrl);
         int chunkSize = meta.getRequestChunk() > 0 ? meta.getRequestChunk() : 25;
         if (meta != null) {
             // no position data available, request it
-            getPositions(sosURL, 0, chunkSize, boundingBox);
+            getPositions(serviceUrl, 0, chunkSize, boundingBox);
         }
     }
 
@@ -773,56 +782,52 @@ public class SOSRequestManager extends RequestManager {
 		this.sensorMetadataService.getProcedureDetailsUrl(serviceURL, procedure, callback);
 	}
 
-	public void requestPhenomenons(String sosUrl) {
+	public void requestPhenomenons(String serviceUrl) {
 	    QueryCallback callback = createQueryCallback("Could not request phenomena.");
-	    QueryRequest request = new PhenomenonQueryRequestBuilder()
-	    		.addServiceUrl(sosUrl)
-	    		.build();
+	    QueryFactory factory = createQueryFactoryFor(serviceUrl);
+	    QueryRequest request = factory.createAllPhenomenonsQuery();
 	    this.queryService.doQuery(request, callback);
 	}
 
-	public void requestProcedure(String serviceURL, String procedureID) {
-		QueryCallback callback = createQueryCallback("Could not get the procedure with ID: " + procedureID);
-		QueryRequest request = new ProcedureQueryRequestBuilder()
-				.addServiceUrl(serviceURL)
-				.addProcedureFilter(procedureID)
-				.build();
+	public void requestProcedure(String serviceUrl, String procedureId) {
+		QueryCallback callback = createQueryCallback("Could not get the procedure with ID: " + procedureId);
+        QueryFactory factory = createQueryFactoryFor(serviceUrl);
+        QueryParameters parameters = new QueryParameters().setProcedure(procedureId);
+		QueryRequest request = factory.createFilteredProcedureQuery(parameters);
 		this.queryService.doQuery(request, callback);
 	}
 
-	public void requestOffering(String serviceUrl, String offeringID) {
-		QueryCallback callback = createQueryCallback("Could not get the offering with ID: " + offeringID); 
-		QueryRequest request = new OfferingQueryRequestBuilder()
-				.addServiceUrl(serviceUrl)
-				.addOfferingFilter(offeringID)
-				.build();
+	public void requestOffering(String serviceUrl, String offeringId) {
+		QueryCallback callback = createQueryCallback("Could not get the offering with ID: " + offeringId);
+		QueryFactory factory = createQueryFactoryFor(serviceUrl);
+        QueryParameters parameters = new QueryParameters().setOffering(offeringId); 
+		QueryRequest request = factory.createFilteredOfferingQuery(parameters);
 		this.queryService.doQuery(request, callback);
 	}
 
-	public void requestFeature(String serviceURL, String featureID) {
-		QueryCallback callback = createQueryCallback("Could not get the feature with ID: " + featureID); 
-		QueryRequest request = new FeatureQueryRequestBuilder()
-				.addServiceUrl(serviceURL)
-				.addFeatureOfInterestFilter(featureID)
-				.build();
+	public void requestFeature(String serviceUrl, String featureId) {
+		QueryCallback callback = createQueryCallback("Could not get the feature with ID: " + featureId); 
+        QueryFactory factory = createQueryFactoryFor(serviceUrl);
+        QueryParameters parameters = new QueryParameters().setFeature(featureId); 
+		QueryRequest request = factory.createFilteredFeaturesQuery(parameters);
 		this.queryService.doQuery(request, callback);
 	}
 
-	public void requestStation(String serviceUrl, String offeringID, String procedureID, String phenomenonID, String featureID) {
+	public void requestStation(String serviceUrl, String offeringId, String procedureID, String phenomenonId, String featureId) {
 		QueryCallback callback = createQueryCallback("Could not get the station");
-		QueryRequest request = new StationQueryRequestBuilder()
-				.addServiceUrl(serviceUrl)
-				.addOfferingFilter(offeringID)
-				.addFeatureOfInterestFilter(featureID)
-				.addPhenomenonFilter(phenomenonID)
-				.build();
+        QueryFactory factory = createQueryFactoryFor(serviceUrl);
+        QueryParameters parameters = new QueryParameters()
+                 .setOffering(offeringId)
+                 .setFeature(featureId)
+                 .setPhenomenon(phenomenonId);
+        QueryRequest request = factory.createFilteredStationQuery(parameters);
 		doQuery(request, callback);
 	}
 
 	private QueryCallback createQueryCallback(String errorMessage) {
 		QueryCallback callback = new QueryCallback(this, errorMessage) {
 			@Override
-			public void onSuccess(QueryResponse result) {
+			public void onSuccess(QueryResponse<?> result) {
 				removeRequest();
 				try {
 					// TODO refactor
@@ -845,92 +850,94 @@ public class SOSRequestManager extends RequestManager {
 		return callback;
 	}
 	
-	protected void handlePhenomenonQuery(QueryResponse result) {
-		PhenomenonQueryResponse response = (PhenomenonQueryResponse) result;
-		Collection<Phenomenon> phenomenons = response.getPhenomenons();
-        String serviceUrl = response.getServiceUrl();
-		StorePhenomenaEvent event = new StorePhenomenaEvent(serviceUrl, null, phenomenons);
+	
+	protected void handlePhenomenonQuery(QueryResponse<?> response) {
+		Phenomenon[] phenomenons = (Phenomenon[]) response.getResults();
+        StorePhenomenaEvent event = new StorePhenomenaEvent(response.getServiceUrl(), null, phenomenons);
         EventBus.getMainEventBus().fireEvent(event);
 	}
 
-	void getPositions(final String sosURL, int startIdx, final int interval, final BoundingBox boundingBox) throws Exception {
-		    final long begin = System.currentTimeMillis();
-		    QueryCallback callback = new QueryCallback(this, "Could not get positions.") {
-		        @Override
-		        public void onSuccess(final QueryResponse result) {
-		            try {
-		                removeRequest();
-		                StationQueryResponse response = (StationQueryResponse) result;
-		                String url = response.getServiceUrl();
-		                if (response.isPagingEnd()) {
-		                    requestMgr.removeRequest(System.currentTimeMillis() - begin);
-		                    EventBus.getMainEventBus().fireEvent(new GetProcedurePositionsFinishedEvent());
-		                } else {
-		                    getNextChunk(sosURL, response.getPagingEndIndex(), interval, boundingBox);
-		                }
-		                List<Station> stations = response.getStations();
-		                StoreStationsEvent event = new StoreStationsEvent(url, stations);
-		                EventBus.getMainEventBus().fireEvent(event);
-		            }
-		            catch (Exception e) {
-		                ExceptionHandler.handleUnexpectedException(e);
-		                removeRequest();
-		            }
-		        }
-		
-		        private void getNextChunk(final String sosURL, final int start, final int interval, final BoundingBox boundingBox) {
-		            try {
-		                getPositions(sosURL, start, interval, boundingBox);
-		            } catch (Exception e) {
-		                ExceptionHandler.handleUnexpectedException(e);
-		                removeRequest();
-		            }
-		        }
-		    };
-		    addRequest();
-			QueryRequest request = new StationQueryRequestBuilder()
-					.addServiceUrl(sosURL)
-					.addPagingStartIndex(startIdx)
-	//				.addPhenomenonFilter("Wasserstand")
-	//				.addPhenomenonFilter("Abfluss")
-					.addPagingInterval(interval)
-					.addSpatialFilter(boundingBox)
-					.build();
-		    this.queryService.doQuery(request, callback);
-		}
+	void getPositions(final String serviceUrl, int offset, final int pageSize, final BoundingBox boundingBox) throws Exception {
+	    final long begin = System.currentTimeMillis();
+	    QueryCallback callback = new QueryCallback(this, "Could not get positions.") {
+	        @Override
+	        public void onSuccess(final QueryResponse<?> queryResponse) {
+	            try {
+	                removeRequest();
+                    Page< ? > resultPage = queryResponse.getPagedResults();
+                    String url = queryResponse.getServiceUrl();
+                    if (resultPage.isLastPage()) {
+	                    requestMgr.removeRequest(System.currentTimeMillis() - begin);
+	                    EventBus.getMainEventBus().fireEvent(new GetProcedurePositionsFinishedEvent());
+	                } else {
+	                    int nextOffset = resultPage.getOffset() + pageSize;
+	                    getNextChunk(serviceUrl, nextOffset, pageSize, boundingBox);
+	                }
+                    Station[] stations = (Station[]) resultPage.getResults();
+	                StoreStationsEvent event = new StoreStationsEvent(url, stations);
+	                EventBus.getMainEventBus().fireEvent(event);
+	            }
+	            catch (Exception e) {
+	                ExceptionHandler.handleUnexpectedException(e);
+	                removeRequest();
+	            }
+	        }
+	
+            private void getNextChunk(final String sosURL, final int start, final int interval, final BoundingBox boundingBox) {
+	            try {
+	                getPositions(sosURL, start, interval, boundingBox);
+	            } catch (Exception e) {
+	                ExceptionHandler.handleUnexpectedException(e);
+	                removeRequest();
+	            }
+	        }
+	    };
+	    
+	    QueryFactory factory = createQueryFactoryFor(serviceUrl);
+	    QueryParameters parameters = new QueryParameters()
+	            .setSpatialFilter(boundingBox)
+	            .setPageSize(pageSize)
+	            .setOffset(offset);
+	    QueryRequest request = factory.createFilteredStationQuery(parameters);
+	    this.queryService.doQuery(request, callback);
+        addRequest();
+	}
 
-	protected void handleStationQuery(QueryResponse result) {
-		StationQueryResponse response = (StationQueryResponse) result;
-		Station station = response.getStations().iterator().next();
-		String serviceUrl = response.getServiceUrl();
-		StoreStationEvent event = new StoreStationEvent(serviceUrl, station);
+    
+
+	protected void handleStationQuery(QueryResponse<?> response) {
+		Station station = (Station) response.getResults()[0]; // TODO fragile!
+		StoreStationEvent event = new StoreStationEvent(response.getServiceUrl(), station);
 		EventBus.getMainEventBus().fireEvent(event);
 	}
 	
-	protected void handleProcedureQuery(QueryResponse result) {
-		ProcedureQueryResponse response = (ProcedureQueryResponse) result;
-		Procedure procedure = response.getProcedure().iterator().next();
-		String serviceUrl = response.getServiceUrl();
-		StoreProcedureEvent event = new StoreProcedureEvent(serviceUrl, procedure);
+	protected void handleProcedureQuery(QueryResponse<?> response) {
+		Procedure procedure = (Procedure) response.getResults()[0]; // TODO fragile!
+		StoreProcedureEvent event = new StoreProcedureEvent(response.getServiceUrl(), procedure);
 		EventBus.getMainEventBus().fireEvent(event);
 	}
 
-	protected void handleOfferingQuery(QueryResponse result) {
-		OfferingQueryResponse response = (OfferingQueryResponse) result;
-		Offering offering = response.getOffering().iterator().next();
+	protected void handleOfferingQuery(QueryResponse<?> response) {
+		Offering offering = (Offering) response.getResults()[0]; // TODO fragile!
 		StoreOfferingEvent event = new StoreOfferingEvent(response.getServiceUrl(), offering);
 		EventBus.getMainEventBus().fireEvent(event);
 	}
 	
-	protected void handleFeatureQuery(QueryResponse result) {
-		FeatureQueryResponse response = (FeatureQueryResponse) result;
-		FeatureOfInterest feature = response.getFeature().iterator().next();
+	protected void handleFeatureQuery(QueryResponse<?> response) {
+		FeatureOfInterest feature = (FeatureOfInterest) response.getResults()[0]; // TODO fragile!
 		StoreFeatureEvent event = new StoreFeatureEvent(response.getServiceUrl(), feature);
 		EventBus.getMainEventBus().fireEvent(event);
 	}
 	
 	private void doQuery(QueryRequest request, QueryCallback callback) {
-		addRequest();
 		this.queryService.doQuery(request, callback);
+        addRequest();
 	}
+	
+
+    private QueryFactory createQueryFactoryFor(String serviceUrl) {
+        SOSMetadata metadata = getDataManager().getServiceMetadata(serviceUrl);
+        return new QueryFactory(metadata);
+    }
+
 }

@@ -23,19 +23,23 @@
  */
 package org.n52.server.service;
 
+import static org.n52.server.oxf.util.ConfigurationContext.UPDATE_TASK_RUNNING;
+
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.List;
 
 import org.n52.client.service.QueryService;
 import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.crs.AReferencingHelper;
 import org.n52.shared.exceptions.ServiceOccupiedException;
-import org.n52.shared.requests.query.FeatureQuery;
-import org.n52.shared.requests.query.OfferingQuery;
-import org.n52.shared.requests.query.PhenomenonQuery;
-import org.n52.shared.requests.query.ProcedureQuery;
-import org.n52.shared.requests.query.QueryRequest;
-import org.n52.shared.requests.query.StationQuery;
+import org.n52.shared.requests.query.QueryParameters;
+import org.n52.shared.requests.query.queries.FeatureQuery;
+import org.n52.shared.requests.query.queries.OfferingQuery;
+import org.n52.shared.requests.query.queries.PhenomenonQuery;
+import org.n52.shared.requests.query.queries.ProcedureQuery;
+import org.n52.shared.requests.query.queries.QueryRequest;
+import org.n52.shared.requests.query.queries.StationQuery;
 import org.n52.shared.requests.query.responses.FeatureQueryResponse;
 import org.n52.shared.requests.query.responses.OfferingQueryResponse;
 import org.n52.shared.requests.query.responses.PhenomenonQueryResponse;
@@ -43,198 +47,250 @@ import org.n52.shared.requests.query.responses.ProcedureQueryResponse;
 import org.n52.shared.requests.query.responses.QueryResponse;
 import org.n52.shared.requests.query.responses.StationQueryResponse;
 import org.n52.shared.serializable.pojos.BoundingBox;
+import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
+import org.n52.shared.serializable.pojos.sos.Offering;
+import org.n52.shared.serializable.pojos.sos.Phenomenon;
+import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class QueryServiceImpl implements QueryService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(QueryServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(QueryServiceImpl.class);
 
 	@Override
-	public QueryResponse doQuery(QueryRequest request)
-			throws Exception {
+	public QueryResponse<?> doQuery(QueryRequest request) throws Exception {
 		// TODO refactor
 		if (request instanceof FeatureQuery) {
-			return getFeatureResponse((FeatureQuery) request);
+			return getFeatures((FeatureQuery) request);
 		} else if (request instanceof PhenomenonQuery) {
 			return getPhenomenons((PhenomenonQuery) request);
 		} else if (request instanceof ProcedureQuery) {
-			return getProcedure((ProcedureQuery) request);
+			return getProcedures((ProcedureQuery) request);
 		} else if (request instanceof OfferingQuery) {
-			return getOffering((OfferingQuery) request);
+			return getOfferings((OfferingQuery) request);
 		} else if (request instanceof StationQuery) { 
 			return getStations((StationQuery) request);
 		}
 		return null;
 	}
 	
-    private QueryResponse getStations(StationQuery query) throws Exception {
+    private QueryResponse<?> getStations(StationQuery query) throws Exception {
         try {
-        	// check if update process is still running
-        	if (ConfigurationContext.UPDATE_TASK_RUNNING) {
-				LOG.info("Update running, no service available currently.");
+        	if (UPDATE_TASK_RUNNING) {
+				LOGGER.info("Update running, no service available currently.");
 				String reason = "Update running, currently no service available, please try again later";
 				throw new ServiceOccupiedException(reason);
 			}
         	String serviceUrl = query.getServiceUrl();
         	SOSMetadata metadata = ConfigurationContext.getSOSMetadata(serviceUrl);
-        	ArrayList<Station> finalStations = new ArrayList<Station>();
             ArrayList<Station> stations = (ArrayList<Station>) metadata.getStations();
-            Collection<String> offeringFilter = query.getOfferingFilter();
-            Collection<String> phenomenonFilter = query.getPhenomenonFilter();
-            Collection<String> procedureFilter = query.getProcedureFilter();
-            Collection<String> featureFilter = query.getFeatureOfInterestFilter();
-        	int startIndex = getStartIndex(query.getPagingStartIndex());
-        	int interval = getInterval(query.getPagingInterval(), stations.size());
-        	BoundingBox spatialFilter = query.getSpatialFilter();
-            if (LOG.isDebugEnabled()) {
-                String msgTemplate = "Request -> getStations(sosUrl: %s, offeringID: %s, procedureID: %s, phenomenonID: %s, featureID: %s, Start: %s, Interval: %s, Spatial: %s)";
-                LOG.debug(String.format(msgTemplate, serviceUrl, offeringFilter, procedureFilter, phenomenonFilter, featureFilter, startIndex, interval, spatialFilter));
-            }
             
+            QueryParameters parameters = query.getQueryParameters();
+            LOGGER.debug("Request -> getStations(sosUrl: {}, filter: {})", serviceUrl, parameters);
+            
+            BoundingBox spatialFilter = parameters.getSpatialFilter();
             boolean shallForceXYAxisOrder = metadata.isForceXYAxisOrder();
             AReferencingHelper referencing = createReferenceHelper(shallForceXYAxisOrder);
             
-            int endIndex = 0;
-            for(int i = startIndex; i < stations.size() && finalStations.size() < interval; i++) {
-            	Station station = stations.get(i).clone();
-                if (spatialFilter == null || referencing.isStationContainedByBBox(spatialFilter, station)) {
-                	station.removeUnmatchedConstellations(offeringFilter, phenomenonFilter, procedureFilter, featureFilter);
-                	if(station.hasAtLeastOneParameterconstellation()) {
-                		finalStations.add(station);
-                        endIndex = i + 1;
-                	}
+            int currentPageIndex = 0;
+            int offset = query.getOffset();
+            int pageSize = query.getPageSize();
+            
+            if (offset == 0 && pageSize == 0) {
+                // when query is done from server side without paging
+                List<Station> filteredStations = new ArrayList<Station>();
+                for (Station station : stations) {
+                    if (spatialFilter == null || referencing.isStationContainedByBBox(spatialFilter, station)) {
+                        station = cloneAndMatchAgainstQuery(station, parameters);
+                        if(station.hasAtLeastOneParameterConstellation()) {
+                            filteredStations.add(station);
+                        }
+                    }
                 }
+                Station[] finalStations = filteredStations.toArray(new Station[0]);
+                return new StationQueryResponse(serviceUrl, finalStations);
+            } else {
+                Station[] finalStations = new Station[pageSize];
+                for(int i = offset; i < stations.size() && currentPageIndex < pageSize; i++) {
+                    Station station = stations.get(i);
+                    if (spatialFilter == null || referencing.isStationContainedByBBox(spatialFilter, station)) {
+                        station = cloneAndMatchAgainstQuery(station, parameters);
+                        if(station.hasAtLeastOneParameterConstellation()) {
+                            finalStations[currentPageIndex++] = station;
+                        }
+                    }
+                }
+                Station[] pagedStations = Arrays.copyOfRange(finalStations, offset, pageSize);
+                return new StationQueryResponse(serviceUrl, pagedStations);
             }
             
-            boolean finished = isFinished(endIndex, finalStations);
-            StationQueryResponse response = new StationQueryResponse();
-            response.setServiceUrl(serviceUrl);
-			response.setPagingEnd(finished);
-            response.setPagingEndIndex(endIndex);
-            response.setStations(finalStations);
-            return response;
         } catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
 
-    private int getInterval(int pagingInterval, int size) {
-		return pagingInterval != 0 ? pagingInterval : size;
-	}
-
-	private int getStartIndex(int pagingStartIndex) {
-		return pagingStartIndex != 0 ? pagingStartIndex : 0;
-	}
-	
-	private boolean isFinished(int endIndex, ArrayList<Station> stations) {
-        boolean devMode = ConfigurationContext.IS_DEV_MODE;
-        return devMode || endIndex >= stations.size();
+	private Station cloneAndMatchAgainstQuery(Station station, QueryParameters parameters) {
+	    Station clonedStation = station.clone();
+	    String offering = parameters.getOffering();
+        String procedure = parameters.getProcedure();
+        String phenomenon = parameters.getPhenomenon();
+        String feature = parameters.getFeature();
+        clonedStation.removeUnmatchedConstellations(offering, phenomenon, procedure, feature);
+        return clonedStation;
+        
     }
 
-	private QueryResponse getOffering(OfferingQuery query) throws Exception {
+    private QueryResponse<?> getOfferings(OfferingQuery query) throws Exception {
         try {
         	String serviceUrl = query.getServiceUrl();
-        	Collection<String> offeringFilter = query.getOfferingFilter();
-            if (LOG.isDebugEnabled()) {
-                String msgTemplate = "Request -> getOffering(sosUrl: %s, offeringID: %s)";
-                LOG.debug(String.format(msgTemplate, serviceUrl, offeringFilter));
-            }
-            SOSMetadata meta = ConfigurationContext.getSOSMetadata(serviceUrl);
-            OfferingQueryResponse response = new OfferingQueryResponse();
-            response.setServiceUrl(serviceUrl);
-            if (offeringFilter == null || offeringFilter.size() == 0) {
-            	response.setOffering(meta.getOfferings());
-            } else {
-            	for (String offering : offeringFilter) {
-    				response.addOffering(meta.getOffering(offering));
-    			}
-            }
-            return response;
+        	QueryParameters parameters = query.getQueryParameters();
+            LOGGER.debug("Request -> getOfferings(sosUrl: {}, filter: {})", serviceUrl, parameters);
+            return queryOfferings(serviceUrl, parameters);
         } catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
 
+    private OfferingQueryResponse queryOfferings(String serviceUrl, QueryParameters parameters) {
+        TimeseriesParametersLookup lookup = getParametersLookupFor(serviceUrl);
+        OfferingQueryResponse response = new OfferingQueryResponse(serviceUrl);
+        if ( !parameters.hasParameterFilter()) {
+        	response.setResults(lookup.getOfferingsAsArray());
+        } else {
+        	String offeringId = parameters.getOffering();
+            if (lookup.containsOffering(offeringId)) {
+                Offering offering = lookup.getOffering(offeringId);
+                response.setResults(new Offering[] { offering });
+            }
+        }
+        
+        if(parameters.hasSpatialFilter()) {
+            
+            // TODO apply spatial filter
+            
+        } 
+        
+        return response;
+    }
+
 	
-	private QueryResponse getProcedure(ProcedureQuery query) throws Exception {
+	private QueryResponse<?> getProcedures(ProcedureQuery query) throws Exception {
         try {
         	String serviceUrl = query.getServiceUrl();
-        	Collection<String> procedureFilter = query.getProcedureFilter();
-            if (LOG.isDebugEnabled()) {
-                String msgTemplate = "Request -> getProcedure(sosUrl: %s, procedureID: %s)";
-                LOG.debug(String.format(msgTemplate, serviceUrl, procedureFilter));
-            }
-            SOSMetadata meta = ConfigurationContext.getSOSMetadata(serviceUrl);
-            ProcedureQueryResponse response = new ProcedureQueryResponse();
-            response.setServiceUrl(serviceUrl);
-            if (procedureFilter == null || procedureFilter.size() == 0) {
-            	response.setProcedure(meta.getProcedures());
-            } else {
-            	for (String procedure : procedureFilter) {
-    				response.addProcedure(meta.getProcedure(procedure));
-    			}
-            }
-            return response;
+            QueryParameters parameters = query.getQueryParameters();
+            LOGGER.debug("Request -> getProcedures(sosUrl: {}, filter: {})", serviceUrl, parameters);
+            return queryProcedures(serviceUrl, parameters);
         } catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
     }
+
+    private QueryResponse<Procedure> queryProcedures(String serviceUrl, QueryParameters parameters) {
+        QueryResponse<Procedure> response = new ProcedureQueryResponse(serviceUrl);
+        TimeseriesParametersLookup lookup = getParametersLookupFor(serviceUrl);
+        
+        if ( !parameters.hasParameterFilter()) {
+            response.setResults(lookup.getProceduresAsArray());
+        } else {
+            String procedureId = parameters.getProcedure();
+            if (lookup.containsProcedure(procedureId)) {
+                Procedure procedure = lookup.getProcedure(procedureId);
+                response.setResults(new Procedure[] { procedure });
+            }
+        }
+        
+        if(parameters.hasSpatialFilter()) {
+            
+            // TODO apply spatial filter
+            
+        } 
+        
+        return response;
+    }
 	
-	private QueryResponse getPhenomenons(PhenomenonQuery query) throws Exception {
+	private QueryResponse<?> getPhenomenons(QueryRequest query) throws Exception {
 		try {
 			String serviceUrl = query.getServiceUrl();
-			Collection<String> phenomenonFilter = query.getPhenomenonFilter();
-            if (LOG.isDebugEnabled()) {
-                String msgTemplate = "Request -> getPhen4SOS(sosUrl: %s)";
-                LOG.debug(String.format(msgTemplate, serviceUrl));
-            }
-            SOSMetadata meta = ConfigurationContext.getSOSMetadata(serviceUrl);
-            PhenomenonQueryResponse response = new PhenomenonQueryResponse();
-            if (phenomenonFilter == null || phenomenonFilter.size() == 0) {
-            	response.setPhenomenons(meta.getPhenomenons());
-            } else {
-            	for (String phenomenon : phenomenonFilter) {
-    				response.addPhenoemon(meta.getPhenomenon(phenomenon));
-    			}
-            }
-            response.setServiceUrl(serviceUrl);
-            return response;
+            QueryParameters parameters = query.getQueryParameters();
+            LOGGER.debug("Request -> getPhenomenons(sosUrl: {}, filter: {})", serviceUrl, parameters);
+            return queryPhenomenons(serviceUrl, parameters);
         } catch (Exception e) {
-            LOG.error("Exception occured on server side.", e);
+            LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
 	}
+
+    private PhenomenonQueryResponse queryPhenomenons(String serviceUrl, QueryParameters parameters) {
+        PhenomenonQueryResponse response = new PhenomenonQueryResponse(serviceUrl);
+        TimeseriesParametersLookup lookup = getParametersLookupFor(serviceUrl);
+
+        if ( !parameters.hasParameterFilter()) {
+            response.setResults(lookup.getPhenomenonsAsArray());
+        } else {
+            String phenomenonId = parameters.getPhenomenon();
+            if (lookup.containsPhenomenon(phenomenonId)) {
+                Phenomenon phenomenon = lookup.getPhenomenon(phenomenonId);
+                response.setResults(new Phenomenon[] { phenomenon });
+            }
+        }
+        
+        if(parameters.hasSpatialFilter()) {
+            
+            // TODO apply spatial filter
+            
+        } 
+        
+        return response;
+    }
 	
-	private QueryResponse getFeatureResponse(FeatureQuery query) throws Exception {
+	private QueryResponse<?> getFeatures(FeatureQuery query) throws Exception {
 	    try {
 	    	String serviceUrl = query.getServiceUrl();
-	    	Collection<String> featureFilter = query.getFeatureOfInterestFilter();
-	        if (LOG.isDebugEnabled()) {
-	            String msgTemplate = "Request -> getFeature(sosUrl: %s, featureID: %s)";
-	            LOG.debug(String.format(msgTemplate, serviceUrl, featureFilter));
-	        }
-	        SOSMetadata meta = ConfigurationContext.getSOSMetadata(serviceUrl);
-	        FeatureQueryResponse response = new FeatureQueryResponse();
-	        if (featureFilter == null || featureFilter.size() == 0) {
-	        	response.setFeature(meta.getFeatures());
-	        } else {
-	        	for (String feature : featureFilter) {
-					response.addFeature(meta.getFeature(feature));
-				}
-	        }
-	        response.setServiceUrl(serviceUrl);
-	        return response;
+            QueryParameters parameters = query.getQueryParameters();
+            LOGGER.debug("Request -> getFeatures(sosUrl: {}, filter: {})", serviceUrl, parameters);
+	        return queryFeatures(serviceUrl, parameters);
 	    } catch (Exception e) {
-	        LOG.error("Exception occured on server side.", e);
+	        LOGGER.error("Exception occured on server side.", e);
 	        throw e; // last chance to log on server side
 	    }
 	}
+
+    private FeatureQueryResponse queryFeatures(String serviceUrl, QueryParameters parameters) {
+        TimeseriesParametersLookup lookup = getParametersLookupFor(serviceUrl);
+        FeatureQueryResponse response = new FeatureQueryResponse(serviceUrl);
+        
+
+        if ( !parameters.hasParameterFilter()) {
+            response.setResults(lookup.getFeaturesAsArray());
+        } else {
+            String featureId = parameters.getFeature();
+            if (lookup.containsPhenomenon(featureId)) {
+                FeatureOfInterest feature = lookup.getFeature(featureId);
+                response.setResults(new FeatureOfInterest[] { feature });
+            }
+        }
+        
+        if(parameters.hasSpatialFilter()) {
+            
+            // TODO apply spatial filter
+            
+        } 
+        
+        return response;
+    }
+
+    private TimeseriesParametersLookup getParametersLookupFor(String serviceUrl) {
+        SOSMetadata metadata = ConfigurationContext.getSOSMetadata(serviceUrl);
+        TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
+        return lookup;
+    }
 	
     private AReferencingHelper createReferenceHelper(boolean forceXYAxisOrder) {
         if (forceXYAxisOrder) {

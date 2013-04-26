@@ -24,7 +24,7 @@
 package org.n52.client.ctrl;
 
 import org.n52.client.bus.EventBus;
-import org.n52.client.sos.ctrl.DataManagerSosImpl;
+import org.n52.client.sos.ctrl.SosDataManager;
 import org.n52.client.sos.event.data.NewTimeSeriesEvent;
 import org.n52.client.sos.event.data.StoreFeatureEvent;
 import org.n52.client.sos.event.data.StoreOfferingEvent;
@@ -110,7 +110,7 @@ public class PermaLinkController {
 
 	public void check() {
 		if (!permalinkLoaded && featureReady && procedureReady && offeringReady && stationReady) {
-            SOSMetadata metadata = DataManagerSosImpl.getInst().getServiceMetadata(url);
+            SOSMetadata metadata = SosDataManager.getDataManager().getServiceMetadata(url);
             ParameterConstellation paramConst = new ParameterConstellation();
             paramConst.setPhenomenon(phenomenon);
             paramConst.setFeatureOfInterest(foi);

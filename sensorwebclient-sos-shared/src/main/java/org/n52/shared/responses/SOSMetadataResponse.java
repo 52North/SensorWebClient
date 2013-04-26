@@ -33,6 +33,7 @@ public class SOSMetadataResponse implements Serializable {
     
     private SOSMetadata sos;
 
+    @SuppressWarnings("unused")
     private SOSMetadataResponse() {
         // serializable for GWT needs empty default constructor
     }
@@ -43,10 +44,6 @@ public class SOSMetadataResponse implements Serializable {
 
     public SOSMetadata getServiceMetadata() {
         return this.sos;
-    }
-
-    public String toDebugString() {
-        return this.sos.toDebugString();
     }
 
 }
