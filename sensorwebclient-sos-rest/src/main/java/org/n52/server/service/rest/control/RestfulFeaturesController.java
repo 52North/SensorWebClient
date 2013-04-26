@@ -20,10 +20,10 @@ import org.springframework.web.servlet.ModelAndView;
 public class RestfulFeaturesController extends TimeseriesParameterController implements RestfulKvp, RestfulUrls {
 
     @RequestMapping(value = "/{instance}/" + PATH_FEATURES)
-    public ModelAndView getFeaturesByGET(@PathVariable("instance") String instance,
-                                         @RequestParam(value = KVP_SHOW, required = false) String details,
-                                         @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
-                                         @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
+    public ModelAndView getFeaturesByGET(@PathVariable("instance") String instance, 
+                                          @RequestParam(value = KVP_SHOW, required = false) String details, 
+                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset, 
+                                          @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
 
         // TODO condense output depending on 'show' parameter
 
@@ -34,8 +34,8 @@ public class RestfulFeaturesController extends TimeseriesParameterController imp
         if (offset != null) {
             return pageResults(features, offset.intValue(), size.intValue());
         }
-
-        ModelAndView mav = new ModelAndView("featrues");
+        
+        ModelAndView mav = new ModelAndView("features");
         return mav.addObject(features);
     }
 
