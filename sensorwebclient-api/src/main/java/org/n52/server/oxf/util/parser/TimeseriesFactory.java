@@ -23,22 +23,17 @@
  */
 package org.n52.server.oxf.util.parser;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.HashMap;
 
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
-import org.joda.time.DateTime;
 import org.n52.oxf.feature.OXFFeature;
 import org.n52.oxf.feature.sos.ObservationSeriesCollection;
 import org.n52.oxf.feature.sos.ObservedValueTuple;
 import org.n52.oxf.valueDomains.time.ITimePosition;
 import org.n52.oxf.valueDomains.time.TimePosition;
 import org.n52.server.oxf.util.ConfigurationContext;
-import org.n52.server.util.TimeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

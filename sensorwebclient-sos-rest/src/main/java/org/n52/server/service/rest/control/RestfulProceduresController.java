@@ -4,7 +4,6 @@ package org.n52.server.service.rest.control;
 import org.n52.server.service.rest.model.ModelAndViewPager;
 import org.n52.shared.requests.query.QueryFactory;
 import org.n52.shared.requests.query.QueryParameters;
-import org.n52.shared.requests.query.ResultPage;
 import org.n52.shared.requests.query.queries.QueryRequest;
 import org.n52.shared.requests.query.responses.QueryResponse;
 import org.n52.shared.serializable.pojos.sos.Procedure;
@@ -30,14 +29,12 @@ public class RestfulProceduresController extends TimeseriesParameterController i
         QueryResponse< ? > result = performQuery(instance, parameters);
         Procedure[] procedures = (Procedure[]) result.getResults();
 
-        if (offset == null) {
-            ModelAndView mav = new ModelAndView("procedures");
-            return mav.addObject(procedures);
+        if (offset != null) {
+            return pageResults(procedures, offset.intValue(), size.intValue());
         }
-        else {
-            ModelAndViewPager mavPage = createResultPage(offset.intValue(), size.intValue(), procedures);
-            return mavPage.getPagedModelAndView();
-        }
+        
+        ModelAndView mav = new ModelAndView("procedures");
+        return mav.addObject(procedures);
     }
 
     @RequestMapping(value = "/{instance}/" + PATH_PROCEDURES + "/{id}")
@@ -55,12 +52,11 @@ public class RestfulProceduresController extends TimeseriesParameterController i
         return mav;
     }
 
-    private ModelAndViewPager createResultPage(int offset, int size, Procedure[] procedures) {
+    private ModelAndView pageResults(Procedure[] procedures, int offset, int size) {
         ModelAndViewPager mavPage = new ModelAndViewPager("procedures");
-        mavPage.setPage(ResultPage.createPageFrom(procedures, offset, size));
-        return mavPage;
+        return mavPage.createPagedModelAndViewFrom(procedures, offset, size);
     }
-
+    
     @Override
     protected QueryResponse< ? > performQuery(String instance, QueryParameters parameters) throws Exception {
         QueryFactory factory = getQueryFactoryFor(instance);

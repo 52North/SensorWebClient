@@ -6,7 +6,6 @@ import static org.n52.shared.requests.query.QueryParameters.createEmptyFilterQue
 import org.n52.server.service.rest.model.ModelAndViewPager;
 import org.n52.shared.requests.query.QueryFactory;
 import org.n52.shared.requests.query.QueryParameters;
-import org.n52.shared.requests.query.ResultPage;
 import org.n52.shared.requests.query.queries.QueryRequest;
 import org.n52.shared.requests.query.responses.QueryResponse;
 import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
@@ -32,14 +31,12 @@ public class RestfulFeaturesController extends TimeseriesParameterController imp
         QueryResponse< ? > result = performQuery(instance, parameters);
         FeatureOfInterest[] features = (FeatureOfInterest[]) result.getResults();
 
-        if (offset == null) {
-            ModelAndView mav = new ModelAndView("features");
-            return mav.addObject(features);
+        if (offset != null) {
+            return pageResults(features, offset.intValue(), size.intValue());
         }
-        else {
-            ModelAndViewPager mavPage = createResultPage(offset.intValue(), size.intValue(), features);
-            return mavPage.getPagedModelAndView();
-        }
+        
+        ModelAndView mav = new ModelAndView("featrues");
+        return mav.addObject(features);
     }
     
     @RequestMapping(value = "/{instance}/" + PATH_FEATURES + "/{id}")
@@ -58,10 +55,9 @@ public class RestfulFeaturesController extends TimeseriesParameterController imp
         return mav;
     }
 
-    private ModelAndViewPager createResultPage(int offset, int size, FeatureOfInterest[] features) {
+    private ModelAndView pageResults(FeatureOfInterest[] features, int offset, int size) {
         ModelAndViewPager mavPage = new ModelAndViewPager("features");
-        mavPage.setPage(ResultPage.createPageFrom(features, offset, size));
-        return mavPage;
+        return mavPage.createPagedModelAndViewFrom(features, offset, size);
     }
 
     @Override

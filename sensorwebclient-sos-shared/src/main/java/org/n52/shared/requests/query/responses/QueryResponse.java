@@ -3,8 +3,8 @@ package org.n52.shared.requests.query.responses;
 
 import java.io.Serializable;
 
-import org.n52.shared.requests.query.Page;
 import org.n52.shared.requests.query.ResultPage;
+import org.n52.shared.requests.query.ResultPager;
 import org.n52.shared.requests.query.queries.QueryRequest;
 
 /**
@@ -17,7 +17,7 @@ public abstract class QueryResponse<T> implements Serializable {
 
     private String serviceUrl;
 
-    private Page<T> results;
+    private ResultPage<T> results;
 
     private boolean paged;
 
@@ -41,7 +41,10 @@ public abstract class QueryResponse<T> implements Serializable {
     public void setServiceUrl(String serviceUrl) {
         this.serviceUrl = serviceUrl;
     }
-
+    
+    /**
+     * @return the results.
+     */
     public T[] getResults() {
         return results.getResults();
     }
@@ -51,11 +54,11 @@ public abstract class QueryResponse<T> implements Serializable {
      * 
      * @param results
      *        the results to set.
-     * @see #setResultPage(Page)
+     * @see #setResultPage(ResultPage)
      */
     public void setResults(T[] results) {
         int size = results == null ? 0 : results.length;
-        this.results = ResultPage.createPageFrom(results, 0, size);
+        this.results = new ResultPager().createPageFrom(results, 0, size);
         this.paged = false;
     }
 
@@ -66,7 +69,7 @@ public abstract class QueryResponse<T> implements Serializable {
      *        the result page to set.
      * @see #setResults(T[])
      */
-    public void setResultPage(Page<T> resultPage) {
+    public void setResultPage(ResultPage<T> resultPage) {
         this.results = resultPage;
         this.paged = true;
     }
@@ -76,7 +79,7 @@ public abstract class QueryResponse<T> implements Serializable {
      * 
      * @return the results on a page.
      */
-    public Page<T> getPagedResults() {
+    public ResultPage<T> getPagedResults() {
         return results;
     }
 

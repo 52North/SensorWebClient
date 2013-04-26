@@ -23,13 +23,12 @@
  */
 package org.n52.ext.link.sos;
 
-import static org.n52.ext.link.sos.PermalinkParameter.SERVICES;
-import static org.n52.ext.link.sos.PermalinkParameter.VERSIONS;
 import static org.n52.ext.link.sos.PermalinkParameter.FEATURES;
 import static org.n52.ext.link.sos.PermalinkParameter.OFFERINGS;
-import static org.n52.ext.link.sos.PermalinkParameter.PROCEDURES;
 import static org.n52.ext.link.sos.PermalinkParameter.PHENOMENONS;
-
+import static org.n52.ext.link.sos.PermalinkParameter.PROCEDURES;
+import static org.n52.ext.link.sos.PermalinkParameter.SERVICES;
+import static org.n52.ext.link.sos.PermalinkParameter.VERSIONS;
 
 import org.n52.ext.link.AccessLinkCompressor;
 

@@ -1,12 +1,10 @@
 package org.n52.server.service.rest.control;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.n52.server.service.ServiceInstancesService;
 import org.n52.server.service.rest.model.ModelAndViewPager;
 import org.n52.server.service.rest.model.ServiceInstance;
-import org.n52.shared.requests.query.ResultPage;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,23 +36,18 @@ public class RestfulServiceInstancesController implements RestfulKvp {
         // TODO condense output depending on 'show' parameter
         
         Collection<ServiceInstance> instances = serviceInstancesService.getServiceInstances();
-        if (offset == null) {
-            ModelAndView mav = new ModelAndView("services");
-            return mav.addObject(createResultSubset(instances, 0, instances.size()));
-        } else {
-            ModelAndViewPager mavPage = createResultPage(offset.intValue(), size.intValue(), instances);
-            return mavPage.getPagedModelAndView();
+
+        if (offset != null) {
+            return pageResults(instances, offset.intValue(), size.intValue());
         }
+        
+        ModelAndView mav = new ModelAndView("services");
+        return mav.addObject(instances);
     }
 
-    private ModelAndViewPager createResultPage(int offset, int size, Collection<ServiceInstance> instances) {
+    private ModelAndView pageResults(Collection<ServiceInstance> services, int offset, int size) {
         ModelAndViewPager mavPage = new ModelAndViewPager("services");
-        mavPage.setPage(ResultPage.createPageFrom(instances, offset, size));
-        return mavPage;
-    }
-
-    private ServiceInstance[] createResultSubset(Collection<ServiceInstance> instances, int offset, int size) {
-        return Arrays.copyOfRange(instances.toArray(new ServiceInstance[0]), offset, offset + size);
+        return mavPage.createPagedModelAndViewFrom(services, offset, size);
     }
 
     public ServiceInstancesService getServiceInstancesService() {

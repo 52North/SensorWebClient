@@ -6,7 +6,6 @@ import static org.n52.shared.requests.query.QueryParameters.createEmptyFilterQue
 import org.n52.server.service.rest.model.ModelAndViewPager;
 import org.n52.shared.requests.query.QueryFactory;
 import org.n52.shared.requests.query.QueryParameters;
-import org.n52.shared.requests.query.ResultPage;
 import org.n52.shared.requests.query.queries.QueryRequest;
 import org.n52.shared.requests.query.responses.QueryResponse;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
@@ -32,14 +31,12 @@ public class RestfulPhenomenonsController extends TimeseriesParameterController 
         QueryResponse< ? > result = performQuery(instance, parameters);
         Phenomenon[] phenomenons = (Phenomenon[]) result.getResults();
 
-        if (offset == null) {
-            ModelAndView mav = new ModelAndView("phenomenons");
-            return mav.addObject(phenomenons);
+        if (offset != null) {
+            return pageResults(phenomenons, offset.intValue(), size.intValue());
         }
-        else {
-            ModelAndViewPager mavPage = createResultPage(offset.intValue(), size.intValue(), phenomenons);
-            return mavPage.getPagedModelAndView();
-        }
+        
+        ModelAndView mav = new ModelAndView("phenomenons");
+        return mav.addObject(phenomenons);
     }
     
     @RequestMapping(value = "/{instance}/" + PATH_PHENOMENONS + "/{id}")
@@ -58,10 +55,9 @@ public class RestfulPhenomenonsController extends TimeseriesParameterController 
         return mav;
     }
 
-    private ModelAndViewPager createResultPage(int offset, int size, Phenomenon[] phenomenons) {
+    private ModelAndView pageResults(Phenomenon[] phenomenons, int offset, int size) {
         ModelAndViewPager mavPage = new ModelAndViewPager("phenomenons");
-        mavPage.setPage(ResultPage.createPageFrom(phenomenons, offset, size));
-        return mavPage;
+        return mavPage.createPagedModelAndViewFrom(phenomenons, offset, size);
     }
 
     @Override

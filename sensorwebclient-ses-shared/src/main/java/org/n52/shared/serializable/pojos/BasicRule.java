@@ -24,7 +24,6 @@
 package org.n52.shared.serializable.pojos;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 public class BasicRule implements Serializable {
 
