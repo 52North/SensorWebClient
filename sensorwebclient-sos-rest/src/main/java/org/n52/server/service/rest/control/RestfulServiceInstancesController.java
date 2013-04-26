@@ -1,3 +1,4 @@
+
 package org.n52.server.service.rest.control;
 
 import java.util.Collection;
@@ -13,12 +14,12 @@ import org.springframework.web.servlet.ModelAndView;
 
 @RequestMapping(produces = {"text/html", "application/*"})
 public class RestfulServiceInstancesController implements RestfulKvp {
-    
+
     private ServiceInstancesService serviceInstancesService;
-    
-    @RequestMapping(value = "/services/{id}", method=RequestMethod.GET)
-    public ModelAndView getInstancesByGET(@PathVariable(value="id") String id, 
-                                          @RequestParam(value=KVP_SHOW, required=false) String filter) {
+
+    @RequestMapping(value = "/services/{id}", method = RequestMethod.GET)
+    public ModelAndView getInstancesByGET(@PathVariable(value = "id") String id,
+                                          @RequestParam(value = KVP_SHOW, required = false) String filter) {
         ServiceInstance serviceInstance = serviceInstancesService.getServiceInstance(id);
         if (serviceInstance == null) {
             throw new ResourceNotFoundException();
@@ -27,20 +28,20 @@ public class RestfulServiceInstancesController implements RestfulKvp {
         mav.addObject(serviceInstance);
         return mav;
     }
-    
-    @RequestMapping(value = "/services", method=RequestMethod.GET)
-    public ModelAndView getInstancesByGET(@RequestParam(value=KVP_SHOW, required=false) String details,
-                                          @RequestParam(value=KVP_OFFSET, required=false) Integer offset,
-                                          @RequestParam(value=KVP_SIZE, required=false, defaultValue=KVP_DEFAULT_SIZE) Integer size) {
-        
+
+    @RequestMapping(value = "/services", method = RequestMethod.GET)
+    public ModelAndView getInstancesByGET(@RequestParam(value = KVP_SHOW, required = false) String details,
+                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
+                                          @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size) {
+
         // TODO condense output depending on 'show' parameter
-        
+
         Collection<ServiceInstance> instances = serviceInstancesService.getServiceInstances();
 
         if (offset != null) {
             return pageResults(instances, offset.intValue(), size.intValue());
         }
-        
+
         ModelAndView mav = new ModelAndView("services");
         return mav.addObject(instances);
     }

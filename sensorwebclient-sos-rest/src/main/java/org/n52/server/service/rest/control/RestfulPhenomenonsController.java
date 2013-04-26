@@ -20,9 +20,9 @@ import org.springframework.web.servlet.ModelAndView;
 public class RestfulPhenomenonsController extends TimeseriesParameterController implements RestfulKvp, RestfulUrls {
 
     @RequestMapping(value = "/{instance}/" + PATH_PHENOMENONS)
-    public ModelAndView getProcedureByGET(@PathVariable("instance") String instance, 
-                                          @RequestParam(value = KVP_SHOW, required = false) String details, 
-                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset, 
+    public ModelAndView getProcedureByGET(@PathVariable("instance") String instance,
+                                          @RequestParam(value = KVP_SHOW, required = false) String details,
+                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
                                           @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
 
         // TODO condense output depending on 'show' parameter
@@ -34,22 +34,23 @@ public class RestfulPhenomenonsController extends TimeseriesParameterController 
         if (offset != null) {
             return pageResults(phenomenons, offset.intValue(), size.intValue());
         }
-        
+
         ModelAndView mav = new ModelAndView("phenomenons");
         return mav.addObject(phenomenons);
     }
-    
+
     @RequestMapping(value = "/{instance}/" + PATH_PHENOMENONS + "/{id}")
-    public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance, 
+    public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          @PathVariable(value = "id") String phenomenon) throws Exception {
         ModelAndView mav = new ModelAndView("phenomenons");
         QueryParameters parameters = new QueryParameters().setPhenomenon(phenomenon);
         QueryResponse< ? > result = performQuery(instance, parameters);
-        
+
         Phenomenon[] phenomenons = (Phenomenon[]) result.getResults();
         if (phenomenons.length == 0) {
             throw new ResourceNotFoundException();
-        } else {
+        }
+        else {
             mav.addObject(phenomenons[0]);
         }
         return mav;

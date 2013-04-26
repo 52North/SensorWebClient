@@ -20,9 +20,9 @@ import org.springframework.web.servlet.ModelAndView;
 public class RestfulOfferingsController extends TimeseriesParameterController implements RestfulKvp, RestfulUrls {
 
     @RequestMapping(value = "/{instance}/" + PATH_OFFERINGS)
-    public ModelAndView getProcedureByGET(@PathVariable("instance") String instance, 
-                                          @RequestParam(value = KVP_SHOW, required = false) String details, 
-                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset, 
+    public ModelAndView getProcedureByGET(@PathVariable("instance") String instance,
+                                          @RequestParam(value = KVP_SHOW, required = false) String details,
+                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
                                           @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
 
         // TODO condense output depending on 'show' parameter
@@ -34,22 +34,23 @@ public class RestfulOfferingsController extends TimeseriesParameterController im
         if (offset != null) {
             return pageResults(offerings, offset.intValue(), size.intValue());
         }
-        
+
         ModelAndView mav = new ModelAndView("offerings");
         return mav.addObject(offerings);
     }
-    
+
     @RequestMapping(value = "/{instance}/" + PATH_OFFERINGS + "/{id}")
-    public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance, 
+    public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          @PathVariable(value = "id") String offering) throws Exception {
         ModelAndView mav = new ModelAndView("offerings");
         QueryParameters parameters = new QueryParameters().setOffering(offering);
         QueryResponse< ? > result = performQuery(instance, parameters);
-        
+
         Offering[] offerings = (Offering[]) result.getResults();
         if (offerings.length == 0) {
             throw new ResourceNotFoundException();
-        } else {
+        }
+        else {
             mav.addObject(offerings[0]);
         }
         return mav;

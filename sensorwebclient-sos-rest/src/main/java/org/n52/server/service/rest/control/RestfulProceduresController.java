@@ -18,9 +18,9 @@ import org.springframework.web.servlet.ModelAndView;
 public class RestfulProceduresController extends TimeseriesParameterController implements RestfulKvp, RestfulUrls {
 
     @RequestMapping(value = "/{instance}/" + PATH_PROCEDURES)
-    public ModelAndView getProcedureByGET(@PathVariable("instance") String instance, 
-                                          @RequestParam(value = KVP_SHOW, required = false) String details, 
-                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset, 
+    public ModelAndView getProcedureByGET(@PathVariable("instance") String instance,
+                                          @RequestParam(value = KVP_SHOW, required = false) String details,
+                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
                                           @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
 
         // TODO condense output depending on 'show' parameter
@@ -32,13 +32,13 @@ public class RestfulProceduresController extends TimeseriesParameterController i
         if (offset != null) {
             return pageResults(procedures, offset.intValue(), size.intValue());
         }
-        
+
         ModelAndView mav = new ModelAndView("procedures");
         return mav.addObject(procedures);
     }
 
     @RequestMapping(value = "/{instance}/" + PATH_PROCEDURES + "/{id}")
-    public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance, 
+    public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          @PathVariable(value = "id") String procedure) throws Exception {
         ModelAndView mav = new ModelAndView("procedures");
         QueryParameters parameters = new QueryParameters().setProcedure(procedure);
@@ -46,7 +46,8 @@ public class RestfulProceduresController extends TimeseriesParameterController i
         Procedure[] procedures = (Procedure[]) result.getResults();
         if (procedures.length == 0) {
             throw new ResourceNotFoundException();
-        } else {
+        }
+        else {
             mav.addObject(procedures[0]);
         }
         return mav;
@@ -56,7 +57,7 @@ public class RestfulProceduresController extends TimeseriesParameterController i
         ModelAndViewPager mavPage = new ModelAndViewPager("procedures");
         return mavPage.createPagedModelAndViewFrom(procedures, offset, size);
     }
-    
+
     @Override
     protected QueryResponse< ? > performQuery(String instance, QueryParameters parameters) throws Exception {
         QueryFactory factory = getQueryFactoryFor(instance);

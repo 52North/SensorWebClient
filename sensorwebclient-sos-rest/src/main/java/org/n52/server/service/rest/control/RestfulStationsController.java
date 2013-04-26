@@ -28,20 +28,20 @@ public class RestfulStationsController extends TimeseriesParameterController imp
                                           @RequestParam(value = KVP_OFFERING, required = false) String offering) throws Exception {
 
         // TODO condense output depending on 'show' parameter
-        
+
         QueryParameters parameters = new QueryParameters()
                 .setPhenomenon(phenomenon)
                 .setProcedure(procedure)
                 .setOffering(offering)
                 .setFeature(feature);
-        
+
         QueryResponse< ? > result = performQuery(instance, parameters);
         Station[] stations = (Station[]) result.getResults();
-        
+
         if (offset != null) {
             return pageResults(stations, offset.intValue(), size.intValue());
         }
-        
+
         ModelAndView mav = new ModelAndView("stations");
         return mav.addObject(stations);
     }
