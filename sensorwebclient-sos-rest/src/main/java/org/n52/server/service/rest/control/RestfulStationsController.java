@@ -10,14 +10,15 @@ import org.n52.shared.serializable.pojos.sos.Station;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping(value = "/services", produces = {"text/html", "application/*"})
-public class RestfulStationsController extends TimeseriesParameterController implements RestfulKvp, RestfulUrls {
+public class RestfulStationsController extends TimeseriesParameterQueryController implements RestfulKvp, RestfulUrls {
 
-    @RequestMapping(value = "/{instance}/" + PATH_STATIONS)
+    @RequestMapping(value = "/{instance}/" + PATH_STATIONS, method = RequestMethod.GET)
     public ModelAndView getProcedureByGET(@PathVariable("instance") String instance,
                                           @RequestParam(value = KVP_SHOW, required = false) String details,
                                           @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
@@ -28,25 +29,25 @@ public class RestfulStationsController extends TimeseriesParameterController imp
                                           @RequestParam(value = KVP_OFFERING, required = false) String offering) throws Exception {
 
         // TODO condense output depending on 'show' parameter
-        
+
         QueryParameters parameters = new QueryParameters()
                 .setPhenomenon(phenomenon)
                 .setProcedure(procedure)
                 .setOffering(offering)
                 .setFeature(feature);
-        
+
         QueryResponse< ? > result = performQuery(instance, parameters);
         Station[] stations = (Station[]) result.getResults();
-        
+
         if (offset != null) {
             return pageResults(stations, offset.intValue(), size.intValue());
         }
-        
+
         ModelAndView mav = new ModelAndView("stations");
         return mav.addObject(stations);
     }
 
-    @RequestMapping(value = "/{instance}/" + PATH_STATIONS + "/{id}")
+    @RequestMapping(value = "/{instance}/" + PATH_STATIONS + "/{id}", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          @PathVariable(value = "id") String station) throws Exception {
         ModelAndView mav = new ModelAndView("stations");

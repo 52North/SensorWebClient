@@ -9,7 +9,7 @@ import org.n52.shared.requests.query.queries.QueryRequest;
 import org.n52.shared.requests.query.responses.QueryResponse;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 
-public abstract class TimeseriesParameterController {
+public abstract class TimeseriesParameterQueryController {
 
     private QueryService queryService;
 

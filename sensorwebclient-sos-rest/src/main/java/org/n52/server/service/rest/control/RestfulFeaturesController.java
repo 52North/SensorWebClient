@@ -12,18 +12,19 @@ import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping(value = "/services", produces = {"text/html", "application/*"})
-public class RestfulFeaturesController extends TimeseriesParameterController implements RestfulKvp, RestfulUrls {
+public class RestfulFeaturesController extends TimeseriesParameterQueryController implements RestfulKvp, RestfulUrls {
 
-    @RequestMapping(value = "/{instance}/" + PATH_FEATURES)
-    public ModelAndView getFeaturesByGET(@PathVariable("instance") String instance, 
-                                          @RequestParam(value = KVP_SHOW, required = false) String details, 
-                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset, 
-                                          @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
+    @RequestMapping(value = "/{instance}/" + PATH_FEATURES, method = RequestMethod.GET)
+    public ModelAndView getFeaturesByGET(@PathVariable("instance") String instance,
+                                         @RequestParam(value = KVP_SHOW, required = false) String details,
+                                         @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
+                                         @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
 
         // TODO condense output depending on 'show' parameter
 
@@ -34,22 +35,23 @@ public class RestfulFeaturesController extends TimeseriesParameterController imp
         if (offset != null) {
             return pageResults(features, offset.intValue(), size.intValue());
         }
-        
+
         ModelAndView mav = new ModelAndView("features");
         return mav.addObject(features);
     }
-    
-    @RequestMapping(value = "/{instance}/" + PATH_FEATURES + "/{id}")
-    public ModelAndView getFeatureByGET(@PathVariable(value = "instance") String instance, 
-                                         @PathVariable(value = "id") String feature) throws Exception {
+
+    @RequestMapping(value = "/{instance}/" + PATH_FEATURES + "/{id}", method = RequestMethod.GET)
+    public ModelAndView getFeatureByGET(@PathVariable(value = "instance") String instance,
+                                        @PathVariable(value = "id") String feature) throws Exception {
         ModelAndView mav = new ModelAndView("features");
         QueryParameters parameters = new QueryParameters().setFeature(feature);
         QueryResponse< ? > result = performQuery(instance, parameters);
-        
+
         FeatureOfInterest[] features = (FeatureOfInterest[]) result.getResults();
         if (features.length == 0) {
             throw new ResourceNotFoundException();
-        } else {
+        }
+        else {
             mav.addObject(features[0]);
         }
         return mav;

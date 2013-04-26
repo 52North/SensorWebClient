@@ -12,17 +12,18 @@ import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping(value = "/services", produces = {"text/html", "application/*"})
-public class RestfulPhenomenonsController extends TimeseriesParameterController implements RestfulKvp, RestfulUrls {
+public class RestfulPhenomenonsController extends TimeseriesParameterQueryController implements RestfulKvp, RestfulUrls {
 
-    @RequestMapping(value = "/{instance}/" + PATH_PHENOMENONS)
-    public ModelAndView getProcedureByGET(@PathVariable("instance") String instance, 
-                                          @RequestParam(value = KVP_SHOW, required = false) String details, 
-                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset, 
+    @RequestMapping(value = "/{instance}/" + PATH_PHENOMENONS, method = RequestMethod.GET)
+    public ModelAndView getProcedureByGET(@PathVariable("instance") String instance,
+                                          @RequestParam(value = KVP_SHOW, required = false) String details,
+                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
                                           @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
 
         // TODO condense output depending on 'show' parameter
@@ -34,22 +35,23 @@ public class RestfulPhenomenonsController extends TimeseriesParameterController 
         if (offset != null) {
             return pageResults(phenomenons, offset.intValue(), size.intValue());
         }
-        
+
         ModelAndView mav = new ModelAndView("phenomenons");
         return mav.addObject(phenomenons);
     }
-    
-    @RequestMapping(value = "/{instance}/" + PATH_PHENOMENONS + "/{id}")
-    public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance, 
+
+    @RequestMapping(value = "/{instance}/" + PATH_PHENOMENONS + "/{id}", method = RequestMethod.GET)
+    public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          @PathVariable(value = "id") String phenomenon) throws Exception {
         ModelAndView mav = new ModelAndView("phenomenons");
         QueryParameters parameters = new QueryParameters().setPhenomenon(phenomenon);
         QueryResponse< ? > result = performQuery(instance, parameters);
-        
+
         Phenomenon[] phenomenons = (Phenomenon[]) result.getResults();
         if (phenomenons.length == 0) {
             throw new ResourceNotFoundException();
-        } else {
+        }
+        else {
             mav.addObject(phenomenons[0]);
         }
         return mav;

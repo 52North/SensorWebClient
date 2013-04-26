@@ -12,17 +12,18 @@ import org.n52.shared.serializable.pojos.sos.Offering;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping(value = "/services", produces = {"text/html", "application/*"})
-public class RestfulOfferingsController extends TimeseriesParameterController implements RestfulKvp, RestfulUrls {
+public class RestfulOfferingsController extends TimeseriesParameterQueryController implements RestfulKvp, RestfulUrls {
 
-    @RequestMapping(value = "/{instance}/" + PATH_OFFERINGS)
-    public ModelAndView getProcedureByGET(@PathVariable("instance") String instance, 
-                                          @RequestParam(value = KVP_SHOW, required = false) String details, 
-                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset, 
+    @RequestMapping(value = "/{instance}/" + PATH_OFFERINGS, method = RequestMethod.GET)
+    public ModelAndView getProcedureByGET(@PathVariable("instance") String instance,
+                                          @RequestParam(value = KVP_SHOW, required = false) String details,
+                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
                                           @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
 
         // TODO condense output depending on 'show' parameter
@@ -34,22 +35,23 @@ public class RestfulOfferingsController extends TimeseriesParameterController im
         if (offset != null) {
             return pageResults(offerings, offset.intValue(), size.intValue());
         }
-        
+
         ModelAndView mav = new ModelAndView("offerings");
         return mav.addObject(offerings);
     }
-    
-    @RequestMapping(value = "/{instance}/" + PATH_OFFERINGS + "/{id}")
-    public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance, 
+
+    @RequestMapping(value = "/{instance}/" + PATH_OFFERINGS + "/{id}", method = RequestMethod.GET)
+    public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          @PathVariable(value = "id") String offering) throws Exception {
         ModelAndView mav = new ModelAndView("offerings");
         QueryParameters parameters = new QueryParameters().setOffering(offering);
         QueryResponse< ? > result = performQuery(instance, parameters);
-        
+
         Offering[] offerings = (Offering[]) result.getResults();
         if (offerings.length == 0) {
             throw new ResourceNotFoundException();
-        } else {
+        }
+        else {
             mav.addObject(offerings[0]);
         }
         return mav;
