@@ -12,6 +12,7 @@ import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -19,7 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(value = "/services", produces = {"text/html", "application/*"})
 public class RestfulPhenomenonsController extends TimeseriesParameterController implements RestfulKvp, RestfulUrls {
 
-    @RequestMapping(value = "/{instance}/" + PATH_PHENOMENONS)
+    @RequestMapping(value = "/{instance}/" + PATH_PHENOMENONS, method = RequestMethod.GET)
     public ModelAndView getProcedureByGET(@PathVariable("instance") String instance,
                                           @RequestParam(value = KVP_SHOW, required = false) String details,
                                           @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
@@ -39,7 +40,7 @@ public class RestfulPhenomenonsController extends TimeseriesParameterController 
         return mav.addObject(phenomenons);
     }
 
-    @RequestMapping(value = "/{instance}/" + PATH_PHENOMENONS + "/{id}")
+    @RequestMapping(value = "/{instance}/" + PATH_PHENOMENONS + "/{id}", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          @PathVariable(value = "id") String phenomenon) throws Exception {
         ModelAndView mav = new ModelAndView("phenomenons");

@@ -12,6 +12,7 @@ import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -19,7 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(value = "/services", produces = {"text/html", "application/*"})
 public class RestfulFeaturesController extends TimeseriesParameterController implements RestfulKvp, RestfulUrls {
 
-    @RequestMapping(value = "/{instance}/" + PATH_FEATURES)
+    @RequestMapping(value = "/{instance}/" + PATH_FEATURES, method = RequestMethod.GET)
     public ModelAndView getFeaturesByGET(@PathVariable("instance") String instance, 
                                           @RequestParam(value = KVP_SHOW, required = false) String details, 
                                           @RequestParam(value = KVP_OFFSET, required = false) Integer offset, 
@@ -39,7 +40,7 @@ public class RestfulFeaturesController extends TimeseriesParameterController imp
         return mav.addObject(features);
     }
 
-    @RequestMapping(value = "/{instance}/" + PATH_FEATURES + "/{id}")
+    @RequestMapping(value = "/{instance}/" + PATH_FEATURES + "/{id}", method = RequestMethod.GET)
     public ModelAndView getFeatureByGET(@PathVariable(value = "instance") String instance,
                                         @PathVariable(value = "id") String feature) throws Exception {
         ModelAndView mav = new ModelAndView("features");
