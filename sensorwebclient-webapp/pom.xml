@@ -57,10 +57,10 @@
 			<artifactId>jstl</artifactId>
 		</dependency>
 		<dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
-            <scope>runtime</scope>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
 
@@ -160,6 +160,9 @@
 						<resource>
 							<directory>src/main/webapp</directory>
 							<filtering>true</filtering>
+							<excludes>
+								<exclude>**/*.jsp</exclude>
+							</excludes>
 						</resource>
 					</webResources>
 					<warName>${sensorwebclient.webapp.name}</warName>

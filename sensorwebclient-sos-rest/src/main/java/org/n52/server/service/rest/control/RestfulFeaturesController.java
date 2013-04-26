@@ -35,7 +35,7 @@ public class RestfulFeaturesController extends TimeseriesParameterController imp
             return pageResults(features, offset.intValue(), size.intValue());
         }
         
-        ModelAndView mav = new ModelAndView("featrues");
+        ModelAndView mav = new ModelAndView("features");
         return mav.addObject(features);
     }
     
