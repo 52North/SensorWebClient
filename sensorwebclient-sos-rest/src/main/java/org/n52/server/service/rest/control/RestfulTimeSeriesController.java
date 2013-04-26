@@ -40,61 +40,74 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping(value = "/services/{instance}/timeseries")
-public class RestfulTimeSeriesController {
-    
+@RequestMapping(value = "/services/")
+public class RestfulTimeSeriesController implements RestfulKvp, RestfulUrls {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(RestfulTimeSeriesController.class);
-    
+
     private GetDataService dataService;
-    
+
     private GetImageService imageService;
     
-    @RequestMapping(method = RequestMethod.POST)
-    public ModelAndView getData(@RequestBody ParameterSet parameterSet, @PathVariable("instance") String instance) {
+
+    @RequestMapping(value = "{instance}" + PATH_TIMESERIES, method = RequestMethod.GET)
+    public ModelAndView getTimeseriesMetadatasByGET(@PathVariable("instance") String instance) {
+        
+        // TODO
+
+        return new ModelAndView();
+    }
+
+    @RequestMapping(value = "{instance}/timeseries", method = RequestMethod.POST)
+    public ModelAndView getData(@RequestBody ParameterSet parameterSet, 
+                                @PathVariable("instance") String instance) {
         try {
             ModelAndView mav = new ModelAndView();
             mav.addAllObjects(dataService.getTimeSeriesFromParameterSet(parameterSet, instance));
             return mav;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Could not create response.", e);
             throw new InternalServiceException();
         }
     }
-    
-    @RequestMapping(value = "/image")
-    public ModelAndView getImage(@RequestBody ParameterSet parameterSet, @PathVariable("instance") String instance) {
+
+    @RequestMapping(value = "{instance}/timseries/image")
+    public ModelAndView getImage(@RequestBody ParameterSet parameterSet, 
+                                 @PathVariable("instance") String instance) {
         try {
             ModelAndView mav = new ModelAndView();
             mav.addObject(imageService.getTimeSeriesChart(parameterSet, instance));
             return mav;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Could not create response.", e);
             throw new InternalServiceException();
         }
     }
-    
-    @RequestMapping(value = "/image", method = RequestMethod.GET)
-    public ModelAndView getImagebyGET(
-    		@PathVariable("instance") String instance,
-    		@RequestParam(value = "offering", required=true) String offering,
-    		@RequestParam(value = "procedure", required=true) String procedure,
-    		@RequestParam(value = "feature", required=true) String feature,
-    		@RequestParam(value = "phenomenon", required=true) String phenomenon) {
+
+    @RequestMapping(value = "{instance}/image", method = RequestMethod.GET)
+    public ModelAndView getImagebyGET(@PathVariable("instance") String instance,
+                                      @RequestParam(value = "offering", required = true) String offering,
+                                      @RequestParam(value = "procedure", required = true) String procedure,
+                                      @RequestParam(value = "feature", required = true) String feature,
+                                      @RequestParam(value = "phenomenon", required = true) String phenomenon) {
         try {
-        	ParameterConstellation paramConst = new ParameterConstellation();
-        	paramConst.setOffering(offering);
-        	paramConst.setProcedure(procedure);
-        	paramConst.setPhenomenon(phenomenon);
-        	paramConst.setFeatureOfInterest(feature);
+            ParameterConstellation paramConst = new ParameterConstellation();
+            paramConst.setOffering(offering);
+            paramConst.setProcedure(procedure);
+            paramConst.setPhenomenon(phenomenon);
+            paramConst.setFeatureOfInterest(feature);
             ModelAndView mav = new ModelAndView();
-//            mav.addObject(imageService.getTimeSeriesChart(paramConst, instance));
+            // mav.addObject(imageService.getTimeSeriesChart(paramConst, instance));
             return mav;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Could not create response.", e);
             throw new InternalServiceException();
         }
     }
-    
+
     public GetDataService getDataService() {
         return dataService;
     }

@@ -16,7 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping(value = "/services", produces = {"text/html", "application/*"})
-public class RestfulProceduresController extends TimeseriesParameterController implements RestfulKvp, RestfulUrls {
+public class RestfulProceduresController extends TimeseriesParameterQueryController implements RestfulKvp, RestfulUrls {
 
     @RequestMapping(value = "/{instance}/" + PATH_PROCEDURES, method = RequestMethod.GET)
     public ModelAndView getProcedureByGET(@PathVariable("instance") String instance,

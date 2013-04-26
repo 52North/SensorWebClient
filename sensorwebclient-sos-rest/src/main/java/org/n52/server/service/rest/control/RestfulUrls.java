@@ -38,5 +38,10 @@ public interface RestfulUrls {
      * Subpath identifying a collection of stations available.
      */
     static final String PATH_STATIONS = "stations";
+    
+    /**
+     * Subpath identifying a collection of timeseries metadata available.
+     */
+    static final String PATH_TIMESERIES = "timeseries";
 
 }
