@@ -4,7 +4,6 @@ package org.n52.server.service.rest.control;
 import org.n52.server.service.rest.model.ModelAndViewPager;
 import org.n52.shared.requests.query.QueryFactory;
 import org.n52.shared.requests.query.QueryParameters;
-import org.n52.shared.requests.query.ResultPage;
 import org.n52.shared.requests.query.queries.QueryRequest;
 import org.n52.shared.requests.query.responses.QueryResponse;
 import org.n52.shared.serializable.pojos.sos.Station;
@@ -39,14 +38,12 @@ public class RestfulStationsController extends TimeseriesParameterController imp
         QueryResponse< ? > result = performQuery(instance, parameters);
         Station[] stations = (Station[]) result.getResults();
         
-        if (offset == null) {
-            ModelAndView mav = new ModelAndView("stations");
-            return mav.addObject(stations);
+        if (offset != null) {
+            return pageResults(stations, offset.intValue(), size.intValue());
         }
-        else {
-            ModelAndViewPager mavPage = createResultPage(offset.intValue(), size.intValue(), stations);
-            return mavPage.getPagedModelAndView();
-        }
+        
+        ModelAndView mav = new ModelAndView("stations");
+        return mav.addObject(stations);
     }
 
     @RequestMapping(value = "/{instance}/" + PATH_STATIONS + "/{id}")
@@ -63,10 +60,9 @@ public class RestfulStationsController extends TimeseriesParameterController imp
         return mav;
     }
 
-    private ModelAndViewPager createResultPage(int offset, int size, Station[] procedures) {
+    private ModelAndView pageResults(Station[] stations, int offset, int size) {
         ModelAndViewPager mavPage = new ModelAndViewPager("stations");
-        mavPage.setPage(ResultPage.createPageFrom(procedures, offset, size));
-        return mavPage;
+        return mavPage.createPagedModelAndViewFrom(stations, offset, size);
     }
 
     @Override

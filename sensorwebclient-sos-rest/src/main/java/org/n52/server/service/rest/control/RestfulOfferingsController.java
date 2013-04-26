@@ -6,7 +6,6 @@ import static org.n52.shared.requests.query.QueryParameters.createEmptyFilterQue
 import org.n52.server.service.rest.model.ModelAndViewPager;
 import org.n52.shared.requests.query.QueryFactory;
 import org.n52.shared.requests.query.QueryParameters;
-import org.n52.shared.requests.query.ResultPage;
 import org.n52.shared.requests.query.queries.QueryRequest;
 import org.n52.shared.requests.query.responses.QueryResponse;
 import org.n52.shared.serializable.pojos.sos.Offering;
@@ -32,14 +31,12 @@ public class RestfulOfferingsController extends TimeseriesParameterController im
         QueryResponse< ? > result = performQuery(instance, parameters);
         Offering[] offerings = (Offering[]) result.getResults();
 
-        if (offset == null) {
-            ModelAndView mav = new ModelAndView("offerings");
-            return mav.addObject(offerings);
+        if (offset != null) {
+            return pageResults(offerings, offset.intValue(), size.intValue());
         }
-        else {
-            ModelAndViewPager mavPage = createResultPage(offset.intValue(), size.intValue(), offerings);
-            return mavPage.getPagedModelAndView();
-        }
+        
+        ModelAndView mav = new ModelAndView("offerings");
+        return mav.addObject(offerings);
     }
     
     @RequestMapping(value = "/{instance}/" + PATH_OFFERINGS + "/{id}")
@@ -58,10 +55,9 @@ public class RestfulOfferingsController extends TimeseriesParameterController im
         return mav;
     }
 
-    private ModelAndViewPager createResultPage(int offset, int size, Offering[] offerings) {
-        ModelAndViewPager mavPage = new ModelAndViewPager("offerings");
-        mavPage.setPage(ResultPage.createPageFrom(offerings, offset, size));
-        return mavPage;
+    private ModelAndView pageResults(Offering[] offerings, int offset, int size) {
+        ModelAndViewPager mavPage = new ModelAndViewPager("phenomenons");
+        return mavPage.createPagedModelAndViewFrom(offerings, offset, size);
     }
 
     @Override

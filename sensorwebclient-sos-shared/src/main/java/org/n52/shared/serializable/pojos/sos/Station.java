@@ -49,7 +49,7 @@ public class Station implements Serializable {
 
     private ArrayList<ParameterConstellation> parameterConstellations;
 
-    public Station() {
+    Station() {
         // for serialization
     }
 
@@ -63,8 +63,6 @@ public class Station implements Serializable {
     }
 
     public void setLocation(EastingNorthing location) {
-        // TODO should be made private as we never should change the equals attributes when having objects in
-        // a HashSet
         this.location = location;
         // this.srs = srs;
     }

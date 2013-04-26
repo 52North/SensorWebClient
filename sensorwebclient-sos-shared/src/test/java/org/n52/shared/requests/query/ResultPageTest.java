@@ -41,7 +41,7 @@ public class ResultPageTest {
     private ResultPage<String> getFirstPage() {
         int from = 0;
         int to = from + PAGE_SIZE;
-        return ResultPage.createPageFrom(allResults, from, to);
+        return new ResultPager().createPageFrom(allResults, from, to);
     }
     
     private ResultPage<String> getLastPageOverlapping() {
@@ -56,7 +56,7 @@ public class ResultPageTest {
     }
 
     private ResultPage<String> getLastPage(int from) {
-        return ResultPage.createPageFrom(allResults, from, PAGE_SIZE);
+        return new ResultPager().createPageFrom(allResults, from, PAGE_SIZE);
     }
 
 }

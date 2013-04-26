@@ -1,6 +1,6 @@
 package org.n52.ext.link.sos;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
