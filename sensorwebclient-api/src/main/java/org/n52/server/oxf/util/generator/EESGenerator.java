@@ -25,6 +25,7 @@ package org.n52.server.oxf.util.generator;
 
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,10 +36,12 @@ import java.util.Map;
 import org.eesgmbh.gimv.shared.util.Bounds;
 import org.eesgmbh.gimv.shared.util.ImageEntity;
 import org.jfree.chart.ChartRenderingInfo;
+import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.entity.EntityCollection;
 import org.jfree.chart.entity.StandardEntityCollection;
 import org.jfree.chart.entity.XYItemEntity;
+import org.jfree.chart.servlet.ServletUtilities;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.feature.OXFFeatureCollection;
 import org.n52.server.oxf.render.sos.DiagramRenderer;
@@ -104,6 +107,20 @@ public class EESGenerator extends Generator {
             throw new GeneratorException(e.getMessage(), e);
         }
     }
+
+	public void createChartToOutputStream(DesignOptions options,
+			ChartRenderingInfo renderingInfo, OutputStream outputStream) {
+		try {
+            Map<String, OXFFeatureCollection> entireCollMap = getFeatureCollectionFor(options, true);
+            JFreeChart chart = producePresentation(entireCollMap, options);
+            chart.removeLegend();
+            int width = options.getWidth();
+            int height = options.getHeight();
+            ChartUtilities.writeChartAsPNG(outputStream, chart, width, height, renderingInfo);
+        } catch (Exception e) {
+            System.out.println("error");
+        }
+	}
 
 	/**
 	 * Creates the image entities.

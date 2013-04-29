@@ -105,10 +105,12 @@ public class QueryServiceImpl implements QueryService {
                 List<Station> filteredStations = new ArrayList<Station>();
                 for (Station station : stations) {
                     if (spatialFilter == null || referencing.isStationContainedByBBox(spatialFilter, station)) {
-                        station = cloneAndMatchAgainstQuery(station, parameters);
-                        if(station.hasAtLeastOneParameterConstellation()) {
-                            filteredStations.add(station);
-                        }
+                    	if (parameters.getStation() == null || station.getId().equals(parameters.getStation())) {
+                    		station = cloneAndMatchAgainstQuery(station, parameters);
+                            if(station.hasAtLeastOneParameterConstellation()) {
+                                filteredStations.add(station);
+                            }
+                    	}
                     }
                 }
                 Station[] finalStations = filteredStations.toArray(new Station[0]);
@@ -142,7 +144,6 @@ public class QueryServiceImpl implements QueryService {
         String feature = parameters.getFeature();
         clonedStation.removeUnmatchedConstellations(offering, phenomenon, procedure, feature);
         return clonedStation;
-        
     }
 
     private QueryResponse<?> getOfferings(OfferingQuery query) throws Exception {
