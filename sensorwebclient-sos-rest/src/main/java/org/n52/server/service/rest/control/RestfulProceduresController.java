@@ -1,6 +1,9 @@
 
 package org.n52.server.service.rest.control;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.n52.server.service.rest.model.ModelAndViewPager;
 import org.n52.shared.requests.query.QueryFactory;
 import org.n52.shared.requests.query.QueryParameters;
@@ -35,7 +38,7 @@ public class RestfulProceduresController extends TimeseriesParameterQueryControl
         }
 
         ModelAndView mav = new ModelAndView("procedures");
-        return mav.addObject(procedures);
+        return mav.addObject(mapProcedures(procedures));
     }
 
     @RequestMapping(value = "/{instance}/" + PATH_PROCEDURES + "/{id}", method = RequestMethod.GET)
@@ -49,12 +52,33 @@ public class RestfulProceduresController extends TimeseriesParameterQueryControl
             throw new ResourceNotFoundException();
         }
         else {
-            mav.addObject(procedures[0]);
+            mav.addObject(mapProcedure(procedures[0]));
         }
         return mav;
     }
+    
+    // fix mapping with ref values, currently the repsonse object file just shows a list of the reference description and not of the value
+    private Object mapProcedure(Procedure procedure) {
+		Map<String, Object> object = new HashMap<String, Object>();
+		object.put("id", procedure.getId());
+		object.put("label", procedure.getLabel());
+		Map<String, Object> refValues = new HashMap<String, Object>();
+		for (String key : procedure.getrefValues()) {
+			refValues.put(key, procedure.getRefValue(key).getValue());
+		}
+		object.put("refValues", refValues);
+		return object;
+	}
 
-    private ModelAndView pageResults(Procedure[] procedures, int offset, int size) {
+	private Object mapProcedures(Procedure[] procedures) {
+		Object[] objects = new Object[procedures.length];
+		for (int i = 0; i < procedures.length; i++) {
+			objects[i] = mapProcedure(procedures[i]);
+		}
+		return objects;
+	}
+
+	private ModelAndView pageResults(Procedure[] procedures, int offset, int size) {
         ModelAndViewPager mavPage = new ModelAndViewPager("procedures");
         return mavPage.createPagedModelAndViewFrom(procedures, offset, size);
     }
