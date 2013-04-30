@@ -11,12 +11,6 @@
 	<name>Shared SOS Components</name>
 	<url>http://52north.org/communities/sensorweb/</url>
 	<dependencies>
-		<!-- ### EXTERNAL DEPENDENCIES ### -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.eesgmbh</groupId>
 			<artifactId>gimv</artifactId>

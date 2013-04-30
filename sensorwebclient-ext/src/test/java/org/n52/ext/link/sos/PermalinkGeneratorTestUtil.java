@@ -28,9 +28,6 @@ import java.util.List;
 
 import org.n52.ext.link.AccessLinkCompressor;
 import org.n52.ext.link.AccessLinkFactory;
-import org.n52.ext.link.sos.PermalinkCompressor;
-import org.n52.ext.link.sos.TimeSeriesParameters;
-import org.n52.ext.link.sos.TimeSeriesPermalinkBuilder;
 
 public final class PermalinkGeneratorTestUtil {
     

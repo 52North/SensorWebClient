@@ -32,7 +32,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import net.opengis.gml.CodeType;
@@ -60,13 +59,12 @@ import org.n52.server.oxf.util.crs.AReferencingHelper;
 import org.n52.server.oxf.util.parser.ConnectorUtils;
 import org.n52.server.oxf.util.parser.utils.ParsedPoint;
 import org.n52.shared.responses.SOSMetadataResponse;
-import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
-import org.n52.shared.serializable.pojos.sos.Station;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,6 +91,7 @@ public class GrdcMetadataHandler extends MetadataHandler {
 		ConnectorUtils.setVersionNumbersToMetadata(sosUrl, sosTitle, sosVersion, omFormat, smlVersion);
 		
 		SOSMetadata metadata = (SOSMetadata) ConfigurationContext.getServiceMetadata(sosUrl);
+		TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
 		
 		IBoundingBox sosBbox = null;
 		Map<String, FutureTask<OperationResult>> futureTasks = new HashMap<String, FutureTask<OperationResult>>();
@@ -109,18 +108,18 @@ public class GrdcMetadataHandler extends MetadataHandler {
 			// add offering
 			Offering offering = new Offering(offeringID);
 			offering.setLabel(observationOffering.getTitle());
-            metadata.addOffering(offering);
+            lookup.addOffering(offering);
 			
 			// add phenomenons
 			for (String phenomenonId : phenArray) {
 				Phenomenon phenomenon = new Phenomenon(phenomenonId);
 				phenomenon.setLabel(phenomenonId.substring(phenomenonId.lastIndexOf(":") + 1));
-                metadata.addPhenomenon(phenomenon);
+				lookup.addPhenomenon(phenomenon);
 			}
 			
 			// add procedures
 			for (String procedure : procArray) {
-				metadata.addProcedure(new Procedure(procedure));
+			    lookup.addProcedure(new Procedure(procedure));
 			}
 
 			ArrayList<String> fois = new ArrayList<String>();
@@ -201,7 +200,7 @@ public class GrdcMetadataHandler extends MetadataHandler {
 							// add feature
 							FeatureOfInterest feature = new FeatureOfInterest(featureId);
 							feature.setLabel(label);
-							metadata.addFeature(feature);
+							lookup.addFeature(feature);
 							// add position and foiID to a new station
 //							for (Station station : stations) {
 //								Station clone = station.clone();

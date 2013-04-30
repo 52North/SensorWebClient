@@ -23,7 +23,8 @@
  */
 package org.n52.ext.link.sos;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 import static org.n52.ext.link.sos.PermalinkGeneratorTestUtil.BASE_URL;
 
 import java.util.Collection;
@@ -32,8 +33,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.ext.link.AccessLinkFactory;
-import org.n52.ext.link.sos.PermalinkParser;
-import org.n52.ext.link.sos.TimeSeriesParameters;
 
 public class PermalinkAdapterTest {
 

@@ -1,33 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:util="http://www.springframework.org/schema/util" xmlns:oxm="http://www.springframework.org/schema/oxm"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans 
-           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-           http://www.springframework.org/schema/oxm 
-           http://www.springframework.org/schema/oxm/spring-oxm-1.5.xsd 
-		   http://www.springframework.org/schema/util
-		   http://www.springframework.org/schema/util/spring-util-3.0.xsd">
-
-
-	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
-		<property name="mediaTypes">
-			<map>
-				<entry key="json" value="application/json" />
-				<entry key="html" value="text/html" />
-			</map>
-		</property>
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+    <mvc:annotation-driven/>
+    
+    <bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+        <property name="favorPathExtension" value="false" />
+        <property name="favorParameter" value="false" />
+        <property name="ignoreAcceptHeader" value="false" />
+        <property name="mediaTypes" >
+            <value>
+                html=text/html
+                json=application/json
+                *=*/*
+            </value>
+        </property>
+    </bean>
+    
+	<bean
+		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<property name="order" value="1" />
 		<property name="viewResolvers">
 			<list>
 				<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
-				<!-- <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"/> -->
+				<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+					<property name="prefix" value="/WEB-INF/pages/" />
+					<property name="suffix" value=".jsp" />
+				</bean>
 			</list>
 		</property>
 		<property name="defaultViews">
 			<list>
-				<bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" />
+				<!-- <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
+					<constructor-arg>
+						<bean class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+							<property name="classesToBeBound">
+								<list>
+									<value>org.n52.server.service.rest.objects.BoundingBox</value>
+									<value>org.n52.server.service.rest.objects.Point</value>
+								</list>
+							</property>
+						</bean>
+					</constructor-arg>
+				</bean> -->
+				<bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" />
 			</list>
 		</property>
+		<property name="ignoreAcceptHeader" value="false" />
+		<property name="defaultContentType" value="application/json"></property>
 	</bean>
-
 </beans>

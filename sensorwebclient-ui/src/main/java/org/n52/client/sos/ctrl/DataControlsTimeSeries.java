@@ -35,7 +35,6 @@ import org.n52.client.bus.EventBus;
 import org.n52.client.bus.EventCallback;
 import org.n52.client.ctrl.DataControls;
 import org.n52.client.ctrl.LoaderManager;
-import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ctrl.TimeManager;
 import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
 import org.n52.client.sos.event.DatesChangedEvent;

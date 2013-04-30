@@ -27,6 +27,7 @@ package org.n52.server.oxf.util.connector;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER;
 import static org.n52.oxf.sos.adapter.SOSAdapter.GET_FEATURE_OF_INTEREST;
+import static org.n52.server.oxf.util.parser.ConnectorUtils.setVersionNumbersToMetadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,6 +61,7 @@ import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,16 +79,12 @@ public abstract class MetadataHandler {
 			String sosUrl, String sosVersion) throws Exception;
 
 	protected SOSMetadata initMetadata(String sosUrl, String sosVersion) {
-		sosMetadata = ConfigurationContext.getServiceMetadatas()
-				.get(sosUrl);
+		sosMetadata = ConfigurationContext.getServiceMetadatas().get(sosUrl);
 		adapter = SosAdapterFactory.createSosAdapter(sosMetadata);
-		serviceDescriptor = ConnectorUtils
-				.getServiceDescriptor(sosUrl, adapter);
-		String sosTitle = serviceDescriptor.getServiceIdentification()
-				.getTitle();
+		serviceDescriptor = ConnectorUtils.getServiceDescriptor(sosUrl, adapter);
+		String sosTitle = serviceDescriptor.getServiceIdentification().getTitle();
 		String omResponseFormat = ConnectorUtils.getResponseFormat(serviceDescriptor, "om");
-		String smlVersion = ConnectorUtils.getSMLVersion(serviceDescriptor,
-				sosVersion);
+		String smlVersion = ConnectorUtils.getSMLVersion(serviceDescriptor, sosVersion);
 		// TODO check why no omFormat and smlVersion exists
 		if (omResponseFormat == null) {
 			omResponseFormat = "http://www.opengis.net/om/2.0";
@@ -95,8 +93,7 @@ public abstract class MetadataHandler {
 			smlVersion = "http://www.opengis.net/sensorML/1.0.1";
 		}
 
-		ConnectorUtils.setVersionNumbersToMetadata(sosUrl, sosTitle,
-				sosVersion, omResponseFormat, smlVersion);
+		setVersionNumbersToMetadata(sosUrl, sosTitle, sosVersion, omResponseFormat, smlVersion);
 		return sosMetadata;
 	}
 
@@ -140,10 +137,12 @@ public abstract class MetadataHandler {
 				featureIds.add(foiArray[j]);
 			}
 		}
+		
+		TimeseriesParametersLookup lookup = sosMetadata.getTimeseriesParamtersLookup();
 
 		// add fois
 		for (String featureId : featureIds) {
-			sosMetadata.addFeature(new FeatureOfInterest(featureId));
+			lookup.addFeature(new FeatureOfInterest(featureId));
 		}
 
 		Collection<ParameterConstellation> parameterConstellations = new ArrayList<ParameterConstellation>();
@@ -168,15 +167,14 @@ public abstract class MetadataHandler {
 						parameterConstellations.add(paramConst);
 					}
 					// add procedures
-					sosMetadata.addProcedure(new Procedure(procedure));
+					lookup.addProcedure(new Procedure(procedure));
 					for (String phenomenonId : offeringPhenMap.get(offeringId)) {
-						sosMetadata.addPhenomenon(new Phenomenon(phenomenonId));
+						lookup.addPhenomenon(new Phenomenon(phenomenonId));
 					}
 				}
 			}
 			// add offering
-			Offering offering = new Offering(offeringId);
-			sosMetadata.addOffering(offering);
+			lookup.addOffering(new Offering(offeringId));
 		}
 		return parameterConstellations;
 	}

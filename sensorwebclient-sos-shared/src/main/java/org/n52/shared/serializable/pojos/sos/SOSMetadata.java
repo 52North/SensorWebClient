@@ -59,14 +59,8 @@ public class SOSMetadata implements Serializable {
     private String sensorMLVersion;
 
     private String omVersion;
-
-    private HashMap<String, FeatureOfInterest> features = new HashMap<String, FeatureOfInterest>();
-
-    private HashMap<String, Phenomenon> phenomenons = new HashMap<String, Phenomenon>();
-
-    private HashMap<String, Procedure> procedures = new HashMap<String, Procedure>();
-
-    private HashMap<String, Offering> offerings = new HashMap<String, Offering>();
+    
+    private TimeseriesParametersLookup timeseriesParamtersLookup;
 
     private HashMap<String, Station> stations = new HashMap<String, Station>();
 
@@ -89,7 +83,7 @@ public class SOSMetadata implements Serializable {
     private BoundingBox configuredExtent;
 
     @SuppressWarnings("unused")
-	private SOSMetadata() {
+    private SOSMetadata() {
         // for serialization
     }
 
@@ -169,6 +163,9 @@ public class SOSMetadata implements Serializable {
         this.version = version;
     }
 
+    /**
+     * @return the configured SOS metadata handler or <code>null</code> when called from client side.
+     */
     public String getSosMetadataHandler() {
         return sosMetadataHandler;
     }
@@ -178,6 +175,9 @@ public class SOSMetadata implements Serializable {
         this.sosMetadataHandler = handler != null ? handler.trim() : null;
     }
 
+    /**
+     * @return the configured SOS adapter or <code>null</code> when called from client side.
+     */
     public String getAdapter() {
         return adapter;
     }
@@ -198,67 +198,7 @@ public class SOSMetadata implements Serializable {
     public void setSrs(String srs) {
         this.srs = srs;
     }
-
-    public String toDebugString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("\nSOS URL: ").append(getId()).append("\n");
-        sb.append("\tversion: ").append(getSosVersion()).append("\n");
-        sb.append("\tsensorML version: ").append(this.sensorMLVersion).append("\n");
-        int offs = 10;
-        sb.append("\tFirst ").append(offs).append(" Offerings of ").append(this.offerings.size()).append(" :\n");
-        for (Offering off : this.offerings.values()) {
-            sb.append("\t\t").append(off.getLabel()).append("\n");
-            offs--;
-            if (offs == 0) {
-                break;
-            }
-        }
-        sb.append("bbox: ").append(getConfiguredExtent());
-        return sb.toString();
-    }
-
-    public void addOffering(Offering off) {
-        if ( !this.offerings.containsKey(off.getId())) {
-            this.offerings.put(off.getId(), off);
-        }
-    }
-
-    public Procedure getProcedure(String ID) {
-        return this.procedures.get(ID);
-    }
-
-    public ArrayList<Offering> getOfferings() {
-        ArrayList<Offering> offs = new ArrayList<Offering>(this.offerings.values());
-        return offs;
-    }
-
-    public Offering getOffering(String ID) {
-        return this.offerings.get(ID);
-    }
-
-    public FeatureOfInterest getFeature(String ID) {
-        return this.features.get(ID);
-    }
-
-    public Collection<FeatureOfInterest> getFeatures() {
-        ArrayList<FeatureOfInterest> features = new ArrayList<FeatureOfInterest>(this.features.values());
-        return features;
-    }
-
-    public Collection<Phenomenon> getPhenomenons() {
-        return new ArrayList<Phenomenon>(this.phenomenons.values());
-    }
-
-    public Phenomenon getPhenomenon(String ID) {
-        return this.phenomenons.get(ID);
-    }
-
-    public ArrayList<Procedure> getProcedures() {
-        ArrayList<Procedure> procs = new ArrayList<Procedure>();
-        procs.addAll(this.procedures.values());
-        return procs;
-    }
-
+    
     public String getTitle() {
         return this.title;
     }
@@ -303,18 +243,7 @@ public class SOSMetadata implements Serializable {
         this.hasDonePositionRequest = hasDonePositionRequest;
     }
 
-    public void addProcedure(Procedure p) {
-        this.procedures.put(p.getId(), p);
-    }
-
-    public void addPhenomenon(Phenomenon phenomenon) {
-        this.phenomenons.put(phenomenon.getId(), phenomenon);
-    }
-
-    public void addFeature(FeatureOfInterest f) {
-        this.features.put(f.getId(), f);
-    }
-
+    
     public boolean canGeneralize() {
         return this.canGeneralize;
     }
@@ -365,11 +294,14 @@ public class SOSMetadata implements Serializable {
         return new ArrayList<Station>(this.stations.values());
     }
 
-    public Station getStationByParameterConstellation(String offeringId, String featureId, String procedureId, String phenomenonId) {
+    public Station getStationByParameterConstellation(String offeringId,
+                                                      String featureId,
+                                                      String procedureId,
+                                                      String phenomenonId) {
         for (Station station : stations.values()) {
-        	if (station.hasParameterConstellation(offeringId, featureId, procedureId, phenomenonId)) {
-        		return station;
-        	}
+            if (station.hasParameterConstellation(offeringId, featureId, procedureId, phenomenonId)) {
+                return station;
+            }
         }
         return null;
     }
@@ -378,7 +310,158 @@ public class SOSMetadata implements Serializable {
         return stations.get(id);
     }
 
-	public void removeProcedure(String procedure) {
-		this.procedures.remove(procedure);
-	}
+    
+    
+    
+    
+    // TODO find references of deprecated methods and replace delegation logic by using #getTimeseriesParamtersLookup()
+    
+    
+    
+
+
+    public TimeseriesParametersLookup getTimeseriesParamtersLookup() {
+        timeseriesParamtersLookup = timeseriesParamtersLookup == null 
+                ? new TimeseriesParametersLookup()
+                : timeseriesParamtersLookup;
+        return timeseriesParamtersLookup;
+    }
+
+    /**
+     * @deprecated use {@link #getTimeseriesParamtersLookup()}
+     */
+    @Deprecated
+    private void addOffering(Offering offering) {
+        getTimeseriesParamtersLookup().addOffering(offering);
+    }
+    
+    /**
+     * @deprecated use {@link #getTimeseriesParamtersLookup()}
+     */
+    @Deprecated
+    public Collection<Offering> getOfferings() {
+        return getTimeseriesParamtersLookup().getOfferings();
+    }
+    
+    /**
+     * @deprecated use {@link #getTimeseriesParamtersLookup()}
+     */
+    @Deprecated
+    public Offering[] getOfferingsAsArray() {
+        return getTimeseriesParamtersLookup().getOfferingsAsArray();
+    }
+    
+    /**
+     * @deprecated use {@link #getTimeseriesParamtersLookup()}
+     */
+    @Deprecated
+    public Offering getOffering(String id) {
+        return getTimeseriesParamtersLookup().getOffering(id);
+    }
+
+    /**
+     * @deprecated use {@link #getTimeseriesParamtersLookup()}
+     */
+    @Deprecated
+    public Collection<FeatureOfInterest> getFeatures() {
+        return getTimeseriesParamtersLookup().getFeatures();
+    }
+
+    /**
+     * @deprecated use {@link #getTimeseriesParamtersLookup()}
+     */
+    @Deprecated
+    public FeatureOfInterest[] getFeaturesAsArray() {
+        return getTimeseriesParamtersLookup().getFeaturesAsArray();
+    }
+
+    /**
+     * @deprecated use {@link #getTimeseriesParamtersLookup()}
+     */
+    @Deprecated
+    public FeatureOfInterest getFeature(String id) {
+        return getTimeseriesParamtersLookup().getFeature(id);
+    }
+
+    /**
+     * @deprecated use {@link #getTimeseriesParamtersLookup()}
+     */
+    @Deprecated
+    public Collection<Phenomenon> getPhenomenons() {
+        return getTimeseriesParamtersLookup().getPhenomenons();
+    }
+    
+    /**
+     * @deprecated use {@link #getTimeseriesParamtersLookup()}
+     */
+    @Deprecated
+    public Phenomenon[] getPhenomenonsAsArray() {
+        return getTimeseriesParamtersLookup().getPhenomenonsAsArray();
+    }
+
+    /**
+     * @deprecated use {@link #getTimeseriesParamtersLookup()}
+     */
+    @Deprecated
+    public Phenomenon getPhenomenon(String id) {
+        return getTimeseriesParamtersLookup().getPhenomenon(id);
+    }
+
+    /**
+     * @deprecated use {@link #getTimeseriesParamtersLookup()}
+     */
+    @Deprecated
+    public ArrayList<Procedure> getProcedures() {
+        return getTimeseriesParamtersLookup().getProcedures();
+    }
+    
+    /**
+     * @deprecated use {@link #getTimeseriesParamtersLookup()}
+     */
+    @Deprecated
+    public Procedure[] getProceduresAsArray() {
+        return getTimeseriesParamtersLookup().getProceduresAsArray();
+    }
+
+    /**
+     * @deprecated use {@link #getTimeseriesParamtersLookup()}
+     */
+    @Deprecated
+    public Procedure getProcedure(String id) {
+        return getTimeseriesParamtersLookup().getProcedure(id);
+    }
+    
+    /**
+     * @deprecated use {@link #getTimeseriesParamtersLookup()}
+     */
+    @Deprecated
+    public void removeProcedure(String procedure) {
+        getTimeseriesParamtersLookup().removeProcedure(procedure);
+    }
+    
+    /**
+     * @deprecated use {@link #getTimeseriesParamtersLookup()}
+     */
+    @Deprecated
+    public void addProcedure(Procedure procedure) {
+        getTimeseriesParamtersLookup().addProcedure(procedure);
+    }
+    
+    /**
+     * @deprecated use {@link #getTimeseriesParamtersLookup()}
+     */
+    @Deprecated
+    public void addPhenomenon(Phenomenon phenomenon) {
+        getTimeseriesParamtersLookup().addPhenomenon(phenomenon);
+    }
+
+    /**
+     * @deprecated use {@link #getTimeseriesParamtersLookup()}
+     */
+    @Deprecated
+    public void addFeature(FeatureOfInterest feature) {
+        getTimeseriesParamtersLookup().addFeature(feature);
+    }
+
+    
 }

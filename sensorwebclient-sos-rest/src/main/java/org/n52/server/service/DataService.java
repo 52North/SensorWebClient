@@ -44,6 +44,7 @@ import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,11 +97,13 @@ public abstract class DataService {
     }
 
     private TimeSeriesProperties createTimeSeriesProperties(SOSMetadata metadata, Station station, ParameterConstellation constellation) {
+        TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
+        FeatureOfInterest foi = lookup.getFeature(constellation.getFeatureOfInterest());
+        Phenomenon phenomenon = lookup.getPhenomenon(constellation.getPhenomenon());
+        Procedure procedure = lookup.getProcedure(constellation.getProcedure());
+        Offering offering = lookup.getOffering(constellation.getOffering());
+
         String sosUrl = metadata.getServiceUrl();
-        Offering offering = metadata.getOffering(constellation.getOffering());
-        Procedure procedure = metadata.getProcedure(constellation.getProcedure());
-        Phenomenon phenomenon = metadata.getPhenomenon(constellation.getPhenomenon());
-        FeatureOfInterest foi = metadata.getFeature(constellation.getFeatureOfInterest());
         return new TimeSeriesProperties(sosUrl, station, offering, foi, procedure, phenomenon, 0, 0, "???", true);
     }
 

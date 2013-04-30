@@ -31,7 +31,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.swing.JOptionPane;
 
-import org.jfree.util.Log;
 import org.n52.server.ses.eml.Meta_Builder;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.service.SesUserServiceImpl;
