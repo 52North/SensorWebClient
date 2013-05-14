@@ -31,7 +31,6 @@ import org.joda.time.DateTime;
 import org.n52.client.service.SensorMetadataService;
 import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.service.rest.InternalServiceException;
-import org.n52.server.service.rest.ParameterConstellation;
 import org.n52.server.service.rest.ParameterSet;
 import org.n52.server.service.rest.TimeSeriesdataResult;
 import org.n52.server.service.rest.control.InvalidParameterConstallationException;
@@ -40,6 +39,7 @@ import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeSeriesProperties;
 import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
 import org.n52.shared.serializable.pojos.sos.Offering;
+import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -68,10 +68,10 @@ public abstract class DataService {
             try {
                 Station station = getStationFromParameters(metadata, constellation);
             	TimeSeriesProperties timeSeriesProperties = createTimeSeriesProperties(metadata, station, constellation);
-            	timeSeriesProperties.setTsID(constellation.getClientId());
+            	timeSeriesProperties.setTsID(constellation.getTimeseriesID());
                 props.add(decorateProperties(timeSeriesProperties, parameterSet));
                 TimeSeriesdataResult result = createTimeSeriesResult(timeSeriesProperties);
-                timeSeriesResults.put(constellation.getClientId(), result);
+                timeSeriesResults.put(constellation.getTimeseriesID(), result);
             }
             catch (InvalidParameterConstallationException e) {
                 LOGGER.warn("Unable to process request: {}", e.getMessage());
