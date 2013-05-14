@@ -30,7 +30,6 @@ import java.util.Map;
 
 import org.n52.client.service.TimeSeriesDataService;
 import org.n52.server.service.rest.InternalServiceException;
-import org.n52.server.service.rest.ParameterConstellation;
 import org.n52.server.service.rest.ParameterSet;
 import org.n52.server.service.rest.TimeSeriesdataResult;
 import org.n52.shared.requests.TimeSeriesDataRequest;
