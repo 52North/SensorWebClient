@@ -30,8 +30,8 @@ import org.joda.time.DateTime;
 import org.n52.server.service.GetDataService;
 import org.n52.server.service.GetImageService;
 import org.n52.server.service.rest.InternalServiceException;
-import org.n52.server.service.rest.ParameterConstellation;
 import org.n52.server.service.rest.ParameterSet;
+import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -52,14 +52,6 @@ public class RestfulTimeSeriesController implements RestfulKvp, RestfulUrls {
 
     private GetImageService imageService;
     
-    @RequestMapping(value = "{instance}" + PATH_TIMESERIES, method = RequestMethod.GET)
-    public ModelAndView getTimeseriesMetadatasByGET(@PathVariable("instance") String instance) {
-        
-        // TODO
-
-        return new ModelAndView();
-    }
-
     @RequestMapping(value = "{instance}/timeseries", method = RequestMethod.POST)
     public ModelAndView getData(@RequestBody ParameterSet parameterSet, 
                                 @PathVariable("instance") String instance) {
@@ -105,7 +97,6 @@ public class RestfulTimeSeriesController implements RestfulKvp, RestfulUrls {
             paramConst.setProcedure(procedure);
             paramConst.setPhenomenon(phenomenon);
             paramConst.setFeatureOfInterest(feature);
-            paramConst.setClientId("1234");
             
             ParameterSet parameterSet = new ParameterSet();
             ParameterConstellation[] parameters = new ParameterConstellation[1];

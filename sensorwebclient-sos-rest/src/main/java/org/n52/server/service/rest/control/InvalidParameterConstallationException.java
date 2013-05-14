@@ -23,7 +23,7 @@
  */
 package org.n52.server.service.rest.control;
 
-import org.n52.server.service.rest.ParameterConstellation;
+import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
 
 
 public class InvalidParameterConstallationException extends Exception {

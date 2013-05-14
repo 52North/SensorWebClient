@@ -52,6 +52,10 @@ public class ParameterConstellation implements Serializable {
         }
         return true;
     }
+    
+    public String getTimeseriesID() {
+        return Integer.toString(hashCode());
+    }
 
     public String getProcedure() {
         return procedure;
