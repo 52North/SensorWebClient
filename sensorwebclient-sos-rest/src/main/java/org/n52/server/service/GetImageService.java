@@ -23,10 +23,13 @@
  */
 package org.n52.server.service;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+
+import javax.servlet.ServletOutputStream;
 
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.entity.StandardEntityCollection;
@@ -55,23 +58,25 @@ public class GetImageService extends DataService {
     private boolean renderGrid;
     
     public ImageDataResult getTimeSeriesChart(ParameterSet parameterSet, String instance) {
-        SOSMetadata metadata = getServiceMetadata(instance);
-        ArrayList<TimeSeriesProperties> tsProperties = new ArrayList<TimeSeriesProperties>();
-        Map<String, TimeSeriesdataResult> timeSeriesResults = new HashMap<String, TimeSeriesdataResult>();
-        createTimeSeriesRequest(parameterSet, metadata, tsProperties, timeSeriesResults);
-        DesignOptions options = createDesignOptions(parameterSet, tsProperties, isRenderGrid());
+        DesignOptions options = createDesignOptions(parameterSet, instance);
         return performChartRendering(options);
     }
-    
-//    public Object getTimeSeriesChart(ParameterConstellation paramConst,
-//			String instance) {
-//		SOSMetadata metadata = getServiceMetadata(instance);
-//		ArrayList<TimeSeriesProperties> tsProperties = new ArrayList<TimeSeriesProperties>();
-//		Map<String, TimeSeriesdataResult> timeSeriesResults = new HashMap<String, TimeSeriesdataResult>();
-//		createTimeSeriesRequest(paramConst, metadata, tsProperties, timeSeriesResults);
-//		DesignOptions options = createDesignOptions(paramConst, tsProperties, isRenderGrid());
-//		return performChartRendering(options);
-//	}
+
+	public void getTimeSeriesChartToOutputStream(ParameterSet parameterSet,
+			String instance, ServletOutputStream outputStream) {
+		DesignOptions options = createDesignOptions(parameterSet, instance);
+        performChartRendering(options, outputStream);
+	}
+
+	private DesignOptions createDesignOptions(ParameterSet parameterSet,
+			String instance) {
+		SOSMetadata metadata = getServiceMetadata(instance);
+	    ArrayList<TimeSeriesProperties> tsProperties = new ArrayList<TimeSeriesProperties>();
+	    Map<String, TimeSeriesdataResult> timeSeriesResults = new HashMap<String, TimeSeriesdataResult>();
+	    createTimeSeriesRequest(parameterSet, metadata, tsProperties, timeSeriesResults);
+	    DesignOptions options = createDesignOptions(parameterSet, tsProperties, isRenderGrid());
+		return options;
+	}
 
 	private ImageDataResult performChartRendering(DesignOptions options) {
         try {
@@ -85,6 +90,17 @@ public class GetImageService extends DataService {
         }
     }
 
+	private void performChartRendering(DesignOptions options, OutputStream outputStream) {
+        try {
+            EESGenerator chartGenerator = new EESGenerator();
+            ChartRenderingInfo renderingInfo = new ChartRenderingInfo(new StandardEntityCollection());
+            chartGenerator.createChartToOutputStream(options, renderingInfo, outputStream);
+        } catch (Exception e) {
+            LOGGER.error("Could not render time series chart.", e);
+            throw new InternalServiceException();
+        }
+    }
+	
     @Override
     protected TimeSeriesProperties decorateProperties(TimeSeriesProperties timeSeriesProperties, ParameterSet parameterSet) throws Exception {
         timeSeriesProperties = decoratePropertiesWithImageSize(timeSeriesProperties, parameterSet);

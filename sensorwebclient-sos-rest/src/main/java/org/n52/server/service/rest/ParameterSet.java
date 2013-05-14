@@ -23,6 +23,8 @@
  */
 package org.n52.server.service.rest;
 
+import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
+
 
 public class ParameterSet {
     

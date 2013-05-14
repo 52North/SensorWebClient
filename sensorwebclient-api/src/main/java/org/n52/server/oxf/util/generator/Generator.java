@@ -113,7 +113,6 @@ public abstract class Generator {
                     if (generalizer != null) {
                         Procedure procedure = con.getProcedure();
                         LOGGER.debug("Using generalizer '{}' for phenomenon '{}' and procedure '{}'", generalizer, phenomenon, procedure);
-                        procedure.setId(procedure.getId() + "," + generalizer);
                     }
                 } catch (PropertyException e) {
                     LOGGER.error("Error loading generalizer property for '{}'.", phenomenon, e);

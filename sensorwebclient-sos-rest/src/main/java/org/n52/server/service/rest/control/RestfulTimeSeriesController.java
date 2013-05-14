@@ -24,11 +24,14 @@
 
 package org.n52.server.service.rest.control;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.joda.time.DateTime;
 import org.n52.server.service.GetDataService;
 import org.n52.server.service.GetImageService;
 import org.n52.server.service.rest.InternalServiceException;
-import org.n52.server.service.rest.ParameterConstellation;
 import org.n52.server.service.rest.ParameterSet;
+import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -49,15 +52,6 @@ public class RestfulTimeSeriesController implements RestfulKvp, RestfulUrls {
 
     private GetImageService imageService;
     
-
-    @RequestMapping(value = "{instance}" + PATH_TIMESERIES, method = RequestMethod.GET)
-    public ModelAndView getTimeseriesMetadatasByGET(@PathVariable("instance") String instance) {
-        
-        // TODO
-
-        return new ModelAndView();
-    }
-
     @RequestMapping(value = "{instance}/timeseries", method = RequestMethod.POST)
     public ModelAndView getData(@RequestBody ParameterSet parameterSet, 
                                 @PathVariable("instance") String instance) {
@@ -72,7 +66,7 @@ public class RestfulTimeSeriesController implements RestfulKvp, RestfulUrls {
         }
     }
 
-    @RequestMapping(value = "{instance}/timseries/image")
+    @RequestMapping(value = "{instance}/timeseries/image")
     public ModelAndView getImage(@RequestBody ParameterSet parameterSet, 
                                  @PathVariable("instance") String instance) {
         try {
@@ -87,20 +81,52 @@ public class RestfulTimeSeriesController implements RestfulKvp, RestfulUrls {
     }
 
     @RequestMapping(value = "{instance}/image", method = RequestMethod.GET)
-    public ModelAndView getImagebyGET(@PathVariable("instance") String instance,
+    public void getImagebyGET(HttpServletResponse response,
+    								  @PathVariable("instance") String instance,
                                       @RequestParam(value = "offering", required = true) String offering,
                                       @RequestParam(value = "procedure", required = true) String procedure,
                                       @RequestParam(value = "feature", required = true) String feature,
-                                      @RequestParam(value = "phenomenon", required = true) String phenomenon) {
+                                      @RequestParam(value = "phenomenon", required = true) String phenomenon,
+                                      @RequestParam(value = "start", required = false) String start,
+                                      @RequestParam(value = "end", required = false) String end,
+                                      @RequestParam(value = "width", required = false) Integer width,
+                                      @RequestParam(value = "height", required = false) Integer height) {
         try {
             ParameterConstellation paramConst = new ParameterConstellation();
             paramConst.setOffering(offering);
             paramConst.setProcedure(procedure);
             paramConst.setPhenomenon(phenomenon);
             paramConst.setFeatureOfInterest(feature);
-            ModelAndView mav = new ModelAndView();
-            // mav.addObject(imageService.getTimeSeriesChart(paramConst, instance));
-            return mav;
+            
+            ParameterSet parameterSet = new ParameterSet();
+            ParameterConstellation[] parameters = new ParameterConstellation[1];
+            parameters[0] = paramConst;
+			parameterSet.setParameters(parameters);
+			if(start != null) {
+				
+				parameterSet.setBegin(start);
+				// TODO validate start
+			} else {
+				parameterSet.setBegin(new DateTime().minusDays(2).toString());
+			}
+			if(end != null) {
+				parameterSet.setEnd(end);
+				// TODO validate end
+			} else {
+				parameterSet.setEnd(new DateTime().toString());
+			}
+            
+			if(width != null) {
+				parameterSet.setWidth(width);
+			}
+			if(height != null) {
+				parameterSet.setHeight(height);
+			}
+			
+            response.setContentType("image/png");
+            
+            imageService.getTimeSeriesChartToOutputStream(parameterSet, instance, response.getOutputStream());
+            response.getOutputStream().close();
         }
         catch (Exception e) {
             LOGGER.error("Could not create response.", e);
