@@ -51,9 +51,9 @@ public class RestfulTimeSeriesController implements RestfulKvp, RestfulUrls {
     private GetDataService dataService;
 
     private GetImageService imageService;
-    
+
     @RequestMapping(value = "{instance}/timeseries", method = RequestMethod.POST)
-    public ModelAndView getData(@RequestBody ParameterSet parameterSet, 
+    public ModelAndView getData(@RequestBody ParameterSet parameterSet,
                                 @PathVariable("instance") String instance) {
         try {
             ModelAndView mav = new ModelAndView();
@@ -67,7 +67,7 @@ public class RestfulTimeSeriesController implements RestfulKvp, RestfulUrls {
     }
 
     @RequestMapping(value = "{instance}/timeseries/image")
-    public ModelAndView getImage(@RequestBody ParameterSet parameterSet, 
+    public ModelAndView getImage(@RequestBody ParameterSet parameterSet,
                                  @PathVariable("instance") String instance) {
         try {
             ModelAndView mav = new ModelAndView();
@@ -82,49 +82,51 @@ public class RestfulTimeSeriesController implements RestfulKvp, RestfulUrls {
 
     @RequestMapping(value = "{instance}/image", method = RequestMethod.GET)
     public void getImagebyGET(HttpServletResponse response,
-    								  @PathVariable("instance") String instance,
-                                      @RequestParam(value = "offering", required = true) String offering,
-                                      @RequestParam(value = "procedure", required = true) String procedure,
-                                      @RequestParam(value = "feature", required = true) String feature,
-                                      @RequestParam(value = "phenomenon", required = true) String phenomenon,
-                                      @RequestParam(value = "start", required = false) String start,
-                                      @RequestParam(value = "end", required = false) String end,
-                                      @RequestParam(value = "width", required = false) Integer width,
-                                      @RequestParam(value = "height", required = false) Integer height) {
+                              @PathVariable("instance") String instance,
+                              @RequestParam(value = "offering", required = true) String offering,
+                              @RequestParam(value = "procedure", required = true) String procedure,
+                              @RequestParam(value = "feature", required = true) String feature,
+                              @RequestParam(value = "phenomenon", required = true) String phenomenon,
+                              @RequestParam(value = "start", required = false) String start,
+                              @RequestParam(value = "end", required = false) String end,
+                              @RequestParam(value = "width", required = false) Integer width,
+                              @RequestParam(value = "height", required = false) Integer height) {
         try {
             ParameterConstellation paramConst = new ParameterConstellation();
             paramConst.setOffering(offering);
             paramConst.setProcedure(procedure);
             paramConst.setPhenomenon(phenomenon);
             paramConst.setFeatureOfInterest(feature);
-            
+
             ParameterSet parameterSet = new ParameterSet();
             ParameterConstellation[] parameters = new ParameterConstellation[1];
             parameters[0] = paramConst;
-			parameterSet.setParameters(parameters);
-			if(start != null) {
-				
-				parameterSet.setBegin(start);
-				// TODO validate start
-			} else {
-				parameterSet.setBegin(new DateTime().minusDays(2).toString());
-			}
-			if(end != null) {
-				parameterSet.setEnd(end);
-				// TODO validate end
-			} else {
-				parameterSet.setEnd(new DateTime().toString());
-			}
-            
-			if(width != null) {
-				parameterSet.setWidth(width);
-			}
-			if(height != null) {
-				parameterSet.setHeight(height);
-			}
-			
+            parameterSet.setParameters(parameters);
+            if (start != null) {
+
+                parameterSet.setBegin(start);
+                // TODO validate start
+            }
+            else {
+                parameterSet.setBegin(new DateTime().minusDays(2).toString());
+            }
+            if (end != null) {
+                parameterSet.setEnd(end);
+                // TODO validate end
+            }
+            else {
+                parameterSet.setEnd(new DateTime().toString());
+            }
+
+            if (width != null) {
+                parameterSet.setWidth(width);
+            }
+            if (height != null) {
+                parameterSet.setHeight(height);
+            }
+
             response.setContentType("image/png");
-            
+
             imageService.getTimeSeriesChartToOutputStream(parameterSet, instance, response.getOutputStream());
             response.getOutputStream().close();
         }
