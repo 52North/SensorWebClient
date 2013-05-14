@@ -84,27 +84,12 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>gwt-maven-plugin</artifactId>
 			</plugin>
-
-			<plugin>
-				<groupId>com.google.code.maven-svn-revision-number-plugin</groupId>
-				<artifactId>svn-revision-number-maven-plugin</artifactId>
-				<version>1.13</version> <!-- please use the latest version -->
-				<executions>
-					<execution>
-						<phase>validate</phase>
-						<goals>
-							<goal>revision</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<entries>
-						<entry>
-							<prefix>svn.info</prefix>
-						</entry>
-					</entries>
-				</configuration>
-			</plugin>
+			<!-- <plugin> <groupId>com.google.code.maven-svn-revision-number-plugin</groupId> 
+				<artifactId>svn-revision-number-maven-plugin</artifactId> <version>1.13</version> 
+				please use the latest version <executions> <execution> <phase>validate</phase> 
+				<goals> <goal>revision</goal> </goals> </execution> </executions> <configuration> 
+				<entries> <entry> <prefix>svn.info</prefix> </entry> </entries> </configuration> 
+				</plugin> -->
 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
