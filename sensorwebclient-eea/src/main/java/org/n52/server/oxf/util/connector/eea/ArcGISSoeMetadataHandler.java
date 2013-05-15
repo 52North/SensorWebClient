@@ -71,6 +71,7 @@ import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
 import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,6 +86,7 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 	@Override
 	public SOSMetadataResponse performMetadataCompletion(String sosUrl, String sosVersion) throws Exception {
 		SOSMetadata metadata = initMetadata(sosUrl, sosVersion);
+		TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
 		
         Collection<ParameterConstellation> parameterConstellations = createParameterConstellations();
         
@@ -137,7 +139,7 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 						}
 						FeatureOfInterest feature = new FeatureOfInterest(id);
 						feature.setLabel(label);
-                        metadata.addFeature(feature);
+                        lookup.addFeature(feature);
                         
                         ParameterConstellation tmp = paramConst.clone();
                         tmp.setFeatureOfInterest(id);
