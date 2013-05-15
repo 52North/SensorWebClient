@@ -60,13 +60,12 @@ public class ResultPager {
         return Arrays.copyOfRange(results, offset, offset + size);
     }
 
-    private <T> ResultPage<T> createEmptyPage() {
+    public <T> ResultPage<T> createEmptyPage() {
         List<T> emptyList = Collections.emptyList();
-        return createPageFrom(getArrayFrom(emptyList), 0, 1);
+        return createPageFrom(getArrayFrom(emptyList), 0, 0);
     }
 
-    @SuppressWarnings("unchecked")
-    // generics ensure type safety
+    @SuppressWarnings("unchecked") // type safety via generics
     private <T> T[] getArrayFrom(Collection<T> results) {
         return results.toArray((T[]) new Object[0]);
     }

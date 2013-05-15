@@ -2,6 +2,7 @@
 package org.n52.shared.requests.query;
 
 import java.io.Serializable;
+import java.util.Collections;
 
 /**
  * Represents a read-only subset of totally available results.
@@ -48,10 +49,15 @@ public class ResultPage<T> implements Serializable {
     }
     
     /**
-     * @return the results.
+     * @return the results (never <code>null</code> but an empty array when no results were set beforehand).
      */
     public T[] getResults() {
-        return results;
+        return results != null ? results : createEmptyArray();
+    }
+
+    @SuppressWarnings("unchecked") // type safety via generics
+    private T[] createEmptyArray() {
+        return Collections.emptyList().toArray((T[]) new Object[0]);
     }
     
     /**
