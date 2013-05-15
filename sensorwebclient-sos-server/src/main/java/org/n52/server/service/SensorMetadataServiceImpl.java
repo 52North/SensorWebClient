@@ -23,6 +23,7 @@
  */
 package org.n52.server.service;
 
+import static org.n52.server.oxf.util.ConfigurationContext.getSOSMetadata;
 import static org.n52.server.oxf.util.access.DescribeSensorAccessor.getSensorDescriptionAsSensorML;
 
 import java.util.HashMap;
@@ -38,6 +39,7 @@ import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.TimeSeriesProperties;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,10 +52,11 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
         try {
             LOG.debug("Request -> GetSensorMetadata");
             String sosUrl = tsProperties.getSosUrl();
+            SOSMetadata metadata = getSOSMetadata(sosUrl);
             String procedureId = tsProperties.getProcedure().getId();
             String phenomenonId = tsProperties.getPhenomenon().getId();
-            Procedure procedure = ConfigurationContext.getSOSMetadata(sosUrl).getProcedure(procedureId);
-            SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosUrl);
+            TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
+            Procedure procedure = lookup.getProcedure(procedureId);
 
             XmlObject sml = getSensorDescriptionAsSensorML(procedureId, metadata);
             DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), metadata);
