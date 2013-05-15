@@ -143,7 +143,7 @@ public class QueryServiceImpl implements QueryService {
         String procedure = parameters.getProcedure();
         String phenomenon = parameters.getPhenomenon();
         String feature = parameters.getFeature();
-        clonedStation.removeUnmatchedConstellations(offering, phenomenon, procedure, feature);
+        clonedStation.removeNotMatchingFilters(offering, phenomenon, procedure, feature);
         return clonedStation;
     }
 
