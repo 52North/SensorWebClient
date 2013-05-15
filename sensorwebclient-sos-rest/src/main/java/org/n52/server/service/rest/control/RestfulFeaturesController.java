@@ -40,19 +40,18 @@ public class RestfulFeaturesController extends TimeseriesParameterQueryControlle
         return mav.addObject(features);
     }
 
-    @RequestMapping(value = "/{instance}/" + PATH_FEATURES + "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{instance}/" + PATH_FEATURES + "/{id:.+}", method = RequestMethod.GET)
     public ModelAndView getFeatureByGET(@PathVariable(value = "instance") String instance,
                                         @PathVariable(value = "id") String feature) throws Exception {
         ModelAndView mav = new ModelAndView("features");
         QueryParameters parameters = new QueryParameters().setFeature(feature);
         QueryResponse< ? > result = performQuery(instance, parameters);
 
-        FeatureOfInterest[] features = (FeatureOfInterest[]) result.getResults();
-        if (features.length == 0) {
+        if (result.getResults().length == 0) {
             throw new ResourceNotFoundException();
         }
         else {
-            mav.addObject(features[0]);
+            mav.addObject(result.getResults()[0]);
         }
         return mav;
     }
