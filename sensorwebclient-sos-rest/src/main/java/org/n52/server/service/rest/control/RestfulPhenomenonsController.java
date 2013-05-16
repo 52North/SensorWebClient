@@ -3,6 +3,8 @@ package org.n52.server.service.rest.control;
 
 import static org.n52.shared.requests.query.QueryParameters.createEmptyFilterQuery;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.n52.server.service.rest.model.ModelAndViewPager;
 import org.n52.shared.requests.query.QueryFactory;
 import org.n52.shared.requests.query.QueryParameters;
@@ -20,7 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(value = "/services", produces = {"text/html", "application/*"})
 public class RestfulPhenomenonsController extends TimeseriesParameterQueryController implements RestfulKvp, RestfulUrls {
 
-    @RequestMapping(value = "/{instance}/" + PATH_PHENOMENONS, method = RequestMethod.GET)
+    @RequestMapping(value = "/{instance}/" + COLLECTION_PHENOMENONS, method = RequestMethod.GET)
     public ModelAndView getProcedureByGET(@PathVariable("instance") String instance,
                                           @RequestParam(value = KVP_SHOW, required = false) String details,
                                           @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
@@ -39,10 +41,21 @@ public class RestfulPhenomenonsController extends TimeseriesParameterQueryContro
         ModelAndView mav = new ModelAndView("phenomenons");
         return mav.addObject(phenomenons);
     }
-
-    @RequestMapping(value = "/{instance}/" + PATH_PHENOMENONS + "/{id:.+}", method = RequestMethod.GET)
+    
+    @RequestMapping(value = "/{instance}/" + COLLECTION_PHENOMENONS + "/**", method = RequestMethod.GET)
+    public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
+                                        HttpServletRequest request) throws Exception {
+        String phenomenon = getIndididuumIdentifierFor(COLLECTION_PHENOMENONS, request);
+        return createResponseView(instance, phenomenon);
+    }
+    
+    @RequestMapping(value = "/{instance}/" + COLLECTION_PHENOMENONS + "/{id:.+}", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          @PathVariable(value = "id") String phenomenon) throws Exception {
+        return createResponseView(instance, phenomenon);
+    }
+
+    private ModelAndView createResponseView(String instance, String phenomenon) throws Exception {
         ModelAndView mav = new ModelAndView("phenomenons");
         QueryParameters parameters = new QueryParameters().setPhenomenon(phenomenon);
         QueryResponse< ? > result = performQuery(instance, parameters);

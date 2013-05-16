@@ -1,6 +1,10 @@
 
 package org.n52.server.service.rest.control;
 
+import static org.springframework.web.servlet.HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.n52.client.service.QueryService;
 import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.shared.requests.query.QueryFactory;
@@ -45,6 +49,19 @@ public abstract class TimeseriesParameterQueryController {
 
     protected QueryResponse< ? > doQuery(QueryRequest queryRequest) throws Exception {
         return queryService.doQuery(queryRequest);
+    }
+    
+    /**
+     * Determines the identifier of the given collection. Instead of 
+     * 
+     * @param collectionName the name of the collection (e.g. <code>features</code>).
+     * @param request the incoming request.
+     * @return the individuum identifier.
+     * @see RestfulUrls
+     */
+    protected String getIndididuumIdentifierFor(String collectionName, HttpServletRequest request) {
+        String path = (String) request.getAttribute(PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+        return path.substring(path.indexOf(collectionName) + collectionName.length() + 1);
     }
 
     public QueryService getQueryService() {

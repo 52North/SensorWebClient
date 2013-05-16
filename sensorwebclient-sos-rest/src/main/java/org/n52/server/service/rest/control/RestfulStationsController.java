@@ -1,6 +1,8 @@
 
 package org.n52.server.service.rest.control;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.n52.server.service.rest.model.ModelAndViewPager;
 import org.n52.shared.requests.query.QueryFactory;
 import org.n52.shared.requests.query.QueryParameters;
@@ -18,7 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(value = "/services", produces = {"text/html", "application/*"})
 public class RestfulStationsController extends TimeseriesParameterQueryController implements RestfulKvp, RestfulUrls {
 
-    @RequestMapping(value = "/{instance}/" + PATH_STATIONS, method = RequestMethod.GET)
+    @RequestMapping(value = "/{instance}/" + COLLECTION_STATIONS, method = RequestMethod.GET)
     public ModelAndView getProcedureByGET(@PathVariable("instance") String instance,
                                           @RequestParam(value = KVP_SHOW, required = false) String details,
                                           @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
@@ -46,10 +48,21 @@ public class RestfulStationsController extends TimeseriesParameterQueryControlle
         ModelAndView mav = new ModelAndView("stations");
         return mav.addObject(stations);
     }
+    
+    @RequestMapping(value = "/{instance}/" + COLLECTION_STATIONS + "/**", method = RequestMethod.GET)
+    public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
+                                        HttpServletRequest request) throws Exception {
+        String station = getIndididuumIdentifierFor(COLLECTION_STATIONS, request);
+        return createResponseView(instance, station);
+    }
 
-    @RequestMapping(value = "/{instance}/" + PATH_STATIONS + "/{id:.+}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{instance}/" + COLLECTION_STATIONS + "/{id:.+}", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          @PathVariable(value = "id") String station) throws Exception {
+        return createResponseView(instance, station);
+    }
+
+    private ModelAndView createResponseView(String instance, String station) throws Exception {
         ModelAndView mav = new ModelAndView("stations");
         QueryParameters parameters = new QueryParameters().setStation(station);
         QueryResponse< ? > result = performQuery(instance, parameters);
