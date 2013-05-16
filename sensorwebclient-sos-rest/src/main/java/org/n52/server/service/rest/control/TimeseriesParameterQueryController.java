@@ -52,7 +52,7 @@ public abstract class TimeseriesParameterQueryController {
     }
     
     /**
-     * Determines the identifier of the given collection. Instead of 
+     * Determines the identifier of an individuum of the given collection. Instead of 
      * 
      * @param collectionName the name of the collection (e.g. <code>features</code>).
      * @param request the incoming request.
@@ -62,6 +62,29 @@ public abstract class TimeseriesParameterQueryController {
     protected String getIndididuumIdentifierFor(String collectionName, HttpServletRequest request) {
         String path = (String) request.getAttribute(PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
         return path.substring(path.indexOf(collectionName) + collectionName.length() + 1);
+    }
+
+    /**
+     * Strips the file extension from the given parameter. The file extension can only be stripped if known.
+     * Currently considered extensions are:
+     * <ul>
+     * <li><code>.json</code></li>
+     * <li><code>.html</code></li>
+     * </ul>
+     * 
+     * 
+     * @param toStrip
+     *        to strip the file extension from.
+     * @return a stripped version of the given parameter (without file extension).
+     */
+    protected String stripKnownFileExtensionFrom(String toStrip) {
+        if (toStrip.lastIndexOf(".json") > 0) {
+            return toStrip.substring(0, toStrip.lastIndexOf(".json"));
+        }
+        else if (toStrip.lastIndexOf(".html") > 0) {
+            return toStrip.substring(0, toStrip.lastIndexOf(".html"));
+        }
+        return toStrip;
     }
 
     public QueryService getQueryService() {

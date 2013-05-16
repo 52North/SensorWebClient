@@ -57,6 +57,7 @@ public class RestfulPhenomenonsController extends TimeseriesParameterQueryContro
 
     private ModelAndView createResponseView(String instance, String phenomenon) throws Exception {
         ModelAndView mav = new ModelAndView("phenomenons");
+        phenomenon = stripKnownFileExtensionFrom(phenomenon);
         QueryParameters parameters = new QueryParameters().setPhenomenon(phenomenon);
         QueryResponse< ? > result = performQuery(instance, parameters);
 

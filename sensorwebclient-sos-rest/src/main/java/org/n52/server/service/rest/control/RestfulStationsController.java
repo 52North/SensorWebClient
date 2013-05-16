@@ -64,6 +64,7 @@ public class RestfulStationsController extends TimeseriesParameterQueryControlle
 
     private ModelAndView createResponseView(String instance, String station) throws Exception {
         ModelAndView mav = new ModelAndView("stations");
+        station = stripKnownFileExtensionFrom(station);
         QueryParameters parameters = new QueryParameters().setStation(station);
         QueryResponse< ? > result = performQuery(instance, parameters);
 
