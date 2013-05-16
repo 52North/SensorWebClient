@@ -25,6 +25,7 @@
 package org.n52.server.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.joda.time.DateTime;
@@ -63,7 +64,8 @@ public abstract class DataService {
         return metadata;
     }
 
-    protected void createTimeSeriesRequest(ParameterSet parameterSet, SOSMetadata metadata, ArrayList<TimeSeriesProperties> props, Map<String, TimeSeriesdataResult> timeSeriesResults) {
+    protected Map<String, TimeSeriesdataResult> createTimeSeriesRequest(ParameterSet parameterSet, SOSMetadata metadata, ArrayList<TimeSeriesProperties> props) {
+        HashMap<String, TimeSeriesdataResult> timeSeriesResults = new HashMap<String, TimeSeriesdataResult>();
         for (ParameterConstellation constellation : parameterSet.getParameters()) {
             try {
                 Station station = getStationFromParameters(metadata, constellation);
@@ -82,14 +84,11 @@ public abstract class DataService {
                 throw new InternalServiceException();
             }
         }
+        return timeSeriesResults;
     }
 
     private Station getStationFromParameters(SOSMetadata metadata, ParameterConstellation constellation) throws InvalidParameterConstallationException {
-        String offeringId = constellation.getOffering();
-        String procedureId = constellation.getProcedure();
-        String phenomenonId = constellation.getPhenomenon();
-        String foiId = constellation.getFeatureOfInterest();
-        Station station = metadata.getStationByParameterConstellation(offeringId, foiId, procedureId, phenomenonId);
+        Station station = metadata.getStationByParameterConstellation(constellation);
         if (station == null) {
             throw new InvalidParameterConstallationException(constellation);
         }

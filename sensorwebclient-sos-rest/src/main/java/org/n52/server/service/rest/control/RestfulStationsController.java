@@ -47,17 +47,17 @@ public class RestfulStationsController extends TimeseriesParameterQueryControlle
         return mav.addObject(stations);
     }
 
-    @RequestMapping(value = "/{instance}/" + PATH_STATIONS + "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{instance}/" + PATH_STATIONS + "/{id:.+}", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          @PathVariable(value = "id") String station) throws Exception {
         ModelAndView mav = new ModelAndView("stations");
         QueryParameters parameters = new QueryParameters().setStation(station);
         QueryResponse< ? > result = performQuery(instance, parameters);
-        Station[] stations = (Station[]) result.getResults();
-        if (stations == null || stations.length == 0) {
+
+        if (result.getResults().length == 0) {
             throw new ResourceNotFoundException();
         }
-        mav.addObject(stations[0]);
+        mav.addObject(result.getResults()[0]);
         return mav;
     }
 

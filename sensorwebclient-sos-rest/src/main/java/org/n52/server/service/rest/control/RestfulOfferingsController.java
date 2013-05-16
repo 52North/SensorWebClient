@@ -40,19 +40,18 @@ public class RestfulOfferingsController extends TimeseriesParameterQueryControll
         return mav.addObject(offerings);
     }
 
-    @RequestMapping(value = "/{instance}/" + PATH_OFFERINGS + "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{instance}/" + PATH_OFFERINGS + "/{id:.+}", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          @PathVariable(value = "id") String offering) throws Exception {
         ModelAndView mav = new ModelAndView("offerings");
         QueryParameters parameters = new QueryParameters().setOffering(offering);
         QueryResponse< ? > result = performQuery(instance, parameters);
 
-        Offering[] offerings = (Offering[]) result.getResults();
-        if (offerings.length == 0) {
+        if (result.getResults().length == 0) {
             throw new ResourceNotFoundException();
         }
         else {
-            mav.addObject(offerings[0]);
+            mav.addObject(result.getResults()[0]);
         }
         return mav;
     }

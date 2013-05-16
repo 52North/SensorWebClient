@@ -40,19 +40,18 @@ public class RestfulPhenomenonsController extends TimeseriesParameterQueryContro
         return mav.addObject(phenomenons);
     }
 
-    @RequestMapping(value = "/{instance}/" + PATH_PHENOMENONS + "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{instance}/" + PATH_PHENOMENONS + "/{id:.+}", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          @PathVariable(value = "id") String phenomenon) throws Exception {
         ModelAndView mav = new ModelAndView("phenomenons");
         QueryParameters parameters = new QueryParameters().setPhenomenon(phenomenon);
         QueryResponse< ? > result = performQuery(instance, parameters);
 
-        Phenomenon[] phenomenons = (Phenomenon[]) result.getResults();
-        if (phenomenons.length == 0) {
+        if (result.getResults().length == 0) {
             throw new ResourceNotFoundException();
         }
         else {
-            mav.addObject(phenomenons[0]);
+            mav.addObject(result.getResults()[0]);
         }
         return mav;
     }

@@ -71,7 +71,7 @@ public class RestfulTimeSeriesController implements RestfulKvp, RestfulUrls {
                                  @PathVariable("instance") String instance) {
         try {
             ModelAndView mav = new ModelAndView();
-            mav.addObject(imageService.getTimeSeriesChart(parameterSet, instance));
+            mav.addObject(imageService.createTimeSeriesChart(parameterSet, instance));
             return mav;
         }
         catch (Exception e) {
@@ -127,7 +127,7 @@ public class RestfulTimeSeriesController implements RestfulKvp, RestfulUrls {
 
             response.setContentType("image/png");
 
-            imageService.getTimeSeriesChartToOutputStream(parameterSet, instance, response.getOutputStream());
+            imageService.writeTimeSeriesChart(parameterSet, instance, response.getOutputStream());
             response.getOutputStream().close();
         }
         catch (Exception e) {

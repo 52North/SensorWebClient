@@ -46,13 +46,9 @@ public class ParameterConstellation implements Serializable {
     private String category;
 
     public boolean isValid() {
-        if (this.offering == null || this.phenomenon == null
-                || this.procedure == null || feature == null) {
-            return false;
-        }
-        return true;
+        return offering != null && phenomenon != null && procedure != null && feature != null;
     }
-    
+
     public String getTimeseriesID() {
         return Integer.toString(hashCode());
     }
@@ -111,16 +107,10 @@ public class ParameterConstellation implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime
-                * result
-                + ( (feature == null) ? 0 : feature
-                        .hashCode());
-        result = prime * result
-                + ( (offering == null) ? 0 : offering.hashCode());
-        result = prime * result
-                + ( (phenomenon == null) ? 0 : phenomenon.hashCode());
-        result = prime * result
-                + ( (procedure == null) ? 0 : procedure.hashCode());
+        result = prime * result + ( (feature == null) ? 0 : feature.hashCode());
+        result = prime * result + ( (offering == null) ? 0 : offering.hashCode());
+        result = prime * result + ( (phenomenon == null) ? 0 : phenomenon.hashCode());
+        result = prime * result + ( (procedure == null) ? 0 : procedure.hashCode());
         return result;
     }
 
@@ -160,19 +150,6 @@ public class ParameterConstellation implements Serializable {
         return true;
     }
 
-    public boolean hasProcedure(String procedure) {
-        return this.procedure != null && this.procedure.equals(procedure);
-    }
-
-    public boolean hasPhenomenon(String phenomenon) {
-        return this.phenomenon != null && this.phenomenon.equals(phenomenon);
-    }
-
-    public boolean hasFoi(String foi) {
-        return this.feature != null
-                && this.feature.equals(foi);
-    }
-
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
@@ -181,14 +158,11 @@ public class ParameterConstellation implements Serializable {
         sb.append("\tFeature: ").append(feature).append("\n");
         sb.append("\tProcedure: ").append(procedure).append("\n");
         sb.append("\tPhenomenon: ").append(phenomenon).append("\n");
-        sb.append("\tCategory: ").append(category).append("]\n");
+        sb.append("\tCategory: ").append(category).append("\n]");
         return sb.toString();
     }
 
-    public boolean hasOffering(String offeringId) {
-        return offering != null && offering.equals(offeringId);
-    }
-
+    // @Override // fails during gwt compile
     public ParameterConstellation clone() {
         ParameterConstellation paramConst = new ParameterConstellation();
         paramConst.setFeatureOfInterest(feature);
@@ -199,56 +173,70 @@ public class ParameterConstellation implements Serializable {
         return paramConst;
     }
 
-    public boolean matchFilter(String offering, String phenomenon, String procedure, String feature) {
+    /**
+     * Match against a filter criteria. The filter criteria is built as an <code>AND</code> criteria to match
+     * against all parameters. If a parameter is <code>null</code> is will be ignored (to match).
+     * 
+     * @param offeringFilter
+     *        filter to match the offering. If <code>null</code> the filter matches by default.
+     * @param phenomenonFilter
+     *        filter to match the phenomenon. If <code>null</code> the filter matches by default.
+     * @param procedureFilter
+     *        filter to match the procedure. If <code>null</code> the filter matches by default.
+     * @param featureFilter
+     *        filter to match the feature. If <code>null</code> the filter matches by default.
+     * @return <code>true</code> if constellation matches to all given filters.
+     */
+    public boolean matchesAll(String offering, String phenomenon, String procedure, String feature) {
         return matchesOffering(offering) && matchesPhenomenon(phenomenon) && matchesProcedure(procedure)
                 && matchesFeature(feature);
     }
 
     /**
-     * Checks if given filter and currently set {@link #feature} match.
+     * Checks if given filter and currently set {@link #feature} do match.
      * 
      * @param filter
      *        the feature to match. If paramter is <code>null</code> the filter does not apply.
      * @return <code>false</code> if filter does not match the {@link #feature} of this instance. Returns
      *         <code>true</code> if filter matches or is <code>null</code> .
      */
-    private boolean matchesFeature(String filter) {
+    public boolean matchesFeature(String filter) {
         return (filter == null) ? true : filter.equals(feature);
     }
 
     /**
-     * Checks if given filter and currently set {@link #procedure} match.
+     * Checks if given filter and currently set {@link #procedure} do match.
      * 
      * @param filter
      *        the feature to match. If paramter is <code>null</code> the filter does not apply.
      * @return <code>false</code> if filter does not match the {@link #procedure} of this instance. Returns
      *         <code>true</code> if filter matches or is <code>null</code> .
      */
-    private boolean matchesProcedure(String filter) {
+    public boolean matchesProcedure(String filter) {
         return (filter == null) ? true : filter.equals(procedure);
     }
 
     /**
-     * Checks if given filter and currently set {@link #phenomenon} match.
+     * Checks if given filter and currently set {@link #phenomenon} do match.
      * 
      * @param filter
      *        the feature to match. If paramter is <code>null</code> the filter does not apply.
      * @return <code>false</code> if filter does not match the {@link #phenomenon} of this instance. Returns
      *         <code>true</code> if filter matches or is <code>null</code> .
      */
-    private boolean matchesPhenomenon(String filter) {
+    public boolean matchesPhenomenon(String filter) {
         return (filter == null) ? true : filter.equals(phenomenon);
     }
 
     /**
-     * Checks if given filter and currently set {@link #offering} match.
+     * Checks if given filter and currently set {@link #offering} do match.
      * 
      * @param filter
      *        the feature to match. If paramter is <code>null</code> the filter does not apply.
      * @return <code>false</code> if filter does not match the {@link #offering} of this instance. Returns
      *         <code>true</code> if filter matches or is <code>null</code> .
      */
-    private boolean matchesOffering(String filter) {
+    public boolean matchesOffering(String filter) {
         return (filter == null) ? true : filter.equals(offering);
     }
 
