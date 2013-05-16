@@ -66,6 +66,7 @@ public class RestfulProceduresController extends TimeseriesParameterQueryControl
 
     private ModelAndView createResponseView(String instance, String procedure) throws Exception {
         ModelAndView mav = new ModelAndView("procedures");
+        procedure = stripKnownFileExtensionFrom(procedure);
         QueryParameters parameters = new QueryParameters().setProcedure(procedure);
         QueryResponse< ? > result = performQuery(instance, parameters);
         

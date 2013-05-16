@@ -57,6 +57,7 @@ public class RestfulOfferingsController extends TimeseriesParameterQueryControll
 
     private ModelAndView createResponseView(String instance, String offering) throws Exception {
         ModelAndView mav = new ModelAndView("offerings");
+        offering = stripKnownFileExtensionFrom(offering);
         QueryParameters parameters = new QueryParameters().setOffering(offering);
         QueryResponse< ? > result = performQuery(instance, parameters);
 

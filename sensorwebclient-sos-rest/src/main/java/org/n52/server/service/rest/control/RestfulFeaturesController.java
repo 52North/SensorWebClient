@@ -41,7 +41,7 @@ public class RestfulFeaturesController extends TimeseriesParameterQueryControlle
         ModelAndView mav = new ModelAndView("features");
         return mav.addObject(features);
     }
-    
+
     @RequestMapping(value = "/{instance}/" + COLLECTION_FEATURES + "/**", method = RequestMethod.GET)
     public ModelAndView getFeatureByGET(@PathVariable(value = "instance") String instance,
                                         HttpServletRequest request) throws Exception {
@@ -54,9 +54,10 @@ public class RestfulFeaturesController extends TimeseriesParameterQueryControlle
                                         @PathVariable(value = "id") String feature) throws Exception {
         return createResponseView(instance, feature);
     }
-    
+
     private ModelAndView createResponseView(String instance, String feature) throws Exception {
         ModelAndView mav = new ModelAndView("features");
+        feature = stripKnownFileExtensionFrom(feature);
         QueryParameters parameters = new QueryParameters().setFeature(feature);
         QueryResponse< ? > result = performQuery(instance, parameters);
 
