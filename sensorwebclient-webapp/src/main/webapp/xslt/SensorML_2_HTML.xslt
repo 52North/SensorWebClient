@@ -14,7 +14,7 @@
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:altova="http://www.altova.com">
-    <xsl:output method="html" encoding="utf-8" indent="yes" />
+    <xsl:output method="html" encoding="utf-8" indent="yes" version="4.01" />
 	<xsl:param name="SV_OutputFormat" select="'HTML'"/>
 	<xsl:variable name="XML" select="/"/>
 	<xsl:template match="/">

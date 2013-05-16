@@ -24,6 +24,7 @@
 package org.n52.server.service;
 
 import static org.n52.server.oxf.util.ConfigurationContext.UPDATE_TASK_RUNNING;
+import static org.n52.server.oxf.util.ConfigurationContext.getSOSMetadata;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -142,7 +143,7 @@ public class QueryServiceImpl implements QueryService {
         String procedure = parameters.getProcedure();
         String phenomenon = parameters.getPhenomenon();
         String feature = parameters.getFeature();
-        clonedStation.removeUnmatchedConstellations(offering, phenomenon, procedure, feature);
+        clonedStation.removeNotMatchingFilters(offering, phenomenon, procedure, feature);
         return clonedStation;
     }
 
@@ -288,9 +289,8 @@ public class QueryServiceImpl implements QueryService {
     }
 
     private TimeseriesParametersLookup getParametersLookupFor(String serviceUrl) {
-        SOSMetadata metadata = ConfigurationContext.getSOSMetadata(serviceUrl);
-        TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
-        return lookup;
+        SOSMetadata metadata = getSOSMetadata(serviceUrl);
+        return metadata.getTimeseriesParamtersLookup();
     }
 	
     private AReferencingHelper createReferenceHelper(boolean forceXYAxisOrder) {

@@ -21,6 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
+
 package org.n52.server.service;
 
 import java.io.OutputStream;
@@ -46,61 +47,59 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class GetImageService extends DataService {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(GetImageService.class);
 
     private EESDataService imageDataService;
-    
+
     private int defaultWidth;
-    
+
     private int defaultHeight;
-    
+
     private boolean renderGrid;
-    
-    public ImageDataResult getTimeSeriesChart(ParameterSet parameterSet, String instance) {
+
+    public ImageDataResult createTimeSeriesChart(ParameterSet parameterSet, String instance) {
         DesignOptions options = createDesignOptions(parameterSet, instance);
         return performChartRendering(options);
     }
 
-	public void getTimeSeriesChartToOutputStream(ParameterSet parameterSet,
-			String instance, ServletOutputStream outputStream) {
-		DesignOptions options = createDesignOptions(parameterSet, instance);
-        performChartRendering(options, outputStream);
-	}
-
-	private DesignOptions createDesignOptions(ParameterSet parameterSet,
-			String instance) {
-		SOSMetadata metadata = getServiceMetadata(instance);
-	    ArrayList<TimeSeriesProperties> tsProperties = new ArrayList<TimeSeriesProperties>();
-	    Map<String, TimeSeriesdataResult> timeSeriesResults = new HashMap<String, TimeSeriesdataResult>();
-	    createTimeSeriesRequest(parameterSet, metadata, tsProperties, timeSeriesResults);
-	    DesignOptions options = createDesignOptions(parameterSet, tsProperties, isRenderGrid());
-		return options;
-	}
-
-	private ImageDataResult performChartRendering(DesignOptions options) {
+    private ImageDataResult performChartRendering(DesignOptions options) {
         try {
             EESGenerator chartGenerator = new EESGenerator();
             ChartRenderingInfo renderingInfo = new ChartRenderingInfo(new StandardEntityCollection());
             String chartUrl = chartGenerator.createChart(options, renderingInfo);
             return new ImageDataResult(chartUrl);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Could not render time series chart.", e);
             throw new InternalServiceException();
         }
     }
 
-	private void performChartRendering(DesignOptions options, OutputStream outputStream) {
+    public void writeTimeSeriesChart(ParameterSet parameterSet, String instance, ServletOutputStream outputStream) {
+        DesignOptions options = createDesignOptions(parameterSet, instance);
+        performChartRendering(options, outputStream);
+    }
+
+    private DesignOptions createDesignOptions(ParameterSet parameterSet, String instance) {
+        SOSMetadata metadata = getServiceMetadata(instance);
+        ArrayList<TimeSeriesProperties> tsProperties = new ArrayList<TimeSeriesProperties>();
+        createTimeSeriesRequest(parameterSet, metadata, tsProperties);
+        return createDesignOptions(parameterSet, tsProperties, isRenderGrid());
+    }
+
+    private void performChartRendering(DesignOptions options, OutputStream outputStream) {
         try {
             EESGenerator chartGenerator = new EESGenerator();
             ChartRenderingInfo renderingInfo = new ChartRenderingInfo(new StandardEntityCollection());
             chartGenerator.createChartToOutputStream(options, renderingInfo, outputStream);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Could not render time series chart.", e);
             throw new InternalServiceException();
         }
     }
-	
+
     @Override
     protected TimeSeriesProperties decorateProperties(TimeSeriesProperties timeSeriesProperties, ParameterSet parameterSet) throws Exception {
         timeSeriesProperties = decoratePropertiesWithImageSize(timeSeriesProperties, parameterSet);
@@ -121,7 +120,7 @@ public class GetImageService extends DataService {
         timeSeriesProperties.setHexColor(getRandomHexColor());
         return timeSeriesProperties;
     }
-    
+
     public static String getRandomHexColor() {
         String redHex = getNextFormattedRandomNumber();
         String yellowHex = getNextFormattedRandomNumber();
@@ -137,7 +136,7 @@ public class GetImageService extends DataService {
         }
         return randomHex;
     }
-    
+
     public EESDataService getImageDataService() {
         return imageDataService;
     }
@@ -145,23 +144,23 @@ public class GetImageService extends DataService {
     public void setImageDataService(EESDataService imageDataService) {
         this.imageDataService = imageDataService;
     }
-    
+
     public int getDefaultWidth() {
         return defaultWidth;
     }
-    
+
     public void setDefaultWidth(int defaultWidth) {
         this.defaultWidth = defaultWidth;
     }
-    
+
     public int getDefaultHeight() {
         return defaultHeight;
     }
-    
+
     public void setDefaultHeight(int defaultHeight) {
         this.defaultHeight = defaultHeight;
     }
-    
+
     public boolean isRenderGrid() {
         return renderGrid;
     }

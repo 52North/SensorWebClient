@@ -275,6 +275,46 @@ public class SOSMetadata implements Serializable {
         return configuredExtent;
     }
 
+    public void addStation(Station station) {
+        stations.put(station.getId(), station);
+    }
+
+    public Collection<Station> getStations() {
+        return new ArrayList<Station>(this.stations.values());
+    }
+    
+    public Station getStationByParameterConstellation(ParameterConstellation parameterConstellation) {
+        for (Station station : stations.values()) {
+            if (station.contains(parameterConstellation)) {
+                return station;
+            }
+        }
+        return null;
+    }
+
+    public boolean containsTimeseriesWith(ParameterConstellation parameterConstellation) {
+        for (Station station : stations.values()) {
+            if (station.contains(parameterConstellation)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Station getStation(String id) {
+        return stations.get(id);
+    }
+
+    /**
+     * @return a lookup helper for timeseries parameters.
+     */
+    public TimeseriesParametersLookup getTimeseriesParamtersLookup() {
+        timeseriesParamtersLookup = timeseriesParamtersLookup == null 
+                ? new TimeseriesParametersLookup()
+                : timeseriesParamtersLookup;
+        return timeseriesParamtersLookup;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -286,182 +326,4 @@ public class SOSMetadata implements Serializable {
         return sb.toString();
     }
 
-    public void addStation(Station station) {
-        stations.put(station.getId(), station);
-    }
-
-    public Collection<Station> getStations() {
-        return new ArrayList<Station>(this.stations.values());
-    }
-
-    public Station getStationByParameterConstellation(String offeringId,
-                                                      String featureId,
-                                                      String procedureId,
-                                                      String phenomenonId) {
-        for (Station station : stations.values()) {
-            if (station.hasParameterConstellation(offeringId, featureId, procedureId, phenomenonId)) {
-                return station;
-            }
-        }
-        return null;
-    }
-
-    public Station getStation(String id) {
-        return stations.get(id);
-    }
-
-    
-    
-    
-    
-    // TODO find references of deprecated methods and replace delegation logic by using #getTimeseriesParamtersLookup()
-    
-    
-    
-
-
-    public TimeseriesParametersLookup getTimeseriesParamtersLookup() {
-        timeseriesParamtersLookup = timeseriesParamtersLookup == null 
-                ? new TimeseriesParametersLookup()
-                : timeseriesParamtersLookup;
-        return timeseriesParamtersLookup;
-    }
-
-    /**
-     * @deprecated use {@link #getTimeseriesParamtersLookup()}
-     */
-    @Deprecated
-    private void addOffering(Offering offering) {
-        getTimeseriesParamtersLookup().addOffering(offering);
-    }
-    
-    /**
-     * @deprecated use {@link #getTimeseriesParamtersLookup()}
-     */
-    @Deprecated
-    public Collection<Offering> getOfferings() {
-        return getTimeseriesParamtersLookup().getOfferings();
-    }
-    
-    /**
-     * @deprecated use {@link #getTimeseriesParamtersLookup()}
-     */
-    @Deprecated
-    public Offering[] getOfferingsAsArray() {
-        return getTimeseriesParamtersLookup().getOfferingsAsArray();
-    }
-    
-    /**
-     * @deprecated use {@link #getTimeseriesParamtersLookup()}
-     */
-    @Deprecated
-    public Offering getOffering(String id) {
-        return getTimeseriesParamtersLookup().getOffering(id);
-    }
-
-    /**
-     * @deprecated use {@link #getTimeseriesParamtersLookup()}
-     */
-    @Deprecated
-    public Collection<FeatureOfInterest> getFeatures() {
-        return getTimeseriesParamtersLookup().getFeatures();
-    }
-
-    /**
-     * @deprecated use {@link #getTimeseriesParamtersLookup()}
-     */
-    @Deprecated
-    public FeatureOfInterest[] getFeaturesAsArray() {
-        return getTimeseriesParamtersLookup().getFeaturesAsArray();
-    }
-
-    /**
-     * @deprecated use {@link #getTimeseriesParamtersLookup()}
-     */
-    @Deprecated
-    public FeatureOfInterest getFeature(String id) {
-        return getTimeseriesParamtersLookup().getFeature(id);
-    }
-
-    /**
-     * @deprecated use {@link #getTimeseriesParamtersLookup()}
-     */
-    @Deprecated
-    public Collection<Phenomenon> getPhenomenons() {
-        return getTimeseriesParamtersLookup().getPhenomenons();
-    }
-    
-    /**
-     * @deprecated use {@link #getTimeseriesParamtersLookup()}
-     */
-    @Deprecated
-    public Phenomenon[] getPhenomenonsAsArray() {
-        return getTimeseriesParamtersLookup().getPhenomenonsAsArray();
-    }
-
-    /**
-     * @deprecated use {@link #getTimeseriesParamtersLookup()}
-     */
-    @Deprecated
-    public Phenomenon getPhenomenon(String id) {
-        return getTimeseriesParamtersLookup().getPhenomenon(id);
-    }
-
-    /**
-     * @deprecated use {@link #getTimeseriesParamtersLookup()}
-     */
-    @Deprecated
-    public ArrayList<Procedure> getProcedures() {
-        return getTimeseriesParamtersLookup().getProcedures();
-    }
-    
-    /**
-     * @deprecated use {@link #getTimeseriesParamtersLookup()}
-     */
-    @Deprecated
-    public Procedure[] getProceduresAsArray() {
-        return getTimeseriesParamtersLookup().getProceduresAsArray();
-    }
-
-    /**
-     * @deprecated use {@link #getTimeseriesParamtersLookup()}
-     */
-    @Deprecated
-    public Procedure getProcedure(String id) {
-        return getTimeseriesParamtersLookup().getProcedure(id);
-    }
-    
-    /**
-     * @deprecated use {@link #getTimeseriesParamtersLookup()}
-     */
-    @Deprecated
-    public void removeProcedure(String procedure) {
-        getTimeseriesParamtersLookup().removeProcedure(procedure);
-    }
-    
-    /**
-     * @deprecated use {@link #getTimeseriesParamtersLookup()}
-     */
-    @Deprecated
-    public void addProcedure(Procedure procedure) {
-        getTimeseriesParamtersLookup().addProcedure(procedure);
-    }
-    
-    /**
-     * @deprecated use {@link #getTimeseriesParamtersLookup()}
-     */
-    @Deprecated
-    public void addPhenomenon(Phenomenon phenomenon) {
-        getTimeseriesParamtersLookup().addPhenomenon(phenomenon);
-    }
-
-    /**
-     * @deprecated use {@link #getTimeseriesParamtersLookup()}
-     */
-    @Deprecated
-    public void addFeature(FeatureOfInterest feature) {
-        getTimeseriesParamtersLookup().addFeature(feature);
-    }
-
-    
 }

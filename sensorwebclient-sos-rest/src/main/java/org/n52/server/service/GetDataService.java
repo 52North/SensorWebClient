@@ -59,8 +59,7 @@ public class GetDataService extends DataService {
     public Map<String, TimeSeriesdataResult> getTimeSeriesFromParameterSet(ParameterSet parameterSet, String instance) {
         SOSMetadata metadata = getServiceMetadata(instance);
         ArrayList<TimeSeriesProperties> tsProperties = new ArrayList<TimeSeriesProperties>();
-        Map<String, TimeSeriesdataResult> timeSeriesResults = new HashMap<String, TimeSeriesdataResult>();
-        createTimeSeriesRequest(parameterSet, metadata, tsProperties, timeSeriesResults);
+        Map<String, TimeSeriesdataResult> timeSeriesResults = createTimeSeriesRequest(parameterSet, metadata, tsProperties);
         performTimeSeriesDataRequest(timeSeriesResults, createDesignOptions(parameterSet, tsProperties));
         return timeSeriesResults;
     }

@@ -41,17 +41,26 @@ public class RestfulProceduresController extends TimeseriesParameterQueryControl
         return mav.addObject(mapProcedures(procedures));
     }
 
-    @RequestMapping(value = "/{instance}/" + PATH_PROCEDURES + "/{id}", method = RequestMethod.GET)
+    private Object mapProcedures(Procedure[] procedures) {
+        Object[] objects = new Object[procedures.length];
+        for (int i = 0; i < procedures.length; i++) {
+            objects[i] = mapProcedure(procedures[i]);
+        }
+        return objects;
+    }
+
+    @RequestMapping(value = "/{instance}/" + PATH_PROCEDURES + "/{id:.+}", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          @PathVariable(value = "id") String procedure) throws Exception {
         ModelAndView mav = new ModelAndView("procedures");
         QueryParameters parameters = new QueryParameters().setProcedure(procedure);
         QueryResponse< ? > result = performQuery(instance, parameters);
-        Procedure[] procedures = (Procedure[]) result.getResults();
-        if (procedures.length == 0) {
+        
+        if (result.getResults().length == 0) {
             throw new ResourceNotFoundException();
         }
         else {
+            Procedure[] procedures = (Procedure[]) result.getResults();
             mav.addObject(mapProcedure(procedures[0]));
         }
         return mav;
@@ -68,14 +77,6 @@ public class RestfulProceduresController extends TimeseriesParameterQueryControl
 		}
 		object.put("refValues", refValues);
 		return object;
-	}
-
-	private Object mapProcedures(Procedure[] procedures) {
-		Object[] objects = new Object[procedures.length];
-		for (int i = 0; i < procedures.length; i++) {
-			objects[i] = mapProcedure(procedures[i]);
-		}
-		return objects;
 	}
 
 	private ModelAndView pageResults(Procedure[] procedures, int offset, int size) {
