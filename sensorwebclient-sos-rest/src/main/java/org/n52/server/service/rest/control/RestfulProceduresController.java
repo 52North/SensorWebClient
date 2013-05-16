@@ -4,6 +4,8 @@ package org.n52.server.service.rest.control;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.n52.server.service.rest.model.ModelAndViewPager;
 import org.n52.shared.requests.query.QueryFactory;
 import org.n52.shared.requests.query.QueryParameters;
@@ -21,7 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(value = "/services", produces = {"text/html", "application/*"})
 public class RestfulProceduresController extends TimeseriesParameterQueryController implements RestfulKvp, RestfulUrls {
 
-    @RequestMapping(value = "/{instance}/" + PATH_PROCEDURES, method = RequestMethod.GET)
+    @RequestMapping(value = "/{instance}/" + COLLECTION_PROCEDURES, method = RequestMethod.GET)
     public ModelAndView getProcedureByGET(@PathVariable("instance") String instance,
                                           @RequestParam(value = KVP_SHOW, required = false) String details,
                                           @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
@@ -40,7 +42,7 @@ public class RestfulProceduresController extends TimeseriesParameterQueryControl
         ModelAndView mav = new ModelAndView("procedures");
         return mav.addObject(mapProcedures(procedures));
     }
-
+    
     private Object mapProcedures(Procedure[] procedures) {
         Object[] objects = new Object[procedures.length];
         for (int i = 0; i < procedures.length; i++) {
@@ -48,10 +50,21 @@ public class RestfulProceduresController extends TimeseriesParameterQueryControl
         }
         return objects;
     }
+    
+    @RequestMapping(value = "/{instance}/" + COLLECTION_PROCEDURES + "/**", method = RequestMethod.GET)
+    public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
+                                        HttpServletRequest request) throws Exception {
+        String procedure = getIndididuumIdentifierFor(COLLECTION_PROCEDURES, request);
+        return createResponseView(instance, procedure);
+    }
 
-    @RequestMapping(value = "/{instance}/" + PATH_PROCEDURES + "/{id:.+}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{instance}/" + COLLECTION_PROCEDURES + "/{id:.+}", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          @PathVariable(value = "id") String procedure) throws Exception {
+        return createResponseView(instance, procedure);
+    }
+
+    private ModelAndView createResponseView(String instance, String procedure) throws Exception {
         ModelAndView mav = new ModelAndView("procedures");
         QueryParameters parameters = new QueryParameters().setProcedure(procedure);
         QueryResponse< ? > result = performQuery(instance, parameters);
