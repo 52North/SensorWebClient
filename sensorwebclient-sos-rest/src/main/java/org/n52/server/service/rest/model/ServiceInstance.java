@@ -2,6 +2,9 @@ package org.n52.server.service.rest.model;
 
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 
+/**
+ * Represents a configured service instance to be used as for data output.
+ */
 public class ServiceInstance {
 
     private String itemName;
