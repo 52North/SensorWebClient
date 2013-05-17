@@ -40,7 +40,8 @@ public class RestfulProceduresController extends TimeseriesParameterQueryControl
         }
 
         ModelAndView mav = new ModelAndView("procedures");
-        return mav.addObject(mapProcedures(procedures));
+//        return mav.addObject(mapProcedures(procedures));
+        return mav.addObject(procedures);
     }
     
     private Object mapProcedures(Procedure[] procedures) {
@@ -75,7 +76,8 @@ public class RestfulProceduresController extends TimeseriesParameterQueryControl
         }
         else {
             Procedure[] procedures = (Procedure[]) result.getResults();
-            mav.addObject(mapProcedure(procedures[0]));
+//            mav.addObject(mapProcedure(procedures[0]));
+            mav.addObject(procedures[0]);
         }
         return mav;
     }
