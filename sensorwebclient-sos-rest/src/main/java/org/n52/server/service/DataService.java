@@ -34,13 +34,13 @@ import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.service.rest.InternalServiceException;
 import org.n52.server.service.rest.ParameterSet;
 import org.n52.server.service.rest.TimeSeriesdataResult;
-import org.n52.server.service.rest.control.InvalidParameterConstallationException;
+import org.n52.server.service.rest.control.InvalidSosTimeseriesException;
 import org.n52.server.service.rest.control.ResourceNotFoundException;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeSeriesProperties;
-import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
+import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -66,16 +66,16 @@ public abstract class DataService {
 
     protected Map<String, TimeSeriesdataResult> createTimeSeriesRequest(ParameterSet parameterSet, SOSMetadata metadata, ArrayList<TimeSeriesProperties> props) {
         HashMap<String, TimeSeriesdataResult> timeSeriesResults = new HashMap<String, TimeSeriesdataResult>();
-        for (ParameterConstellation constellation : parameterSet.getParameters()) {
+        for (SosTimeseries timeseries : parameterSet.getTimeserieses()) {
             try {
-                Station station = getStationFromParameters(metadata, constellation);
-            	TimeSeriesProperties timeSeriesProperties = createTimeSeriesProperties(metadata, station, constellation);
-            	timeSeriesProperties.setTsID(constellation.getTimeseriesID());
+                Station station = getStationFromParameters(metadata, timeseries);
+            	TimeSeriesProperties timeSeriesProperties = createTimeSeriesProperties(metadata, station, timeseries);
+            	timeSeriesProperties.setTsID(timeseries.getTimeseriesId());
                 props.add(decorateProperties(timeSeriesProperties, parameterSet));
                 TimeSeriesdataResult result = createTimeSeriesResult(timeSeriesProperties);
-                timeSeriesResults.put(constellation.getTimeseriesID(), result);
+                timeSeriesResults.put(timeseries.getTimeseriesId(), result);
             }
-            catch (InvalidParameterConstallationException e) {
+            catch (InvalidSosTimeseriesException e) {
                 LOGGER.warn("Unable to process request: {}", e.getMessage());
 //                timeSeriesResults.put(constellation.getClientId(), null);
             }
@@ -87,20 +87,20 @@ public abstract class DataService {
         return timeSeriesResults;
     }
 
-    private Station getStationFromParameters(SOSMetadata metadata, ParameterConstellation constellation) throws InvalidParameterConstallationException {
-        Station station = metadata.getStationByParameterConstellation(constellation);
+    private Station getStationFromParameters(SOSMetadata metadata, SosTimeseries timeseries) throws InvalidSosTimeseriesException {
+        Station station = metadata.getStationByTimeSeries(timeseries);
         if (station == null) {
-            throw new InvalidParameterConstallationException(constellation);
+            throw new InvalidSosTimeseriesException(timeseries);
         }
         return station;
     }
 
-    private TimeSeriesProperties createTimeSeriesProperties(SOSMetadata metadata, Station station, ParameterConstellation constellation) {
+    private TimeSeriesProperties createTimeSeriesProperties(SOSMetadata metadata, Station station, SosTimeseries timeseries) {
         TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
-        FeatureOfInterest foi = lookup.getFeature(constellation.getFeatureOfInterest());
-        Phenomenon phenomenon = lookup.getPhenomenon(constellation.getPhenomenon());
-        Procedure procedure = lookup.getProcedure(constellation.getProcedure());
-        Offering offering = lookup.getOffering(constellation.getOffering());
+        Feature foi = lookup.getFeature(timeseries.getFeature());
+        Phenomenon phenomenon = lookup.getPhenomenon(timeseries.getPhenomenon());
+        Procedure procedure = lookup.getProcedure(timeseries.getProcedure());
+        Offering offering = lookup.getOffering(timeseries.getOffering());
 
         String sosUrl = metadata.getServiceUrl();
         return new TimeSeriesProperties(sosUrl, station, offering, foi, procedure, phenomenon, 0, 0, "???", true);

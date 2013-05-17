@@ -31,7 +31,7 @@ import org.n52.server.service.GetDataService;
 import org.n52.server.service.GetImageService;
 import org.n52.server.service.rest.InternalServiceException;
 import org.n52.server.service.rest.ParameterSet;
-import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -92,16 +92,16 @@ public class RestfulTimeSeriesController implements RestfulKvp, RestfulUrls {
                               @RequestParam(value = "width", required = false) Integer width,
                               @RequestParam(value = "height", required = false) Integer height) {
         try {
-            ParameterConstellation paramConst = new ParameterConstellation();
-            paramConst.setOffering(offering);
-            paramConst.setProcedure(procedure);
-            paramConst.setPhenomenon(phenomenon);
-            paramConst.setFeatureOfInterest(feature);
+            SosTimeseries timeseries = new SosTimeseries();
+            timeseries.setOffering(offering);
+            timeseries.setProcedure(procedure);
+            timeseries.setPhenomenon(phenomenon);
+            timeseries.setFeature(feature);
 
             ParameterSet parameterSet = new ParameterSet();
-            ParameterConstellation[] parameters = new ParameterConstellation[1];
-            parameters[0] = paramConst;
-            parameterSet.setParameters(parameters);
+            SosTimeseries[] timeserieses = new SosTimeseries[1];
+            timeserieses[0] = timeseries;
+            parameterSet.setTimserieses(timeserieses);
             if (start != null) {
 
                 parameterSet.setBegin(start);

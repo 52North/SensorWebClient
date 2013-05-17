@@ -39,9 +39,14 @@ public class RestfulOfferingsController extends TimeseriesParameterQueryControll
         }
 
         ModelAndView mav = new ModelAndView("offerings");
-        return mav.addObject(offerings);
+        return mav.addObject("offerings", offerings);
     }
-    
+
+    private ModelAndView pageResults(Offering[] offerings, int offset, int size) {
+        ModelAndViewPager mavPage = new ModelAndViewPager("offerings");
+        return mavPage.createPagedModelAndViewFrom(offerings, offset, size);
+    }
+
     @RequestMapping(value = "/{instance}/" + COLLECTION_OFFERINGS + "/**", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                         HttpServletRequest request) throws Exception {
@@ -64,15 +69,9 @@ public class RestfulOfferingsController extends TimeseriesParameterQueryControll
         if (result.getResults().length == 0) {
             throw new ResourceNotFoundException();
         }
-        else {
-            mav.addObject(result.getResults()[0]);
-        }
+        
+        mav.addObject("offering", result.getResults()[0]);
         return mav;
-    }
-
-    private ModelAndView pageResults(Offering[] offerings, int offset, int size) {
-        ModelAndViewPager mavPage = new ModelAndViewPager("offerings");
-        return mavPage.createPagedModelAndViewFrom(offerings, offset, size);
     }
 
     @Override

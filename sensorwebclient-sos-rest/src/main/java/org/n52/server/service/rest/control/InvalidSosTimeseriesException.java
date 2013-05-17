@@ -23,23 +23,23 @@
  */
 package org.n52.server.service.rest.control;
 
-import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 
 
-public class InvalidParameterConstallationException extends Exception {
+public class InvalidSosTimeseriesException extends Exception {
 
     private static final long serialVersionUID = 3129135716623019120L;
 
-    private ParameterConstellation parameterConstellation;
+    private SosTimeseries timeseries;
 
-    public InvalidParameterConstallationException(ParameterConstellation constellation) {
-        parameterConstellation = constellation;
+    public InvalidSosTimeseriesException(SosTimeseries constellation) {
+        timeseries = constellation;
     }
 
     public String getMessage() {
         StringBuilder sb = new StringBuilder();
         sb.append("Invalid Paramter Constellation: \n");
-        sb.append(parameterConstellation.toString());
+        sb.append(timeseries.toString());
         return sb.toString();
     }
 

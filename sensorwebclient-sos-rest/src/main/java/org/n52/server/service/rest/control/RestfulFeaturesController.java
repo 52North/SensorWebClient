@@ -10,7 +10,7 @@ import org.n52.shared.requests.query.QueryFactory;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.requests.query.queries.QueryRequest;
 import org.n52.shared.requests.query.responses.QueryResponse;
-import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
+import org.n52.shared.serializable.pojos.sos.Feature;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,14 +32,19 @@ public class RestfulFeaturesController extends TimeseriesParameterQueryControlle
 
         QueryParameters parameters = createEmptyFilterQuery();
         QueryResponse< ? > result = performQuery(instance, parameters);
-        FeatureOfInterest[] features = (FeatureOfInterest[]) result.getResults();
+        Feature[] features = (Feature[]) result.getResults();
 
         if (offset != null) {
             return pageResults(features, offset.intValue(), size.intValue());
         }
 
         ModelAndView mav = new ModelAndView("features");
-        return mav.addObject(features);
+        return mav.addObject("features", features);
+    }
+
+    private ModelAndView pageResults(Feature[] features, int offset, int size) {
+        ModelAndViewPager mavPage = new ModelAndViewPager("features");
+        return mavPage.createPagedModelAndViewFrom(features, offset, size);
     }
 
     @RequestMapping(value = "/{instance}/" + COLLECTION_FEATURES + "/**", method = RequestMethod.GET)
@@ -64,15 +69,9 @@ public class RestfulFeaturesController extends TimeseriesParameterQueryControlle
         if (result.getResults().length == 0) {
             throw new ResourceNotFoundException();
         }
-        else {
-            mav.addObject(result.getResults()[0]);
-        }
+        
+        mav.addObject("feature", result.getResults()[0]);
         return mav;
-    }
-
-    private ModelAndView pageResults(FeatureOfInterest[] features, int offset, int size) {
-        ModelAndViewPager mavPage = new ModelAndViewPager("features");
-        return mavPage.createPagedModelAndViewFrom(features, offset, size);
     }
 
     @Override

@@ -55,9 +55,9 @@ import org.n52.server.oxf.util.crs.AReferencingHelper;
 import org.n52.server.oxf.util.parser.ConnectorUtils;
 import org.n52.server.util.SosAdapterFactory;
 import org.n52.shared.responses.SOSMetadataResponse;
-import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
+import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -97,7 +97,7 @@ public abstract class MetadataHandler {
 		return sosMetadata;
 	}
 
-	protected Collection<ParameterConstellation> createParameterConstellations()
+	protected Collection<SosTimeseries> createTimeserieses()
 			throws OXFException {
 		// association: Offering - FOIs
 		Map<String, String[]> offeringFoiMap = new HashMap<String, String[]>();
@@ -142,10 +142,10 @@ public abstract class MetadataHandler {
 
 		// add fois
 		for (String featureId : featureIds) {
-			lookup.addFeature(new FeatureOfInterest(featureId));
+			lookup.addFeature(new Feature(featureId));
 		}
 
-		Collection<ParameterConstellation> parameterConstellations = new ArrayList<ParameterConstellation>();
+		Collection<SosTimeseries> allObservedTimeseries = new ArrayList<SosTimeseries>();
 		// FOI -> Procedure -> Phenomenon
 		for (String offeringId : offeringFoiMap.keySet()) {
 			for (String procedure : offeringProcMap.get(offeringId)) {
@@ -160,11 +160,11 @@ public abstract class MetadataHandler {
 						 * from getFeatureOfInterest of describeSensor
 						 * operations.
 						 */
-						ParameterConstellation paramConst = new ParameterConstellation();
-						paramConst.setPhenomenon(phenomenon);
-						paramConst.setProcedure(procedure);
-						paramConst.setOffering(offeringId);
-						parameterConstellations.add(paramConst);
+						SosTimeseries timeseries = new SosTimeseries();
+						timeseries.setPhenomenon(phenomenon);
+						timeseries.setProcedure(procedure);
+						timeseries.setOffering(offeringId);
+						allObservedTimeseries.add(timeseries);
 					}
 					// add procedures
 					lookup.addProcedure(new Procedure(procedure));
@@ -176,14 +176,14 @@ public abstract class MetadataHandler {
 			// add offering
 			lookup.addOffering(new Offering(offeringId));
 		}
-		return parameterConstellations;
+		return allObservedTimeseries;
 	}
 	
-	protected void refactorCategoriesInConstellations(Collection<ParameterConstellation> constellations) {
-		for (ParameterConstellation constellation : constellations) {
-			String phenomenon = constellation.getPhenomenon();
-			String category = phenomenon.substring(phenomenon.lastIndexOf(":")+1);
-			constellation.setCategory(category);
+	protected void normalizeDefaultCategories(Collection<SosTimeseries> timeserieses) {
+		for (SosTimeseries timeseries : timeserieses) {
+			String phenomenon = timeseries.getPhenomenon();
+			String category = phenomenon.substring(phenomenon.lastIndexOf(":") + 1);
+			timeseries.setCategory(category);
 		}
 	}
 

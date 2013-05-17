@@ -283,18 +283,18 @@ public class SOSMetadata implements Serializable {
         return new ArrayList<Station>(this.stations.values());
     }
     
-    public Station getStationByParameterConstellation(ParameterConstellation parameterConstellation) {
+    public Station getStationByTimeSeries(SosTimeseries timeseries) {
         for (Station station : stations.values()) {
-            if (station.contains(parameterConstellation)) {
+            if (station.contains(timeseries)) {
                 return station;
             }
         }
         return null;
     }
 
-    public boolean containsTimeseriesWith(ParameterConstellation parameterConstellation) {
+    public boolean containsTimeseriesWith(SosTimeseries timeseries) {
         for (Station station : stations.values()) {
-            if (station.contains(parameterConstellation)) {
+            if (station.contains(timeseries)) {
                 return true;
             }
         }

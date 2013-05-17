@@ -39,9 +39,14 @@ public class RestfulPhenomenonsController extends TimeseriesParameterQueryContro
         }
 
         ModelAndView mav = new ModelAndView("phenomenons");
-        return mav.addObject(phenomenons);
+        return mav.addObject("phenomenons", phenomenons);
     }
-    
+
+    private ModelAndView pageResults(Phenomenon[] phenomenons, int offset, int size) {
+        ModelAndViewPager mavPage = new ModelAndViewPager("phenomenons");
+        return mavPage.createPagedModelAndViewFrom(phenomenons, offset, size);
+    }
+
     @RequestMapping(value = "/{instance}/" + COLLECTION_PHENOMENONS + "/**", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                         HttpServletRequest request) throws Exception {
@@ -64,15 +69,9 @@ public class RestfulPhenomenonsController extends TimeseriesParameterQueryContro
         if (result.getResults().length == 0) {
             throw new ResourceNotFoundException();
         }
-        else {
-            mav.addObject(result.getResults()[0]);
-        }
+        
+        mav.addObject("phenomenon", result.getResults()[0]);
         return mav;
-    }
-
-    private ModelAndView pageResults(Phenomenon[] phenomenons, int offset, int size) {
-        ModelAndViewPager mavPage = new ModelAndViewPager("phenomenons");
-        return mavPage.createPagedModelAndViewFrom(phenomenons, offset, size);
     }
 
     @Override

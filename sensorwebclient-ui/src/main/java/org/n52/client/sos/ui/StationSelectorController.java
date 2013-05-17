@@ -58,9 +58,9 @@ import org.n52.client.ui.map.InfoMarker;
 import org.n52.client.ui.map.MapController;
 import org.n52.shared.Constants;
 import org.n52.shared.serializable.pojos.BoundingBox;
-import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
+import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -173,28 +173,24 @@ class StationSelectorController implements MapController {
     
     public void loadParameterConstellationByCategory(String category) {
     	selectedCategory = category;
-    	ParameterConstellation paramConst = selectedStation.getParameterConstellationByCategory(selectedCategory);
-    	if (paramConst != null) {
-    		fireGetParameterConstellation(paramConst);
+    	SosTimeseries timeseries = selectedStation.getObservingTimeseriesByCategory(selectedCategory);
+    	if (timeseries != null) {
+    		fireGetTimeseries(timeseries);
     	}
     }
 
-	private void fireGetParameterConstellation(ParameterConstellation paramConst) {
-		GetProcedureEvent getProcEvent = new GetProcedureEvent(
-				selectedServiceUrl,
-				paramConst.getProcedure());
+	private void fireGetTimeseries(SosTimeseries timeseries) {
+		GetProcedureEvent getProcEvent = new GetProcedureEvent(selectedServiceUrl, timeseries.getProcedure());
 		EventBus.getMainEventBus().fireEvent(getProcEvent);
-		GetOfferingEvent getOffEvent = new GetOfferingEvent(selectedServiceUrl,
-				paramConst.getOffering());
+		GetOfferingEvent getOffEvent = new GetOfferingEvent(selectedServiceUrl, timeseries.getOffering());
 		EventBus.getMainEventBus().fireEvent(getOffEvent);
-		GetFeatureEvent getFoiEvent = new GetFeatureEvent(selectedServiceUrl,
-				paramConst.getFeatureOfInterest());
+		GetFeatureEvent getFoiEvent = new GetFeatureEvent(selectedServiceUrl, timeseries.getFeature());
 		EventBus.getMainEventBus().fireEvent(getFoiEvent);
 
 		// Get procedure details
 		GetProcedureDetailsUrlEvent getProcDetailsEvent = new GetProcedureDetailsUrlEvent(
 				selectedServiceUrl,
-				paramConst.getProcedure());
+				timeseries.getProcedure());
 		EventBus.getMainEventBus().fireEvent(getProcDetailsEvent);
 	}
 
@@ -236,15 +232,15 @@ class StationSelectorController implements MapController {
         return selectedStation;
     }
     
-    public ParameterConstellation getSelectedParameterConstellation() {
-		return selectedStation.getParameterConstellationByCategory(selectedCategory);
+    public SosTimeseries getSelectedTimeseries() {
+		return selectedStation.getObservingTimeseriesByCategory(selectedCategory);
 	}
 
     public Phenomenon getSelectedPhenomenon() {
         return getParametersLookup().getPhenomenon(selectedCategory);
     }
 
-    public FeatureOfInterest getSelectedFeature() {
+    public Feature getSelectedFeature() {
         return getParametersLookup().getFeature(getSelectedFeatureId());
     }
 

@@ -1,8 +1,7 @@
 
 package org.n52.server.service.rest.control;
 
-import java.util.HashMap;
-import java.util.Map;
+import static org.n52.server.service.rest.model.ProcedureOutput.createSimpleProcedureOuput;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -40,18 +39,14 @@ public class RestfulProceduresController extends TimeseriesParameterQueryControl
         }
 
         ModelAndView mav = new ModelAndView("procedures");
-//        return mav.addObject(mapProcedures(procedures));
-        return mav.addObject(procedures);
+        return mav.addObject("procedures", createSimpleProcedureOuput(procedures));
     }
-    
-    private Object mapProcedures(Procedure[] procedures) {
-        Object[] objects = new Object[procedures.length];
-        for (int i = 0; i < procedures.length; i++) {
-            objects[i] = mapProcedure(procedures[i]);
-        }
-        return objects;
+
+    private ModelAndView pageResults(Procedure[] procedures, int offset, int size) {
+        ModelAndViewPager mavPage = new ModelAndViewPager("procedures");
+        return mavPage.createPagedModelAndViewFrom(procedures, offset, size);
     }
-    
+
     @RequestMapping(value = "/{instance}/" + COLLECTION_PROCEDURES + "/**", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                         HttpServletRequest request) throws Exception {
@@ -74,32 +69,12 @@ public class RestfulProceduresController extends TimeseriesParameterQueryControl
         if (result.getResults().length == 0) {
             throw new ResourceNotFoundException();
         }
-        else {
-            Procedure[] procedures = (Procedure[]) result.getResults();
-//            mav.addObject(mapProcedure(procedures[0]));
-            mav.addObject(procedures[0]);
-        }
+        
+        Procedure[] procedures = (Procedure[]) result.getResults();
+        mav.addObject("procedure", createSimpleProcedureOuput(procedures[0]));
         return mav;
     }
     
-    // fix mapping with ref values, currently the repsonse object file just shows a list of the reference description and not of the value
-    private Object mapProcedure(Procedure procedure) {
-		Map<String, Object> object = new HashMap<String, Object>();
-		object.put("id", procedure.getId());
-		object.put("label", procedure.getLabel());
-		Map<String, Object> refValues = new HashMap<String, Object>();
-		for (String key : procedure.getrefValues()) {
-			refValues.put(key, procedure.getRefValue(key).getValue());
-		}
-		object.put("refValues", refValues);
-		return object;
-	}
-
-	private ModelAndView pageResults(Procedure[] procedures, int offset, int size) {
-        ModelAndViewPager mavPage = new ModelAndViewPager("procedures");
-        return mavPage.createPagedModelAndViewFrom(procedures, offset, size);
-    }
-
     @Override
     protected QueryResponse< ? > performQuery(String instance, QueryParameters parameters) throws Exception {
         QueryFactory factory = getQueryFactoryFor(instance);

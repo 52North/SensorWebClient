@@ -26,17 +26,11 @@ package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.n52.shared.serializable.pojos.EastingNorthing;
 
 /**
- * A {@link Station} represents a location where timeseries data can be retrieved at. The most important
- * 
- * (TODO put more infos here)<br>
- * <br>
- * A Station belongs to a category (by default to its {@link #phenomenon} field. It can be used to filter a
- * common set of stations according to a predefined category.
+ * A {@link Station} represents a location where timeseries data is observed.
  */
 public class Station implements Serializable {
 
@@ -46,7 +40,7 @@ public class Station implements Serializable {
 
     private EastingNorthing location;
 
-    private ArrayList<ParameterConstellation> parameterConstellations;
+    private ArrayList<SosTimeseries> timeserieses;
 
     Station() {
         // for serialization
@@ -54,7 +48,7 @@ public class Station implements Serializable {
 
     public Station(String stationId) {
         this.id = stationId;
-        parameterConstellations = new ArrayList<ParameterConstellation>();
+        timeserieses = new ArrayList<SosTimeseries>();
     }
 
     public String getId() {
@@ -69,20 +63,16 @@ public class Station implements Serializable {
         return location;
     }
 
-    public void addParameterConstellation(ParameterConstellation parameterConstellation) {
-        parameterConstellations.add(parameterConstellation);
+    public void addTimeseries(SosTimeseries timeseries) {
+        timeserieses.add(timeseries);
     }
 
-    public ArrayList<ParameterConstellation> getParameterConstellations() {
-        return parameterConstellations;
+    public ArrayList<SosTimeseries> getTimeserieses() {
+        return timeserieses;
     }
 
-    public boolean contains(ParameterConstellation parameterConstellation) {
-        return parameterConstellations.contains(parameterConstellation);
-    }
-
-    public void setParameterConstellations(ArrayList<ParameterConstellation> parameterConstellations) {
-        this.parameterConstellations = parameterConstellations;
+    public boolean contains(SosTimeseries timeseries) {
+        return timeserieses.contains(timeseries);
     }
 
     @Override
@@ -91,21 +81,21 @@ public class Station implements Serializable {
         sb.append("Station: [ ").append("\n");
         sb.append("\tId: ").append(id).append("\n");
         sb.append("\tLocation: ").append(location).append("\n");
-        sb.append("\tParameterConstellation-Count: ").append(parameterConstellations.size()).append(" ]\n");
+        sb.append("\t#Timeseries: ").append(timeserieses.size()).append(" ]\n");
         return sb.toString();
     }
 
     public boolean hasStationCategory(String filterCategory) {
-        for (ParameterConstellation paramConst : parameterConstellations) {
-            if (paramConst.getCategory().equals(filterCategory)) {
+        for (SosTimeseries timeseries : timeserieses) {
+            if (timeseries.getCategory().equals(filterCategory)) {
                 return true;
             }
         }
         return false;
     }
 
-    public ParameterConstellation getParameterConstellationByCategory(String category) {
-        for (ParameterConstellation paramConst : parameterConstellations) {
+    public SosTimeseries getObservingTimeseriesByCategory(String category) {
+        for (SosTimeseries paramConst : timeserieses) {
             if (paramConst.getCategory().equals(category)) {
                 return paramConst;
             }
@@ -113,41 +103,20 @@ public class Station implements Serializable {
         return null;
     }
 
-    /**
-     * Removes those {@link #parameterConstellations} which do not match the given filter criteria. The filter
-     * criteria is built as an <code>AND</code> criteria to match against all parameters. If a parameter is
-     * <code>null</code> is will be ignored (to match all).
-     * 
-     * @param offeringFilter
-     *        filter to match the offering, or all offerings if <code>null</code>.
-     * @param phenomenonFilter
-     *        filter to match the phenomenon, or all phenomenons if <code>null</code>.
-     * @param procedureFilter
-     *        filter to match the procedure, or all procedures if <code>null</code>.
-     * @param featureFilter
-     *        filter to match the feature, or all features if <code>null</code>.
-     */
-    public void removeNotMatchingFilters(String offeringFilter,
-                                         String phenomenonFilter,
-                                         String procedureFilter,
-                                         String featureFilter) {
-        for (Iterator<ParameterConstellation> iterator = parameterConstellations.iterator(); iterator.hasNext();) {
-            ParameterConstellation constellation = (ParameterConstellation) iterator.next();
-            if ( !constellation.matchesAll(offeringFilter, phenomenonFilter, procedureFilter, featureFilter)) {
-                iterator.remove();
-            }
-        }
-    }
-
     public boolean hasAtLeastOneParameterConstellation() {
-        return parameterConstellations.size() > 0 ? true : false;
+        return timeserieses.size() > 0 ? true : false;
     }
 
     // @Override // fails during gwt compile
     public Station clone() {
         Station station = new Station(id);
         station.setLocation(location);
-        station.setParameterConstellations(new ArrayList<ParameterConstellation>(parameterConstellations));
+        station.setTimeserieses(new ArrayList<SosTimeseries>(timeserieses));
         return station;
     }
+    
+    private void setTimeserieses(ArrayList<SosTimeseries> timeserieses) {
+        this.timeserieses = timeserieses;
+    }
+
 }

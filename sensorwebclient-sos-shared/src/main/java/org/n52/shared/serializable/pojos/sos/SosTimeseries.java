@@ -27,13 +27,17 @@ package org.n52.shared.serializable.pojos.sos;
 import java.io.Serializable;
 
 /**
- * Represents a valid parameter constellation to retrieve timeseries data from an SOS.
- * 
- * @see Station which contains multiple parameter constellations valid for a specific location.
+ * An SOS timeseries representation identified by <code>serviceUrl</code>, <code>procedure</code>,
+ * <code>phenomenon</code>, <code>feature</code>, and <code>offering</code>.<br/>
+ * <br/>
+ * Timeseries can be categorized by a custom label (by default {@link #phenomenon}). It can be used to filter
+ * a set of timeseries which belongs to a predefined category.
  */
-public class ParameterConstellation implements Serializable {
+public class SosTimeseries implements Serializable {
 
     private static final long serialVersionUID = 4336908002034438766L;
+
+    private String serviceUrl;
 
     private String procedure;
 
@@ -45,11 +49,14 @@ public class ParameterConstellation implements Serializable {
 
     private String category;
 
-    public boolean isValid() {
-        return offering != null && phenomenon != null && procedure != null && feature != null;
+    /**
+     * @return <code>true</code> if complete, <code>false</code> otherwise.
+     */
+    public boolean isComplete() {
+        return serviceUrl != null && offering != null && phenomenon != null && procedure != null && feature != null;
     }
 
-    public String getTimeseriesID() {
+    public String getTimeseriesId() {
         return Integer.toString(hashCode());
     }
 
@@ -69,12 +76,20 @@ public class ParameterConstellation implements Serializable {
         this.phenomenon = phenomenon;
     }
 
-    public String getFeatureOfInterest() {
+    public String getFeature() {
         return feature;
     }
 
-    public void setFeatureOfInterest(String featureOfInterest) {
-        this.feature = featureOfInterest;
+    public void setFeature(String feature) {
+        this.feature = feature;
+    }
+
+    public String getServiceUrl() {
+        return serviceUrl;
+    }
+
+    public void setServiceUrl(String serviceUrl) {
+        this.serviceUrl = serviceUrl;
     }
 
     public String getOffering() {
@@ -86,8 +101,8 @@ public class ParameterConstellation implements Serializable {
     }
 
     /**
-     * A label to categorize parameter constellation. If not set, the {@link #phenomenon} of the parameter
-     * constellation is returned. Can be used to filter a set of stations according a common category.
+     * A label to categorize this timeseries. If not set, the {@link #phenomenon} of the timeseries is
+     * returned. Can be used to filter a set of stations according a common category.
      * 
      * @return a label to categorize stations on which filtering can take place.
      */
@@ -111,6 +126,7 @@ public class ParameterConstellation implements Serializable {
         result = prime * result + ( (offering == null) ? 0 : offering.hashCode());
         result = prime * result + ( (phenomenon == null) ? 0 : phenomenon.hashCode());
         result = prime * result + ( (procedure == null) ? 0 : procedure.hashCode());
+        result = prime * result + ( (serviceUrl == null) ? 0 : serviceUrl.hashCode());
         return result;
     }
 
@@ -120,9 +136,9 @@ public class ParameterConstellation implements Serializable {
             return true;
         if (obj == null)
             return false;
-        if ( ! (obj instanceof ParameterConstellation))
+        if ( ! (obj instanceof SosTimeseries))
             return false;
-        ParameterConstellation other = (ParameterConstellation) obj;
+        SosTimeseries other = (SosTimeseries) obj;
         if (feature == null) {
             if (other.feature != null)
                 return false;
@@ -147,13 +163,20 @@ public class ParameterConstellation implements Serializable {
         }
         else if ( !procedure.equals(other.procedure))
             return false;
+        if (serviceUrl == null) {
+            if (other.serviceUrl != null)
+                return false;
+        }
+        else if ( !serviceUrl.equals(other.serviceUrl))
+            return false;
         return true;
     }
 
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("ParameterConstellation: [ ").append("\n");
+        sb.append("SosTimeseries: [ ").append("\n");
+        sb.append("\tService: ").append(serviceUrl).append("\n");
         sb.append("\tOffering: ").append(offering).append("\n");
         sb.append("\tFeature: ").append(feature).append("\n");
         sb.append("\tProcedure: ").append(procedure).append("\n");
@@ -163,14 +186,15 @@ public class ParameterConstellation implements Serializable {
     }
 
     // @Override // fails during gwt compile
-    public ParameterConstellation clone() {
-        ParameterConstellation paramConst = new ParameterConstellation();
-        paramConst.setFeatureOfInterest(feature);
-        paramConst.setPhenomenon(phenomenon);
-        paramConst.setProcedure(procedure);
-        paramConst.setOffering(offering);
-        paramConst.setCategory(category);
-        return paramConst;
+    public SosTimeseries clone() {
+        SosTimeseries timeseries = new SosTimeseries();
+        timeseries.setFeature(feature);
+        timeseries.setPhenomenon(phenomenon);
+        timeseries.setServiceUrl(serviceUrl);
+        timeseries.setProcedure(procedure);
+        timeseries.setOffering(offering);
+        timeseries.setCategory(category);
+        return timeseries;
     }
 
     /**
@@ -187,7 +211,7 @@ public class ParameterConstellation implements Serializable {
      *        filter to match the feature. If <code>null</code> the filter matches by default.
      * @return <code>true</code> if constellation matches to all given filters.
      */
-    public boolean matchesAll(String offering, String phenomenon, String procedure, String feature) {
+    public boolean matchParameters(String offering, String phenomenon, String procedure, String feature) {
         return matchesOffering(offering) && matchesPhenomenon(phenomenon) && matchesProcedure(procedure)
                 && matchesFeature(feature);
     }

@@ -23,7 +23,7 @@
  */
 package org.n52.server.service.rest;
 
-import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 
 
 public class ParameterSet {
@@ -36,7 +36,7 @@ public class ParameterSet {
     
     private int height;
     
-    private ParameterConstellation[] parameters;
+    private SosTimeseries[] timeserieses;
     
     public ParameterSet() {
         // for serialization
@@ -74,12 +74,12 @@ public class ParameterSet {
         this.height = height;
     }
 
-    public ParameterConstellation[] getParameters() {
-        return parameters;
+    public SosTimeseries[] getTimeserieses() {
+        return timeserieses;
     }
 
-    public void setParameters(ParameterConstellation[] parameters) {
-        this.parameters = parameters;
+    public void setTimserieses(SosTimeseries[] timeserieses) {
+        this.timeserieses = timeserieses;
     }
     
 }

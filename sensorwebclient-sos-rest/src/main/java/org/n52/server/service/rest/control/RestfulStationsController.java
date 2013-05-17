@@ -46,9 +46,14 @@ public class RestfulStationsController extends TimeseriesParameterQueryControlle
         }
 
         ModelAndView mav = new ModelAndView("stations");
-        return mav.addObject(stations);
+        return mav.addObject("stations", stations);
     }
-    
+
+    private ModelAndView pageResults(Station[] stations, int offset, int size) {
+        ModelAndViewPager mavPage = new ModelAndViewPager("stations");
+        return mavPage.createPagedModelAndViewFrom(stations, offset, size);
+    }
+
     @RequestMapping(value = "/{instance}/" + COLLECTION_STATIONS + "/**", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                         HttpServletRequest request) throws Exception {
@@ -71,13 +76,9 @@ public class RestfulStationsController extends TimeseriesParameterQueryControlle
         if (result.getResults().length == 0) {
             throw new ResourceNotFoundException();
         }
-        mav.addObject(result.getResults()[0]);
+        
+        mav.addObject("station", result.getResults()[0]);
         return mav;
-    }
-
-    private ModelAndView pageResults(Station[] stations, int offset, int size) {
-        ModelAndViewPager mavPage = new ModelAndViewPager("stations");
-        return mavPage.createPagedModelAndViewFrom(stations, offset, size);
     }
 
     @Override

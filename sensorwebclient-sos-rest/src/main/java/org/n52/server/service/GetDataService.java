@@ -54,7 +54,7 @@ public class GetDataService extends DataService {
     /**
      * @param parameterSet containing request parameters.
      * @param instance the configured data instance
-     * @return a time series result instance, identified by {@link ParameterConstellation#getClientId()}
+     * @return a time series result instance, identified by {@link SosTimeseries#getClientId()}
      */
     public Map<String, TimeSeriesdataResult> getTimeSeriesFromParameterSet(ParameterSet parameterSet, String instance) {
         SOSMetadata metadata = getServiceMetadata(instance);

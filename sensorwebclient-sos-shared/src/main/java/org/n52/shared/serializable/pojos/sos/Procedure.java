@@ -35,6 +35,7 @@ public class Procedure extends ObservationParameter implements Serializable {
 
     private HashMap<String, ReferenceValue> refvalues = new HashMap<String, ReferenceValue>();
     
+    @SuppressWarnings("unused")
     private Procedure() {
         // for serialization
     }
@@ -51,7 +52,7 @@ public class Procedure extends ObservationParameter implements Serializable {
         return this.refvalues.get(s);
     }
     
-    public Set<String> getrefValues() {
+    public Set<String> getRefValues() {
         return this.refvalues.keySet();
     }
 
