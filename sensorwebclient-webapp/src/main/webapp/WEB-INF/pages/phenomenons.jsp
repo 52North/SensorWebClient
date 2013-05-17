@@ -8,36 +8,54 @@
 </head>
 <body>
 
-	<c:if test="${not empty phenomenonList}">
+    <c:if test="${not empty phenomenon}">
+        
+        <!-- A PHENOMENON INDIVIDUUM -->
+    
+        <a href="${url}phenomenons/${phenomenon.id}.json">as Json</a>
+        <a href="${url}phenomenons">back</a>
+        
+        <h3>Phenomenon</h3>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                </tr>
+            </thead>
+            <tr>
+                <td>${phenomenon.id}</td>
+            </tr>
+        </table>
+    </c:if>
+    
+	<c:if test="${not empty phenomenons}">
+	   
+	   <!-- ALL PHENOMENONS IN A SINGLE LIST -->
+	
 		<a href="${url}phenomenons.json">as Json</a>
 		<a href="${url}phenomenons?offset=0">Paging</a>
+        <a href="${url}">back</a>
 	
-		<h3>Phenomenons:</h3>
+		<h3>Phenomenons</h3>
 		<ul>
-			<c:forEach items="${phenomenonList}" var="phenomenon">
+			<c:forEach var="phenomenon" items="${phenomenons}">
 				<li><a href="${url}phenomenons/${phenomenon.id}">${phenomenon.id}</a></li>
 			</c:forEach>
 		</ul>
-		<a href="${url}">back</a>
 	</c:if>
 
-	<c:if test="${not empty phenomenon}">
-		<a href="${url}phenomenons/${phenomenon.id}.json">as Json</a>
-		<table>
-			<tr>
-				<td>ID</td>
-				<td>${phenomenon.id}</td>
-			</tr>
-		</table>
-		<a href="${url}phenomenons">back</a>
-	</c:if>
-	
 	<c:if test="${not empty resultPage}">
+	
+	   <!-- A PAGED PHONENOMENON LIST -->
+	
 		<a href="${url}phenomenons.json">as Json</a>
 		<a href="${url}phenomenons">All</a>
+        <a href="${url}">back</a>
+        
 		<h3>Phenomenons ${resultPage.offset + 1} - ${resultPage.offset + fn:length(resultPage.results)} of ${resultPage.total}</h3>
 		<ul>
-			<c:forEach items="${resultPage.results}" var="phenomenon">
+			<c:forEach var="phenomenon" items="${resultPage.results}" >
 				<li><a href="${url}phenomenons/${phenomenon.id}">${phenomenon.id}</a></li>
 			</c:forEach>
 		</ul>
@@ -60,9 +78,6 @@
 			</c:otherwise>
 		</c:choose>
 		  
-		<br>
-		
-		<a href="${url}">back</a>
 	</c:if>
 	
 </body>
