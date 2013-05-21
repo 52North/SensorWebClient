@@ -25,6 +25,9 @@
 package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * An SOS timeseries representation identified by <code>serviceUrl</code>, <code>procedure</code>,
@@ -49,6 +52,9 @@ public class SosTimeseries implements Serializable {
 
     private String category;
 
+    public SosTimeseries() {
+    }
+
     /**
      * @return <code>true</code> if complete, <code>false</code> otherwise.
      */
@@ -56,8 +62,45 @@ public class SosTimeseries implements Serializable {
         return serviceUrl != null && offering != null && phenomenon != null && procedure != null && feature != null;
     }
 
+    /**
+     * Computes a unique timeseries id on-the-fly dependend on the following parameters:
+     * <ul>
+     * <li>{@link #serviceUrl}</li>
+     * <li>{@link #offering}</li>
+     * <li>{@link #feature}</li>
+     * <li>{@link #procedure}</li>
+     * <li>{@link #phenomenon}</li>
+     * </ul>
+     * If a parameter is not set it will be ignored.
+     * 
+     * @return a unique and gml:id-valid identifier dependend on the parameter values set.
+     */
     public String getTimeseriesId() {
-        return Integer.toString(hashCode());
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+
+            if (serviceUrl != null) {
+                md.update(serviceUrl.getBytes());
+            }
+            if (offering != null) {
+                md.update(offering.getBytes());
+            }
+            if (phenomenon != null) {
+                md.update(phenomenon.getBytes());
+            }
+            if (procedure != null) {
+                md.update(procedure.getBytes());
+            }
+            if (feature != null) {
+                md.update(feature.getBytes());
+            }
+            byte[] digest = md.digest();
+            BigInteger bigInt = new BigInteger(1, digest);
+            return "ts_" + bigInt.toString(16);
+        }
+        catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("MD5 message digester not available!", e);
+        }
     }
 
     public String getProcedure() {
