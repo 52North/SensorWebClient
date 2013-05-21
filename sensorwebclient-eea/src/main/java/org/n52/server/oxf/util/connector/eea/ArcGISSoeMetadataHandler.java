@@ -88,7 +88,7 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 		SOSMetadata metadata = initMetadata(sosUrl, sosVersion);
 		TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
 		
-        Collection<SosTimeseries> observingTimeseries = createTimeserieses();
+        Collection<SosTimeseries> observingTimeseries = createObservingTimeseries();
         
         // TODO send DescribeSensor for every procedure to get the UOM, when the EEA-SOS deliver the uom
 

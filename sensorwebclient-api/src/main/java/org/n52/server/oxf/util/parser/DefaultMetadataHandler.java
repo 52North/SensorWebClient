@@ -76,16 +76,16 @@ public class DefaultMetadataHandler extends MetadataHandler {
 
         SOSMetadata sosMetadata = initMetadata(sosUrl, sosVersion);
 
-        Collection<SosTimeseries> timeserieses = createTimeserieses();
+        Collection<SosTimeseries> observingTimeseries = createObservingTimeseries();
 
-        normalizeDefaultCategories(timeserieses);
+        normalizeDefaultCategories(observingTimeseries);
 
         // TODO check version 2.0.0 sos's
 
         // XXX hack to get conjunctions between procedures and fois
         if ( !sosMetadata.hasDonePositionRequest()) {
             try {
-                performMetadataInterlinking(sosUrl, timeserieses);
+                performMetadataInterlinking(sosUrl, observingTimeseries);
             }
             catch (IOException e) {
                 LOGGER.warn("Could not retrieve relations between procedures and fois", e);
@@ -107,7 +107,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
      * 
      * @param sosUrl
      *        the SOS service URL.
-     * @param timeserieses
+     * @param observingTimeseries
      *        all timeseries being observed.
      * @throws OXFException
      *         when request creation fails.
@@ -120,7 +120,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
      * @throws IllegalStateException
      *         if SOS version is not supported.
      */
-    private void performMetadataInterlinking(String sosUrl, Collection<SosTimeseries> timeserieses) throws OXFException,
+    private void performMetadataInterlinking(String sosUrl, Collection<SosTimeseries> observingTimeseries) throws OXFException,
             InterruptedException,
             XMLHandlingException,
             IOException {
@@ -186,7 +186,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
                         }
 
                         for (String phenomenon : phenomenons) {
-                            Collection<SosTimeseries> paramConstellations = getMatchingConstellations(timeserieses,
+                            Collection<SosTimeseries> paramConstellations = getMatchingConstellations(observingTimeseries,
                                                                                                       procedureId,
                                                                                                       phenomenon);
 
@@ -283,11 +283,11 @@ public class DefaultMetadataHandler extends MetadataHandler {
         return opAccessorCallable;
     }
 
-    private Collection<SosTimeseries> getMatchingConstellations(Collection<SosTimeseries> timeserieses,
+    private Collection<SosTimeseries> getMatchingConstellations(Collection<SosTimeseries> observingTimeseries,
                                                                 String procedure,
                                                                 String phenomenon) {
         Collection<SosTimeseries> result = new ArrayList<SosTimeseries>();
-        for (SosTimeseries timeseries : timeserieses) {
+        for (SosTimeseries timeseries : observingTimeseries) {
             if (timeseries.matchesProcedure(procedure) && timeseries.matchesPhenomenon(phenomenon)) {
                 result.add(timeseries);
             }

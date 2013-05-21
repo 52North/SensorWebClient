@@ -97,7 +97,7 @@ public abstract class MetadataHandler {
 		return sosMetadata;
 	}
 
-	protected Collection<SosTimeseries> createTimeserieses()
+	protected Collection<SosTimeseries> createObservingTimeseries()
 			throws OXFException {
 		// association: Offering - FOIs
 		Map<String, String[]> offeringFoiMap = new HashMap<String, String[]>();
@@ -179,8 +179,8 @@ public abstract class MetadataHandler {
 		return allObservedTimeseries;
 	}
 	
-	protected void normalizeDefaultCategories(Collection<SosTimeseries> timeserieses) {
-		for (SosTimeseries timeseries : timeserieses) {
+	protected void normalizeDefaultCategories(Collection<SosTimeseries> observingTimeseries) {
+		for (SosTimeseries timeseries : observingTimeseries) {
 			String phenomenon = timeseries.getPhenomenon();
 			String category = phenomenon.substring(phenomenon.lastIndexOf(":") + 1);
 			timeseries.setCategory(category);

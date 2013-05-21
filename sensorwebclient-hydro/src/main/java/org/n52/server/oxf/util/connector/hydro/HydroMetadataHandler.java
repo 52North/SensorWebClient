@@ -94,11 +94,11 @@ public class HydroMetadataHandler extends MetadataHandler {
 			metadata.setOmVersion(responseFormat);
 		}
 
-		Collection<SosTimeseries> timeserieses = createTimeserieses();
+		Collection<SosTimeseries> observingTimeseries = createObservingTimeseries();
 		
 		// execute the GetFeatureOfInterest requests
 		Map<SosTimeseries, FutureTask<OperationResult>> futureTasks = new HashMap<SosTimeseries, FutureTask<OperationResult>>();
-		for (SosTimeseries timeseries : timeserieses) {
+		for (SosTimeseries timeseries : observingTimeseries) {
 			// create the category for every parameter constellation out of phenomenon and procedure
 			String category = getLastPartOf(timeseries.getPhenomenon()) + " (" + getLastPartOf(timeseries.getProcedure()) + ")";
 			timeseries.setCategory(category);
