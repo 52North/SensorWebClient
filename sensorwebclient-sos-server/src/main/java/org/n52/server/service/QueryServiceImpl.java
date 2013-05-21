@@ -164,7 +164,7 @@ public class QueryServiceImpl implements QueryService {
         String procedure = parameters.getProcedure();
         String phenomenon = parameters.getPhenomenon();
         String feature = parameters.getFeature();
-        ArrayList<SosTimeseries> timeserieses = station.getTimeserieses();
+        ArrayList<SosTimeseries> timeserieses = station.getObservingTimeseries();
         Iterator<SosTimeseries> iterator = timeserieses.iterator();
         while(iterator.hasNext()) {
             SosTimeseries timeseries = iterator.next();
