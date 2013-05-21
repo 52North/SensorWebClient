@@ -173,7 +173,7 @@ class StationSelectorController implements MapController {
     
     public void loadParameterConstellationByCategory(String category) {
     	selectedCategory = category;
-    	SosTimeseries timeseries = selectedStation.getObservingTimeseriesByCategory(selectedCategory);
+    	SosTimeseries timeseries = selectedStation.getTimeseriesByCategory(selectedCategory);
     	if (timeseries != null) {
     		fireGetTimeseries(timeseries);
     	}
@@ -233,7 +233,7 @@ class StationSelectorController implements MapController {
     }
     
     public SosTimeseries getSelectedTimeseries() {
-		return selectedStation.getObservingTimeseriesByCategory(selectedCategory);
+		return selectedStation.getTimeseriesByCategory(selectedCategory);
 	}
 
     public Phenomenon getSelectedPhenomenon() {

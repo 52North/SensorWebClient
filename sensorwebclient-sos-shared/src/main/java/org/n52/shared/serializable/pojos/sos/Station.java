@@ -40,7 +40,7 @@ public class Station implements Serializable {
 
     private EastingNorthing location;
 
-    private ArrayList<SosTimeseries> timeserieses;
+    private ArrayList<SosTimeseries> observingTimeseries;
 
     Station() {
         // for serialization
@@ -48,7 +48,7 @@ public class Station implements Serializable {
 
     public Station(String stationId) {
         this.id = stationId;
-        timeserieses = new ArrayList<SosTimeseries>();
+        observingTimeseries = new ArrayList<SosTimeseries>();
     }
 
     public String getId() {
@@ -64,29 +64,42 @@ public class Station implements Serializable {
     }
 
     public void addTimeseries(SosTimeseries timeseries) {
-        timeserieses.add(timeseries);
+        observingTimeseries.add(timeseries);
     }
 
-    public ArrayList<SosTimeseries> getTimeserieses() {
-        return timeserieses;
+    public ArrayList<SosTimeseries> getObservingTimeseries() {
+        return observingTimeseries;
     }
 
     public boolean contains(SosTimeseries timeseries) {
-        return timeserieses.contains(timeseries);
+        return observingTimeseries.contains(timeseries);
     }
-
+    
+    public boolean contains(String timeseriesId) {
+        return getTimeseriesById(timeseriesId) != null;
+    }
+    
+    public SosTimeseries getTimeseriesById(String timeseriesId) {
+        for (SosTimeseries timeseries : observingTimeseries) {
+            if (timeseries.getTimeseriesId().equals(timeseriesId)) {
+                return timeseries;
+            }
+        }
+        return null;
+    }
+    
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("Station: [ ").append("\n");
         sb.append("\tId: ").append(id).append("\n");
         sb.append("\tLocation: ").append(location).append("\n");
-        sb.append("\t#Timeseries: ").append(timeserieses.size()).append(" ]\n");
+        sb.append("\t#Timeseries: ").append(observingTimeseries.size()).append(" ]\n");
         return sb.toString();
     }
 
     public boolean hasStationCategory(String filterCategory) {
-        for (SosTimeseries timeseries : timeserieses) {
+        for (SosTimeseries timeseries : observingTimeseries) {
             if (timeseries.getCategory().equals(filterCategory)) {
                 return true;
             }
@@ -94,8 +107,8 @@ public class Station implements Serializable {
         return false;
     }
 
-    public SosTimeseries getObservingTimeseriesByCategory(String category) {
-        for (SosTimeseries paramConst : timeserieses) {
+    public SosTimeseries getTimeseriesByCategory(String category) {
+        for (SosTimeseries paramConst : observingTimeseries) {
             if (paramConst.getCategory().equals(category)) {
                 return paramConst;
             }
@@ -104,19 +117,19 @@ public class Station implements Serializable {
     }
 
     public boolean hasAtLeastOneParameterConstellation() {
-        return timeserieses.size() > 0 ? true : false;
+        return observingTimeseries.size() > 0 ? true : false;
     }
 
     // @Override // fails during gwt compile
     public Station clone() {
         Station station = new Station(id);
         station.setLocation(location);
-        station.setTimeserieses(new ArrayList<SosTimeseries>(timeserieses));
+        station.setObservingTimeseries(new ArrayList<SosTimeseries>(observingTimeseries));
         return station;
     }
     
-    private void setTimeserieses(ArrayList<SosTimeseries> timeserieses) {
-        this.timeserieses = timeserieses;
+    private void setObservingTimeseries(ArrayList<SosTimeseries> observingTimeseries) {
+        this.observingTimeseries = observingTimeseries;
     }
 
 }
