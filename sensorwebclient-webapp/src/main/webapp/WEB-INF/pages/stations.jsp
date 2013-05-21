@@ -40,7 +40,7 @@
                     <th>Diagram</th>
 				</tr>
 			</thead>
-			<c:forEach var="timeseries" items="${station.timeserieses}">
+			<c:forEach var="timeseries" items="${station.observingTimeseries}">
 				<tr>
                     <td>${timeseries.timeseriesId}</td>
 					<td>${timeseries.offering}</td>
