@@ -20,7 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping(value = "/services", produces = {"text/html", "application/*"})
-public class RestfulFeaturesController extends TimeseriesParameterQueryController implements RestfulKvp, RestfulUrls {
+public class RestfulFeaturesController extends QueryController implements RestfulKvp, RestfulUrls {
 
     @RequestMapping(value = "/{instance}/" + COLLECTION_FEATURES, method = RequestMethod.GET)
     public ModelAndView getFeaturesByGET(@PathVariable("instance") String instance,

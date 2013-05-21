@@ -40,15 +40,10 @@ public class RestfulServiceInstancesController implements RestfulKvp {
     }
 
     @RequestMapping(value = "/services/{id}", method = RequestMethod.GET)
-    public ModelAndView getInstancesByGET(@PathVariable(value = "id") String id,
+    public ModelAndView getInstancesByGET(@PathVariable(value = "id") String service,
                                           @RequestParam(value = KVP_SHOW, required = false) String filter) {
-        ServiceInstance serviceInstance = serviceInstancesService.getServiceInstance(id);
-        
-        if (serviceInstance == null) {
-            throw new ResourceNotFoundException();
-        }
-        
         ModelAndView mav = new ModelAndView("services");
+        ServiceInstance serviceInstance = serviceInstancesService.getServiceInstance(service);
         mav.addObject("service", serviceInstance);
         return mav;
     }

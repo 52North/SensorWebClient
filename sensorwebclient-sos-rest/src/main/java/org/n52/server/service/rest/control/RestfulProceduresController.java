@@ -20,13 +20,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping(value = "/services", produces = {"text/html", "application/*"})
-public class RestfulProceduresController extends TimeseriesParameterQueryController implements RestfulKvp, RestfulUrls {
+public class RestfulProceduresController extends QueryController implements RestfulKvp, RestfulUrls {
 
     @RequestMapping(value = "/{instance}/" + COLLECTION_PROCEDURES, method = RequestMethod.GET)
-    public ModelAndView getProcedureByGET(@PathVariable("instance") String instance,
-                                          @RequestParam(value = KVP_SHOW, required = false) String details,
-                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
-                                          @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
+    public ModelAndView getProceduresByGET(@PathVariable("instance") String instance,
+                                           @RequestParam(value = KVP_SHOW, required = false) String details,
+                                           @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
+                                           @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
 
         // TODO condense output depending on 'show' parameter
 
@@ -49,7 +49,7 @@ public class RestfulProceduresController extends TimeseriesParameterQueryControl
 
     @RequestMapping(value = "/{instance}/" + COLLECTION_PROCEDURES + "/**", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
-                                        HttpServletRequest request) throws Exception {
+                                         HttpServletRequest request) throws Exception {
         String procedure = getIndididuumIdentifierFor(COLLECTION_PROCEDURES, request);
         return createResponseView(instance, procedure);
     }
@@ -65,16 +65,16 @@ public class RestfulProceduresController extends TimeseriesParameterQueryControl
         procedure = stripKnownFileExtensionFrom(procedure);
         QueryParameters parameters = new QueryParameters().setProcedure(procedure);
         QueryResponse< ? > result = performQuery(instance, parameters);
-        
+
         if (result.getResults().length == 0) {
             throw new ResourceNotFoundException();
         }
-        
+
         Procedure[] procedures = (Procedure[]) result.getResults();
         mav.addObject("procedure", createSimpleProcedureOuput(procedures[0]));
         return mav;
     }
-    
+
     @Override
     protected QueryResponse< ? > performQuery(String instance, QueryParameters parameters) throws Exception {
         QueryFactory factory = getQueryFactoryFor(instance);

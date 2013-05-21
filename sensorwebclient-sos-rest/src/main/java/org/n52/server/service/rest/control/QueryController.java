@@ -13,10 +13,10 @@ import org.n52.shared.requests.query.queries.QueryRequest;
 import org.n52.shared.requests.query.responses.QueryResponse;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 
-public abstract class TimeseriesParameterQueryController {
+public abstract class QueryController {
 
     private QueryService queryService;
-
+    
     /**
      * Creates a query factory for the given service instance.
      * 
@@ -50,7 +50,7 @@ public abstract class TimeseriesParameterQueryController {
     protected QueryResponse< ? > doQuery(QueryRequest queryRequest) throws Exception {
         return queryService.doQuery(queryRequest);
     }
-    
+
     /**
      * Determines the identifier of an individuum of the given collection. Instead of 
      * 
@@ -94,5 +94,4 @@ public abstract class TimeseriesParameterQueryController {
     public void setQueryService(QueryService queryService) {
         this.queryService = queryService;
     }
-
 }

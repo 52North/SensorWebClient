@@ -20,13 +20,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping(value = "/services", produces = {"text/html", "application/*"})
-public class RestfulPhenomenonsController extends TimeseriesParameterQueryController implements RestfulKvp, RestfulUrls {
+public class RestfulPhenomenonsController extends QueryController implements RestfulKvp, RestfulUrls {
 
     @RequestMapping(value = "/{instance}/" + COLLECTION_PHENOMENONS, method = RequestMethod.GET)
-    public ModelAndView getProcedureByGET(@PathVariable("instance") String instance,
-                                          @RequestParam(value = KVP_SHOW, required = false) String details,
-                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
-                                          @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
+    public ModelAndView getPhenomenonsByGET(@PathVariable("instance") String instance,
+                                            @RequestParam(value = KVP_SHOW, required = false) String details,
+                                            @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
+                                            @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
 
         // TODO condense output depending on 'show' parameter
 
@@ -48,12 +48,12 @@ public class RestfulPhenomenonsController extends TimeseriesParameterQueryContro
     }
 
     @RequestMapping(value = "/{instance}/" + COLLECTION_PHENOMENONS + "/**", method = RequestMethod.GET)
-    public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
-                                        HttpServletRequest request) throws Exception {
+    public ModelAndView getPhenomenonByID(@PathVariable(value = "instance") String instance,
+                                          HttpServletRequest request) throws Exception {
         String phenomenon = getIndididuumIdentifierFor(COLLECTION_PHENOMENONS, request);
         return createResponseView(instance, phenomenon);
     }
-    
+
     @RequestMapping(value = "/{instance}/" + COLLECTION_PHENOMENONS + "/{id:.+}", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          @PathVariable(value = "id") String phenomenon) throws Exception {
@@ -69,7 +69,7 @@ public class RestfulPhenomenonsController extends TimeseriesParameterQueryContro
         if (result.getResults().length == 0) {
             throw new ResourceNotFoundException();
         }
-        
+
         mav.addObject("phenomenon", result.getResults()[0]);
         return mav;
     }

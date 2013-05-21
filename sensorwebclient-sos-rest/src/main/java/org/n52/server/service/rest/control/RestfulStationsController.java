@@ -18,17 +18,17 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping(value = "/services", produces = {"text/html", "application/*"})
-public class RestfulStationsController extends TimeseriesParameterQueryController implements RestfulKvp, RestfulUrls {
+public class RestfulStationsController extends QueryController implements RestfulKvp, RestfulUrls {
 
     @RequestMapping(value = "/{instance}/" + COLLECTION_STATIONS, method = RequestMethod.GET)
-    public ModelAndView getProcedureByGET(@PathVariable("instance") String instance,
-                                          @RequestParam(value = KVP_SHOW, required = false) String details,
-                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
-                                          @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size,
-                                          @RequestParam(value = KVP_FEATURE, required = false) String feature,
-                                          @RequestParam(value = KVP_PHENOMENON, required = false) String phenomenon,
-                                          @RequestParam(value = KVP_PROCEDURE, required = false) String procedure,
-                                          @RequestParam(value = KVP_OFFERING, required = false) String offering) throws Exception {
+    public ModelAndView getStationsByGET(@PathVariable("instance") String instance,
+                                         @RequestParam(value = KVP_SHOW, required = false) String details,
+                                         @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
+                                         @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size,
+                                         @RequestParam(value = KVP_FEATURE, required = false) String feature,
+                                         @RequestParam(value = KVP_PHENOMENON, required = false) String phenomenon,
+                                         @RequestParam(value = KVP_PROCEDURE, required = false) String procedure,
+                                         @RequestParam(value = KVP_OFFERING, required = false) String offering) throws Exception {
 
         // TODO condense output depending on 'show' parameter
 
@@ -56,14 +56,14 @@ public class RestfulStationsController extends TimeseriesParameterQueryControlle
 
     @RequestMapping(value = "/{instance}/" + COLLECTION_STATIONS + "/**", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
-                                        HttpServletRequest request) throws Exception {
+                                         HttpServletRequest request) throws Exception {
         String station = getIndididuumIdentifierFor(COLLECTION_STATIONS, request);
         return createResponseView(instance, station);
     }
 
     @RequestMapping(value = "/{instance}/" + COLLECTION_STATIONS + "/{id:.+}", method = RequestMethod.GET)
-    public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
-                                         @PathVariable(value = "id") String station) throws Exception {
+    public ModelAndView getStationByID(@PathVariable(value = "instance") String instance,
+                                       @PathVariable(value = "id") String station) throws Exception {
         return createResponseView(instance, station);
     }
 
@@ -76,7 +76,7 @@ public class RestfulStationsController extends TimeseriesParameterQueryControlle
         if (result.getResults().length == 0) {
             throw new ResourceNotFoundException();
         }
-        
+
         mav.addObject("station", result.getResults()[0]);
         return mav;
     }
