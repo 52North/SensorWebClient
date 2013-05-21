@@ -21,26 +21,32 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.server.service.rest;
+package org.n52.server.service.rest.model;
 
-public class ImageDataResult {
+public class TimeSeriesDataResult {
+
+    private String uom;
     
-    private String imageUrl;
+    private String values;
     
-    public ImageDataResult() {
+    public TimeSeriesDataResult() {
         // for serialization
     }
     
-    public ImageDataResult(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public String getUom() {
+        return uom;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public void setUom(String uom) {
+        this.uom = uom;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public String getValues() {
+        return values;
+    }
+
+    public void setValues(String values) {
+        this.values = values;
     }
     
 }
