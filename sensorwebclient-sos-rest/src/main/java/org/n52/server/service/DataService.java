@@ -28,22 +28,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.n52.client.service.SensorMetadataService;
 import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.service.rest.InternalServiceException;
 import org.n52.server.service.rest.ParameterSet;
-import org.n52.server.service.rest.TimeSeriesdataResult;
 import org.n52.server.service.rest.control.InvalidSosTimeseriesException;
 import org.n52.server.service.rest.control.ResourceNotFoundException;
+import org.n52.server.service.rest.model.TimeSeriesDataResult;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeSeriesProperties;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
@@ -64,16 +64,17 @@ public abstract class DataService {
         return metadata;
     }
 
-    protected Map<String, TimeSeriesdataResult> createTimeSeriesRequest(ParameterSet parameterSet, SOSMetadata metadata, ArrayList<TimeSeriesProperties> props) {
-        HashMap<String, TimeSeriesdataResult> timeSeriesResults = new HashMap<String, TimeSeriesdataResult>();
-        for (SosTimeseries timeseries : parameterSet.getTimeserieses()) {
+    protected Map<String, TimeSeriesDataResult> createTimeSeriesRequest(ParameterSet parameterSet, SOSMetadata metadata, ArrayList<TimeSeriesProperties> props) {
+        HashMap<String, TimeSeriesDataResult> timeSeriesResults = new HashMap<String, TimeSeriesDataResult>();
+        for (String reference : parameterSet.getTimeseriesReferences()) {
             try {
+                SosTimeseries timeseries = parameterSet.getTimeseriesByReference(reference);
                 Station station = getStationFromParameters(metadata, timeseries);
             	TimeSeriesProperties timeSeriesProperties = createTimeSeriesProperties(metadata, station, timeseries);
             	timeSeriesProperties.setTsID(timeseries.getTimeseriesId());
                 props.add(decorateProperties(timeSeriesProperties, parameterSet));
-                TimeSeriesdataResult result = createTimeSeriesResult(timeSeriesProperties);
-                timeSeriesResults.put(timeseries.getTimeseriesId(), result);
+                TimeSeriesDataResult result = createTimeSeriesResult(timeSeriesProperties);
+                timeSeriesResults.put(reference, result);
             }
             catch (InvalidSosTimeseriesException e) {
                 LOGGER.warn("Unable to process request: {}", e.getMessage());
@@ -131,8 +132,8 @@ public abstract class DataService {
         return sensorMetadataService.getSensorMetadata(timeSeriesProperties).getProps();
     }
 
-    private TimeSeriesdataResult createTimeSeriesResult(TimeSeriesProperties timeSeriesProperties) {
-        TimeSeriesdataResult result = new TimeSeriesdataResult();
+    private TimeSeriesDataResult createTimeSeriesResult(TimeSeriesProperties timeSeriesProperties) {
+        TimeSeriesDataResult result = new TimeSeriesDataResult();
         result.setUom(timeSeriesProperties.getUom());
         return result;
     }
@@ -142,8 +143,9 @@ public abstract class DataService {
     }
     
     protected DesignOptions createDesignOptions(ParameterSet parameterSet, ArrayList<TimeSeriesProperties> props, boolean renderGrid) {
-        long begin = new DateTime(parameterSet.getBegin()).getMillis();
-        long end = new DateTime(parameterSet.getEnd()).getMillis();
+        Interval timespan = Interval.parse(parameterSet.getTimespan());
+        long begin = timespan.getStartMillis();
+        long end = timespan.getEndMillis();
         return new DesignOptions(props, begin, end, renderGrid);
     }
 

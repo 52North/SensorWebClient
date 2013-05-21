@@ -31,7 +31,7 @@ import java.util.Map;
 import org.n52.client.service.TimeSeriesDataService;
 import org.n52.server.service.rest.InternalServiceException;
 import org.n52.server.service.rest.ParameterSet;
-import org.n52.server.service.rest.TimeSeriesdataResult;
+import org.n52.server.service.rest.model.TimeSeriesDataResult;
 import org.n52.shared.requests.TimeSeriesDataRequest;
 import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
@@ -56,10 +56,10 @@ public class GetDataService extends DataService {
      * @param instance the configured data instance
      * @return a time series result instance, identified by {@link SosTimeseries#getClientId()}
      */
-    public Map<String, TimeSeriesdataResult> getTimeSeriesFromParameterSet(ParameterSet parameterSet, String instance) {
+    public Map<String, TimeSeriesDataResult> getTimeSeriesFromParameterSet(ParameterSet parameterSet, String instance) {
         SOSMetadata metadata = getServiceMetadata(instance);
         ArrayList<TimeSeriesProperties> tsProperties = new ArrayList<TimeSeriesProperties>();
-        Map<String, TimeSeriesdataResult> timeSeriesResults = createTimeSeriesRequest(parameterSet, metadata, tsProperties);
+        Map<String, TimeSeriesDataResult> timeSeriesResults = createTimeSeriesRequest(parameterSet, metadata, tsProperties);
         performTimeSeriesDataRequest(timeSeriesResults, createDesignOptions(parameterSet, tsProperties));
         return timeSeriesResults;
     }
@@ -69,13 +69,13 @@ public class GetDataService extends DataService {
         return decoradeWithSensorMetadataProperties(timeSeriesProperties);
     }
     
-    private void performTimeSeriesDataRequest(Map<String, TimeSeriesdataResult> timeSeriesResults, DesignOptions options) throws InternalServiceException {
+    private void performTimeSeriesDataRequest(Map<String, TimeSeriesDataResult> timeSeriesResults, DesignOptions options) throws InternalServiceException {
         try {
             TimeSeriesDataRequest tsRequest = new TimeSeriesDataRequest(options);
             TimeSeriesDataResponse timeSeriesData = timeSeriesDataService.getTimeSeriesData(tsRequest);
             Map<String, HashMap<Long, String>> data = timeSeriesData.getPayloadData();
             for (String clientId : timeSeriesResults.keySet()) {
-                TimeSeriesdataResult result = timeSeriesResults.get(clientId);
+                TimeSeriesDataResult result = timeSeriesResults.get(clientId);
                 result.setValues(createCsvValues(data.get(clientId)));
             }
         }

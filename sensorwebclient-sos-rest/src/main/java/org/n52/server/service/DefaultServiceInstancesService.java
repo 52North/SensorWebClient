@@ -6,6 +6,7 @@ import static org.n52.server.oxf.util.ConfigurationContext.getSOSMetadatas;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.n52.server.service.rest.control.ResourceNotFoundException;
 import org.n52.server.service.rest.model.ServiceInstance;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 
@@ -23,7 +24,10 @@ public class DefaultServiceInstancesService implements ServiceInstancesService {
     @Override
     public ServiceInstance getServiceInstance(String id) {
         SOSMetadata metadata = getSOSMetadataForItemName(id);
-        return (metadata != null) ? new ServiceInstance(metadata) : null;
+        if (metadata == null) {
+            throw new ResourceNotFoundException();
+        }
+        return new ServiceInstance(metadata);
     }
 
 }
