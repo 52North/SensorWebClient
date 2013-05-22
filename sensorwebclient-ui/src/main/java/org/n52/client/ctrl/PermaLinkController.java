@@ -116,7 +116,7 @@ public class PermaLinkController {
             paramConst.setFeatureOfInterest(foi);
             paramConst.setOffering(offering);
             paramConst.setProcedure(procedure);
-            Station station = metadata.getStationByParameterConstellation(offering, foi, procedure, phenomenon);
+            Station station = metadata.getStationByParameterConstellation(paramConst);
             
             Toaster.getToasterInstance().addMessage("load session from permalink");
             permalinkLoaded = true;

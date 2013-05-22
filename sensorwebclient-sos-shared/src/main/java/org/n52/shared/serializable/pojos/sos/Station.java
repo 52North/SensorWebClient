@@ -44,7 +44,6 @@ public class Station implements Serializable {
 
     private String id;
 
-    // private String srs; // TODO srs and location into one object!
     private EastingNorthing location;
 
     private ArrayList<ParameterConstellation> parameterConstellations;
@@ -64,20 +63,11 @@ public class Station implements Serializable {
 
     public void setLocation(EastingNorthing location) {
         this.location = location;
-        // this.srs = srs;
     }
 
     public EastingNorthing getLocation() {
         return location;
     }
-
-    // public void setSrs(String srs) {
-    // this.srs = srs;
-    // }
-    //
-    // public String getSrs() {
-    // return srs;
-    // }
 
     public void addParameterConstellation(ParameterConstellation parameterConstellation) {
         parameterConstellations.add(parameterConstellation);
@@ -98,26 +88,11 @@ public class Station implements Serializable {
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        // TODO wait for fix: http://code.google.com/p/google-web-toolkit/issues/detail?id=3404
-        // sb.append(getClass().getSimpleName()).append(" [ ");
         sb.append("Station: [ ").append("\n");
         sb.append("\tId: ").append(id).append("\n");
         sb.append("\tLocation: ").append(location).append("\n");
         sb.append("\tParameterConstellation-Count: ").append(parameterConstellations.size()).append(" ]\n");
         return sb.toString();
-    }
-
-    public boolean hasParameterConstellation(String offeringId, String featureId,
-                                             String procedureId, String phenomenonId) {
-        if (id.equals(featureId)) {
-            for (ParameterConstellation paramConst : parameterConstellations) {
-                if (paramConst.hasOffering(offeringId) && paramConst.hasFoi(featureId)
-                        && paramConst.hasProcedure(procedureId) && paramConst.hasPhenomenon(phenomenonId)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     public boolean hasStationCategory(String filterCategory) {
@@ -138,10 +113,27 @@ public class Station implements Serializable {
         return null;
     }
 
-    public void removeUnmatchedConstellations(String offering, String phenomenon, String procedure, String feature) {
+    /**
+     * Removes those {@link #parameterConstellations} which do not match the given filter criteria. The filter
+     * criteria is built as an <code>AND</code> criteria to match against all parameters. If a parameter is
+     * <code>null</code> is will be ignored (to match all).
+     * 
+     * @param offeringFilter
+     *        filter to match the offering, or all offerings if <code>null</code>.
+     * @param phenomenonFilter
+     *        filter to match the phenomenon, or all phenomenons if <code>null</code>.
+     * @param procedureFilter
+     *        filter to match the procedure, or all procedures if <code>null</code>.
+     * @param featureFilter
+     *        filter to match the feature, or all features if <code>null</code>.
+     */
+    public void removeNotMatchingFilters(String offeringFilter,
+                                         String phenomenonFilter,
+                                         String procedureFilter,
+                                         String featureFilter) {
         for (Iterator<ParameterConstellation> iterator = parameterConstellations.iterator(); iterator.hasNext();) {
             ParameterConstellation constellation = (ParameterConstellation) iterator.next();
-            if ( !constellation.matchFilter(offering, phenomenon, procedure, feature)) {
+            if ( !constellation.matchesAll(offeringFilter, phenomenonFilter, procedureFilter, featureFilter)) {
                 iterator.remove();
             }
         }
@@ -151,6 +143,7 @@ public class Station implements Serializable {
         return parameterConstellations.size() > 0 ? true : false;
     }
 
+    // @Override // fails during gwt compile
     public Station clone() {
         Station station = new Station(id);
         station.setLocation(location);

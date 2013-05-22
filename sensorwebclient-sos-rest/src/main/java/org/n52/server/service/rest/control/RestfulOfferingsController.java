@@ -3,6 +3,8 @@ package org.n52.server.service.rest.control;
 
 import static org.n52.shared.requests.query.QueryParameters.createEmptyFilterQuery;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.n52.server.service.rest.model.ModelAndViewPager;
 import org.n52.shared.requests.query.QueryFactory;
 import org.n52.shared.requests.query.QueryParameters;
@@ -20,7 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(value = "/services", produces = {"text/html", "application/*"})
 public class RestfulOfferingsController extends TimeseriesParameterQueryController implements RestfulKvp, RestfulUrls {
 
-    @RequestMapping(value = "/{instance}/" + PATH_OFFERINGS, method = RequestMethod.GET)
+    @RequestMapping(value = "/{instance}/" + COLLECTION_OFFERINGS, method = RequestMethod.GET)
     public ModelAndView getProcedureByGET(@PathVariable("instance") String instance,
                                           @RequestParam(value = KVP_SHOW, required = false) String details,
                                           @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
@@ -39,20 +41,31 @@ public class RestfulOfferingsController extends TimeseriesParameterQueryControll
         ModelAndView mav = new ModelAndView("offerings");
         return mav.addObject(offerings);
     }
-
-    @RequestMapping(value = "/{instance}/" + PATH_OFFERINGS + "/{id}", method = RequestMethod.GET)
+    
+    @RequestMapping(value = "/{instance}/" + COLLECTION_OFFERINGS + "/**", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
-                                         @PathVariable(value = "id") String offering) throws Exception {
+                                        HttpServletRequest request) throws Exception {
+        String offering = getIndididuumIdentifierFor(COLLECTION_OFFERINGS, request);
+        return createResponseView(instance, offering);
+    }
+
+    @RequestMapping(value = "/{instance}/" + COLLECTION_OFFERINGS + "/{id:.+}", method = RequestMethod.GET)
+    public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
+                                        @PathVariable(value = "id") String offering) throws Exception {
+        return createResponseView(instance, offering);
+    }
+
+    private ModelAndView createResponseView(String instance, String offering) throws Exception {
         ModelAndView mav = new ModelAndView("offerings");
+        offering = stripKnownFileExtensionFrom(offering);
         QueryParameters parameters = new QueryParameters().setOffering(offering);
         QueryResponse< ? > result = performQuery(instance, parameters);
 
-        Offering[] offerings = (Offering[]) result.getResults();
-        if (offerings.length == 0) {
+        if (result.getResults().length == 0) {
             throw new ResourceNotFoundException();
         }
         else {
-            mav.addObject(offerings[0]);
+            mav.addObject(result.getResults()[0]);
         }
         return mav;
     }

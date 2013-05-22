@@ -69,6 +69,7 @@ import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
 import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,6 +86,7 @@ public class HydroMetadataHandler extends MetadataHandler {
 	public SOSMetadataResponse performMetadataCompletion(String sosUrl, String sosVersion) throws Exception {
 		
 		SOSMetadata metadata = initMetadata(sosUrl, sosVersion);
+		TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
 		
 		// get a waterml specific responseFormat if set
 		String responseFormat = ConnectorUtils.getResponseFormat(getServiceDescriptor(), "waterml");
@@ -150,7 +152,7 @@ public class HydroMetadataHandler extends MetadataHandler {
 						// add feature
 						FeatureOfInterest feature = new FeatureOfInterest(id);
 						feature.setLabel(label);
-	                    metadata.addFeature(feature);
+	                    lookup.addFeature(feature);
 	                    
 	                    // create station if not exists
 	                    Station station = metadata.getStation(id);
