@@ -53,6 +53,7 @@ public class SosTimeseries implements Serializable {
     private String category;
 
     public SosTimeseries() {
+        // for serialization
     }
 
     /**
@@ -79,9 +80,9 @@ public class SosTimeseries implements Serializable {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
 
-            if (serviceUrl != null) {
-                md.update(serviceUrl.getBytes());
-            }
+//            if (serviceUrl != null) {
+//                md.update(serviceUrl.getBytes());
+//            }
             if (offering != null) {
                 md.update(offering.getBytes());
             }

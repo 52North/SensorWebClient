@@ -191,9 +191,9 @@ public class DefaultMetadataHandler extends MetadataHandler {
                                                                                                       phenomenon);
 
                             station.setLocation(eastingNorthing);
-                            for (SosTimeseries paraCon : paramConstellations) {
-                                paraCon.setFeature(foi);
-                                station.addTimeseries(paraCon);
+                            for (SosTimeseries timseries : paramConstellations) {
+                                timseries.setFeature(foi);
+                                station.addTimeseries(timseries);
                             }
                         }
                     }

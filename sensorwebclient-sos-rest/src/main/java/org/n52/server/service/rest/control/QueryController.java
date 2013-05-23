@@ -37,7 +37,7 @@ public abstract class QueryController {
      * @throws ResourceNotFoundException
      *         if no service is configured with the given item name.
      */
-    private SOSMetadata findServiceMetadataForItemName(String serviceInstance) {
+    protected SOSMetadata findServiceMetadataForItemName(String serviceInstance) {
         SOSMetadata metadata = ConfigurationContext.getSOSMetadataForItemName(serviceInstance);
         if (metadata == null) {
             throw new ResourceNotFoundException();

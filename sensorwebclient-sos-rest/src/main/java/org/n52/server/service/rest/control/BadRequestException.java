@@ -21,21 +21,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.shared.requests;
+package org.n52.server.service.rest.control;
 
-import org.n52.shared.serializable.pojos.DesignOptions;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-public class TimeSeriesDataRequest extends RepresentationRequest {
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+public class BadRequestException extends RuntimeException {
 
-    private static final long serialVersionUID = 2993975401908052490L;
-
-    @SuppressWarnings("unused")
-    private TimeSeriesDataRequest() {
-        // for serialization
-    }
-
-    public TimeSeriesDataRequest(DesignOptions options) {
-        super(options);
-    }
+    private static final long serialVersionUID = -299285770822168789L;
 
 }

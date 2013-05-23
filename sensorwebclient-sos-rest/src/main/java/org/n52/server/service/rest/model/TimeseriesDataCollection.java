@@ -23,30 +23,44 @@
  */
 package org.n52.server.service.rest.model;
 
-public class TimeSeriesDataResult {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-    private String uom;
+public class TimeseriesDataCollection {
     
-    private String values;
+    /**
+     * Associates timeseries to a (custom client) id.
+     */
+    private Map<String, TimeseriesData> allTimeseries = new HashMap<String, TimeseriesData>();
     
-    public TimeSeriesDataResult() {
+    public TimeseriesDataCollection() {
         // for serialization
     }
     
-    public String getUom() {
-        return uom;
+    public void addAll(TimeseriesDataCollection timseriesCollection) {
+        allTimeseries.putAll(timseriesCollection.getAllTimeseries());
+    }
+    
+    public void addNewTimeseries(String reference, TimeseriesData timeseries) {
+        this.allTimeseries.put(reference, timeseries);
+    }
+    
+    public TimeseriesData getTimeseries(String timeseriesId) {
+        return allTimeseries.get(timeseriesId);
+    }
+    
+    public Map<String, TimeseriesData> getAllTimeseries() {
+        return allTimeseries;
+    }
+    
+//    public Set<String> getTimeseriesIds() {
+//        return allTimeseries.keySet();
+//    }
+
+    public void setAllTimeseries(HashMap<String, TimeseriesData> timeseries) {
+        this.allTimeseries = timeseries;
     }
 
-    public void setUom(String uom) {
-        this.uom = uom;
-    }
-
-    public String getValues() {
-        return values;
-    }
-
-    public void setValues(String values) {
-        this.values = values;
-    }
     
 }

@@ -79,9 +79,9 @@ public class GetImageService extends DataService {
     }
 
     private DesignOptions createDesignOptions(ParameterSet parameterSet, String instance) {
-        SOSMetadata metadata = getServiceMetadata(instance);
+        SOSMetadata metadata = getMetadataForInstanceName(instance);
         ArrayList<TimeSeriesProperties> tsProperties = new ArrayList<TimeSeriesProperties>();
-        createTimeSeriesRequest(parameterSet, metadata, tsProperties);
+        prepareTimeseriesResults(parameterSet, metadata, tsProperties);
         return createDesignOptions(parameterSet, tsProperties, isRenderGrid());
     }
 

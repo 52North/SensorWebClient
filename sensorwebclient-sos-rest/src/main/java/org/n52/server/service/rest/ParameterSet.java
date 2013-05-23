@@ -51,7 +51,7 @@ public class ParameterSet {
     private String size;
 
     /**
-     * A collection of timeseries. Can be optionally associated to custom ids.
+     * A collection of explicit timeseries associated to their (custom client) ids.
      * 
      * @see {@link #addTimeseries(SosTimeseries)}
      * @see {@link #addTimeseries(String, SosTimeseries)}
@@ -142,6 +142,11 @@ public class ParameterSet {
         this.referencedTimeseries = timeseries;
     }
 
+    /**
+     * @param reference
+     *        the (custom client) reference which references a timeseries.
+     * @return the referenced timeseries
+     */
     public SosTimeseries getTimeseriesByReference(String reference) {
         return referencedTimeseries.get(reference);
     }

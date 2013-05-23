@@ -24,18 +24,21 @@
 
 package org.n52.server.service;
 
+import static org.n52.server.oxf.util.ConfigurationContext.getSOSMetadataForItemName;
+import static org.n52.server.oxf.util.ConfigurationContext.getServiceMetadata;
+
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
 import org.joda.time.Interval;
 import org.n52.client.service.SensorMetadataService;
-import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.service.rest.InternalServiceException;
 import org.n52.server.service.rest.ParameterSet;
 import org.n52.server.service.rest.control.InvalidSosTimeseriesException;
 import org.n52.server.service.rest.control.ResourceNotFoundException;
-import org.n52.server.service.rest.model.TimeSeriesDataResult;
+import org.n52.server.service.rest.model.TimeseriesData;
+import org.n52.server.service.rest.model.TimeseriesDataCollection;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeSeriesProperties;
 import org.n52.shared.serializable.pojos.sos.Feature;
@@ -55,8 +58,8 @@ public abstract class DataService {
 
     private SensorMetadataService sensorMetadataService;
 
-    protected SOSMetadata getServiceMetadata(String instance) {
-        SOSMetadata metadata = ConfigurationContext.getSOSMetadataForItemName(instance);
+    protected SOSMetadata getMetadataForInstanceName(String instance) {
+        SOSMetadata metadata = getSOSMetadataForItemName(instance);
         if (metadata == null) {
             LOGGER.warn("Could not find configured SOS instance for itemName '{}'" + instance);
             throw new ResourceNotFoundException();
@@ -64,17 +67,16 @@ public abstract class DataService {
         return metadata;
     }
 
-    protected Map<String, TimeSeriesDataResult> createTimeSeriesRequest(ParameterSet parameterSet, SOSMetadata metadata, ArrayList<TimeSeriesProperties> props) {
-        HashMap<String, TimeSeriesDataResult> timeSeriesResults = new HashMap<String, TimeSeriesDataResult>();
+    protected TimeseriesDataCollection prepareTimeseriesResults(ParameterSet parameterSet, SOSMetadata metadata, ArrayList<TimeSeriesProperties> props) {
+        TimeseriesDataCollection timeseriesCollection = new TimeseriesDataCollection();
         for (String reference : parameterSet.getTimeseriesReferences()) {
             try {
                 SosTimeseries timeseries = parameterSet.getTimeseriesByReference(reference);
-                Station station = getStationFromParameters(metadata, timeseries);
-            	TimeSeriesProperties timeSeriesProperties = createTimeSeriesProperties(metadata, station, timeseries);
-            	timeSeriesProperties.setTsID(timeseries.getTimeseriesId());
-                props.add(decorateProperties(timeSeriesProperties, parameterSet));
-                TimeSeriesDataResult result = createTimeSeriesResult(timeSeriesProperties);
-                timeSeriesResults.put(reference, result);
+                Station station = metadata.getStationByTimeSeries(timeseries);
+            	TimeSeriesProperties propertiesInstance = createTimeSeriesProperties(station, timeseries);
+                props.add(decorateProperties(propertiesInstance, parameterSet));
+                TimeseriesData timeseriesData = createTimeseriesData(propertiesInstance);
+                timeseriesCollection.addNewTimeseries(reference, timeseriesData);
             }
             catch (InvalidSosTimeseriesException e) {
                 LOGGER.warn("Unable to process request: {}", e.getMessage());
@@ -85,26 +87,20 @@ public abstract class DataService {
                 throw new InternalServiceException();
             }
         }
-        return timeSeriesResults;
+        return timeseriesCollection;
     }
 
-    private Station getStationFromParameters(SOSMetadata metadata, SosTimeseries timeseries) throws InvalidSosTimeseriesException {
-        Station station = metadata.getStationByTimeSeries(timeseries);
-        if (station == null) {
-            throw new InvalidSosTimeseriesException(timeseries);
-        }
-        return station;
-    }
-
-    private TimeSeriesProperties createTimeSeriesProperties(SOSMetadata metadata, Station station, SosTimeseries timeseries) {
+    private TimeSeriesProperties createTimeSeriesProperties(Station station, SosTimeseries timeseries) throws Exception {
+        String sosUrl = timeseries.getServiceUrl();
+        SOSMetadata metadata = getServiceMetadata(sosUrl);
         TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
         Feature foi = lookup.getFeature(timeseries.getFeature());
         Phenomenon phenomenon = lookup.getPhenomenon(timeseries.getPhenomenon());
         Procedure procedure = lookup.getProcedure(timeseries.getProcedure());
         Offering offering = lookup.getOffering(timeseries.getOffering());
-
-        String sosUrl = metadata.getServiceUrl();
-        return new TimeSeriesProperties(sosUrl, station, offering, foi, procedure, phenomenon, 0, 0, "???", true);
+        TimeSeriesProperties properties = new TimeSeriesProperties(sosUrl, station, offering, foi, procedure, phenomenon, 0, 0, "???", true);
+        properties.setTsID(timeseries.getTimeseriesId());
+        return properties;
     }
 
     /**
@@ -132,10 +128,10 @@ public abstract class DataService {
         return sensorMetadataService.getSensorMetadata(timeSeriesProperties).getProps();
     }
 
-    private TimeSeriesDataResult createTimeSeriesResult(TimeSeriesProperties timeSeriesProperties) {
-        TimeSeriesDataResult result = new TimeSeriesDataResult();
-        result.setUom(timeSeriesProperties.getUom());
-        return result;
+    private TimeseriesData createTimeseriesData(TimeSeriesProperties timeseriesProperties) {
+        String uom = timeseriesProperties.getUnitOfMeasure();
+        Map<Long, String> dummyMap = Collections.emptyMap();
+        return TimeseriesData.newTimeseriesData(dummyMap, uom);
     }
 
     protected DesignOptions createDesignOptions(ParameterSet parameterSet, ArrayList<TimeSeriesProperties> props) {

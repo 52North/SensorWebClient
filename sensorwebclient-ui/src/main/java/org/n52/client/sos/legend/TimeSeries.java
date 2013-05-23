@@ -245,7 +245,7 @@ public class TimeSeries implements LegendData {
 	}
 
 	public void setUnitOfMeasure(String unitOfMeasure) {
-		properties.setUOM(unitOfMeasure);
+		properties.setUnitOfMeasure(unitOfMeasure);
 	}
 
 	public String getOfferingId() {

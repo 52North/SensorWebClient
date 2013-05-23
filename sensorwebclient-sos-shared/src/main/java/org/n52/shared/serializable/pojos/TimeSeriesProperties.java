@@ -146,7 +146,7 @@ public class TimeSeriesProperties implements Serializable {
 		result.setShowYAxis(this.isYAxisVisible);
 		result.setStationName(this.stationName);
 		result.setTsID(this.timeSeriesId);
-		result.setUOM(this.uom);
+		result.setUnitOfMeasure(this.uom);
 		result.setSeriesType(this.seriesType);
 
 		return result;
@@ -260,10 +260,6 @@ public class TimeSeriesProperties implements Serializable {
 
 	public void setPhen(Phenomenon phen) {
 		this.phen = phen;
-	}
-
-	public String getUom() {
-		return this.uom;
 	}
 
 	public String getStationName() {
@@ -483,22 +479,11 @@ public class TimeSeriesProperties implements Serializable {
 	// 5);
 	// }
 
-	/**
-	 * Gets the uOM.
-	 * 
-	 * @return the uOM
-	 */
 	public String getUnitOfMeasure() {
 		return this.uom;
 	}
 
-	/**
-	 * Sets the uOM.
-	 * 
-	 * @param uom
-	 *            the new uOM
-	 */
-	public void setUOM(String uom) {
+	public void setUnitOfMeasure(String uom) {
 		this.uom = uom;
 		this.phen.setUnitOfMeasure(uom);
 	}

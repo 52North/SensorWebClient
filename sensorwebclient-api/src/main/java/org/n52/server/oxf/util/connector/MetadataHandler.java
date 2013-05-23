@@ -164,6 +164,7 @@ public abstract class MetadataHandler {
 						timeseries.setPhenomenon(phenomenon);
 						timeseries.setProcedure(procedure);
 						timeseries.setOffering(offeringId);
+						timeseries.setServiceUrl(sosMetadata.getServiceUrl());
 						allObservedTimeseries.add(timeseries);
 					}
 					// add procedures

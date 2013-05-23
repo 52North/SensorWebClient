@@ -118,6 +118,7 @@ public class PermaLinkController {
             timeseries.setFeature(foi);
             timeseries.setOffering(offering);
             timeseries.setProcedure(procedure);
+            timeseries.setServiceUrl(url);
             Station station = metadata.getStationByTimeSeries(timeseries);
             
             Toaster.getToasterInstance().addMessage("load session from permalink");

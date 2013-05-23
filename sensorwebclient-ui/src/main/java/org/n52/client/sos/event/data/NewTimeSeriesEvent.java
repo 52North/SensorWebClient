@@ -55,17 +55,14 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
 		private NewTimeSeriesEventHandler[] blockedHandlers = new NewTimeSeriesEventHandler[0];
     	
     	public Builder(String sosURL) {
-    		assert(sosURL != null);
     		this.serviceURL = sosURL;
     	}
 
     	public Builder addStation(final Station station) {
-    		assert(station != null);
     		this.station = station;
     		return this;
     	}
     	public Builder addTimeseries(final SosTimeseries timeseries) {
-    		assert(timeseries != null);
     		this.timeseries = timeseries;
     		return this;
     	}
