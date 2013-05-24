@@ -25,7 +25,6 @@ package org.n52.server.service.rest.model;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class TimeseriesDataCollection {
     
