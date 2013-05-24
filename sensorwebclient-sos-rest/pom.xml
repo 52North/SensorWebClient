@@ -38,6 +38,7 @@
 		</dependency>
 	</dependencies>
 	<build>
+		
 		<plugins>
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
@@ -54,7 +55,10 @@
 							<resources>
 								<resource>
 									<directory>src/main/webapp/</directory>
-									<filtering>true</filtering>
+									<includes>
+										<include>**/*.jsp</include>
+									</includes>
+									<filtering>false</filtering>
 								</resource>
 							</resources>
 						</configuration>

@@ -83,7 +83,6 @@
 				</excludes>
 			</resource>
 		</resources>
-
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -96,6 +95,7 @@
 							<directory>src/main/webapp</directory>
 							<filtering>true</filtering>
 							<excludes>
+								<!-- exclude files from filtering -->
 								<exclude>**/*.jsp</exclude>
 								<exclude>cache/*</exclude>
 								<exclude>img/*</exclude>
@@ -109,6 +109,7 @@
 							<groupId>org.n52.sensorweb</groupId>
 							<artifactId>sensorwebclient-webapp</artifactId>
 							<includes>
+							    <include>WEB-INF/pages/*.jsp</include>
 								<include>ds/sos-instances.data.xml</include>
 								<include>WEB-INF/classes/dispatcher-control.xml</include>
 								<include>WEB-INF/classes/spring-view-config.xml</include>
@@ -189,33 +190,33 @@
 					<dependency>
 						<groupId>org.n52.sensorweb</groupId>
 						<artifactId>sensorwebclient-sos-server</artifactId>
-                        <version>${project.version}</version>
+						<version>${project.version}</version>
 						<scope>provided</scope>
 					</dependency>
 					<dependency>
 						<groupId>org.n52.sensorweb</groupId>
 						<artifactId>sensorwebclient-sos-rest</artifactId>
-                        <version>${project.version}</version>
+						<version>${project.version}</version>
 						<scope>provided</scope>
 					</dependency>
-                    <dependency>
-                        <groupId>org.n52.sensorweb</groupId>
-                        <artifactId>sensorwebclient-grdc</artifactId>
-                        <version>${project.version}</version>
-                        <scope>provided</scope>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.n52.sensorweb</groupId>
-                        <artifactId>sensorwebclient-eea</artifactId>
-                        <version>${project.version}</version>
-                        <scope>provided</scope>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.n52.sensorweb</groupId>
-                        <artifactId>sensorwebclient-hydro</artifactId>
-                        <version>${project.version}</version>
-                        <scope>provided</scope>
-                    </dependency>
+					<dependency>
+						<groupId>org.n52.sensorweb</groupId>
+						<artifactId>sensorwebclient-grdc</artifactId>
+						<version>${project.version}</version>
+						<scope>provided</scope>
+					</dependency>
+					<dependency>
+						<groupId>org.n52.sensorweb</groupId>
+						<artifactId>sensorwebclient-eea</artifactId>
+						<version>${project.version}</version>
+						<scope>provided</scope>
+					</dependency>
+					<dependency>
+						<groupId>org.n52.sensorweb</groupId>
+						<artifactId>sensorwebclient-hydro</artifactId>
+						<version>${project.version}</version>
+						<scope>provided</scope>
+					</dependency>
 				</dependencies>
 			</dependencyManagement>
 		</profile>

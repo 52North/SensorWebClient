@@ -136,6 +136,7 @@
 							<directory>src/main/webapp</directory>
 							<filtering>true</filtering>
 							<excludes>
+                                <!-- exclude files from filtering -->
 								<exclude>**/*.jsp</exclude>
 								<exclude>cache/*</exclude>
 								<exclude>img/*</exclude>

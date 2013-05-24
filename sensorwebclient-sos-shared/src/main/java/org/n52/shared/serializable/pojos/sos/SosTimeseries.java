@@ -59,7 +59,7 @@ public class SosTimeseries implements Serializable {
     /**
      * @return <code>true</code> if complete, <code>false</code> otherwise.
      */
-    public boolean isComplete() {
+    public boolean parametersComplete() {
         return serviceUrl != null && offering != null && phenomenon != null && procedure != null && feature != null;
     }
 
