@@ -1,9 +1,17 @@
 
 package org.n52.server.service.rest.control;
 
+import static org.n52.server.service.rest.model.StationOutput.createCompleteStationOutput;
+import static org.n52.server.service.rest.model.StationOutput.createSimpleStationOutput;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.n52.server.service.rest.model.ModelAndViewPager;
+import org.n52.server.service.rest.model.StationOutput;
 import org.n52.shared.requests.query.QueryFactory;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.requests.query.queries.QueryRequest;
@@ -39,17 +47,25 @@ public class RestfulStationsController extends QueryController implements Restfu
                 .setFeature(feature);
 
         QueryResponse< ? > result = performQuery(instance, parameters);
+
         Station[] stations = (Station[]) result.getResults();
+        List<StationOutput> output = new ArrayList<StationOutput>();
+        if (shallShowCompleteResults(details)) {
+            Collections.addAll(output, createCompleteStationOutput(stations));
+        }
+        else {
+            Collections.addAll(output, createSimpleStationOutput(stations));
+        }
 
         if (offset != null) {
-            return pageResults(stations, offset.intValue(), size.intValue());
+            return pageResults(output, offset.intValue(), size.intValue());
         }
 
         ModelAndView mav = new ModelAndView("stations");
-        return mav.addObject("stations", stations);
+        return mav.addObject("stations", output);
     }
 
-    private ModelAndView pageResults(Station[] stations, int offset, int size) {
+    private ModelAndView pageResults(List<StationOutput> stations, int offset, int size) {
         ModelAndViewPager mavPage = new ModelAndViewPager("stations");
         return mavPage.createPagedModelAndViewFrom(stations, offset, size);
     }
@@ -72,13 +88,11 @@ public class RestfulStationsController extends QueryController implements Restfu
         station = stripKnownFileExtensionFrom(station);
         QueryParameters parameters = new QueryParameters().setStation(station);
         QueryResponse< ? > result = performQuery(instance, parameters);
-
-        if (result.getResults().length == 0) {
+        Station[] stations = (Station[]) result.getResults();
+        if (stations.length == 0) {
             throw new ResourceNotFoundException();
         }
-
-        mav.addObject("station", result.getResults()[0]);
-        return mav;
+        return mav.addObject("station", createCompleteStationOutput(stations[0]));
     }
 
     @Override

@@ -16,7 +16,17 @@ import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 public abstract class QueryController {
 
     private QueryService queryService;
-    
+
+    /**
+     * @param kvpDetailsValue
+     *        the value of KVP parameter <code>details</code>.
+     * @return <code>true</code> if parameter indicates to create a full expanded list of objects,
+     *         <code>false</code> if condensed output shall be generated (default).
+     */
+    protected boolean shallShowCompleteResults(String kvpDetailsValue) {
+        return kvpDetailsValue != null && "complete".equalsIgnoreCase(kvpDetailsValue);
+    }
+
     /**
      * Creates a query factory for the given service instance.
      * 
@@ -44,7 +54,7 @@ public abstract class QueryController {
         }
         return metadata;
     }
-    
+
     protected abstract QueryResponse< ? > performQuery(String instance, QueryParameters parameters) throws Exception;
 
     protected QueryResponse< ? > doQuery(QueryRequest queryRequest) throws Exception {
@@ -52,10 +62,12 @@ public abstract class QueryController {
     }
 
     /**
-     * Determines the identifier of an individuum of the given collection. Instead of 
+     * Determines the identifier of an individuum of the given collection. Instead of
      * 
-     * @param collectionName the name of the collection (e.g. <code>features</code>).
-     * @param request the incoming request.
+     * @param collectionName
+     *        the name of the collection (e.g. <code>features</code>).
+     * @param request
+     *        the incoming request.
      * @return the individuum identifier.
      * @see RestfulUrls
      */
@@ -94,4 +106,5 @@ public abstract class QueryController {
     public void setQueryService(QueryService queryService) {
         this.queryService = queryService;
     }
+
 }

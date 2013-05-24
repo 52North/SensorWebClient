@@ -1,7 +1,8 @@
 
 package org.n52.server.service.rest.control;
 
-import static org.n52.server.service.rest.model.ProcedureOutput.createSimpleProcedureOuput;
+import static org.n52.server.service.rest.model.ProcedureOutput.createCompleteProcedureOutput;
+import static org.n52.server.service.rest.model.ProcedureOutput.createSimpleProcedureOutput;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -39,7 +40,7 @@ public class RestfulProceduresController extends QueryController implements Rest
         }
 
         ModelAndView mav = new ModelAndView("procedures");
-        return mav.addObject("procedures", createSimpleProcedureOuput(procedures));
+        return mav.addObject("procedures", createSimpleProcedureOutput(procedures));
     }
 
     private ModelAndView pageResults(Procedure[] procedures, int offset, int size) {
@@ -71,7 +72,7 @@ public class RestfulProceduresController extends QueryController implements Rest
         }
 
         Procedure[] procedures = (Procedure[]) result.getResults();
-        mav.addObject("procedure", createSimpleProcedureOuput(procedures[0]));
+        mav.addObject("procedure", createCompleteProcedureOutput(procedures[0]));
         return mav;
     }
 

@@ -1,4 +1,4 @@
-<html>
+<!DOCTYPE html>
 <head>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
@@ -11,9 +11,12 @@
 
 		<!-- A STATION INDIVIDUUM -->
 
-		<a href="${url}stations/${station.id}.json">as Json</a>
-		<a href="${url}stations">back</a>
+        <section>
+			<a href="${url}stations/${station.properties.station}.json">as Json</a>
+			<a href="${url}stations">back</a>
+		</section>
 
+        
 		<h3>Station</h3>
 
 		<table>
@@ -23,7 +26,7 @@
 				</tr>
 			</thead>
 			<tr>
-				<td>${station.id}</td>
+				<td>${station.properties.station}</td>
 			</tr>
 		</table>
 
@@ -40,7 +43,7 @@
                     <th>Diagram</th>
 				</tr>
 			</thead>
-			<c:forEach var="timeseries" items="${station.observingTimeseries}">
+			<c:forEach var="timeseries" items="${station.properties.timeseries}">
 				<tr>
                     <td>${timeseries.timeseriesId}</td>
 					<td>${timeseries.offering}</td>
@@ -65,7 +68,7 @@
 		<h3>Stations</h3>
 		<ul>
 			<c:forEach var="station" items="${stations}">
-				<li><a href="${url}stations/${station.id}">${station.id}</a></li>
+				<li><a href="${url}stations/${station.properties.station}">${station.properties.station}</a></li>
 			</c:forEach>
 		</ul>
 	</c:if>
@@ -82,7 +85,7 @@
 			${resultPage.total}</h3>
 		<ul>
 			<c:forEach var="station" items="${resultPage.results}">
-				<li><a href="${url}stations/${station.id}">${station.id}</a></li>
+				<li><a href="${url}stations/${station.properties.station}">${station.properties.station}</a></li>
 			</c:forEach>
 		</ul>
 
@@ -105,5 +108,7 @@
 		</c:choose>
 	</c:if>
 
+
+    <script src="http://cdn.leafletjs.com/leaflet-0.5/leaflet.js"></script>
 </body>
 </html>

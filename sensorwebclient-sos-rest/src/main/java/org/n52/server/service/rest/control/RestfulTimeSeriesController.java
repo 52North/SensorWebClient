@@ -28,6 +28,7 @@ import static org.n52.server.oxf.util.ConfigurationContext.getServiceMetadata;
 import static org.n52.shared.requests.query.QueryParameters.createEmptyFilterQuery;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -72,12 +73,12 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
                                           @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
                                           @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
 
-        List<Object> allTimeseries = new ArrayList<Object>();
+        List<Object> allTimeseries = Collections.emptyList();
         for (Station station : getAllStations(instance)) {
-            if (details != null && "complete".equalsIgnoreCase(details)) {
-                createCompleteOutput(allTimeseries, station);
+            if (shallShowCompleteResults(details)) {
+                allTimeseries.addAll(createCompleteOutput(station));
             } else {
-                createSimpleOutput(allTimeseries, station);
+                allTimeseries.addAll(createSimpleOutput(station));
             }
         }
         
@@ -89,16 +90,18 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
         return mav.addObject("multipleTimeseries", allTimeseries);
     }
 
-    private void createCompleteOutput(List<Object> allTimeseries, Station station) {
-        for (SosTimeseries timeseries : station.getObservingTimeseries()) {
-            allTimeseries.add(timeseries);
-        }
+    private List<Object> createCompleteOutput(Station station) {
+        List<Object> allTimeseries = new ArrayList<Object>();
+        allTimeseries.addAll(station.getObservingTimeseries());
+        return allTimeseries;
     }
 
-    private void createSimpleOutput(List<Object> allTimeseries, Station station) {
+    private List<Object> createSimpleOutput(Station station) {
+        List<Object> allTimeseries = new ArrayList<Object>();
         for (SosTimeseries timeseries : station.getObservingTimeseries()) {
             allTimeseries.add(timeseries.getTimeseriesId());
         }
+        return allTimeseries;
     }
     
     private ModelAndView pageResults(List<Object> timeseries, int offset, int size) {
