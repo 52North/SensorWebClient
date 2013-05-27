@@ -200,7 +200,7 @@
 						<artifactId>maven-dependency-plugin</artifactId>
 						<executions>
 							<execution>
-							     <id>copy-jsps</id>
+							     <id>copy-module-webapp-resources</id>
 								<phase>generate-sources</phase>
 								<goals>
 									<goal>unpack</goal>
@@ -213,7 +213,7 @@
 											<overWrite>false</overWrite>
 										</artifactItem>
 									</artifactItems>
-									<includes>WEB-INF/pages/*.jsp</includes>
+									<includes>WEB-INF/**/*.jsp,css/**/*.css,js/**/*.js,img/**/*.png</includes>
 									<outputDirectory>${webappDirectory}</outputDirectory>
 									<overWriteReleases>false</overWriteReleases>
 								</configuration>

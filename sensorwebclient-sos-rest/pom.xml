@@ -57,6 +57,9 @@
 									<directory>src/main/webapp/</directory>
 									<includes>
 										<include>**/*.jsp</include>
+										<include>**/*.js</include>
+										<include>**/*.css</include>
+                                        <include>**/*.png</include>
 									</includes>
 									<filtering>false</filtering>
 								</resource>
