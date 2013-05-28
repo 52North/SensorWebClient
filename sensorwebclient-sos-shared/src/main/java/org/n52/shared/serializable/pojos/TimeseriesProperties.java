@@ -34,7 +34,7 @@ import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.Station;
 
-public class TimeSeriesProperties implements Serializable {
+public class TimeseriesProperties implements Serializable {
 
 	private static final long serialVersionUID = 1813366884589984223L;
 
@@ -102,17 +102,17 @@ public class TimeSeriesProperties implements Serializable {
 	}
 
 	@SuppressWarnings("unused")
-	private TimeSeriesProperties() {
+	private TimeseriesProperties() {
 		// do nothing
 	}
 
-	public TimeSeriesProperties(String sosUrl, Station station, Offering offering,
+	public TimeseriesProperties(String sosUrl, Station station, Offering offering,
 			Feature foi, Procedure procedure, Phenomenon phenomenon,
 			int width, int height) {
 		this(sosUrl, station, offering, foi, procedure, phenomenon, width, height, "", true);
 	}
 
-	public TimeSeriesProperties(String sosUrl, Station station, Offering offering,
+	public TimeseriesProperties(String sosUrl, Station station, Offering offering,
 			Feature foi, Procedure procedure, Phenomenon phenomenon,
 			int width, int height, String uom, boolean isAutoScale) {
 		this.sosUrl = sosUrl;
@@ -130,8 +130,8 @@ public class TimeSeriesProperties implements Serializable {
 	/**
 	 * @return A deep copy of this Object
 	 */
-	public TimeSeriesProperties copy() {
-		TimeSeriesProperties result = new TimeSeriesProperties(this.sosUrl, this.station,
+	public TimeseriesProperties copy() {
+		TimeseriesProperties result = new TimeseriesProperties(this.sosUrl, this.station,
 				this.off, this.foi, this.proc, this.phen, this.width,
 				this.height, this.uom, this.isAutoScale);
 		result.setAxisData(this.axis); // XXX this is not a deep copy! => CBR

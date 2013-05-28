@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.shared.serializable.pojos.ReferenceValue;
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -44,7 +44,7 @@ public class TimeSeriesMetadataTable extends VLayout {
     }
     
     private void addRowsForReferenceValues(TimeSeries timeSeries) {
-        TimeSeriesProperties properties = timeSeries.getProperties();
+        TimeseriesProperties properties = timeSeries.getProperties();
         Set<String> refValues = properties.getReferenceValues();
         if (refValues != null && refValues.size() > 0) {
             for (String refValueStr : refValues) {

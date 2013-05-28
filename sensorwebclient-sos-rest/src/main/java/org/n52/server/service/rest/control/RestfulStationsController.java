@@ -30,15 +30,13 @@ public class RestfulStationsController extends QueryController implements Restfu
 
     @RequestMapping(value = "/{instance}/" + COLLECTION_STATIONS, method = RequestMethod.GET)
     public ModelAndView getStationsByGET(@PathVariable("instance") String instance,
-                                         @RequestParam(value = KVP_SHOW, required = false) String details,
-                                         @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
-                                         @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size,
+                                         @RequestParam(value = KVP_OFFSET, defaultValue = KVP_DEFAULT_OFFSET) int offset,
+                                         @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) int size,
+                                         @RequestParam(value = KVP_SHOW, defaultValue = KVP_DEFAULT_SHOW) String details,
                                          @RequestParam(value = KVP_FEATURE, required = false) String feature,
                                          @RequestParam(value = KVP_PHENOMENON, required = false) String phenomenon,
                                          @RequestParam(value = KVP_PROCEDURE, required = false) String procedure,
                                          @RequestParam(value = KVP_OFFERING, required = false) String offering) throws Exception {
-
-        // TODO condense output depending on 'show' parameter
 
         QueryParameters parameters = new QueryParameters()
                 .setPhenomenon(phenomenon)
@@ -57,12 +55,11 @@ public class RestfulStationsController extends QueryController implements Restfu
             Collections.addAll(output, createSimpleStationOutput(stations));
         }
 
-        if (offset != null) {
-            return pageResults(output, offset.intValue(), size.intValue());
+        if (offset < 0) {
+            return new ModelAndView("stations").addObject("stations", output);
+        } else {
+            return pageResults(output, offset, size);
         }
-
-        ModelAndView mav = new ModelAndView("stations");
-        return mav.addObject("stations", output);
     }
 
     private ModelAndView pageResults(List<StationOutput> stations, int offset, int size) {

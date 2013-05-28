@@ -111,6 +111,8 @@
 							<includes>
 							    <include>WEB-INF/pages/*.jsp</include>
 								<include>ds/sos-instances.data.xml</include>
+								<include>js/**/*.js</include>
+                                <include>css/**/*.css</include>
 								<include>WEB-INF/classes/dispatcher-control.xml</include>
 								<include>WEB-INF/classes/spring-view-config.xml</include>
 								<include>WEB-INF/pages/*</include>

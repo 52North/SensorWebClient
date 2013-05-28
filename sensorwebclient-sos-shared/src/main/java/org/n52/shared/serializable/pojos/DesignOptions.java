@@ -37,7 +37,7 @@ public class DesignOptions implements Serializable {
 
     private static final long serialVersionUID = -3922742599500705640L;
 
-    private ArrayList<TimeSeriesProperties> properties; // XXX really necessary to hols these?
+    private ArrayList<TimeseriesProperties> properties; // XXX really necessary to hols these?
 
     private long begin;
 
@@ -58,12 +58,12 @@ public class DesignOptions implements Serializable {
         // do nothin
     }
 
-    public DesignOptions(ArrayList<TimeSeriesProperties> props, long begin, long end, String timeParam, boolean grid) {
+    public DesignOptions(ArrayList<TimeseriesProperties> props, long begin, long end, String timeParam, boolean grid) {
         this(props, begin, end, grid);
         this.timeParam = timeParam;
     }
 
-    public DesignOptions(ArrayList<TimeSeriesProperties> props, long begin, long end, boolean grid) {
+    public DesignOptions(ArrayList<TimeseriesProperties> props, long begin, long end, boolean grid) {
         if (props.isEmpty()) {
             throw new IllegalArgumentException("Cannot create DesignOptions from empty TimeSeriesProperties list.");
         }
@@ -82,7 +82,7 @@ public class DesignOptions implements Serializable {
 
     public String[] getAllPhenomenIds() {
         HashMap<String, String> obs = new HashMap<String, String>();
-        for (TimeSeriesProperties p : this.properties) {
+        for (TimeseriesProperties p : this.properties) {
             String phenomenon = p.getPhenomenon().getId();
             obs.put(phenomenon, phenomenon);
         }
@@ -97,7 +97,7 @@ public class DesignOptions implements Serializable {
         this.width = w;
     }
 
-    public ArrayList<TimeSeriesProperties> getProperties() {
+    public ArrayList<TimeseriesProperties> getProperties() {
         return this.properties;
     }
 

@@ -105,7 +105,7 @@ import org.n52.shared.responses.SensorMetadataResponse;
 import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.DesignOptions;
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
@@ -162,7 +162,7 @@ public class SOSRequestManager extends RequestManager {
         this.eesDataService = GWT.create(RpcEESDataService.class);
     }
 
-    private void getSensorData(TimeSeriesProperties properties, final boolean requestSensorData) throws Exception {
+    private void getSensorData(TimeseriesProperties properties, final boolean requestSensorData) throws Exception {
         SensorMetadataCallback callback = new SensorMetadataCallback(this, "Could not get sensor data.") {
             @Override
             public void onSuccess(SensorMetadataResponse result) {
@@ -188,7 +188,7 @@ public class SOSRequestManager extends RequestManager {
     }
 
     public void requestSensorMetadata(NewTimeSeriesEvent evt) throws Exception {
-        TimeSeriesProperties props = createTimeseriesProperties(evt, evt.getServiceUrl());
+        TimeseriesProperties props = createTimeseriesProperties(evt, evt.getServiceUrl());
         TimeSeries timeSeries = new TimeSeries("TS_" + System.currentTimeMillis(), props);
 
         try {
@@ -209,7 +209,7 @@ public class SOSRequestManager extends RequestManager {
         }
     }
 
-    private TimeSeriesProperties createTimeseriesProperties(NewTimeSeriesEvent evt, String serviceUrl) {
+    private TimeseriesProperties createTimeseriesProperties(NewTimeSeriesEvent evt, String serviceUrl) {
         int width = evt.getWidth();
         int height = evt.getHeight();
         Station station = evt.getStation();
@@ -219,7 +219,7 @@ public class SOSRequestManager extends RequestManager {
         Phenomenon phenomenon = lookup.getPhenomenon(timeseries.getPhenomenon());
         Procedure procedure = lookup.getProcedure(timeseries.getProcedure());
         Offering offering = lookup.getOffering(timeseries.getOffering());
-        return new TimeSeriesProperties(serviceUrl, station, offering, feature, procedure, phenomenon, width, height);
+        return new TimeseriesProperties(serviceUrl, station, offering, feature, procedure, phenomenon, width, height);
     }
 
     private TimeseriesParametersLookup getTimeseriesParameterLookupFor(String serviceUrl) {
@@ -229,7 +229,7 @@ public class SOSRequestManager extends RequestManager {
 
     public void requestFirstValueOf(TimeSeries timeSeries) {
         try {
-            ArrayList<TimeSeriesProperties> series = new ArrayList<TimeSeriesProperties>();
+            ArrayList<TimeseriesProperties> series = new ArrayList<TimeseriesProperties>();
             series.add(timeSeries.getProperties());
 
             boolean grid = DataStoreTimeSeriesImpl.getInst().isGridEnabled();
@@ -248,7 +248,7 @@ public class SOSRequestManager extends RequestManager {
 
     public void requestLastValueOf(TimeSeries timeSeries) {
         try {
-            ArrayList<TimeSeriesProperties> series = new ArrayList<TimeSeriesProperties>();
+            ArrayList<TimeseriesProperties> series = new ArrayList<TimeseriesProperties>();
             series.add(timeSeries.getProperties());
             boolean grid = DataStoreTimeSeriesImpl.getInst().isGridEnabled();
             long begin = TimeManager.getInst().getBegin();
@@ -266,7 +266,7 @@ public class SOSRequestManager extends RequestManager {
 
     public void requestSensorData(TimeSeries[] timeSeries, String id) {
         try {
-            ArrayList<TimeSeriesProperties> series = new ArrayList<TimeSeriesProperties>();
+            ArrayList<TimeseriesProperties> series = new ArrayList<TimeseriesProperties>();
             for (TimeSeries timeSerie : timeSeries) {
                 if (timeSerie.getId().equals(id)) {
                     timeSerie.getProperties().setHeight(View.getView().getDataPanelHeight());
@@ -394,7 +394,7 @@ public class SOSRequestManager extends RequestManager {
 
     public void requestSensorData(TimeSeries[] timeseriesArray) {
         if (timeseriesArray.length > 0) {
-            ArrayList<TimeSeriesProperties> series = new ArrayList<TimeSeriesProperties>();
+            ArrayList<TimeseriesProperties> series = new ArrayList<TimeseriesProperties>();
             for (int i = 0; i < timeseriesArray.length; i++) {
                 TimeSeries timeseries = timeseriesArray[i];
                 series.add(timeseries.getProperties());
@@ -422,7 +422,7 @@ public class SOSRequestManager extends RequestManager {
             return;
         }
 
-        ArrayList<TimeSeriesProperties> properties = new ArrayList<TimeSeriesProperties>();
+        ArrayList<TimeseriesProperties> properties = new ArrayList<TimeseriesProperties>();
         for (TimeSeries timeSerie : timeSeries) {
             timeSerie.getProperties().setHeight(DiagramTab.getPanelHeight());
             timeSerie.getProperties().setWidth(DiagramTab.getPanelWidth());
@@ -449,9 +449,9 @@ public class SOSRequestManager extends RequestManager {
 //				ovBegin = ovEnd - timeRangeOverview;
 //			}
 
-            ArrayList<TimeSeriesProperties> copySeries = new ArrayList<TimeSeriesProperties>();
-            for (TimeSeriesProperties pc : properties) {
-                TimeSeriesProperties copy = pc.copy();
+            ArrayList<TimeseriesProperties> copySeries = new ArrayList<TimeseriesProperties>();
+            for (TimeseriesProperties pc : properties) {
+                TimeseriesProperties copy = pc.copy();
                 setDefaultValues(copy);
                 copy.setLanguage(PropertiesManager.language);
                 copy.setShowYAxis(false);
@@ -471,7 +471,7 @@ public class SOSRequestManager extends RequestManager {
         }
     }
 
-    private void setDefaultValues(TimeSeriesProperties copy) {
+    private void setDefaultValues(TimeseriesProperties copy) {
         PropertiesManager properties = PropertiesManager.getPropertiesManager();
         ArrayList<String> mappings = properties.getParameters("phenomenon");
         for (String mapping : mappings) {
@@ -571,7 +571,7 @@ public class SOSRequestManager extends RequestManager {
                         EventBus.getMainEventBus().fireEvent(new StoreAxisDataEvent(key, result.getAxis().get(key)));
                     }
 
-                    for (TimeSeriesProperties prop : result.getPropertiesList()) {
+                    for (TimeseriesProperties prop : result.getPropertiesList()) {
                         TimeSeriesHasDataEvent hasDataEvent = new TimeSeriesHasDataEvent(prop.getTsID(), prop.hasData());
                         EventBus.getMainEventBus().fireEvent(hasDataEvent);
                     }
@@ -674,7 +674,7 @@ public class SOSRequestManager extends RequestManager {
     }
 
     private TimeSeriesDataRequest createTimeSeriesDataRequest(Collection<TimeSeries> tsCollection) {
-        ArrayList<TimeSeriesProperties> series = new ArrayList<TimeSeriesProperties>();
+        ArrayList<TimeseriesProperties> series = new ArrayList<TimeseriesProperties>();
         for (TimeSeries timeSeries : tsCollection) {
             timeSeries.getProperties().setLanguage(PropertiesManager.language);
 			series.add(timeSeries.getProperties());

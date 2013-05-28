@@ -66,7 +66,7 @@ import org.n52.server.oxf.util.generator.MetaDataInURLGenerator;
 import org.n52.server.oxf.util.parser.TimeseriesFactory;
 import org.n52.shared.serializable.pojos.Axis;
 import org.n52.shared.serializable.pojos.DesignOptions;
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 
 public class DiagramRenderer {
@@ -127,7 +127,7 @@ public class DiagramRenderer {
 
         String observedPropertyWithGrid = options.getProperties().get(0).getPhenomenon().getId();
 
-        for (TimeSeriesProperties tsProperties : options.getProperties()) {
+        for (TimeseriesProperties tsProperties : options.getProperties()) {
 
             Color c = JavaHelper.transformToColor(tsProperties.getHexColor());
             String phenomenonId = tsProperties.getPhenomenon().getId();
@@ -220,7 +220,7 @@ public class DiagramRenderer {
         // create all TS collections
         for (int i = 0; i < options.getProperties().size(); i++) {
 
-            TimeSeriesProperties prop = options.getProperties().get(i);
+            TimeseriesProperties prop = options.getProperties().get(i);
             
             Phenomenon phenomenon = prop.getPhenomenon();
             String phenomenonId = phenomenon.getId();
@@ -497,7 +497,7 @@ public class DiagramRenderer {
         return chart;
     }
 
-    public TimeSeriesCollection createDataset(Map<String, OXFFeatureCollection> entireCollMap, TimeSeriesProperties prop, String observedProperty, boolean compress) {
+    public TimeSeriesCollection createDataset(Map<String, OXFFeatureCollection> entireCollMap, TimeseriesProperties prop, String observedProperty, boolean compress) {
 
         TimeSeriesCollection dataset = new TimeSeriesCollection();
         OXFFeatureCollection obsColl = entireCollMap.get(prop.getOffering().getId() + "@" + prop.getSosUrl());
