@@ -20,7 +20,7 @@ public class RestfulServiceInstancesController implements RestfulKvp {
     @RequestMapping(value = "/services", method = RequestMethod.GET)
     public ModelAndView getInstancesByGET(@RequestParam(value = KVP_SHOW, required = false) String details,
                                           @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
-                                          @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size) {
+                                          @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) Integer size) {
 
         // TODO condense output depending on 'show' parameter
 

@@ -11,7 +11,7 @@ public class TimeseriesData {
     private List<TimeseriesValue> values = new ArrayList<TimeseriesValue>();
 
     private String uom;
-
+    
     /**
      * @param values
      *        the timestamp &lt;-&gt; value map.

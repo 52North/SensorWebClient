@@ -30,15 +30,13 @@ public class RestfulStationsController extends QueryController implements Restfu
 
     @RequestMapping(value = "/{instance}/" + COLLECTION_STATIONS, method = RequestMethod.GET)
     public ModelAndView getStationsByGET(@PathVariable("instance") String instance,
-                                         @RequestParam(value = KVP_SHOW, required = false) String details,
                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
-                                         @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size,
+                                         @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) Integer size,
+                                         @RequestParam(value = KVP_SHOW, defaultValue = KVP_DEFAULT_SHOW) String details,
                                          @RequestParam(value = KVP_FEATURE, required = false) String feature,
                                          @RequestParam(value = KVP_PHENOMENON, required = false) String phenomenon,
                                          @RequestParam(value = KVP_PROCEDURE, required = false) String procedure,
                                          @RequestParam(value = KVP_OFFERING, required = false) String offering) throws Exception {
-
-        // TODO condense output depending on 'show' parameter
 
         QueryParameters parameters = new QueryParameters()
                 .setPhenomenon(phenomenon)

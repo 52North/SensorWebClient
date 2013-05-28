@@ -27,18 +27,20 @@ package org.n52.server.service.rest.control;
 import static org.n52.server.oxf.util.ConfigurationContext.containsServiceInstance;
 import static org.n52.server.oxf.util.ConfigurationContext.getSOSMetadataForItemName;
 import static org.n52.shared.requests.query.QueryParameters.createEmptyFilterQuery;
+import static org.n52.shared.serializable.pojos.TimeseriesRenderingOptions.createDefaultRenderingOptions;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.n52.server.service.GetDataService;
 import org.n52.server.service.GetImageService;
+import org.n52.server.service.rest.DesignedParameterSet;
 import org.n52.server.service.rest.ParameterSet;
+import org.n52.server.service.rest.UndesignedParameterSet;
 import org.n52.server.service.rest.model.ModelAndViewPager;
 import org.n52.server.service.rest.model.TimeseriesData;
 import org.n52.server.service.rest.model.TimeseriesDataCollection;
@@ -59,7 +61,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping(value = "/services")
 public class RestfulTimeSeriesController extends QueryController implements RestfulKvp, RestfulUrls {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestfulTimeSeriesController.class);
@@ -68,13 +69,13 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
 
     private GetImageService imageService;
 
-    @RequestMapping(value = "/{instance}/timeseries", produces = "application/json", method = GET)
+    @RequestMapping(value = "/services/{instance}/timeseries", produces = "application/json", method = GET)
     public ModelAndView getAllTimeseries(@PathVariable String instance,
                                          @RequestParam(value = KVP_SHOW, required = false) String details,
                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
-                                         @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
+                                         @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
 
-        List<Object> allTimeseries = Collections.emptyList();
+        List<Object> allTimeseries = new ArrayList<Object>();
         for (Station station : getAllStations(instance)) {
             if (shallShowCompleteResults(details)) {
                 allTimeseries.addAll(createCompleteOutput(station));
@@ -94,7 +95,7 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
 
     @RequestMapping(value = "/timeseries", produces = "image/png", method = POST)
     public void getTimeseriesGraphForMultipleTimeseries(HttpServletResponse response,
-                                                        @RequestBody ParameterSet parameterSet) throws Exception {
+                                                        @RequestBody DesignedParameterSet parameterSet) throws Exception {
         try {
             imageService.writeTimeSeriesChart(parameterSet, response.getOutputStream());
         }
@@ -104,14 +105,14 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
     }
 
     @RequestMapping(value = "/timeseries", produces = "application/json", method = POST)
-    public ModelAndView getTimeseriesDataForMultipleTimeseries(@RequestBody ParameterSet parameterSet) throws Exception {
+    public ModelAndView getTimeseriesDataForMultipleTimeseries(@RequestBody UndesignedParameterSet parameterSet) throws Exception {
         TimeseriesDataCollection results = new TimeseriesDataCollection();
         results.addAll(dataService.getTimeSeriesFromParameterSet(parameterSet));
         ModelAndView mav = new ModelAndView("multipleTimeseries");
-        return mav.addObject("singleTimeseries", results);
+        return mav.addObject("multipleTimeseries", results.getAllTimeseries());
     }
 
-    @RequestMapping(value = "/{instance}/timeseries/{timeseriesId}", produces = "application/json", method = GET)
+    @RequestMapping(value = "/services/{instance}/timeseries/{timeseriesId}", produces = "application/json", method = GET)
     public ModelAndView getTimeseriesData(@PathVariable String instance,
                                           @PathVariable String timeseriesId,
                                           @RequestParam(required = false) String timespan) throws Exception {
@@ -120,7 +121,6 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
         for (Station station : getAllStations(instance)) {
             if (station.contains(timeseriesId)) {
                 ParameterSet parameterSet = createParameterSet(timespan);
-                parameterSet.setTimeseries(new String[] {timeseriesId});
                 results.addAll(dataService.getTimeSeriesFromParameterSet(parameterSet));
                 break;
             }
@@ -136,12 +136,13 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
 
     }
 
-    @RequestMapping(value = "/{instance}/timeseries/{timeseriesId}", produces = "image/png", method = GET)
+    @RequestMapping(value = "/services/{instance}/timeseries/{timeseriesId}", produces = "image/png", method = GET)
     public void getTimeseriesGraph(HttpServletResponse response,
                                    @PathVariable String instance,
                                    @PathVariable String timeseriesId,
                                    @RequestParam(required = false) String timespan,
-                                   @RequestParam(required = false) String size) throws Exception {
+                                   @RequestParam(defaultValue = "-1") int width,
+                                   @RequestParam(defaultValue = "-1") int height) throws Exception {
         try {
             if ( !containsServiceInstance(instance)) {
                 LOGGER.info("SOS instance {} is not available.", instance);
@@ -156,8 +157,8 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
             for (Station station : getAllStations(instance)) {
                 if (station.contains(timeseriesId)) {
                     response.setContentType("image/png");
-                    ParameterSet parameterSet = createParameterSet(timespan, size);
-                    parameterSet.setTimeseries(new String[] {timeseriesId});
+                    DesignedParameterSet parameterSet = createParameterSet(timespan, width, height);
+                    parameterSet.addTimeseriesWithRenderingOptions(timeseriesId, createDefaultRenderingOptions());
                     imageService.writeTimeSeriesChart(parameterSet, response.getOutputStream());
                     break;
                 }
@@ -188,14 +189,15 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
     }
 
     private ParameterSet createParameterSet(String timespan) {
-        return createParameterSet(timespan, null);
+        return createParameterSet(timespan, -1, -1);
     }
 
-    private ParameterSet createParameterSet(String timespan, String size) {
+    private DesignedParameterSet createParameterSet(String timespan, int width, int height) {
         try {
-            ParameterSet parameterSet = new ParameterSet();
+            DesignedParameterSet parameterSet = new DesignedParameterSet();
             parameterSet.setTimespan(timespan);
-            parameterSet.setSize(size);
+            parameterSet.setWidth(width);
+            parameterSet.setHeight(height);
             return parameterSet;
         }
         catch (IllegalArgumentException e) {

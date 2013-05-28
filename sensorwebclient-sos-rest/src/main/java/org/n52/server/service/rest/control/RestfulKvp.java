@@ -36,6 +36,11 @@ public interface RestfulKvp {
      */
     static final String KVP_DEFAULT_SIZE = "10";
     
+    /**
+     * Default <code>show</code>-parameter value.
+     */
+    static final String KVP_DEFAULT_SHOW = "complete";
+    
     static final String KVP_FEATURE = "feature";
     
     static final String KVP_OFFERING = "offering";

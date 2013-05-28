@@ -60,7 +60,7 @@ import org.n52.shared.exceptions.TimeoutException;
 import org.n52.shared.requests.TimeSeriesDataRequest;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,9 +146,9 @@ public class FileDataServiceImpl implements FileDataService {
 
     private RepresentationResponse generateZipPresentation(TimeSeriesDataRequest req, Generator gen) throws ServerException {
         try {
-            for (TimeSeriesProperties prop : req.getOptions().getProperties()) {
+            for (TimeseriesProperties prop : req.getOptions().getProperties()) {
                 generateSensorMLFile(sendDescSens(prop), prop, gen.getFolderPostfix());
-                ArrayList<TimeSeriesProperties> props = new ArrayList<TimeSeriesProperties>();
+                ArrayList<TimeseriesProperties> props = new ArrayList<TimeseriesProperties>();
                 props.add(prop);
                 gen.producePresentation(new DesignOptions(props, req.getOptions()
                         .getBegin(), req.getOptions().getEnd(), req.getOptions().getGrid()));
@@ -163,7 +163,7 @@ public class FileDataServiceImpl implements FileDataService {
     }
     
 
-    private void generateSensorMLFile(OperationResult sendDescSens, TimeSeriesProperties prop, String folderPostfix) throws ServerException {
+    private void generateSensorMLFile(OperationResult sendDescSens, TimeseriesProperties prop, String folderPostfix) throws ServerException {
         try {
             File f = JavaHelper.genFile(ConfigurationContext.GEN_DIR+"/"+folderPostfix, 
                     "SensorML_" + prop.getProcedure().getId().replaceAll("/", "_"), "xml");
@@ -174,7 +174,7 @@ public class FileDataServiceImpl implements FileDataService {
         }
     }
 
-    private OperationResult sendDescSens(TimeSeriesProperties prop) throws ServerException {
+    private OperationResult sendDescSens(TimeseriesProperties prop) throws ServerException {
         try {
             String sosUrl = prop.getSosUrl();
             SOSMetadata meta = (SOSMetadata)ConfigurationContext.getServiceMetadata(sosUrl);

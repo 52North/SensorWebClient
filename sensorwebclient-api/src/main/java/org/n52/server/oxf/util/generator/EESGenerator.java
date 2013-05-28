@@ -118,7 +118,7 @@ public class EESGenerator extends Generator {
             int height = options.getHeight();
             ChartUtilities.writeChartAsPNG(outputStream, chart, width, height, renderingInfo);
         } catch (Exception e) {
-            System.out.println("error");
+            LOGGER.warn("Error while rendering chart.", e);
         }
 	}
 
