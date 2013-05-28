@@ -25,8 +25,8 @@
     var leafletKey = 'http://{s}.tile.cloudmade.com/fd3f159c3654442a8e7ff82bddc00b29/997/256/{z}/{x}/{y}.png';
     var mapAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>';
 
-    function initMap(clustered) {
-        debugger;
+    function initMap(station, clustered) {
+        station = typeof station === 'undefined' ? '' : station;
         clustered = typeof clustered === 'undefined' ? true : clustered;
         
         map = L.map('map');
@@ -38,21 +38,29 @@
         var stations = jQuery.ajax({
             type : "GET",
             dataType : "json",
-            url : "${url}/stations"
+            url : "${url}/stations/" + station
         }).done(function(stations) {
             var stations = L.geoJson(stations, {
                 onEachFeature : function(feature, layer) {
                     var content = "";
                     if (feature.properties) {
                         var stationName = feature.properties['station'];
-                        content = content + "<b>station:</b> " + stationName + "<br/>";
-                        var timeseriesArray = feature.properties['timeseries'];
-                        if (timeseriesArray) {
-                            var timeseries = "";
-                            for (var i = 0; i < timeseriesArray.length ; i++) {
-                                timeseries = timeseries + timeseriesArray[i] + "<br/>";
+                        content = content + "<b>Station:</b> " + stationName + "<br/>";
+                        var tsProperties = feature.properties['timeseries'];
+                        if (tsProperties) {
+                            if (station.length !== 0) {
+                                parameters = tsProperties[0];
+                                content = content + "<b>Offering:</b> " + parameters.offering + "<br/>";
+                                content = content + "<b>Proceudre:</b> " + parameters.procedure + "<br/>";
+                                content = content + "<b>Phenomenon:</b> " + parameters.phenomenon + "<br/>";
+                                content = content + "<b>Feature:</b> " + parameters.feature;
+                            } else {
+                                var timeseries = "";
+                                for (var i = 0; i < tsProperties.length ; i++) {
+                                    timeseries = timeseries + tsProperties[i] + "<br/>";
+                                }
+                                content = content + "<b>timeseries:</b> " + timeseries;
                             }
-                            content = content + "<b>timeseries:</b> " + timeseries;
                         }
                         layer.bindPopup("<html><body>" + content + "</body></html>");
                     }
@@ -75,7 +83,7 @@
 </head>
 
 
-<body onload="initMap()">
+<body onload="initMap('${station.properties.station}')">
     <div class="span12">
 
     <c:if test="${not empty station}">
