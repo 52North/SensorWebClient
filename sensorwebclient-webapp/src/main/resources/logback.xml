@@ -3,7 +3,7 @@
 	<!-- refer to http://logback.qos.ch/manual/appenders.html -->
 
 	<property name="logFile"
-		value="${config.logger.fileappender.filepath}/${pom.artifactId}-${project.version}" />
+		value="${config.logger.fileappender.filepath}/${sensorwebclient.webapp.name}" />
 
 	<appender name="FILE"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
