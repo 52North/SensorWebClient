@@ -97,6 +97,7 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
     public void getTimeseriesGraphForMultipleTimeseries(HttpServletResponse response,
                                                         @RequestBody DesignedParameterSet parameterSet) throws Exception {
         try {
+            response.setContentType("image/png");
             imageService.writeTimeSeriesChart(parameterSet, response.getOutputStream());
         }
         finally {
