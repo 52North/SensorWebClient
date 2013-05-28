@@ -42,6 +42,7 @@
     <bean class="org.n52.server.service.rest.control.RestfulTimeSeriesController">
         <property name="dataService" ref="dataService" />
         <property name="imageService" ref="imageService" />
+        <property name="queryService" ref="queryServiceImpl"/>
     </bean>
     
 	

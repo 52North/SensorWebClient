@@ -67,8 +67,8 @@ import org.n52.server.oxf.util.parser.ConnectorUtils;
 import org.n52.server.oxf.util.parser.utils.ParsedPoint;
 import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.serializable.pojos.EastingNorthing;
-import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
-import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
+import org.n52.shared.serializable.pojos.sos.Feature;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
@@ -88,27 +88,27 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 		SOSMetadata metadata = initMetadata(sosUrl, sosVersion);
 		TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
 		
-        Collection<ParameterConstellation> parameterConstellations = createParameterConstellations();
+        Collection<SosTimeseries> observingTimeseries = createObservingTimeseries();
         
         // TODO send DescribeSensor for every procedure to get the UOM, when the EEA-SOS deliver the uom
 
         AReferencingHelper referenceHelper = createReferencingHelper();
         Map<String, String> offeringBBoxMap = getOfferingBBoxMap();
-        Map<ParameterConstellation, FutureTask<OperationResult>> futureTasks = new ConcurrentHashMap<ParameterConstellation, FutureTask<OperationResult>>();
-        for (ParameterConstellation paramConst : parameterConstellations) {
-        	String bboxString = offeringBBoxMap.get(paramConst.getOffering());
-        	futureTasks.put(paramConst,	new FutureTask<OperationResult>(createGetFoiAccess(sosUrl, sosVersion, bboxString, paramConst)));
+        Map<SosTimeseries, FutureTask<OperationResult>> futureTasks = new ConcurrentHashMap<SosTimeseries, FutureTask<OperationResult>>();
+        for (SosTimeseries timeseries : observingTimeseries) {
+        	String bboxString = offeringBBoxMap.get(timeseries.getOffering());
+        	futureTasks.put(timeseries,	new FutureTask<OperationResult>(createGetFoiAccess(sosUrl, sosVersion, bboxString, timeseries)));
 		}
 		// execute the GetFeatureOfInterest requests
 		LOGGER.debug("Sending " + futureTasks.size() + " GetFeatureOfInterest requests");
-		for (ParameterConstellation paramConst : futureTasks.keySet()) {
-		    LOGGER.debug("Sending request for " + paramConst);
-			AccessorThreadPool.execute(futureTasks.get(paramConst));
+		for (SosTimeseries timeseries : futureTasks.keySet()) {
+		    LOGGER.debug("Sending request for " + timeseries);
+			AccessorThreadPool.execute(futureTasks.get(timeseries));
 			try {
-				FutureTask<OperationResult> futureTask = futureTasks.get(paramConst);
+				FutureTask<OperationResult> futureTask = futureTasks.get(timeseries);
 				OperationResult opRes = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
 				if (opRes == null) {
-					LOGGER.error("Get no result for GetFeatureOfInterest " + paramConst + "!");
+					LOGGER.error("Get no result for GetFeatureOfInterest " + timeseries + "!");
 				}
 				XmlObject xmlObject = XmlObject.Factory.parse(opRes.getIncomingResultAsStream());
 				if (xmlObject instanceof GetFeatureOfInterestResponseDocument) {
@@ -137,19 +137,19 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 						} else {
 							label = id;
 						}
-						FeatureOfInterest feature = new FeatureOfInterest(id);
+						Feature feature = new Feature(id);
 						feature.setLabel(label);
                         lookup.addFeature(feature);
                         
-                        ParameterConstellation tmp = paramConst.clone();
-                        tmp.setFeatureOfInterest(id);
-                        station.addParameterConstellation(tmp);
+                        SosTimeseries tmp = timeseries.clone();
+                        tmp.setFeature(id);
+                        station.addTimeseries(tmp);
 					}
 				}
 			} catch (TimeoutException e) {
 				LOGGER.error("Timeout occured.", e);
 			} finally {
-				futureTasks.remove(paramConst);
+				futureTasks.remove(timeseries);
 			}
 		} 
 		
@@ -218,14 +218,14 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 		return sb.toString();
 	}
 
-	private Callable<OperationResult> createGetFoiAccess(String sosUrl, String sosVersion, String bboxString, ParameterConstellation paramConst) throws OXFException {
+	private Callable<OperationResult> createGetFoiAccess(String sosUrl, String sosVersion, String bboxString, SosTimeseries timeseries) throws OXFException {
 		SOSAdapter adapter = new SOSAdapterByGET(sosVersion);
 		Operation operation = new Operation(SOSAdapter.GET_FEATURE_OF_INTEREST, sosUrl, sosUrl);
 		ParameterContainer container = new ParameterContainer();
 		container.addParameterShell(ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER, "SOS");
         container.addParameterShell(ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER, sosVersion);
-        container.addParameterShell("phenomenon", paramConst.getPhenomenon());
-        container.addParameterShell("procedure", paramConst.getProcedure());
+        container.addParameterShell("phenomenon", timeseries.getPhenomenon());
+        container.addParameterShell("procedure", timeseries.getProcedure());
         container.addParameterShell("bbox", bboxString);
 		return new OperationAccessor(adapter, operation, container);
 	}

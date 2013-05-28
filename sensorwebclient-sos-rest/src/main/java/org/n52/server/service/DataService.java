@@ -24,26 +24,29 @@
 
 package org.n52.server.service;
 
+import static org.n52.server.oxf.util.ConfigurationContext.getSOSMetadataForItemName;
+import static org.n52.server.oxf.util.ConfigurationContext.getServiceMetadata;
+
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
-import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.n52.client.service.SensorMetadataService;
-import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.service.rest.InternalServiceException;
 import org.n52.server.service.rest.ParameterSet;
-import org.n52.server.service.rest.TimeSeriesdataResult;
-import org.n52.server.service.rest.control.InvalidParameterConstallationException;
+import org.n52.server.service.rest.control.InvalidSosTimeseriesException;
 import org.n52.server.service.rest.control.ResourceNotFoundException;
+import org.n52.server.service.rest.model.TimeseriesData;
+import org.n52.server.service.rest.model.TimeseriesDataCollection;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeSeriesProperties;
-import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
+import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
@@ -55,8 +58,8 @@ public abstract class DataService {
 
     private SensorMetadataService sensorMetadataService;
 
-    protected SOSMetadata getServiceMetadata(String instance) {
-        SOSMetadata metadata = ConfigurationContext.getSOSMetadataForItemName(instance);
+    protected SOSMetadata getMetadataForInstanceName(String instance) {
+        SOSMetadata metadata = getSOSMetadataForItemName(instance);
         if (metadata == null) {
             LOGGER.warn("Could not find configured SOS instance for itemName '{}'" + instance);
             throw new ResourceNotFoundException();
@@ -64,18 +67,18 @@ public abstract class DataService {
         return metadata;
     }
 
-    protected Map<String, TimeSeriesdataResult> createTimeSeriesRequest(ParameterSet parameterSet, SOSMetadata metadata, ArrayList<TimeSeriesProperties> props) {
-        HashMap<String, TimeSeriesdataResult> timeSeriesResults = new HashMap<String, TimeSeriesdataResult>();
-        for (ParameterConstellation constellation : parameterSet.getParameters()) {
+    protected TimeseriesDataCollection prepareTimeseriesResults(ParameterSet parameterSet, SOSMetadata metadata, ArrayList<TimeSeriesProperties> props) {
+        TimeseriesDataCollection timeseriesCollection = new TimeseriesDataCollection();
+        for (String reference : parameterSet.getTimeseriesReferences()) {
             try {
-                Station station = getStationFromParameters(metadata, constellation);
-            	TimeSeriesProperties timeSeriesProperties = createTimeSeriesProperties(metadata, station, constellation);
-            	timeSeriesProperties.setTsID(constellation.getTimeseriesID());
-                props.add(decorateProperties(timeSeriesProperties, parameterSet));
-                TimeSeriesdataResult result = createTimeSeriesResult(timeSeriesProperties);
-                timeSeriesResults.put(constellation.getTimeseriesID(), result);
+                SosTimeseries timeseries = parameterSet.getTimeseriesByReference(reference);
+                Station station = metadata.getStationByTimeSeries(timeseries);
+            	TimeSeriesProperties propertiesInstance = createTimeSeriesProperties(station, timeseries);
+                props.add(decorateProperties(propertiesInstance, parameterSet));
+                TimeseriesData timeseriesData = createTimeseriesData(propertiesInstance);
+                timeseriesCollection.addNewTimeseries(reference, timeseriesData);
             }
-            catch (InvalidParameterConstallationException e) {
+            catch (InvalidSosTimeseriesException e) {
                 LOGGER.warn("Unable to process request: {}", e.getMessage());
 //                timeSeriesResults.put(constellation.getClientId(), null);
             }
@@ -84,26 +87,20 @@ public abstract class DataService {
                 throw new InternalServiceException();
             }
         }
-        return timeSeriesResults;
+        return timeseriesCollection;
     }
 
-    private Station getStationFromParameters(SOSMetadata metadata, ParameterConstellation constellation) throws InvalidParameterConstallationException {
-        Station station = metadata.getStationByParameterConstellation(constellation);
-        if (station == null) {
-            throw new InvalidParameterConstallationException(constellation);
-        }
-        return station;
-    }
-
-    private TimeSeriesProperties createTimeSeriesProperties(SOSMetadata metadata, Station station, ParameterConstellation constellation) {
+    private TimeSeriesProperties createTimeSeriesProperties(Station station, SosTimeseries timeseries) throws Exception {
+        String sosUrl = timeseries.getServiceUrl();
+        SOSMetadata metadata = getServiceMetadata(sosUrl);
         TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
-        FeatureOfInterest foi = lookup.getFeature(constellation.getFeatureOfInterest());
-        Phenomenon phenomenon = lookup.getPhenomenon(constellation.getPhenomenon());
-        Procedure procedure = lookup.getProcedure(constellation.getProcedure());
-        Offering offering = lookup.getOffering(constellation.getOffering());
-
-        String sosUrl = metadata.getServiceUrl();
-        return new TimeSeriesProperties(sosUrl, station, offering, foi, procedure, phenomenon, 0, 0, "???", true);
+        Feature foi = lookup.getFeature(timeseries.getFeature());
+        Phenomenon phenomenon = lookup.getPhenomenon(timeseries.getPhenomenon());
+        Procedure procedure = lookup.getProcedure(timeseries.getProcedure());
+        Offering offering = lookup.getOffering(timeseries.getOffering());
+        TimeSeriesProperties properties = new TimeSeriesProperties(sosUrl, station, offering, foi, procedure, phenomenon, 0, 0, "???", true);
+        properties.setTsID(timeseries.getTimeseriesId());
+        return properties;
     }
 
     /**
@@ -131,10 +128,10 @@ public abstract class DataService {
         return sensorMetadataService.getSensorMetadata(timeSeriesProperties).getProps();
     }
 
-    private TimeSeriesdataResult createTimeSeriesResult(TimeSeriesProperties timeSeriesProperties) {
-        TimeSeriesdataResult result = new TimeSeriesdataResult();
-        result.setUom(timeSeriesProperties.getUom());
-        return result;
+    private TimeseriesData createTimeseriesData(TimeSeriesProperties timeseriesProperties) {
+        String uom = timeseriesProperties.getUnitOfMeasure();
+        Map<Long, String> dummyMap = Collections.emptyMap();
+        return TimeseriesData.newTimeseriesData(dummyMap, uom);
     }
 
     protected DesignOptions createDesignOptions(ParameterSet parameterSet, ArrayList<TimeSeriesProperties> props) {
@@ -142,8 +139,9 @@ public abstract class DataService {
     }
     
     protected DesignOptions createDesignOptions(ParameterSet parameterSet, ArrayList<TimeSeriesProperties> props, boolean renderGrid) {
-        long begin = new DateTime(parameterSet.getBegin()).getMillis();
-        long end = new DateTime(parameterSet.getEnd()).getMillis();
+        Interval timespan = Interval.parse(parameterSet.getTimespan());
+        long begin = timespan.getStartMillis();
+        long end = timespan.getEndMillis();
         return new DesignOptions(props, begin, end, renderGrid);
     }
 

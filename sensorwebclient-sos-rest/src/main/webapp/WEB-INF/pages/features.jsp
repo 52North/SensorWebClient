@@ -8,36 +8,54 @@
 </head>
 <body>
 	
-	<c:if test="${not empty featureOfInterestList}">
+    <c:if test="${not empty feature}">
+    
+        <!-- A FEATURE INDIVIDUUM -->
+    
+        <a href="${url}features/${feature.id}.json">as Json</a>
+        <a href="${url}features">back</a>
+        
+        <h3>Feature</h3>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                </tr>
+            </thead>
+            <tr>
+                <td>${feature.id}</td>
+            </tr>
+        </table>
+    </c:if>
+	
+	<c:if test="${not empty features}">
+	
+	   <!-- ALL FEATURES IN A SINGLE LIST -->
+	
 		<a href="${url}features.json">as Json</a>
 		<a href="${url}features?offset=0">Paging</a>
+        <a href="${url}">back</a>
 		
-		<h3>Features:</h3>
+		<h3>Features</h3>
 		<ul>
-			<c:forEach items="${featureOfInterestList}" var="feature">
+			<c:forEach var="feature" items="${features}" >
 				<li><a href="${url}features/${feature.id}">${feature.id}</a></li>
 			</c:forEach>
 		</ul>
-		<a href="${url}">back</a>
-	</c:if>
-
-	<c:if test="${not empty featureOfInterest}">
-		<a href="${url}features/${featureOfInterest.id}.json">as Json</a>
-		<table>
-			<tr>
-				<td>ID</td>
-				<td>${featureOfInterest.id}</td>
-			</tr>
-		</table>
-		<a href="${url}features">back</a>
 	</c:if>
 
 	<c:if test="${not empty resultPage}">
+	
+	   <!-- A PAGED FEATURE LIST -->
+	
 		<a href="${url}features.json">as Json</a>
 		<a href="${url}features">All</a>
+		<a href="${url}">back</a>
+		
 		<h3>Features ${resultPage.offset + 1} - ${resultPage.offset + fn:length(resultPage.results)} of ${resultPage.total}</h3>
 		<ul>
-			<c:forEach items="${resultPage.results}" var="feature">
+			<c:forEach var="feature" items="${resultPage.results}" >
 				<li><a href="${url}features/${feature.id}">${feature.id}</a></li>
 			</c:forEach>
 		</ul>
@@ -59,10 +77,7 @@
 				<a href="${url}features?offset=${resultPage.offset}">next 10</a>
 			</c:otherwise>
 		</c:choose>
-		  
-		<br>
 		
-		<a href="${url}">back</a>
 	</c:if>	
 	
 </body>

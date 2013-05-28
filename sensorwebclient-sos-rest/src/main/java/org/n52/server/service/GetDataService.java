@@ -24,6 +24,8 @@
 
 package org.n52.server.service;
 
+import static org.n52.server.service.rest.model.TimeseriesData.newTimeseriesData;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,12 +33,14 @@ import java.util.Map;
 import org.n52.client.service.TimeSeriesDataService;
 import org.n52.server.service.rest.InternalServiceException;
 import org.n52.server.service.rest.ParameterSet;
-import org.n52.server.service.rest.TimeSeriesdataResult;
+import org.n52.server.service.rest.model.TimeseriesData;
+import org.n52.server.service.rest.model.TimeseriesDataCollection;
 import org.n52.shared.requests.TimeSeriesDataRequest;
 import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeSeriesProperties;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,15 +57,13 @@ public class GetDataService extends DataService {
 
     /**
      * @param parameterSet containing request parameters.
-     * @param instance the configured data instance
-     * @return a time series result instance, identified by {@link ParameterConstellation#getClientId()}
+     * @param metadata the service's metadata
+     * @return a time series result instance, identified by {@link SosTimeseries#getTimeseriesId()}
      */
-    public Map<String, TimeSeriesdataResult> getTimeSeriesFromParameterSet(ParameterSet parameterSet, String instance) {
-        SOSMetadata metadata = getServiceMetadata(instance);
+    public TimeseriesDataCollection getTimeSeriesFromParameterSet(ParameterSet parameterSet, SOSMetadata metadata) {
         ArrayList<TimeSeriesProperties> tsProperties = new ArrayList<TimeSeriesProperties>();
-        Map<String, TimeSeriesdataResult> timeSeriesResults = createTimeSeriesRequest(parameterSet, metadata, tsProperties);
-        performTimeSeriesDataRequest(timeSeriesResults, createDesignOptions(parameterSet, tsProperties));
-        return timeSeriesResults;
+        TimeseriesDataCollection timeseriesCollection = prepareTimeseriesResults(parameterSet, metadata, tsProperties);
+        return performTimeseriesDataRequest(timeseriesCollection, createDesignOptions(parameterSet, tsProperties));
     }
 
     @Override
@@ -69,20 +71,24 @@ public class GetDataService extends DataService {
         return decoradeWithSensorMetadataProperties(timeSeriesProperties);
     }
     
-    private void performTimeSeriesDataRequest(Map<String, TimeSeriesdataResult> timeSeriesResults, DesignOptions options) throws InternalServiceException {
+    private TimeseriesDataCollection performTimeseriesDataRequest(TimeseriesDataCollection timeSeriesResults, DesignOptions options) throws InternalServiceException {
         try {
             TimeSeriesDataRequest tsRequest = new TimeSeriesDataRequest(options);
             TimeSeriesDataResponse timeSeriesData = timeSeriesDataService.getTimeSeriesData(tsRequest);
             Map<String, HashMap<Long, String>> data = timeSeriesData.getPayloadData();
-            for (String clientId : timeSeriesResults.keySet()) {
-                TimeSeriesdataResult result = timeSeriesResults.get(clientId);
-                result.setValues(createCsvValues(data.get(clientId)));
+            
+            for (String timeseriesId : timeSeriesResults.getAllTimeseries().keySet()) {
+                TimeseriesData result = timeSeriesResults.getTimeseries(timeseriesId);
+                HashMap<Long, String> values = data.get(timeseriesId);
+                TimeseriesData timeseriesData = newTimeseriesData(values, result.getUom());
+                timeSeriesResults.addNewTimeseries(timeseriesId, timeseriesData);
             }
         }
         catch (Exception e) {
             LOGGER.error("Could not get timeseries data for options: " + options);
             throw new InternalServiceException();
         }
+        return timeSeriesResults;
     }
 
     private String createCsvValues(HashMap<Long, String> timeSeries) {

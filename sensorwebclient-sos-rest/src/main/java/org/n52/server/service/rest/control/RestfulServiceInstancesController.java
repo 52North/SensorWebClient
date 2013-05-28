@@ -17,18 +17,6 @@ public class RestfulServiceInstancesController implements RestfulKvp {
 
     private ServiceInstancesService serviceInstancesService;
 
-    @RequestMapping(value = "/services/{id}", method = RequestMethod.GET)
-    public ModelAndView getInstancesByGET(@PathVariable(value = "id") String id,
-                                          @RequestParam(value = KVP_SHOW, required = false) String filter) {
-        ServiceInstance serviceInstance = serviceInstancesService.getServiceInstance(id);
-        if (serviceInstance == null) {
-            throw new ResourceNotFoundException();
-        }
-        ModelAndView mav = new ModelAndView("services");
-        mav.addObject(serviceInstance);
-        return mav;
-    }
-
     @RequestMapping(value = "/services", method = RequestMethod.GET)
     public ModelAndView getInstancesByGET(@RequestParam(value = KVP_SHOW, required = false) String details,
                                           @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
@@ -43,12 +31,21 @@ public class RestfulServiceInstancesController implements RestfulKvp {
         }
 
         ModelAndView mav = new ModelAndView("services");
-        return mav.addObject(instances);
+        return mav.addObject("services", instances);
     }
 
     private ModelAndView pageResults(Collection<ServiceInstance> services, int offset, int size) {
         ModelAndViewPager mavPage = new ModelAndViewPager("services");
         return mavPage.createPagedModelAndViewFrom(services, offset, size);
+    }
+
+    @RequestMapping(value = "/services/{id}", method = RequestMethod.GET)
+    public ModelAndView getInstancesByGET(@PathVariable(value = "id") String service,
+                                          @RequestParam(value = KVP_SHOW, required = false) String filter) {
+        ModelAndView mav = new ModelAndView("services");
+        ServiceInstance serviceInstance = serviceInstancesService.getServiceInstance(service);
+        mav.addObject("service", serviceInstance);
+        return mav;
     }
 
     public ServiceInstancesService getServiceInstancesService() {

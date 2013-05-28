@@ -13,9 +13,19 @@ import org.n52.shared.requests.query.queries.QueryRequest;
 import org.n52.shared.requests.query.responses.QueryResponse;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 
-public abstract class TimeseriesParameterQueryController {
+public abstract class QueryController {
 
     private QueryService queryService;
+
+    /**
+     * @param kvpDetailsValue
+     *        the value of KVP parameter <code>details</code>.
+     * @return <code>true</code> if parameter indicates to create a full expanded list of objects,
+     *         <code>false</code> if condensed output shall be generated (default).
+     */
+    protected boolean shallShowCompleteResults(String kvpDetailsValue) {
+        return kvpDetailsValue != null && "complete".equalsIgnoreCase(kvpDetailsValue);
+    }
 
     /**
      * Creates a query factory for the given service instance.
@@ -37,25 +47,27 @@ public abstract class TimeseriesParameterQueryController {
      * @throws ResourceNotFoundException
      *         if no service is configured with the given item name.
      */
-    private SOSMetadata findServiceMetadataForItemName(String serviceInstance) {
+    protected SOSMetadata findServiceMetadataForItemName(String serviceInstance) {
         SOSMetadata metadata = ConfigurationContext.getSOSMetadataForItemName(serviceInstance);
         if (metadata == null) {
             throw new ResourceNotFoundException();
         }
         return metadata;
     }
-    
+
     protected abstract QueryResponse< ? > performQuery(String instance, QueryParameters parameters) throws Exception;
 
     protected QueryResponse< ? > doQuery(QueryRequest queryRequest) throws Exception {
         return queryService.doQuery(queryRequest);
     }
-    
+
     /**
-     * Determines the identifier of an individuum of the given collection. Instead of 
+     * Determines the identifier of an individuum of the given collection. Instead of
      * 
-     * @param collectionName the name of the collection (e.g. <code>features</code>).
-     * @param request the incoming request.
+     * @param collectionName
+     *        the name of the collection (e.g. <code>features</code>).
+     * @param request
+     *        the incoming request.
      * @return the individuum identifier.
      * @see RestfulUrls
      */

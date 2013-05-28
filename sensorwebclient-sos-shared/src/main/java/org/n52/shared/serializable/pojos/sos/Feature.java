@@ -25,15 +25,15 @@ package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
 
-public class FeatureOfInterest extends ObservationParameter implements Serializable {
+public class Feature extends ObservationParameter implements Serializable {
 
 	private static final long serialVersionUID = 693946840349140532L;
 
-	private FeatureOfInterest() {
+	private Feature() {
 		// for serialization
 	}
 
-	public FeatureOfInterest(String parameterId) {
+	public Feature(String parameterId) {
 	    super(parameterId);
 	}
 
@@ -62,7 +62,7 @@ public class FeatureOfInterest extends ObservationParameter implements Serializa
             return false;
         if (getClass() != obj.getClass())
             return false;
-        FeatureOfInterest other = (FeatureOfInterest) obj;
+        Feature other = (Feature) obj;
         if (parameterId == null) {
             if (other.getId() != null)
                 return false;
