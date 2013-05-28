@@ -18,14 +18,7 @@
      <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.ie.css" />
      <link rel="stylesheet" href="${base}/css/Leaflet.markercluster/6fda9a206f47f446bd42a931caa4a68aaca511d9/MarkerCluster.Default.ie.css" />
 <![endif]-->
-
-<style>
-body {
-    padding-top: 60px;
-    /* 60px to make the container go all the way to the bottom of the topbar */
-}
-
-</style>
+<link rel="stylesheet" href="${base}/css/jsp-styles.css" />
 
 <script type="text/javascript">
     var map = {};
@@ -151,19 +144,19 @@ body {
                 <ul class="nav nav-pills pull-right">
                     <li><a href="${url}/stations.json">As Json</a></li>
                     <li><a href="${url}/stations?offset=0">Paging</a></li>
-                    <li><a href="${url}/stations">back</a></li>
+                    <li><a href="${url}">back</a></li>
                 </ul>
                 <h3 class="muted">Stations</h3>
             </div>
 
-            <div class="span5 pull-left" style="overflow:auto;height: 500px">
+            <div class="span5 pull-left parameterList">
                  <ul>
                     <c:forEach var="station" items="${stations}">
                         <li><a href="${url}/stations/${station.properties.station}">${station.properties.station}</a></li>
                     </c:forEach>
                 </ul>
             </div>
-            <div id="map" class="span6 pull-right" style="height: 500px"></div>
+            <div id="map" class="span6 pull-right"></div>
         </c:if>
 
         <c:if test="${not empty resultPage}">

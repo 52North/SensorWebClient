@@ -41,7 +41,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.entity.EntityCollection;
 import org.jfree.chart.entity.StandardEntityCollection;
 import org.jfree.chart.entity.XYItemEntity;
-import org.jfree.chart.servlet.ServletUtilities;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.feature.OXFFeatureCollection;
 import org.n52.server.oxf.render.sos.DiagramRenderer;

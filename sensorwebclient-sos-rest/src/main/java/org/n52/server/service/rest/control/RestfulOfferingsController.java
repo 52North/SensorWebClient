@@ -25,8 +25,8 @@ public class RestfulOfferingsController extends QueryController implements Restf
     @RequestMapping(value = "/{instance}/" + COLLECTION_OFFERINGS, method = RequestMethod.GET)
     public ModelAndView getOfferingsByGET(@PathVariable("instance") String instance,
                                           @RequestParam(value = KVP_SHOW, required = false) String details,
-                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
-                                          @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
+                                          @RequestParam(value = KVP_OFFSET, defaultValue = KVP_DEFAULT_OFFSET) int offset,
+                                          @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) int size) throws Exception {
 
         // TODO condense output depending on 'show' parameter
 
@@ -34,12 +34,11 @@ public class RestfulOfferingsController extends QueryController implements Restf
         QueryResponse< ? > result = performQuery(instance, parameters);
         Offering[] offerings = (Offering[]) result.getResults();
 
-        if (offset != null) {
-            return pageResults(offerings, offset.intValue(), size.intValue());
+        if (offset <  0) {
+            return new ModelAndView("offerings").addObject("offerings", offerings);
+        } else {
+            return pageResults(offerings, offset, size);
         }
-
-        ModelAndView mav = new ModelAndView("offerings");
-        return mav.addObject("offerings", offerings);
     }
 
     private ModelAndView pageResults(Offering[] offerings, int offset, int size) {

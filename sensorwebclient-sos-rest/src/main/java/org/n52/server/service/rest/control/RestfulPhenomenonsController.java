@@ -25,8 +25,8 @@ public class RestfulPhenomenonsController extends QueryController implements Res
     @RequestMapping(value = "/{instance}/" + COLLECTION_PHENOMENONS, method = RequestMethod.GET)
     public ModelAndView getPhenomenonsByGET(@PathVariable("instance") String instance,
                                             @RequestParam(value = KVP_SHOW, required = false) String details,
-                                            @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
-                                            @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
+                                            @RequestParam(value = KVP_OFFSET, defaultValue = KVP_DEFAULT_OFFSET) int offset,
+                                            @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) int size) throws Exception {
 
         // TODO condense output depending on 'show' parameter
 
@@ -34,12 +34,11 @@ public class RestfulPhenomenonsController extends QueryController implements Res
         QueryResponse< ? > result = performQuery(instance, parameters);
         Phenomenon[] phenomenons = (Phenomenon[]) result.getResults();
 
-        if (offset != null) {
-            return pageResults(phenomenons, offset.intValue(), size.intValue());
+        if (offset < 0) {
+            return new ModelAndView("phenomenons").addObject("phenomenons", phenomenons);
+        } else {
+            return pageResults(phenomenons, offset, size);
         }
-
-        ModelAndView mav = new ModelAndView("phenomenons");
-        return mav.addObject("phenomenons", phenomenons);
     }
 
     private ModelAndView pageResults(Phenomenon[] phenomenons, int offset, int size) {

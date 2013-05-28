@@ -30,6 +30,13 @@ public interface RestfulKvp {
     static final String KVP_SIZE = "size";
 
     /**
+    * An <code>int</code> value (provided as {@link String}) which defines the default page offset.
+    * 
+    * @see #KVP_OFFSET
+    */
+    static final String KVP_DEFAULT_OFFSET = "-1";
+    
+    /**
      * An <code>int</code> value (provided as {@link String}) which defines the default page size.
      * 
      * @see #KVP_SIZE

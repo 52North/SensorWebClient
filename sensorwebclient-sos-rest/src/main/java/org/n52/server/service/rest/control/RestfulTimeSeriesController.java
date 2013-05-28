@@ -72,8 +72,8 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
     @RequestMapping(value = "/services/{instance}/timeseries", produces = "application/json", method = GET)
     public ModelAndView getAllTimeseries(@PathVariable String instance,
                                          @RequestParam(value = KVP_SHOW, required = false) String details,
-                                         @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
-                                         @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
+                                         @RequestParam(value = KVP_OFFSET, defaultValue = KVP_DEFAULT_OFFSET) int offset,
+                                         @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) int size) throws Exception {
 
         List<Object> allTimeseries = new ArrayList<Object>();
         for (Station station : getAllStations(instance)) {
@@ -85,12 +85,12 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
             }
         }
 
-        if (offset != null) {
-            return pageResults(allTimeseries, offset.intValue(), size.intValue());
+        if (offset < 0) {
+            return new ModelAndView("timeseries").addObject("multipleTimeseries", allTimeseries);
         }
-
-        ModelAndView mav = new ModelAndView("timeseries");
-        return mav.addObject("multipleTimeseries", allTimeseries);
+        else {
+            return pageResults(allTimeseries, offset, size);
+        }
     }
 
     @RequestMapping(value = "/timeseries", produces = "image/png", method = POST)

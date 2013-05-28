@@ -26,8 +26,8 @@ public class RestfulProceduresController extends QueryController implements Rest
     @RequestMapping(value = "/{instance}/" + COLLECTION_PROCEDURES, method = RequestMethod.GET)
     public ModelAndView getProceduresByGET(@PathVariable("instance") String instance,
                                            @RequestParam(value = KVP_SHOW, required = false) String details,
-                                           @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
-                                           @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
+                                           @RequestParam(value = KVP_OFFSET, defaultValue = KVP_DEFAULT_OFFSET) int offset,
+                                           @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) int size) throws Exception {
 
         // TODO condense output depending on 'show' parameter
 
@@ -35,12 +35,11 @@ public class RestfulProceduresController extends QueryController implements Rest
         QueryResponse< ? > result = performQuery(instance, parameters);
         Procedure[] procedures = (Procedure[]) result.getResults();
 
-        if (offset != null) {
-            return pageResults(procedures, offset.intValue(), size.intValue());
+        if (offset < 0) {
+            return new ModelAndView("procedures").addObject("procedures", createSimpleProcedureOutput(procedures));
+        } else {
+            return pageResults(procedures, offset, size);
         }
-
-        ModelAndView mav = new ModelAndView("procedures");
-        return mav.addObject("procedures", createSimpleProcedureOutput(procedures));
     }
 
     private ModelAndView pageResults(Procedure[] procedures, int offset, int size) {

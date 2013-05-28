@@ -19,19 +19,18 @@ public class RestfulServiceInstancesController implements RestfulKvp {
 
     @RequestMapping(value = "/services", method = RequestMethod.GET)
     public ModelAndView getInstancesByGET(@RequestParam(value = KVP_SHOW, required = false) String details,
-                                          @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
-                                          @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) Integer size) {
+                                          @RequestParam(value = KVP_OFFSET, defaultValue = KVP_DEFAULT_SIZE) int offset,
+                                          @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) int size) {
 
         // TODO condense output depending on 'show' parameter
 
         Collection<ServiceInstance> instances = serviceInstancesService.getServiceInstances();
 
-        if (offset != null) {
-            return pageResults(instances, offset.intValue(), size.intValue());
+        if (offset < 0) {
+            return new ModelAndView("services").addObject("services", instances);
+        } else {
+            return pageResults(instances, offset, size);
         }
-
-        ModelAndView mav = new ModelAndView("services");
-        return mav.addObject("services", instances);
     }
 
     private ModelAndView pageResults(Collection<ServiceInstance> services, int offset, int size) {
