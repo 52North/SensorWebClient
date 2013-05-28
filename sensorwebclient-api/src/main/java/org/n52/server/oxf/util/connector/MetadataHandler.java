@@ -27,6 +27,7 @@ package org.n52.server.oxf.util.connector;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER;
 import static org.n52.oxf.sos.adapter.SOSAdapter.GET_FEATURE_OF_INTEREST;
+import static org.n52.server.oxf.util.parser.ConnectorUtils.setVersionNumbersToMetadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,12 +55,13 @@ import org.n52.server.oxf.util.crs.AReferencingHelper;
 import org.n52.server.oxf.util.parser.ConnectorUtils;
 import org.n52.server.util.SosAdapterFactory;
 import org.n52.shared.responses.SOSMetadataResponse;
-import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
+import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,16 +79,12 @@ public abstract class MetadataHandler {
 			String sosUrl, String sosVersion) throws Exception;
 
 	protected SOSMetadata initMetadata(String sosUrl, String sosVersion) {
-		sosMetadata = ConfigurationContext.getServiceMetadatas()
-				.get(sosUrl);
+		sosMetadata = ConfigurationContext.getServiceMetadatas().get(sosUrl);
 		adapter = SosAdapterFactory.createSosAdapter(sosMetadata);
-		serviceDescriptor = ConnectorUtils
-				.getServiceDescriptor(sosUrl, adapter);
-		String sosTitle = serviceDescriptor.getServiceIdentification()
-				.getTitle();
+		serviceDescriptor = ConnectorUtils.getServiceDescriptor(sosUrl, adapter);
+		String sosTitle = serviceDescriptor.getServiceIdentification().getTitle();
 		String omResponseFormat = ConnectorUtils.getResponseFormat(serviceDescriptor, "om");
-		String smlVersion = ConnectorUtils.getSMLVersion(serviceDescriptor,
-				sosVersion);
+		String smlVersion = ConnectorUtils.getSMLVersion(serviceDescriptor, sosVersion);
 		// TODO check why no omFormat and smlVersion exists
 		if (omResponseFormat == null) {
 			omResponseFormat = "http://www.opengis.net/om/2.0";
@@ -95,12 +93,11 @@ public abstract class MetadataHandler {
 			smlVersion = "http://www.opengis.net/sensorML/1.0.1";
 		}
 
-		ConnectorUtils.setVersionNumbersToMetadata(sosUrl, sosTitle,
-				sosVersion, omResponseFormat, smlVersion);
+		setVersionNumbersToMetadata(sosUrl, sosTitle, sosVersion, omResponseFormat, smlVersion);
 		return sosMetadata;
 	}
 
-	protected Collection<ParameterConstellation> createParameterConstellations()
+	protected Collection<SosTimeseries> createObservingTimeseries()
 			throws OXFException {
 		// association: Offering - FOIs
 		Map<String, String[]> offeringFoiMap = new HashMap<String, String[]>();
@@ -140,13 +137,15 @@ public abstract class MetadataHandler {
 				featureIds.add(foiArray[j]);
 			}
 		}
+		
+		TimeseriesParametersLookup lookup = sosMetadata.getTimeseriesParamtersLookup();
 
 		// add fois
 		for (String featureId : featureIds) {
-			sosMetadata.addFeature(new FeatureOfInterest(featureId));
+			lookup.addFeature(new Feature(featureId));
 		}
 
-		Collection<ParameterConstellation> parameterConstellations = new ArrayList<ParameterConstellation>();
+		Collection<SosTimeseries> allObservedTimeseries = new ArrayList<SosTimeseries>();
 		// FOI -> Procedure -> Phenomenon
 		for (String offeringId : offeringFoiMap.keySet()) {
 			for (String procedure : offeringProcMap.get(offeringId)) {
@@ -161,31 +160,31 @@ public abstract class MetadataHandler {
 						 * from getFeatureOfInterest of describeSensor
 						 * operations.
 						 */
-						ParameterConstellation paramConst = new ParameterConstellation();
-						paramConst.setPhenomenon(phenomenon);
-						paramConst.setProcedure(procedure);
-						paramConst.setOffering(offeringId);
-						parameterConstellations.add(paramConst);
+						SosTimeseries timeseries = new SosTimeseries();
+						timeseries.setPhenomenon(phenomenon);
+						timeseries.setProcedure(procedure);
+						timeseries.setOffering(offeringId);
+						timeseries.setServiceUrl(sosMetadata.getServiceUrl());
+						allObservedTimeseries.add(timeseries);
 					}
 					// add procedures
-					sosMetadata.addProcedure(new Procedure(procedure));
+					lookup.addProcedure(new Procedure(procedure));
 					for (String phenomenonId : offeringPhenMap.get(offeringId)) {
-						sosMetadata.addPhenomenon(new Phenomenon(phenomenonId));
+						lookup.addPhenomenon(new Phenomenon(phenomenonId));
 					}
 				}
 			}
 			// add offering
-			Offering offering = new Offering(offeringId);
-			sosMetadata.addOffering(offering);
+			lookup.addOffering(new Offering(offeringId));
 		}
-		return parameterConstellations;
+		return allObservedTimeseries;
 	}
 	
-	protected void refactorCategoriesInConstellations(Collection<ParameterConstellation> constellations) {
-		for (ParameterConstellation constellation : constellations) {
-			String phenomenon = constellation.getPhenomenon();
-			String category = phenomenon.substring(phenomenon.lastIndexOf(":")+1);
-			constellation.setCategory(category);
+	protected void normalizeDefaultCategories(Collection<SosTimeseries> observingTimeseries) {
+		for (SosTimeseries timeseries : observingTimeseries) {
+			String phenomenon = timeseries.getPhenomenon();
+			String category = phenomenon.substring(phenomenon.lastIndexOf(":") + 1);
+			timeseries.setCategory(category);
 		}
 	}
 

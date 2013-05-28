@@ -51,6 +51,8 @@ import org.n52.oxf.valueDomains.time.TimePosition;
 public class SOSRequestBuilder_200_OXFExtension extends SOSRequestBuilder_200 {
     
     public static final String GET_OBSERVATION_TIME_PARAM_FIRST = "getFirst";
+    
+    public static final String GET_ABSERVATION_NEW_TIME_PARAM_FIRST = "first";
 
     public static final String GET_OBSERVATION_TIME_PARAM_LAST = "latest";
     
@@ -105,6 +107,10 @@ public class SOSRequestBuilder_200_OXFExtension extends SOSRequestBuilder_200 {
         } else if (specifiedTime instanceof ITime) {
             ITime timePosition = (ITime) specifiedTime;
             String timeIso8601Format = timePosition.toISO8601Format();
+            // fix for time parameter: in 52N SOS 2.0.0 now the time parameter for "getFirst" changed to "first"
+            if (timeIso8601Format.equals(GET_OBSERVATION_TIME_PARAM_FIRST)) {
+            	timeIso8601Format = GET_ABSERVATION_NEW_TIME_PARAM_FIRST;
+            }
             addEqualsTimePositionFilter(xb_getObs, timeIso8601Format);
         }
     }

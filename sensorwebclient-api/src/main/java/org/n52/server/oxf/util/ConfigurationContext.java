@@ -123,7 +123,7 @@ public class ConfigurationContext extends HttpServlet {
         }
 
         GEN_DIR_ZIP = GEN_DIR + "/zipped";
-        USE_DEVEL_CACHING = IS_DEV_MODE;
+//        USE_DEVEL_CACHING = IS_DEV_MODE;
 
         LOGGER.info("INITIALIZED SERVER APPLICATION SUCESSFULLY");
         if (IS_DEV_MODE) {
@@ -265,6 +265,10 @@ public class ConfigurationContext extends HttpServlet {
     
     public static boolean containsServiceMetadata(String sosURL) {
         return serviceMetadatas.containsKey(sosURL) && serviceMetadatas.get(sosURL) != null;
+    }
+    
+    public static boolean containsServiceInstance(String instance) {
+        return getSOSMetadataForItemName(instance) != null;
     }
     
     /**

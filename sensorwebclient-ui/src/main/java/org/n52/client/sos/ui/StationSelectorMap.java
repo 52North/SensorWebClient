@@ -179,7 +179,7 @@ public class StationSelectorMap extends OpenLayersMapWrapper {
     public void updateStations(final SOSMetadata metadata) {
         clearMap();
         for (Station station : metadata.getStations()) {
-        	if (station.getParameterConstellations().size() >= 0) {
+        	if (station.getObservingTimeseries().size() >= 0) {
         		addStationToMap(station);
 			}
         }

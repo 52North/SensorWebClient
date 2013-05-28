@@ -25,7 +25,7 @@ package org.n52.client.sos.event.data;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.data.handler.StoreTimeSeriesPropsEventHandler;
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 
 /**
  * The Class StoreTimeSeriesPropsEvent.
@@ -43,9 +43,9 @@ public class StoreTimeSeriesPropsEvent extends
     private String iD;
 
     /** The props. */
-    private TimeSeriesProperties props;
+    private TimeseriesProperties props;
 
-    public StoreTimeSeriesPropsEvent(String ID, TimeSeriesProperties props,
+    public StoreTimeSeriesPropsEvent(String ID, TimeseriesProperties props,
             StoreTimeSeriesPropsEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.iD = ID;
@@ -57,7 +57,7 @@ public class StoreTimeSeriesPropsEvent extends
         return this.iD;
     }
 
-    public TimeSeriesProperties getProps() {
+    public TimeseriesProperties getProps() {
         return this.props;
     }
 

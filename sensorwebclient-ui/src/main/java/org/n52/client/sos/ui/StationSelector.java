@@ -44,7 +44,7 @@ import org.n52.client.ui.InteractionWindow;
 import org.n52.client.ui.LoadingSpinner;
 import org.n52.client.ui.Toaster;
 import org.n52.client.ui.map.InfoMarker;
-import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
 
@@ -349,11 +349,11 @@ public class StationSelector extends Window {
 	private void loadTimeSeries() {
         final String selectedServiceURL = controller.getSelectedServiceURL();
 		final Station station = controller.getSelectedStation();
-		ParameterConstellation parameterConstellation = controller.getSelectedParameterConstellation();
+		SosTimeseries timeseries = controller.getSelectedTimeseries();
 		
 		NewTimeSeriesEvent event = new NewTimeSeriesEvent.Builder(selectedServiceURL)
 				.addStation(station)
-				.addParameterConstellation(parameterConstellation)
+				.addTimeseries(timeseries)
 				.build();
 		EventBus.getMainEventBus().fireEvent(event);
 	}
@@ -391,8 +391,8 @@ public class StationSelector extends Window {
 	
 	private Set<String> getStationCategories(Station station) {
 		Set<String> categories = new HashSet<String>();
-		for (ParameterConstellation paramConst : station.getParameterConstellations()) {
-			categories.add(paramConst.getCategory());
+		for (SosTimeseries timeseries : station.getObservingTimeseries()) {
+			categories.add(timeseries.getCategory());
 		}
 		return categories;
 	}

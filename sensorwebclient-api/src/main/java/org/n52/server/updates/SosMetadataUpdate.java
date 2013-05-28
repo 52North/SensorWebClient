@@ -66,23 +66,19 @@ public class SosMetadataUpdate {
 
     public static void updateService(String serviceUrl) throws Exception {
         LOGGER.debug("Update service metadata for '{}'", serviceUrl);
-        if (ConfigurationContext.USE_DEVEL_CACHING) {
-            File cache = getCacheTarget(serviceUrl);
-            if (isCacheAvailable(cache)) {
-                try {
-                    loadMetadataFromCache(cache);
-                } catch (IOException e) {
-                    cache.delete();
-                    cacheMetadata(cache, serviceUrl);
-                }
-            }
-            else {
-                prepareCacheTargetDirectory();
+        File cache = getCacheTarget(serviceUrl);
+        if (isCacheAvailable(cache)) {
+            try {
+                loadMetadataFromCache(cache);
+            } catch (IOException e) {
+                LOGGER.info("Could not read cache. Recreate cache ...", e);
+                cache.delete();
                 cacheMetadata(cache, serviceUrl);
             }
-        } else {
-            // XXX refactor COnfiguration COntext in combiniation of this class and timerupdate
-            ConfigurationContext.getServiceMetadata(serviceUrl);
+        }
+        else {
+            prepareCacheTargetDirectory();
+            cacheMetadata(cache, serviceUrl);
         }
     }
 
@@ -106,7 +102,7 @@ public class SosMetadataUpdate {
     }
 
     private static boolean isCacheAvailable(File file) {
-        return ConfigurationContext.USE_DEVEL_CACHING && file.exists();
+        return /*ConfigurationContext.USE_DEVEL_CACHING &&*/ file.exists();
     }
 
     protected static void loadMetadataFromCache(File file) throws IOException, ClassNotFoundException {
@@ -114,8 +110,8 @@ public class SosMetadataUpdate {
         ObjectInput input = new ObjectInputStream(stream);
         try {
             // deserialize the List
-            SOSMetadata meta = (SOSMetadata) input.readObject();
-            ConfigurationContext.getServiceMetadatas().put(meta.getId(), meta);
+            SOSMetadata metadata = (SOSMetadata) input.readObject();
+            ConfigurationContext.addNewSOSMetadata(metadata);
         }
         finally {
             input.close();

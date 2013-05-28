@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+	http://www.springframework.org/schema/mvc 
+	http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+
+	<mvc:annotation-driven />
+	
+	<bean class="org.n52.server.service.rest.control.RestfulServiceInstancesController">
+        <property name="serviceInstancesService" ref="serviceInstancesService"/>
+    </bean>
+    
+    <bean class="org.n52.server.service.rest.control.RestfulProceduresController">
+        <property name="queryService" ref="queryServiceImpl"/>
+    </bean>
+    
+    <bean class="org.n52.server.service.rest.control.RestfulStationsController">
+        <property name="queryService" ref="queryServiceImpl"/>
+    </bean>
+    
+    <bean class="org.n52.server.service.rest.control.RestfulFeaturesController">
+        <property name="queryService" ref="queryServiceImpl"/>
+    </bean>
+    
+    <bean class="org.n52.server.service.rest.control.RestfulPhenomenonsController">
+        <property name="queryService" ref="queryServiceImpl"/>
+    </bean>
+    
+    
+    <bean class="org.n52.server.service.rest.control.RestfulOfferingsController">
+        <property name="queryService" ref="queryServiceImpl"/>
+    </bean>
+	
+	
+	
+	
+	
+	
+    <bean class="org.n52.server.service.rest.control.RestfulTimeSeriesController">
+        <property name="dataService" ref="dataService" />
+        <property name="imageService" ref="imageService" />
+        <property name="queryService" ref="queryServiceImpl"/>
+    </bean>
+    
+	
+	<bean id="dataService" class="org.n52.server.service.GetDataService" parent="service">
+		<property name="timeSeriesDataService" ref="tsDataService" />
+	</bean>
+	
+	<bean id="imageService" class="org.n52.server.service.GetImageService" parent="service">
+		<property name="imageDataService" ref="imageDataService" />
+		<property name="defaultHeight" value="600" />
+		<property name="defaultWidth" value="800" />
+		<property name="renderGrid" value="true" />
+	</bean>
+	
+    <bean id="service" class="org.n52.server.service.DataService" abstract="true">
+        <property name="sensorMetadataService" ref="sensorMetadataService" />
+    </bean>
+    
+    <bean id="serviceInstancesService" class="org.n52.server.service.DefaultServiceInstancesService" />
+    
+	<bean id="sensorMetadataService" class="org.n52.server.service.SensorMetadataServiceImpl" />
+	
+    <bean id="tsDataService" class="org.n52.server.service.TimeSeriesDataServiceImpl" />
+    
+	<bean id="imageDataService" class="org.n52.server.service.EESDataServiceImpl" />
+	
+	<bean id="queryServiceImpl" class="org.n52.server.service.QueryServiceImpl"/>
+	
+</beans>

@@ -47,7 +47,7 @@ import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.shared.responses.FileResponse;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +89,7 @@ public class XlsGenerator extends Generator {
         OXFFeatureCollection entireColl =
                 (OXFFeatureCollection) observationCollList.toArray()[0];
         
-        TimeSeriesProperties pc = options.getProperties().get(0);
+        TimeseriesProperties pc = options.getProperties().get(0);
         File xls = JavaHelper.genRndFile(ConfigurationContext.GEN_DIR+"/"+folderPostfix, pc.getProcedure().getId().replaceAll("/", "_")+"_"+formatDate(new Date(options.getBegin()))+"_"+formatDate(
                         new Date(options.getEnd()))+"_", "xls");
         try {
@@ -108,7 +108,7 @@ public class XlsGenerator extends Generator {
             //
             // fill cells:
             // //
-            for (TimeSeriesProperties prop : options.getProperties()) {
+            for (TimeseriesProperties prop : options.getProperties()) {
                 String foiID = prop.getFoi().getId();
                 String obsPropsID = prop.getPhenomenon().getId();
 

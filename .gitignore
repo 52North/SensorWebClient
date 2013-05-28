@@ -1,5 +1,6 @@
 target
 .classpath
 .project
-
+.externalToolBuilders
 .settings
+META-INF

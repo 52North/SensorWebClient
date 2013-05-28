@@ -45,8 +45,8 @@ import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ctrl.RequestManager;
 import org.n52.client.ctrl.TimeManager;
 import org.n52.client.ses.ctrl.SesController;
-import org.n52.client.sos.ctrl.DataManagerSosImpl;
 import org.n52.client.sos.ctrl.SOSController;
+import org.n52.client.sos.ctrl.SosDataManager;
 import org.n52.client.sos.event.DatesChangedEvent;
 import org.n52.client.sos.event.InitEvent;
 import org.n52.client.sos.event.data.GetFeatureEvent;
@@ -97,7 +97,7 @@ public final class Application {
     public static void continueStartup() {
 
         // init handlers before throwing events
-        DataManagerSosImpl.getInst();
+        SosDataManager.getDataManager();
         new SOSController();
         if (ClientUtils.isSesEnabled()) {
             new SesController();

@@ -23,8 +23,9 @@
  */
 package org.n52.client.ctrl;
 
+import static org.n52.client.sos.ctrl.SosDataManager.getDataManager;
+
 import org.n52.client.bus.EventBus;
-import org.n52.client.sos.ctrl.DataManagerSosImpl;
 import org.n52.client.sos.event.data.NewTimeSeriesEvent;
 import org.n52.client.sos.event.data.StoreFeatureEvent;
 import org.n52.client.sos.event.data.StoreOfferingEvent;
@@ -35,8 +36,8 @@ import org.n52.client.sos.event.data.handler.StoreOfferingEventHandler;
 import org.n52.client.sos.event.data.handler.StoreProcedureEventHandler;
 import org.n52.client.sos.event.data.handler.StoreStationEventHandler;
 import org.n52.client.ui.Toaster;
-import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 
 public class PermaLinkController {
@@ -110,20 +111,21 @@ public class PermaLinkController {
 
 	public void check() {
 		if (!permalinkLoaded && featureReady && procedureReady && offeringReady && stationReady) {
-            SOSMetadata metadata = DataManagerSosImpl.getInst().getServiceMetadata(url);
-            ParameterConstellation paramConst = new ParameterConstellation();
-            paramConst.setPhenomenon(phenomenon);
-            paramConst.setFeatureOfInterest(foi);
-            paramConst.setOffering(offering);
-            paramConst.setProcedure(procedure);
-            Station station = metadata.getStationByParameterConstellation(offering, foi, procedure, phenomenon);
+            SOSMetadata metadata = getDataManager().getServiceMetadata(url);
+            SosTimeseries timeseries = new SosTimeseries();
+            timeseries.setPhenomenon(phenomenon);
+            timeseries.setFeature(foi);
+            timeseries.setOffering(offering);
+            timeseries.setProcedure(procedure);
+            timeseries.setServiceUrl(url);
+            Station station = metadata.getStationByTimeSeries(timeseries);
             
             Toaster.getToasterInstance().addMessage("load session from permalink");
             permalinkLoaded = true;
             
             NewTimeSeriesEvent event = new NewTimeSeriesEvent.Builder(url)
             		.addStation(station)
-            		.addParameterConstellation(paramConst)
+            		.addTimeseries(timeseries)
     				.build();
             EventBus.getMainEventBus().fireEvent(event);
 		}

@@ -35,8 +35,6 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.ext.link.sos.QueryParser;
-import org.n52.ext.link.sos.TimeRange;
 
 public class QueryParserTest {
     

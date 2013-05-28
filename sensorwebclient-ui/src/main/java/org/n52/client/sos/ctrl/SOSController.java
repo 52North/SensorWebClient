@@ -65,14 +65,11 @@ import org.n52.client.sos.event.data.handler.StoreProcedureEventHandler;
 import org.n52.client.sos.event.data.handler.StoreStationEventHandler;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
 import com.google.gwt.core.client.GWT;
 
 public class SOSController extends ServiceController {
-
-    public static final String SOS_PARAM_FIRST = "getFirst";
-
-    public static final String SOS_PARAM_LAST = "latest";
 
     protected boolean isAddingNewTimeSeries;
     
@@ -218,31 +215,37 @@ public class SOSController extends ServiceController {
 		}
 
 		@Override
-		public void onStore(StoreProcedureEvent evt) {
-			SOSMetadata serviceMetadata = DataManagerSosImpl.getInst().getServiceMetadata(evt.getServiceURL());
-			serviceMetadata.addProcedure(evt.getProcedure());
-		}
-
-		@Override
 		public void onGetOffering(GetOfferingEvent evt) {
 			getRequestManager().requestOffering(evt.getServiceURL(), evt.getOfferingID());
 		}
 
+        @Override
+        public void onStore(StoreProcedureEvent evt) {
+            TimeseriesParametersLookup lookup = getParametersLookup(evt.getServiceURL());
+            lookup.addProcedure(evt.getProcedure());
+        }
+
 		@Override
 		public void onStore(StoreOfferingEvent evt) {
-			SOSMetadata serviceMetadata = DataManagerSosImpl.getInst().getServiceMetadata(evt.getServiceURL());
-			serviceMetadata.addOffering(evt.getOffering());
+            TimeseriesParametersLookup lookup = getParametersLookup(evt.getServiceURL());
+			lookup.addOffering(evt.getOffering());
 		}
+
+        @Override
+        public void onStore(StoreFeatureEvent evt) {
+            TimeseriesParametersLookup lookup = getParametersLookup(evt.getServiceURL());
+            lookup.addFeature(evt.getFeature());
+        }
+
+        private TimeseriesParametersLookup getParametersLookup(String serviceUrl) {
+            SosDataManager dataManager = SosDataManager.getDataManager();
+            SOSMetadata serviceMetadata = dataManager.getServiceMetadata(serviceUrl);
+            return serviceMetadata.getTimeseriesParamtersLookup();
+        }
 
 		@Override
 		public void onGetFeature(GetFeatureEvent evt) {
 			getRequestManager().requestFeature(evt.getServiceURL(), evt.getFeatureID());
-		}
-
-		@Override
-		public void onStore(StoreFeatureEvent evt) {
-			SOSMetadata serviceMetadata = DataManagerSosImpl.getInst().getServiceMetadata(evt.getServiceURL());
-			serviceMetadata.addFeature(evt.getFeature());
 		}
 
 		@Override
@@ -252,7 +255,7 @@ public class SOSController extends ServiceController {
 
 		@Override
 		public void onStore(StoreStationEvent evt) {
-			SOSMetadata serviceMetadata = DataManagerSosImpl.getInst().getServiceMetadata(evt.getServiceURL());
+			SOSMetadata serviceMetadata = SosDataManager.getDataManager().getServiceMetadata(evt.getServiceURL());
 			serviceMetadata.addStation(evt.getStation());
 		}
     }

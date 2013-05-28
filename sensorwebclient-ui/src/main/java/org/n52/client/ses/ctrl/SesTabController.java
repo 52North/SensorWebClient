@@ -25,14 +25,7 @@ package org.n52.client.ses.ctrl;
 
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
-import static org.n52.client.ses.ui.FormLayout.LayoutType.ABOS;
-import static org.n52.client.ses.ui.FormLayout.LayoutType.CREATE_COMPLEX;
-import static org.n52.client.ses.ui.FormLayout.LayoutType.EDIT_PROFILE;
-import static org.n52.client.ses.ui.FormLayout.LayoutType.EDIT_RULES;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.LOGIN;
-import static org.n52.client.ses.ui.FormLayout.LayoutType.PASSWORD;
-import static org.n52.client.ses.ui.FormLayout.LayoutType.REGISTER;
-import static org.n52.client.ses.ui.FormLayout.LayoutType.RULELIST;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.USERLIST;
 import static org.n52.client.ses.ui.FormLayout.LayoutType.WELCOME;
 import static org.n52.client.ui.View.getView;
@@ -47,18 +40,11 @@ import org.n52.client.ctrl.Controller;
 import org.n52.client.ctrl.ExceptionHandler;
 import org.n52.client.ctrl.GUIException;
 import org.n52.client.ses.event.ChangeLayoutEvent;
-import org.n52.client.ses.event.GetAllOtherRulesEvent;
-import org.n52.client.ses.event.GetAllOwnRulesEvent;
-import org.n52.client.ses.event.GetAllPublishedRulesEvent;
-import org.n52.client.ses.event.GetAllRulesEvent;
 import org.n52.client.ses.event.GetAllUsersEvent;
 import org.n52.client.ses.event.GetDataEvent;
-import org.n52.client.ses.event.GetSingleUserEvent;
-import org.n52.client.ses.event.InformUserEvent;
 import org.n52.client.ses.event.SetRoleEvent;
 import org.n52.client.ses.event.ShowAllUserEvent;
 import org.n52.client.ses.event.handler.ChangeLayoutEventHandler;
-import org.n52.client.ses.event.handler.InformUserEventHandler;
 import org.n52.client.ses.event.handler.SetRoleEventHandler;
 import org.n52.client.ses.event.handler.ShowAllUserEventHandler;
 import org.n52.client.ses.ui.FormLayout.LayoutType;
@@ -71,10 +57,7 @@ import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.ui.View;
 import org.n52.client.ui.legend.LegendElement;
-import org.n52.shared.responses.SesClientResponseType;
 import org.n52.shared.serializable.pojos.UserRole;
-
-import com.smartgwt.client.util.SC;
 
 public class SesTabController extends Controller<SesTab> {
     

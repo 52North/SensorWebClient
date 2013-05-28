@@ -38,7 +38,6 @@ import org.n52.client.ses.event.InformUserEvent;
 import org.n52.client.ses.event.LoginEvent;
 import org.n52.client.ses.event.handler.InformUserEventHandler;
 import org.n52.client.ses.ui.FormLayout;
-import org.n52.client.util.ClientSessionManager;
 import org.n52.shared.responses.SesClientResponse;
 
 import com.smartgwt.client.widgets.form.FormItemErrorFormatter;

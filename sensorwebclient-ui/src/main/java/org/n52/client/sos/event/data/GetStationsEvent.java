@@ -27,78 +27,35 @@ import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.data.handler.GetStationsEventHandler;
 import org.n52.shared.serializable.pojos.BoundingBox;
 
-/**
- * The Class GetProcedurePositionsEvent.
- * 
- * @author <a href="mailto:f.bache@52north.de">Felix Bache</a>
- */
-public class GetStationsEvent extends
-        FilteredDispatchGwtEvent<GetStationsEventHandler> {
+public class GetStationsEvent extends FilteredDispatchGwtEvent<GetStationsEventHandler> {
 
-    /** The TYPE. */
-    public static Type<GetStationsEventHandler> TYPE =
-            new Type<GetStationsEventHandler>();
+    public static Type<GetStationsEventHandler> TYPE = new Type<GetStationsEventHandler>();
 
-    /** The sos url. */
     private String sosURL;
 
-    /** The bbox. */
     private BoundingBox bbox;
 
-    /**
-     * Instantiates a new gets the procedure positions event.
-     * 
-     * @param sosURL
-     *            the sos url
-     * @param bbox
-     *            the bbox
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
-    public GetStationsEvent(String sosURL, BoundingBox bbox,
-            GetStationsEventHandler... blockedHandlers) {
+    public GetStationsEvent(String sosURL, BoundingBox bbox, GetStationsEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.sosURL = sosURL;
         this.bbox = bbox;
     }
 
-    /**
-     * Gets the sOSURL.
-     * 
-     * @return the sOSURL
-     */
     public String getSOSURL() {
         return this.sosURL;
     }
 
-    /**
-     * Gets the b box.
-     * 
-     * @return the b box
-     */
     public BoundingBox getBBox() {
         return this.bbox;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(GetStationsEventHandler handler) {
         handler.onGetProcedurePositions(this);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<GetStationsEventHandler> getAssociatedType() {
+    public Type<GetStationsEventHandler> getAssociatedType() {
         return TYPE;
     }
 

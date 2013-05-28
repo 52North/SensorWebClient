@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.n52.sensorweb</groupId>
+		<artifactId>sensorwebclient</artifactId>
+		<version>3.2.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>sensorwebclient-sos-rest</artifactId>
+	<packaging>jar</packaging>
+	<name>SOS Rest Interface</name>
+	<url>http://52north.org/communities/sensorweb/</url>
+	<dependencies>
+		<dependency>
+			<groupId>org.n52.sensorweb</groupId>
+			<artifactId>sensorwebclient-sos-shared</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.n52.sensorweb</groupId>
+			<artifactId>sensorwebclient-sos-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+	</dependencies>
+	<build>
+		
+		<plugins>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<!-- here the phase you need -->
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.basedir}/target/classes/</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/webapp/</directory>
+									<includes>
+										<include>**/*.jsp</include>
+										<include>**/*.js</include>
+										<include>**/*.css</include>
+                                        <include>**/*.png</include>
+									</includes>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
+
