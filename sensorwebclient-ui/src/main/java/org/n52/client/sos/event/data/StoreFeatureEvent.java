@@ -25,17 +25,17 @@ package org.n52.client.sos.event.data;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.data.handler.StoreFeatureEventHandler;
-import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
+import org.n52.shared.serializable.pojos.sos.Feature;
 
 public class StoreFeatureEvent extends FilteredDispatchGwtEvent<StoreFeatureEventHandler> {
 	
 	public static Type<StoreFeatureEventHandler> TYPE = new Type<StoreFeatureEventHandler>();
 	
-	private FeatureOfInterest feature;
+	private Feature feature;
 	
 	private String serviceURL;
 	
-	public StoreFeatureEvent(String serviceURL, FeatureOfInterest feature, StoreFeatureEventHandler... blockHandlers) {
+	public StoreFeatureEvent(String serviceURL, Feature feature, StoreFeatureEventHandler... blockHandlers) {
 		super(blockHandlers);
 		this.serviceURL = serviceURL;
 		this.feature = feature;
@@ -51,7 +51,7 @@ public class StoreFeatureEvent extends FilteredDispatchGwtEvent<StoreFeatureEven
 		return TYPE;
 	}
 
-	public FeatureOfInterest getFeature() {
+	public Feature getFeature() {
 		return feature;
 	}
 

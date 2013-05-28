@@ -21,26 +21,26 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.server.service.rest;
+package org.n52.server.service.rest.control;
 
-public class ImageDataResult {
-    
-    private String imageUrl;
-    
-    public ImageDataResult() {
-        // for serialization
-    }
-    
-    public ImageDataResult(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 
-    public String getImageUrl() {
-        return imageUrl;
+
+public class InvalidSosTimeseriesException extends Exception {
+
+    private static final long serialVersionUID = 3129135716623019120L;
+
+    private SosTimeseries timeseries;
+
+    public InvalidSosTimeseriesException(SosTimeseries constellation) {
+        timeseries = constellation;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public String getMessage() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Invalid Paramter Constellation: \n");
+        sb.append(timeseries.toString());
+        return sb.toString();
     }
-    
+
 }

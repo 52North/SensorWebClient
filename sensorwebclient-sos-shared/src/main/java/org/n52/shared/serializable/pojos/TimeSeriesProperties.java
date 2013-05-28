@@ -28,7 +28,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
+import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
@@ -44,7 +44,7 @@ public class TimeSeriesProperties implements Serializable {
 
 	private Offering off;
 
-	private FeatureOfInterest foi;
+	private Feature foi;
 
 	private Procedure proc;
 
@@ -107,13 +107,13 @@ public class TimeSeriesProperties implements Serializable {
 	}
 
 	public TimeSeriesProperties(String sosUrl, Station station, Offering offering,
-			FeatureOfInterest foi, Procedure procedure, Phenomenon phenomenon,
+			Feature foi, Procedure procedure, Phenomenon phenomenon,
 			int width, int height) {
 		this(sosUrl, station, offering, foi, procedure, phenomenon, width, height, "", true);
 	}
 
 	public TimeSeriesProperties(String sosUrl, Station station, Offering offering,
-			FeatureOfInterest foi, Procedure procedure, Phenomenon phenomenon,
+			Feature foi, Procedure procedure, Phenomenon phenomenon,
 			int width, int height, String uom, boolean isAutoScale) {
 		this.sosUrl = sosUrl;
 		this.station = station;
@@ -146,7 +146,7 @@ public class TimeSeriesProperties implements Serializable {
 		result.setShowYAxis(this.isYAxisVisible);
 		result.setStationName(this.stationName);
 		result.setTsID(this.timeSeriesId);
-		result.setUOM(this.uom);
+		result.setUnitOfMeasure(this.uom);
 		result.setSeriesType(this.seriesType);
 
 		return result;
@@ -250,7 +250,7 @@ public class TimeSeriesProperties implements Serializable {
 		this.off = off;
 	}
 
-	public void setFoi(FeatureOfInterest foi) {
+	public void setFoi(Feature foi) {
 		this.foi = foi;
 	}
 
@@ -260,10 +260,6 @@ public class TimeSeriesProperties implements Serializable {
 
 	public void setPhen(Phenomenon phen) {
 		this.phen = phen;
-	}
-
-	public String getUom() {
-		return this.uom;
 	}
 
 	public String getStationName() {
@@ -299,7 +295,7 @@ public class TimeSeriesProperties implements Serializable {
 	 * 
 	 * @return the foi
 	 */
-	public FeatureOfInterest getFoi() {
+	public Feature getFoi() {
 		return this.foi;
 	}
 
@@ -483,22 +479,11 @@ public class TimeSeriesProperties implements Serializable {
 	// 5);
 	// }
 
-	/**
-	 * Gets the uOM.
-	 * 
-	 * @return the uOM
-	 */
 	public String getUnitOfMeasure() {
 		return this.uom;
 	}
 
-	/**
-	 * Sets the uOM.
-	 * 
-	 * @param uom
-	 *            the new uOM
-	 */
-	public void setUOM(String uom) {
+	public void setUnitOfMeasure(String uom) {
 		this.uom = uom;
 		this.phen.setUnitOfMeasure(uom);
 	}

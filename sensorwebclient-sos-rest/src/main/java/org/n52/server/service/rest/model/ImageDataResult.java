@@ -21,26 +21,26 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.server.service.rest.control;
+package org.n52.server.service.rest.model;
 
-import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
-
-
-public class InvalidParameterConstallationException extends Exception {
-
-    private static final long serialVersionUID = 3129135716623019120L;
-
-    private ParameterConstellation parameterConstellation;
-
-    public InvalidParameterConstallationException(ParameterConstellation constellation) {
-        parameterConstellation = constellation;
+public class ImageDataResult {
+    
+    private String imageUrl;
+    
+    public ImageDataResult() {
+        // for serialization
+    }
+    
+    public ImageDataResult(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
-    public String getMessage() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Invalid Paramter Constellation: \n");
-        sb.append(parameterConstellation.toString());
-        return sb.toString();
+    public String getImageUrl() {
+        return imageUrl;
     }
 
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+    
 }

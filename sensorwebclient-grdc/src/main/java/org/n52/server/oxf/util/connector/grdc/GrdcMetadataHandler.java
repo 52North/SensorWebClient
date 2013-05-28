@@ -59,7 +59,7 @@ import org.n52.server.oxf.util.crs.AReferencingHelper;
 import org.n52.server.oxf.util.parser.ConnectorUtils;
 import org.n52.server.oxf.util.parser.utils.ParsedPoint;
 import org.n52.shared.responses.SOSMetadataResponse;
-import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
+import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
@@ -198,7 +198,7 @@ public class GrdcMetadataHandler extends MetadataHandler {
 								label = featureId;
 							}
 							// add feature
-							FeatureOfInterest feature = new FeatureOfInterest(featureId);
+							Feature feature = new Feature(featureId);
 							feature.setLabel(label);
 							lookup.addFeature(feature);
 							// add position and foiID to a new station

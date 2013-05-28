@@ -26,8 +26,6 @@ package org.n52.server.service;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import javax.servlet.ServletOutputStream;
@@ -36,10 +34,9 @@ import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.entity.StandardEntityCollection;
 import org.n52.client.service.EESDataService;
 import org.n52.server.oxf.util.generator.EESGenerator;
-import org.n52.server.service.rest.ImageDataResult;
 import org.n52.server.service.rest.InternalServiceException;
 import org.n52.server.service.rest.ParameterSet;
-import org.n52.server.service.rest.TimeSeriesdataResult;
+import org.n52.server.service.rest.model.ImageDataResult;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeSeriesProperties;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -82,9 +79,9 @@ public class GetImageService extends DataService {
     }
 
     private DesignOptions createDesignOptions(ParameterSet parameterSet, String instance) {
-        SOSMetadata metadata = getServiceMetadata(instance);
+        SOSMetadata metadata = getMetadataForInstanceName(instance);
         ArrayList<TimeSeriesProperties> tsProperties = new ArrayList<TimeSeriesProperties>();
-        createTimeSeriesRequest(parameterSet, metadata, tsProperties);
+        prepareTimeseriesResults(parameterSet, metadata, tsProperties);
         return createDesignOptions(parameterSet, tsProperties, isRenderGrid());
     }
 

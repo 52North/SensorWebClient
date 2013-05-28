@@ -57,8 +57,8 @@ import org.n52.server.oxf.util.connector.MetadataHandler;
 import org.n52.server.oxf.util.parser.utils.ParsedPoint;
 import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.serializable.pojos.EastingNorthing;
-import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
-import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
+import org.n52.shared.serializable.pojos.sos.Feature;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
@@ -76,16 +76,16 @@ public class DefaultMetadataHandler extends MetadataHandler {
 
         SOSMetadata sosMetadata = initMetadata(sosUrl, sosVersion);
 
-        Collection<ParameterConstellation> constellations = createParameterConstellations();
+        Collection<SosTimeseries> observingTimeseries = createObservingTimeseries();
 
-        refactorCategoriesInConstellations(constellations);
+        normalizeDefaultCategories(observingTimeseries);
 
         // TODO check version 2.0.0 sos's
 
         // XXX hack to get conjunctions between procedures and fois
         if ( !sosMetadata.hasDonePositionRequest()) {
             try {
-                performMetadataInterlinking(sosUrl, constellations);
+                performMetadataInterlinking(sosUrl, observingTimeseries);
             }
             catch (IOException e) {
                 LOGGER.warn("Could not retrieve relations between procedures and fois", e);
@@ -107,7 +107,8 @@ public class DefaultMetadataHandler extends MetadataHandler {
      * 
      * @param sosUrl
      *        the SOS service URL.
-     * @param parameterConstellations
+     * @param observingTimeseries
+     *        all timeseries being observed.
      * @throws OXFException
      *         when request creation fails.
      * @throws InterruptedException
@@ -119,7 +120,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
      * @throws IllegalStateException
      *         if SOS version is not supported.
      */
-    private void performMetadataInterlinking(String sosUrl, Collection<ParameterConstellation> parameterConstellations) throws OXFException,
+    private void performMetadataInterlinking(String sosUrl, Collection<SosTimeseries> observingTimeseries) throws OXFException,
             InterruptedException,
             XMLHandlingException,
             IOException {
@@ -168,10 +169,10 @@ public class DefaultMetadataHandler extends MetadataHandler {
                     EastingNorthing eastingNorthing = new EastingNorthing(lng, lat, srs);
 
                     if (fois.isEmpty()) {
-                        Collection<FeatureOfInterest> features = lookup.getFeatures();
+                        Collection<Feature> features = lookup.getFeatures();
                         LOGGER.warn("No FOI references found for procedure '{}'.", procedureId);
                         LOGGER.warn("==> Reference all ({}) available.", features.size());
-                        for (FeatureOfInterest foi : features) {
+                        for (Feature foi : features) {
                             fois.add(foi.getId());
                         }
                     }
@@ -185,14 +186,14 @@ public class DefaultMetadataHandler extends MetadataHandler {
                         }
 
                         for (String phenomenon : phenomenons) {
-                            Collection<ParameterConstellation> paramConstellations = getMatchingConstellations(parameterConstellations,
-                                                                                                               procedureId,
-                                                                                                               phenomenon);
+                            Collection<SosTimeseries> paramConstellations = getMatchingConstellations(observingTimeseries,
+                                                                                                      procedureId,
+                                                                                                      phenomenon);
 
                             station.setLocation(eastingNorthing);
-                            for (ParameterConstellation paraCon : paramConstellations) {
-                                paraCon.setFeatureOfInterest(foi);
-                                station.addParameterConstellation(paraCon);
+                            for (SosTimeseries timseries : paramConstellations) {
+                                timseries.setFeature(foi);
+                                station.addTimeseries(timseries);
                             }
                         }
                     }
@@ -282,13 +283,13 @@ public class DefaultMetadataHandler extends MetadataHandler {
         return opAccessorCallable;
     }
 
-    private Collection<ParameterConstellation> getMatchingConstellations(Collection<ParameterConstellation> parameterConstellations,
-                                                                         String procedure,
-                                                                         String phenomenon) {
-        Collection<ParameterConstellation> result = new ArrayList<ParameterConstellation>();
-        for (ParameterConstellation paraCon : parameterConstellations) {
-            if (paraCon.matchesProcedure(procedure) && paraCon.matchesPhenomenon(phenomenon)) {
-                result.add(paraCon);
+    private Collection<SosTimeseries> getMatchingConstellations(Collection<SosTimeseries> observingTimeseries,
+                                                                String procedure,
+                                                                String phenomenon) {
+        Collection<SosTimeseries> result = new ArrayList<SosTimeseries>();
+        for (SosTimeseries timeseries : observingTimeseries) {
+            if (timeseries.matchesProcedure(procedure) && timeseries.matchesPhenomenon(phenomenon)) {
+                result.add(timeseries);
             }
         }
         return result;

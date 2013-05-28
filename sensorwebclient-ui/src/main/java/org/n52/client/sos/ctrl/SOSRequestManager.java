@@ -106,9 +106,9 @@ import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeSeriesProperties;
-import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
+import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -214,12 +214,12 @@ public class SOSRequestManager extends RequestManager {
         int height = evt.getHeight();
         Station station = evt.getStation();
         TimeseriesParametersLookup lookup = getTimeseriesParameterLookupFor(serviceUrl);
-        ParameterConstellation parameterConstellation = evt.getParameterConstellation();
-        FeatureOfInterest foi = lookup.getFeature(parameterConstellation.getFeatureOfInterest());
-        Phenomenon phenomenon = lookup.getPhenomenon(parameterConstellation.getPhenomenon());
-        Procedure procedure = lookup.getProcedure(parameterConstellation.getProcedure());
-        Offering offering = lookup.getOffering(parameterConstellation.getOffering());
-        return new TimeSeriesProperties(serviceUrl, station, offering, foi, procedure, phenomenon, width, height);
+        SosTimeseries timeseries = evt.getTimeseries();
+        Feature feature = lookup.getFeature(timeseries.getFeature());
+        Phenomenon phenomenon = lookup.getPhenomenon(timeseries.getPhenomenon());
+        Procedure procedure = lookup.getProcedure(timeseries.getProcedure());
+        Offering offering = lookup.getOffering(timeseries.getOffering());
+        return new TimeSeriesProperties(serviceUrl, station, offering, feature, procedure, phenomenon, width, height);
     }
 
     private TimeseriesParametersLookup getTimeseriesParameterLookupFor(String serviceUrl) {
@@ -923,7 +923,7 @@ public class SOSRequestManager extends RequestManager {
 	}
 	
 	protected void handleFeatureQuery(QueryResponse<?> response) {
-		FeatureOfInterest feature = (FeatureOfInterest) response.getResults()[0]; // TODO fragile!
+		Feature feature = (Feature) response.getResults()[0]; // TODO fragile!
 		StoreFeatureEvent event = new StoreFeatureEvent(response.getServiceUrl(), feature);
 		EventBus.getMainEventBus().fireEvent(event);
 	}
