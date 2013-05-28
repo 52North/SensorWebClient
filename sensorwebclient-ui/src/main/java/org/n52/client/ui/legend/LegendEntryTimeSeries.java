@@ -625,7 +625,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		// I18N.sosClient.procedureLabel()
 		// + "</span>: " + procedure);
 
-		String uom = this.getTimeSeries().getProperties().getUom();
+		String uom = this.getTimeSeries().getProperties().getUnitOfMeasure();
 		// if (phenomenon.contains("/")) {
 		// phenomenon = phenomenon.substring(phenomenon.lastIndexOf("/") + 1);
 		// }

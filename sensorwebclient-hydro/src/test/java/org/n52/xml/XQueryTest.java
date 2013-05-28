@@ -23,7 +23,7 @@
  */
 package org.n52.xml;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Before;

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.n52.sensorweb</groupId>
@@ -13,144 +14,52 @@
 
 	<properties>
 		<webappDirectory>${project.build.directory}/${project.artifactId}</webappDirectory>
-		<org.springframework.version>3.0.5.RELEASE</org.springframework.version>
 	</properties>
 
 	<dependencies>
-		<!-- ### 52n DEPENDENCIES ### -->
+
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
-			<artifactId>oxf-sos-adapter</artifactId>
-			<scope>runtime</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.n52.sensorweb</groupId>
-					<artifactId>52n-xml-csw-v202</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.n52.sensorweb</groupId>
-					<artifactId>52n-xml-kml-v220</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.n52.sensorweb</groupId>
-					<artifactId>52n-xml-wcs-v111</artifactId>
-				</exclusion>
-			</exclusions>
+			<artifactId>sensorwebclient-webapp</artifactId>
+			<type>war</type>
 		</dependency>
+
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>sensorwebclient-api</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>hibernate-core</artifactId>
-					<groupId>org.hibernate</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>validation-api</artifactId>
-					<groupId>javax.validation</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>xml-pdf-format</artifactId>
-					<groupId>org.n52.sensorweb</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>gwt-log</artifactId>
-					<groupId>com.google.code.gwt-log</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>gwt-servlet</artifactId>
-					<groupId>com.google.gwt</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>mail</artifactId>
-					<groupId>javax.mail</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>unitConversion</artifactId>
-					<groupId>org.n52.sensorweb.sweclient-old</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>fop</artifactId>
-					<groupId>org.apache.xmlgraphics</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>jxl</artifactId>
-					<groupId>net.sourceforge.jexcelapi</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>sensorwebclient-sos-server</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>hibernate-core</artifactId>
-					<groupId>org.hibernate</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>xml-pdf-format</artifactId>
-					<groupId>org.n52.sensorweb</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>gwt-servlet</artifactId>
-					<groupId>com.google.gwt</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>mail</artifactId>
-					<groupId>javax.mail</groupId>
-				</exclusion>
-				<exclusion>
-                    <groupId>org.vast</groupId>
-					<artifactId>swe-common-data-framework</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
-			<artifactId>sensorwebclient-sos-shared</artifactId>
+			<artifactId>sensorwebclient-sos-rest</artifactId>
 		</dependency>
-						
-		<!-- ### EXTERNAL DEPENDENCIES ### -->
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>jfree</groupId>
-			<artifactId>jfreechart</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-		</dependency>
-		<!-- ### SPRING DEPENDENCIES ### -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>${org.springframework.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>${org.springframework.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-oxm</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-mapper-asl</artifactId>
+			<artifactId>jstl</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
 
@@ -177,27 +86,61 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>2.2</version>
+				<version>2.3</version>
 				<configuration>
 					<webappDirectory>${webappDirectory}</webappDirectory>
 					<webResources>
 						<resource>
 							<directory>src/main/webapp</directory>
 							<filtering>true</filtering>
+							<excludes>
+								<!-- exclude files from filtering -->
+								<exclude>**/*.jsp</exclude>
+								<exclude>cache/*</exclude>
+								<exclude>img/*</exclude>
+							</excludes>
 						</resource>
 					</webResources>
 					<warName>${project.artifactId}-${project.version}</warName>
+
+					<overlays>
+						<overlay>
+							<groupId>org.n52.sensorweb</groupId>
+							<artifactId>sensorwebclient-webapp</artifactId>
+							<includes>
+							    <include>WEB-INF/pages/*.jsp</include>
+								<include>ds/sos-instances.data.xml</include>
+								<include>js/**/*.js</include>
+                                <include>css/**/*.css</include>
+								<include>WEB-INF/classes/dispatcher-control.xml</include>
+								<include>WEB-INF/classes/spring-view-config.xml</include>
+								<include>WEB-INF/pages/*</include>
+								<include>xslt/SensorML*.xslt</include>
+							</includes>
+						</overlay>
+					</overlays>
 				</configuration>
 			</plugin>
+
 			<plugin>
-				<groupId>com.google.code.maven-svn-revision-number-plugin</groupId>
-				<artifactId>svn-revision-number-maven-plugin</artifactId>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<doCheck>true</doCheck>
+					<doUpdate>true</doUpdate>
+				</configuration>
 			</plugin>
+
 		</plugins>
 	</build>
 
@@ -215,6 +158,7 @@
 				</filters>
 			</build>
 		</profile>
+
 		<profile>
 			<id>connector-eea</id>
 			<dependencies>
@@ -224,6 +168,7 @@
 				</dependency>
 			</dependencies>
 		</profile>
+
 		<profile>
 			<id>connector-hydro</id>
 			<dependencies>
@@ -232,6 +177,50 @@
 					<artifactId>sensorwebclient-hydro</artifactId>
 				</dependency>
 			</dependencies>
+		</profile>
+
+		<profile>
+			<id>all-modules-provided</id>
+			<dependencyManagement>
+				<dependencies>
+					<dependency>
+						<groupId>org.n52.sensorweb</groupId>
+						<artifactId>sensorwebclient-api</artifactId>
+						<version>${project.version}</version>
+						<scope>provided</scope>
+					</dependency>
+					<dependency>
+						<groupId>org.n52.sensorweb</groupId>
+						<artifactId>sensorwebclient-sos-server</artifactId>
+						<version>${project.version}</version>
+						<scope>provided</scope>
+					</dependency>
+					<dependency>
+						<groupId>org.n52.sensorweb</groupId>
+						<artifactId>sensorwebclient-sos-rest</artifactId>
+						<version>${project.version}</version>
+						<scope>provided</scope>
+					</dependency>
+					<dependency>
+						<groupId>org.n52.sensorweb</groupId>
+						<artifactId>sensorwebclient-grdc</artifactId>
+						<version>${project.version}</version>
+						<scope>provided</scope>
+					</dependency>
+					<dependency>
+						<groupId>org.n52.sensorweb</groupId>
+						<artifactId>sensorwebclient-eea</artifactId>
+						<version>${project.version}</version>
+						<scope>provided</scope>
+					</dependency>
+					<dependency>
+						<groupId>org.n52.sensorweb</groupId>
+						<artifactId>sensorwebclient-hydro</artifactId>
+						<version>${project.version}</version>
+						<scope>provided</scope>
+					</dependency>
+				</dependencies>
+			</dependencyManagement>
 		</profile>
 	</profiles>
 

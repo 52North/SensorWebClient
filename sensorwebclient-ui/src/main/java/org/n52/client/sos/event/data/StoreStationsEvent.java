@@ -23,86 +23,40 @@
  */
 package org.n52.client.sos.event.data;
 
-import java.util.List;
-
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.data.handler.StoreStationsEventHandler;
 import org.n52.shared.serializable.pojos.sos.Station;
 
-/**
- * The Class StoreProcedurePositionsEvent.
- * 
- * @author <a href="mailto:f.bache@52north.de">Felix Bache</a>
- */
 public class StoreStationsEvent extends
         FilteredDispatchGwtEvent<StoreStationsEventHandler> {
 
-    /** The TYPE. */
-    public static Type<StoreStationsEventHandler> TYPE =
-            new Type<StoreStationsEventHandler>();
+    public static Type<StoreStationsEventHandler> TYPE = new Type<StoreStationsEventHandler>();
 
-    /** The sos url. */
     private final String sosURL;
 
-    /** The procedures. */
-    private final List<Station> stations;
+    private final Station[] stations;
 
-    /**
-     * Instantiates a new store procedure positions event.
-     * 
-     * @param sosURL
-     *            the sos url
-     * @param procedures
-     *            the procedures
-     * @param srs
-     *            the srs
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
-    public StoreStationsEvent(String sosURL, List<Station> stations, 
-            StoreStationsEventHandler... blockedHandlers) {
+    public StoreStationsEvent(String sosURL, Station[] stations,  StoreStationsEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.sosURL = sosURL;
         this.stations = stations;
     }
 
-    /**
-     * Gets the sos url.
-     * 
-     * @return the sos url
-     */
     public String getSosURL() {
         return this.sosURL;
     }
 
-    /**
-     * Gets the procedures.
-     * 
-     * @return the procedures
-     */
-    public List<Station> getStations() {
+    public Station[] getStations() {
         return this.stations;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(StoreStationsEventHandler handler) {
         handler.onStore(this);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<StoreStationsEventHandler> getAssociatedType() {
+    public Type<StoreStationsEventHandler> getAssociatedType() {
         return TYPE;
     }
 

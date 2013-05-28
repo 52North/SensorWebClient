@@ -23,6 +23,7 @@
  */
 package org.n52.server.service;
 
+import static org.n52.server.oxf.util.ConfigurationContext.getSOSMetadata;
 import static org.n52.server.oxf.util.access.DescribeSensorAccessor.getSensorDescriptionAsSensorML;
 
 import java.util.HashMap;
@@ -35,9 +36,10 @@ import org.n52.server.oxf.util.parser.DescribeSensorParser;
 import org.n52.shared.responses.GetProcedureDetailsUrlResponse;
 import org.n52.shared.responses.SensorMetadataResponse;
 import org.n52.shared.serializable.pojos.ReferenceValue;
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,20 +48,21 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
     private static final Logger LOG = LoggerFactory.getLogger(SensorMetadataServiceImpl.class);
 
     @Override
-    public SensorMetadataResponse getSensorMetadata(TimeSeriesProperties tsProperties) throws Exception {
+    public SensorMetadataResponse getSensorMetadata(TimeseriesProperties tsProperties) throws Exception {
         try {
             LOG.debug("Request -> GetSensorMetadata");
             String sosUrl = tsProperties.getSosUrl();
+            SOSMetadata metadata = getSOSMetadata(sosUrl);
             String procedureId = tsProperties.getProcedure().getId();
             String phenomenonId = tsProperties.getPhenomenon().getId();
-            Procedure procedure = ConfigurationContext.getSOSMetadata(sosUrl).getProcedure(procedureId);
-            SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosUrl);
+            TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
+            Procedure procedure = lookup.getProcedure(procedureId);
 
             XmlObject sml = getSensorDescriptionAsSensorML(procedureId, metadata);
             DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), metadata);
             tsProperties.setMetadataUrl(parser.buildUpSensorMetadataHtmlUrl(procedureId, sosUrl));
             tsProperties.setStationName(parser.buildUpSensorMetadataStationName());
-            tsProperties.setUOM(parser.buildUpSensorMetadataUom(phenomenonId));
+            tsProperties.setUnitOfMeasure(parser.buildUpSensorMetadataUom(phenomenonId));
             
             HashMap<String, ReferenceValue> refvalues = parser.parseCapsDataFields();
             tsProperties.addAllRefValues(refvalues);

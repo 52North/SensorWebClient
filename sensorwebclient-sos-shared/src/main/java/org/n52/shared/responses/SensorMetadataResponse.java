@@ -25,23 +25,23 @@ package org.n52.shared.responses;
 
 import java.io.Serializable;
 
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 
 public class SensorMetadataResponse implements Serializable {
 
     private static final long serialVersionUID = -572577336556117796L;
     
-    private TimeSeriesProperties props;
+    private TimeseriesProperties props;
 
     private SensorMetadataResponse() {
         // serializable for GWT needs empty default constructor
     }
 
-    public SensorMetadataResponse(TimeSeriesProperties props) {
+    public SensorMetadataResponse(TimeseriesProperties props) {
         this.props = props;
     }
 
-    public TimeSeriesProperties getProps() {
+    public TimeseriesProperties getProps() {
         return this.props;
     }
 

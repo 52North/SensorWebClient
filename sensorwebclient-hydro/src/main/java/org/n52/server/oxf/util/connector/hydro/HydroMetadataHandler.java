@@ -65,10 +65,11 @@ import org.n52.server.oxf.util.parser.ConnectorUtils;
 import org.n52.server.oxf.util.parser.utils.ParsedPoint;
 import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.serializable.pojos.EastingNorthing;
-import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
-import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
+import org.n52.shared.serializable.pojos.sos.Feature;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,6 +86,7 @@ public class HydroMetadataHandler extends MetadataHandler {
 	public SOSMetadataResponse performMetadataCompletion(String sosUrl, String sosVersion) throws Exception {
 		
 		SOSMetadata metadata = initMetadata(sosUrl, sosVersion);
+		TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
 		
 		// get a waterml specific responseFormat if set
 		String responseFormat = ConnectorUtils.getResponseFormat(getServiceDescriptor(), "waterml");
@@ -92,21 +94,21 @@ public class HydroMetadataHandler extends MetadataHandler {
 			metadata.setOmVersion(responseFormat);
 		}
 
-		Collection<ParameterConstellation> parameterConstellations = createParameterConstellations();
+		Collection<SosTimeseries> observingTimeseries = createObservingTimeseries();
 		
 		// execute the GetFeatureOfInterest requests
-		Map<ParameterConstellation, FutureTask<OperationResult>> futureTasks = new HashMap<ParameterConstellation, FutureTask<OperationResult>>();
-		for (ParameterConstellation paramConst : parameterConstellations) {
+		Map<SosTimeseries, FutureTask<OperationResult>> futureTasks = new HashMap<SosTimeseries, FutureTask<OperationResult>>();
+		for (SosTimeseries timeseries : observingTimeseries) {
 			// create the category for every parameter constellation out of phenomenon and procedure
-			String category = getLastPartOf(paramConst.getPhenomenon()) + " (" + getLastPartOf(paramConst.getProcedure()) + ")";
-			paramConst.setCategory(category);
-			futureTasks.put(paramConst, new FutureTask<OperationResult>(createGetFoiAccess(sosUrl, sosVersion, paramConst)));
+			String category = getLastPartOf(timeseries.getPhenomenon()) + " (" + getLastPartOf(timeseries.getProcedure()) + ")";
+			timeseries.setCategory(category);
+			futureTasks.put(timeseries, new FutureTask<OperationResult>(createGetFoiAccess(sosUrl, sosVersion, timeseries)));
 		}
 		
         int counter = futureTasks.size();
         AReferencingHelper referenceHelper = createReferencingHelper();
 		LOGGER.info("Sending " + counter + " GetFeatureOfInterest requests");
-		for (ParameterConstellation paramConst: futureTasks.keySet()) {
+		for (SosTimeseries paramConst: futureTasks.keySet()) {
 			LOGGER.info("Sending #{} GetFeatureOfInterest request for Offering " + paramConst.getOffering(), counter--);
 			AccessorThreadPool.execute(futureTasks.get(paramConst));
 			try {
@@ -148,9 +150,9 @@ public class HydroMetadataHandler extends MetadataHandler {
 						LOGGER.warn("The foi with ID {} has no valid point", id);
 					} else {
 						// add feature
-						FeatureOfInterest feature = new FeatureOfInterest(id);
+						Feature feature = new Feature(id);
 						feature.setLabel(label);
-	                    metadata.addFeature(feature);
+	                    lookup.addFeature(feature);
 	                    
 	                    // create station if not exists
 	                    Station station = metadata.getStation(id);
@@ -163,9 +165,9 @@ public class HydroMetadataHandler extends MetadataHandler {
 	                        metadata.addStation(station);
 	                    }
 	                    
-	                    ParameterConstellation tmp = paramConst.clone();
-	                    tmp.setFeatureOfInterest(id);
-	                    station.addParameterConstellation(tmp);
+	                    SosTimeseries tmp = paramConst.clone();
+	                    tmp.setFeature(id);
+	                    station.addTimeseries(tmp);
 					}
 				}
 			} catch (TimeoutException e) {
@@ -231,12 +233,12 @@ public class HydroMetadataHandler extends MetadataHandler {
 		}
 	}
 
-	private Callable<OperationResult> createGetFoiAccess(String sosUrl, String sosVersion, ParameterConstellation paramConst) throws OXFException {
+	private Callable<OperationResult> createGetFoiAccess(String sosUrl, String sosVersion, SosTimeseries timeseries) throws OXFException {
 		ParameterContainer container = new ParameterContainer();
 		container.addParameterShell(GET_FOI_SERVICE_PARAMETER, "SOS");
         container.addParameterShell(GET_FOI_VERSION_PARAMETER, sosVersion);
-        container.addParameterShell("phenomenon", paramConst.getPhenomenon());
-        container.addParameterShell("procedure", paramConst.getProcedure());
+        container.addParameterShell("phenomenon", timeseries.getPhenomenon());
+        container.addParameterShell("procedure", timeseries.getProcedure());
         Operation operation = new Operation(GET_FEATURE_OF_INTEREST, sosUrl, sosUrl);
 		return new OperationAccessor(getSosAdapter(), operation, container);
 	}

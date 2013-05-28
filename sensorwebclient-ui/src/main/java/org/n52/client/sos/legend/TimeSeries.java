@@ -34,7 +34,7 @@ import org.n52.client.ui.map.Coordinate;
 import org.n52.client.ui.map.OpenLayersMapWrapper;
 import org.n52.client.util.ClientUtils;
 import org.n52.shared.serializable.pojos.Axis;
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.Station;
 
@@ -48,7 +48,7 @@ public class TimeSeries implements LegendData {
 
 	private String id;
 
-	private TimeSeriesProperties properties;
+	private TimeseriesProperties properties;
 
 	private int ordering;
 
@@ -66,7 +66,7 @@ public class TimeSeries implements LegendData {
 
 	private Coordinate coords;
 
-	public TimeSeries(String id, TimeSeriesProperties properties) {
+	public TimeSeries(String id, TimeseriesProperties properties) {
 		this.id = id;
 		this.properties = properties;
 		this.properties.setTsID(id);
@@ -214,7 +214,7 @@ public class TimeSeries implements LegendData {
 		this.properties.setMetadataUrl(metadataUrl);
 	}
 
-	public TimeSeriesProperties getProperties() {
+	public TimeseriesProperties getProperties() {
 		return this.properties;
 	}
 
@@ -245,7 +245,7 @@ public class TimeSeries implements LegendData {
 	}
 
 	public void setUnitOfMeasure(String unitOfMeasure) {
-		properties.setUOM(unitOfMeasure);
+		properties.setUnitOfMeasure(unitOfMeasure);
 	}
 
 	public String getOfferingId() {
@@ -309,7 +309,7 @@ public class TimeSeries implements LegendData {
 		this.legendElement = elem;
 	}
 
-	public void setProperties(TimeSeriesProperties props) {
+	public void setProperties(TimeseriesProperties props) {
 		this.properties = props;
 		this.coords = getCoords(props.getProcedure());
 		updateLegendElement();

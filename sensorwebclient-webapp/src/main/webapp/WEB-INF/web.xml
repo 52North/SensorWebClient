@@ -1,7 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app>
+<web-app version="2.5">
 	<display-name>${project.artifactId} (SVN r${svn.info.revision}, built on ${timestamp})</display-name>
 
+	<!-- listen for spring related configuration files -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener
+		</listener-class>
+	</listener>
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/classes/spring-view-config.xml</param-value>
+	</context-param>
+	
+	<servlet>
+		<servlet-name>rest</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet
+		</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/classes/dispatcher-control.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>rest</servlet-name>
+		<url-pattern>/rest/*</url-pattern>
+	</servlet-mapping>
+	
 	<servlet>
 		<servlet-name>ConfigurationContext</servlet-name>
 		<servlet-class>

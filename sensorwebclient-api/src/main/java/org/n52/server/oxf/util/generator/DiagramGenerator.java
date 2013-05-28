@@ -43,7 +43,7 @@ import org.n52.server.oxf.render.sos.DesignDescriptionList.DesignDescription;
 import org.n52.server.oxf.render.sos.DiagramRenderer;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 
 import com.sun.media.jai.codec.ImageCodec;
 import com.sun.media.jai.codec.ImageEncoder;
@@ -218,7 +218,7 @@ public class DiagramGenerator extends Generator {
 
         String observedPropertyWithGrid = options.getProperties().get(0).getPhenomenon().getId();
 
-        for (TimeSeriesProperties prop : options.getProperties()) {
+        for (TimeseriesProperties prop : options.getProperties()) {
 
             Color c = JavaHelper.transformToColor(prop.getHexColor());
             boolean gridOn = observedPropertyWithGrid.equals(prop.getPhenomenon().getId());

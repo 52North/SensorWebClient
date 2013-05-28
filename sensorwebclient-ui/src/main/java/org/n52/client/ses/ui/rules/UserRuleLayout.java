@@ -35,7 +35,6 @@ import org.n52.client.bus.EventBus;
 import org.n52.client.ses.ctrl.DataControlsSes;
 import org.n52.client.ses.event.SubscribeEvent;
 import org.n52.client.ses.ui.FormLayout;
-import org.n52.client.util.ClientSessionManager;
 import org.n52.shared.serializable.pojos.BasicRuleDTO;
 import org.n52.shared.serializable.pojos.ComplexRuleDTO;
 
