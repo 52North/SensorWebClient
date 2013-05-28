@@ -36,7 +36,7 @@ import org.n52.server.oxf.util.parser.DescribeSensorParser;
 import org.n52.shared.responses.GetProcedureDetailsUrlResponse;
 import org.n52.shared.responses.SensorMetadataResponse;
 import org.n52.shared.serializable.pojos.ReferenceValue;
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
@@ -48,7 +48,7 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
     private static final Logger LOG = LoggerFactory.getLogger(SensorMetadataServiceImpl.class);
 
     @Override
-    public SensorMetadataResponse getSensorMetadata(TimeSeriesProperties tsProperties) throws Exception {
+    public SensorMetadataResponse getSensorMetadata(TimeseriesProperties tsProperties) throws Exception {
         try {
             LOG.debug("Request -> GetSensorMetadata");
             String sosUrl = tsProperties.getSosUrl();

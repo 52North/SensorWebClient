@@ -8,13 +8,13 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-public class ParameterSetTest {
+public class DesignedParameterSetTest {
 
     @Test
     public void
             shouldCreateNonNullTimspan()
     {
-        ParameterSet parameterSet = new ParameterSet();
+        DesignedParameterSet parameterSet = new DesignedParameterSet();
         assertNotNull(parameterSet.getTimespan());
     }
 
@@ -22,23 +22,23 @@ public class ParameterSetTest {
     public void
             shouldCreateNonNullTimeseries()
     {
-        ParameterSet parameterSet = new ParameterSet();
-        assertNotNull(parameterSet.getReferencedTimeseries());
+        DesignedParameterSet parameterSet = new DesignedParameterSet();
+        assertNotNull(parameterSet.getTimeseries());
     }
 
     @Test
     public void
             shouldCreateEmptyTimeseries()
     {
-        ParameterSet parameterSet = new ParameterSet();
-        assertTrue(parameterSet.getReferencedTimeseries().isEmpty());
+        DesignedParameterSet parameterSet = new DesignedParameterSet();
+        assertThat(parameterSet.getTimeseries().length, is(0));
     }
 
     @Test
     public void
             shouldSetValuableDefaultIfTimespanIsNull()
     {
-        ParameterSet parameterSet = new ParameterSet();
+        DesignedParameterSet parameterSet = new DesignedParameterSet();
         parameterSet.setTimespan(null);
         assertNotNull(parameterSet.getTimespan());
     }
@@ -47,8 +47,7 @@ public class ParameterSetTest {
     public void
             shouldSetNegativeWidthAndHeightIfNullSize()
     {
-        ParameterSet parameterSet = new ParameterSet();
-        parameterSet.setSize(null);
+        DesignedParameterSet parameterSet = new DesignedParameterSet();
         assertTrue(parameterSet.getWidth() < 0);
         assertTrue(parameterSet.getHeight() < 0);
     }
@@ -57,7 +56,7 @@ public class ParameterSetTest {
     public void
             shouldThrowExceptionWhenTimespanIsInvalid()
     {
-        ParameterSet parameterSet = new ParameterSet();
+        DesignedParameterSet parameterSet = new DesignedParameterSet();
         parameterSet.setTimespan("2013-23-23T20:23:23Z");
     }
 
@@ -65,7 +64,7 @@ public class ParameterSetTest {
     public void
             shouldAcceptValidIntervalWithStartAndEnd()
     {
-        ParameterSet parameterSet = new ParameterSet();
+        DesignedParameterSet parameterSet = new DesignedParameterSet();
         parameterSet.setTimespan("2007-03-01T13:00:00Z/2008-05-11T15:30:00Z");
     }
 
@@ -73,7 +72,7 @@ public class ParameterSetTest {
     public void
             shouldAcceptValidIntervalWithStartAndPeriod()
     {
-        ParameterSet parameterSet = new ParameterSet();
+        DesignedParameterSet parameterSet = new DesignedParameterSet();
         parameterSet.setTimespan("2007-03-01T13:00:00Z/P1Y2M10DT2H30M");
     }
 
@@ -81,7 +80,7 @@ public class ParameterSetTest {
     public void
             shouldAcceptValidIntervalWithPeriodAndEnd()
     {
-        ParameterSet parameterSet = new ParameterSet();
+        DesignedParameterSet parameterSet = new DesignedParameterSet();
         parameterSet.setTimespan("P1Y2M10DT2H30M/2008-05-11T15:30:00Z");
     }
 
@@ -89,24 +88,8 @@ public class ParameterSetTest {
     public void
             shouldNotAcceptPeriodOnlyVersion()
     {
-        ParameterSet parameterSet = new ParameterSet();
+        DesignedParameterSet parameterSet = new DesignedParameterSet();
         parameterSet.setTimespan("P1Y2M10DT2H30M");
-    }
-
-    @Test public void
-    shouldReturnCorrectWidth()
-    {
-        ParameterSet parameterSet = new ParameterSet();
-        parameterSet.setSize("123,234");
-        assertThat(parameterSet.getWidth(), is(123));
-    }
-    
-    @Test public void
-    shouldReturnCorrectHeight()
-    {
-        ParameterSet parameterSet = new ParameterSet();
-        parameterSet.setSize("123,234");
-        assertThat(parameterSet.getHeight(), is(234));
     }
 
 }

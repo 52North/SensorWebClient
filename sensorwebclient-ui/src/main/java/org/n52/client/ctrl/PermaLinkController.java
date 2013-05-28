@@ -26,7 +26,6 @@ package org.n52.client.ctrl;
 import static org.n52.client.sos.ctrl.SosDataManager.getDataManager;
 
 import org.n52.client.bus.EventBus;
-import org.n52.client.sos.ctrl.SosDataManager;
 import org.n52.client.sos.event.data.NewTimeSeriesEvent;
 import org.n52.client.sos.event.data.StoreFeatureEvent;
 import org.n52.client.sos.event.data.StoreOfferingEvent;
@@ -37,8 +36,8 @@ import org.n52.client.sos.event.data.handler.StoreOfferingEventHandler;
 import org.n52.client.sos.event.data.handler.StoreProcedureEventHandler;
 import org.n52.client.sos.event.data.handler.StoreStationEventHandler;
 import org.n52.client.ui.Toaster;
-import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 
 public class PermaLinkController {

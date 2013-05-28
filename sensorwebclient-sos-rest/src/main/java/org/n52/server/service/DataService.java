@@ -25,7 +25,7 @@
 package org.n52.server.service;
 
 import static org.n52.server.oxf.util.ConfigurationContext.getSOSMetadataForItemName;
-import static org.n52.server.oxf.util.ConfigurationContext.getServiceMetadata;
+import static org.n52.server.oxf.util.ConfigurationContext.getSOSMetadatas;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +40,8 @@ import org.n52.server.service.rest.control.ResourceNotFoundException;
 import org.n52.server.service.rest.model.TimeseriesData;
 import org.n52.server.service.rest.model.TimeseriesDataCollection;
 import org.n52.shared.serializable.pojos.DesignOptions;
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.shared.serializable.pojos.TimeseriesRenderingOptions;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
@@ -58,6 +59,28 @@ public abstract class DataService {
 
     private SensorMetadataService sensorMetadataService;
 
+    /**
+     * @param timeseriesId
+     *        the timeseries id to find the SOS metadata for.
+     * @return the SOS metadata associated to the given timeseries or <code>null</code> if timeseries id is
+     *         unknown.
+     */
+    protected SOSMetadata getMetadataForTimeseriesId(String timeseriesId) {
+        for (SOSMetadata metadata : getSOSMetadatas()) {
+            if (metadata.containsStationWithTimeseriesId(timeseriesId)) {
+                return metadata;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param instance
+     *        the SOS instance to find metadata for.
+     * @return the SOS metadata.
+     * @throws ResourceNotFoundException
+     *         if SOS instance could not be found.
+     */
     protected SOSMetadata getMetadataForInstanceName(String instance) {
         SOSMetadata metadata = getSOSMetadataForItemName(instance);
         if (metadata == null) {
@@ -67,20 +90,20 @@ public abstract class DataService {
         return metadata;
     }
 
-    protected TimeseriesDataCollection prepareTimeseriesResults(ParameterSet parameterSet, SOSMetadata metadata, ArrayList<TimeSeriesProperties> props) {
+    protected TimeseriesDataCollection prepareTimeseriesResults(ParameterSet parameterSet,
+                                                                ArrayList<TimeseriesProperties> props) {
         TimeseriesDataCollection timeseriesCollection = new TimeseriesDataCollection();
-        for (String reference : parameterSet.getTimeseriesReferences()) {
+        for (String timeseriesId : parameterSet.getTimeseries()) {
             try {
-                SosTimeseries timeseries = parameterSet.getTimeseriesByReference(reference);
-                Station station = metadata.getStationByTimeSeries(timeseries);
-            	TimeSeriesProperties propertiesInstance = createTimeSeriesProperties(station, timeseries);
+                TimeseriesRenderingOptions properties = parameterSet.getTimeseriesRenderingOptions(timeseriesId);
+                TimeseriesProperties propertiesInstance = createTimeseriesProperties(timeseriesId, properties);
                 props.add(decorateProperties(propertiesInstance, parameterSet));
                 TimeseriesData timeseriesData = createTimeseriesData(propertiesInstance);
-                timeseriesCollection.addNewTimeseries(reference, timeseriesData);
+                timeseriesCollection.addNewTimeseries(timeseriesId, timeseriesData);
             }
             catch (InvalidSosTimeseriesException e) {
                 LOGGER.warn("Unable to process request: {}", e.getMessage());
-//                timeSeriesResults.put(constellation.getClientId(), null);
+                // timeSeriesResults.put(constellation.getClientId(), null);
             }
             catch (Exception e) {
                 LOGGER.error("Could not process time series request.", e);
@@ -90,16 +113,31 @@ public abstract class DataService {
         return timeseriesCollection;
     }
 
-    private TimeSeriesProperties createTimeSeriesProperties(Station station, SosTimeseries timeseries) throws Exception {
+    private TimeseriesProperties createTimeseriesProperties(String timeseriesId,
+                                                            TimeseriesRenderingOptions renderingOptions) throws Exception {
+        SOSMetadata metadata = getMetadataForTimeseriesId(timeseriesId);
+        Station station = metadata.getStationByTimeSeriesId(timeseriesId);
+        SosTimeseries timeseries = station.getTimeseriesById(timeseriesId);
         String sosUrl = timeseries.getServiceUrl();
-        SOSMetadata metadata = getServiceMetadata(sosUrl);
         TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
         Feature foi = lookup.getFeature(timeseries.getFeature());
         Phenomenon phenomenon = lookup.getPhenomenon(timeseries.getPhenomenon());
         Procedure procedure = lookup.getProcedure(timeseries.getProcedure());
         Offering offering = lookup.getOffering(timeseries.getOffering());
-        TimeSeriesProperties properties = new TimeSeriesProperties(sosUrl, station, offering, foi, procedure, phenomenon, 0, 0, "???", true);
-        properties.setTsID(timeseries.getTimeseriesId());
+        TimeseriesProperties properties = new TimeseriesProperties(sosUrl,
+                                                                   station,
+                                                                   offering,
+                                                                   foi,
+                                                                   procedure,
+                                                                   phenomenon,
+                                                                   0,
+                                                                   0,
+                                                                   "???",
+                                                                   true);
+        if (renderingOptions != null) {
+            properties.setHexColor(renderingOptions.getHexColor());
+        }
+        properties.setTsID(timeseriesId);
         return properties;
     }
 
@@ -109,13 +147,14 @@ public abstract class DataService {
      * 
      * @param timeSeriesProperties
      *        the properties to decorate.
-     * @param parameterSet 
+     * @param parameterSet
      *        the request parameters.
      * @return the decorated properties
      * @throws Exception
      *         if decoration fails.
      */
-    protected TimeSeriesProperties decorateProperties(final TimeSeriesProperties timeSeriesProperties, ParameterSet parameterSet) throws Exception {
+    protected TimeseriesProperties decorateProperties(final TimeseriesProperties timeSeriesProperties,
+                                                      ParameterSet parameterSet) throws Exception {
         // default is to decorate nothing
         return timeSeriesProperties;
     }
@@ -124,21 +163,23 @@ public abstract class DataService {
      * Decorades passed properties with further properties from sensor's metadata (e.g. UOM). These are
      * requested from the {@link SensorMetadataService}.
      */
-    protected TimeSeriesProperties decoradeWithSensorMetadataProperties(TimeSeriesProperties timeSeriesProperties) throws Exception {
+    protected TimeseriesProperties decoradeWithSensorMetadataProperties(TimeseriesProperties timeSeriesProperties) throws Exception {
         return sensorMetadataService.getSensorMetadata(timeSeriesProperties).getProps();
     }
 
-    private TimeseriesData createTimeseriesData(TimeSeriesProperties timeseriesProperties) {
+    private TimeseriesData createTimeseriesData(TimeseriesProperties timeseriesProperties) {
         String uom = timeseriesProperties.getUnitOfMeasure();
         Map<Long, String> dummyMap = Collections.emptyMap();
         return TimeseriesData.newTimeseriesData(dummyMap, uom);
     }
 
-    protected DesignOptions createDesignOptions(ParameterSet parameterSet, ArrayList<TimeSeriesProperties> props) {
+    protected DesignOptions createDesignOptions(ParameterSet parameterSet, ArrayList<TimeseriesProperties> props) {
         return createDesignOptions(parameterSet, props, true);
     }
-    
-    protected DesignOptions createDesignOptions(ParameterSet parameterSet, ArrayList<TimeSeriesProperties> props, boolean renderGrid) {
+
+    protected DesignOptions createDesignOptions(ParameterSet parameterSet,
+                                                ArrayList<TimeseriesProperties> props,
+                                                boolean renderGrid) {
         Interval timespan = Interval.parse(parameterSet.getTimespan());
         long begin = timespan.getStartMillis();
         long end = timespan.getEndMillis();

@@ -25,8 +25,8 @@ public class RestfulFeaturesController extends QueryController implements Restfu
     @RequestMapping(value = "/{instance}/" + COLLECTION_FEATURES, method = RequestMethod.GET)
     public ModelAndView getFeaturesByGET(@PathVariable("instance") String instance,
                                          @RequestParam(value = KVP_SHOW, required = false) String details,
-                                         @RequestParam(value = KVP_OFFSET, required = false) Integer offset,
-                                         @RequestParam(value = KVP_SIZE, required = false, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
+                                         @RequestParam(value = KVP_OFFSET, defaultValue = KVP_DEFAULT_OFFSET) int offset,
+                                         @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
 
         // TODO condense output depending on 'show' parameter
 
@@ -34,12 +34,11 @@ public class RestfulFeaturesController extends QueryController implements Restfu
         QueryResponse< ? > result = performQuery(instance, parameters);
         Feature[] features = (Feature[]) result.getResults();
 
-        if (offset != null) {
-            return pageResults(features, offset.intValue(), size.intValue());
+        if (offset < 0) {
+            return new ModelAndView("features").addObject("features", features);
+        } else {
+            return pageResults(features, offset, size);
         }
-
-        ModelAndView mav = new ModelAndView("features");
-        return mav.addObject("features", features);
     }
 
     private ModelAndView pageResults(Feature[] features, int offset, int size) {

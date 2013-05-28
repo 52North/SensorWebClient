@@ -30,7 +30,7 @@ import org.eesgmbh.gimv.shared.util.Bounds;
 import org.eesgmbh.gimv.shared.util.ImageEntity;
 import org.n52.shared.serializable.pojos.Axis;
 import org.n52.shared.serializable.pojos.DesignOptions;
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 
 public class EESDataResponse extends RepresentationResponse {
 
@@ -54,7 +54,7 @@ public class EESDataResponse extends RepresentationResponse {
 
     private long end;
 
-    private ArrayList<TimeSeriesProperties> propertiesList;
+    private ArrayList<TimeseriesProperties> propertiesList;
 
     private EESDataResponse() {
         // for serialization
@@ -80,7 +80,7 @@ public class EESDataResponse extends RepresentationResponse {
         this.tsAxis = null;
     }
 
-    public ArrayList<TimeSeriesProperties> getPropertiesList() {
+    public ArrayList<TimeseriesProperties> getPropertiesList() {
         return this.propertiesList;
     }
     

@@ -38,15 +38,14 @@ import org.n52.server.service.rest.model.TimeseriesDataCollection;
 import org.n52.shared.requests.TimeSeriesDataRequest;
 import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
-import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Gets data values from an SOS instance. Requested time series are aggregated to a list of
- * {@link TimeSeriesProperties} and passed to a configured {@link TimeSeriesDataService}. Data response will
+ * {@link TimeseriesProperties} and passed to a configured {@link TimeSeriesDataService}. Data response will
  * be enriched by further metadata from each procedure measuring the requested time series.
  */
 public class GetDataService extends DataService {
@@ -57,17 +56,16 @@ public class GetDataService extends DataService {
 
     /**
      * @param parameterSet containing request parameters.
-     * @param metadata the service's metadata
      * @return a time series result instance, identified by {@link SosTimeseries#getTimeseriesId()}
      */
-    public TimeseriesDataCollection getTimeSeriesFromParameterSet(ParameterSet parameterSet, SOSMetadata metadata) {
-        ArrayList<TimeSeriesProperties> tsProperties = new ArrayList<TimeSeriesProperties>();
-        TimeseriesDataCollection timeseriesCollection = prepareTimeseriesResults(parameterSet, metadata, tsProperties);
+    public TimeseriesDataCollection getTimeSeriesFromParameterSet(ParameterSet parameterSet) {
+        ArrayList<TimeseriesProperties> tsProperties = new ArrayList<TimeseriesProperties>();
+        TimeseriesDataCollection timeseriesCollection = prepareTimeseriesResults(parameterSet, tsProperties);
         return performTimeseriesDataRequest(timeseriesCollection, createDesignOptions(parameterSet, tsProperties));
     }
 
     @Override
-    protected TimeSeriesProperties decorateProperties(TimeSeriesProperties timeSeriesProperties, ParameterSet parameterSet) throws Exception {
+    protected TimeseriesProperties decorateProperties(TimeseriesProperties timeSeriesProperties, ParameterSet parameterSet) throws Exception {
         return decoradeWithSensorMetadataProperties(timeSeriesProperties);
     }
     
@@ -89,15 +87,6 @@ public class GetDataService extends DataService {
             throw new InternalServiceException();
         }
         return timeSeriesResults;
-    }
-
-    private String createCsvValues(HashMap<Long, String> timeSeries) {
-        StringBuilder sb = new StringBuilder();
-        for (Long timestamp : timeSeries.keySet()) {
-            sb.append(timestamp.toString()).append(",");
-            sb.append(timeSeries.get(timestamp)).append(";");
-        }
-        return sb.toString();
     }
 
     public TimeSeriesDataService getTimeSeriesDataService() {

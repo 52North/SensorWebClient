@@ -53,10 +53,6 @@ public class TimeseriesDataCollection {
         return allTimeseries;
     }
     
-//    public Set<String> getTimeseriesIds() {
-//        return allTimeseries.keySet();
-//    }
-
     public void setAllTimeseries(HashMap<String, TimeseriesData> timeseries) {
         this.allTimeseries = timeseries;
     }

@@ -267,6 +267,10 @@ public class ConfigurationContext extends HttpServlet {
         return serviceMetadatas.containsKey(sosURL) && serviceMetadatas.get(sosURL) != null;
     }
     
+    public static boolean containsServiceInstance(String instance) {
+        return getSOSMetadataForItemName(instance) != null;
+    }
+    
     /**
      * @param itemName the configured item name of the SOS.
      * @return the associated {@link SOSMetadata} or <code>null</code> if not found.
