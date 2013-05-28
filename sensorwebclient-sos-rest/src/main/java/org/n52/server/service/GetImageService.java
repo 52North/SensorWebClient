@@ -39,7 +39,6 @@ import org.n52.server.service.rest.ParameterSet;
 import org.n52.server.service.rest.model.ImageDataResult;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeSeriesProperties;
-import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,8 +54,8 @@ public class GetImageService extends DataService {
 
     private boolean renderGrid;
 
-    public ImageDataResult createTimeSeriesChart(ParameterSet parameterSet, String instance) {
-        DesignOptions options = createDesignOptions(parameterSet, instance);
+    public ImageDataResult createTimeSeriesChart(ParameterSet parameterSet) {
+        DesignOptions options = createDesignOptions(parameterSet);
         return performChartRendering(options);
     }
 
@@ -73,15 +72,14 @@ public class GetImageService extends DataService {
         }
     }
 
-    public void writeTimeSeriesChart(ParameterSet parameterSet, String instance, ServletOutputStream outputStream) {
-        DesignOptions options = createDesignOptions(parameterSet, instance);
+    public void writeTimeSeriesChart(ParameterSet parameterSet, ServletOutputStream outputStream) {
+        DesignOptions options = createDesignOptions(parameterSet);
         performChartRendering(options, outputStream);
     }
 
-    private DesignOptions createDesignOptions(ParameterSet parameterSet, String instance) {
-        SOSMetadata metadata = getMetadataForInstanceName(instance);
+    private DesignOptions createDesignOptions(ParameterSet parameterSet) {
         ArrayList<TimeSeriesProperties> tsProperties = new ArrayList<TimeSeriesProperties>();
-        prepareTimeseriesResults(parameterSet, metadata, tsProperties);
+        prepareTimeseriesResults(parameterSet, tsProperties);
         return createDesignOptions(parameterSet, tsProperties, isRenderGrid());
     }
 
@@ -98,14 +96,16 @@ public class GetImageService extends DataService {
     }
 
     @Override
-    protected TimeSeriesProperties decorateProperties(TimeSeriesProperties timeSeriesProperties, ParameterSet parameterSet) throws Exception {
+    protected TimeSeriesProperties decorateProperties(TimeSeriesProperties timeSeriesProperties,
+                                                      ParameterSet parameterSet) throws Exception {
         timeSeriesProperties = decoratePropertiesWithImageSize(timeSeriesProperties, parameterSet);
         timeSeriesProperties = decoradeWithSensorMetadataProperties(timeSeriesProperties);
         timeSeriesProperties = decoratePropertiesWithRandomColor(timeSeriesProperties);
         return timeSeriesProperties;
     }
 
-    private TimeSeriesProperties decoratePropertiesWithImageSize(TimeSeriesProperties timeSeriesProperties, ParameterSet parameterSet) {
+    private TimeSeriesProperties decoratePropertiesWithImageSize(TimeSeriesProperties timeSeriesProperties,
+                                                                 ParameterSet parameterSet) {
         int width = parameterSet.getWidth() > 0 ? parameterSet.getWidth() : defaultWidth;
         int height = parameterSet.getHeight() > 0 ? parameterSet.getHeight() : defaultHeight;
         timeSeriesProperties.setWidth(width);

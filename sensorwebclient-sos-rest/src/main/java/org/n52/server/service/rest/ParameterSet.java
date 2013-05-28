@@ -26,16 +26,11 @@ package org.n52.server.service.rest;
 
 import static java.lang.Integer.parseInt;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
-import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 
 /**
- * Represents a parameter object to request data from one or multiple timeseries.
+ * Represents a parameter object to request data from multiple timeseries.
  */
 public class ParameterSet {
 
@@ -51,12 +46,9 @@ public class ParameterSet {
     private String size;
 
     /**
-     * A collection of explicit timeseries associated to their (custom client) ids.
-     * 
-     * @see {@link #addTimeseries(SosTimeseries)}
-     * @see {@link #addTimeseries(String, SosTimeseries)}
+     * The timeseriesIds of interest.
      */
-    private HashMap<String, SosTimeseries> referencedTimeseries;
+    private String[] timeseriesIds;
 
     /**
      * Creates an instance with non-null default values.
@@ -64,7 +56,7 @@ public class ParameterSet {
     public ParameterSet() {
         size = createDefaultSize();
         timespan = createDefaultTimespan();
-        referencedTimeseries = new HashMap<String, SosTimeseries>();
+        timeseriesIds = new String[0];
     }
 
     private String createDefaultTimespan() {
@@ -130,47 +122,12 @@ public class ParameterSet {
         return values;
     }
 
-    public Set<String> getTimeseriesReferences() {
-        return referencedTimeseries.keySet();
+    public String[] getTimeseriesIds() {
+        return timeseriesIds;
     }
 
-    public Map<String, SosTimeseries> getReferencedTimeseries() {
-        return referencedTimeseries;
-    }
-
-    public void setReferencedTimseries(HashMap<String, SosTimeseries> timeseries) {
-        this.referencedTimeseries = timeseries;
-    }
-
-    /**
-     * @param reference
-     *        the (custom client) reference which references a timeseries.
-     * @return the referenced timeseries
-     */
-    public SosTimeseries getTimeseriesByReference(String reference) {
-        return referencedTimeseries.get(reference);
-    }
-
-    /**
-     * Adds a timeseries to the parameter set.
-     * 
-     * @param timeseries
-     *        the timeseries to add.
-     */
-    public void addTimeseries(SosTimeseries timeseries) {
-        this.referencedTimeseries.put(timeseries.getTimeseriesId(), timeseries);
-    }
-
-    /**
-     * Adds a timeseries with custom (client) association id to the parameters set.
-     * 
-     * @param clientReference
-     *        the client's reference to the timeseries.
-     * @param timeseries
-     *        the timeseries to add.
-     */
-    public void addTimeseries(String clientReference, SosTimeseries timeseries) {
-        this.referencedTimeseries.put(clientReference, timeseries);
+    public void setTimeseries(String[] timeseriesIds) {
+        this.timeseriesIds = timeseriesIds;
     }
 
 }

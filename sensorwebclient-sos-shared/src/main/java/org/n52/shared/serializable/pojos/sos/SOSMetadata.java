@@ -283,6 +283,24 @@ public class SOSMetadata implements Serializable {
         return new ArrayList<Station>(this.stations.values());
     }
     
+    public Station getStationByTimeSeriesId(String timeseriesId) {
+        for (Station station : stations.values()) {
+            if (station.contains(timeseriesId)) {
+                return station;
+            }
+        }
+        return null;
+    }
+    
+    public boolean containsStationWithTimeseriesId(String timeseriesId) {
+        for (Station station : stations.values()) {
+            if (station.contains(timeseriesId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public Station getStationByTimeSeries(SosTimeseries timeseries) {
         for (Station station : stations.values()) {
             if (station.contains(timeseries)) {
@@ -301,8 +319,8 @@ public class SOSMetadata implements Serializable {
         return false;
     }
 
-    public Station getStation(String id) {
-        return stations.get(id);
+    public Station getStation(String stationId) {
+        return stations.get(stationId);
     }
 
     /**

@@ -23,7 +23,7 @@ public class ParameterSetTest {
             shouldCreateNonNullTimeseries()
     {
         ParameterSet parameterSet = new ParameterSet();
-        assertNotNull(parameterSet.getReferencedTimeseries());
+        assertNotNull(parameterSet.getTimeseriesIds());
     }
 
     @Test
@@ -31,7 +31,7 @@ public class ParameterSetTest {
             shouldCreateEmptyTimeseries()
     {
         ParameterSet parameterSet = new ParameterSet();
-        assertTrue(parameterSet.getReferencedTimeseries().isEmpty());
+        assertThat(parameterSet.getTimeseriesIds().length, is(0));
     }
 
     @Test

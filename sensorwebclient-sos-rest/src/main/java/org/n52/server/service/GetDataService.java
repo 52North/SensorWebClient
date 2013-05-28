@@ -39,7 +39,6 @@ import org.n52.shared.requests.TimeSeriesDataRequest;
 import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeSeriesProperties;
-import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,12 +56,11 @@ public class GetDataService extends DataService {
 
     /**
      * @param parameterSet containing request parameters.
-     * @param metadata the service's metadata
      * @return a time series result instance, identified by {@link SosTimeseries#getTimeseriesId()}
      */
-    public TimeseriesDataCollection getTimeSeriesFromParameterSet(ParameterSet parameterSet, SOSMetadata metadata) {
+    public TimeseriesDataCollection getTimeSeriesFromParameterSet(ParameterSet parameterSet) {
         ArrayList<TimeSeriesProperties> tsProperties = new ArrayList<TimeSeriesProperties>();
-        TimeseriesDataCollection timeseriesCollection = prepareTimeseriesResults(parameterSet, metadata, tsProperties);
+        TimeseriesDataCollection timeseriesCollection = prepareTimeseriesResults(parameterSet, tsProperties);
         return performTimeseriesDataRequest(timeseriesCollection, createDesignOptions(parameterSet, tsProperties));
     }
 
@@ -89,15 +87,6 @@ public class GetDataService extends DataService {
             throw new InternalServiceException();
         }
         return timeSeriesResults;
-    }
-
-    private String createCsvValues(HashMap<Long, String> timeSeries) {
-        StringBuilder sb = new StringBuilder();
-        for (Long timestamp : timeSeries.keySet()) {
-            sb.append(timestamp.toString()).append(",");
-            sb.append(timeSeries.get(timestamp)).append(";");
-        }
-        return sb.toString();
     }
 
     public TimeSeriesDataService getTimeSeriesDataService() {
