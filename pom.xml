@@ -455,7 +455,7 @@
 						<draftCompile>${gwt.compile.draft}</draftCompile>
 						<compileReport>${gwt.compile.report}</compileReport>
 						<optimizationLevel>${gwt.compile.optimization.level}</optimizationLevel>
-						<extraJvmArgs>-XX:MaxPermSize=512m -Xmx1024m</extraJvmArgs>
+						<extraJvmArgs>-XX:MaxPermSize=512m -Xmx512m</extraJvmArgs>
 					</configuration>
 					<executions>
 						<execution>
