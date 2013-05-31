@@ -1,4 +1,4 @@
-<html>
+<!DOCTYPE html>
 <head>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
@@ -65,7 +65,7 @@
 			<div class="span5 pull-left parameterList">
 				<ul>
 					<c:forEach var="phenomenon" items="${phenomenons}">
-						<li><a href="${url}phenomenons/${phenomenon.id}">${phenomenon.id}</a></li>
+						<li><a href="${url}/phenomenons/${phenomenon.id}">${phenomenon.id}</a></li>
 					</c:forEach>
 				</ul>
 			</div>
