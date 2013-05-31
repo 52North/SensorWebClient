@@ -30,7 +30,7 @@
             
             <div class="masthead">
                 <ul class="nav nav-pills pull-right">
-                    <li><a href="${url}/services/${service}.json">As Json</a></li>
+                    <li><a href="${url}/services/${service.itemName}.json">As Json</a></li>
                     <li><a href="${url}/services">back</a></li>
                 </ul>
                 <h3 class="muted">Service</h3>
