@@ -170,13 +170,17 @@
         <c:if test="${not empty resultPage}">
 
             <!-- A PAGED STATION LIST -->
+            
+            <div class="masthead">
+                <ul class="nav nav-pills pull-right">
+                    <li><a href="${url}/stations.json">As Json</a></li>
+                    <li><a href="${url}/stations">All</a></li>
+                    <li><a href="${url}">back</a></li>
+                </ul>
+                <h3 class="muted">Stations ${resultPage.offset + 1} - ${resultPage.offset + fn:length(resultPage.results)}
+                    of ${resultPage.total}</h3>
+            </div>
 
-            <a href="${url}/stations.json">as Json</a>
-            <a href="${url}/stations">All</a>
-            <a href="${url}">back</a>
-
-            <h3>Stations ${resultPage.offset + 1} - ${resultPage.offset + fn:length(resultPage.results)} of
-                ${resultPage.total}</h3>
             <ul>
                 <c:forEach var="station" items="${resultPage.results}">
                     <li><a href="${url}/stations/${station.properties.station}">${station.properties.station}</a></li>
