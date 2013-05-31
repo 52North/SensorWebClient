@@ -1,6 +1,7 @@
 
 package org.n52.server.service.rest.control;
 
+import java.io.IOException;
 import java.util.Collection;
 
 import org.n52.server.service.ServiceInstancesService;
@@ -16,7 +17,12 @@ import org.springframework.web.servlet.ModelAndView;
 public class RestfulServiceInstancesController implements RestfulKvp {
 
     private ServiceInstancesService serviceInstancesService;
-
+    
+    @RequestMapping(value = "/")
+    public String forwardToServicesSite() throws IOException {
+        return "redirect:/rest/services";
+    }
+    
     @RequestMapping(value = "/services", method = RequestMethod.GET)
     public ModelAndView getInstancesByGET(@RequestParam(value = KVP_SHOW, required = false) String details,
                                           @RequestParam(value = KVP_OFFSET, defaultValue = KVP_DEFAULT_OFFSET) int offset,
