@@ -23,12 +23,12 @@
  */
 package org.n52.client.sos.event.data.handler;
 
-import org.n52.client.sos.event.data.GetStationEvent;
+import org.n52.client.sos.event.data.GetStationsWithinBBoxEvent;
 
 import com.google.gwt.event.shared.EventHandler;
 
-public interface GetStationEventHandler extends EventHandler {
-	
-	void onGetStation(GetStationEvent evt);
+public interface GetStationsWithinBBoxEventHandler extends EventHandler {
+
+    void onGetStations(GetStationsWithinBBoxEvent evt);
 
 }

@@ -33,7 +33,7 @@ public class SensorMetadataResponse implements Serializable {
     
     private TimeseriesProperties props;
 
-    private SensorMetadataResponse() {
+    SensorMetadataResponse() {
         // serializable for GWT needs empty default constructor
     }
 
@@ -46,12 +46,12 @@ public class SensorMetadataResponse implements Serializable {
     }
 
     public String toDebugString() {
-        StringBuilder sb = new StringBuilder("Sensormetadata: \n");
-        sb.append("\tOffering: ").append(props.getOffering().getId()).append("\n");
-        sb.append("\tProcedure: ").append(props.getProcedure().getId()).append("\n");
-        sb.append("\tFeatureOfInterest: ").append(props.getFoi().getId()).append("\n");
-        sb.append("\tPhenomenon: ").append(props.getPhenomenon().getId()).append("\n");
-        return sb.toString();
+        StringBuilder sb = new StringBuilder("SensorMetadataResponse: [ \n");
+        sb.append("\tOffering: ").append(props.getOffering()).append("\n");
+        sb.append("\tProcedure: ").append(props.getProcedure()).append("\n");
+        sb.append("\tFeature: ").append(props.getFoi()).append("\n");
+        sb.append("\tPhenomenon: ").append(props.getPhenomenon());
+        return sb.append(" ]").toString();
     }
 
 }

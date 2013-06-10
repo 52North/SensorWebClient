@@ -35,8 +35,7 @@ public class Procedure extends ObservationParameter implements Serializable {
 
     private HashMap<String, ReferenceValue> refvalues = new HashMap<String, ReferenceValue>();
     
-    @SuppressWarnings("unused")
-    private Procedure() {
+    Procedure() {
         // for serialization
     }
     

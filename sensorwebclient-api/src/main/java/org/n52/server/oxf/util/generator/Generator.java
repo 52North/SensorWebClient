@@ -155,7 +155,7 @@ public abstract class Generator {
         return this.folderPostfix;
     }
     
-    protected String createAndSaveImage(DesignOptions options, JFreeChart chart, ChartRenderingInfo renderingInfo) throws GeneratorException {
+    protected String createAndSaveImage(DesignOptions options, JFreeChart chart, ChartRenderingInfo renderingInfo) throws Exception {
         int width = options.getWidth();
         int height = options.getHeight();
         BufferedImage image = chart.createBufferedImage(width, height, renderingInfo);
@@ -167,7 +167,7 @@ public abstract class Generator {
         try {
             return ServletUtilities.saveChartAsPNG(chart, width, height, renderingInfo, null);
         } catch (IOException e) {
-            throw new GeneratorException("Could not save PNG", e);
+            throw new Exception("Could not save PNG!", e);
         }
     }
 

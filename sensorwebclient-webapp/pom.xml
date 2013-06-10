@@ -72,6 +72,13 @@
 					<exclude>logback-test.xml</exclude>
 				</excludes>
 			</resource>
+			<resource>
+                <!-- exclude cache data -->
+                <directory>src/main/webapp/cache</directory>
+                <excludes>
+                    <exclude>*</exclude>
+                </excludes>
+            </resource>
 		</resources>
 		<plugins>
 			<plugin>

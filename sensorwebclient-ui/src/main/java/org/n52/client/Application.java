@@ -45,9 +45,8 @@ import java.util.Map;
 import org.eesgmbh.gimv.client.event.StateChangeEvent;
 import org.n52.client.bus.EventBus;
 import org.n52.client.bus.EventCallback;
-import org.n52.client.ctrl.PermaLinkController;
+import org.n52.client.ctrl.PermalinkController;
 import org.n52.client.ctrl.PropertiesManager;
-import org.n52.client.ctrl.RequestManager;
 import org.n52.client.ctrl.TimeManager;
 import org.n52.client.ses.ctrl.SesController;
 import org.n52.client.sos.ctrl.SOSController;
@@ -58,8 +57,8 @@ import org.n52.client.sos.event.data.GetFeatureEvent;
 import org.n52.client.sos.event.data.GetOfferingEvent;
 import org.n52.client.sos.event.data.GetPhenomenonsEvent;
 import org.n52.client.sos.event.data.GetProcedureEvent;
-import org.n52.client.sos.event.data.GetStationEvent;
-import org.n52.client.sos.event.data.GetStationsEvent;
+import org.n52.client.sos.event.data.GetStationForTimeseriesEvent;
+import org.n52.client.sos.event.data.GetStationsWithinBBoxEvent;
 import org.n52.client.sos.event.data.NewSOSMetadataEvent;
 import org.n52.client.sos.event.data.OverviewIntervalChangedEvent;
 import org.n52.client.sos.event.data.OverviewIntervalChangedEvent.IntervalType;
@@ -73,6 +72,7 @@ import org.n52.ext.link.sos.PermalinkParameter;
 import org.n52.ext.link.sos.TimeRange;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SOSMetadataBuilder;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
@@ -85,7 +85,7 @@ import com.google.gwt.user.client.Window;
 public final class Application {
 
     private static boolean HAS_STARTED = false;
-    
+
     public static boolean isHasStarted() {
         return HAS_STARTED;
     }
@@ -137,6 +137,8 @@ public final class Application {
                     fireNewTimeRangeEvent(timeRange);
                 }
 
+                
+                PermalinkController permalinkController = new PermalinkController();
                 for (int i = 0; i < services.length; i++) {
                     final String service = services[i];
                     final String version = versions[i];
@@ -144,23 +146,32 @@ public final class Application {
                     final String procedure = procedures[i];
                     final String phenomenon = phenomenons[i];
                     final String feature = features[i];
-                    
-                    // register handler to request timeseries 
-                    new PermaLinkController(service, offering, procedure, phenomenon, feature);
+
+                    SosTimeseries sosTimeseries = new SosTimeseries();
+                    sosTimeseries.setFeature(feature);
+                    sosTimeseries.setOffering(offering);
+                    sosTimeseries.setPhenomenon(phenomenon);
+                    sosTimeseries.setServiceUrl(service);
+                    sosTimeseries.setProcedure(procedure);
+                    GWT.log("Timeseries to load: " + sosTimeseries);
+                    permalinkController.addTimeseries(sosTimeseries);
                     
                     SOSMetadataBuilder builder = new SOSMetadataBuilder()
-                                                        .addServiceURL(service)
-                                                        .addServiceVersion(version);
+                            .addServiceURL(service)
+                            .addServiceVersion(version);
                     SOSMetadata sosMetadata = new SOSMetadata(builder);
                     getMainEventBus().fireEvent(new StoreSOSMetadataEvent(sosMetadata));
                     getMainEventBus().fireEvent(new GetPhenomenonsEvent.Builder(service).build());
                     getMainEventBus().fireEvent(new GetFeatureEvent(service, feature));
                     getMainEventBus().fireEvent(new GetOfferingEvent(service, offering));
                     getMainEventBus().fireEvent(new GetProcedureEvent(service, procedure));
-                    getMainEventBus().fireEvent(new GetStationsEvent(service, null));
-                    getMainEventBus().fireEvent(new GetStationEvent(service, offering, procedure, phenomenon, feature));
+                    getMainEventBus().fireEvent(new GetStationForTimeseriesEvent(sosTimeseries));
+                    getMainEventBus().fireEvent(new GetStationsWithinBBoxEvent(service, null));
                     getMainEventBus().fireEvent(new NewSOSMetadataEvent());
                 }
+                
+                
+                
             }
             else {
                 showStationSelectorWhenConfigured();

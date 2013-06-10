@@ -40,8 +40,8 @@ import org.n52.client.sos.event.data.GetOfferingEvent;
 import org.n52.client.sos.event.data.GetPhenomenonsEvent;
 import org.n52.client.sos.event.data.GetProcedureDetailsUrlEvent;
 import org.n52.client.sos.event.data.GetProcedureEvent;
-import org.n52.client.sos.event.data.GetStationEvent;
-import org.n52.client.sos.event.data.GetStationsEvent;
+import org.n52.client.sos.event.data.GetStationForTimeseriesEvent;
+import org.n52.client.sos.event.data.GetStationsWithinBBoxEvent;
 import org.n52.client.sos.event.data.NewTimeSeriesEvent;
 import org.n52.client.sos.event.data.RequestSensorDataEvent;
 import org.n52.client.sos.event.data.StoreFeatureEvent;
@@ -55,8 +55,8 @@ import org.n52.client.sos.event.data.handler.GetOfferingEventHandler;
 import org.n52.client.sos.event.data.handler.GetPhenomenonsEventHandler;
 import org.n52.client.sos.event.data.handler.GetProcedureDetailsUrlEventHandler;
 import org.n52.client.sos.event.data.handler.GetProcedureEventHandler;
-import org.n52.client.sos.event.data.handler.GetStationEventHandler;
-import org.n52.client.sos.event.data.handler.GetStationsEventHandler;
+import org.n52.client.sos.event.data.handler.GetStationForTimeseriesEventHandler;
+import org.n52.client.sos.event.data.handler.GetStationsWithinBBoxEventHandler;
 import org.n52.client.sos.event.data.handler.NewTimeSeriesEventHandler;
 import org.n52.client.sos.event.data.handler.RequestSensorDataEventHandler;
 import org.n52.client.sos.event.data.handler.StoreFeatureEventHandler;
@@ -88,7 +88,8 @@ public class SOSController extends ServiceController {
             LoadImageDataEventHandler,
             RequestSensorDataEventHandler,
             GetPhenomenonsEventHandler,
-            GetStationsEventHandler,
+            GetStationsWithinBBoxEventHandler,
+            GetStationForTimeseriesEventHandler,
             GetProcedureDetailsUrlEventHandler,
             GetProcedureEventHandler,
             StoreProcedureEventHandler,
@@ -96,7 +97,6 @@ public class SOSController extends ServiceController {
             StoreOfferingEventHandler,
             GetFeatureEventHandler,
             StoreFeatureEventHandler,
-            GetStationEventHandler,
             StoreStationEventHandler,
             ExportEventHandler,
             FinishedLoadingTimeSeriesEventHandler,
@@ -115,8 +115,8 @@ public class SOSController extends ServiceController {
             EventBus.getMainEventBus().addHandler(StoreOfferingEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(GetFeatureEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(StoreFeatureEvent.TYPE, this);
-            EventBus.getMainEventBus().addHandler(GetStationsEvent.TYPE, this);
-            EventBus.getMainEventBus().addHandler(GetStationEvent.TYPE, this);
+            EventBus.getMainEventBus().addHandler(GetStationsWithinBBoxEvent.TYPE, this);
+            EventBus.getMainEventBus().addHandler(GetStationForTimeseriesEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(StoreStationEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(ExportEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(FinishedLoadingTimeSeriesEvent.TYPE, this);
@@ -156,8 +156,8 @@ public class SOSController extends ServiceController {
             }
         }
 
-        public void onGetProcedurePositions(GetStationsEvent evt) {
-        	getRequestManager().requestProcedurePositions(evt.getSOSURL(), evt.getBBox());
+        public void onGetStations(GetStationsWithinBBoxEvent evt) {
+        	getRequestManager().requestStations(evt.getSOSURL(), evt.getBBox());
         }
 
         public void onExport(ExportEvent evt) {
@@ -250,8 +250,8 @@ public class SOSController extends ServiceController {
 		}
 
 		@Override
-		public void onGetStation(GetStationEvent evt) {
-			getRequestManager().requestStation(evt.getServiceURL(), evt.getOfferingID(), evt.getProcedureID(), evt.getPhenomenonID(), evt.getFeatureID());
+		public void onGetStation(GetStationForTimeseriesEvent evt) {
+			getRequestManager().requestStationWith(evt.getTimseries());
 		}
 
 		@Override

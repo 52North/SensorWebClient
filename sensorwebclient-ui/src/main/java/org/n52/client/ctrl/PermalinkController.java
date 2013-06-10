@@ -23,9 +23,14 @@
  */
 package org.n52.client.ctrl;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.sos.ctrl.SosDataManager.getDataManager;
 
-import org.n52.client.bus.EventBus;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.n52.client.sos.event.data.NewTimeSeriesEvent;
 import org.n52.client.sos.event.data.StoreFeatureEvent;
 import org.n52.client.sos.event.data.StoreOfferingEvent;
@@ -35,40 +40,22 @@ import org.n52.client.sos.event.data.handler.StoreFeatureEventHandler;
 import org.n52.client.sos.event.data.handler.StoreOfferingEventHandler;
 import org.n52.client.sos.event.data.handler.StoreProcedureEventHandler;
 import org.n52.client.sos.event.data.handler.StoreStationEventHandler;
-import org.n52.client.ui.Toaster;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
-public class PermaLinkController {
+public class PermalinkController {
 	
-	private String url;
+	private Map<SosTimeseries, Boolean> timeseriesToLoad;
 	
-	private String offering;
-	
-	private String procedure;
-	
-	private String phenomenon;
-	
-	private String foi;
-	
-	private boolean offeringReady = false;
-	
-	private boolean procedureReady = false;
-	
-	private boolean featureReady = false;
-	
-	private boolean stationReady = false;
-	
-	private boolean permalinkLoaded = false;
-	
-	public PermaLinkController(String url, String offering, String procedure, String phenomenon, String foi) {
+	public PermalinkController() {
 		new PermalinkControllerEventBroker();
-		this.url = url;
-		this.offering = offering;
-		this.procedure = procedure;
-		this.phenomenon = phenomenon;
-		this.foi = foi;
+		this.timeseriesToLoad = new HashMap<SosTimeseries, Boolean>();
+	}
+	
+	public void addTimeseries(SosTimeseries timeseries) {
+	    this.timeseriesToLoad.put(timeseries, FALSE);
 	}
 	
 	private class PermalinkControllerEventBroker implements
@@ -78,56 +65,52 @@ public class PermaLinkController {
 			StoreStationEventHandler {
 		
 		public PermalinkControllerEventBroker() {
-			EventBus.getMainEventBus().addHandler(StoreOfferingEvent.TYPE, this);
-			EventBus.getMainEventBus().addHandler(StoreProcedureEvent.TYPE, this);
-			EventBus.getMainEventBus().addHandler(StoreFeatureEvent.TYPE, this);
-			EventBus.getMainEventBus().addHandler(StoreStationEvent.TYPE, this);
+			getMainEventBus().addHandler(StoreOfferingEvent.TYPE, this);
+			getMainEventBus().addHandler(StoreProcedureEvent.TYPE, this);
+			getMainEventBus().addHandler(StoreFeatureEvent.TYPE, this);
+			getMainEventBus().addHandler(StoreStationEvent.TYPE, this);
 		}
 
 		@Override
 		public void onStore(StoreFeatureEvent evt) {
-			featureReady = true;
 			check();
 		}
 
 		@Override
 		public void onStore(StoreProcedureEvent evt) {
-			procedureReady = true;
 			check();
 		}
 
 		@Override
 		public void onStore(StoreOfferingEvent evt) {
-			offeringReady = true;
 			check();
 		}
 
 		@Override
 		public void onStore(StoreStationEvent evt) {
-			stationReady = true;
 			check();
 		}
 	}
 
 	public void check() {
-		if (!permalinkLoaded && featureReady && procedureReady && offeringReady && stationReady) {
-            SOSMetadata metadata = getDataManager().getServiceMetadata(url);
-            SosTimeseries timeseries = new SosTimeseries();
-            timeseries.setPhenomenon(phenomenon);
-            timeseries.setFeature(foi);
-            timeseries.setOffering(offering);
-            timeseries.setProcedure(procedure);
-            timeseries.setServiceUrl(url);
-            Station station = metadata.getStationByTimeSeries(timeseries);
-            
-            Toaster.getToasterInstance().addMessage("load session from permalink");
-            permalinkLoaded = true;
-            
-            NewTimeSeriesEvent event = new NewTimeSeriesEvent.Builder(url)
-            		.addStation(station)
-            		.addTimeseries(timeseries)
-    				.build();
-            EventBus.getMainEventBus().fireEvent(event);
-		}
+	    for (SosTimeseries timeseries : PermalinkController.this.timeseriesToLoad.keySet()) {
+            String serviceUrl = timeseries.getServiceUrl();
+            SOSMetadata metadata = getDataManager().getServiceMetadata(serviceUrl);
+            TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
+            if (lookup.hasLoadedCompletely(timeseries) && !isNewTimeseriesEventAlreadyFired(timeseries)) {
+                Station station = metadata.getStationByTimeSeries(timeseries);
+                PermalinkController.this.timeseriesToLoad.put(timeseries, TRUE);
+                
+                NewTimeSeriesEvent event = new NewTimeSeriesEvent.Builder(serviceUrl)
+                        .addStation(station)
+                        .addTimeseries(timeseries)
+                        .build();
+                getMainEventBus().fireEvent(event);
+            }
+        }
 	}
+
+    private boolean isNewTimeseriesEventAlreadyFired(SosTimeseries timeseries) {
+        return PermalinkController.this.timeseriesToLoad.get(timeseries);
+    }
 }

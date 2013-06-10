@@ -26,7 +26,7 @@ package org.n52.client.sos.ui;
 import org.n52.client.bus.EventBus;
 import org.n52.client.sos.ctrl.SosDataManager;
 import org.n52.client.sos.event.data.GetPhenomenonsEvent;
-import org.n52.client.sos.event.data.GetStationsEvent;
+import org.n52.client.sos.event.data.GetStationsWithinBBoxEvent;
 import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SOSMetadataBuilder;
@@ -98,7 +98,7 @@ final class SOSSelectionChangedHandler implements SelectionChangedHandler {
 	    SosDataManager dataManager = SosDataManager.getDataManager();
 	    SOSMetadata metadata = dataManager.getServiceMetadata(serviceURL);
         BoundingBox bbox = metadata.getConfiguredExtent();
-		GetStationsEvent getStations = new GetStationsEvent(serviceURL, bbox);
+		GetStationsWithinBBoxEvent getStations = new GetStationsWithinBBoxEvent(serviceURL, bbox);
 		controller.loadingStations(true);
 		GetPhenomenonsEvent getPhenomenons = new GetPhenomenonsEvent.Builder(serviceURL).build();
 		EventBus.getMainEventBus().fireEvent(getStations);

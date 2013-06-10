@@ -53,7 +53,7 @@ public class TimeSeriesDataGenerator extends Generator {
     private static final Logger LOGGER = LoggerFactory.getLogger(TimeSeriesDataGenerator.class);
 
     @Override
-    public RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException {
+    public RepresentationResponse producePresentation(DesignOptions options) throws Exception {
         try {
             LOGGER.debug("Starting producing representation with " + options);
             Map<String, OXFFeatureCollection> entireCollMap = getFeatureCollectionFor(options, false);
@@ -150,7 +150,7 @@ public class TimeSeriesDataGenerator extends Generator {
 //            return new TimeSeriesDataResponse(new HashMap<String, HashMap<Long,Double>>());
 
         } catch (Exception e) {
-            throw new GeneratorException("Error creating TimeSeriesDataResponse", e);
+            throw new Exception("Error creating TimeSeriesDataResponse.", e);
         }
 
     }

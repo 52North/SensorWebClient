@@ -72,7 +72,7 @@ public class EESGenerator extends Generator {
     }
 
     @Override
-    public RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException {
+    public RepresentationResponse producePresentation(DesignOptions options) throws Exception {
         ChartRenderingInfo renderingInfo = new ChartRenderingInfo(new StandardEntityCollection());
         String chartUrl = createChart(options, renderingInfo);
         
@@ -94,17 +94,13 @@ public class EESGenerator extends Generator {
         return new EESDataResponse(chartUrl, options, chartArea, entities, renderer.getAxisMapping());
     }
 
-    public String createChart(DesignOptions options, ChartRenderingInfo renderingInfo) throws GeneratorException {
-        try {
-            Map<String, OXFFeatureCollection> entireCollMap = getFeatureCollectionFor(options, true);
-            JFreeChart chart = producePresentation(entireCollMap, options);
-            chart.removeLegend();
-            
-            String chartFileName = createAndSaveImage(options, chart, renderingInfo);
-            return ConfigurationContext.IMAGE_SERVICE + chartFileName; 
-        } catch (Exception e) {
-            throw new GeneratorException(e.getMessage(), e);
-        }
+    public String createChart(DesignOptions options, ChartRenderingInfo renderingInfo) throws Exception {
+        Map<String, OXFFeatureCollection> entireCollMap = getFeatureCollectionFor(options, true);
+        JFreeChart chart = producePresentation(entireCollMap, options);
+        chart.removeLegend();
+        
+        String chartFileName = createAndSaveImage(options, chart, renderingInfo);
+        return ConfigurationContext.IMAGE_SERVICE + chartFileName; 
     }
 
 	public void createChartToOutputStream(DesignOptions options,
