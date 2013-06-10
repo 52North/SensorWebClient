@@ -69,7 +69,7 @@
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 				<excludes>
-				    <exclude>logback-test.xml</exclude>
+					<exclude>logback-test.xml</exclude>
 				</excludes>
 			</resource>
 		</resources>
@@ -139,7 +139,7 @@
 							<directory>src/main/webapp</directory>
 							<filtering>true</filtering>
 							<excludes>
-                                <!-- exclude files from filtering -->
+								<!-- exclude files from filtering -->
 								<exclude>**/*.jsp</exclude>
 								<exclude>cache/*</exclude>
 								<exclude>img/*</exclude>
@@ -181,14 +181,14 @@
 				</dependency>
 			</dependencies>
 		</profile>
-		
+
 		<profile>
 			<id>with-rest-binding</id>
 			<activation>
-			     <property>
-			         <!-- To exclude REST binding use -Dno-rest-binding  -->
-			         <name>!no-rest-binding</name>
-			     </property>
+				<property>
+					<!-- To exclude REST binding use -Dno-rest-binding -->
+					<name>!no-rest-binding</name>
+				</property>
 			</activation>
 			<dependencies>
 				<dependency>
@@ -203,44 +203,55 @@
 						<artifactId>maven-dependency-plugin</artifactId>
 						<executions>
 							<execution>
-							     <id>copy-module-webapp-resources</id>
 								<phase>generate-sources</phase>
 								<goals>
 									<goal>unpack</goal>
 								</goals>
-								<configuration>
-									<artifactItems>
-										<artifactItem>
-											<groupId>${project.groupId}</groupId>
-											<artifactId>sensorwebclient-sos-rest</artifactId>
-											<overWrite>false</overWrite>
-										</artifactItem>
-									</artifactItems>
-									<includes>WEB-INF/**/*.jsp,css/**/*.css,js/**/*.js,img/**/*.png</includes>
-									<outputDirectory>${webappDirectory}</outputDirectory>
-									<overWriteReleases>false</overWriteReleases>
-								</configuration>
 							</execution>
-							<execution>
-							     <id>copy-spring-config</id>
-                                <phase>generate-sources</phase>
-                                <goals>
-                                    <goal>unpack</goal>
-                                </goals>
-                                <configuration>
-                                    <artifactItems>
-                                        <artifactItem>
-                                            <groupId>${project.groupId}</groupId>
-                                            <artifactId>sensorwebclient-sos-rest</artifactId>
-                                            <overWrite>false</overWrite>
-                                        </artifactItem>
-                                    </artifactItems>
-                                    <includes>*.xml</includes>
-                                    <outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory>
-                                    <overWriteReleases>false</overWriteReleases>
-                                </configuration>
-                            </execution>
 						</executions>
+
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>sensorwebclient-sos-rest</artifactId>
+									<includes>WEB-INF/**/*.*</includes>
+									<outputDirectory>${webappDirectory}</outputDirectory>
+									<overWrite>false</overWrite>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>sensorwebclient-sos-rest</artifactId>
+									<includes>*.xml</includes>
+									<outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory>
+									<overWrite>false</overWrite>
+								</artifactItem>
+
+							</artifactItems>
+						</configuration>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-war-plugin</artifactId>
+						<configuration>
+							<webappDirectory>${webappDirectory}</webappDirectory>
+							<webResources>
+								<resource>
+									<directory>src/main/webapp</directory>
+									<filtering>true</filtering>
+									<excludes>
+										<!-- exclude files from filtering -->
+										<exclude>**/*.jsp</exclude>
+										<exclude>cache/*</exclude>
+										<exclude>img/*</exclude>
+									</excludes>
+								</resource>
+							</webResources>
+							<warName>${sensorwebclient.webapp.name}</warName>
+							
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>
