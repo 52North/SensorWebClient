@@ -1,10 +1,24 @@
-<!DOCTYPE html>
-<head>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<c:set var="url" value="${fn:substringBefore(requestScope['javax.servlet.forward.request_uri'],'timeseries')}" />
+<!DOCTYPE html>
+<head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<c:set var="url"
-	value="${fn:substringBefore(requestScope['javax.servlet.forward.request_uri'],'timeseries')}" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="${base}/css/bootstrap/bootstrap.css" media="screen">
+<link rel="stylesheet" href="${base}/css/bootstrap/bootstrap-responsive.css">
+
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.css">
+<link rel="stylesheet" href="${base}/css/Leaflet.markercluster/6fda9a206f47f446bd42a931caa4a68aaca511d9/MarkerCluster.css">
+<link rel="stylesheet" href="${base}/css/Leaflet.markercluster/6fda9a206f47f446bd42a931caa4a68aaca511d9/MarkerCluster.Default.css">
+<!--[if lte IE 8]>
+     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.ie.css">
+     <link rel="stylesheet" href="${base}/css/Leaflet.markercluster/6fda9a206f47f446bd42a931caa4a68aaca511d9/MarkerCluster.Default.ie.css">
+<![endif]-->
+
+<link rel="stylesheet" href="${base}/css/jsp-styles.css" />
+
 </head>
 <body>
 	

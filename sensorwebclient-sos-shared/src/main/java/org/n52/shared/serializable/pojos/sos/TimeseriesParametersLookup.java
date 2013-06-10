@@ -228,4 +228,20 @@ public class TimeseriesParametersLookup implements Serializable {
     public void removeProcedure(String id) {
         procedures.remove(id);
     }
+
+    /**
+     * Checks if the timeseries' parameters are already known/loaded to this lookup instance.
+     * 
+     * @param timeseries
+     *        the timeseries to check if parameters are loaded.
+     * @return <code>true</code> if all parameters are already loaded, <code>false</code> otherwise.
+     */
+    public boolean hasLoadedCompletely(SosTimeseries timeseries) {
+        boolean procedureLoaded = procedures.containsKey(timeseries.getProcedure());
+        boolean featureLoaded = features.containsKey(timeseries.getFeature());
+        boolean offeringLoaded = offerings.containsKey(timeseries.getOffering());
+        boolean phenomenonLoaded = phenomenons.containsKey(timeseries.getPhenomenon());
+        return procedureLoaded && featureLoaded && offeringLoaded && phenomenonLoaded;
+
+    }
 }

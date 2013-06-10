@@ -47,7 +47,7 @@ public class StoreProcedureEvent extends FilteredDispatchGwtEvent<StoreProcedure
 	}
 
 	@Override
-	public com.google.gwt.event.shared.GwtEvent.Type<StoreProcedureEventHandler> getAssociatedType() {
+	public Type<StoreProcedureEventHandler> getAssociatedType() {
 		return TYPE;
 	}
 

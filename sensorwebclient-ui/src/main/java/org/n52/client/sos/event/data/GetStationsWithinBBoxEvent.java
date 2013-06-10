@@ -24,18 +24,18 @@
 package org.n52.client.sos.event.data;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
-import org.n52.client.sos.event.data.handler.GetStationsEventHandler;
+import org.n52.client.sos.event.data.handler.GetStationsWithinBBoxEventHandler;
 import org.n52.shared.serializable.pojos.BoundingBox;
 
-public class GetStationsEvent extends FilteredDispatchGwtEvent<GetStationsEventHandler> {
+public class GetStationsWithinBBoxEvent extends FilteredDispatchGwtEvent<GetStationsWithinBBoxEventHandler> {
 
-    public static Type<GetStationsEventHandler> TYPE = new Type<GetStationsEventHandler>();
+    public static Type<GetStationsWithinBBoxEventHandler> TYPE = new Type<GetStationsWithinBBoxEventHandler>();
 
     private String sosURL;
 
     private BoundingBox bbox;
 
-    public GetStationsEvent(String sosURL, BoundingBox bbox, GetStationsEventHandler... blockedHandlers) {
+    public GetStationsWithinBBoxEvent(String sosURL, BoundingBox bbox, GetStationsWithinBBoxEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.sosURL = sosURL;
         this.bbox = bbox;
@@ -50,12 +50,12 @@ public class GetStationsEvent extends FilteredDispatchGwtEvent<GetStationsEventH
     }
 
     @Override
-    protected void onDispatch(GetStationsEventHandler handler) {
-        handler.onGetProcedurePositions(this);
+    protected void onDispatch(GetStationsWithinBBoxEventHandler handler) {
+        handler.onGetStations(this);
     }
 
     @Override
-    public Type<GetStationsEventHandler> getAssociatedType() {
+    public Type<GetStationsWithinBBoxEventHandler> getAssociatedType() {
         return TYPE;
     }
 

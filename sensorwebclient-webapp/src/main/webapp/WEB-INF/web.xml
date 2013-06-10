@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.5">
-	<display-name>${project.artifactId} (SVN r${svn.info.revision}, built on ${timestamp})</display-name>
+	<display-name>${project.artifactId} (built on ${timestamp})</display-name>
 
 	<!-- listen for spring related configuration files -->
 	<listener>
@@ -9,7 +9,7 @@
 	</listener>
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>/WEB-INF/classes/spring-view-config.xml</param-value>
+		<param-value>/WEB-INF/classes/spring-*-config.xml</param-value>
 	</context-param>
 	
 	<servlet>

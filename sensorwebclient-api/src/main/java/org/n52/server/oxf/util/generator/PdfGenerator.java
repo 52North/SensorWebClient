@@ -357,7 +357,7 @@ public class PdfGenerator extends Generator {
      * (org.n52.shared.pojos.RepresentationDesignOptions)
      */
     @Override
-    public RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException {
+    public RepresentationResponse producePresentation(DesignOptions options) throws Exception {
         Map<String, OXFFeatureCollection> observationCollMap = getFeatureCollectionFor(options, false);
 
         try {
@@ -389,7 +389,7 @@ public class PdfGenerator extends Generator {
                 LOGGER.debug("legendFile: " + legendFile);
 
             } catch (Exception e) {
-               throw new ServerException("Error producing legend", e);
+               throw new Exception("Error producing legend.", e);
                 
             } finally {
                 imageOut.flush();

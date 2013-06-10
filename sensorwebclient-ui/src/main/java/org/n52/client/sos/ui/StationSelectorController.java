@@ -24,6 +24,7 @@
 
 package org.n52.client.sos.ui;
 
+import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.sos.ctrl.SosDataManager.getDataManager;
 
 import java.util.ArrayList;
@@ -85,7 +86,7 @@ class StationSelectorController implements MapController {
 
     public StationSelectorController() {
         map = new StationSelectorMap(this);
-        new StationPickerControllerEventBroker(this);
+        new StationSelectorControllerEventBroker(this);
         this.selectedStationFilterByServiceUrl = new HashMap<String, String>();
     }
 
@@ -162,7 +163,7 @@ class StationSelectorController implements MapController {
         
         String category = getSelectedStationFilter();
         if(category != null) {
-        	loadParameterConstellationByCategory(category);
+        	loadTimeseriesByCategory(category);
         }
 
         map.selectMarker(infoMarker);
@@ -171,27 +172,21 @@ class StationSelectorController implements MapController {
         stationSelector.showInfoWindow(infoMarker, selectedStation.getId());
     }
     
-    public void loadParameterConstellationByCategory(String category) {
+    public void loadTimeseriesByCategory(String category) {
     	selectedCategory = category;
     	SosTimeseries timeseries = selectedStation.getTimeseriesByCategory(selectedCategory);
     	if (timeseries != null) {
     		fireGetTimeseries(timeseries);
+    	} else {
+    	    GWT.log("Timseries to load was null!");
     	}
     }
 
 	private void fireGetTimeseries(SosTimeseries timeseries) {
-		GetProcedureEvent getProcEvent = new GetProcedureEvent(selectedServiceUrl, timeseries.getProcedure());
-		EventBus.getMainEventBus().fireEvent(getProcEvent);
-		GetOfferingEvent getOffEvent = new GetOfferingEvent(selectedServiceUrl, timeseries.getOffering());
-		EventBus.getMainEventBus().fireEvent(getOffEvent);
-		GetFeatureEvent getFoiEvent = new GetFeatureEvent(selectedServiceUrl, timeseries.getFeature());
-		EventBus.getMainEventBus().fireEvent(getFoiEvent);
-
-		// Get procedure details
-		GetProcedureDetailsUrlEvent getProcDetailsEvent = new GetProcedureDetailsUrlEvent(
-				selectedServiceUrl,
-				timeseries.getProcedure());
-		EventBus.getMainEventBus().fireEvent(getProcDetailsEvent);
+		getMainEventBus().fireEvent(new GetProcedureEvent(selectedServiceUrl, timeseries.getProcedure()));
+		getMainEventBus().fireEvent(new GetOfferingEvent(selectedServiceUrl, timeseries.getOffering()));
+		getMainEventBus().fireEvent(new GetFeatureEvent(selectedServiceUrl, timeseries.getFeature()));
+		getMainEventBus().fireEvent(new GetProcedureDetailsUrlEvent(selectedServiceUrl, timeseries.getProcedure()));
 	}
 
 	private boolean isServiceSelected() {
@@ -258,7 +253,7 @@ class StationSelectorController implements MapController {
     }
     
 
-    private class StationPickerControllerEventBroker implements
+    private class StationSelectorControllerEventBroker implements
             NewPhenomenonsEventHandler,
             NewStationPositionsEventHandler,
             PropagateOfferingFullEventHandler,
@@ -269,7 +264,7 @@ class StationSelectorController implements MapController {
 
         private StationSelectorController controller;
 
-        public StationPickerControllerEventBroker(StationSelectorController controller) {
+        public StationSelectorControllerEventBroker(StationSelectorController controller) {
             this.controller = controller;
             EventBus bus = EventBus.getMainEventBus();
             bus.addHandler(NewPhenomenonsEvent.TYPE, this);

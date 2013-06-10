@@ -26,6 +26,8 @@ package org.n52.client.sos.ui;
 
 import static com.smartgwt.client.types.Overflow.HIDDEN;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
+import static org.n52.client.sos.ui.SelectionMenuModel.createListGrid;
+import static org.n52.client.ui.Toaster.getToasterInstance;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -42,10 +44,9 @@ import org.n52.client.sos.event.data.NewTimeSeriesEvent;
 import org.n52.client.ui.ApplyCancelButtonLayout;
 import org.n52.client.ui.InteractionWindow;
 import org.n52.client.ui.LoadingSpinner;
-import org.n52.client.ui.Toaster;
 import org.n52.client.ui.map.InfoMarker;
-import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 
 import com.smartgwt.client.types.Alignment;
@@ -67,7 +68,6 @@ import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
 import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
-import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.Layout;
@@ -93,15 +93,13 @@ public class StationSelector extends Window {
 	
 	private Label stationInfoLabel;
 
-	private HTMLPane procedureDetailsHTMLPane;
+	private HTMLPane timeseriesInfoHTMLPane;
 
 	private Label showSelectionMenuButton;
 	
 	private InteractionWindow selectionMenu;
 	
 	private InteractionWindow infoWindow;
-	
-	private ListGrid listGrid;
 	
 	private Img stationLoadingSpinner;
 	
@@ -208,9 +206,8 @@ public class StationSelector extends Window {
 	}
 
 	private Canvas createSelectionMenuWindow() {
-		listGrid = SelectionMenuModel.createListGrid(this);
 		Layout layout = new Layout();
-		layout.addMember(listGrid);
+		layout.addMember(createListGrid(this));
 		selectionMenu = new InteractionWindow(layout);
 		selectionMenu.setZIndex(1000000);
 		selectionMenu.setWidth(250);
@@ -227,7 +224,7 @@ public class StationSelector extends Window {
 
 	private Canvas createInfoWindow() {
 		VLayout layout = new VLayout();
-		layout.addMember(createInformationFieldForSelectedProcedure());
+		layout.addMember(createInformationFieldForSelectedStation());
 		HLayout buttons = new HLayout();
 		buttons.setAutoHeight();
 		buttons.setAlign(Alignment.RIGHT);
@@ -274,15 +271,15 @@ public class StationSelector extends Window {
         };
     }
 
-    private Canvas createInformationFieldForSelectedProcedure() {
+    private Canvas createInformationFieldForSelectedStation() {
         VLayout layout = new VLayout();
-        procedureDetailsHTMLPane = new HTMLPane();
+        timeseriesInfoHTMLPane = new HTMLPane();
         phenomenonBox = new SelectItem(i18n.phenomenonLabel());
         phenomenonBox.addChangedHandler(new ChangedHandler() {
 			@Override
 			public void onChanged(ChangedEvent event) {
 				String category = (String) event.getItem().getValue();
-				controller.loadParameterConstellationByCategory(category);
+				controller.loadTimeseriesByCategory(category);
 			}
 		});
         DynamicForm form = new DynamicForm();
@@ -294,7 +291,7 @@ public class StationSelector extends Window {
 //        layout.addMember(phenomenonInfoLabel);
         layout.addMember(form);
         layout.addMember(stationInfoLabel);
-        layout.addMember(procedureDetailsHTMLPane);
+        layout.addMember(timeseriesInfoHTMLPane);
         return layout;
     }
 
@@ -327,7 +324,6 @@ public class StationSelector extends Window {
 			RadioGroupItem selector = stationFilterGroups.get(serviceUrl);
 			return selector;
 		}
-		//RadioGroupItem radioGroup = new RadioGroupItem(serviceUrl);
 		RadioGroupItem radioGroup = new RadioGroupItem("sosDataSource");
 		radioGroup.setShowTitle(false);
 		radioGroup.addChangedHandler(new ChangedHandler() {
@@ -365,13 +361,13 @@ public class StationSelector extends Window {
 	}
 
 	public void updateProcedureDetailsURL(String url) {
-		procedureDetailsHTMLPane.setContentsURL(url);
-		procedureDetailsHTMLPane.show();
+		timeseriesInfoHTMLPane.setContentsURL(url);
+		timeseriesInfoHTMLPane.show();
 		applyCancel.finishLoading();
 	}
 	
 	public void clearProcedureDetails() {
-		procedureDetailsHTMLPane.hide();
+		timeseriesInfoHTMLPane.hide();
 	}
 	
 	public void updateStationFilters(final SOSMetadata currentMetadata) {
@@ -401,7 +397,7 @@ public class StationSelector extends Window {
 		RadioGroupItem selector = stationFilterGroups.get(serviceURL);
 		if (selector == null) {
 			// debug message .. should not happen anyway
-			Toaster.getToasterInstance().addErrorMessage("Missing expansion component for " + serviceURL);
+			getToasterInstance().addErrorMessage("Missing expansion component for " + serviceURL);
 		} else {
 			selector.setValue(filter);
 		}
@@ -442,16 +438,16 @@ public class StationSelector extends Window {
 	}
 
 	public void updateInfoLabels() {
-		String phenDesc = null;
+		String selectedPhenomenon = null;
 		if (controller.getSelectedPhenomenon() != null) {
-			phenDesc = controller.getSelectedPhenomenon().getLabel();
+			selectedPhenomenon = controller.getSelectedPhenomenon().getLabel();
 		}
 		String foiDesc = null;
 //		if (controller.getSelectedFeature() != null) {
 //			foiDesc = controller.getSelectedFeature().getLabel();
 //		}
-		if (phenDesc != null && !phenDesc.isEmpty()) {
-			phenomenonBox.setValue(phenDesc);
+		if (selectedPhenomenon != null && !selectedPhenomenon.isEmpty()) {
+			phenomenonBox.setValue(selectedPhenomenon);
 //			phenomenonInfoLabel.setContents(i18n.phenomenonLabel() + ": " + phenDesc);
 //			phenomenonInfoLabel.show();
 		} else {

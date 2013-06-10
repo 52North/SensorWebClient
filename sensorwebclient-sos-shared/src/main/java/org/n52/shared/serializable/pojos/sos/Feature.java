@@ -29,7 +29,7 @@ public class Feature extends ObservationParameter implements Serializable {
 
 	private static final long serialVersionUID = 693946840349140532L;
 
-	private Feature() {
+	Feature() {
 		// for serialization
 	}
 
