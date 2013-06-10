@@ -121,7 +121,7 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
         TimeseriesDataCollection results = new TimeseriesDataCollection();
         for (Station station : getAllStations(instance)) {
             if (station.contains(timeseriesId)) {
-                ParameterSet parameterSet = createParameterSet(timespan);
+                ParameterSet parameterSet = createUndesignedParameterSet(timespan);
                 results.addAll(dataService.getTimeSeriesFromParameterSet(parameterSet));
                 break;
             }
@@ -158,7 +158,7 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
             for (Station station : getAllStations(instance)) {
                 if (station.contains(timeseriesId)) {
                     response.setContentType("image/png");
-                    DesignedParameterSet parameterSet = createParameterSet(timespan, width, height);
+                    DesignedParameterSet parameterSet = createDesignedParameterSet(timespan, width, height);
                     parameterSet.addTimeseriesWithRenderingOptions(timeseriesId, createDefaultRenderingOptions());
                     imageService.writeTimeSeriesChart(parameterSet, response.getOutputStream());
                     break;
@@ -189,11 +189,18 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
         return mavPage.createPagedModelAndViewFrom(timeseries, offset, size);
     }
 
-    private ParameterSet createParameterSet(String timespan) {
-        return createParameterSet(timespan, -1, -1);
+    private ParameterSet createUndesignedParameterSet(String timespan) {
+        try {
+            UndesignedParameterSet parameterSet = new UndesignedParameterSet();
+            parameterSet.setTimespan(timespan);
+            return parameterSet;
+        }
+        catch (IllegalArgumentException e) {
+            throw new BadRequestException();
+        }
     }
 
-    private DesignedParameterSet createParameterSet(String timespan, int width, int height) {
+    private DesignedParameterSet createDesignedParameterSet(String timespan, int width, int height) {
         try {
             DesignedParameterSet parameterSet = new DesignedParameterSet();
             parameterSet.setTimespan(timespan);
