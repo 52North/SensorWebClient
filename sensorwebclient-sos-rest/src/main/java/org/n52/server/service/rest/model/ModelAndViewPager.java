@@ -52,7 +52,6 @@ public class ModelAndViewPager {
     }
 
     private <T> ModelAndView setPage(ResultPage<T> page) {
-        mav.addObject(page);
-        return mav;
+        return mav.addObject(page);
     }
 }
