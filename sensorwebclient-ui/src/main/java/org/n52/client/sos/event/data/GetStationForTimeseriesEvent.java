@@ -24,59 +24,32 @@
 package org.n52.client.sos.event.data;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
-import org.n52.client.sos.event.data.handler.GetStationEventHandler;
+import org.n52.client.sos.event.data.handler.GetStationForTimeseriesEventHandler;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 
-public class GetStationEvent extends FilteredDispatchGwtEvent<GetStationEventHandler>{
+public class GetStationForTimeseriesEvent extends FilteredDispatchGwtEvent<GetStationForTimeseriesEventHandler>{
 	
-	public static Type<GetStationEventHandler> TYPE = new Type<GetStationEventHandler>();
+	public static Type<GetStationForTimeseriesEventHandler> TYPE = new Type<GetStationForTimeseriesEventHandler>();
 	
-	private String serviceURL;
+    private SosTimeseries timeseries;
 	
-	private String offeringID;
-	
-	private String phenomenonID;
-	
-	private String featureID;
-	
-	private String procedureID;
-	
-	// TODO pass station instead of particular parameters
-	public GetStationEvent(String url, String offeringID, String procedureID, String phenomenonID, String foiID) {
-		this.serviceURL = url;
-		this.offeringID = offeringID;
-		this.procedureID = procedureID;
-		this.phenomenonID = phenomenonID;
-		this.featureID = foiID;
+	public GetStationForTimeseriesEvent(SosTimeseries sosTimeseries) {
+	    this.timeseries = sosTimeseries;
 	}
-
+	
 	@Override
-	protected void onDispatch(GetStationEventHandler handler) {
+	protected void onDispatch(GetStationForTimeseriesEventHandler handler) {
 		handler.onGetStation(this);
 	}
 
 	@Override
-	public com.google.gwt.event.shared.GwtEvent.Type<GetStationEventHandler> getAssociatedType() {
+	public Type<GetStationForTimeseriesEventHandler> getAssociatedType() {
 		return TYPE;
 	}
-
-	public String getProcedureID() {
-		return procedureID;
-	}
-
-	public String getOfferingID() {
-		return offeringID;
-	}
 	
-	public String getPhenomenonID() {
-		return phenomenonID;
+	public SosTimeseries getTimseries() {
+	    return timeseries;
 	}
 
-	public String getFeatureID() {
-		return featureID;
-	}
-
-	public String getServiceURL() {
-		return serviceURL;
-	}
 	
 }

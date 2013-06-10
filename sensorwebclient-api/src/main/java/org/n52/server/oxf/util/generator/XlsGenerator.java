@@ -78,7 +78,7 @@ public class XlsGenerator extends Generator {
      * .shared.serializable.pojos.RepresentationDesignOptions)
      */
     @Override
-    public RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException {
+    public RepresentationResponse producePresentation(DesignOptions options) throws Exception {
         Collection<OXFFeatureCollection> observationCollList = getFeatureCollectionFor(options, false).values();
 
         if (observationCollList.size() != 1) {
@@ -194,7 +194,7 @@ public class XlsGenerator extends Generator {
             workbook.write();
             workbook.close();
         } catch (Exception e) {
-            throw new GeneratorException("Error creating XLS", e);
+            throw new Exception("Error creating XLS!", e);
         }
         LOGGER.debug("Produced XLS file url '{}'.", ConfigurationContext.GEN_URL + "/" + xls.getName());
         JavaHelper.cleanUpDir(ConfigurationContext.GEN_DIR, ConfigurationContext.FILE_KEEPING_TIME);

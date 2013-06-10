@@ -113,15 +113,8 @@ public class ZipGenerator extends Generator {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.n52.server.oxf.util.generator.Generator#producePresentation(org.n52
-     * .shared.serializable.pojos.RepresentationDesignOptions)
-     */
     @Override
-    public RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException {
+    public RepresentationResponse producePresentation(DesignOptions options) throws Exception {
         ZipOutputStream zipOutputStream = null;
         File file = new File(ConfigurationContext.GEN_DIR+"/"+folder);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");

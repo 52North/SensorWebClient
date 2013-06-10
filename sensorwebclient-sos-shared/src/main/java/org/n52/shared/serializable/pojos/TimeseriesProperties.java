@@ -281,38 +281,18 @@ public class TimeseriesProperties implements Serializable {
 	    return this.language;
 	}
 
-	/**
-	 * Gets the off.
-	 * 
-	 * @return the off
-	 */
 	public Offering getOffering() {
 		return this.off;
 	}
 
-	/**
-	 * Gets the foi.
-	 * 
-	 * @return the foi
-	 */
 	public Feature getFoi() {
 		return this.foi;
 	}
 
-	/**
-	 * Gets the proc.
-	 * 
-	 * @return the proc
-	 */
 	public Procedure getProcedure() {
 		return this.proc;
 	}
 
-	/**
-	 * Gets the phen.
-	 * 
-	 * @return the phen
-	 */
 	public Phenomenon getPhenomenon() {
 		return this.phen;
 	}
@@ -496,25 +476,17 @@ public class TimeseriesProperties implements Serializable {
 		return this.station.getLocation().getEasting();
 	}
 
-    /**
-     * Gets the srs.
-     * 
-     * @return the srs
-     */
     public String getSrs() {
-        return this.station.getLocation().getSrs();
+        if (station == null || station.getLocation() == null) {
+            return null;
+        }
+        return station.getLocation().getSrs();
     }
 
     public void setSrs(String srs) {
         this.station.getLocation().setSrs(srs);
     }
 
-	/**
-	 * Sets the opacity.
-	 * 
-	 * @param opacityPercentage
-	 *            the new opacity
-	 */
 	public void setOpacity(double opacityPercentage) {
 		this.opacity = opacityPercentage;
 	}

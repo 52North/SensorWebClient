@@ -240,7 +240,7 @@ public class DiagramGenerator extends Generator {
      * .shared.serializable.pojos.RepresentationDesignOptions)
      */
     @Override
-    public RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException {
+    public RepresentationResponse producePresentation(DesignOptions options) throws Exception {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException();
     }

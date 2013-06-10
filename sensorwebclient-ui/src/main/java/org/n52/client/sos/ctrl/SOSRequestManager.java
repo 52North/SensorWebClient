@@ -24,6 +24,7 @@
 
 package org.n52.client.sos.ctrl;
 
+import static org.n52.client.ctrl.ExceptionHandler.handleUnexpectedException;
 import static org.n52.client.sos.ctrl.SosDataManager.getDataManager;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 import static org.n52.shared.serializable.pojos.DesignOptions.SOS_PARAM_FIRST;
@@ -623,7 +624,7 @@ public class SOSRequestManager extends RequestManager {
         this.eesDataService.getEESDiagram(request, callback);
     }
 
-    public void requestProcedurePositions(String sosURL, BoundingBox boundingBox) {
+    public void requestStations(String sosURL, BoundingBox boundingBox) {
         try {
             getProcedurePositions(sosURL, boundingBox);
         }
@@ -812,13 +813,14 @@ public class SOSRequestManager extends RequestManager {
 		this.queryService.doQuery(request, callback);
 	}
 
-	public void requestStation(String serviceUrl, String offeringId, String procedureID, String phenomenonId, String featureId) {
-		QueryCallback callback = createQueryCallback("Could not get the station");
-        QueryFactory factory = createQueryFactoryFor(serviceUrl);
+	public void requestStationWith(SosTimeseries timeseries) {
+		QueryCallback callback = createQueryCallback("Could not get the timeseries: " + timeseries);
+        QueryFactory factory = createQueryFactoryFor(timeseries.getServiceUrl());
         QueryParameters parameters = new QueryParameters()
-                 .setOffering(offeringId)
-                 .setFeature(featureId)
-                 .setPhenomenon(phenomenonId);
+                 .setOffering(timeseries.getOffering())
+                 .setFeature(timeseries.getFeature())
+                 .setPhenomenon(timeseries.getPhenomenon())
+                 .setProcedure(timeseries.getProcedure());
         QueryRequest request = factory.createFilteredStationQuery(parameters);
 		doQuery(request, callback);
 	}
@@ -829,7 +831,6 @@ public class SOSRequestManager extends RequestManager {
 			public void onSuccess(QueryResponse<?> result) {
 				removeRequest();
 				try {
-					// TODO refactor
 					if (result instanceof StationQueryResponse) {
 						handleStationQuery(result);
 					} else if (result instanceof PhenomenonQueryResponse) {
@@ -842,7 +843,7 @@ public class SOSRequestManager extends RequestManager {
 						handleFeatureQuery(result);
 					}
 				} catch (Exception e) {
-					ExceptionHandler.handleUnexpectedException(e);
+					handleUnexpectedException(e);
 				}
 			}
 		};
@@ -901,8 +902,6 @@ public class SOSRequestManager extends RequestManager {
 	    this.queryService.doQuery(request, callback);
         addRequest();
 	}
-
-    
 
 	protected void handleStationQuery(QueryResponse<?> response) {
 		Station station = (Station) response.getResults()[0]; // TODO fragile!

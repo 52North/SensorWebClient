@@ -81,7 +81,6 @@ public class RestfulStationsController extends QueryController implements Restfu
     }
 
     private ModelAndView createResponseView(String instance, String station) throws Exception {
-        ModelAndView mav = new ModelAndView("stations");
         station = stripKnownFileExtensionFrom(station);
         QueryParameters parameters = new QueryParameters().setStation(station);
         QueryResponse< ? > result = performQuery(instance, parameters);
@@ -89,6 +88,7 @@ public class RestfulStationsController extends QueryController implements Restfu
         if (stations.length == 0) {
             throw new ResourceNotFoundException();
         }
+        ModelAndView mav = new ModelAndView("stations");
         return mav.addObject("station", createCompleteStationOutput(stations[0]));
     }
 

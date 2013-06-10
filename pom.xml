@@ -877,9 +877,9 @@
 	</repositories>
 
 	<scm>
-		<developerConnection>scm:svn:https://svn.52north.org/svn/swe/main/Clients/SensorWebClient/trunk/</developerConnection>
-		<url>https://svn.52north.org/cgi-bin/viewvc.cgi/main/Clients/SensorWebClient/?root=sensorweb</url>
-		<connection>https://svn.52north.org/svn/swe/main/Clients/SensorWebClient/trunk</connection>
+		<connection>scm:git:git://github.com/52North/SensorWebClient.git</connection>
+        <developerConnection>scm:git:https://github.com/52North/SensorWebClient.git</developerConnection>
+        <url>https://github.com/52North/SensorWebClient</url>
 	</scm>
 </project>
 

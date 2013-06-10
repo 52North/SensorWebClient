@@ -31,7 +31,7 @@ public class Phenomenon extends ObservationParameter implements Serializable {
 
     private String unitOfMeasure;
 
-    private Phenomenon() {
+    Phenomenon() {
         // for serialization
     }
 
