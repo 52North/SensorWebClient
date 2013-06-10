@@ -126,11 +126,12 @@ public class SOSController extends ServiceController {
 
         public void onNewTimeSeries(NewTimeSeriesEvent evt) {
             try {
+                GWT.log("load new timeseries: " + evt.getTimeseries());
                 SOSController.this.isAddingNewTimeSeries = true;
                 getRequestManager().requestSensorMetadata(evt);
             }
             catch (Exception e1) {
-                GWT.log("", e1);
+                GWT.log("Could not request timeseries.", e1);
             }
         }
 
