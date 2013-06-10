@@ -51,7 +51,6 @@ public class SensorMetadataResponse implements Serializable {
         sb.append("\tProcedure: ").append(props.getProcedure().getId()).append("\n");
         sb.append("\tFeatureOfInterest: ").append(props.getFoi().getId()).append("\n");
         sb.append("\tPhenomenon: ").append(props.getPhenomenon().getId()).append("\n");
-        sb.append("\tlat: ").append(props.getLat()).append("  lng: ").append(props.getLon());
         return sb.toString();
     }
 
