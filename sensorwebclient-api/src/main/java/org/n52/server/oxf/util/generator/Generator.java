@@ -82,9 +82,9 @@ public abstract class Generator {
      * @param options
      *            the options
      * @return RepresentationResponse
-     * @throws GeneratorException
+     * @throws Exception if generating presentation fails.
      */
-    public abstract RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException;
+    public abstract RepresentationResponse producePresentation(DesignOptions options) throws Exception;
 
     /**
      * returns an object of type Map<String, OXFFeatureCollection>. The key is a
