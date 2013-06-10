@@ -774,7 +774,7 @@
 		<gwt.compile.optimization.level>9</gwt.compile.optimization.level>
 
 		<dev.mode>false</dev.mode>
-		<gwt.version>2.5.0</gwt.version>
+		<gwt.version>2.5.1</gwt.version>
 		<slf4j.version>1.7.2</slf4j.version>
 		<logback.version>1.0.11</logback.version>
 		<smartgwt.version>3.1</smartgwt.version>

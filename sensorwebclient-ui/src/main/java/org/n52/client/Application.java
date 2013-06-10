@@ -38,6 +38,7 @@ import static org.n52.ext.link.sos.PermalinkParameter.PROCEDURES;
 import static org.n52.ext.link.sos.PermalinkParameter.SERVICES;
 import static org.n52.ext.link.sos.PermalinkParameter.VERSIONS;
 import static org.n52.shared.Constants.DEFAULT_OVERVIEW_INTERVAL;
+import static org.n52.shared.Constants.FALLBACK_EXTENT;
 
 import java.util.List;
 import java.util.Map;
@@ -70,6 +71,7 @@ import org.n52.client.ui.View;
 import org.n52.client.util.ClientUtils;
 import org.n52.ext.link.sos.PermalinkParameter;
 import org.n52.ext.link.sos.TimeRange;
+import org.n52.shared.Constants;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SOSMetadataBuilder;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
@@ -166,7 +168,7 @@ public final class Application {
                     getMainEventBus().fireEvent(new GetOfferingEvent(service, offering));
                     getMainEventBus().fireEvent(new GetProcedureEvent(service, procedure));
                     getMainEventBus().fireEvent(new GetStationForTimeseriesEvent(sosTimeseries));
-                    getMainEventBus().fireEvent(new GetStationsWithinBBoxEvent(service, null));
+                    getMainEventBus().fireEvent(new GetStationsWithinBBoxEvent(service, FALLBACK_EXTENT));
                     getMainEventBus().fireEvent(new NewSOSMetadataEvent());
                 }
                 
