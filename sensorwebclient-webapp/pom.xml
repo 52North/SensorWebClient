@@ -25,6 +25,10 @@
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>sensorwebclient-ui</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>sensorwebclient-sos-rest</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>sensorwebclient-sos-server</artifactId>
@@ -162,7 +166,7 @@
                             <artifactId>sensorwebclient-sos-rest</artifactId>
                             <includes>*.xml</includes>
                             <outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory>
-                            <overWrite>false</overWrite>
+                            <overWrite>true</overWrite>
                         </artifactItem>
                     </artifactItems>
                 </configuration>
