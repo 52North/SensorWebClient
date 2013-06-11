@@ -135,6 +135,39 @@
 				</executions>
 			</plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <artifactItems>
+                        <artifactItem>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>sensorwebclient-sos-rest</artifactId>
+                            <includes>WEB-INF/**/*.*,css/**/*.*,js/**/*.*,img/**/*.*</includes>
+                            <outputDirectory>${webappDirectory}</outputDirectory>
+                            <overWrite>false</overWrite>
+                        </artifactItem>
+
+                        <artifactItem>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>sensorwebclient-sos-rest</artifactId>
+                            <includes>*.xml</includes>
+                            <outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory>
+                            <overWrite>false</overWrite>
+                        </artifactItem>
+                    </artifactItems>
+                </configuration>
+            </plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
@@ -187,81 +220,6 @@
 					<artifactId>sensorwebclient-hydro</artifactId>
 				</dependency>
 			</dependencies>
-		</profile>
-
-		<profile>
-			<id>with-rest-binding</id>
-			<activation>
-				<property>
-					<!-- To exclude REST binding use -Dno-rest-binding -->
-					<name>!no-rest-binding</name>
-				</property>
-			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>org.n52.sensorweb</groupId>
-					<artifactId>sensorwebclient-sos-rest</artifactId>
-				</dependency>
-			</dependencies>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<executions>
-							<execution>
-								<phase>generate-sources</phase>
-								<goals>
-									<goal>unpack</goal>
-								</goals>
-							</execution>
-						</executions>
-
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>sensorwebclient-sos-rest</artifactId>
-									<includes>WEB-INF/**/*.*</includes>
-									<outputDirectory>${webappDirectory}</outputDirectory>
-									<overWrite>false</overWrite>
-								</artifactItem>
-
-								<artifactItem>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>sensorwebclient-sos-rest</artifactId>
-									<includes>*.xml</includes>
-									<outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory>
-									<overWrite>false</overWrite>
-								</artifactItem>
-
-							</artifactItems>
-						</configuration>
-					</plugin>
-
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-war-plugin</artifactId>
-						<configuration>
-							<webappDirectory>${webappDirectory}</webappDirectory>
-							<webResources>
-								<resource>
-									<directory>src/main/webapp</directory>
-									<filtering>true</filtering>
-									<excludes>
-										<!-- exclude files from filtering -->
-										<exclude>**/*.jsp</exclude>
-										<exclude>cache/*</exclude>
-										<exclude>img/*</exclude>
-									</excludes>
-								</resource>
-							</webResources>
-							<warName>${sensorwebclient.webapp.name}</warName>
-							
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
 
 		<profile>
