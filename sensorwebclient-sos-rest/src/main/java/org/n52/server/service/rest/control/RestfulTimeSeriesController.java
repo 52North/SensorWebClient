@@ -69,6 +69,26 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
 
     private GetImageService imageService;
 
+    @RequestMapping(value = "/timeseries", produces = "image/png", method = POST)
+    public void getTimeseriesGraphForMultipleTimeseries(HttpServletResponse response,
+                                                        @RequestBody DesignedParameterSet parameterSet) throws Exception {
+        try {
+            response.setContentType("image/png");
+            imageService.writeTimeSeriesChart(parameterSet, response.getOutputStream());
+        }
+        finally {
+            response.getOutputStream().close();
+        }
+    }
+
+    @RequestMapping(value = "/timeseries", produces = "application/json", method = POST)
+    public ModelAndView getTimeseriesDataForMultipleTimeseries(@RequestBody UndesignedParameterSet parameterSet) throws Exception {
+        TimeseriesDataCollection results = new TimeseriesDataCollection();
+        results.addAll(dataService.getTimeSeriesFromParameterSet(parameterSet));
+        ModelAndView mav = new ModelAndView("multipleTimeseries");
+        return mav.addObject("multipleTimeseries", results.getAllTimeseries());
+    }
+
     @RequestMapping(value = "/services/{instance}/timeseries", produces = "application/json", method = GET)
     public ModelAndView getAllTimeseries(@PathVariable String instance,
                                          @RequestParam(value = KVP_SHOW, required = false) String details,
@@ -93,26 +113,6 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
         }
     }
 
-    @RequestMapping(value = "/timeseries", produces = "image/png", method = POST)
-    public void getTimeseriesGraphForMultipleTimeseries(HttpServletResponse response,
-                                                        @RequestBody DesignedParameterSet parameterSet) throws Exception {
-        try {
-            response.setContentType("image/png");
-            imageService.writeTimeSeriesChart(parameterSet, response.getOutputStream());
-        }
-        finally {
-            response.getOutputStream().close();
-        }
-    }
-
-    @RequestMapping(value = "/timeseries", produces = "application/json", method = POST)
-    public ModelAndView getTimeseriesDataForMultipleTimeseries(@RequestBody UndesignedParameterSet parameterSet) throws Exception {
-        TimeseriesDataCollection results = new TimeseriesDataCollection();
-        results.addAll(dataService.getTimeSeriesFromParameterSet(parameterSet));
-        ModelAndView mav = new ModelAndView("multipleTimeseries");
-        return mav.addObject("multipleTimeseries", results.getAllTimeseries());
-    }
-
     @RequestMapping(value = "/services/{instance}/timeseries/{timeseriesId}", produces = "application/json", method = GET)
     public ModelAndView getTimeseriesData(@PathVariable String instance,
                                           @PathVariable String timeseriesId,
@@ -121,7 +121,8 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
         TimeseriesDataCollection results = new TimeseriesDataCollection();
         for (Station station : getAllStations(instance)) {
             if (station.contains(timeseriesId)) {
-                ParameterSet parameterSet = createUndesignedParameterSet(timespan);
+                UndesignedParameterSet parameterSet = createUndesignedParameterSet(timespan);
+                parameterSet.setTimeseries(new String[] { timeseriesId });
                 results.addAll(dataService.getTimeSeriesFromParameterSet(parameterSet));
                 break;
             }
@@ -189,7 +190,7 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
         return mavPage.createPagedModelAndViewFrom(timeseries, offset, size);
     }
 
-    private ParameterSet createUndesignedParameterSet(String timespan) {
+    private UndesignedParameterSet createUndesignedParameterSet(String timespan) {
         try {
             UndesignedParameterSet parameterSet = new UndesignedParameterSet();
             parameterSet.setTimespan(timespan);

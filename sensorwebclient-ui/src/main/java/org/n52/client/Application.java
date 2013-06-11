@@ -169,9 +169,6 @@ public final class Application {
                     getMainEventBus().fireEvent(new GetStationsWithinBBoxEvent(service, null));
                     getMainEventBus().fireEvent(new NewSOSMetadataEvent());
                 }
-                
-                
-                
             }
             else {
                 showStationSelectorWhenConfigured();
