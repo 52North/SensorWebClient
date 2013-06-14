@@ -387,7 +387,7 @@ public class StationSelector extends Window {
 	
 	private Set<String> getStationCategories(Station station) {
 		Set<String> categories = new HashSet<String>();
-		for (SosTimeseries timeseries : station.getObservingTimeseries()) {
+		for (SosTimeseries timeseries : station.getObservedTimeseries()) {
 			categories.add(timeseries.getCategory());
 		}
 		return categories;

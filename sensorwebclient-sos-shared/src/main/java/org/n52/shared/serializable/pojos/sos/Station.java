@@ -67,7 +67,7 @@ public class Station implements Serializable {
         observingTimeseries.add(timeseries);
     }
 
-    public ArrayList<SosTimeseries> getObservingTimeseries() {
+    public ArrayList<SosTimeseries> getObservedTimeseries() {
         return observingTimeseries;
     }
 
