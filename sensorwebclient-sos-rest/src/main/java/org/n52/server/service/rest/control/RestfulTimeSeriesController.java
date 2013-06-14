@@ -39,7 +39,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.n52.server.service.GetDataService;
 import org.n52.server.service.GetImageService;
 import org.n52.server.service.rest.DesignedParameterSet;
-import org.n52.server.service.rest.ParameterSet;
 import org.n52.server.service.rest.UndesignedParameterSet;
 import org.n52.server.service.rest.model.ModelAndViewPager;
 import org.n52.server.service.rest.model.TimeseriesData;
@@ -173,13 +172,13 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
 
     private List<Object> createCompleteOutput(Station station) {
         List<Object> allTimeseries = new ArrayList<Object>();
-        allTimeseries.addAll(station.getObservingTimeseries());
+        allTimeseries.addAll(station.getObservedTimeseries());
         return allTimeseries;
     }
 
     private List<Object> createSimpleOutput(Station station) {
         List<Object> allTimeseries = new ArrayList<Object>();
-        for (SosTimeseries timeseries : station.getObservingTimeseries()) {
+        for (SosTimeseries timeseries : station.getObservedTimeseries()) {
             allTimeseries.add(timeseries.getTimeseriesId());
         }
         return allTimeseries;

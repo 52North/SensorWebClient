@@ -85,7 +85,7 @@ public class StationOutput extends GeojsonFeature {
 
     private static SosTimeseries[] createCompleteTimeseriesList(Station station) {
         List<SosTimeseries> timeseriesIds = new ArrayList<SosTimeseries>();
-        for (SosTimeseries timeseries : station.getObservingTimeseries()) {
+        for (SosTimeseries timeseries : station.getObservedTimeseries()) {
             timeseriesIds.add(timeseries);
         }
         return timeseriesIds.toArray(new SosTimeseries[0]);
@@ -93,7 +93,7 @@ public class StationOutput extends GeojsonFeature {
     
     private static String[] createSimpleTimeseriesList(Station station) {
         List<String> timeseriesIds = new ArrayList<String>();
-        for (SosTimeseries timeseries : station.getObservingTimeseries()) {
+        for (SosTimeseries timeseries : station.getObservedTimeseries()) {
             timeseriesIds.add(timeseries.getTimeseriesId());
         }
         return timeseriesIds.toArray(new String[0]);
