@@ -4,14 +4,15 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.n52.server.service.rest.model.TimeseriesData.newTimeseriesData;
+import static org.n52.server.api.v0.model.TimeseriesData.newTimeseriesData;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.server.service.rest.model.TimeseriesData.TimeseriesValue;
+import org.n52.server.api.v0.model.TimeseriesData;
+import org.n52.server.api.v0.model.TimeseriesData.TimeseriesValue;
 
 
 
