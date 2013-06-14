@@ -7,6 +7,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.n52.server.api.v0.DesignedParameterSet;
 
 public class DesignedParameterSetTest {
 

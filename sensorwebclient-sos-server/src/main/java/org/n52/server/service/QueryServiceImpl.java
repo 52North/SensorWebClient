@@ -157,16 +157,19 @@ public class QueryServiceImpl implements QueryService {
      * criteria is built as an <code>AND</code> criteria to match against all parameters. If a parameter is
      * <code>null</code> is will be ignored (to match all).
      * 
-     * @param parameters parameters to match the 
+     * @param station
+     *        the station where to remove not matching timeseries.
+     * @param parameters
+     *        parameters to match each timeseries.
      */
     private void removeNotMatchingFilters(Station station, QueryParameters parameters) {
         String offering = parameters.getOffering();
         String procedure = parameters.getProcedure();
         String phenomenon = parameters.getPhenomenon();
         String feature = parameters.getFeature();
-        ArrayList<SosTimeseries> timeserieses = station.getObservingTimeseries();
-        Iterator<SosTimeseries> iterator = timeserieses.iterator();
-        while(iterator.hasNext()) {
+        ArrayList<SosTimeseries> observedTimeseries = station.getObservedTimeseries();
+        Iterator<SosTimeseries> iterator = observedTimeseries.iterator();
+        while (iterator.hasNext()) {
             SosTimeseries timeseries = iterator.next();
             if ( !timeseries.matchParameters(offering, phenomenon, procedure, feature)) {
                 iterator.remove();

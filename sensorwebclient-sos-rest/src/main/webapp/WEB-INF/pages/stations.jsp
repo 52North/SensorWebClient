@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <c:set var="url" value="${fn:substringBefore(requestScope['javax.servlet.forward.request_uri'],'/station')}" />
-<c:set var="base" value="${fn:substringBefore(requestScope['javax.servlet.forward.request_uri'],'/rest/')}" />
+<c:set var="base" value="${fn:substringBefore(requestScope['javax.servlet.forward.request_uri'],'/api/v0/')}" />
 <!DOCTYPE html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">

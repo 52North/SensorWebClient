@@ -3,8 +3,8 @@ package org.n52.server.service;
 
 import java.util.Collection;
 
-import org.n52.server.service.rest.control.ResourceNotFoundException;
-import org.n52.server.service.rest.model.ServiceInstance;
+import org.n52.server.api.v0.ctrl.ResourceNotFoundException;
+import org.n52.server.api.v0.model.ServiceInstance;
 
 public interface ServiceInstancesService {
 
