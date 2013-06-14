@@ -3,6 +3,7 @@ package org.n52.server.service.rest.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +30,11 @@ public class TimeseriesData {
         return timeseries;
     }
 
+    /**
+     * @return a sorted list of timeseries values.
+     */
     public TimeseriesValue[] getValues() {
+        Collections.sort(values);
         return values.toArray(new TimeseriesValue[0]);
     }
 
@@ -49,7 +54,7 @@ public class TimeseriesData {
         this.uom = uom;
     }
 
-    public class TimeseriesValue {
+    public class TimeseriesValue implements Comparable<TimeseriesValue>{
 
         private Long timestamp;
 
@@ -79,6 +84,19 @@ public class TimeseriesData {
         public void setValue(String value) {
             this.value = value;
         }
+        
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("TimeseriesValue [ ");
+            sb.append("timestamp: ").append(timestamp).append(", ");
+            sb.append("value: ").append(value);
+            return sb.append(" ]").toString();
+        }
 
+        @Override
+        public int compareTo(TimeseriesValue o) {
+            return getTimestamp().compareTo(o.getTimestamp());
+//            return o.getTimestamp().compareTo(getTimestamp());
+        }
     }
 }
