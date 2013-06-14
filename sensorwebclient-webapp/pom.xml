@@ -69,6 +69,11 @@
 		<finalName>${project.artifactId}</finalName>
 		<resources>
 			<resource>
+				<!-- copy resource files from external modules -->
+				<directory>src/main/tmp</directory>
+				<filtering>true</filtering>
+			</resource>
+			<resource>
 				<!-- copy and filter -->
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
@@ -165,7 +170,7 @@
                             <groupId>${project.groupId}</groupId>
                             <artifactId>sensorwebclient-sos-rest</artifactId>
                             <includes>*.xml</includes>
-                            <outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory>
+                            <outputDirectory>src/main/tmp</outputDirectory>
                             <overWrite>true</overWrite>
                         </artifactItem>
                     </artifactItems>
