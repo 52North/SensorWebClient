@@ -136,7 +136,6 @@ public final class Application {
                 if (timeRange.isSetStartAndEnd()) {
                     fireNewTimeRangeEvent(timeRange);
                 }
-
                 
                 PermalinkController permalinkController = new PermalinkController();
                 for (int i = 0; i < services.length; i++) {

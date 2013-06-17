@@ -24,6 +24,7 @@
 
 package org.n52.client.sos.ctrl;
 
+import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ctrl.ExceptionHandler.handleUnexpectedException;
 import static org.n52.client.sos.ctrl.SosDataManager.getDataManager;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
@@ -624,33 +625,18 @@ public class SOSRequestManager extends RequestManager {
         this.eesDataService.getEESDiagram(request, callback);
     }
 
-    public void requestStations(String sosURL, BoundingBox boundingBox) {
+    public void requestStations(String serviceUrl, BoundingBox boundingBox) {
         try {
-            getProcedurePositions(sosURL, boundingBox);
+            EventBus.getMainEventBus().fireEvent(new DeleteMarkersEvent());
+            SOSMetadata meta = getDataManager().getServiceMetadata(serviceUrl);
+            int chunkSize = meta.getRequestChunk() > 0 ? meta.getRequestChunk() : 300;
+            getPositions(serviceUrl, 0, chunkSize, boundingBox);
         }
         catch (Exception e) {
             ExceptionHandler.handleException(new ServerException("could not get procedures", e));
         }
     }
 
-    private void getProcedurePositions(String serviceUrl, BoundingBox boundingBox) throws Exception {
-
-        EventBus.getMainEventBus().fireEvent(new DeleteMarkersEvent());
-
-        SOSMetadata meta = getDataManager().getServiceMetadata(serviceUrl);
-        int chunkSize = meta.getRequestChunk() > 0 ? meta.getRequestChunk() : 25;
-        if (meta != null) {
-            // no position data available, request it
-            getPositions(serviceUrl, 0, chunkSize, boundingBox);
-        }
-    }
-
-    /**
-     * Request export pdf.
-     * 
-     * @param timeseries
-     *        the timeseries
-     */
     public void requestExportPDF(Collection<TimeSeries> timeseries) {
         try {
             getPDF(timeseries);
@@ -863,22 +849,21 @@ public class SOSRequestManager extends RequestManager {
 	        @Override
 	        public void onSuccess(final QueryResponse<?> queryResponse) {
 	            try {
-	                removeRequest();
 	                ResultPage< ? > resultPage = queryResponse.getPagedResults();
                     String url = queryResponse.getServiceUrl();
                     if (resultPage.isLastPage()) {
 	                    requestMgr.removeRequest(System.currentTimeMillis() - begin);
-	                    EventBus.getMainEventBus().fireEvent(new GetProcedurePositionsFinishedEvent());
+	                    getMainEventBus().fireEvent(new GetProcedurePositionsFinishedEvent());
 	                } else {
 	                    int nextOffset = resultPage.getOffset() + pageSize;
 	                    getNextChunk(serviceUrl, nextOffset, pageSize, boundingBox);
 	                }
                     Station[] stations = (Station[]) resultPage.getResults();
 	                StoreStationsEvent event = new StoreStationsEvent(url, stations);
-	                EventBus.getMainEventBus().fireEvent(event);
+	                getMainEventBus().fireEvent(event);
 	            }
 	            catch (Exception e) {
-	                ExceptionHandler.handleUnexpectedException(e);
+	                handleUnexpectedException(e);
 	                removeRequest();
 	            }
 	        }
@@ -887,7 +872,7 @@ public class SOSRequestManager extends RequestManager {
 	            try {
 	                getPositions(sosURL, start, interval, boundingBox);
 	            } catch (Exception e) {
-	                ExceptionHandler.handleUnexpectedException(e);
+	                handleUnexpectedException(e);
 	                removeRequest();
 	            }
 	        }
