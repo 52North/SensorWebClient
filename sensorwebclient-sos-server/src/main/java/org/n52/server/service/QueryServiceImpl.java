@@ -28,7 +28,6 @@ import static org.n52.server.oxf.util.ConfigurationContext.UPDATE_TASK_RUNNING;
 import static org.n52.server.oxf.util.ConfigurationContext.getSOSMetadata;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -37,6 +36,7 @@ import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.crs.AReferencingHelper;
 import org.n52.shared.exceptions.ServiceOccupiedException;
 import org.n52.shared.requests.query.QueryParameters;
+import org.n52.shared.requests.query.ResultPage;
 import org.n52.shared.requests.query.queries.FeatureQuery;
 import org.n52.shared.requests.query.queries.OfferingQuery;
 import org.n52.shared.requests.query.queries.PhenomenonQuery;
@@ -135,8 +135,9 @@ public class QueryServiceImpl implements QueryService {
                         }
                     }
                 }
-                Station[] pagedStations = Arrays.copyOfRange(finalStations, offset, pageSize);
-                return new StationQueryResponse(serviceUrl, pagedStations);
+                StationQueryResponse response = new StationQueryResponse(serviceUrl);
+                response.setResultPage(new ResultPage<Station>(finalStations, offset, stations.size()));
+                return response;
             }
 
         }
