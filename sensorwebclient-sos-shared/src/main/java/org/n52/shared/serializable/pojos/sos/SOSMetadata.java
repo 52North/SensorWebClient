@@ -76,7 +76,7 @@ public class SOSMetadata implements Serializable {
 
     private boolean autoZoom = true; // default
 
-    private int requestChunk = 100; // default
+    private int requestChunk = 300; // default
 
     private boolean forceXYAxisOrder = false; // default
 
