@@ -143,7 +143,7 @@
 			<dependency>
 				<groupId>org.n52.sensorweb</groupId>
 				<artifactId>52n-xml-xlink-v110</artifactId>
-				<version>1.0.0</version>
+				<version>${n52.xml.commons.version}</version>
 			</dependency>
 
 			<!-- ### EXTERNAL DEPENDENCIES ### -->
@@ -191,11 +191,6 @@
 				<groupId>joda-time</groupId>
 				<artifactId>joda-time</artifactId>
 				<version>2.1</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.xmlbeans</groupId>
-				<artifactId>xmlbeans</artifactId>
-				<version>2.5.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.vividsolutions</groupId>
@@ -514,18 +509,18 @@
 									</action>
 								</pluginExecution>
 								<pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.apache.maven.plugins</groupId>
-                                        <artifactId>maven-dependency-plugin</artifactId>
-                                        <versionRange>[2.8,)</versionRange>
-                                        <goals>
-                                            <goal>unpack</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore />
-                                    </action>
-                                </pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-dependency-plugin</artifactId>
+										<versionRange>[2.8,)</versionRange>
+										<goals>
+											<goal>unpack</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
@@ -878,8 +873,8 @@
 
 	<scm>
 		<connection>scm:git:git://github.com/52North/SensorWebClient.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/52North/SensorWebClient.git</developerConnection>
-        <url>https://github.com/52North/SensorWebClient</url>
+		<developerConnection>scm:git:ssh://git@github.com/52North/SensorWebClient.git</developerConnection>
+		<url>https://github.com/52North/SensorWebClient</url>
 	</scm>
 </project>
 
