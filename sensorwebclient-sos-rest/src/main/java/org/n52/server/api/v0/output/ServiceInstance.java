@@ -1,4 +1,4 @@
-package org.n52.server.api.v0.model;
+package org.n52.server.api.v0.output;
 
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 

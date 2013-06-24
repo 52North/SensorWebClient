@@ -4,8 +4,8 @@ package org.n52.server.api.v0.ctrl;
 import java.io.IOException;
 import java.util.Collection;
 
-import org.n52.server.api.v0.model.ModelAndViewPager;
-import org.n52.server.api.v0.model.ServiceInstance;
+import org.n52.server.api.v0.output.ModelAndViewPager;
+import org.n52.server.api.v0.output.ServiceInstance;
 import org.n52.server.service.ServiceInstancesService;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -181,6 +181,26 @@ public abstract class AReferencingHelper {
         PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING);
         return new GeometryFactory(pm, srsId);
     }
+    
+
+    /**
+     * Creates a coordinate with respect to axis ordering of the given srs parameter.
+     * 
+     * @param srs
+     *        an authoritive spatial reference system code the coordinate is in.
+     * @param easting
+     *        the coordinate's easting value.
+     * @param northing
+     *        the coordinate's northing value.
+     * @return a coordinate respecting axis ordering of the given spatial reference system
+     * @throws FactoryException
+     *         if no {@link CRS} factory could be found to create a coordinate reference system corresponding
+     *         to the given srs parameter.
+     */
+    public Coordinate createCoordinate(String srs, Double easting, Double northing) throws FactoryException {
+        return createCoordinate(srs, easting, northing, null);
+    }
+
 
     /**
      * Creates a coordinate with respect to axis ordering of the given srs parameter.

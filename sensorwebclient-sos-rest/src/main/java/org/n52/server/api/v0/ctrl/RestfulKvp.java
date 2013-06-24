@@ -48,6 +48,11 @@ public interface RestfulKvp {
      */
     static final String KVP_DEFAULT_SHOW = "complete";
     
+    /**
+     * The spatial surrounding, given by a lon/lat ordered EPSG:4326 coordinate and radius.
+     */
+    static final String KVP_NEAR = "near";
+    
     static final String KVP_FEATURE = "feature";
     
     static final String KVP_OFFERING = "offering";

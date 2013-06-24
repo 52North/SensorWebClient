@@ -1,8 +1,8 @@
 
 package org.n52.server.api.v0.ctrl;
 
-import static org.n52.server.api.v0.model.StationOutput.createCompleteStationOutput;
-import static org.n52.server.api.v0.model.StationOutput.createSimpleStationOutput;
+import static org.n52.server.api.v0.output.StationOutput.createCompleteStationOutput;
+import static org.n52.server.api.v0.output.StationOutput.createSimpleStationOutput;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,8 +10,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.n52.server.api.v0.model.ModelAndViewPager;
-import org.n52.server.api.v0.model.StationOutput;
+import org.n52.server.api.v0.Vicinity;
+import org.n52.server.api.v0.output.ModelAndViewPager;
+import org.n52.server.api.v0.output.StationOutput;
 import org.n52.shared.requests.query.QueryFactory;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.requests.query.queries.QueryRequest;
@@ -24,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Controller
 @RequestMapping(value = "/v0/services", produces = {"text/html", "application/*"})
 public class RestfulStationsController extends QueryController implements RestfulKvp, RestfulUrls {
@@ -33,6 +36,7 @@ public class RestfulStationsController extends QueryController implements Restfu
                                          @RequestParam(value = KVP_OFFSET, defaultValue = KVP_DEFAULT_OFFSET) int offset,
                                          @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) int size,
                                          @RequestParam(value = KVP_SHOW, defaultValue = KVP_DEFAULT_SHOW) String details,
+                                         @RequestParam(value = KVP_NEAR, required = false) String near,
                                          @RequestParam(value = KVP_FEATURE, required = false) String feature,
                                          @RequestParam(value = KVP_PHENOMENON, required = false) String phenomenon,
                                          @RequestParam(value = KVP_PROCEDURE, required = false) String procedure,
@@ -43,6 +47,12 @@ public class RestfulStationsController extends QueryController implements Restfu
                 .setProcedure(procedure)
                 .setOffering(offering)
                 .setFeature(feature);
+
+        if (near != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            Vicinity vicinity = mapper.readValue(near, Vicinity.class);
+            parameters.setSpatialFilter(vicinity.calculateBounds());
+        }
 
         QueryResponse< ? > result = performQuery(instance, parameters);
 
@@ -67,6 +77,7 @@ public class RestfulStationsController extends QueryController implements Restfu
         return mavPage.createPagedModelAndViewFrom(stations, offset, size);
     }
 
+    // this mapping handles identifier URLs
     @RequestMapping(value = "/{instance}/" + COLLECTION_STATIONS + "/**", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          HttpServletRequest request) throws Exception {
