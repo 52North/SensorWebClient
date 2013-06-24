@@ -110,7 +110,7 @@ public class QueryParameters implements Serializable {
     public BoundingBox getSpatialFilter() {
         return spatialFilter;
     }
-
+    
     public QueryParameters setSpatialFilter(BoundingBox spatialFilter) {
         this.spatialFilter = spatialFilter;
         return this;

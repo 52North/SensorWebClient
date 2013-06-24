@@ -1,5 +1,5 @@
 
-package org.n52.server.service.rest;
+package org.n52.server.api.v0;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;

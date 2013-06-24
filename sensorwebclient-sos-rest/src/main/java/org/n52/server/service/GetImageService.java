@@ -35,7 +35,7 @@ import org.n52.client.service.EESDataService;
 import org.n52.server.api.v0.DesignedParameterSet;
 import org.n52.server.api.v0.InternalServiceException;
 import org.n52.server.api.v0.ParameterSet;
-import org.n52.server.api.v0.model.ImageDataResult;
+import org.n52.server.api.v0.output.ImageDataResult;
 import org.n52.server.oxf.util.generator.EESGenerator;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;

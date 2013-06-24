@@ -1,12 +1,12 @@
 
 package org.n52.server.api.v0.ctrl;
 
-import static org.n52.server.api.v0.model.ProcedureOutput.createCompleteProcedureOutput;
-import static org.n52.server.api.v0.model.ProcedureOutput.createSimpleProcedureOutput;
+import static org.n52.server.api.v0.output.ProcedureOutput.createCompleteProcedureOutput;
+import static org.n52.server.api.v0.output.ProcedureOutput.createSimpleProcedureOutput;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.n52.server.api.v0.model.ModelAndViewPager;
+import org.n52.server.api.v0.output.ModelAndViewPager;
 import org.n52.shared.requests.query.QueryFactory;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.requests.query.queries.QueryRequest;
@@ -47,6 +47,7 @@ public class RestfulProceduresController extends QueryController implements Rest
         return mavPage.createPagedModelAndViewFrom(procedures, offset, size);
     }
 
+    // this mapping handles identifier URLs
     @RequestMapping(value = "/{instance}/" + COLLECTION_PROCEDURES + "/**", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          HttpServletRequest request) throws Exception {

@@ -38,9 +38,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.n52.server.api.v0.DesignedParameterSet;
 import org.n52.server.api.v0.UndesignedParameterSet;
-import org.n52.server.api.v0.model.ModelAndViewPager;
-import org.n52.server.api.v0.model.TimeseriesData;
-import org.n52.server.api.v0.model.TimeseriesDataCollection;
+import org.n52.server.api.v0.output.ModelAndViewPager;
+import org.n52.server.api.v0.output.TimeseriesData;
+import org.n52.server.api.v0.output.TimeseriesDataCollection;
 import org.n52.server.service.GetDataService;
 import org.n52.server.service.GetImageService;
 import org.n52.shared.requests.query.QueryFactory;

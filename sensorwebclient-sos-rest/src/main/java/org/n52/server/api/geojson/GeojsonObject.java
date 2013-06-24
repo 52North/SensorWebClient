@@ -1,5 +1,5 @@
 
-package org.n52.server.api.v0.model.geojson;
+package org.n52.server.api.geojson;
 
 public abstract class GeojsonObject {
 

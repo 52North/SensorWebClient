@@ -1,5 +1,5 @@
 
-package org.n52.server.api.v0.model;
+package org.n52.server.api.v0.output;
 
 import java.util.ArrayList;
 import java.util.Arrays;
