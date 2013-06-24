@@ -29,7 +29,6 @@ public class VicinityTest {
     {
         Vicinity vicinity = createRadiusAtNorthPole(circleCenterAtGreenwhichAndEquator);
         BoundingBox bounds = vicinity.calculateBounds();
-        System.out.println("At Equator: " + bounds);
         double llLatitudeOfSmallCircle = bounds.getLowerLeftCorner().getNorthing();
         double urLatitudeOfSmallCircle = bounds.getUpperRightCorner().getNorthing();
         assertThat(llLatitudeOfSmallCircle, closeTo(-urLatitudeOfSmallCircle, ERROR_DELTA));
@@ -41,7 +40,6 @@ public class VicinityTest {
     {
         Vicinity vicinity = createRadiusAtNorthPole(circleCenterAtGreenwhichAndEquator);
         BoundingBox bounds = vicinity.calculateBounds();
-        System.out.println("At Equator: " + bounds);
         double llLongitudeOfGreatCircle = bounds.getLowerLeftCorner().getEasting();
         double urLongitudeOnGreatCircle = bounds.getUpperRightCorner().getEasting();
         assertThat(llLongitudeOfGreatCircle, closeTo(-urLongitudeOnGreatCircle, ERROR_DELTA));
@@ -53,7 +51,6 @@ public class VicinityTest {
     {
         Vicinity vicinity = createRadiusAtNorthPole(circleAroundNorthPole);
         BoundingBox bounds = vicinity.calculateBounds();
-        System.out.println("Around North Pole: " + bounds);
         double llLatitudeOfSmallCircle = bounds.getLowerLeftCorner().getNorthing();
         double urLatitudeOfSmallCircle = bounds.getUpperRightCorner().getNorthing();
         assertThat(llLatitudeOfSmallCircle, closeTo(urLatitudeOfSmallCircle, ERROR_DELTA));
@@ -65,7 +62,6 @@ public class VicinityTest {
     {
             Vicinity vicinity = createRadiusAtNorthPole(circleAroundSouthPole);
             BoundingBox bounds = vicinity.calculateBounds();
-            System.out.println("Around South Pole: " + bounds);
             double llLatitudeOfSmallCircle = bounds.getLowerLeftCorner().getNorthing();
             double urLatitudeOfSmallCircle = bounds.getUpperRightCorner().getNorthing();
             assertThat(llLatitudeOfSmallCircle, closeTo(urLatitudeOfSmallCircle, ERROR_DELTA));
