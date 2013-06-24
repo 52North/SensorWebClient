@@ -5,7 +5,7 @@ import static org.n52.shared.requests.query.QueryParameters.createEmptyFilterQue
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.n52.server.api.v0.model.ModelAndViewPager;
+import org.n52.server.api.v0.output.ModelAndViewPager;
 import org.n52.shared.requests.query.QueryFactory;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.requests.query.queries.QueryRequest;
@@ -46,6 +46,7 @@ public class RestfulPhenomenonsController extends QueryController implements Res
         return mavPage.createPagedModelAndViewFrom(phenomenons, offset, size);
     }
 
+    // this mapping handles identifier URLs
     @RequestMapping(value = "/{instance}/" + COLLECTION_PHENOMENONS + "/**", method = RequestMethod.GET)
     public ModelAndView getPhenomenonByID(@PathVariable(value = "instance") String instance,
                                           HttpServletRequest request) throws Exception {
