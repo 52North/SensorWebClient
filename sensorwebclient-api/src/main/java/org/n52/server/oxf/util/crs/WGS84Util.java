@@ -51,7 +51,7 @@ public class WGS84Util {
      * @return the longitude delta in degrees.
      */
     public static double getLongitudeDelta(double latitude, double distance) {
-        return toDegrees(distance / getLatitutesCircleRadius(latitude));
+        return toDegrees(distance / getLatitutesCircleRadius(latitude)) % 360;
     }
 
     /**
