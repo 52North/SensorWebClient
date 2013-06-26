@@ -113,39 +113,18 @@
 				<groupId>org.n52.sensorweb</groupId>
 				<artifactId>oxf-sos-adapter</artifactId>
 				<version>${oxf.version}</version>
-				<exclusions>
-					<exclusion>
-						<artifactId>52n-xml-gml-v212</artifactId>
-						<groupId>org.n52.sensorweb</groupId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.n52.sensorweb</groupId>
 				<artifactId>oxf-ses-adapter</artifactId>
 				<version>${oxf.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>org.n52.sensorweb</groupId>
-				<artifactId>52n-xml-sensorML-v101</artifactId>
-				<version>${n52.xml.commons.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.n52.sensorweb</groupId>
-				<artifactId>52n-xml-om-v100</artifactId>
-				<version>${n52.xml.commons.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.n52.sensorweb</groupId>
-				<artifactId>52n-xml-ows-v100</artifactId>
-				<version>${n52.xml.commons.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.n52.sensorweb</groupId>
-				<artifactId>52n-xml-xlink-v110</artifactId>
-				<version>${n52.xml.commons.version}</version>
-			</dependency>
-
+	        <dependency>
+	            <groupId>org.n52.sensorweb</groupId>
+	            <artifactId>52n-xml-soap-v12</artifactId>
+	            <version>${n52.xml.commons.version}</version>
+	        </dependency>
+	        
 			<!-- ### EXTERNAL DEPENDENCIES ### -->
 
 			<!-- ### GWT DEPENDENCIES ### -->
@@ -435,7 +414,7 @@
 					<artifactId>gwt-maven-plugin</artifactId>
 					<version>${gwt.version}</version>
 					<configuration>
-						<module>org.n52.SensorWebClient</module>
+						<module>${gwt.compile.module}</module>
 						<runTarget>Client.jsp</runTarget>
 						<compileSourcesArtifacts>
 							<artifact>org.n52.sensorweb:sensorwebclient-ext</artifact>
@@ -527,7 +506,7 @@
 				</plugin>
 
 				<plugin>
-					<!-- NOTE: We don't need a groupId specification because the group is 
+					<!-- NOTE: We don't need a groupId specification because the group is
 						org.apache.maven.plugins ...which is assumed by default. -->
 					<artifactId>maven-assembly-plugin</artifactId>
 					<version>2.4</version>
@@ -549,7 +528,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>3.1</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
@@ -608,6 +587,8 @@
 				<gwt.compile.report>true</gwt.compile.report>
 				<gwt.compile.draft>true</gwt.compile.draft>
 				<gwt.compile.optimization.level>0</gwt.compile.optimization.level>
+                <gwt.compile.module>org.n52.SensorWebClient_debug</gwt.compile.module>
+                <gwt.user.agent>gecko1_8</gwt.user.agent>
 			</properties>
 		</profile>
 
@@ -671,7 +652,7 @@
 						<artifactId>maven-release-plugin</artifactId>
 						<version>2.3.2</version>
 						<configuration>
-							<!-- no build in release:prepare (takes too long time), so in bad 
+							<!-- no build in release:prepare (takes too long time), so in bad
 								cases release fails on perform -->
 							<preparationGoals>clean</preparationGoals>
 							<autoVersionSubmodules>true</autoVersionSubmodules>
@@ -692,8 +673,8 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<!-- EXAMPLE CONFIG PROPERTIES FOLLOW. TO SEPARATE CONFIGURATION FROM 
-					PROJECT, COPY build-example.properties to ${user.home}/sensorwebclient-build-dev.properties 
+				<!-- EXAMPLE CONFIG PROPERTIES FOLLOW. TO SEPARATE CONFIGURATION FROM
+					PROJECT, COPY build-example.properties to ${user.home}/sensorwebclient-build-dev.properties
 					CUSTOMIZE PROPERTIES AND TRIGGER MAVEN BUILD WITH `mvn install -Penv-dev'. -->
 
 				<application.title>Sensor Web Client</application.title>
@@ -742,6 +723,7 @@
 				<gwt.compile.report>true</gwt.compile.report>
 				<gwt.compile.draft>true</gwt.compile.draft>
 				<gwt.compile.optimization.level>0</gwt.compile.optimization.level>
+                <gwt.compile.module>org.n52.SensorWebClient</gwt.compile.module>
 			</properties>
 		</profile>
 
@@ -767,6 +749,7 @@
 		<gwt.compile.report>true</gwt.compile.report>
 		<gwt.compile.draft>false</gwt.compile.draft>
 		<gwt.compile.optimization.level>9</gwt.compile.optimization.level>
+        <gwt.compile.module>org.n52.SensorWebClient</gwt.compile.module>
 
 		<dev.mode>false</dev.mode>
 		<gwt.version>2.5.1</gwt.version>
@@ -776,8 +759,9 @@
 		<geotools.version>8.2</geotools.version>
 		<oxf.version>2.0.0-alpha.3-SNAPSHOT</oxf.version>
 		<hibernate.version>3.5.0-Final</hibernate.version>
-		<n52.xml.commons.version>1.1.4</n52.xml.commons.version>
+		<n52.xml.commons.version>1.1.5</n52.xml.commons.version>
 		<org.springframework.version>3.2.0.RELEASE</org.springframework.version>
+		
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sensorwebclient.webapp.name>${project.artifactId}-${project.version}</sensorwebclient.webapp.name>
 		<maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
