@@ -51,6 +51,7 @@ import org.n52.shared.serializable.pojos.sos.Station;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.AnimationEffect;
+import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.HTMLPane;
 import com.smartgwt.client.widgets.Img;
@@ -68,7 +69,7 @@ import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
 import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
-import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
+import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -207,7 +208,7 @@ public class StationSelector extends Window {
 
 	private Canvas createSelectionMenuWindow() {
 		Layout layout = new Layout();
-		layout.addMember(createListGrid(this));
+        layout.addMember(createExpandableSelectionGrid());
 		selectionMenu = new InteractionWindow(layout);
 		selectionMenu.setZIndex(1000000);
 		selectionMenu.setWidth(250);
@@ -216,6 +217,15 @@ public class StationSelector extends Window {
 		setSelectionMenuWindowPosition();
 		return selectionMenu;
 	}
+
+    private ListGrid createExpandableSelectionGrid() {
+        ListGrid listGrid = createListGrid(this);
+        listGrid.addSelectionChangedHandler(new SOSSelectionChangedHandler(controller));
+        listGrid.addClickHandler(new SOSClickedHandler(controller));
+        listGrid.setSelectionType(SelectionStyle.SINGLE);
+        listGrid.setCanExpandMultipleRecords(false);
+        return listGrid;
+    }
 
 	private void setSelectionMenuWindowPosition() {
 		selectionMenu.setTop(34);
@@ -305,14 +315,6 @@ public class StationSelector extends Window {
 	private void setInfoWindowPosition() {
 		infoWindow.setTop(HEIGHT - infoWindow.getHeight() - 35);
 		infoWindow.setLeft(2);
-	}
-
-	SelectionChangedHandler getSOSSelectionHandler() {
-		return new SOSSelectionChangedHandler(controller);
-	}
-
-	public ClickHandler getSOSClickedHandler() {
-		return new SOSClickedHandler(controller);
 	}
 
 	private MapWidget createMapContent() {
