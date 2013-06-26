@@ -27,11 +27,16 @@ public class RestfulProceduresController extends QueryController implements Rest
     public ModelAndView getProceduresByGET(@PathVariable("instance") String instance,
                                            @RequestParam(value = KVP_SHOW, required = false) String details,
                                            @RequestParam(value = KVP_OFFSET, defaultValue = KVP_DEFAULT_OFFSET) int offset,
-                                           @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) int size) throws Exception {
+                                           @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) int size,
+                                           @RequestParam(value = KVP_FEATURE, required = false) String feature,
+                                           @RequestParam(value = KVP_PHENOMENON, required = false) String phenomenon,
+                                           @RequestParam(value = KVP_OFFERING, required = false) String offering) throws Exception {
 
-        // TODO condense output depending on 'show' parameter
-
-        QueryParameters parameters = QueryParameters.createEmptyFilterQuery();
+        QueryParameters parameters = new QueryParameters()
+                .setPhenomenon(phenomenon)
+                .setOffering(offering)
+                .setFeature(feature);
+        
         QueryResponse< ? > result = performQuery(instance, parameters);
         Procedure[] procedures = (Procedure[]) result.getResults();
 
