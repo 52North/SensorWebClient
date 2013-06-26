@@ -18,7 +18,6 @@
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>52n-xml-soap-v12</artifactId>
-			<version>${n52.xml.commons.version}</version>
 		</dependency>
 		<!-- ### EXTERNAL DEPENDENCIES ### -->
 		<dependency>

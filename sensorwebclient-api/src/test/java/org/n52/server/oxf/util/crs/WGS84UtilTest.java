@@ -41,7 +41,7 @@ public class WGS84UtilTest {
     {
         Point statueOfLiberty = createXYOrderedWgs84Point(-74.0444, 40.6892);
         Point tourDeEiffel = createXYOrderedWgs84Point(2.2945, 48.8583);
-        System.out.println(shortestDistanceBetween(statueOfLiberty, tourDeEiffel));
+        assertThat(shortestDistanceBetween(statueOfLiberty, tourDeEiffel), closeTo(5837.0, 0.5));
     }
 
     private Point createXYOrderedWgs84Point(double lon, double lat) throws FactoryException {

@@ -5,14 +5,19 @@ For a complete Release Notes overview visit
 
 Release Notes for Sensor Web Client 3.2.0
 =========================================
-This release contains new features and bugfixes from versions 3.1.x.
+This release contains new features and bugfixes from versions 3.1.x. 
+
+Most work has been done to create a leightweight RESTful interface to access 
+timeseries data and metadata from external clients (not only from shipped UI).
+A modularization of the UI and its server part has been done to run a server 
+only application to just provide a SOS aggregation layer.
 
 Features:
 ---------
- * Add API version to REST API
+ * Add REST API to parameters, stations, timeseries raw data and metadata
  * Removed local repository from root pom.xml as all old dependencies are available from 52n repo now
  * Change Metadata structure, now stations in the metadata have a collection of parameter collections
- * Expands the restful interface and add the option to request metadata to a specific SOS (see https://wiki.52north.org/bin/view/SensorWeb/RESTfulTimeseriesWebApp)
+ * RESTful interface expanded and option added to request metadata specific to an SOS (see https://wiki.52north.org/bin/view/SensorWeb/RESTfulTimeseriesWebApp)
 
 3.1.x Bugfixes:
 ---------------

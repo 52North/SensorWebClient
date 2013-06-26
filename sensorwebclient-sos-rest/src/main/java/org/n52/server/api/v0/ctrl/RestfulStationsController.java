@@ -36,7 +36,7 @@ public class RestfulStationsController extends QueryController implements Restfu
                                          @RequestParam(value = KVP_OFFSET, defaultValue = KVP_DEFAULT_OFFSET) int offset,
                                          @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) int size,
                                          @RequestParam(value = KVP_SHOW, defaultValue = KVP_DEFAULT_SHOW) String details,
-                                         @RequestParam(value = KVP_NEAR, required = false) String near,
+                                         @RequestParam(value = KVP_WITHIN, required = false) String near,
                                          @RequestParam(value = KVP_FEATURE, required = false) String feature,
                                          @RequestParam(value = KVP_PHENOMENON, required = false) String phenomenon,
                                          @RequestParam(value = KVP_PROCEDURE, required = false) String procedure,
