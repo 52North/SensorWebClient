@@ -1,8 +1,6 @@
 
 package org.n52.server.api.v0.ctrl;
 
-import static org.n52.shared.requests.query.QueryParameters.createEmptyFilterQuery;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.n52.server.api.v0.output.ModelAndViewPager;
@@ -26,11 +24,16 @@ public class RestfulOfferingsController extends QueryController implements Restf
     public ModelAndView getOfferingsByGET(@PathVariable("instance") String instance,
                                           @RequestParam(value = KVP_SHOW, required = false) String details,
                                           @RequestParam(value = KVP_OFFSET, defaultValue = KVP_DEFAULT_OFFSET) int offset,
-                                          @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) int size) throws Exception {
+                                          @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) int size,
+                                          @RequestParam(value = KVP_FEATURE, required = false) String feature,
+                                          @RequestParam(value = KVP_PHENOMENON, required = false) String phenomenon,
+                                          @RequestParam(value = KVP_PROCEDURE, required = false) String procedure) throws Exception {
 
-        // TODO condense output depending on 'show' parameter
-
-        QueryParameters parameters = createEmptyFilterQuery();
+        QueryParameters parameters = new QueryParameters()
+                .setPhenomenon(phenomenon)
+                .setProcedure(procedure)
+                .setFeature(feature);
+        
         QueryResponse< ? > result = performQuery(instance, parameters);
         Offering[] offerings = (Offering[]) result.getResults();
 

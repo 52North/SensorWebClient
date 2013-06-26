@@ -51,7 +51,7 @@ public interface RestfulKvp {
     /**
      * The spatial surrounding, given by a lon/lat ordered EPSG:4326 coordinate and radius.
      */
-    static final String KVP_NEAR = "near";
+    static final String KVP_WITHIN = "within";
     
     static final String KVP_FEATURE = "feature";
     
