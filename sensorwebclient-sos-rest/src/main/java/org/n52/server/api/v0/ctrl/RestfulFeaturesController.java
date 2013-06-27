@@ -24,16 +24,9 @@ public class RestfulFeaturesController extends QueryController implements Restfu
     public ModelAndView getFeaturesByGET(@PathVariable("instance") String instance,
                                          @RequestParam(value = KVP_SHOW, required = false) String details,
                                          @RequestParam(value = KVP_OFFSET, defaultValue = KVP_DEFAULT_OFFSET) int offset,
-                                         @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) Integer size,
-                                         @RequestParam(value = KVP_PHENOMENON, required = false) String phenomenon,
-                                         @RequestParam(value = KVP_PROCEDURE, required = false) String procedure,
-                                         @RequestParam(value = KVP_OFFERING, required = false) String offering) throws Exception {
+                                         @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) Integer size) throws Exception {
 
-        QueryParameters parameters = new QueryParameters()
-                .setPhenomenon(phenomenon)
-                .setProcedure(procedure)
-                .setOffering(offering);
-        
+        QueryParameters parameters = QueryParameters.createEmptyFilterQuery();
         QueryResponse< ? > result = performQuery(instance, parameters);
         Feature[] features = (Feature[]) result.getResults();
 

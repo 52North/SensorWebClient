@@ -161,8 +161,16 @@
                         <artifactItem>
                             <groupId>${project.groupId}</groupId>
                             <artifactId>sensorwebclient-sos-rest</artifactId>
-                            <includes>WEB-INF/**/*.*,css/**/*.*,js/**/*.*,img/**/*.*</includes>
+                            <includes>css/**,js/**,img/**,partials/**,lib/**</includes>
                             <outputDirectory>${webappDirectory}</outputDirectory>
+                            <overWrite>false</overWrite>
+                        </artifactItem>
+                        
+                        <artifactItem>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>sensorwebclient-sos-rest</artifactId>
+                            <includes>index*.html</includes>
+                            <outputDirectory>${webappDirectory}/discovery</outputDirectory>
                             <overWrite>false</overWrite>
                         </artifactItem>
 
@@ -170,6 +178,7 @@
                             <groupId>${project.groupId}</groupId>
                             <artifactId>sensorwebclient-sos-rest</artifactId>
                             <includes>*.xml</includes>
+                            <!-- tmp files will be copied into WEB-INF/classes -->
                             <outputDirectory>src/main/tmp</outputDirectory>
                             <overWrite>true</overWrite>
                         </artifactItem>
