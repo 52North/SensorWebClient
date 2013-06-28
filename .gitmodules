@@ -1,0 +1,3 @@
+[submodule "sensorwebclient-sos-rest/src/main/angular"]
+	path = sensorwebclient-sos-rest/src/main/angular
+	url = git://github.com/angular/angular-seed.git

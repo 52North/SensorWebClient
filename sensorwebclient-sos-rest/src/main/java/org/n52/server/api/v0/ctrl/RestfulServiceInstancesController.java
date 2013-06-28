@@ -20,7 +20,7 @@ public class RestfulServiceInstancesController implements RestfulKvp {
     
     @RequestMapping(value = "/")
     public String forwardToServicesSite() throws IOException {
-        return "redirect:/rest/services";
+        return "redirect:/api/v0/services";
     }
     
     @RequestMapping(method = RequestMethod.GET)
