@@ -43,7 +43,7 @@ import org.n52.server.oxf.util.parser.TimeseriesFactory;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,7 @@ public class TimeSeriesDataGenerator extends Generator {
     private static final Logger LOGGER = LoggerFactory.getLogger(TimeSeriesDataGenerator.class);
 
     @Override
-    public RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException {
+    public RepresentationResponse producePresentation(DesignOptions options) throws Exception {
         try {
             LOGGER.debug("Starting producing representation with " + options);
             Map<String, OXFFeatureCollection> entireCollMap = getFeatureCollectionFor(options, false);
@@ -107,8 +107,8 @@ public class TimeSeriesDataGenerator extends Generator {
                                             new String[] { foi },
                                             new String[] { obsProp.getURN() }, false);
 
-                            TimeSeriesProperties selectedProperties = null;
-                            for (TimeSeriesProperties property : options.getProperties()) {
+                            TimeseriesProperties selectedProperties = null;
+                            for (TimeseriesProperties property : options.getProperties()) {
                                 if (LOGGER.isDebugEnabled()) {
                                     LOGGER.debug(property.getOffFoiProcPhenCombination());
                                 }
@@ -140,7 +140,7 @@ public class TimeSeriesDataGenerator extends Generator {
             }
 
             // check if some TS did not get data and fill blank spots
-            for (TimeSeriesProperties prop : options.getProperties()) {
+            for (TimeseriesProperties prop : options.getProperties()) {
                 if (!allTimeSeries.containsKey(prop.getTsID())) {
                     allTimeSeries.put(prop.getTsID(), new HashMap<Long, String>());
                 }
@@ -150,7 +150,7 @@ public class TimeSeriesDataGenerator extends Generator {
 //            return new TimeSeriesDataResponse(new HashMap<String, HashMap<Long,Double>>());
 
         } catch (Exception e) {
-            throw new GeneratorException("Error creating TimeSeriesDataResponse", e);
+            throw new Exception("Error creating TimeSeriesDataResponse.", e);
         }
 
     }

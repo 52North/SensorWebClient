@@ -83,7 +83,6 @@
 				</excludes>
 			</resource>
 		</resources>
-
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -96,10 +95,11 @@
 							<directory>src/main/webapp</directory>
 							<filtering>true</filtering>
 							<excludes>
-                                <exclude>**/*.jsp</exclude>
-                                <exclude>cache/*</exclude>
-                                <exclude>img/*</exclude>
-                            </excludes>
+								<!-- exclude files from filtering -->
+								<exclude>**/*.jsp</exclude>
+								<exclude>cache/*</exclude>
+								<exclude>img/*</exclude>
+							</excludes>
 						</resource>
 					</webResources>
 					<warName>${project.artifactId}-${project.version}</warName>
@@ -109,11 +109,14 @@
 							<groupId>org.n52.sensorweb</groupId>
 							<artifactId>sensorwebclient-webapp</artifactId>
 							<includes>
-							     <include>ds/sos-instances.data.xml</include>
-							     <include>WEB-INF/classes/dispatcher-control.xml</include>
-                                 <include>WEB-INF/classes/spring-view-config.xml</include>
-                                 <include>WEB-INF/pages/*</include>
-                                 <include>xslt/SensorML*.xslt</include>
+							    <include>WEB-INF/pages/*.jsp</include>
+								<include>ds/sos-instances.data.xml</include>
+								<include>js/**/*.js</include>
+                                <include>css/**/*.css</include>
+								<include>WEB-INF/classes/dispatcher-control.xml</include>
+								<include>WEB-INF/classes/spring-view-config.xml</include>
+								<include>WEB-INF/pages/*</include>
+								<include>xslt/SensorML*.xslt</include>
 							</includes>
 						</overlay>
 					</overlays>
@@ -155,6 +158,7 @@
 				</filters>
 			</build>
 		</profile>
+
 		<profile>
 			<id>connector-eea</id>
 			<dependencies>
@@ -164,6 +168,7 @@
 				</dependency>
 			</dependencies>
 		</profile>
+
 		<profile>
 			<id>connector-hydro</id>
 			<dependencies>
@@ -172,6 +177,50 @@
 					<artifactId>sensorwebclient-hydro</artifactId>
 				</dependency>
 			</dependencies>
+		</profile>
+
+		<profile>
+			<id>all-modules-provided</id>
+			<dependencyManagement>
+				<dependencies>
+					<dependency>
+						<groupId>org.n52.sensorweb</groupId>
+						<artifactId>sensorwebclient-api</artifactId>
+						<version>${project.version}</version>
+						<scope>provided</scope>
+					</dependency>
+					<dependency>
+						<groupId>org.n52.sensorweb</groupId>
+						<artifactId>sensorwebclient-sos-server</artifactId>
+						<version>${project.version}</version>
+						<scope>provided</scope>
+					</dependency>
+					<dependency>
+						<groupId>org.n52.sensorweb</groupId>
+						<artifactId>sensorwebclient-sos-rest</artifactId>
+						<version>${project.version}</version>
+						<scope>provided</scope>
+					</dependency>
+					<dependency>
+						<groupId>org.n52.sensorweb</groupId>
+						<artifactId>sensorwebclient-grdc</artifactId>
+						<version>${project.version}</version>
+						<scope>provided</scope>
+					</dependency>
+					<dependency>
+						<groupId>org.n52.sensorweb</groupId>
+						<artifactId>sensorwebclient-eea</artifactId>
+						<version>${project.version}</version>
+						<scope>provided</scope>
+					</dependency>
+					<dependency>
+						<groupId>org.n52.sensorweb</groupId>
+						<artifactId>sensorwebclient-hydro</artifactId>
+						<version>${project.version}</version>
+						<scope>provided</scope>
+					</dependency>
+				</dependencies>
+			</dependencyManagement>
 		</profile>
 	</profiles>
 

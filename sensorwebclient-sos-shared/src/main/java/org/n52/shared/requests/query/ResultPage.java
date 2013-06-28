@@ -25,6 +25,16 @@ public class ResultPage<T> implements Serializable {
         // for serialization
     }
 
+    /**
+     * Creates a page of the given results and holds the page's context to the complete result list.
+     * 
+     * @param results
+     *        the results to put on a page.
+     * @param offset
+     *        the page's offset context (first element's index in the complete result list).
+     * @param total
+     *        the amount of results in total.
+     */
     public ResultPage(T[] results, int offset, int total) {
         this.total = total;
         this.offset = offset;
@@ -37,7 +47,7 @@ public class ResultPage<T> implements Serializable {
     public int getOffset() {
         return offset;
     }
-    
+
     /**
      * The total number of available results should not change. It inidicates a boundary until where the
      * results can be scrolled. The length of each subset is implicit by {@link #getResults().length}.
@@ -47,7 +57,7 @@ public class ResultPage<T> implements Serializable {
     public int getTotal() {
         return total;
     }
-    
+
     /**
      * @return the results (never <code>null</code> but an empty array when no results were set beforehand).
      */
@@ -55,11 +65,12 @@ public class ResultPage<T> implements Serializable {
         return results != null ? results : createEmptyArray();
     }
 
-    @SuppressWarnings("unchecked") // type safety via generics
+    @SuppressWarnings("unchecked")
+    // type safety via generics
     private T[] createEmptyArray() {
         return Collections.emptyList().toArray((T[]) new Object[0]);
     }
-    
+
     /**
      * @return <code>true</code> if no more results are available, <code>false</code> otherwise.
      */

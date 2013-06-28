@@ -72,7 +72,7 @@ import org.n52.shared.exceptions.ServerException;
 import org.n52.shared.responses.FileResponse;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,7 +134,7 @@ public class PdfGenerator extends Generator {
 
         DocumentStructureType docStructure = docStructureDoc.addNewDocumentStructure();
 
-        for (TimeSeriesProperties prop : getRepresentationOp.getProperties()) {
+        for (TimeseriesProperties prop : getRepresentationOp.getProperties()) {
 
 //            Offering offering = prop.getOffering();
 
@@ -269,7 +269,7 @@ public class PdfGenerator extends Generator {
      *            the proc parameterId
      * @return the table type
      */
-	private TableType buildUpTable(TimeSeriesProperties prop, OXFFeatureCollection obsColl,
+	private TableType buildUpTable(TimeseriesProperties prop, OXFFeatureCollection obsColl,
             String foiID, String obsPropID, String procID) {
 
         TableType table = TableType.Factory.newInstance();
@@ -357,7 +357,7 @@ public class PdfGenerator extends Generator {
      * (org.n52.shared.pojos.RepresentationDesignOptions)
      */
     @Override
-    public RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException {
+    public RepresentationResponse producePresentation(DesignOptions options) throws Exception {
         Map<String, OXFFeatureCollection> observationCollMap = getFeatureCollectionFor(options, false);
 
         try {
@@ -389,7 +389,7 @@ public class PdfGenerator extends Generator {
                 LOGGER.debug("legendFile: " + legendFile);
 
             } catch (Exception e) {
-               throw new ServerException("Error producing legend", e);
+               throw new Exception("Error producing legend.", e);
                 
             } finally {
                 imageOut.flush();
@@ -424,7 +424,7 @@ public class PdfGenerator extends Generator {
             }
 
             if (this.zip) {
-                TimeSeriesProperties pc = options.getProperties().get(0);
+                TimeseriesProperties pc = options.getProperties().get(0);
                 this.pdfFile =
                     JavaHelper.genRndFile(ConfigurationContext.GEN_DIR+"/"+folderPostfix, pc.getProcedure().getId().replaceAll("/", "_")+"_"+formatDate(new Date(options.getBegin()))+
                             "_"+formatDate(new Date(options.getEnd()))+"_", "pdf");
@@ -435,7 +435,7 @@ public class PdfGenerator extends Generator {
                         JavaHelper.genRndFile(ConfigurationContext.GEN_DIR+"/"+folderPostfix, "Cumulated_PDF_", "pdf");
                     this.pdfURL = ConfigurationContext.GEN_URL+folderPostfix +"/"+ this.pdfFile.getName();
                 } else {
-                    TimeSeriesProperties pc = options.getProperties().get(0);
+                    TimeseriesProperties pc = options.getProperties().get(0);
                     this.pdfFile =
                         JavaHelper.genRndFile(ConfigurationContext.GEN_DIR+"/"+folderPostfix, pc.getProcedure().getId().replaceAll("/", "_")
                         		+formatDate(new Date(options.getBegin()))+

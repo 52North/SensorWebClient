@@ -54,7 +54,7 @@ import org.n52.server.oxf.util.access.oxfExtensions.TimePosition_OXFExtension;
 import org.n52.server.oxf.util.properties.GeneralizationConfiguration;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -82,9 +82,9 @@ public abstract class Generator {
      * @param options
      *            the options
      * @return RepresentationResponse
-     * @throws GeneratorException
+     * @throws Exception if generating presentation fails.
      */
-    public abstract RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException;
+    public abstract RepresentationResponse producePresentation(DesignOptions options) throws Exception;
 
     /**
      * returns an object of type Map<String, OXFFeatureCollection>. The key is a
@@ -104,7 +104,7 @@ public abstract class Generator {
             time = new TimePosition_OXFExtension(options.getTimeParam());
         }
         
-        for (TimeSeriesProperties con : options.getProperties()) {
+        for (TimeseriesProperties con : options.getProperties()) {
             SOSMetadata meta = ConfigurationContext.getSOSMetadata(con.getSosUrl());
             if (meta.canGeneralize() && generalize) {
                 String phenomenon = con.getPhenomenon().getId();
@@ -125,7 +125,7 @@ public abstract class Generator {
     }
 
     private void updateTimeSeriesPropertiesForHavingData(DesignOptions options, Map<String, OXFFeatureCollection> entireCollMap) {
-        for (TimeSeriesProperties prop : options.getProperties()) {
+        for (TimeseriesProperties prop : options.getProperties()) {
 
             OXFFeatureCollection obsColl = entireCollMap.get(prop.getOffering().getId() + "@" + prop.getSosUrl());
 
@@ -155,7 +155,7 @@ public abstract class Generator {
         return this.folderPostfix;
     }
     
-    protected String createAndSaveImage(DesignOptions options, JFreeChart chart, ChartRenderingInfo renderingInfo) throws GeneratorException {
+    protected String createAndSaveImage(DesignOptions options, JFreeChart chart, ChartRenderingInfo renderingInfo) throws Exception {
         int width = options.getWidth();
         int height = options.getHeight();
         BufferedImage image = chart.createBufferedImage(width, height, renderingInfo);
@@ -167,7 +167,7 @@ public abstract class Generator {
         try {
             return ServletUtilities.saveChartAsPNG(chart, width, height, renderingInfo, null);
         } catch (IOException e) {
-            throw new GeneratorException("Could not save PNG", e);
+            throw new Exception("Could not save PNG!", e);
         }
     }
 
@@ -186,7 +186,7 @@ public abstract class Generator {
 
     private List<RequestConfig> createRequestList(DesignOptions options, ITime time) {
         List<RequestConfig> requests = new ArrayList<RequestConfig>();
-        for (TimeSeriesProperties property : options.getProperties()) {
+        for (TimeseriesProperties property : options.getProperties()) {
             List<String> fois = new ArrayList<String>();
             List<String> procedures = new ArrayList<String>();
             List<String> observedProperties = new ArrayList<String>();

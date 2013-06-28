@@ -24,6 +24,7 @@
 
 package org.n52.client.sos.ui;
 
+import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.sos.ctrl.SosDataManager.getDataManager;
 
 import java.util.ArrayList;
@@ -58,9 +59,9 @@ import org.n52.client.ui.map.InfoMarker;
 import org.n52.client.ui.map.MapController;
 import org.n52.shared.Constants;
 import org.n52.shared.serializable.pojos.BoundingBox;
-import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
+import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -85,7 +86,7 @@ class StationSelectorController implements MapController {
 
     public StationSelectorController() {
         map = new StationSelectorMap(this);
-        new StationPickerControllerEventBroker(this);
+        new StationSelectorControllerEventBroker(this);
         this.selectedStationFilterByServiceUrl = new HashMap<String, String>();
     }
 
@@ -162,7 +163,7 @@ class StationSelectorController implements MapController {
         
         String category = getSelectedStationFilter();
         if(category != null) {
-        	loadParameterConstellationByCategory(category);
+        	loadTimeseriesByCategory(category);
         }
 
         map.selectMarker(infoMarker);
@@ -171,31 +172,21 @@ class StationSelectorController implements MapController {
         stationSelector.showInfoWindow(infoMarker, selectedStation.getId());
     }
     
-    public void loadParameterConstellationByCategory(String category) {
+    public void loadTimeseriesByCategory(String category) {
     	selectedCategory = category;
-    	ParameterConstellation paramConst = selectedStation.getParameterConstellationByCategory(selectedCategory);
-    	if (paramConst != null) {
-    		fireGetParameterConstellation(paramConst);
+    	SosTimeseries timeseries = selectedStation.getTimeseriesByCategory(selectedCategory);
+    	if (timeseries != null) {
+    		fireGetTimeseries(timeseries);
+    	} else {
+    	    GWT.log("Timseries to load was null!");
     	}
     }
 
-	private void fireGetParameterConstellation(ParameterConstellation paramConst) {
-		GetProcedureEvent getProcEvent = new GetProcedureEvent(
-				selectedServiceUrl,
-				paramConst.getProcedure());
-		EventBus.getMainEventBus().fireEvent(getProcEvent);
-		GetOfferingEvent getOffEvent = new GetOfferingEvent(selectedServiceUrl,
-				paramConst.getOffering());
-		EventBus.getMainEventBus().fireEvent(getOffEvent);
-		GetFeatureEvent getFoiEvent = new GetFeatureEvent(selectedServiceUrl,
-				paramConst.getFeatureOfInterest());
-		EventBus.getMainEventBus().fireEvent(getFoiEvent);
-
-		// Get procedure details
-		GetProcedureDetailsUrlEvent getProcDetailsEvent = new GetProcedureDetailsUrlEvent(
-				selectedServiceUrl,
-				paramConst.getProcedure());
-		EventBus.getMainEventBus().fireEvent(getProcDetailsEvent);
+	private void fireGetTimeseries(SosTimeseries timeseries) {
+		getMainEventBus().fireEvent(new GetProcedureEvent(selectedServiceUrl, timeseries.getProcedure()));
+		getMainEventBus().fireEvent(new GetOfferingEvent(selectedServiceUrl, timeseries.getOffering()));
+		getMainEventBus().fireEvent(new GetFeatureEvent(selectedServiceUrl, timeseries.getFeature()));
+		getMainEventBus().fireEvent(new GetProcedureDetailsUrlEvent(selectedServiceUrl, timeseries.getProcedure()));
 	}
 
 	private boolean isServiceSelected() {
@@ -236,15 +227,15 @@ class StationSelectorController implements MapController {
         return selectedStation;
     }
     
-    public ParameterConstellation getSelectedParameterConstellation() {
-		return selectedStation.getParameterConstellationByCategory(selectedCategory);
+    public SosTimeseries getSelectedTimeseries() {
+		return selectedStation.getTimeseriesByCategory(selectedCategory);
 	}
 
     public Phenomenon getSelectedPhenomenon() {
         return getParametersLookup().getPhenomenon(selectedCategory);
     }
 
-    public FeatureOfInterest getSelectedFeature() {
+    public Feature getSelectedFeature() {
         return getParametersLookup().getFeature(getSelectedFeatureId());
     }
 
@@ -262,7 +253,7 @@ class StationSelectorController implements MapController {
     }
     
 
-    private class StationPickerControllerEventBroker implements
+    private class StationSelectorControllerEventBroker implements
             NewPhenomenonsEventHandler,
             NewStationPositionsEventHandler,
             PropagateOfferingFullEventHandler,
@@ -273,7 +264,7 @@ class StationSelectorController implements MapController {
 
         private StationSelectorController controller;
 
-        public StationPickerControllerEventBroker(StationSelectorController controller) {
+        public StationSelectorControllerEventBroker(StationSelectorController controller) {
             this.controller = controller;
             EventBus bus = EventBus.getMainEventBus();
             bus.addHandler(NewPhenomenonsEvent.TYPE, this);

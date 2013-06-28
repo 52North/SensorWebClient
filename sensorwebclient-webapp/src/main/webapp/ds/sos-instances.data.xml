@@ -121,7 +121,7 @@
 	</instance> -->
 
 	
-	<!-- <instance>
+	<instance>
 		<itemName>Air Quality Belgium</itemName>
 		<url>http://sos.irceline.be/sos</url>
 		<version>1.0.0</version>
@@ -151,7 +151,7 @@
 		<urNorthing>70.0</urNorthing>
 		<defaultZoom>13</defaultZoom>
 		<requestChunk>500</requestChunk>
-	</instance> -->
+	</instance><!--  -->
 	
 <!-- 
 

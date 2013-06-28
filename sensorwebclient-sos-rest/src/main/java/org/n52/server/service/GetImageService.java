@@ -26,23 +26,19 @@ package org.n52.server.service;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
 
 import javax.servlet.ServletOutputStream;
 
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.entity.StandardEntityCollection;
 import org.n52.client.service.EESDataService;
+import org.n52.server.api.v0.DesignedParameterSet;
+import org.n52.server.api.v0.InternalServiceException;
+import org.n52.server.api.v0.ParameterSet;
+import org.n52.server.api.v0.output.ImageDataResult;
 import org.n52.server.oxf.util.generator.EESGenerator;
-import org.n52.server.service.rest.ImageDataResult;
-import org.n52.server.service.rest.InternalServiceException;
-import org.n52.server.service.rest.ParameterSet;
-import org.n52.server.service.rest.TimeSeriesdataResult;
 import org.n52.shared.serializable.pojos.DesignOptions;
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
-import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,8 +54,8 @@ public class GetImageService extends DataService {
 
     private boolean renderGrid;
 
-    public ImageDataResult createTimeSeriesChart(ParameterSet parameterSet, String instance) {
-        DesignOptions options = createDesignOptions(parameterSet, instance);
+    public ImageDataResult createTimeSeriesChart(DesignedParameterSet parameterSet) {
+        DesignOptions options = createDesignOptions(parameterSet);
         return performChartRendering(options);
     }
 
@@ -76,15 +72,14 @@ public class GetImageService extends DataService {
         }
     }
 
-    public void writeTimeSeriesChart(ParameterSet parameterSet, String instance, ServletOutputStream outputStream) {
-        DesignOptions options = createDesignOptions(parameterSet, instance);
+    public void writeTimeSeriesChart(DesignedParameterSet parameterSet, ServletOutputStream outputStream) {
+        DesignOptions options = createDesignOptions(parameterSet);
         performChartRendering(options, outputStream);
     }
 
-    private DesignOptions createDesignOptions(ParameterSet parameterSet, String instance) {
-        SOSMetadata metadata = getServiceMetadata(instance);
-        ArrayList<TimeSeriesProperties> tsProperties = new ArrayList<TimeSeriesProperties>();
-        createTimeSeriesRequest(parameterSet, metadata, tsProperties);
+    private DesignOptions createDesignOptions(DesignedParameterSet parameterSet) {
+        ArrayList<TimeseriesProperties> tsProperties = new ArrayList<TimeseriesProperties>();
+        prepareTimeseriesResults(parameterSet, tsProperties);
         return createDesignOptions(parameterSet, tsProperties, isRenderGrid());
     }
 
@@ -95,46 +90,26 @@ public class GetImageService extends DataService {
             chartGenerator.createChartToOutputStream(options, renderingInfo, outputStream);
         }
         catch (Exception e) {
-            LOGGER.error("Could not render time series chart.", e);
+            LOGGER.error("Could not render timeseries chart.", e);
             throw new InternalServiceException();
         }
     }
 
     @Override
-    protected TimeSeriesProperties decorateProperties(TimeSeriesProperties timeSeriesProperties, ParameterSet parameterSet) throws Exception {
+    protected TimeseriesProperties decorateProperties(TimeseriesProperties timeSeriesProperties,
+                                                      ParameterSet parameterSet) throws Exception {
         timeSeriesProperties = decoratePropertiesWithImageSize(timeSeriesProperties, parameterSet);
         timeSeriesProperties = decoradeWithSensorMetadataProperties(timeSeriesProperties);
-        timeSeriesProperties = decoratePropertiesWithRandomColor(timeSeriesProperties);
         return timeSeriesProperties;
     }
 
-    private TimeSeriesProperties decoratePropertiesWithImageSize(TimeSeriesProperties timeSeriesProperties, ParameterSet parameterSet) {
+    private TimeseriesProperties decoratePropertiesWithImageSize(TimeseriesProperties timeSeriesProperties,
+                                                                 ParameterSet parameterSet) {
         int width = parameterSet.getWidth() > 0 ? parameterSet.getWidth() : defaultWidth;
         int height = parameterSet.getHeight() > 0 ? parameterSet.getHeight() : defaultHeight;
         timeSeriesProperties.setWidth(width);
         timeSeriesProperties.setHeight(height);
         return timeSeriesProperties;
-    }
-
-    private TimeSeriesProperties decoratePropertiesWithRandomColor(TimeSeriesProperties timeSeriesProperties) {
-        timeSeriesProperties.setHexColor(getRandomHexColor());
-        return timeSeriesProperties;
-    }
-
-    public static String getRandomHexColor() {
-        String redHex = getNextFormattedRandomNumber();
-        String yellowHex = getNextFormattedRandomNumber();
-        String blueHex = getNextFormattedRandomNumber();
-        return "#" + redHex + yellowHex + blueHex;
-    }
-
-    private static String getNextFormattedRandomNumber() {
-        String randomHex = Integer.toHexString(new Random().nextInt(256));
-        if (randomHex.length() == 1) {
-            // ensure two digits
-            randomHex = "0" + randomHex;
-        }
-        return randomHex;
     }
 
     public EESDataService getImageDataService() {

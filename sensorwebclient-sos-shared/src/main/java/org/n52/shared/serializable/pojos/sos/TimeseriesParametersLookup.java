@@ -12,16 +12,14 @@ import java.util.HashMap;
  * instance is hold together with other metadata within the {@link SOSMetadata} of a configured SOS.<br>
  * <br>
  * <b>Note:</b> A TimeseriesParametersLookup serves only parameters available (typically parsed from a
- * capabilities file). There is no logic to combine these parameters to valid {@link ParameterConstellation}s
- * which can be used to identify actual timeseries.
- * 
- * @see ParameterConstellation
+ * capabilities file). There is no logic to combine these parameters to valid {@link SosTimeseries}s which can
+ * be used to identify actual timeseries.
  */
 public class TimeseriesParametersLookup implements Serializable {
 
     private static final long serialVersionUID = 7232653582909270958L;
 
-    private HashMap<String, FeatureOfInterest> features = new HashMap<String, FeatureOfInterest>();
+    private HashMap<String, Feature> features = new HashMap<String, Feature>();
 
     private HashMap<String, Phenomenon> phenomenons = new HashMap<String, Phenomenon>();
 
@@ -83,7 +81,7 @@ public class TimeseriesParametersLookup implements Serializable {
      * @param feature
      *        the feature to set.
      */
-    public void addFeature(FeatureOfInterest feature) {
+    public void addFeature(Feature feature) {
         this.features.put(feature.getId(), feature);
     }
 
@@ -100,20 +98,20 @@ public class TimeseriesParametersLookup implements Serializable {
     /**
      * @return all <code>FeatureOfInterest</code>s or an empty collection if no features are available.
      */
-    public Collection<FeatureOfInterest> getFeatures() {
+    public Collection<Feature> getFeatures() {
         if (features.size() == 0) {
-            return new ArrayList<FeatureOfInterest>();
+            return new ArrayList<Feature>();
         }
         else {
-            return new ArrayList<FeatureOfInterest>(features.values());
+            return new ArrayList<Feature>(features.values());
         }
     }
 
     /**
      * @return all <code>FeatureOfInterest</code>s or an empty array if no features are available.
      */
-    public FeatureOfInterest[] getFeaturesAsArray() {
-        return getFeatures().toArray(new FeatureOfInterest[0]);
+    public Feature[] getFeaturesAsArray() {
+        return getFeatures().toArray(new Feature[0]);
     }
 
     /**
@@ -121,7 +119,7 @@ public class TimeseriesParametersLookup implements Serializable {
      *        the specific feature id
      * @return the feature instance for the given id.
      */
-    public FeatureOfInterest getFeature(String id) {
+    public Feature getFeature(String id) {
         return features.get(id);
     }
 
@@ -229,5 +227,21 @@ public class TimeseriesParametersLookup implements Serializable {
      */
     public void removeProcedure(String id) {
         procedures.remove(id);
+    }
+
+    /**
+     * Checks if the timeseries' parameters are already known/loaded to this lookup instance.
+     * 
+     * @param timeseries
+     *        the timeseries to check if parameters are loaded.
+     * @return <code>true</code> if all parameters are already loaded, <code>false</code> otherwise.
+     */
+    public boolean hasLoadedCompletely(SosTimeseries timeseries) {
+        boolean procedureLoaded = procedures.containsKey(timeseries.getProcedure());
+        boolean featureLoaded = features.containsKey(timeseries.getFeature());
+        boolean offeringLoaded = offerings.containsKey(timeseries.getOffering());
+        boolean phenomenonLoaded = phenomenons.containsKey(timeseries.getPhenomenon());
+        return procedureLoaded && featureLoaded && offeringLoaded && phenomenonLoaded;
+
     }
 }

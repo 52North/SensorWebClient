@@ -31,7 +31,7 @@ import org.n52.server.oxf.util.logging.Statistics;
 import org.n52.server.service.SensorMetadataServiceImpl;
 import org.n52.shared.responses.GetProcedureDetailsUrlResponse;
 import org.n52.shared.responses.SensorMetadataResponse;
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.service.rpc.RpcSensorMetadataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,7 @@ public class RpcSensorMetadataServlet extends RemoteServiceServlet implements Rp
     }
     
     @Override
-    public SensorMetadataResponse getSensorMetadata(TimeSeriesProperties tsProperties) throws Exception {
+    public SensorMetadataResponse getSensorMetadata(TimeseriesProperties tsProperties) throws Exception {
         Statistics.saveHostRequest(this.getThreadLocalRequest().getRemoteHost());
         return service.getSensorMetadata(tsProperties);
     }

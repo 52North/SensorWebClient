@@ -24,6 +24,8 @@
 
 package org.n52.client.sos.ctrl;
 
+import static org.n52.client.bus.EventBus.getMainEventBus;
+import static org.n52.client.ctrl.ExceptionHandler.handleUnexpectedException;
 import static org.n52.client.sos.ctrl.SosDataManager.getDataManager;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 import static org.n52.shared.serializable.pojos.DesignOptions.SOS_PARAM_FIRST;
@@ -105,10 +107,10 @@ import org.n52.shared.responses.SensorMetadataResponse;
 import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.DesignOptions;
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
-import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -162,7 +164,7 @@ public class SOSRequestManager extends RequestManager {
         this.eesDataService = GWT.create(RpcEESDataService.class);
     }
 
-    private void getSensorData(TimeSeriesProperties properties, final boolean requestSensorData) throws Exception {
+    private void getSensorData(TimeseriesProperties properties, final boolean requestSensorData) throws Exception {
         SensorMetadataCallback callback = new SensorMetadataCallback(this, "Could not get sensor data.") {
             @Override
             public void onSuccess(SensorMetadataResponse result) {
@@ -188,7 +190,7 @@ public class SOSRequestManager extends RequestManager {
     }
 
     public void requestSensorMetadata(NewTimeSeriesEvent evt) throws Exception {
-        TimeSeriesProperties props = createTimeseriesProperties(evt, evt.getServiceUrl());
+        TimeseriesProperties props = createTimeseriesProperties(evt, evt.getServiceUrl());
         TimeSeries timeSeries = new TimeSeries("TS_" + System.currentTimeMillis(), props);
 
         try {
@@ -209,17 +211,17 @@ public class SOSRequestManager extends RequestManager {
         }
     }
 
-    private TimeSeriesProperties createTimeseriesProperties(NewTimeSeriesEvent evt, String serviceUrl) {
+    private TimeseriesProperties createTimeseriesProperties(NewTimeSeriesEvent evt, String serviceUrl) {
         int width = evt.getWidth();
         int height = evt.getHeight();
         Station station = evt.getStation();
         TimeseriesParametersLookup lookup = getTimeseriesParameterLookupFor(serviceUrl);
-        ParameterConstellation parameterConstellation = evt.getParameterConstellation();
-        FeatureOfInterest foi = lookup.getFeature(parameterConstellation.getFeatureOfInterest());
-        Phenomenon phenomenon = lookup.getPhenomenon(parameterConstellation.getPhenomenon());
-        Procedure procedure = lookup.getProcedure(parameterConstellation.getProcedure());
-        Offering offering = lookup.getOffering(parameterConstellation.getOffering());
-        return new TimeSeriesProperties(serviceUrl, station, offering, foi, procedure, phenomenon, width, height);
+        SosTimeseries timeseries = evt.getTimeseries();
+        Feature feature = lookup.getFeature(timeseries.getFeature());
+        Phenomenon phenomenon = lookup.getPhenomenon(timeseries.getPhenomenon());
+        Procedure procedure = lookup.getProcedure(timeseries.getProcedure());
+        Offering offering = lookup.getOffering(timeseries.getOffering());
+        return new TimeseriesProperties(serviceUrl, station, offering, feature, procedure, phenomenon, width, height);
     }
 
     private TimeseriesParametersLookup getTimeseriesParameterLookupFor(String serviceUrl) {
@@ -229,7 +231,7 @@ public class SOSRequestManager extends RequestManager {
 
     public void requestFirstValueOf(TimeSeries timeSeries) {
         try {
-            ArrayList<TimeSeriesProperties> series = new ArrayList<TimeSeriesProperties>();
+            ArrayList<TimeseriesProperties> series = new ArrayList<TimeseriesProperties>();
             series.add(timeSeries.getProperties());
 
             boolean grid = DataStoreTimeSeriesImpl.getInst().isGridEnabled();
@@ -248,7 +250,7 @@ public class SOSRequestManager extends RequestManager {
 
     public void requestLastValueOf(TimeSeries timeSeries) {
         try {
-            ArrayList<TimeSeriesProperties> series = new ArrayList<TimeSeriesProperties>();
+            ArrayList<TimeseriesProperties> series = new ArrayList<TimeseriesProperties>();
             series.add(timeSeries.getProperties());
             boolean grid = DataStoreTimeSeriesImpl.getInst().isGridEnabled();
             long begin = TimeManager.getInst().getBegin();
@@ -266,7 +268,7 @@ public class SOSRequestManager extends RequestManager {
 
     public void requestSensorData(TimeSeries[] timeSeries, String id) {
         try {
-            ArrayList<TimeSeriesProperties> series = new ArrayList<TimeSeriesProperties>();
+            ArrayList<TimeseriesProperties> series = new ArrayList<TimeseriesProperties>();
             for (TimeSeries timeSerie : timeSeries) {
                 if (timeSerie.getId().equals(id)) {
                     timeSerie.getProperties().setHeight(View.getView().getDataPanelHeight());
@@ -394,7 +396,7 @@ public class SOSRequestManager extends RequestManager {
 
     public void requestSensorData(TimeSeries[] timeseriesArray) {
         if (timeseriesArray.length > 0) {
-            ArrayList<TimeSeriesProperties> series = new ArrayList<TimeSeriesProperties>();
+            ArrayList<TimeseriesProperties> series = new ArrayList<TimeseriesProperties>();
             for (int i = 0; i < timeseriesArray.length; i++) {
                 TimeSeries timeseries = timeseriesArray[i];
                 series.add(timeseries.getProperties());
@@ -422,7 +424,7 @@ public class SOSRequestManager extends RequestManager {
             return;
         }
 
-        ArrayList<TimeSeriesProperties> properties = new ArrayList<TimeSeriesProperties>();
+        ArrayList<TimeseriesProperties> properties = new ArrayList<TimeseriesProperties>();
         for (TimeSeries timeSerie : timeSeries) {
             timeSerie.getProperties().setHeight(DiagramTab.getPanelHeight());
             timeSerie.getProperties().setWidth(DiagramTab.getPanelWidth());
@@ -449,9 +451,9 @@ public class SOSRequestManager extends RequestManager {
 //				ovBegin = ovEnd - timeRangeOverview;
 //			}
 
-            ArrayList<TimeSeriesProperties> copySeries = new ArrayList<TimeSeriesProperties>();
-            for (TimeSeriesProperties pc : properties) {
-                TimeSeriesProperties copy = pc.copy();
+            ArrayList<TimeseriesProperties> copySeries = new ArrayList<TimeseriesProperties>();
+            for (TimeseriesProperties pc : properties) {
+                TimeseriesProperties copy = pc.copy();
                 setDefaultValues(copy);
                 copy.setLanguage(PropertiesManager.language);
                 copy.setShowYAxis(false);
@@ -471,7 +473,7 @@ public class SOSRequestManager extends RequestManager {
         }
     }
 
-    private void setDefaultValues(TimeSeriesProperties copy) {
+    private void setDefaultValues(TimeseriesProperties copy) {
         PropertiesManager properties = PropertiesManager.getPropertiesManager();
         ArrayList<String> mappings = properties.getParameters("phenomenon");
         for (String mapping : mappings) {
@@ -571,7 +573,7 @@ public class SOSRequestManager extends RequestManager {
                         EventBus.getMainEventBus().fireEvent(new StoreAxisDataEvent(key, result.getAxis().get(key)));
                     }
 
-                    for (TimeSeriesProperties prop : result.getPropertiesList()) {
+                    for (TimeseriesProperties prop : result.getPropertiesList()) {
                         TimeSeriesHasDataEvent hasDataEvent = new TimeSeriesHasDataEvent(prop.getTsID(), prop.hasData());
                         EventBus.getMainEventBus().fireEvent(hasDataEvent);
                     }
@@ -623,33 +625,18 @@ public class SOSRequestManager extends RequestManager {
         this.eesDataService.getEESDiagram(request, callback);
     }
 
-    public void requestProcedurePositions(String sosURL, BoundingBox boundingBox) {
+    public void requestStations(String serviceUrl, BoundingBox boundingBox) {
         try {
-            getProcedurePositions(sosURL, boundingBox);
+            EventBus.getMainEventBus().fireEvent(new DeleteMarkersEvent());
+            SOSMetadata meta = getDataManager().getServiceMetadata(serviceUrl);
+            int chunkSize = meta.getRequestChunk() > 0 ? meta.getRequestChunk() : 300;
+            getPositions(serviceUrl, 0, chunkSize, boundingBox);
         }
         catch (Exception e) {
             ExceptionHandler.handleException(new ServerException("could not get procedures", e));
         }
     }
 
-    private void getProcedurePositions(String serviceUrl, BoundingBox boundingBox) throws Exception {
-
-        EventBus.getMainEventBus().fireEvent(new DeleteMarkersEvent());
-
-        SOSMetadata meta = getDataManager().getServiceMetadata(serviceUrl);
-        int chunkSize = meta.getRequestChunk() > 0 ? meta.getRequestChunk() : 25;
-        if (meta != null) {
-            // no position data available, request it
-            getPositions(serviceUrl, 0, chunkSize, boundingBox);
-        }
-    }
-
-    /**
-     * Request export pdf.
-     * 
-     * @param timeseries
-     *        the timeseries
-     */
     public void requestExportPDF(Collection<TimeSeries> timeseries) {
         try {
             getPDF(timeseries);
@@ -674,7 +661,7 @@ public class SOSRequestManager extends RequestManager {
     }
 
     private TimeSeriesDataRequest createTimeSeriesDataRequest(Collection<TimeSeries> tsCollection) {
-        ArrayList<TimeSeriesProperties> series = new ArrayList<TimeSeriesProperties>();
+        ArrayList<TimeseriesProperties> series = new ArrayList<TimeseriesProperties>();
         for (TimeSeries timeSeries : tsCollection) {
             timeSeries.getProperties().setLanguage(PropertiesManager.language);
 			series.add(timeSeries.getProperties());
@@ -812,13 +799,14 @@ public class SOSRequestManager extends RequestManager {
 		this.queryService.doQuery(request, callback);
 	}
 
-	public void requestStation(String serviceUrl, String offeringId, String procedureID, String phenomenonId, String featureId) {
-		QueryCallback callback = createQueryCallback("Could not get the station");
-        QueryFactory factory = createQueryFactoryFor(serviceUrl);
+	public void requestStationWith(SosTimeseries timeseries) {
+		QueryCallback callback = createQueryCallback("Could not get the timeseries: " + timeseries);
+        QueryFactory factory = createQueryFactoryFor(timeseries.getServiceUrl());
         QueryParameters parameters = new QueryParameters()
-                 .setOffering(offeringId)
-                 .setFeature(featureId)
-                 .setPhenomenon(phenomenonId);
+                 .setOffering(timeseries.getOffering())
+                 .setFeature(timeseries.getFeature())
+                 .setPhenomenon(timeseries.getPhenomenon())
+                 .setProcedure(timeseries.getProcedure());
         QueryRequest request = factory.createFilteredStationQuery(parameters);
 		doQuery(request, callback);
 	}
@@ -829,7 +817,6 @@ public class SOSRequestManager extends RequestManager {
 			public void onSuccess(QueryResponse<?> result) {
 				removeRequest();
 				try {
-					// TODO refactor
 					if (result instanceof StationQueryResponse) {
 						handleStationQuery(result);
 					} else if (result instanceof PhenomenonQueryResponse) {
@@ -842,7 +829,7 @@ public class SOSRequestManager extends RequestManager {
 						handleFeatureQuery(result);
 					}
 				} catch (Exception e) {
-					ExceptionHandler.handleUnexpectedException(e);
+					handleUnexpectedException(e);
 				}
 			}
 		};
@@ -862,22 +849,21 @@ public class SOSRequestManager extends RequestManager {
 	        @Override
 	        public void onSuccess(final QueryResponse<?> queryResponse) {
 	            try {
-	                removeRequest();
 	                ResultPage< ? > resultPage = queryResponse.getPagedResults();
                     String url = queryResponse.getServiceUrl();
                     if (resultPage.isLastPage()) {
 	                    requestMgr.removeRequest(System.currentTimeMillis() - begin);
-	                    EventBus.getMainEventBus().fireEvent(new GetProcedurePositionsFinishedEvent());
+	                    getMainEventBus().fireEvent(new GetProcedurePositionsFinishedEvent());
 	                } else {
 	                    int nextOffset = resultPage.getOffset() + pageSize;
 	                    getNextChunk(serviceUrl, nextOffset, pageSize, boundingBox);
 	                }
                     Station[] stations = (Station[]) resultPage.getResults();
 	                StoreStationsEvent event = new StoreStationsEvent(url, stations);
-	                EventBus.getMainEventBus().fireEvent(event);
+	                getMainEventBus().fireEvent(event);
 	            }
 	            catch (Exception e) {
-	                ExceptionHandler.handleUnexpectedException(e);
+	                handleUnexpectedException(e);
 	                removeRequest();
 	            }
 	        }
@@ -886,7 +872,7 @@ public class SOSRequestManager extends RequestManager {
 	            try {
 	                getPositions(sosURL, start, interval, boundingBox);
 	            } catch (Exception e) {
-	                ExceptionHandler.handleUnexpectedException(e);
+	                handleUnexpectedException(e);
 	                removeRequest();
 	            }
 	        }
@@ -901,8 +887,6 @@ public class SOSRequestManager extends RequestManager {
 	    this.queryService.doQuery(request, callback);
         addRequest();
 	}
-
-    
 
 	protected void handleStationQuery(QueryResponse<?> response) {
 		Station station = (Station) response.getResults()[0]; // TODO fragile!
@@ -923,7 +907,7 @@ public class SOSRequestManager extends RequestManager {
 	}
 	
 	protected void handleFeatureQuery(QueryResponse<?> response) {
-		FeatureOfInterest feature = (FeatureOfInterest) response.getResults()[0]; // TODO fragile!
+		Feature feature = (Feature) response.getResults()[0]; // TODO fragile!
 		StoreFeatureEvent event = new StoreFeatureEvent(response.getServiceUrl(), feature);
 		EventBus.getMainEventBus().fireEvent(event);
 	}
