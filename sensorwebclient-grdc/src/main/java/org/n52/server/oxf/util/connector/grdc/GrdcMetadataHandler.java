@@ -91,7 +91,7 @@ public class GrdcMetadataHandler extends MetadataHandler {
 		ConnectorUtils.setVersionNumbersToMetadata(sosUrl, sosTitle, sosVersion, omFormat, smlVersion);
 		
 		SOSMetadata metadata = (SOSMetadata) ConfigurationContext.getServiceMetadata(sosUrl);
-		TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
+		TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
 		
 		IBoundingBox sosBbox = null;
 		Map<String, FutureTask<OperationResult>> futureTasks = new HashMap<String, FutureTask<OperationResult>>();

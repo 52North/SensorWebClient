@@ -86,7 +86,7 @@ public class HydroMetadataHandler extends MetadataHandler {
 	public SOSMetadataResponse performMetadataCompletion(String sosUrl, String sosVersion) throws Exception {
 		
 		SOSMetadata metadata = initMetadata(sosUrl, sosVersion);
-		TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
+		TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
 		
 		// get a waterml specific responseFormat if set
 		String responseFormat = ConnectorUtils.getResponseFormat(getServiceDescriptor(), "waterml");

@@ -138,7 +138,7 @@ public abstract class MetadataHandler {
 			}
 		}
 		
-		TimeseriesParametersLookup lookup = sosMetadata.getTimeseriesParamtersLookup();
+		TimeseriesParametersLookup lookup = sosMetadata.getTimeseriesParametersLookup();
 
 		// add fois
 		for (String featureId : featureIds) {

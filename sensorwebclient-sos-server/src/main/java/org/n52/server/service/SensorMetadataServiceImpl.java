@@ -55,7 +55,7 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
             SOSMetadata metadata = getSOSMetadata(sosUrl);
             String procedureId = tsProperties.getProcedure().getId();
             String phenomenonId = tsProperties.getPhenomenon().getId();
-            TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
+            TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
             Procedure procedure = lookup.getProcedure(procedureId);
 
             XmlObject sml = getSensorDescriptionAsSensorML(procedureId, metadata);

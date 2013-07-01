@@ -125,7 +125,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
             XMLHandlingException,
             IOException {
         SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosUrl);
-        TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
+        TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
         ArrayList<Procedure> procedures = lookup.getProcedures();
 
         // do describe sensor for each procedure

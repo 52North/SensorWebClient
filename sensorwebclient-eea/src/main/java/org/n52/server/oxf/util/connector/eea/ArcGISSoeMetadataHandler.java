@@ -86,7 +86,7 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 	@Override
 	public SOSMetadataResponse performMetadataCompletion(String sosUrl, String sosVersion) throws Exception {
 		SOSMetadata metadata = initMetadata(sosUrl, sosVersion);
-		TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
+		TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
 		
         Collection<SosTimeseries> observingTimeseries = createObservingTimeseries();
         

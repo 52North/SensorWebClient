@@ -245,7 +245,7 @@ class StationSelectorController implements MapController {
     
     private TimeseriesParametersLookup getParametersLookup() {
         final SOSMetadata metadata = getCurrentMetadata();
-        return metadata.getTimeseriesParamtersLookup();
+        return metadata.getTimeseriesParametersLookup();
     }
 
     public SOSMetadata getCurrentMetadata() {

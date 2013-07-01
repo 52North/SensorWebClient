@@ -326,7 +326,7 @@ public class SOSMetadata implements Serializable {
     /**
      * @return a lookup helper for timeseries parameters.
      */
-    public TimeseriesParametersLookup getTimeseriesParamtersLookup() {
+    public TimeseriesParametersLookup getTimeseriesParametersLookup() {
         timeseriesParamtersLookup = timeseriesParamtersLookup == null 
                 ? new TimeseriesParametersLookup()
                 : timeseriesParamtersLookup;

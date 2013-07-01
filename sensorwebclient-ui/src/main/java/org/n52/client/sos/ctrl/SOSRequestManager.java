@@ -226,7 +226,7 @@ public class SOSRequestManager extends RequestManager {
 
     private TimeseriesParametersLookup getTimeseriesParameterLookupFor(String serviceUrl) {
         SOSMetadata meta = getDataManager().getServiceMetadata(serviceUrl);
-        return meta.getTimeseriesParamtersLookup();
+        return meta.getTimeseriesParametersLookup();
     }
 
     public void requestFirstValueOf(TimeSeries timeSeries) {

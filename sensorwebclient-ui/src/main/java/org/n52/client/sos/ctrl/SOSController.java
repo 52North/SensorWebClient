@@ -241,7 +241,7 @@ public class SOSController extends ServiceController {
         private TimeseriesParametersLookup getParametersLookup(String serviceUrl) {
             SosDataManager dataManager = SosDataManager.getDataManager();
             SOSMetadata serviceMetadata = dataManager.getServiceMetadata(serviceUrl);
-            return serviceMetadata.getTimeseriesParamtersLookup();
+            return serviceMetadata.getTimeseriesParametersLookup();
         }
 
 		@Override
