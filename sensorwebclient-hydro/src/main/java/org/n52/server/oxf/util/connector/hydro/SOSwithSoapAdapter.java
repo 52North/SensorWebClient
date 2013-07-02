@@ -30,6 +30,9 @@ import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_CAPABILITIES_SERVIC
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.entity.ContentType;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.oxf.OXFException;
@@ -41,6 +44,8 @@ import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.sos.adapter.SOSAdapter;
 import org.n52.oxf.sos.util.SosUtil;
+import org.n52.oxf.util.web.HttpClient;
+import org.n52.oxf.util.web.ProxyAwareHttpClient;
 import org.n52.oxf.util.web.SimpleHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +54,8 @@ import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
 public class SOSwithSoapAdapter extends SOSAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSwithSoapAdapter.class);
+    
+    public static final String GET_DATA_AVAILABILITY = "GetDataAvailability";
     
     private static final int SOCKET_TIMEOUT = 30000;
     
@@ -126,7 +133,24 @@ public class SOSwithSoapAdapter extends SOSAdapter {
     @Override
     public OperationResult doOperation(Operation operation, ParameterContainer parameters) throws ExceptionReport,
             OXFException {
-        OperationResult result = super.doOperation(operation, parameters);
+    	OperationResult result = null;
+		if (operation.getName().equals(GET_DATA_AVAILABILITY)) {
+			if (getRequestBuilder() instanceof SoapSOSRequestBuilder_200) {
+				try {
+					SoapSOSRequestBuilder_200 builder = (SoapSOSRequestBuilder_200) getRequestBuilder();
+					String request = builder.buildGetDataAvailabilityRequest(parameters);
+					HttpClient httpClient = new ProxyAwareHttpClient(new SimpleHttpClient());
+					String url = operation.getDcps()[0].getHTTPGetRequestMethods().get(0).getOnlineResource().getHref();
+					HttpResponse httpResponse = httpClient.executePost(url, request, ContentType.TEXT_XML);
+					HttpEntity responseEntity = httpResponse.getEntity();
+					result = new OperationResult(responseEntity.getContent(), parameters, request);
+				} catch (Exception e) {
+					LOGGER.error("Error occured, while sending GetDataAvailability.", e);
+				}
+			}
+		} else {
+			result = super.doOperation(operation, parameters);	
+		}
         ByteArrayInputStream resultStream = result.getIncomingResultAsStream();
         try {
             XmlObject result_xb = XmlObject.Factory.parse(resultStream);

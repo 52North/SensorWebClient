@@ -28,6 +28,7 @@ import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_SERVICE_PARAMET
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER;
 import static org.n52.oxf.sos.adapter.SOSAdapter.GET_FEATURE_OF_INTEREST;
 import static org.n52.server.oxf.util.ConfigurationContext.SERVER_TIMEOUT;
+import static org.n52.server.oxf.util.connector.hydro.SOSwithSoapAdapter.GET_DATA_AVAILABILITY;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -50,20 +51,15 @@ import net.opengis.sos.x20.GetFeatureOfInterestResponseDocument;
 import net.opengis.waterml.x20.MonitoringPointDocument;
 import net.opengis.waterml.x20.MonitoringPointType;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.entity.ContentType;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
+import org.n52.oxf.ows.ExceptionReport;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
-import org.n52.oxf.util.web.HttpClient;
-import org.n52.oxf.util.web.ProxyAwareHttpClient;
-import org.n52.oxf.util.web.SimpleHttpClient;
 import org.n52.server.oxf.util.access.AccessorThreadPool;
 import org.n52.server.oxf.util.access.OperationAccessor;
 import org.n52.server.oxf.util.connector.MetadataHandler;
@@ -79,7 +75,6 @@ import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -105,22 +100,22 @@ public class HydroMetadataHandler extends MetadataHandler {
 		Collection<SosTimeseries> observingTimeseries = createObservingTimeseries();
 		
 		// execute the GetFeatureOfInterest requests
-		Map<SosTimeseries, FutureTask<OperationResult>> futureTasks = new HashMap<SosTimeseries, FutureTask<OperationResult>>();
+		Map<SosTimeseries, FutureTask<OperationResult>> getFoiAccessTasks = new HashMap<SosTimeseries, FutureTask<OperationResult>>();
 		for (SosTimeseries timeseries : observingTimeseries) {
 			// create the category for every parameter constellation out of phenomenon and procedure
 			String category = getLastPartOf(timeseries.getPhenomenon()) + " (" + getLastPartOf(timeseries.getProcedure()) + ")";
 			timeseries.setCategory(category);
-			futureTasks.put(timeseries, new FutureTask<OperationResult>(createGetFoiAccess(sosUrl, sosVersion, timeseries)));
+			getFoiAccessTasks.put(timeseries, new FutureTask<OperationResult>(createGetFoiAccess(sosUrl, sosVersion, timeseries)));
 		}
 		
-        int counter = futureTasks.size();
+        int counter = getFoiAccessTasks.size();
         AReferencingHelper referenceHelper = createReferencingHelper();
 		LOGGER.info("Sending " + counter + " GetFeatureOfInterest requests");
-		for (SosTimeseries paramConst: futureTasks.keySet()) {
+		for (SosTimeseries paramConst: getFoiAccessTasks.keySet()) {
 			LOGGER.info("Sending #{} GetFeatureOfInterest request for Offering " + paramConst.getOffering(), counter--);
-			AccessorThreadPool.execute(futureTasks.get(paramConst));
+			AccessorThreadPool.execute(getFoiAccessTasks.get(paramConst));
 			try {
-				FutureTask<OperationResult> futureTask = futureTasks.get(paramConst);
+				FutureTask<OperationResult> futureTask = getFoiAccessTasks.get(paramConst);
 				OperationResult opRes = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
 				if (opRes == null) {
 					LOGGER.error("Get no result for GetFeatureOfInterest with parameter constellation: " + paramConst + "!");
@@ -185,7 +180,6 @@ public class HydroMetadataHandler extends MetadataHandler {
 			} catch (TimeoutException e) {
 				LOGGER.error("Timeout occured.", e);
 			}
-
 		}
 		
 		LOGGER.info("{} stations are created", metadata.getStations().size());
@@ -194,33 +188,21 @@ public class HydroMetadataHandler extends MetadataHandler {
 		return new SOSMetadataResponse(metadata);
 	}
 	
-	private boolean isValidTimeserie(SosTimeseries tmp, String sosUrl) throws OXFException {
+	private boolean isValidTimeserie(SosTimeseries tmp, String sosUrl) throws OXFException, ExceptionReport, XmlException, IOException {
 		ParameterContainer parameters = new ParameterContainer();
 		parameters.addParameterShell(ISOSRequestBuilder.GET_OBSERVATION_OBSERVED_PROPERTY_PARAMETER, tmp.getPhenomenon());
 		parameters.addParameterShell(ISOSRequestBuilder.GET_OBSERVATION_PROCEDURE_PARAMETER, tmp.getProcedure());
 		parameters.addParameterShell(ISOSRequestBuilder.GET_OBSERVATION_OFFERING_PARAMETER, tmp.getOffering());
 		parameters.addParameterShell(ISOSRequestBuilder.GET_OBSERVATION_FEATURE_OF_INTEREST_PARAMETER, tmp.getFeature());
-		if (getSosAdapter().getRequestBuilder() instanceof SoapSOSRequestBuilder_200) {
-			SoapSOSRequestBuilder_200 builder = (SoapSOSRequestBuilder_200) getSosAdapter().getRequestBuilder();
-			try {
-				String request = builder.buildGetDataAvailabilityRequest(parameters);
-				HttpClient httpClient = new ProxyAwareHttpClient(new SimpleHttpClient());
-				HttpResponse httpResponse = httpClient.executePost(sosUrl, request, ContentType.TEXT_XML);
-				HttpEntity responseEntity = httpResponse.getEntity();
-				OperationResult result = new OperationResult(responseEntity.getContent(), parameters, request);
-				XmlObject result_xb = XmlObject.Factory.parse(result.getIncomingResultAsStream());
-				return hasAvailabilityMember(result_xb);
-			} catch (Exception e) {
-				LOGGER.error("Error occured, while sending GetDataAvailability to check the availability of a timeseries.");
-			}
-		}
-		return false;
+		Operation operation = new Operation(GET_DATA_AVAILABILITY, sosUrl, sosUrl);
+		OperationResult result = getSosAdapter().doOperation(operation, parameters);
+		XmlObject result_xb = XmlObject.Factory.parse(result.getIncomingResultAsStream());
+		return hasAvailabilityMember(result_xb);
 	}
 
 	private boolean hasAvailabilityMember(XmlObject result_xb) throws XmlException, IOException {
-		EnvelopeDocument envelopeDoc = EnvelopeDocument.Factory.parse(result_xb.newInputStream());
 		String queryExpression = "declare namespace sos='http://www.opengis.net/sos/2.0'; $this/sos:GetDataAvailabilityResponse/sos:dataAvailabilityMember";
-		XmlObject[] response = envelopeDoc.getEnvelope().getBody().selectPath(queryExpression);
+		XmlObject[] response = result_xb.selectPath(queryExpression);
 		if (response.length == 1) {
 			return true;
 		} else {
