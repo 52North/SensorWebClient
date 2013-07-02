@@ -50,6 +50,9 @@ import net.opengis.sos.x20.GetFeatureOfInterestResponseDocument;
 import net.opengis.waterml.x20.MonitoringPointDocument;
 import net.opengis.waterml.x20.MonitoringPointType;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.entity.ContentType;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -57,6 +60,10 @@ import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.ows.capabilities.Operation;
+import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
+import org.n52.oxf.util.web.HttpClient;
+import org.n52.oxf.util.web.ProxyAwareHttpClient;
+import org.n52.oxf.util.web.SimpleHttpClient;
 import org.n52.server.oxf.util.access.AccessorThreadPool;
 import org.n52.server.oxf.util.access.OperationAccessor;
 import org.n52.server.oxf.util.connector.MetadataHandler;
@@ -66,12 +73,13 @@ import org.n52.server.oxf.util.parser.utils.ParsedPoint;
 import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.Feature;
-import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -167,7 +175,11 @@ public class HydroMetadataHandler extends MetadataHandler {
 	                    
 	                    SosTimeseries tmp = paramConst.clone();
 	                    tmp.setFeature(id);
-	                    station.addTimeseries(tmp);
+	                    if (isValidTimeserie(tmp, sosUrl)) {
+	                    	station.addTimeseries(tmp);
+						} else {
+							LOGGER.debug("Timeseries misses the DataAvailability check: " + tmp.toString());
+						}
 					}
 				}
 			} catch (TimeoutException e) {
@@ -182,6 +194,40 @@ public class HydroMetadataHandler extends MetadataHandler {
 		return new SOSMetadataResponse(metadata);
 	}
 	
+	private boolean isValidTimeserie(SosTimeseries tmp, String sosUrl) throws OXFException {
+		ParameterContainer parameters = new ParameterContainer();
+		parameters.addParameterShell(ISOSRequestBuilder.GET_OBSERVATION_OBSERVED_PROPERTY_PARAMETER, tmp.getPhenomenon());
+		parameters.addParameterShell(ISOSRequestBuilder.GET_OBSERVATION_PROCEDURE_PARAMETER, tmp.getProcedure());
+		parameters.addParameterShell(ISOSRequestBuilder.GET_OBSERVATION_OFFERING_PARAMETER, tmp.getOffering());
+		parameters.addParameterShell(ISOSRequestBuilder.GET_OBSERVATION_FEATURE_OF_INTEREST_PARAMETER, tmp.getFeature());
+		if (getSosAdapter().getRequestBuilder() instanceof SoapSOSRequestBuilder_200) {
+			SoapSOSRequestBuilder_200 builder = (SoapSOSRequestBuilder_200) getSosAdapter().getRequestBuilder();
+			try {
+				String request = builder.buildGetDataAvailabilityRequest(parameters);
+				HttpClient httpClient = new ProxyAwareHttpClient(new SimpleHttpClient());
+				HttpResponse httpResponse = httpClient.executePost(sosUrl, request, ContentType.TEXT_XML);
+				HttpEntity responseEntity = httpResponse.getEntity();
+				OperationResult result = new OperationResult(responseEntity.getContent(), parameters, request);
+				XmlObject result_xb = XmlObject.Factory.parse(result.getIncomingResultAsStream());
+				return hasAvailabilityMember(result_xb);
+			} catch (Exception e) {
+				LOGGER.error("Error occured, while sending GetDataAvailability to check the availability of a timeseries.");
+			}
+		}
+		return false;
+	}
+
+	private boolean hasAvailabilityMember(XmlObject result_xb) throws XmlException, IOException {
+		EnvelopeDocument envelopeDoc = EnvelopeDocument.Factory.parse(result_xb.newInputStream());
+		String queryExpression = "declare namespace sos='http://www.opengis.net/sos/2.0'; $this/sos:GetDataAvailabilityResponse/sos:dataAvailabilityMember";
+		XmlObject[] response = envelopeDoc.getEnvelope().getBody().selectPath(queryExpression);
+		if (response.length == 1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	private String getLastPartOf(String phenomenonId) {
         return phenomenonId.substring(phenomenonId.lastIndexOf("/") + 1);
     }
