@@ -49,14 +49,14 @@ public class RestfulProceduresController extends QueryController implements Rest
     @RequestMapping(value = "/{instance}/" + COLLECTION_PROCEDURES + "/**", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          HttpServletRequest request) throws Exception {
-        String procedure = getIndididuumIdentifierFor(COLLECTION_PROCEDURES, request);
+        String procedure = getDecodedIndividuumIdentifierFor(COLLECTION_PROCEDURES, request);
         return createResponseView(instance, procedure);
     }
 
     @RequestMapping(value = "/{instance}/" + COLLECTION_PROCEDURES + "/{id:.+}", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          @PathVariable(value = "id") String procedure) throws Exception {
-        return createResponseView(instance, procedure);
+        return createResponseView(instance, decode(procedure));
     }
 
     private ModelAndView createResponseView(String instance, String procedure) throws Exception {

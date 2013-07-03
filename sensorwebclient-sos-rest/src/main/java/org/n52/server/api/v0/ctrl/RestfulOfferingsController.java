@@ -46,14 +46,14 @@ public class RestfulOfferingsController extends QueryController implements Restf
     @RequestMapping(value = "/{instance}/" + COLLECTION_OFFERINGS + "/**", method = RequestMethod.GET)
     public ModelAndView getOfferingByID(@PathVariable(value = "instance") String instance,
                                         HttpServletRequest request) throws Exception {
-        String offering = getIndididuumIdentifierFor(COLLECTION_OFFERINGS, request);
+        String offering = getDecodedIndividuumIdentifierFor(COLLECTION_OFFERINGS, request);
         return createResponseView(instance, offering);
     }
 
     @RequestMapping(value = "/{instance}/" + COLLECTION_OFFERINGS + "/{id:.+}", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          @PathVariable(value = "id") String offering) throws Exception {
-        return createResponseView(instance, offering);
+        return createResponseView(instance, decode(offering));
     }
 
     private ModelAndView createResponseView(String instance, String offering) throws Exception {
