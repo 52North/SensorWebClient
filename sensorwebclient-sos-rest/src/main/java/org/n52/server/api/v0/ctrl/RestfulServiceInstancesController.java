@@ -2,6 +2,8 @@
 package org.n52.server.api.v0.ctrl;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Collection;
 
 import org.n52.server.api.v0.output.ModelAndViewPager;
@@ -46,11 +48,16 @@ public class RestfulServiceInstancesController implements RestfulKvp {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ModelAndView getInstancesByGET(@PathVariable(value = "id") String service,
-                                          @RequestParam(value = KVP_SHOW, required = false) String filter) {
+                                          @RequestParam(value = KVP_SHOW, required = false) String filter) throws Exception {
         ModelAndView mav = new ModelAndView("services");
-        ServiceInstance serviceInstance = serviceInstancesService.getServiceInstance(service);
+        String decodedServiceId = doubleDecode(service);
+        ServiceInstance serviceInstance = serviceInstancesService.getServiceInstance(decodedServiceId);
         mav.addObject("service", serviceInstance);
         return mav;
+    }
+
+    private String doubleDecode(String service) throws UnsupportedEncodingException {
+        return URLDecoder.decode(service, "utf-8");
     }
 
     public ServiceInstancesService getServiceInstancesService() {
