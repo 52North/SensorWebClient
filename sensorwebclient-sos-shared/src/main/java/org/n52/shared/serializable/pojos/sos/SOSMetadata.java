@@ -60,7 +60,7 @@ public class SOSMetadata implements Serializable {
 
     private String omVersion;
     
-    private TimeseriesParametersLookup timeseriesParamtersLookup;
+    private TimeseriesParametersLookup timeseriesParametersLookup;
 
     private HashMap<String, Station> stations = new HashMap<String, Station>();
 
@@ -75,6 +75,8 @@ public class SOSMetadata implements Serializable {
     private boolean waterML = false; // default
 
     private boolean autoZoom = true; // default
+    
+    private boolean protectedService = false; // default
 
     private int requestChunk = 300; // default
 
@@ -136,6 +138,7 @@ public class SOSMetadata implements Serializable {
         this.forceXYAxisOrder = builder.isForceXYAxisOrder();
         this.requestChunk = builder.getRequestChunk();
         this.configuredExtent = builder.getConfiguredServiceExtent();
+        this.protectedService = builder.isProctectedService();
         this.setSosMetadataHandler(builder.getSosMetadataHandler());
         this.setAdapter(builder.getAdapter());
     }
@@ -263,6 +266,10 @@ public class SOSMetadata implements Serializable {
     public boolean isForceXYAxisOrder() {
         return forceXYAxisOrder;
     }
+    
+    public boolean isProtectedService() {
+    	return protectedService;
+    }
 
     public int getRequestChunk() {
         return requestChunk;
@@ -327,10 +334,10 @@ public class SOSMetadata implements Serializable {
      * @return a lookup helper for timeseries parameters.
      */
     public TimeseriesParametersLookup getTimeseriesParametersLookup() {
-        timeseriesParamtersLookup = timeseriesParamtersLookup == null 
+        timeseriesParametersLookup = timeseriesParametersLookup == null 
                 ? new TimeseriesParametersLookup()
-                : timeseriesParamtersLookup;
-        return timeseriesParamtersLookup;
+                : timeseriesParametersLookup;
+        return timeseriesParametersLookup;
     }
 
     @Override
