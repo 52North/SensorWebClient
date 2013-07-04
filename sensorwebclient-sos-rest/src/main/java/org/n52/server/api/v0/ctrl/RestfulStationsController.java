@@ -81,14 +81,14 @@ public class RestfulStationsController extends QueryController implements Restfu
     @RequestMapping(value = "/{instance}/" + COLLECTION_STATIONS + "/**", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          HttpServletRequest request) throws Exception {
-        String station = getIndididuumIdentifierFor(COLLECTION_STATIONS, request);
+        String station = getDecodedIndividuumIdentifierFor(COLLECTION_STATIONS, request);
         return createResponseView(instance, station);
     }
 
     @RequestMapping(value = "/{instance}/" + COLLECTION_STATIONS + "/{id:.+}", method = RequestMethod.GET)
     public ModelAndView getStationByID(@PathVariable(value = "instance") String instance,
                                        @PathVariable(value = "id") String station) throws Exception {
-        return createResponseView(instance, station);
+        return createResponseView(instance, decode(station));
     }
 
     private ModelAndView createResponseView(String instance, String station) throws Exception {

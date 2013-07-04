@@ -46,14 +46,14 @@ public class RestfulPhenomenonsController extends QueryController implements Res
     @RequestMapping(value = "/{instance}/" + COLLECTION_PHENOMENONS + "/**", method = RequestMethod.GET)
     public ModelAndView getPhenomenonByID(@PathVariable(value = "instance") String instance,
                                           HttpServletRequest request) throws Exception {
-        String phenomenon = getIndididuumIdentifierFor(COLLECTION_PHENOMENONS, request);
+        String phenomenon = getDecodedIndividuumIdentifierFor(COLLECTION_PHENOMENONS, request);
         return createResponseView(instance, phenomenon);
     }
 
     @RequestMapping(value = "/{instance}/" + COLLECTION_PHENOMENONS + "/{id:.+}", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          @PathVariable(value = "id") String phenomenon) throws Exception {
-        return createResponseView(instance, phenomenon);
+        return createResponseView(instance, decode(phenomenon));
     }
 
     private ModelAndView createResponseView(String instance, String phenomenon) throws Exception {

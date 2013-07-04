@@ -3,6 +3,9 @@ package org.n52.server.api.v0.ctrl;
 
 import static org.springframework.web.servlet.HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.n52.client.service.QueryService;
@@ -62,18 +65,32 @@ public abstract class QueryController {
     }
 
     /**
-     * Determines the identifier of an individuum of the given collection. Instead of
+     * Determines the decoded identifier of an individuum of the given collection.
      * 
      * @param collectionName
      *        the name of the collection (e.g. <code>features</code>).
      * @param request
      *        the incoming request.
      * @return the individuum identifier.
+     * @throws UnsupportedEncodingException
+     *         if encoding is not supported.
      * @see RestfulUrls
      */
-    protected String getIndididuumIdentifierFor(String collectionName, HttpServletRequest request) {
+    protected String getDecodedIndividuumIdentifierFor(String collectionName, HttpServletRequest request) throws UnsupportedEncodingException {
         String path = (String) request.getAttribute(PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-        return path.substring(path.indexOf(collectionName) + collectionName.length() + 1);
+        return decode(path.substring(path.indexOf(collectionName) + collectionName.length() + 1));
+    }
+
+    /**
+     * Decodes given URL encoded string. Assumes and uses UTF-8 encoding.
+     * 
+     * @param toDecode
+     *        the string to decode.
+     * @return a decoded version of the input.
+     * @throws UnsupportedEncodingException if encoding is not supported.
+     */
+    protected String decode(String toDecode) throws UnsupportedEncodingException {
+        return URLDecoder.decode(toDecode, "UTF-8");
     }
 
     /**

@@ -46,14 +46,14 @@ public class RestfulFeaturesController extends QueryController implements Restfu
     @RequestMapping(value = "/{instance}/" + COLLECTION_FEATURES + "/**", method = RequestMethod.GET)
     public ModelAndView getFeatureByGET(@PathVariable(value = "instance") String instance,
                                         HttpServletRequest request) throws Exception {
-        String feature = getIndididuumIdentifierFor(COLLECTION_FEATURES, request);
+        String feature = getDecodedIndividuumIdentifierFor(COLLECTION_FEATURES, request);
         return createResponseView(instance, feature);
     }
 
     @RequestMapping(value = "/{instance}/" + COLLECTION_FEATURES + "/{id:.+}", method = RequestMethod.GET)
     public ModelAndView getFeatureByGET(@PathVariable(value = "instance") String instance,
                                         @PathVariable(value = "id") String feature) throws Exception {
-        return createResponseView(instance, feature);
+        return createResponseView(instance, decode(feature));
     }
 
     private ModelAndView createResponseView(String instance, String feature) throws Exception {
