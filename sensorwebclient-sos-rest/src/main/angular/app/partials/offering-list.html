@@ -1,0 +1,17 @@
+
+<div ng-controller="OfferingListCtrl">
+
+	<div class="masthead">
+		<ul class="nav nav-pills pull-right">
+			<li><a href="#/{{serviceId}}">back</a></li>
+		</ul>
+		<h3 class="muted">Offerings</h3>
+	</div>
+
+	<ul class="offerings">
+		<li ng-repeat="offering in offerings">
+			<!-- decode twice since browser decodes automatically when routing -->
+			<a href="#/{{serviceId}}/offerings/{{utils.doubleEncode(offering.id)}}">{{offering.id}}</a>
+		</li>
+	</ul>
+</div>

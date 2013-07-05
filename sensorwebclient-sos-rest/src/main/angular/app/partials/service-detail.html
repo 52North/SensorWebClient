@@ -1,0 +1,41 @@
+
+<div ng-controller="ServiceDetailCtrl">
+
+	<div class="masthead">
+		<ul class="nav nav-pills pull-right">
+			<li><a href="#/">back</a></li>
+		</ul>
+		<h3 class="muted">Service</h3>
+	</div>
+
+	<div>
+		<table class="table span7">
+			<thead>
+				<tr>
+					<th>Configured Name</th>
+					<th>Service Title</th>
+					<th>Service Url</th>
+					<th>Service Type</th>
+					<th>Service Version</th>
+				</tr>
+			</thead>
+			<tr>
+				<td>{{service.itemName}}</td>
+				<td>{{service.title}}</td>
+				<td><a href="{{service.url}}">{{service.url}}</a></td>
+				<td>{{service.type}}</td>
+				<td>{{service.version}}</td>
+			</tr>
+		</table>
+	</div>
+
+	<h4>Available Parameters</h4>
+
+	<ul>
+		<li><a href="#/{{service.itemName}}/offerings">offerings</a></li>
+		<li><a href="#/{{service.itemName}}/features">features</a></li>
+		<li><a href="#/{{service.itemName}}/procedures">procedures</a></li>
+		<li><a href="#/{{service.itemName}}/phenomenons">phenomenons</a></li>
+		<li><a href="#/{{service.itemName}}/stations">stations</a></li>
+	</ul>
+</div>

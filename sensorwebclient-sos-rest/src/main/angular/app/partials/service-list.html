@@ -1,0 +1,14 @@
+
+<div class="masthead">
+	<h3 class="muted">Service</h3>
+</div>
+
+<div ng-controller="ServiceListCtrl">
+	<ul class="services">
+		<li ng-repeat="service in services">
+			<!-- decode twice since browser decodes automatically when routing -->
+			<a href="#/{{utils.doubleEncode(service.itemName)}}">{{service.title}}</a>
+			<p>{{service.url}}</p>
+		</li>
+	</ul>
+</div>

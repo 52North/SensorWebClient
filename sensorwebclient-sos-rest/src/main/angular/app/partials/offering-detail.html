@@ -1,0 +1,23 @@
+
+<div ng-controller="OfferingDetailCtrl">
+
+	<div class="masthead">
+		<ul class="nav nav-pills pull-right">
+			<li><a href="#/{{serviceId}}/offerings">back</a></li>
+		</ul>
+		<h3 class="muted">Offering</h3>
+	</div>
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>ID</th>
+                <th>Label</th>
+			</tr>
+		</thead>
+		<tr>
+			<td>{{offering.id}}</td>
+            <td>{{offering.label}}</td>
+		</tr>
+	</table>
+</div>
