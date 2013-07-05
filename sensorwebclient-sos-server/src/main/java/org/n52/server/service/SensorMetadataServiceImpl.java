@@ -27,6 +27,7 @@ import static org.n52.server.oxf.util.ConfigurationContext.getSOSMetadata;
 import static org.n52.server.oxf.util.access.DescribeSensorAccessor.getSensorDescriptionAsSensorML;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.client.service.SensorMetadataService;
@@ -34,6 +35,7 @@ import org.n52.oxf.util.JavaHelper;
 import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.parser.DescribeSensorParser;
 import org.n52.shared.responses.GetProcedureDetailsUrlResponse;
+import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.responses.SensorMetadataResponse;
 import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
@@ -55,7 +57,7 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
             SOSMetadata metadata = getSOSMetadata(sosUrl);
             String procedureId = tsProperties.getProcedure().getId();
             String phenomenonId = tsProperties.getPhenomenon().getId();
-            TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
+            TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
             Procedure procedure = lookup.getProcedure(procedureId);
 
             XmlObject sml = getSensorDescriptionAsSensorML(procedureId, metadata);
@@ -95,5 +97,11 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
             throw e; // last chance to log on server side
         }
     }
+
+	@Override
+	public SOSMetadataResponse getUpdatedSOSMetadata() {
+		Map<String, SOSMetadata> updateSOSMetadata = ConfigurationContext.updateSOSMetadata();
+		return new SOSMetadataResponse(updateSOSMetadata);
+	}
 
 }

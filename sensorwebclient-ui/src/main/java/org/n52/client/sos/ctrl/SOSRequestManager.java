@@ -36,6 +36,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eesgmbh.gimv.client.event.SetDataAreaPixelBoundsEvent;
 import org.eesgmbh.gimv.client.event.SetDomainBoundsEvent;
@@ -74,6 +75,7 @@ import org.n52.client.sos.event.data.StoreOfferingEvent;
 import org.n52.client.sos.event.data.StorePhenomenaEvent;
 import org.n52.client.sos.event.data.StoreProcedureDetailsUrlEvent;
 import org.n52.client.sos.event.data.StoreProcedureEvent;
+import org.n52.client.sos.event.data.StoreSOSMetadataEvent;
 import org.n52.client.sos.event.data.StoreStationEvent;
 import org.n52.client.sos.event.data.StoreStationsEvent;
 import org.n52.client.sos.event.data.StoreTimeSeriesDataEvent;
@@ -103,6 +105,7 @@ import org.n52.shared.requests.query.responses.QueryResponse;
 import org.n52.shared.requests.query.responses.StationQueryResponse;
 import org.n52.shared.responses.EESDataResponse;
 import org.n52.shared.responses.GetProcedureDetailsUrlResponse;
+import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.responses.SensorMetadataResponse;
 import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.serializable.pojos.BoundingBox;
@@ -226,7 +229,7 @@ public class SOSRequestManager extends RequestManager {
 
     private TimeseriesParametersLookup getTimeseriesParameterLookupFor(String serviceUrl) {
         SOSMetadata meta = getDataManager().getServiceMetadata(serviceUrl);
-        return meta.getTimeseriesParamtersLookup();
+        return meta.getTimeseriesParametersLookup();
     }
 
     public void requestFirstValueOf(TimeSeries timeSeries) {
@@ -809,6 +812,26 @@ public class SOSRequestManager extends RequestManager {
                  .setProcedure(timeseries.getProcedure());
         QueryRequest request = factory.createFilteredStationQuery(parameters);
 		doQuery(request, callback);
+	}
+
+	public void requestUpdateSOSMetadata() {
+		addRequest();
+		this.sensorMetadataService.getUpdatedSOSMetadata(new AsyncCallback<SOSMetadataResponse>() {
+			@Override
+			public void onSuccess(SOSMetadataResponse response) {
+				removeRequest();
+				Map<String, SOSMetadata> metadatas = response.getServiceMetadata();
+				for (String metadataKey : metadatas.keySet()) {
+					SOSMetadata sosMetadata = metadatas.get(metadataKey);
+					EventBus.getMainEventBus().fireEvent(new StoreSOSMetadataEvent(sosMetadata));
+					Toaster.getToasterInstance().addMessage("Update protected services with url " + sosMetadata.getServiceUrl());
+				}
+			}
+			@Override
+			public void onFailure(Throwable error) {
+				GWT.log("Error occured while updating SOS metadata.", error);
+			}
+		});
 	}
 
 	private QueryCallback createQueryCallback(String errorMessage) {

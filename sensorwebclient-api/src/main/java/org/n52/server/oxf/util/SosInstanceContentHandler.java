@@ -37,7 +37,7 @@ public class SosInstanceContentHandler extends DefaultHandler {
     private static final Logger LOG = LoggerFactory.getLogger(SosInstanceContentHandler.class);
 
     enum TagNames {
-        INSTANCE, ITEMNAME, URL, VERSION, METADATAHANDLER, ADAPTER, WATERML, LLEASTING, LLNORTHING, UREASTING, URNORTHING, DEFAULTZOOM, AUTOZOOM, REQUESTCHUNK, FORCEXYAXISORDER, NOELEMENT;
+        INSTANCE, ITEMNAME, URL, VERSION, METADATAHANDLER, ADAPTER, WATERML, LLEASTING, LLNORTHING, UREASTING, URNORTHING, DEFAULTZOOM, AUTOZOOM, REQUESTCHUNK, FORCEXYAXISORDER, PROTECTEDSERVICE, NOELEMENT;
     }
 
     private SOSMetadataBuilder currentBuilder = new SOSMetadataBuilder();
@@ -95,6 +95,9 @@ public class SosInstanceContentHandler extends DefaultHandler {
         }
         else if (TagNames.ADAPTER.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.ADAPTER;
+        }
+        else if (TagNames.PROTECTEDSERVICE.name().equalsIgnoreCase(qName)) {
+        	currentElement = TagNames.PROTECTEDSERVICE;
         }
     }
 
@@ -173,6 +176,9 @@ public class SosInstanceContentHandler extends DefaultHandler {
                 String adapter = parsedCharacters;
                 currentBuilder.addAdapter(adapter);
                 break;
+            case PROTECTEDSERVICE:
+            	boolean protectedService = Boolean.parseBoolean(parsedCharacters);
+            	currentBuilder.addProtectedService(protectedService);
             default:
                 currentElement = TagNames.NOELEMENT; // reset
             }

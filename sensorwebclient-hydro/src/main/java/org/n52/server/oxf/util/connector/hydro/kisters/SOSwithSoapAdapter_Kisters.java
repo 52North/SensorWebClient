@@ -24,6 +24,12 @@
 
 package org.n52.server.oxf.util.connector.hydro.kisters;
 
+import org.n52.oxf.OXFException;
+import org.n52.oxf.adapter.OperationResult;
+import org.n52.oxf.adapter.ParameterContainer;
+import org.n52.oxf.ows.ExceptionReport;
+import org.n52.oxf.ows.capabilities.Operation;
+import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.server.oxf.util.connector.hydro.SOSwithSoapAdapter;
 
 public class SOSwithSoapAdapter_Kisters extends SOSwithSoapAdapter {
@@ -31,6 +37,20 @@ public class SOSwithSoapAdapter_Kisters extends SOSwithSoapAdapter {
 	public SOSwithSoapAdapter_Kisters(String sosVersion) {
 		super(sosVersion);
 		setRequestBuilder(new SoapSOSRequestBuilder_200_Kisters());
+	}
+	
+	@Override
+	public OperationResult doOperation(Operation operation,
+			ParameterContainer parameters) throws ExceptionReport, OXFException {
+		// set sos url to used it for an extra GetObs 
+    	if (operation.getDcps()[0].getHTTPPostRequestMethods().size() > 0) {
+    		ISOSRequestBuilder requestBuilder = this.getRequestBuilder();
+    		if (requestBuilder instanceof SoapSOSRequestBuilder_200_Kisters) {
+    			SoapSOSRequestBuilder_200_Kisters tempBuilder = (SoapSOSRequestBuilder_200_Kisters) requestBuilder;
+    			tempBuilder.setUrl(operation.getDcps()[0].getHTTPPostRequestMethods().get(0).getOnlineResource().getHref());
+    		}
+        }
+		return super.doOperation(operation, parameters);
 	}
 
 }

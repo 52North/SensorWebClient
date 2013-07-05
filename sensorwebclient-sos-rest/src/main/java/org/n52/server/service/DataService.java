@@ -119,7 +119,7 @@ public abstract class DataService {
         Station station = metadata.getStationByTimeSeriesId(timeseriesId);
         SosTimeseries timeseries = station.getTimeseriesById(timeseriesId);
         String sosUrl = timeseries.getServiceUrl();
-        TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
+        TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
         Feature foi = lookup.getFeature(timeseries.getFeature());
         Phenomenon phenomenon = lookup.getPhenomenon(timeseries.getPhenomenon());
         Procedure procedure = lookup.getProcedure(timeseries.getProcedure());
