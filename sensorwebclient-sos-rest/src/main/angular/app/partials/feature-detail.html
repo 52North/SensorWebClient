@@ -1,0 +1,23 @@
+
+<div ng-controller="FeatureDetailCtrl">
+
+    <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+            <li><a href="#/{{serviceId}}/features">back</a></li>
+        </ul>
+        <h3 class="muted">Feature</h3>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Label</th>
+            </tr>
+        </thead>
+        <tr>
+            <td>{{feature.id}}</td>
+            <td>{{feature.label}}</td>
+        </tr>
+    </table>
+</div>

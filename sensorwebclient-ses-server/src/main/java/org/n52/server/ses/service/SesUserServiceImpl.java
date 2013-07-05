@@ -27,6 +27,7 @@ package org.n52.server.ses.service;
 import static java.lang.Integer.parseInt;
 import static org.n52.server.ses.hibernate.HibernateUtil.deleteSubscription;
 import static org.n52.server.ses.hibernate.HibernateUtil.getSubscriptionfromUserID;
+import static org.n52.server.ses.util.SesServerUtil.isLoggedInAdmin;
 import static org.n52.server.ses.util.SesServerUtil.unSubscribe;
 import static org.n52.shared.responses.SesClientResponseType.LAST_ADMIN;
 import static org.n52.shared.responses.SesClientResponseType.LOGIN_ACTIVATED;
@@ -285,7 +286,7 @@ public class SesUserServiceImpl implements SesUserService {
     public SesClientResponse validateLoginSession(SessionInfo sessionInfo) throws Exception {
         try {
             if (sessionStore.isKnownActiveSessionInfo(sessionInfo)) {
-                if (sessionStore.isLoggedInAdmin(sessionInfo)) {
+                if (isLoggedInAdmin(sessionInfo, sessionStore)) {
                     UserDTO transferUser = getUserFromValidSession(sessionInfo);
                     SesClientResponse response = new SesClientResponse(LOGIN_ADMIN, transferUser);
                     response.setSessionInfo(sessionStore.reNewSession(sessionInfo));

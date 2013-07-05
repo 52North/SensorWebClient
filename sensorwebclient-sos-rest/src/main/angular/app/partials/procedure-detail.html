@@ -1,0 +1,23 @@
+
+<div ng-controller="ProcedureDetailCtrl">
+
+    <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+            <li><a href="#/{{serviceId}}">back</a></li>
+        </ul>
+        <h3 class="muted">Procedure</h3>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Label</th>
+            </tr>
+        </thead>
+        <tr>
+            <td>{{procedure.id}}</td>
+            <td>{{procedure.label}}</td>
+        </tr>
+    </table>
+</div>

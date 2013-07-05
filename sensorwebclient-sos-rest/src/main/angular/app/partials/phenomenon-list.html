@@ -1,0 +1,17 @@
+
+<div ng-controller="PhenomenonListCtrl">
+
+	<div class="masthead">
+		<ul class="nav nav-pills pull-right">
+			<li><a href="#/{{serviceId}}">back</a></li>
+		</ul>
+		<h3 class="muted">Phenomenons</h3>
+	</div>
+
+	<ul class="phenomenons">
+		<li ng-repeat="phenomenon in phenomenons">
+			<!-- decode twice since browser decodes automatically when routing -->
+			<a href="#/{{serviceId}}/phenomenons/{{utils.doubleEncode(phenomenon.id)}}">{{phenomenon.label}}</a>
+		</li>
+	</ul>
+</div>
