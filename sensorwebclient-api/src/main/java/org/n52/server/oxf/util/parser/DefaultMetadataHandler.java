@@ -55,12 +55,11 @@ import org.n52.server.oxf.util.access.AccessorThreadPool;
 import org.n52.server.oxf.util.access.OperationAccessor;
 import org.n52.server.oxf.util.connector.MetadataHandler;
 import org.n52.server.oxf.util.parser.utils.ParsedPoint;
-import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.Feature;
-import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
@@ -70,7 +69,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultMetadataHandler.class);
 
-    public SOSMetadataResponse performMetadataCompletion(String sosUrl, String sosVersion) throws OXFException,
+    public SOSMetadata performMetadataCompletion(String sosUrl, String sosVersion) throws OXFException,
             InterruptedException,
             XMLHandlingException {
 
@@ -94,7 +93,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
 
         LOGGER.debug("Got metadata for SOS " + sosMetadata.getId());
         sosMetadata.setInitialized(true);
-        return new SOSMetadataResponse(sosMetadata);
+        return sosMetadata;
     }
 
     /**
@@ -294,5 +293,11 @@ public class DefaultMetadataHandler extends MetadataHandler {
         }
         return result;
     }
+
+	@Override
+	public SOSMetadata updateMetadata(SOSMetadata metadata) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

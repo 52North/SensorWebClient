@@ -29,9 +29,11 @@ import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.Date;
 
+import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.TimeManager;
 import org.n52.client.sos.ctrl.SosDataManager;
 import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
+import org.n52.client.sos.event.data.UpdateSOSMetadataEvent;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.client.util.ClientUtils;
 import org.n52.ext.ExternalToolsException;
@@ -84,6 +86,10 @@ public class Header extends HLayout {
 //        linkLayout.addMember(getVersionInfo());
 //        linkLayout.addMember(getSeparator());
         
+        // TODO temp button for metadata reset
+        linkLayout.addMember(getMetadatareset());
+        linkLayout.addMember(getSeparator());
+        
         linkLayout.addMember(getPermalinkLink());
         linkLayout.addMember(getSeparator());
         linkLayout.addMember(getHelpLink());
@@ -101,6 +107,18 @@ public class Header extends HLayout {
         
         addMember(rightLayout);
     }
+
+	private Label getMetadatareset() {
+        Label label = getHeaderLinkLabel("reset Metadata");
+        label.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+            	Toaster.getToasterInstance().addMessage("Update protected services");
+            	EventBus.getMainEventBus().fireEvent(new UpdateSOSMetadataEvent());
+            }
+        });
+        return label;
+	}
 
 	private Layout getHomeLabel() {
 		Layout layout = new VLayout();
@@ -250,7 +268,7 @@ public class Header extends HLayout {
         return pipe;
     }
     
-    String getPermaLink(String baseUrl) {
+    private String getPermaLink(String baseUrl) {
         TimeSeries[] ts = DataStoreTimeSeriesImpl.getInst().getTimeSeriesSorted();
         TimeSeriesPermalinkBuilder builder = new TimeSeriesPermalinkBuilder();
         for (TimeSeries timeSeries : ts) {

@@ -48,6 +48,7 @@ import org.n52.client.sos.event.data.StoreFeatureEvent;
 import org.n52.client.sos.event.data.StoreOfferingEvent;
 import org.n52.client.sos.event.data.StoreProcedureEvent;
 import org.n52.client.sos.event.data.StoreStationEvent;
+import org.n52.client.sos.event.data.UpdateSOSMetadataEvent;
 import org.n52.client.sos.event.data.handler.ExportEventHandler;
 import org.n52.client.sos.event.data.handler.FinishedLoadingTimeSeriesEventHandler;
 import org.n52.client.sos.event.data.handler.GetFeatureEventHandler;
@@ -63,6 +64,7 @@ import org.n52.client.sos.event.data.handler.StoreFeatureEventHandler;
 import org.n52.client.sos.event.data.handler.StoreOfferingEventHandler;
 import org.n52.client.sos.event.data.handler.StoreProcedureEventHandler;
 import org.n52.client.sos.event.data.handler.StoreStationEventHandler;
+import org.n52.client.sos.event.data.handler.UpdateSOSMetadataEventHandler;
 import org.n52.client.sos.legend.TimeSeries;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
@@ -101,7 +103,8 @@ public class SOSController extends ServiceController {
             ExportEventHandler,
             FinishedLoadingTimeSeriesEventHandler,
             SetOverviewDomainBoundsEventHandler,
-            SetDomainBoundsEventHandler {
+            SetDomainBoundsEventHandler,
+            UpdateSOSMetadataEventHandler {
 
         public SosControllerEventBroker() {
             EventBus.getMainEventBus().addHandler(NewTimeSeriesEvent.TYPE, this);
@@ -122,6 +125,7 @@ public class SOSController extends ServiceController {
             EventBus.getMainEventBus().addHandler(FinishedLoadingTimeSeriesEvent.TYPE, this);
             EventBus.getOverviewChartEventBus().addHandler(SetOverviewDomainBoundsEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(SetDomainBoundsEvent.TYPE, this);
+            EventBus.getMainEventBus().addHandler(UpdateSOSMetadataEvent.TYPE, this);
         }
 
         public void onNewTimeSeries(NewTimeSeriesEvent evt) {
@@ -258,6 +262,11 @@ public class SOSController extends ServiceController {
 		public void onStore(StoreStationEvent evt) {
 			SOSMetadata serviceMetadata = SosDataManager.getDataManager().getServiceMetadata(evt.getServiceURL());
 			serviceMetadata.addStation(evt.getStation());
+		}
+
+		@Override
+		public void onUpdate(UpdateSOSMetadataEvent evt) {
+			getRequestManager().requestUpdateSOSMetadata();
 		}
     }
 }

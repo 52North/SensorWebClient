@@ -67,7 +67,6 @@ import org.n52.server.oxf.util.connector.MetadataHandler;
 import org.n52.server.oxf.util.crs.AReferencingHelper;
 import org.n52.server.oxf.util.parser.ConnectorUtils;
 import org.n52.server.oxf.util.parser.utils.ParsedPoint;
-import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -87,15 +86,27 @@ public class HydroMetadataHandler extends MetadataHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(HydroMetadataHandler.class);
     
 	@Override
-	public SOSMetadataResponse performMetadataCompletion(String sosUrl, String sosVersion) throws Exception {
-		
+	public SOSMetadata performMetadataCompletion(String sosUrl, String sosVersion) throws Exception {
 		SOSMetadata metadata = initMetadata(sosUrl, sosVersion);
-		
 		// get a waterml specific responseFormat if set
 		String responseFormat = ConnectorUtils.getResponseFormat(getServiceDescriptor(), "waterml");
 		if (responseFormat != null) {
 			metadata.setOmVersion(responseFormat);
 		}
+		collectTimeseries(metadata);
+		return metadata;
+	}
+
+	@Override
+	public SOSMetadata updateMetadata(SOSMetadata metadata) throws Exception {
+		SOSMetadata newMetadata = metadata.clone();
+		initServiceDescription(newMetadata);
+		collectTimeseries(newMetadata);
+		return newMetadata;
+	}
+
+	private void collectTimeseries(SOSMetadata metadata) throws OXFException, InterruptedException,
+			ExecutionException, TimeoutException, XmlException, IOException {
 
 		Collection<SosTimeseries> observingTimeseries = createObservingTimeseries();
 		
@@ -105,8 +116,8 @@ public class HydroMetadataHandler extends MetadataHandler {
 		// create tasks by iteration over procedures
 		for (SosTimeseries timeserie : observingTimeseries) {
 			String procedureID = timeserie.getProcedure();
-			getFoiAccessTasks.put(procedureID, new FutureTask<OperationResult>(createGetFoiAccess(sosUrl, sosVersion, procedureID)));
-			getDataAvailabilityTasks.put(timeserie, new FutureTask<OperationResult>(createGDAAccess(sosUrl, timeserie)));
+			getFoiAccessTasks.put(procedureID, new FutureTask<OperationResult>(createGetFoiAccess(metadata.getServiceUrl(), metadata.getVersion(), procedureID)));
+			getDataAvailabilityTasks.put(timeserie, new FutureTask<OperationResult>(createGDAAccess(metadata.getServiceUrl(), timeserie)));
 		}
 		
 		// create list of timeseries of GDA requests
@@ -129,7 +140,6 @@ public class HydroMetadataHandler extends MetadataHandler {
 		LOGGER.info("{} stations are created", metadata.getStations().size());
 		
 		metadata.setHasDonePositionRequest(true);
-		return new SOSMetadataResponse(metadata);
 	}
 
 	private Collection<SosTimeseries> executeGDATasks(
@@ -203,6 +213,9 @@ public class HydroMetadataHandler extends MetadataHandler {
 					if (point == null) {
 						LOGGER.warn("The foi with ID {} has no valid point", id);
 					} else {
+//						if (metadata.getStations().size() > 10) {
+//							break;
+//						}
 						// add feature
 						Feature feature = new Feature(id);
 						feature.setLabel(label);

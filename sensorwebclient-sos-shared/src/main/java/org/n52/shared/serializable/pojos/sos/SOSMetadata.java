@@ -350,5 +350,18 @@ public class SOSMetadata implements Serializable {
         sb.append(" ]");
         return sb.toString();
     }
+    
+    public SOSMetadata clone() {
+    	SOSMetadata clone = new SOSMetadata(this.id,this.version,this.sensorMLVersion,this.omVersion,this.title);
+    	clone.waterML = this.waterML;
+    	clone.autoZoom = this.autoZoom;
+        clone.forceXYAxisOrder = this.forceXYAxisOrder;
+        clone.requestChunk = this.requestChunk;
+        clone.configuredExtent = this.configuredExtent;
+        clone.protectedService = this.protectedService;
+        clone.setSosMetadataHandler(this.getSosMetadataHandler());
+        clone.setAdapter(this.getAdapter());
+    	return clone;
+    }
 
 }

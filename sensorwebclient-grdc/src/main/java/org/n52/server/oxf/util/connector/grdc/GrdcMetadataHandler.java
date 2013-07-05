@@ -58,7 +58,6 @@ import org.n52.server.oxf.util.connector.MetadataHandler;
 import org.n52.server.oxf.util.crs.AReferencingHelper;
 import org.n52.server.oxf.util.parser.ConnectorUtils;
 import org.n52.server.oxf.util.parser.utils.ParsedPoint;
-import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
@@ -81,7 +80,7 @@ public class GrdcMetadataHandler extends MetadataHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(GrdcMetadataHandler.class);
 	
 	@Override
-	public SOSMetadataResponse performMetadataCompletion(String sosUrl, String sosVersion) throws Exception {
+	public SOSMetadata performMetadataCompletion(String sosUrl, String sosVersion) throws Exception {
 		SOSAdapter adapter = new SOSAdapter_OXFExtension(sosVersion);
 		ServiceDescriptor serviceDesc = ConnectorUtils.getServiceDescriptor(sosUrl, adapter);
 
@@ -223,7 +222,7 @@ public class GrdcMetadataHandler extends MetadataHandler {
 		}
 		
 		metadata.setHasDonePositionRequest(true);
-		return new SOSMetadataResponse(metadata);
+		return metadata;
 	}
 
 	private ParsedPoint getPositionOfGRDCSamplingPoint(GrdcSamplingPointType grdcSamplingPoint, AReferencingHelper referenceHelper) {
@@ -269,6 +268,12 @@ public class GrdcMetadataHandler extends MetadataHandler {
 		paramCon.addParameterShell(ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER, sosVersion);
 		OperationAccessor opAccessorCallable = new OperationAccessor(adapter, operation, paramCon);
 		return opAccessorCallable;
+	}
+
+	@Override
+	public SOSMetadata updateMetadata(SOSMetadata metadata) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

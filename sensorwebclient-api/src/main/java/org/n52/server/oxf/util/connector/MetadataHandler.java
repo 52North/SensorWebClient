@@ -54,13 +54,12 @@ import org.n52.server.oxf.util.ConfigurationContext;
 import org.n52.server.oxf.util.crs.AReferencingHelper;
 import org.n52.server.oxf.util.parser.ConnectorUtils;
 import org.n52.server.util.SosAdapterFactory;
-import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,13 +74,14 @@ public abstract class MetadataHandler {
 	
 	private SOSMetadata sosMetadata;
 
-	public abstract SOSMetadataResponse performMetadataCompletion(
+	public abstract SOSMetadata performMetadataCompletion(
 			String sosUrl, String sosVersion) throws Exception;
+	
+	public abstract SOSMetadata updateMetadata(SOSMetadata metadata) throws Exception;
 
 	protected SOSMetadata initMetadata(String sosUrl, String sosVersion) {
 		sosMetadata = ConfigurationContext.getServiceMetadatas().get(sosUrl);
-		adapter = SosAdapterFactory.createSosAdapter(sosMetadata);
-		serviceDescriptor = ConnectorUtils.getServiceDescriptor(sosUrl, adapter);
+		initServiceDescription(sosMetadata);
 		String sosTitle = serviceDescriptor.getServiceIdentification().getTitle();
 		String omResponseFormat = ConnectorUtils.getResponseFormat(serviceDescriptor, "om");
 		String smlVersion = ConnectorUtils.getSMLVersion(serviceDescriptor, sosVersion);
@@ -97,6 +97,12 @@ public abstract class MetadataHandler {
 		return sosMetadata;
 	}
 
+	protected void initServiceDescription(SOSMetadata metadata) {
+		sosMetadata = metadata; 
+		adapter = SosAdapterFactory.createSosAdapter(metadata);
+		serviceDescriptor = ConnectorUtils.getServiceDescriptor(metadata.getServiceUrl(), adapter);
+	}
+	
 	protected Collection<SosTimeseries> createObservingTimeseries()
 			throws OXFException {
 		// association: Offering - FOIs
