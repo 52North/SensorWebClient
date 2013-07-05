@@ -86,7 +86,7 @@ public class Header extends HLayout {
 //        linkLayout.addMember(getVersionInfo());
 //        linkLayout.addMember(getSeparator());
         
-        // TODO temp button for metadata reset
+        // temporary button for metadata reset
         linkLayout.addMember(getMetadatareset());
         linkLayout.addMember(getSeparator());
         
