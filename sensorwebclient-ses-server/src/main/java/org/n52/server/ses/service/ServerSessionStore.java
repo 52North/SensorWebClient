@@ -199,20 +199,11 @@ public class ServerSessionStore {
         return getKnownSession(sessionInfo).getUserId();
     }
 
-    /**
-     * Checks if the user of the given session info is of role {@link UserRole#ADMIN}. If session is not known
-     * an {@link IllegalArgumentException} is thrown.
-     * 
-     * @param sessionInfo
-     *        the session info to check.
-     * @return <code>true</code> if login session is known and user has admin role, <code>false</code> if
-     *         session is known but user has not an admin role.
-     * @see ServerSessionStore#validateSessionInfo(SessionInfo)
-     */
-    public boolean isLoggedInAdmin(SessionInfo sessionInfo) {
-        return isAdmin(getKnownSession(sessionInfo).getRole());
+    
+    public String getLoggedInUserRole(SessionInfo sessionInfo) {
+        return getKnownSession(sessionInfo).getRole();
     }
-
+    
     /**
      * @param sessionInfo
      *        the session which should be known.

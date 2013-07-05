@@ -32,6 +32,7 @@ import static org.n52.oxf.ses.adapter.ISESRequestBuilder.UNSUBSCRIBE_SES_URL;
 import static org.n52.oxf.ses.adapter.SESAdapter.GET_CAPABILITIES;
 import static org.n52.oxf.ses.adapter.SESAdapter.SUBSCRIBE;
 import static org.n52.oxf.ses.adapter.SESAdapter.UNSUBSCRIBE;
+import static org.n52.shared.serializable.pojos.UserRole.isAdmin;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -55,10 +56,13 @@ import org.n52.oxf.ses.adapter.SESAdapter;
 import org.n52.server.ses.SesConfig;
 import org.n52.server.ses.eml.Constants;
 import org.n52.server.ses.hibernate.HibernateUtil;
+import org.n52.server.ses.service.ServerSessionStore;
 import org.n52.shared.serializable.pojos.BasicRule;
 import org.n52.shared.serializable.pojos.ComplexRule;
 import org.n52.shared.serializable.pojos.Subscription;
 import org.n52.shared.serializable.pojos.User;
+import org.n52.shared.serializable.pojos.UserRole;
+import org.n52.shared.session.SessionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -72,6 +76,21 @@ public class SesServerUtil {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(SesServerUtil.class);
 
+    /**
+     * Checks if the user of the given session info is of role {@link UserRole#ADMIN}. If session is not known
+     * an {@link IllegalArgumentException} is thrown.
+     * 
+     * @param sessionInfo
+     *        the session info to check.
+     * @param sessionStore 
+     *        the session store keeping track of active user sessions.
+     * @return <code>true</code> if login session is known and user has admin role, <code>false</code> if
+     *         session is known but user has not an admin role.
+     */
+    public static boolean isLoggedInAdmin(SessionInfo sessionInfo, ServerSessionStore sessionStore) {
+        return isAdmin(sessionStore.getLoggedInUserRole(sessionInfo));
+    }
+    
     /**
      * @param serviceVersion
      * @param sesEndpoint

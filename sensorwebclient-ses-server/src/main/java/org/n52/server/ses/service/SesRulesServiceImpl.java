@@ -41,6 +41,7 @@ import static org.n52.server.ses.hibernate.HibernateUtil.subscribeBasicRule;
 import static org.n52.server.ses.hibernate.HibernateUtil.unsubscribeBasicRule;
 import static org.n52.server.ses.hibernate.HibernateUtil.updateComplexRuleSubscribtion;
 import static org.n52.server.ses.util.SesServerUtil.getTimeseriesIdsFromEML;
+import static org.n52.server.ses.util.SesServerUtil.isLoggedInAdmin;
 import static org.n52.shared.responses.SesClientResponseType.DELETE_RULE_OK;
 import static org.n52.shared.responses.SesClientResponseType.ERROR_SUBSCRIBE_FEEDER;
 import static org.n52.shared.responses.SesClientResponseType.ERROR_SUBSCRIBE_SES;
@@ -614,7 +615,7 @@ public class SesRulesServiceImpl implements SesRuleService {
                 return new SesClientResponse(REQUIRES_LOGIN);
             }
             LOGGER.debug("publish rule: " + ruleName + ": " + published);
-            if (sessionStore.isLoggedInAdmin(sessionInfo)) {
+            if (isLoggedInAdmin(sessionInfo, sessionStore)) {
                 return new SesClientResponse(SesClientResponseType.PUBLISH_RULE_ADMIN);
             }
             return new SesClientResponse(SesClientResponseType.PUBLISH_RULE_USER);
@@ -623,9 +624,8 @@ public class SesRulesServiceImpl implements SesRuleService {
             LOGGER.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side
         }
-
     }
-
+    
     @Override
     public SesClientResponse getAllRules(SessionInfo sessionInfo) throws Exception {
         try {
