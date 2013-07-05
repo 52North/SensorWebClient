@@ -4,77 +4,73 @@
 /* Controllers */
 
 angular.module('myApp.controllers', [])
-  .controller('ServiceListCtrl', [ '$scope','SosServices','Utils',function ($scope,SosServices,utils) {
+  .controller('ServiceListCtrl', [ '$scope','SosInstanceService','Utils',function ($scope,service,utils) {
 	  $scope.utils = utils;
-	  $scope.services = SosServices.query();
+	  $scope.services = service.getServiceInstances();
   }])
-  .controller('ServiceDetailCtrl', [ '$scope','$routeParams','SosService','Stations', function ($scope,$routeParams,SosService,Stations) {
-	  $scope.service = SosService.get({serviceId: $routeParams.serviceId});
-	  
-	  //angular.element(document).ready(function() {
-	  //	  initializeMap('service-detail-map', Stations.get({serviceId: $routeParams.serviceId}));
-	  //});
+  .controller('ServiceDetailCtrl', [ '$scope','$routeParams','SosInstanceService',function ($scope,$routeParams,service) {
+	  $scope.service = service.getServiceInstance({serviceId: $routeParams.serviceId});
   }])
-  .controller('OfferingListCtrl', [ '$scope','$routeParams','Offerings','Utils',function ($scope,$routeParams,Offerings,utils) {
+  .controller('OfferingListCtrl', [ '$scope','$routeParams','OfferingService','Utils',function ($scope,$routeParams,service,utils) {
+	  debugger;
 	  $scope.utils = utils;
-	  $scope.offerings = Offerings.query({serviceId: $routeParams.serviceId});
+	  $scope.offerings = service.getOfferings({serviceId: $routeParams.serviceId});
 	  $scope.serviceId = $routeParams.serviceId;
   }])
-  .controller('OfferingDetailCtrl', [ '$scope','$routeParams','Offering',function ($scope,$routeParams,Offering) {
-	  $scope.offering = Offering.get({
+  .controller('OfferingDetailCtrl', [ '$scope','$routeParams','OfferingService',function ($scope,$routeParams,service) {
+	  $scope.offering = service.getOffering({
 			  	serviceId: $routeParams.serviceId,
 			  	offeringId: $routeParams.offeringId
 		  	}, function() {
 		  		$scope.serviceId = $routeParams.serviceId;
 		  	});
   }])
-  .controller('ProcedureListCtrl', [ '$scope','$routeParams','Procedures','Utils',function ($scope,$routeParams,Procedures,utils) {
+  .controller('ProcedureListCtrl', [ '$scope','$routeParams','ProcedureService','Utils',function ($scope,$routeParams,service,utils) {
 	  $scope.utils = utils;
-	  $scope.procedures = Procedures.query({serviceId: $routeParams.serviceId});
+	  $scope.procedures = service.getProcedures({serviceId: $routeParams.serviceId});
 	  $scope.serviceId = $routeParams.serviceId;
   }])
-  .controller('ProcedureDetailCtrl', [ '$scope','$routeParams','Procedure',function ($scope,$routeParams,Procedure) {
-	  $scope.procedure = Procedure.get({
+  .controller('ProcedureDetailCtrl', [ '$scope','$routeParams','ProcedureService',function ($scope,$routeParams,service) {
+	  $scope.procedure = service.getProcedure({
 			  	serviceId: $routeParams.serviceId,
 		  		procedureId: $routeParams.procedureId
 	  		}, function() {
 	  			$scope.serviceId = $routeParams.serviceId;
 	  		});
   }])
-  .controller('FeatureListCtrl', [ '$scope','$routeParams','Features','Utils',function ($scope,$routeParams,Features,utils) {
+  .controller('FeatureListCtrl', [ '$scope','$routeParams','FeatureService','Utils',function ($scope,$routeParams,service,utils) {
 	  $scope.utils = utils;
-	  $scope.features = Features.query({serviceId: $routeParams.serviceId});
+	  $scope.features = service.getFeatures({serviceId: $routeParams.serviceId});
 	  $scope.serviceId = $routeParams.serviceId;
   }])
-  .controller('FeatureDetailCtrl', [ '$scope','$routeParams','Feature',function ($scope,$routeParams,Feature) {
-	  $scope.feature = Feature.get({
+  .controller('FeatureDetailCtrl', [ '$scope','$routeParams','FeatureService',function ($scope,$routeParams,service) {
+	  $scope.feature = service.getFeature({
 			  	serviceId: $routeParams.serviceId,
 		  		featureId: $routeParams.featureId
 	  		}, function() {
 	  			$scope.serviceId = $routeParams.serviceId;
 	  		});
   }])
-  .controller('PhenomenonListCtrl', [ '$scope','$routeParams','Phenomenons','Utils',function ($scope,$routeParams,Phenomenons,utils) {
+  .controller('PhenomenonListCtrl', [ '$scope','$routeParams','PhenomenonService','Utils',function ($scope,$routeParams,service,utils) {
 	  $scope.utils = utils;
-	  $scope.phenomenons = Phenomenons.query({serviceId: $routeParams.serviceId});
+	  $scope.phenomenons = service.getPhenomenons({serviceId: $routeParams.serviceId});
 	  $scope.serviceId = $routeParams.serviceId;
   }])
-  .controller('PhenomenonDetailCtrl', [ '$scope','$routeParams','Phenomenon',function ($scope,$routeParams,Phenomenon) {
-	  $scope.phenomenon = Phenomenon.get({
+  .controller('PhenomenonDetailCtrl', [ '$scope','$routeParams','PhenomenonService',function ($scope,$routeParams,service) {
+	  $scope.phenomenon = service.getPhenomenon({
 			  	serviceId: $routeParams.serviceId,
 			  	phenomenonId: $routeParams.phenomenonId
 	  		}, function() {
 	  			$scope.serviceId = $routeParams.serviceId;
 	  		});
   }])
-  .controller('StationListCtrl', [ '$scope','$routeParams','Stations','Utils',function ($scope,$routeParams,Stations,utils) {
+  .controller('StationListCtrl', [ '$scope','$routeParams','StationService','Utils',function ($scope,$routeParams,service,utils) {
 	  $scope.utils = utils;
-	  $scope.stations = Stations.query({serviceId: $routeParams.serviceId});
+	  $scope.stations = service.getStations({serviceId: $routeParams.serviceId});
 	  $scope.serviceId = $routeParams.serviceId;
   }])
-  .controller('StationDetailCtrl', [ '$scope','$routeParams','Station',function ($scope,$routeParams,Station) {
-	  
-	  $scope.station = Station.get({
+  .controller('StationDetailCtrl', [ '$scope','$routeParams','StationService',function ($scope,$routeParams,service) {
+	  $scope.station = service.getStation({
 			  	serviceId: $routeParams.serviceId,
 			  	stationId: $routeParams.stationId
 	  		}, function() {

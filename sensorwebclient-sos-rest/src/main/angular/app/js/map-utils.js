@@ -18,42 +18,49 @@ angular.module('myApp.leaflet',[]).directive('leaflet', function() {
                 maxZoom : 18,
             }).addTo(map);
         	
+        	scope.addStation = function(station) {
+        		L.geoJson(station);
+        	};
         	
-//    		L.geoJson(scope.station, {
-//    			onEachFeature : function(feature, layer) {
-//                    var content = "";
-//                    if (feature.properties) {
-//                        var stationName = feature.properties['station'];
-//                        content = content + "<b>Station:</b> " + stationName + "<br/>";
-//                        var tsProperties = feature.properties['timeseries'];
-//                        if (tsProperties) {
-//                            if (station.length !== 0) {
-//                                parameters = tsProperties[0];
-//                                content = content + "<b>Offering:</b> " + parameters.offering + "<br/>";
-//                                content = content + "<b>Proceudre:</b> " + parameters.procedure + "<br/>";
-//                                content = content + "<b>Phenomenon:</b> " + parameters.phenomenon + "<br/>";
-//                                content = content + "<b>Feature:</b> " + parameters.feature;
-//                            } else {
-//                                var timeseries = "";
-//                                for (var i = 0; i < tsProperties.length ; i++) {
-//                                    timeseries = timeseries + tsProperties[i] + "<br/>";
-//                                }
-//                                content = content + "<b>timeseries:</b> " + timeseries;
-//                            }
-//                        }
-//                        layer.bindPopup("<html><body>" + content + "</body></html>");
-//                    }
-//                }
-//            });
-//            if (clustered) {
-//                var clusteredLayer = new L.MarkerClusterGroup();
-//                clusteredLayer.addLayer(stations);
-//                map.addLayer(clusteredLayer);
-//                map.fitBounds(clusteredLayer.getBounds());
-//            } else {
-//                map.addLayer(stations);
-//                map.fitBounds(stations.getBounds());
-//            }
+        	scope.addStations = function(stations) {
+        		L.geoJson(stations, {
+        			onEachFeature : function(feature, layer) {
+                        var content = "";
+                        if (feature.properties) {
+                            var stationName = feature.properties['station'];
+                            content = content + "<b>Station:</b> " + stationName + "<br/>";
+                            var tsProperties = feature.properties['timeseries'];
+                            if (tsProperties) {
+                                if (station.length !== 0) {
+                                    parameters = tsProperties[0];
+                                    content = content + "<b>Offering:</b> " + parameters.offering + "<br/>";
+                                    content = content + "<b>Proceudre:</b> " + parameters.procedure + "<br/>";
+                                    content = content + "<b>Phenomenon:</b> " + parameters.phenomenon + "<br/>";
+                                    content = content + "<b>Feature:</b> " + parameters.feature;
+                                } else {
+                                    var timeseries = "";
+                                    for (var i = 0; i < tsProperties.length ; i++) {
+                                        timeseries = timeseries + tsProperties[i] + "<br/>";
+                                    }
+                                    content = content + "<b>timeseries:</b> " + timeseries;
+                                }
+                            }
+                            layer.bindPopup("<html><body>" + content + "</body></html>");
+                        }
+                    }
+                });
+                if (clustered) {
+                    var clusteredLayer = new L.MarkerClusterGroup();
+                    clusteredLayer.addLayer(stations);
+                    map.addLayer(clusteredLayer);
+                    map.fitBounds(clusteredLayer.getBounds());
+                } else {
+                    map.addLayer(stations);
+                    map.fitBounds(stations.getBounds());
+                }
+                
+        	};
+        	
         }
     };
 });

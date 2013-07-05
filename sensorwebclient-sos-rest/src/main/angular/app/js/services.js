@@ -11,20 +11,11 @@ angular.module('myApp.services', [ 'ngResource' ])
 				return encodeURIComponent(encodeURIComponent(toEncode));
 			};
 		})
-	.factory('SosServices',
-		function($resource) {
-			return $resource(base + 'services', {}, {
-				query : {
-					method : 'GET',
-					isArray : true
-				}
-			});
-		})
-	.factory('SosService',
+	.factory('SosInstanceService',
 		function($resource) {
 			return $resource(base + 'services/:serviceId', {}, {
-				query : {
-					method : 'GET',
+				getServiceInstances : { method : 'GET', isArray : true },
+				getServiceInstance : { method : 'GET', 
 					params : {
 						serviceId : ':serviceId'
 					},
@@ -32,22 +23,17 @@ angular.module('myApp.services', [ 'ngResource' ])
 				}
 			});
 		})
-	.factory('Offerings',
+	.factory('OfferingService',
 		function($resource) {
-			return $resource(base + 'services/:serviceId/offerings', {}, {
-				query : {
+			return $resource(base + 'services/:serviceId/offerings/:offeringId', {}, {
+				getOfferings : {
 					method : 'GET',
 					params : {
 						serviceId : ':serviceId'
 					},
 					isArray : true
-				}
-			});
-		})
-	.factory('Offering',
-		function($resource) {
-			return $resource(base + 'services/:serviceId/offerings/:offeringId', {}, {
-				query : {
+				},
+				getOffering : {
 					method : 'GET',
 					params : {
 						offeringId : ':offeringId',
@@ -57,19 +43,14 @@ angular.module('myApp.services', [ 'ngResource' ])
 				}
 			});
 		})
-	.factory('Procedures',
-		function($resource) {
-			return $resource(base + 'services/:serviceId/procedures', {}, {
-				query : {
-					method : 'GET',
-					isArray : true
-				}
-			});
-		})
-	.factory('Procedure',
+	.factory('ProcedureService',
 		function($resource) {
 			return $resource(base + 'services/:serviceId/procedures/:procedureId', {}, {
-				query : {
+				getProcedures : {
+					method : 'GET',
+					isArray : true
+				},
+				getProcedure : {
 					method : 'GET',
 					params : {
 						procedureId : ':procedureId',
@@ -79,19 +60,14 @@ angular.module('myApp.services', [ 'ngResource' ])
 				}
 			});
 		})
-	.factory('Features',
-		function($resource) {
-			return $resource(base + 'services/:serviceId/features', {}, {
-				query : {
-					method : 'GET',
-					isArray : true
-				}
-			});
-		})
-	.factory('Feature',
+	.factory('FeatureService',
 		function($resource) {
 			return $resource(base + 'services/:serviceId/features/:featureId', {}, {
-				query : {
+				getFeatures : {
+					method : 'GET',
+					isArray : true
+				},
+				getFeature : {
 					method : 'GET',
 					params : {
 						featureId : ':featureId',
@@ -101,19 +77,14 @@ angular.module('myApp.services', [ 'ngResource' ])
 				}
 			});
 		})
-	.factory('Phenomenons',
-		function($resource) {
-			return $resource(base + 'services/:serviceId/phenomenons', {}, {
-				query : {
-					method : 'GET',
-					isArray : true
-				}
-			});
-		})
-	.factory('Phenomenon',
+	.factory('PhenomenonService',
 		function($resource) {
 			return $resource(base + 'services/:serviceId/phenomenons/:phenomenonId', {}, {
-				query : {
+				getPhenomenons : {
+					method : 'GET',
+					isArray : true
+				},
+				getPhenomenon : {
 					method : 'GET',
 					params : {
 						phenomenonId : ':phenomenonId',
@@ -123,19 +94,14 @@ angular.module('myApp.services', [ 'ngResource' ])
 				}
 			});
 		})
-	.factory('Stations',
-		function($resource) {
-			return $resource(base + 'services/:serviceId/stations', {}, {
-				query : {
-					method : 'GET',
-					isArray : true
-				}
-			});
-		})
-	.factory('Station',
+	.factory('StationService',
 		function($resource) {
 			return $resource(base + 'services/:serviceId/stations/:stationId', {}, {
-				query : {
+				getStations : {
+					method : 'GET',
+					isArray : true
+				},
+				getStation : {
 					method : 'GET',
 					params : {
 						serviceId : ':serviceId',
@@ -148,7 +114,7 @@ angular.module('myApp.services', [ 'ngResource' ])
 	.factory('Timeseries',
 		function($resource) {
 			return $resource(base + 'timeseries/:timeseriesId.png', {}, {
-				query : {
+				getTimeseries : {
 					method : 'GET',
 					params : {
 						timeseriesId : ':timeseriesId',
