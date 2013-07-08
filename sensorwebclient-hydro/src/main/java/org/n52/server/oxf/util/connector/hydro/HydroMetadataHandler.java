@@ -272,7 +272,7 @@ public class HydroMetadataHandler extends MetadataHandler {
     }
 
 	private ParsedPoint createParsedPoint(XmlObject feature, AReferencingHelper referenceHelper) throws XmlException {
-		ParsedPoint point = new ParsedPoint();
+		ParsedPoint point2D = new ParsedPoint();
 		XmlCursor cursor = feature.newCursor();
 		if (cursor.toChild(new QName("http://www.opengis.net/samplingSpatial/2.0", "shape"))) {
 			ShapeDocument shapeDoc = ShapeDocument.Factory.parse(cursor.getDomNode());
@@ -292,9 +292,9 @@ public class HydroMetadataHandler extends MetadataHandler {
                     alt = Double.parseDouble(lonLat[2]);
                 }
 				String wgs84 = "EPSG:4326";
-                point.setLon(lonLat[1]);
-                point.setLat(lonLat[0]);
-                point.setSrs(wgs84);
+                point2D.setLon(lonLat[1]);
+                point2D.setLat(lonLat[0]);
+                point2D.setSrs(wgs84);
 		        try {
 					String srs = referenceHelper.extractSRSCode(srsName); 
 					int srsID = referenceHelper.getSrsIdFromEPSG(srs);
@@ -303,13 +303,13 @@ public class HydroMetadataHandler extends MetadataHandler {
 					Coordinate coord = referenceHelper.createCoordinate(srs, lon, lat, alt);
 					Point createdPoint = geometryFactory.createPoint(coord);
 					createdPoint = referenceHelper.transform(createdPoint, srs, wgs84);
-					point = new ParsedPoint(createdPoint.getY() + "", createdPoint.getX() + "", wgs84); 
+					point2D = new ParsedPoint(createdPoint.getY() + "", createdPoint.getX() + "", wgs84); 
 				} catch (Exception e) {
 					LOGGER.debug("Could not transform! Keeping old SRS: " + wgs84, e);
 				}
 			}
 		}
-		return point;
+		return point2D;
 	}
 	
 	private GetFeatureOfInterestResponseDocument getFOIResponseOfOpResult(OperationResult opRes)
