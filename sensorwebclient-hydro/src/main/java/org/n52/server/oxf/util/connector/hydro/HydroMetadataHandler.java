@@ -287,6 +287,10 @@ public class HydroMetadataHandler extends MetadataHandler {
 				}
 				Double lon = Double.parseDouble(lonLat[1]);
 				Double lat = Double.parseDouble(lonLat[0]);
+				Double alt = null;
+				if (lonLat.length == 3) {
+                    alt = Double.parseDouble(lonLat[2]);
+                }
 				String wgs84 = "EPSG:4326";
                 point.setLon(lonLat[1]);
                 point.setLat(lonLat[0]);
@@ -296,7 +300,7 @@ public class HydroMetadataHandler extends MetadataHandler {
 					int srsID = referenceHelper.getSrsIdFromEPSG(srs);
 					PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING);
 					GeometryFactory geometryFactory = new GeometryFactory(pm, srsID);
-					Coordinate coord = referenceHelper.createCoordinate(srs, lon, lat, null);
+					Coordinate coord = referenceHelper.createCoordinate(srs, lon, lat, alt);
 					Point createdPoint = geometryFactory.createPoint(coord);
 					createdPoint = referenceHelper.transform(createdPoint, srs, wgs84);
 					point = new ParsedPoint(createdPoint.getY() + "", createdPoint.getX() + "", wgs84); 
