@@ -48,6 +48,9 @@ angular.module('myApp.services', [ 'ngResource' ])
 			return $resource(base + 'services/:serviceId/procedures/:procedureId', {}, {
 				getProcedures : {
 					method : 'GET',
+					params : {
+						serviceId : ':serviceId'
+					},
 					isArray : true
 				},
 				getProcedure : {
@@ -65,6 +68,9 @@ angular.module('myApp.services', [ 'ngResource' ])
 			return $resource(base + 'services/:serviceId/features/:featureId', {}, {
 				getFeatures : {
 					method : 'GET',
+					params : {
+						serviceId : ':serviceId'
+					},
 					isArray : true
 				},
 				getFeature : {
@@ -82,6 +88,9 @@ angular.module('myApp.services', [ 'ngResource' ])
 			return $resource(base + 'services/:serviceId/phenomenons/:phenomenonId', {}, {
 				getPhenomenons : {
 					method : 'GET',
+					params : {
+						serviceId : ':serviceId'
+					},
 					isArray : true
 				},
 				getPhenomenon : {
@@ -99,6 +108,9 @@ angular.module('myApp.services', [ 'ngResource' ])
 			return $resource(base + 'services/:serviceId/stations/:stationId', {}, {
 				getStations : {
 					method : 'GET',
+					params : {
+						serviceId : ':serviceId'
+					},
 					isArray : true
 				},
 				getStation : {
@@ -111,13 +123,14 @@ angular.module('myApp.services', [ 'ngResource' ])
 				}
 			});
 		})
-	.factory('Timeseries',
+	.factory('ImageService',
 		function($resource) {
-			return $resource(base + 'timeseries/:timeseriesId.png', {}, {
+			return $resource(':baseUrl/timeseries/:timeseriesId.png', {}, {
 				getTimeseries : {
 					method : 'GET',
 					params : {
-						timeseriesId : ':timeseriesId',
+						baseUrl: ':baseUrl',
+						timeseriesId : ':timeseriesId'
 					},
 					isArray : false
 				}

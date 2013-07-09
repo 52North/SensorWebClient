@@ -16,6 +16,15 @@ angular.module('myApp.controllers', [])
 	  $scope.utils = utils;
 	  $scope.offerings = service.getOfferings({serviceId: $routeParams.serviceId});
 	  $scope.serviceId = $routeParams.serviceId;
+	  
+	  $scope.searchInRelevantProperties = function(offering) {
+		  var search, label;
+		  if($scope.search) {
+			  search = $scope.search.toLowerCase();
+		  }
+		  label = offering.label.toLowerCase();
+		  return !$scope.search || label.indexOf(search) !== -1;
+	  };
   }])
   .controller('OfferingDetailCtrl', [ '$scope','$routeParams','OfferingService',function ($scope,$routeParams,service) {
 	  $scope.offering = service.getOffering({
@@ -29,6 +38,15 @@ angular.module('myApp.controllers', [])
 	  $scope.utils = utils;
 	  $scope.procedures = service.getProcedures({serviceId: $routeParams.serviceId});
 	  $scope.serviceId = $routeParams.serviceId;
+	  
+	  $scope.searchInRelevantProperties = function(feature) {
+		  var search, label;
+		  if($scope.search) {
+			  search = $scope.search.toLowerCase();
+		  }
+		  label = feature.label.toLowerCase();
+		  return !$scope.search || label.indexOf(search) !== -1;
+	  };
   }])
   .controller('ProcedureDetailCtrl', [ '$scope','$routeParams','ProcedureService',function ($scope,$routeParams,service) {
 	  $scope.procedure = service.getProcedure({
@@ -42,6 +60,15 @@ angular.module('myApp.controllers', [])
 	  $scope.utils = utils;
 	  $scope.features = service.getFeatures({serviceId: $routeParams.serviceId});
 	  $scope.serviceId = $routeParams.serviceId;
+	  
+	  $scope.searchInRelevantProperties = function(feature) {
+		  var search, label;
+		  if($scope.search) {
+			  search = $scope.search.toLowerCase();
+		  }
+		  label = feature.label.toLowerCase();
+		  return !$scope.search || label.indexOf(search) !== -1;
+	  };
   }])
   .controller('FeatureDetailCtrl', [ '$scope','$routeParams','FeatureService',function ($scope,$routeParams,service) {
 	  $scope.feature = service.getFeature({
@@ -55,6 +82,16 @@ angular.module('myApp.controllers', [])
 	  $scope.utils = utils;
 	  $scope.phenomenons = service.getPhenomenons({serviceId: $routeParams.serviceId});
 	  $scope.serviceId = $routeParams.serviceId;
+
+	  debugger;
+	  $scope.searchInRelevantProperties = function(phenomenon) {
+		  var search, label;
+		  if($scope.search) {
+			  search = $scope.search.toLowerCase();
+		  }
+		  label = phenomenon.label.toLowerCase();
+		  return !$scope.search || label.indexOf(search) !== -1;
+	  };
   }])
   .controller('PhenomenonDetailCtrl', [ '$scope','$routeParams','PhenomenonService',function ($scope,$routeParams,service) {
 	  $scope.phenomenon = service.getPhenomenon({
@@ -64,10 +101,20 @@ angular.module('myApp.controllers', [])
 	  			$scope.serviceId = $routeParams.serviceId;
 	  		});
   }])
-  .controller('StationListCtrl', [ '$scope','$routeParams','StationService','Utils',function ($scope,$routeParams,service,utils) {
+  .controller('StationListCtrl', [ '$scope','$routeParams','$timeout','StationService','Utils',function ($scope,$routeParams,$timeout,service,utils) {
 	  $scope.utils = utils;
 	  $scope.stations = service.getStations({serviceId: $routeParams.serviceId});
 	  $scope.serviceId = $routeParams.serviceId;
+	  
+	  $scope.searchInRelevantProperties = function(station) {
+		  debugger;
+		  var search, name;
+		  if($scope.search) {
+			  search = $scope.search.toLowerCase();
+		  }
+		  name = station.properties.station.toLowerCase();
+		  return !$scope.search || name.indexOf(search) !== -1;
+	  };
   }])
   .controller('StationDetailCtrl', [ '$scope','$routeParams','StationService',function ($scope,$routeParams,service) {
 	  $scope.station = service.getStation({

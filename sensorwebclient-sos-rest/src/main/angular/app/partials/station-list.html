@@ -8,11 +8,15 @@
 		<h3 class="muted">Stations</h3>
 	</div>
 
-	<ul class="station">
-		<li ng-repeat="station in stations">
-			<!-- decode twice since browser decodes automatically when routing -->
-			<a ng-href="#/{{serviceId}}/stations/{{utils.doubleEncode(station.properties.station)}}">
-				{{station.properties.station}} </a>
-		</li>
-	</ul>
+    <div class="span5 pull-left parameterList">
+        <input type="text" ng-model="search" placeholder="Filter by name...">
+		<ul class="station">
+			<li ng-repeat="station in stations | filter:searchInRelevantProperties">
+				<!-- decode twice since browser decodes automatically when routing -->
+				<a ng-href="#/{{serviceId}}/stations/{{utils.doubleEncode(station.properties.station)}}">
+					{{station.properties.station}} </a>
+			</li>
+		</ul>
+	</div>
+    <map id="station-overview-map" class="span6 pull-right" data-features="stations"></map>
 </div>

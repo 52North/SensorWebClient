@@ -68,19 +68,20 @@ angular.module('myApp', ['myApp.services', 'myApp.directives', 'myApp.controller
 		});
 	$routeProvider.when('/:serviceId/stations/:stationId', {
 			templateUrl: '../partials/station-detail.html', 
-			controller: 'StationDetailCtrl' 
+			controller: 'StationDetailCtrl'
 		});
 	
 	//
 	// timeseries routes
-	$routeProvider.when('/timeseries/:timeseriesId', {
-			templateUrl: '../partials/timeseries-img.html', 
-			controller: 'TimeseriesImgCtrl' 
-		});
-	$routeProvider.when('/timeseries/:timeseriesId', {
-			templateUrl: '../partials/timeseries-data.html', 
-			controller: 'TimeseriesDataCtrl' 
-		});
+//	$routeProvider.when('/timeseries/:timeseriesId', {
+//			templateUrl: '../partials/timeseries-img.html', 
+//			template : '<a ng-href="{{ts_url}}"></a>',
+//			controller: 'TimeseriesImgCtrl' 
+//		});
+//	$routeProvider.when('/timeseries/:timeseriesId', {
+//			templateUrl: '../partials/timeseries-data.html', 
+//			controller: 'TimeseriesDataCtrl' 
+//		});
 	
 	//
 	// fallback route

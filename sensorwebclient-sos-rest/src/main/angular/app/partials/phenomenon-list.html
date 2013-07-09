@@ -7,11 +7,14 @@
 		</ul>
 		<h3 class="muted">Phenomenons</h3>
 	</div>
-
-	<ul class="phenomenons">
-		<li ng-repeat="phenomenon in phenomenons">
-			<!-- decode twice since browser decodes automatically when routing -->
-			<a href="#/{{serviceId}}/phenomenons/{{utils.doubleEncode(phenomenon.id)}}">{{phenomenon.label}}</a>
-		</li>
-	</ul>
+	
+    <div class="span5 pull-left parameterList">
+        <input type="text" ng-model="search" placeholder="Filter by name...">
+		<ul class="phenomenons">
+			<li ng-repeat="phenomenon in phenomenons | filter:searchInRelevantProperties">
+				<!-- decode twice since browser decodes automatically when routing -->
+				<a href="#/{{serviceId}}/phenomenons/{{utils.doubleEncode(phenomenon.id)}}">{{phenomenon.label}}</a>
+			</li>
+		</ul>
+	</div>
 </div>
