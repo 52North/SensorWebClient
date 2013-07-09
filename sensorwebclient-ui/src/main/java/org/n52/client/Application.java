@@ -74,7 +74,9 @@ import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SOSMetadataBuilder;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 
+import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.http.client.URL;
@@ -82,7 +84,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 
-public final class Application {
+public final class Application implements EntryPoint {
 
     private static boolean HAS_STARTED = false;
 
@@ -94,7 +96,14 @@ public final class Application {
         HAS_STARTED = hasStarted;
     }
 
-    public static void start() {
+    @Override
+    public void onModuleLoad() {
+        GWT.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+            public void onUncaughtException(Throwable e) {
+                GWT.log("Uncaught Exception", e);
+            }
+        });
+        
         // TODO refactor startup to be more explicit
         getPropertiesManager(); // creates singleton
     }
@@ -288,4 +297,5 @@ public final class Application {
             }
         });
     }
+
 }

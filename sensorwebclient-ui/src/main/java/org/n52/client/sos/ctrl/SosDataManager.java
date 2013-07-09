@@ -98,7 +98,7 @@ public class SosDataManager implements DataManager<SOSMetadata> {
 			}
 
 			Set<String> phenomenonIds = new HashSet<String>();
-			TimeseriesParametersLookup lookup = meta.getTimeseriesParamtersLookup();
+			TimeseriesParametersLookup lookup = meta.getTimeseriesParametersLookup();
 			for (Phenomenon phenomenon : evt.getPhenomenons()) {
 				lookup.addPhenomenon(phenomenon);
 				phenomenonIds.add(phenomenon.getId());

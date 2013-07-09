@@ -36,23 +36,28 @@ import java.util.Map.Entry;
 
 import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.n52.client.bus.EventBus;
+import org.n52.client.sos.ctrl.SosDataManager;
 import org.n52.client.sos.event.AddMarkerEvent;
 import org.n52.client.sos.event.data.GetFeatureEvent;
 import org.n52.client.sos.event.data.GetOfferingEvent;
+import org.n52.client.sos.event.data.GetPhenomenonsEvent;
 import org.n52.client.sos.event.data.GetProcedureDetailsUrlEvent;
 import org.n52.client.sos.event.data.GetProcedureEvent;
 import org.n52.client.sos.event.data.GetProcedurePositionsFinishedEvent;
+import org.n52.client.sos.event.data.GetStationsWithinBBoxEvent;
 import org.n52.client.sos.event.data.NewPhenomenonsEvent;
 import org.n52.client.sos.event.data.NewStationPositionsEvent;
 import org.n52.client.sos.event.data.PropagateOfferingsFullEvent;
 import org.n52.client.sos.event.data.StoreFeatureEvent;
 import org.n52.client.sos.event.data.StoreProcedureDetailsUrlEvent;
+import org.n52.client.sos.event.data.StoreSOSMetadataEvent;
 import org.n52.client.sos.event.data.handler.GetProcedurePositionsFinishedEventHandler;
 import org.n52.client.sos.event.data.handler.NewPhenomenonsEventHandler;
 import org.n52.client.sos.event.data.handler.NewStationPositionsEventHandler;
 import org.n52.client.sos.event.data.handler.PropagateOfferingFullEventHandler;
 import org.n52.client.sos.event.data.handler.StoreFeatureEventHandler;
 import org.n52.client.sos.event.data.handler.StoreProcedureDetailsUrlEventHandler;
+import org.n52.client.sos.event.data.handler.StoreSOSMetadataEventHandler;
 import org.n52.client.sos.event.handler.AddMarkerEventHandler;
 import org.n52.client.ui.Toaster;
 import org.n52.client.ui.map.InfoMarker;
@@ -245,7 +250,7 @@ class StationSelectorController implements MapController {
     
     private TimeseriesParametersLookup getParametersLookup() {
         final SOSMetadata metadata = getCurrentMetadata();
-        return metadata.getTimeseriesParamtersLookup();
+        return metadata.getTimeseriesParametersLookup();
     }
 
     public SOSMetadata getCurrentMetadata() {
@@ -260,7 +265,8 @@ class StationSelectorController implements MapController {
             StoreProcedureDetailsUrlEventHandler,
             StoreFeatureEventHandler,
             AddMarkerEventHandler,
-            GetProcedurePositionsFinishedEventHandler {
+            GetProcedurePositionsFinishedEventHandler,
+            StoreSOSMetadataEventHandler {
 
         private StationSelectorController controller;
 
@@ -274,6 +280,7 @@ class StationSelectorController implements MapController {
             bus.addHandler(GetProcedurePositionsFinishedEvent.TYPE, this);
             bus.addHandler(StoreFeatureEvent.TYPE, this);
             bus.addHandler(AddMarkerEvent.TYPE, this);
+            bus.addHandler(StoreSOSMetadataEvent.TYPE, this);
         }
 
         @Override
@@ -334,6 +341,13 @@ class StationSelectorController implements MapController {
         public void onStore(StoreFeatureEvent evt) {
             stationSelector.updateInfoLabels();
         }
+
+		@Override
+		public void onStore(StoreSOSMetadataEvent evt) {
+			if (evt.getMetadata().getServiceUrl().equals(controller.selectedServiceUrl)) {
+				controller.performSOSDataRequests(selectedServiceUrl);
+			}
+		}
     }
 
     /**
@@ -358,6 +372,25 @@ class StationSelectorController implements MapController {
         }
         return mostCommonCategory;
     }
+    
+    public void performSOSDataRequests(String serviceURL) {
+	    /*
+	     * XXX
+	     * Using the current extent would require the client to get missing stations
+	     * from the server part. this would make neccessary an interaction (zoom, pan) 
+	     * based rendering of stations!
+	     */
+//		BoundingBox bbox = controller.getCurrentExtent();
+	    SosDataManager dataManager = SosDataManager.getDataManager();
+	    SOSMetadata metadata = dataManager.getServiceMetadata(serviceURL);
+        BoundingBox bbox = metadata.getConfiguredExtent();
+		GetStationsWithinBBoxEvent getStations = new GetStationsWithinBBoxEvent(serviceURL, bbox);
+		loadingStations(true);
+		GetPhenomenonsEvent getPhenomenons = new GetPhenomenonsEvent.Builder(serviceURL).build();
+		EventBus.getMainEventBus().fireEvent(getStations);
+		EventBus.getMainEventBus().fireEvent(getPhenomenons);
+		setSelectedServiceURL(serviceURL);
+	}
 
     @SuppressWarnings("unused")
 	private void increaseAmountOf(String category, Map<String, Integer> countResults) {
