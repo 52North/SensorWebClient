@@ -24,6 +24,7 @@
 package org.n52.client.service;
 
 import org.n52.shared.responses.GetProcedureDetailsUrlResponse;
+import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.responses.SensorMetadataResponse;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 
@@ -32,5 +33,7 @@ public interface SensorMetadataService {
     public SensorMetadataResponse getSensorMetadata(TimeseriesProperties properties) throws Exception;
 
     public GetProcedureDetailsUrlResponse getProcedureDetailsUrl(String serviceURL, String procedure) throws Exception;
+    
+    public SOSMetadataResponse getUpdatedSOSMetadata();
     
 }

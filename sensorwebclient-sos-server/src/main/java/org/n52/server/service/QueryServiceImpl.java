@@ -327,7 +327,7 @@ public class QueryServiceImpl implements QueryService {
 
     private TimeseriesParametersLookup getParametersLookupFor(String serviceUrl) {
         SOSMetadata metadata = getSOSMetadata(serviceUrl);
-        return metadata.getTimeseriesParamtersLookup();
+        return metadata.getTimeseriesParametersLookup();
     }
 
     private AReferencingHelper createReferenceHelper(boolean forceXYAxisOrder) {

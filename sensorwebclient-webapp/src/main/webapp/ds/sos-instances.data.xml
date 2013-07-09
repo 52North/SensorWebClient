@@ -83,12 +83,12 @@
 		<defaultZoom>15</defaultZoom>
 		<requestChunk>200</requestChunk>
 		<autoZoom>true</autoZoom>
+		<protectedService>false</protectedService>
 	</instance>
 	
-	<!-- 
 	<instance>
 		<itemName>GRDC-SOS_GEOWOW</itemName>
-		<url>http://geowow.dev.52north.org:8080/52n-sos-grdc-webapp-4.0.0-SNAPSHOT/sos/soap</url>
+		<url>http://geowow.dev.52north.org/52n-sos-grdc-webapp/sos/soap</url>
 		<version>2.0.0</version>
 		<metadataHandler>org.n52.server.oxf.util.connector.hydro.HydroMetadataHandler</metadataHandler>
 		<adapter>org.n52.server.oxf.util.connector.hydro.SOSwithSoapAdapter</adapter>
@@ -100,8 +100,8 @@
 		<defaultZoom>10</defaultZoom>
 		<requestChunk>200</requestChunk>
 		<autoZoom>true</autoZoom>
+		<protectedService>true</protectedService>
 	</instance>
-	 -->
 	
 	<!-- <instance>
 		<itemName>EEA-SOS</itemName>

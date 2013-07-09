@@ -45,7 +45,6 @@ import org.n52.server.oxf.util.logging.Statistics;
 import org.n52.server.oxf.util.parser.DefaultMetadataHandler;
 import org.n52.server.updates.SosMetadataUpdate;
 import org.n52.shared.Constants;
-import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -201,8 +200,8 @@ public class ConfigurationContext extends HttpServlet {
         }
         try {
             DefaultMetadataHandler parser = new DefaultMetadataHandler();
-            SOSMetadataResponse resp = parser.performMetadataCompletion(url, Constants.DEFAULT_SOS_VERSION);
-            return resp.getServiceMetadata();
+            SOSMetadata metadata = parser.performMetadataCompletion(url, Constants.DEFAULT_SOS_VERSION);
+            return metadata;
         }
         catch (Exception e) {
             // throw new RuntimeException("Error building server metadata", e);
@@ -308,5 +307,25 @@ public class ConfigurationContext extends HttpServlet {
 		} catch (Exception e) {
 			LOGGER.error("Could not load SOS from " + metadata, e);
 		}
+	}
+	
+	public static Map<String, SOSMetadata> updateSOSMetadata() {
+		LOGGER.debug("Update protected services");
+		Map<String, SOSMetadata> updatedMetadatas = new HashMap<String, SOSMetadata>();
+		for (String metadataKey : serviceMetadatas.keySet()) {
+			SOSMetadata sosMetadata = serviceMetadatas.get(metadataKey);
+			if(sosMetadata.isProtectedService()) {
+				try {
+					MetadataHandler metadataHandler = ConfigurationContext.createSosMetadataHandler(sosMetadata);
+					SOSMetadata updatedMetadata = metadataHandler.updateMetadata(sosMetadata);
+					updatedMetadatas.put(updatedMetadata.getServiceUrl(), updatedMetadata); 
+					LOGGER.debug("Update metadata for service with url '{}'", updatedMetadata.getServiceUrl());
+				} catch (Exception e) {
+					LOGGER.error("Could not update {} ", sosMetadata, e);
+				}
+			}
+		}
+		LOGGER.debug("Update #{} protected services", updatedMetadatas.size());
+		return updatedMetadatas;
 	}
 }

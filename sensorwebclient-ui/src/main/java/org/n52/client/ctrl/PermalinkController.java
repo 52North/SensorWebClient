@@ -96,7 +96,7 @@ public class PermalinkController {
 	    for (SosTimeseries timeseries : PermalinkController.this.timeseriesToLoad.keySet()) {
             String serviceUrl = timeseries.getServiceUrl();
             SOSMetadata metadata = getDataManager().getServiceMetadata(serviceUrl);
-            TimeseriesParametersLookup lookup = metadata.getTimeseriesParamtersLookup();
+            TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
             if (lookup.hasLoadedCompletely(timeseries) && !isNewTimeseriesEventAlreadyFired(timeseries)) {
                 Station station = metadata.getStationByTimeSeries(timeseries);
                 PermalinkController.this.timeseriesToLoad.put(timeseries, TRUE);

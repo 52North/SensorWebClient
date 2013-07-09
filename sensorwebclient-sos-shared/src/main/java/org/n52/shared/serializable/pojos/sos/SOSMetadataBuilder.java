@@ -45,6 +45,8 @@ public class SOSMetadataBuilder {
     private boolean autoZoom = true;
     
     private boolean forceXYAxisOrder = false;
+    
+    private boolean protectedService = false;
 
     private int requestChunk = 100;
     
@@ -105,6 +107,11 @@ public class SOSMetadataBuilder {
         this.adapter = adapter.trim();
         return this;
     }
+    
+	public SOSMetadataBuilder addProtectedService(boolean protectedService) {
+		this.protectedService = protectedService;
+		return this;
+	}
 
     public SOSMetadataBuilder setWaterML(boolean waterML) {
         this.waterML = waterML;
@@ -203,6 +210,10 @@ public class SOSMetadataBuilder {
     public String getAdapter() {
         return this.adapter;
     }
+    
+    public boolean isProctectedService() {
+    	return this.protectedService;
+    }
 
     public boolean isAutoZoom() {
         return this.autoZoom;
@@ -227,5 +238,5 @@ public class SOSMetadataBuilder {
         EastingNorthing ur = new EastingNorthing(urEasting, urNorthing, "EPSG:4326");
         return new BoundingBox(ll, ur);
     }
-    
+
 }

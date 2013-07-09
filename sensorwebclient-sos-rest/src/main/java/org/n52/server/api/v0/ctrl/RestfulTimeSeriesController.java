@@ -92,10 +92,23 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
     public ModelAndView getAllTimeseries(@PathVariable String instance,
                                          @RequestParam(value = KVP_SHOW, required = false) String details,
                                          @RequestParam(value = KVP_OFFSET, defaultValue = KVP_DEFAULT_OFFSET) int offset,
-                                         @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) int size) throws Exception {
+                                         @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) int size,
+                                         @RequestParam(value = KVP_FEATURE, required = false) String feature,
+                                         @RequestParam(value = KVP_PHENOMENON, required = false) String phenomenon,
+                                         @RequestParam(value = KVP_PROCEDURE, required = false) String procedure,
+                                         @RequestParam(value = KVP_OFFERING, required = false) String offering) throws Exception {
 
+        QueryParameters parameters = new QueryParameters()
+                .setFeature(feature)
+                .setOffering(offering)
+                .setPhenomenon(phenomenon)
+                .setProcedure(procedure);
+        QueryResponse< ? > result = performQuery(instance, parameters);
+        Station[] stations = (Station[]) result.getResults();
+        
         List<Object> allTimeseries = new ArrayList<Object>();
-        for (Station station : getAllStations(instance)) {
+//        for (Station station : getAllStations(instance)) {
+        for (Station station : stations) {
             if (shallShowCompleteResults(details)) {
                 allTimeseries.addAll(createCompleteOutput(station));
             }

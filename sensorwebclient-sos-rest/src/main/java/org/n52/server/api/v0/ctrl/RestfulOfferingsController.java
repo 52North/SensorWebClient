@@ -24,16 +24,9 @@ public class RestfulOfferingsController extends QueryController implements Restf
     public ModelAndView getOfferingsByGET(@PathVariable("instance") String instance,
                                           @RequestParam(value = KVP_SHOW, required = false) String details,
                                           @RequestParam(value = KVP_OFFSET, defaultValue = KVP_DEFAULT_OFFSET) int offset,
-                                          @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) int size,
-                                          @RequestParam(value = KVP_FEATURE, required = false) String feature,
-                                          @RequestParam(value = KVP_PHENOMENON, required = false) String phenomenon,
-                                          @RequestParam(value = KVP_PROCEDURE, required = false) String procedure) throws Exception {
+                                          @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) int size) throws Exception {
 
-        QueryParameters parameters = new QueryParameters()
-                .setPhenomenon(phenomenon)
-                .setProcedure(procedure)
-                .setFeature(feature);
-        
+        QueryParameters parameters = QueryParameters.createEmptyFilterQuery();
         QueryResponse< ? > result = performQuery(instance, parameters);
         Offering[] offerings = (Offering[]) result.getResults();
 
@@ -53,14 +46,14 @@ public class RestfulOfferingsController extends QueryController implements Restf
     @RequestMapping(value = "/{instance}/" + COLLECTION_OFFERINGS + "/**", method = RequestMethod.GET)
     public ModelAndView getOfferingByID(@PathVariable(value = "instance") String instance,
                                         HttpServletRequest request) throws Exception {
-        String offering = getIndididuumIdentifierFor(COLLECTION_OFFERINGS, request);
+        String offering = getDecodedIndividuumIdentifierFor(COLLECTION_OFFERINGS, request);
         return createResponseView(instance, offering);
     }
 
     @RequestMapping(value = "/{instance}/" + COLLECTION_OFFERINGS + "/{id:.+}", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          @PathVariable(value = "id") String offering) throws Exception {
-        return createResponseView(instance, offering);
+        return createResponseView(instance, decode(offering));
     }
 
     private ModelAndView createResponseView(String instance, String offering) throws Exception {

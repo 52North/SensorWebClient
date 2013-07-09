@@ -24,16 +24,9 @@ public class RestfulPhenomenonsController extends QueryController implements Res
     public ModelAndView getPhenomenonsByGET(@PathVariable("instance") String instance,
                                             @RequestParam(value = KVP_SHOW, required = false) String details,
                                             @RequestParam(value = KVP_OFFSET, defaultValue = KVP_DEFAULT_OFFSET) int offset,
-                                            @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) int size,
-                                            @RequestParam(value = KVP_FEATURE, required = false) String feature,
-                                            @RequestParam(value = KVP_PROCEDURE, required = false) String procedure,
-                                            @RequestParam(value = KVP_OFFERING, required = false) String offering) throws Exception {
+                                            @RequestParam(value = KVP_SIZE, defaultValue = KVP_DEFAULT_SIZE) int size) throws Exception {
 
-        QueryParameters parameters = new QueryParameters()
-                .setProcedure(procedure)
-                .setOffering(offering)
-                .setFeature(feature);
-        
+        QueryParameters parameters = QueryParameters.createEmptyFilterQuery();
         QueryResponse< ? > result = performQuery(instance, parameters);
         Phenomenon[] phenomenons = (Phenomenon[]) result.getResults();
 
@@ -53,14 +46,14 @@ public class RestfulPhenomenonsController extends QueryController implements Res
     @RequestMapping(value = "/{instance}/" + COLLECTION_PHENOMENONS + "/**", method = RequestMethod.GET)
     public ModelAndView getPhenomenonByID(@PathVariable(value = "instance") String instance,
                                           HttpServletRequest request) throws Exception {
-        String phenomenon = getIndididuumIdentifierFor(COLLECTION_PHENOMENONS, request);
+        String phenomenon = getDecodedIndividuumIdentifierFor(COLLECTION_PHENOMENONS, request);
         return createResponseView(instance, phenomenon);
     }
 
     @RequestMapping(value = "/{instance}/" + COLLECTION_PHENOMENONS + "/{id:.+}", method = RequestMethod.GET)
     public ModelAndView getProcedureByID(@PathVariable(value = "instance") String instance,
                                          @PathVariable(value = "id") String phenomenon) throws Exception {
-        return createResponseView(instance, phenomenon);
+        return createResponseView(instance, decode(phenomenon));
     }
 
     private ModelAndView createResponseView(String instance, String phenomenon) throws Exception {

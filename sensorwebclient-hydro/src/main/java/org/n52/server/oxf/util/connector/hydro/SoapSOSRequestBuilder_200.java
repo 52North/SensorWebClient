@@ -27,7 +27,7 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.ParameterContainer;
-import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
+import org.n52.oxf.adapter.ParameterShell;
 import org.n52.oxf.xmlbeans.tools.XmlUtil;
 import org.n52.server.oxf.util.access.oxfExtensions.SOSRequestBuilder_200_OXFExtension;
 import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
@@ -75,15 +75,24 @@ public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtensio
 
 	public String buildGetDataAvailabilityRequest(ParameterContainer parameters) throws OXFException {
 		StringBuffer sb = new StringBuffer();
-	    String observedProperty = (String) parameters.getParameterShellWithCommonName(ISOSRequestBuilder.GET_OBSERVATION_OBSERVED_PROPERTY_PARAMETER).getSpecifiedValue();
-	    String procedure = (String) parameters.getParameterShellWithCommonName(ISOSRequestBuilder.GET_OBSERVATION_PROCEDURE_PARAMETER).getSpecifiedValue();
-	    String offering = (String) parameters.getParameterShellWithCommonName(ISOSRequestBuilder.GET_OBSERVATION_OFFERING_PARAMETER).getSpecifiedValue();
-	    String feature = (String) parameters.getParameterShellWithCommonName(ISOSRequestBuilder.GET_OBSERVATION_FEATURE_OF_INTEREST_PARAMETER).getSpecifiedValue();
-	    sb.append("<sos:GetDataAvailability service=\"SOS\" version=\"2.0\" xmlns:sos=\"http://www.opengis.net/sos/2.0\">");
-	    sb.append("<sos:observedProperty>" + observedProperty + "</sos:observedProperty>");
-	    sb.append("<sos:procedure>" + procedure + "</sos:procedure>");
-	    sb.append("<sos:offering>" + offering + "</sos:offering>");
-	    sb.append("<sos:featureOfInterest>" + feature + "</sos:featureOfInterest>");
+	    ParameterShell observedProperty = parameters.getParameterShellWithCommonName("observedProperty");
+	    ParameterShell procedure = parameters.getParameterShellWithCommonName("procedure");
+	    ParameterShell offering = parameters.getParameterShellWithCommonName("offering");
+	    ParameterShell feature = parameters.getParameterShellWithCommonName("featureOfInterest");
+	    String version = "2.0.0";
+	    sb.append("<sos:GetDataAvailability service=\"SOS\" version=\"" + version + "\" xmlns:sos=\"http://www.opengis.net/sos/2.0\">");
+	    if (observedProperty != null) {
+	    	sb.append("<sos:observedProperty>" + observedProperty.getSpecifiedValue() + "</sos:observedProperty>");
+	    }
+	    if (procedure != null) {
+	    	sb.append("<sos:procedure>" + procedure.getSpecifiedValue() + "</sos:procedure>");
+	    }
+	    if (offering != null) {
+	    	sb.append("<sos:offering>" + offering.getSpecifiedValue() + "</sos:offering>");
+	    }
+	    if (feature != null) {
+	    	sb.append("<sos:featureOfInterest>" + feature.getSpecifiedValue() + "</sos:featureOfInterest>");
+	    }
 	    sb.append("</sos:GetDataAvailability>");
 	    EnvelopeDocument envelope = addSoapEnvelope(sb.toString(), GET_DATA_AVAILABILITY);
 	    return envelope.xmlText(XmlUtil.PRETTYPRINT);

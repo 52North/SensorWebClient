@@ -60,7 +60,7 @@ public class SOSMetadata implements Serializable {
 
     private String omVersion;
     
-    private TimeseriesParametersLookup timeseriesParamtersLookup;
+    private TimeseriesParametersLookup timeseriesParametersLookup;
 
     private HashMap<String, Station> stations = new HashMap<String, Station>();
 
@@ -75,6 +75,8 @@ public class SOSMetadata implements Serializable {
     private boolean waterML = false; // default
 
     private boolean autoZoom = true; // default
+    
+    private boolean protectedService = false; // default
 
     private int requestChunk = 300; // default
 
@@ -136,6 +138,7 @@ public class SOSMetadata implements Serializable {
         this.forceXYAxisOrder = builder.isForceXYAxisOrder();
         this.requestChunk = builder.getRequestChunk();
         this.configuredExtent = builder.getConfiguredServiceExtent();
+        this.protectedService = builder.isProctectedService();
         this.setSosMetadataHandler(builder.getSosMetadataHandler());
         this.setAdapter(builder.getAdapter());
     }
@@ -263,6 +266,10 @@ public class SOSMetadata implements Serializable {
     public boolean isForceXYAxisOrder() {
         return forceXYAxisOrder;
     }
+    
+    public boolean isProtectedService() {
+    	return protectedService;
+    }
 
     public int getRequestChunk() {
         return requestChunk;
@@ -326,11 +333,11 @@ public class SOSMetadata implements Serializable {
     /**
      * @return a lookup helper for timeseries parameters.
      */
-    public TimeseriesParametersLookup getTimeseriesParamtersLookup() {
-        timeseriesParamtersLookup = timeseriesParamtersLookup == null 
+    public TimeseriesParametersLookup getTimeseriesParametersLookup() {
+        timeseriesParametersLookup = timeseriesParametersLookup == null 
                 ? new TimeseriesParametersLookup()
-                : timeseriesParamtersLookup;
-        return timeseriesParamtersLookup;
+                : timeseriesParametersLookup;
+        return timeseriesParametersLookup;
     }
 
     @Override
@@ -342,6 +349,19 @@ public class SOSMetadata implements Serializable {
         sb.append("version: ").append(version);
         sb.append(" ]");
         return sb.toString();
+    }
+    
+    public SOSMetadata clone() {
+    	SOSMetadata clone = new SOSMetadata(this.id,this.version,this.sensorMLVersion,this.omVersion,this.title);
+    	clone.waterML = this.waterML;
+    	clone.autoZoom = this.autoZoom;
+        clone.forceXYAxisOrder = this.forceXYAxisOrder;
+        clone.requestChunk = this.requestChunk;
+        clone.configuredExtent = this.configuredExtent;
+        clone.protectedService = this.protectedService;
+        clone.setSosMetadataHandler(this.getSosMetadataHandler());
+        clone.setAdapter(this.getAdapter());
+    	return clone;
     }
 
 }
