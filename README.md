@@ -95,17 +95,17 @@ configuration contexts by renaming (the `<new-context>` part) and saving it
 under `sensorwebclient-build-<new-context>.properties` into your 
 `${user.home}`-folder. Build your context dependent Client instance by running  
 
-´´´
+```
   mvn clean install -P env-dev -Denv=<context>
-´´´
+```
 
 By default the Sensor Web Client build with the default SOS connection only.
 If you want to build and include another one, you have to activate the 
 accoring profile, e.g. for the Hydro connector:
 
-´´´
+```
   mvn clean install -P env-dev,connector-hydro -Denv=<context>
-´´´
+```
 
 For detailed installation and configuration explanation, please consult 
 the Wiki page
