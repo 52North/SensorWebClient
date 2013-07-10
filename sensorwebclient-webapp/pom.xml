@@ -170,7 +170,7 @@
                             <groupId>${project.groupId}</groupId>
                             <artifactId>sensorwebclient-sos-rest</artifactId>
                             <includes>index*.html</includes>
-                            <outputDirectory>${webappDirectory}/discovery</outputDirectory>
+                            <outputDirectory>${webappDirectory}/explore</outputDirectory>
                             <overWrite>false</overWrite>
                         </artifactItem>
 
