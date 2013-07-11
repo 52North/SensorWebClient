@@ -23,8 +23,8 @@
  */
 package org.n52.ext.link.sos;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.n52.ext.link.sos.PermalinkGeneratorTestUtil.BASE_URL;
 
 import java.util.Collection;
