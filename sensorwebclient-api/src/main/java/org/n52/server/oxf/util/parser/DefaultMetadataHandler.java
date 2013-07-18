@@ -156,7 +156,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
                     DescribeSensorParser parser = new DescribeSensorParser(incomingResultAsStream, metadata);
 
                     Procedure procedure = lookup.getProcedure(procedureId);
-                    procedure.addAllRefValues(parser.parseCapsDataFields());
+                    procedure.addAllRefValues(parser.parseReferenceValues());
                     List<String> phenomenons = parser.getPhenomenons();
                     List<String> fois = parser.parseFOIReferences();
                     ParsedPoint point = parser.buildUpSensorMetadataPosition();

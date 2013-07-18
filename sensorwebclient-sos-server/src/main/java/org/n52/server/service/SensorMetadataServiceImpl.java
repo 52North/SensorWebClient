@@ -66,7 +66,7 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
             tsProperties.setStationName(parser.buildUpSensorMetadataStationName());
             tsProperties.setUnitOfMeasure(parser.buildUpSensorMetadataUom(phenomenonId));
             
-            HashMap<String, ReferenceValue> refvalues = parser.parseCapsDataFields();
+            HashMap<String, ReferenceValue> refvalues = parser.parseReferenceValues();
             tsProperties.addAllRefValues(refvalues);
             procedure.addAllRefValues(refvalues);
     
