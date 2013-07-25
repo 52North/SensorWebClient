@@ -372,6 +372,23 @@ public class Legend extends VLayout {
         return toPDF;
     }
 
+    private Label createZIPLabel() {
+        Label toZIP = new Label(i18n.toZIP());
+        toZIP.setWrap(false);
+        toZIP.setAutoFit(true);
+        toZIP.setPadding(3);
+        toZIP.setWidth100();
+        toZIP.setStyleName("n52_sensorweb_client_exportEntry");
+        toZIP.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                controller.exportTo(ExportType.DATADOWNLOAD_ZIP);
+                exportMenu.hide();
+            }
+        });
+        return toZIP;
+    }
+
     private Label createExportLabelButton() {
         Label export = new Label(i18n.export());
         export.setStyleName("n52_sensorweb_client_legendbuttonDisabled");
