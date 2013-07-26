@@ -55,11 +55,13 @@ import net.opengis.sensorML.x101.SensorMLDocument.SensorML;
 import net.opengis.sensorML.x101.SensorMLDocument.SensorML.Member;
 import net.opengis.sensorML.x101.impl.ProcessModelTypeImpl;
 import net.opengis.sensorML.x101.impl.SystemDocumentImpl;
+import net.opengis.swe.x101.AbstractDataRecordType;
 import net.opengis.swe.x101.AnyScalarPropertyType;
 import net.opengis.swe.x101.DataComponentPropertyType;
 import net.opengis.swe.x101.DataRecordType;
 import net.opengis.swe.x101.PositionType;
 import net.opengis.swe.x101.SimpleDataRecordType;
+import net.opengis.swe.x101.TextDocument.Text;
 import net.opengis.swe.x101.VectorPropertyType;
 import net.opengis.swes.x20.DescribeSensorResponseDocument;
 import net.opengis.swes.x20.DescribeSensorResponseType;
@@ -110,7 +112,7 @@ public class DescribeSensorParser {
     public DescribeSensorParser(InputStream inputStream, SOSMetadata metadata) throws XmlException,
             IOException,
             XMLHandlingException {
-        setDataStreamToParse(inputStream, metadata.getVersion());
+        setDataStreamToParse(inputStream);
         if (metadata.isForceXYAxisOrder()) {
             referenceHelper = AReferencingHelper.createEpsgForcedXYAxisOrder();
         }
@@ -415,86 +417,39 @@ public class DescribeSensorParser {
         return toNormalize.replaceAll("[\\\\,/,:,\\*,?,\",<,>,;]", "_");
     }
 
-    public HashMap<String, ReferenceValue> parseCapsDataFields() {
-
-        HashMap<String, ReferenceValue> map = new HashMap<String, ReferenceValue>();
+    public HashMap<String, ReferenceValue> parseReferenceValues() {
         Capabilities[] caps = getSensorMLCapabilities(smlDoc.getSensorML());
+        HashMap<String, ReferenceValue> map = new HashMap<String, ReferenceValue>();
 
         for (int i = 0; i < caps.length; i++) {
-            if (caps[i].getAbstractDataRecord() instanceof SimpleDataRecordType) {
-                SimpleDataRecordType rec = (SimpleDataRecordType) caps[i].getAbstractDataRecord();
-                for (int j = 0; j < rec.getFieldArray().length; j++) {
-
-                    AnyScalarPropertyType field = rec.getFieldArray(j);
-                    // FIXME put in config and define definition for
-                    // reference values
+            AbstractDataRecordType abstractDataRecord = caps[i].getAbstractDataRecord();
+            if (abstractDataRecord instanceof SimpleDataRecordType) {
+                SimpleDataRecordType simpleDataRecord = (SimpleDataRecordType) abstractDataRecord;
+                for (AnyScalarPropertyType field : simpleDataRecord.getFieldArray()) {
                     if (field.isSetText()) {
-                        // FIXME merge redundant code
-                        String definition = field.getText().getDefinition();
-                        if (definition.equals("urn:x-ogc:def:property:unit")
-                                || definition.equals("urn:x-ogc:def:property:equidistance")
-                                || definition.equals("FeatureOfInterest identifier")
-                                || definition.equals("FeatureOfInterestID")
-                                || definition.equals("Pegelnullpunkt ?ber NN")) {
-                            // ignore
-                        }
-                        else {
-                            Double d = null;
-                            String val = field.getText().getValue();
-                            if (val.matches("([0-9\\,\\.\\+\\-]+)")) {
-                                d = new Double(val);
-                            }
-                            else {
-                                // special case: value + " " + uom(e.g.
-                                // "637.0 cm")
-                                String tmp = val.substring(0, val.indexOf(" "));
-                                if (tmp.matches("([0-9\\,\\.\\+\\-]+)")) {
-                                    d = new Double(tmp);
-                                }
-                            }
-                            if (d != null) {
-                                map.put(field.getName(), new ReferenceValue(field.getName(), d));
+                        String fieldName = field.getName();
+                        Text textComponent = field.getText();
+                        String definition = textComponent.getDefinition();
+                        if (isReferenceValue(definition)) {
+                            ReferenceValue referenceValue = parseReferenceValue(textComponent, fieldName);
+                            if (referenceValue != null) {
+                                map.put(fieldName, referenceValue);
                             }
                         }
                     }
                 }
             }
-            else if (caps[i].getAbstractDataRecord() instanceof DataRecordType) {
-                DataRecordType rec = (DataRecordType) caps[i].getAbstractDataRecord();
-                for (int j = 0; j < rec.getFieldArray().length; j++) {
-
-                    DataComponentPropertyType field = rec.getFieldArray(j);
-                    // FIXME put in config and define definition for
-                    // reference values
+            else if (abstractDataRecord instanceof DataRecordType) {
+                DataRecordType dataRecord = (DataRecordType) abstractDataRecord;
+                for (DataComponentPropertyType field : dataRecord.getFieldArray()) {
                     if (field.isSetText()) {
-                        // FIXME merge redundant code
-                        String definition = field.getText().getDefinition();
-                        if (definition.equals("urn:x-ogc:def:property:unit")
-                                || definition.equals("urn:x-ogc:def:property:equidistance")
-                                || definition.equals("FeatureOfInterest identifier")
-                                || definition.equals("FeatureOfInterestID")
-                                || definition.equals("Pegelnullpunkt ?ber NN")) {
-                            // ignore
-                        }
-                        else {
-                            Double d = null;
-                            String val = field.getText().getValue();
-                            if (val.matches("([0-9\\,\\.\\+\\-]+)")) {
-                                d = new Double(val);
-                            }
-                            else {
-                                // special case: value + " " + uom(e.g.
-                                // "637.0 cm")
-                                int spaceIndex = val.indexOf(" ");
-                                if (spaceIndex > 0) {
-                                    String tmp = val.substring(0, spaceIndex);
-                                    if (tmp.matches("([0-9\\,\\.\\+\\-]+)")) {
-                                        d = new Double(tmp);
-                                    }
-                                }
-                            }
-                            if (d != null) {
-                                map.put(field.getName(), new ReferenceValue(field.getName(), d));
+                        String fieldName = field.getName();
+                        Text textComponent = field.getText();
+                        String definition = textComponent.getDefinition();
+                        if (isReferenceValue(definition)) {
+                            ReferenceValue referenceValue = parseReferenceValue(textComponent, fieldName);
+                            if (referenceValue != null) {
+                                map.put(fieldName, referenceValue);
                             }
                         }
                     }
@@ -502,6 +457,29 @@ public class DescribeSensorParser {
             }
         }
         return map;
+    }
+
+    private boolean isReferenceValue(String definition) {
+        return definition != null && !("urn:x-ogc:def:property:unit".equals(definition)
+                || "urn:x-ogc:def:property:equidistance".equals(definition)
+                || "FeatureOfInterest identifier".equals(definition)
+                || "FeatureOfInterestID".equals(definition));
+    }
+
+    private ReferenceValue parseReferenceValue(Text text, String fieldName) {
+        Double value = null;
+        String stringValue = text.getValue();
+        if (stringValue.matches("([0-9\\,\\.\\+\\-]+)")) {
+            value = new Double(stringValue);
+        }
+        else {
+            // special case: value + " " + uom(e.g. "637.0 cm")
+            String tmp = stringValue.substring(0, stringValue.indexOf(" "));
+            if (tmp.matches("([0-9\\,\\.\\+\\-]+)")) {
+                value = new Double(tmp);
+            }
+        }
+        return new ReferenceValue(fieldName, value);
     }
 
     /**
@@ -649,7 +627,7 @@ public class DescribeSensorParser {
         return phenomenons;
     }
 
-    private void setDataStreamToParse(InputStream incomingResultAsStream, String sosVersion) throws XmlException,
+    private void setDataStreamToParse(InputStream incomingResultAsStream) throws XmlException,
             IOException,
             XMLHandlingException {
         XmlObject xmlObject = XmlObject.Factory.parse(incomingResultAsStream);
