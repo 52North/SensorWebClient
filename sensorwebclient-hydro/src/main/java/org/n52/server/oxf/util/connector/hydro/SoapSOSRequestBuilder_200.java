@@ -79,8 +79,8 @@ public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtensio
 	    ParameterShell procedure = parameters.getParameterShellWithCommonName("procedure");
 	    ParameterShell offering = parameters.getParameterShellWithCommonName("offering");
 	    ParameterShell feature = parameters.getParameterShellWithCommonName("featureOfInterest");
-	    String version = "2.0.0";
-	    sb.append("<sos:GetDataAvailability service=\"SOS\" version=\"" + version + "\" xmlns:sos=\"http://www.opengis.net/sos/2.0\">");
+	    ParameterShell version = parameters.getParameterShellWithCommonName("version");
+	    sb.append("<sos:GetDataAvailability service=\"SOS\" version=\"" + version.getSpecifiedValue() + "\" xmlns:sos=\"http://www.opengis.net/sos/2.0\">");
 	    if (observedProperty != null) {
 	    	sb.append("<sos:observedProperty>" + observedProperty.getSpecifiedValue() + "</sos:observedProperty>");
 	    }
