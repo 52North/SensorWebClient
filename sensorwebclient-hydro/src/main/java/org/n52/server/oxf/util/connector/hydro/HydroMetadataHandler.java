@@ -117,7 +117,7 @@ public class HydroMetadataHandler extends MetadataHandler {
 		for (SosTimeseries timeserie : observingTimeseries) {
 			String procedureID = timeserie.getProcedure();
 			getFoiAccessTasks.put(procedureID, new FutureTask<OperationResult>(createGetFoiAccess(metadata.getServiceUrl(), metadata.getVersion(), procedureID)));
-			getDataAvailabilityTasks.put(timeserie, new FutureTask<OperationResult>(createGDAAccess(metadata.getServiceUrl(), timeserie)));
+			getDataAvailabilityTasks.put(timeserie, new FutureTask<OperationResult>(createGDAAccess(metadata.getServiceUrl(), metadata.getVersion(), timeserie)));
 		}
 		
 		// create list of timeseries of GDA requests
@@ -331,9 +331,10 @@ public class HydroMetadataHandler extends MetadataHandler {
 		return new OperationAccessor(getSosAdapter(), operation, container);
 	}
 
-	private Callable<OperationResult> createGDAAccess(String sosUrl, SosTimeseries timeserie) throws OXFException {
+	private Callable<OperationResult> createGDAAccess(String sosUrl, String version, SosTimeseries timeserie) throws OXFException {
 		ParameterContainer container = new ParameterContainer();
         container.addParameterShell("procedure", timeserie.getProcedure());
+        container.addParameterShell("version", version);
         Operation operation = new Operation(GET_DATA_AVAILABILITY, sosUrl, sosUrl);
 		return new OperationAccessor(getSosAdapter(), operation, container);
 	}
