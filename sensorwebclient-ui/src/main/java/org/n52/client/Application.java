@@ -32,6 +32,7 @@ import static org.n52.client.ui.Toaster.getToasterInstance;
 import static org.n52.ext.link.sos.PermalinkParameter.BEGIN;
 import static org.n52.ext.link.sos.PermalinkParameter.END;
 import static org.n52.ext.link.sos.PermalinkParameter.FEATURES;
+import static org.n52.ext.link.sos.PermalinkParameter.LOCALE;
 import static org.n52.ext.link.sos.PermalinkParameter.OFFERINGS;
 import static org.n52.ext.link.sos.PermalinkParameter.PHENOMENONS;
 import static org.n52.ext.link.sos.PermalinkParameter.PROCEDURES;
@@ -135,7 +136,12 @@ public final class Application implements EntryPoint {
                 String[] offerings = getDecodedParameters(OFFERINGS);
                 String[] procedures = getDecodedParameters(PROCEDURES);
                 String[] phenomenons = getDecodedParameters(PHENOMENONS);
+                String locale = getDecodedParameter(LOCALE);
                 TimeRange timeRange = createTimeRange();
+                
+                if (justLocaleSet(services,versions,offerings,features,procedures,phenomenons,locale)) {
+                	return;
+                }
 
                 if ( !isAllParametersAvailable(services, versions, offerings, features, procedures, phenomenons)) {
                     getToasterInstance().addErrorMessage(i18n.errorUrlParsing());
@@ -213,7 +219,7 @@ public final class Application implements EntryPoint {
 
     private static String[] getDecodedParameters(PermalinkParameter parameter) {
         String value = Window.Location.getParameter(parameter.nameLowerCase());
-        if (value.isEmpty()) {
+        if (value == null || value.isEmpty()) {
             return new String[] {};
         }
         else {
@@ -260,8 +266,23 @@ public final class Application implements EntryPoint {
         return serviceUrlAvailable && versionAvailalbe && offeringAvailable && featuresAvailable && proceduresAvailable
                 && phenomenonAvailable;
     }
+    
+    
 
-    private static void finalEvents() {
+    private static boolean justLocaleSet(String[] services, String[] versions,
+			String[] offerings, String[] features, String[] procedures,
+			String[] phenomenons, String locale) {
+    	boolean serviceUrlsEmpty = services.length == 0;
+        boolean versionEmpty = versions.length == 0;
+        boolean offeringEmpty = offerings.length == 0;
+        boolean featuresEmpty = features.length == 0;
+        boolean proceduresEmpty = procedures.length == 0;
+        boolean phenomenonEmpty = phenomenons.length == 0;
+        boolean localeAvailable = locale != null;
+        return serviceUrlsEmpty && versionEmpty && offeringEmpty && featuresEmpty && proceduresEmpty && phenomenonEmpty && localeAvailable;
+	}
+
+	private static void finalEvents() {
 
         // check for time intervals bigger than the default overview interval (in days)
         PropertiesManager propertiesMgr = getPropertiesManager();
