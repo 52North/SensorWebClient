@@ -30,13 +30,13 @@ import org.jfree.data.xy.XYDataset;
 import org.n52.server.sos.render.DesignDescriptionList;
 import org.n52.server.sos.render.DesignDescriptionList.DesignDescription;
 
-public class MetaDataInURLGenerator implements XYURLGenerator, Serializable {
+public class MetadataInURLGenerator implements XYURLGenerator, Serializable {
 
     private static final long serialVersionUID = -3191226455244301588L;
 
     private DesignDescriptionList designDescriptions;
 
-    public MetaDataInURLGenerator(DesignDescriptionList designDesciptions) {
+    public MetadataInURLGenerator(DesignDescriptionList designDesciptions) {
         this.designDescriptions = designDesciptions;
     }
 

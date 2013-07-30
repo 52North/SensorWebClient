@@ -24,7 +24,7 @@
 package org.n52.server.service;
 
 import org.n52.client.service.TimeSeriesDataService;
-import org.n52.server.sos.generator.TimeSeriesDataGenerator;
+import org.n52.server.sos.generator.TimeseriesDataGenerator;
 import org.n52.shared.requests.TimeSeriesDataRequest;
 import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
@@ -40,7 +40,7 @@ public class TimeSeriesDataServiceImpl implements TimeSeriesDataService {
         try {
             LOG.debug("Performing TimeSeries data request.");
             DesignOptions options = request.getOptions();
-            TimeSeriesDataGenerator generator = new TimeSeriesDataGenerator();
+            TimeseriesDataGenerator generator = new TimeseriesDataGenerator();
             TimeSeriesDataResponse resp = (TimeSeriesDataResponse) generator.producePresentation(options);
             LOG.debug(resp.toDebugString());
             return resp;

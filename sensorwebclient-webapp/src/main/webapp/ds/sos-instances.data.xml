@@ -9,8 +9,8 @@
 		<url>http://localhost:7080/52nSOSv3.5.0/sos</url>
 		<version>1.0.0</version>
 		<waterML>false</waterML>
-		<metadataHandler>org.n52.server.sos.parser.DefaultMetadataHandler</metadataHandler>
-		<adapter>org.n52.server.da.oxf.extn.SOSAdapter_OXFExtension</adapter>
+		<metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
+		<adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
 		<requestChunk>300</requestChunk>
 		<autoZoom>false</autoZoom>
 		<llEasting>-80</llEasting>
@@ -26,8 +26,8 @@
 		<url>http://pegelonline.wsv.de/webservices/gis/gdi-sos</url>
 		<version>1.0.0</version>
 		<waterML>false</waterML>
-		<metadataHandler>org.n52.server.sos.parser.DefaultMetadataHandler</metadataHandler>
-        <adapter>org.n52.server.da.oxf.extn.SOSAdapter_OXFExtension</adapter>
+		<metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
+        <adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
 		<requestChunk>300</requestChunk>
 		<autoZoom>false</autoZoom>
 		<llEasting>5</llEasting>
@@ -42,8 +42,8 @@
 		<url>http://ict4eo.meraka.csir.co.za/AMD_SOS/sos</url>
 		<version>1.0.0</version>
 		<waterML>false</waterML>
-		<metadataHandler>org.n52.server.sos.parser.DefaultMetadataHandler</metadataHandler>
-        <adapter>org.n52.server.da.oxf.extn.SOSAdapter_OXFExtension</adapter>
+		<metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
+        <adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
 		<requestChunk>200</requestChunk>
 		<autoZoom>true</autoZoom>
 		<llEasting>0.0</llEasting>
@@ -59,8 +59,8 @@
         <url>http://geodata-srv02.rzi.dlz-it.de:8080/52nSOS_ZDM_PORTALE/sos</url>
         <version>2.0.0</version>
         <waterML>false</waterML>
-        <metadataHandler>org.n52.server.sos.parser.DefaultMetadataHandler</metadataHandler>
-        <adapter>org.n52.server.da.oxf.extn.SOSAdapter_OXFExtension</adapter>
+        <metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
+        <adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
         <requestChunk>2100</requestChunk>
         <autoZoom>false</autoZoom>
         <llEasting>8.2</llEasting>
@@ -75,8 +75,8 @@
         <itemName>Wupperverband</itemName>
         <url>http://fluggs.wupperverband.de/sos/sos</url>
         <version>1.0.0</version>
-        <metadataHandler>org.n52.server.sos.parser.DefaultMetadataHandler</metadataHandler>
-        <adapter>org.n52.server.da.oxf.extn.SOSAdapter_OXFExtension</adapter>
+        <metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
+        <adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
         <waterML>false</waterML>
         <llEasting>6</llEasting>
         <llNorthing>51</llNorthing>
@@ -92,7 +92,7 @@
 		<url>http://kiwis.kisters.de/KiWIS/KiWIS?datasource=3</url>
 		<version>2.0.0</version>
 		<metadataHandler>org.n52.server.sos.connector.hydro.HydroMetadataHandler</metadataHandler>
-		<adapter>org.n52.server.oxf.util.connector.hydro.kisters.SOSwithSoapAdapter_Kisters</adapter>
+		<adapter>org.n52.server.sos.connector.hydro.kisters.SOSwithSoapAdapter_Kisters</adapter>
 		<waterML>true</waterML>
 		<llEasting>-180</llEasting>
 		<llNorthing>-80</llNorthing>
@@ -109,7 +109,7 @@
 		<url>http://geowow.dev.52north.org/52n-sos-grdc-webapp/sos/soap</url>
 		<version>2.0.0</version>
 		<metadataHandler>org.n52.server.sos.connector.hydro.HydroMetadataHandler</metadataHandler>
-		<adapter>org.n52.server.oxf.util.connector.hydro.SOSwithSoapAdapter</adapter>
+		<adapter>org.n52.server.sos.connector.hydro.SOSwithSoapAdapter</adapter>
 		<waterML>true</waterML>
 		<llEasting>-180</llEasting>
 		<llNorthing>-80</llNorthing>
@@ -126,7 +126,7 @@
 		<url>http://ags.dev.52north.org:6080/arcgis/rest/services/ObservationDB/MapServer/exts/SOSExtension/</url>
 		<version>2.0.0</version>
 		<metadataHandler>org.n52.server.sos.connector.eea.ArcGISSoeMetadataHandler</metadataHandler>
-		<adapter>org.n52.server.oxf.util.connector.eea.SOSAdapterByGET</adapter>
+		<adapter>org.n52.server.sos.connector.eea.SOSAdapterByGET</adapter>
 		<waterML>false</waterML>
 		<autoZoom>false</autoZoom>
 		<llEasting>-16</llEasting>
@@ -144,8 +144,8 @@
 		<url>http://sos.irceline.be/sos</url>
 		<version>1.0.0</version>
 		<waterML>false</waterML>
-		<metadataHandler>org.n52.server.sos.parser.DefaultMetadataHandler</metadataHandler>
-		<adapter>org.n52.server.da.oxf.extn.SOSAdapter_OXFExtension</adapter>
+		<metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
+		<adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
 		<requestChunk>300</requestChunk>
 		<autoZoom>true</autoZoom>
 		<llEasting>2.4</llEasting>
@@ -160,7 +160,7 @@
 		<url>http://paikkatieto.ymparisto.fi/arcgis/rest/services/InSitu/SYKE_SnowCoursesInSitu/MapServer/exts/SOSExtension/</url>
 		<version>2.0.0</version>
 		<metadataHandler>org.n52.server.sos.connector.eea.ArcGISSoeMetadataHandler</metadataHandler>
-		<adapter>org.n52.server.oxf.util.connector.eea.SOSAdapterByGET</adapter>
+		<adapter>org.n52.server.sos.connector.eea.SOSAdapterByGET</adapter>
 		<waterML>false</waterML>
 		<autoZoom>true</autoZoom>
 		<llEasting>15</llEasting>
@@ -179,9 +179,9 @@
 		<itemName>AQE 2.0</itemName>
 		<url>http://giv-uw.uni-muenster.de:8080/AQE/sos</url>
 		<version>2.0.0</version>
-		<metadataHandler>org.n52.server.sos.parser.DefaultMetadataHandler
+		<metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler
 		</metadataHandler>
-		<adapter>org.n52.server.da.oxf.extn.SOSAdapter_OXFExtension</adapter>
+		<adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
 		<waterML>false</waterML>
 		<llEasting>6.00</llEasting>
 		<llNorthing>55.00</llNorthing>

@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.server.da.oxf.extn;
+package org.n52.server.da.oxf;
 
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;

@@ -21,22 +21,23 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.server.da.oxf.extn;
+package org.n52.server.da;
 
-import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
-import org.n52.oxf.sos.adapter.SOSRequestBuilderFactory;
-import org.n52.oxf.sos.util.SosUtil;
+import static java.util.concurrent.Executors.newFixedThreadPool;
+import static org.n52.server.mgmt.ConfigurationContext.THREAD_POOL_SIZE;
 
-public class SosRequestBuilderFactory {
+import java.util.concurrent.ExecutorService;
 
-    public static ISOSRequestBuilder createRequestBuilder(String serviceVersion) {
-        if (SosUtil.isVersion100(serviceVersion)) {
-            return new SOSRequestBuilder_100_OXFExtension();
-        } else if (SosUtil.isVersion200(serviceVersion)) {
-            return new SOSRequestBuilder_200_OXFExtension();
-        } else {
-            return SOSRequestBuilderFactory.generateRequestBuilder(serviceVersion);
-        }
+public class AccessorThreadPool {
+
+    private static ExecutorService service = newFixedThreadPool(THREAD_POOL_SIZE);
+
+    public static void execute(Runnable command) {
+        service.execute(command);
+    }
+
+    public static ExecutorService getExecutor() {
+        return service;
     }
 
 }

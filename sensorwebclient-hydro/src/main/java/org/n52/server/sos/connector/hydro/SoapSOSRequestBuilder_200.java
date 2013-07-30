@@ -29,7 +29,7 @@ import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.adapter.ParameterShell;
 import org.n52.oxf.xmlbeans.tools.XmlUtil;
-import org.n52.server.da.oxf.extn.SOSRequestBuilder_200_OXFExtension;
+import org.n52.server.da.oxf.SOSRequestBuilder_200_OXFExtension;
 import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
 
 public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtension {

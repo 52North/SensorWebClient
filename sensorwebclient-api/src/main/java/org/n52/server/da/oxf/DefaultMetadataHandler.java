@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.server.sos.parser;
+package org.n52.server.da.oxf;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.n52.server.mgmt.ConfigurationContext.SERVER_TIMEOUT;
@@ -50,10 +50,10 @@ import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.sos.adapter.SOSAdapter;
 import org.n52.oxf.sos.util.SosUtil;
 import org.n52.oxf.xmlbeans.parser.XMLHandlingException;
-import org.n52.server.da.oxf.AccessorThreadPool;
-import org.n52.server.da.oxf.OperationAccessor;
+import org.n52.server.da.AccessorThreadPool;
+import org.n52.server.da.MetadataHandler;
 import org.n52.server.mgmt.ConfigurationContext;
-import org.n52.server.sos.connector.MetadataHandler;
+import org.n52.server.sos.parser.DescribeSensorParser;
 import org.n52.server.sos.parser.utils.ParsedPoint;
 import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.Feature;
