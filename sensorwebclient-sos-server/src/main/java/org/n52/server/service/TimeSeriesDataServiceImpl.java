@@ -24,7 +24,7 @@
 package org.n52.server.service;
 
 import org.n52.client.service.TimeSeriesDataService;
-import org.n52.server.oxf.util.generator.TimeSeriesDataGenerator;
+import org.n52.server.sos.generator.TimeSeriesDataGenerator;
 import org.n52.shared.requests.TimeSeriesDataRequest;
 import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;

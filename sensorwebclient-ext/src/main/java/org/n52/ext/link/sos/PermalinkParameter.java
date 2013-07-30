@@ -25,7 +25,7 @@ package org.n52.ext.link.sos;
 
 public enum PermalinkParameter {
 
-	SERVICES,VERSIONS,OFFERINGS,PROCEDURES,FEATURES,PHENOMENONS,BEGIN,END,LOCALE;
+	SERVICES,VERSIONS,OFFERINGS,PROCEDURES,FEATURES,PHENOMENONS,BEGIN,END;
 	
 	public String nameLowerCase() {
 	    return name().toLowerCase();

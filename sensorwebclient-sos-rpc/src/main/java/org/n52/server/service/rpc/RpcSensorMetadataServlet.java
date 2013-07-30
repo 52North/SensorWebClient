@@ -27,8 +27,8 @@ package org.n52.server.service.rpc;
 import javax.servlet.ServletException;
 
 import org.n52.client.service.SensorMetadataService;
-import org.n52.server.oxf.util.logging.Statistics;
 import org.n52.server.service.SensorMetadataServiceImpl;
+import org.n52.server.util.Statistics;
 import org.n52.shared.responses.GetProcedureDetailsUrlResponse;
 import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.responses.SensorMetadataResponse;

@@ -24,16 +24,16 @@
 
 package org.n52.server.service;
 
-import static org.n52.server.oxf.util.ConfigurationContext.UPDATE_TASK_RUNNING;
-import static org.n52.server.oxf.util.ConfigurationContext.getSOSMetadata;
+import static org.n52.server.mgmt.ConfigurationContext.UPDATE_TASK_RUNNING;
+import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadata;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.n52.client.service.QueryService;
-import org.n52.server.oxf.util.ConfigurationContext;
-import org.n52.server.oxf.util.crs.AReferencingHelper;
+import org.n52.server.mgmt.ConfigurationContext;
+import org.n52.server.util.crs.AReferencingHelper;
 import org.n52.shared.exceptions.ServiceOccupiedException;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.requests.query.ResultPage;
@@ -66,7 +66,7 @@ public class QueryServiceImpl implements QueryService {
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryServiceImpl.class);
 
     @Override
-    public QueryResponse< ? > doQuery(QueryRequest request) throws Exception {
+    public QueryResponse doQuery(QueryRequest request) throws Exception {
         // TODO refactor
         if (request instanceof FeatureQuery) {
             return getFeatures((FeatureQuery) request);

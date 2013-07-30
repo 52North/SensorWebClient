@@ -61,8 +61,6 @@ public class Header extends HLayout {
 
     private String elemID;
 
-    private String url;
-    
     public static com.google.gwt.user.client.ui.Label requestCounter;
 
     public Header (String id){
@@ -181,26 +179,8 @@ public class Header extends HLayout {
 		Label restart = getHeaderLinkLabel(i18n.permalink());
         restart.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent evt) {
-            	String localeParameter = Window.Location.getParameter("locale");
-                String href = Window.Location.getHref();
-				String permaLink = getPermaLink(href);
-				if (isEnglishLocale(localeParameter)) {
-                    url = href.substring(0, href.indexOf("?"));
-                    url += "?locale=en" + permaLink;
-                }
-                else if (isGermanLocale(localeParameter)) {
-                    url = href.substring(0, href.indexOf("?"));
-                    url += "?locale=de" + permaLink;
-                }
-                else {
-                	url = permaLink;
-//                	if (GWT.isProdMode()) {
-//                        url = href + "?" + permaLink.substring(1);
-//					} else {
-//						url = permaLink;
-//					}
-                }
-                Window.Location.assign(url);
+                String currentUrl = Window.Location.getHref();
+                Window.Location.assign(createPermaLink(currentUrl));
             }
         });
 		return restart;
@@ -209,6 +189,10 @@ public class Header extends HLayout {
 	private LoginHeaderLayout createLoginInfo() {
 		return new LoginHeaderLayout();
 	}
+	
+    private boolean hasLocaleParameter(String value) {
+        return value != null && !value.isEmpty();
+    }
 	
 	private boolean isEnglishLocale(String value) {
 		return value != null && value.equals("en");
@@ -268,8 +252,12 @@ public class Header extends HLayout {
         return pipe;
     }
     
-    private String getPermaLink(String baseUrl) {
+    private String createPermaLink(String baseUrl) {
         TimeSeries[] ts = DataStoreTimeSeriesImpl.getInst().getTimeSeriesSorted();
+        if (ts == null || ts.length == 0) {
+            return baseUrl;
+        }
+        
         TimeSeriesPermalinkBuilder builder = new TimeSeriesPermalinkBuilder();
         for (TimeSeries timeSeries : ts) {
             TimeSeriesParameters parameters = createTimeSeriesParameters(timeSeries);

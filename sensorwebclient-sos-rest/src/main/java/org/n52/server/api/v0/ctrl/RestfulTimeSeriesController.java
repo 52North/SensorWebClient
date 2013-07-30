@@ -24,8 +24,8 @@
 
 package org.n52.server.api.v0.ctrl;
 
-import static org.n52.server.oxf.util.ConfigurationContext.containsServiceInstance;
-import static org.n52.server.oxf.util.ConfigurationContext.getSOSMetadataForItemName;
+import static org.n52.server.mgmt.ConfigurationContext.containsServiceInstance;
+import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadataForItemName;
 import static org.n52.shared.requests.query.QueryParameters.createEmptyFilterQuery;
 import static org.n52.shared.serializable.pojos.TimeseriesRenderingOptions.createDefaultRenderingOptions;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;

@@ -33,8 +33,8 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.junit.Test;
-import org.n52.server.oxf.util.ConfigurationContext;
-import org.n52.server.oxf.util.SosInstanceContentHandler;
+import org.n52.server.mgmt.ConfigurationContext;
+import org.n52.server.mgmt.SosInstanceContentHandler;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

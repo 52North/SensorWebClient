@@ -32,7 +32,6 @@ import static org.n52.client.ui.Toaster.getToasterInstance;
 import static org.n52.ext.link.sos.PermalinkParameter.BEGIN;
 import static org.n52.ext.link.sos.PermalinkParameter.END;
 import static org.n52.ext.link.sos.PermalinkParameter.FEATURES;
-import static org.n52.ext.link.sos.PermalinkParameter.LOCALE;
 import static org.n52.ext.link.sos.PermalinkParameter.OFFERINGS;
 import static org.n52.ext.link.sos.PermalinkParameter.PHENOMENONS;
 import static org.n52.ext.link.sos.PermalinkParameter.PROCEDURES;
@@ -136,10 +135,10 @@ public final class Application implements EntryPoint {
                 String[] offerings = getDecodedParameters(OFFERINGS);
                 String[] procedures = getDecodedParameters(PROCEDURES);
                 String[] phenomenons = getDecodedParameters(PHENOMENONS);
-                String locale = getDecodedParameter(LOCALE);
                 TimeRange timeRange = createTimeRange();
-                
-                if (justLocaleSet(services,versions,offerings,features,procedures,phenomenons,locale)) {
+
+                String locale = Window.Location.getParameter("locale");
+                if (isLocaleOnly(services,versions,offerings,features,procedures,phenomenons,locale)) {
                 	return;
                 }
 
@@ -269,7 +268,7 @@ public final class Application implements EntryPoint {
     
     
 
-    private static boolean justLocaleSet(String[] services, String[] versions,
+    private static boolean isLocaleOnly(String[] services, String[] versions,
 			String[] offerings, String[] features, String[] procedures,
 			String[] phenomenons, String locale) {
     	boolean serviceUrlsEmpty = services.length == 0;
