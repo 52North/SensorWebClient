@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.server.sos.connector;
+package org.n52.server.da;
 
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER;
@@ -74,8 +74,7 @@ public abstract class MetadataHandler {
 	
 	private SOSMetadata sosMetadata;
 
-	public abstract SOSMetadata performMetadataCompletion(
-			String sosUrl, String sosVersion) throws Exception;
+	public abstract SOSMetadata performMetadataCompletion(String sosUrl, String sosVersion) throws Exception;
 	
 	public abstract SOSMetadata updateMetadata(SOSMetadata metadata) throws Exception;
 
@@ -103,8 +102,7 @@ public abstract class MetadataHandler {
 		serviceDescriptor = ConnectorUtils.getServiceDescriptor(metadata.getServiceUrl(), adapter);
 	}
 	
-	protected Collection<SosTimeseries> createObservingTimeseries()
-			throws OXFException {
+	protected Collection<SosTimeseries> createObservingTimeseries() throws OXFException {
 		// association: Offering - FOIs
 		Map<String, String[]> offeringFoiMap = new HashMap<String, String[]>();
 
@@ -119,8 +117,7 @@ public abstract class MetadataHandler {
 
 		Contents contents = getServiceDescriptorContent();
 		for (int i = 0; i < contents.getDataIdentificationCount(); i++) {
-			ObservationOffering offering = (ObservationOffering) contents
-					.getDataIdentification(i);
+			ObservationOffering offering = (ObservationOffering) contents.getDataIdentification(i);
 
 			updateBBox(offering);
 

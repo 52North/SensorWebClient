@@ -61,7 +61,7 @@ import org.n52.oxf.feature.OXFFeatureCollection;
 import org.n52.oxf.feature.sos.ObservationSeriesCollection;
 import org.n52.oxf.util.JavaHelper;
 import org.n52.server.mgmt.ConfigurationContext;
-import org.n52.server.sos.generator.MetaDataInURLGenerator;
+import org.n52.server.sos.generator.MetadataInURLGenerator;
 import org.n52.server.sos.parser.TimeseriesFactory;
 import org.n52.server.sos.render.DesignDescriptionList.DesignDescription;
 import org.n52.shared.serializable.pojos.Axis;
@@ -398,7 +398,7 @@ public class DiagramRenderer {
                     // plot.getRenderer(datasetIndex).setShapesVisible(true);
 
                     XYToolTipGenerator toolTipGenerator = StandardXYToolTipGenerator.getTimeSeriesInstance();
-                    XYURLGenerator urlGenerator = new MetaDataInURLGenerator(designDescriptions);
+                    XYURLGenerator urlGenerator = new MetadataInURLGenerator(designDescriptions);
 
                     plot.getRenderer(datasetIndex).setBaseToolTipGenerator(toolTipGenerator);
                     plot.getRenderer(datasetIndex).setURLGenerator(urlGenerator);

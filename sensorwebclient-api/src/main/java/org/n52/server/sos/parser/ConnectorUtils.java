@@ -41,7 +41,7 @@ import org.n52.oxf.sos.adapter.SOSAdapter;
 import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.oxf.sos.util.SosUtil;
 import org.n52.oxf.valueDomains.StringValueDomain;
-import org.n52.server.da.oxf.AccessorThreadPool;
+import org.n52.server.da.AccessorThreadPool;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;

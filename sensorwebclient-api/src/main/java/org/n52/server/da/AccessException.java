@@ -21,10 +21,19 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.server.da.oxf.extn;
+package org.n52.server.da;
 
-import org.n52.oxf.ows.capabilities.ITime;
+public class AccessException extends Exception {
 
-public interface ITimePosition_OXFExtension extends ITime {
-    // asdf
+    private static final long serialVersionUID = 7108063037688083963L;
+
+    public AccessException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public AccessException(String message) {
+        super(message);
+    }
+
+    
 }

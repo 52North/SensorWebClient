@@ -55,6 +55,8 @@ import org.n52.oxf.sos.adapter.SOSAdapter;
 import org.n52.oxf.sos.feature.SOSObservationStore;
 import org.n52.oxf.util.JavaHelper;
 import org.n52.oxf.valueDomains.time.TemporalValueDomain;
+import org.n52.server.da.AccessException;
+import org.n52.server.da.AccessorThreadPool;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.server.sos.generator.RequestConfig;
 import org.n52.server.util.SosAdapterFactory;

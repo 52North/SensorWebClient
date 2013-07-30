@@ -31,6 +31,7 @@ public class EastingNorthing extends Geometry implements Serializable {
     
     private String easting;
     private String northing;
+    private String altitude;
     
     @SuppressWarnings("unused")
 	private EastingNorthing() {
@@ -51,10 +52,19 @@ public class EastingNorthing extends Geometry implements Serializable {
         return Double.parseDouble(northing);
     }
     
+    public String getAltitude() {
+        return altitude;
+    }
+
+    public void setAltitude(String altitude) {
+        this.altitude = altitude;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ( (altitude == null) ? 0 : altitude.hashCode());
         result = prime * result + ( (easting == null) ? 0 : easting.hashCode());
         result = prime * result + ( (northing == null) ? 0 : northing.hashCode());
         return result;
@@ -62,25 +72,40 @@ public class EastingNorthing extends Geometry implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if ( ! (obj instanceof EastingNorthing))
+        }
+        if ( ! (obj instanceof EastingNorthing)) {
             return false;
+        }
         EastingNorthing other = (EastingNorthing) obj;
+        if (altitude == null) {
+            if (other.altitude != null) {
+                return false;
+            }
+        }
+        else if ( !altitude.equals(other.altitude)) {
+            return false;
+        }
         if (easting == null) {
-            if (other.easting != null)
+            if (other.easting != null) {
                 return false;
+            }
         }
-        else if ( !easting.equals(other.easting))
+        else if ( !easting.equals(other.easting)) {
             return false;
+        }
         if (northing == null) {
-            if (other.northing != null)
+            if (other.northing != null) {
                 return false;
+            }
         }
-        else if ( !northing.equals(other.northing))
+        else if ( !northing.equals(other.northing)) {
             return false;
+        }
         return true;
     }
 
@@ -89,7 +114,8 @@ public class EastingNorthing extends Geometry implements Serializable {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getName()).append(" [ ");
         sb.append("Easting: ").append(easting).append(", ");
-        sb.append("Northing: ").append(northing).append(" ]");
+        sb.append("Northing: ").append(northing).append(", ");
+        sb.append("Altitude: ").append(altitude).append(" ]");
         return sb.toString();
     }
 }
