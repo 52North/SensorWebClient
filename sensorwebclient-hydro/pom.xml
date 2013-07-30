@@ -19,6 +19,11 @@
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>52n-xml-soap-v12</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-oxf-xmlbeans</artifactId>
+            <scope>test</scope>
+        </dependency>
 		<!-- ### EXTERNAL DEPENDENCIES ### -->
 		<dependency>
 			<groupId>javax.servlet</groupId>

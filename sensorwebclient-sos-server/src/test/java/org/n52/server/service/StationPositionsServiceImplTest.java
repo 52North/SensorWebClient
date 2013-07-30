@@ -27,7 +27,7 @@ import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.server.oxf.util.ConfigurationContext;
+import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.shared.serializable.pojos.sos.Station;
 
 public class StationPositionsServiceImplTest {

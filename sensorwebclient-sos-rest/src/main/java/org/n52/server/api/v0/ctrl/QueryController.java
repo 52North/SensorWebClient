@@ -9,7 +9,7 @@ import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 
 import org.n52.client.service.QueryService;
-import org.n52.server.oxf.util.ConfigurationContext;
+import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.shared.requests.query.QueryFactory;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.requests.query.queries.QueryRequest;

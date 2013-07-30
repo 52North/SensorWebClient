@@ -4,7 +4,7 @@
 	   ${project.artifactId} (built on ${timestamp})
 	</display-name>
 	
-	<!-- Cross origin resource sharing (uncomment to share REST-API)
+	<!-- Cross origin resource sharing (uncomment to share REST-API) 
     <filter>
         <filter-name>CorsFilter</filter-name>
         <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
@@ -13,7 +13,7 @@
         <filter-name>CorsFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-     -->
+    -->
 
 	<!-- listen for spring related configuration files -->
 	<listener>
@@ -44,7 +44,7 @@
 	<servlet>
 		<servlet-name>ConfigurationContext</servlet-name>
 		<servlet-class>
-			org.n52.server.oxf.util.ConfigurationContext
+			org.n52.server.mgmt.ConfigurationContext
 		</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>

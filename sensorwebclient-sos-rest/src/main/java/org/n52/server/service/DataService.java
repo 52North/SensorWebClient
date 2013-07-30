@@ -24,8 +24,8 @@
 
 package org.n52.server.service;
 
-import static org.n52.server.oxf.util.ConfigurationContext.getSOSMetadataForItemName;
-import static org.n52.server.oxf.util.ConfigurationContext.getSOSMetadatas;
+import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadataForItemName;
+import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
 
 import java.util.ArrayList;
 import java.util.Collections;

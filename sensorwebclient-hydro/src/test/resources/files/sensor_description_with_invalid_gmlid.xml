@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<soap12:Envelope xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope/soap-envelope.xsd http://www.opengis.net/swes/2.0 http://schemas.opengis.net/swes/2.0/swesDescribeSensor.xsd" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:sml="http://www.opengis.net/sensorML/1.0.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:swes="http://www.opengis.net/swes/2.0">
+   <soap12:Header>
+      <wsa:To>http://www.w3.org/2005/08/addressing/anonymous</wsa:To>
+      <wsa:Action>http://www.opengis.net/def/serviceOperation/sos/core/2.0/DescribeSensorResponse</wsa:Action>
+      <wsa:RelatesTo>ef925d6d-77b5-4ea3-9fe9-806326452a75</wsa:RelatesTo>
+   </soap12:Header>
+   <soap12:Body>
+      <swes:DescribeSensorResponse>
+         <swes:procedureDescriptionFormat>http://www.opengis.net/sensorML/1.0.1</swes:procedureDescriptionFormat>
+         <swes:description>
+            <swes:SensorDescription>
+               <swes:data>
+                  <sml:SensorML version="1.0.1">
+                     <sml:member xlink:arcrole="urn:ogc:def:role:process">
+                        <!-- the gml:id is an invalid ncName to be replaced in a test case -->
+                        <sml:ProcessModel gml:id="0ttp://kiwis.kisters.de/tstypes/Year.Cmd.HQ">
+                           <gml:description>93 - HQ</gml:description>
+                           <sml:method xlink:href="http://kiwis.kisters.de/tstypes/Year.Cmd.HQ" xlink:title="93 - HQ"/>
+                        </sml:ProcessModel>
+                     </sml:member>
+                  </sml:SensorML>
+               </swes:data>
+            </swes:SensorDescription>
+         </swes:description>
+      </swes:DescribeSensorResponse>
+   </soap12:Body>
+</soap12:Envelope>
