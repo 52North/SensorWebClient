@@ -23,8 +23,8 @@
  */
 package org.n52.server.service;
 
-import static org.n52.server.oxf.util.ConfigurationContext.getSOSMetadata;
-import static org.n52.server.oxf.util.access.DescribeSensorAccessor.getSensorDescriptionAsSensorML;
+import static org.n52.server.da.oxf.DescribeSensorAccessor.getSensorDescriptionAsSensorML;
+import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadata;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,8 +32,8 @@ import java.util.Map;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.client.service.SensorMetadataService;
 import org.n52.oxf.util.JavaHelper;
-import org.n52.server.oxf.util.ConfigurationContext;
-import org.n52.server.oxf.util.parser.DescribeSensorParser;
+import org.n52.server.mgmt.ConfigurationContext;
+import org.n52.server.sos.parser.DescribeSensorParser;
 import org.n52.shared.responses.GetProcedureDetailsUrlResponse;
 import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.responses.SensorMetadataResponse;

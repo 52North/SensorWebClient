@@ -26,8 +26,8 @@ package org.n52.server.oxf.util.timerTasks;
 import java.util.HashSet;
 import java.util.TimerTask;
 
-import org.n52.server.oxf.util.ConfigurationContext;
-import org.n52.server.updates.SosMetadataUpdate;
+import org.n52.server.mgmt.ConfigurationContext;
+import org.n52.server.mgmt.SosMetadataUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

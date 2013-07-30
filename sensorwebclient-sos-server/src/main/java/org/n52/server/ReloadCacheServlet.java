@@ -31,8 +31,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.n52.server.oxf.util.ConfigurationContext;
-import org.n52.server.updates.SosMetadataUpdate;
+import org.n52.server.mgmt.ConfigurationContext;
+import org.n52.server.mgmt.SosMetadataUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

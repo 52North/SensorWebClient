@@ -26,8 +26,8 @@ package org.n52.server.service.rpc;
 import javax.servlet.ServletException;
 
 import org.n52.client.service.TimeSeriesDataService;
-import org.n52.server.oxf.util.logging.Statistics;
 import org.n52.server.service.TimeSeriesDataServiceImpl;
+import org.n52.server.util.Statistics;
 import org.n52.shared.requests.TimeSeriesDataRequest;
 import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.service.rpc.RpcTimeSeriesDataService;

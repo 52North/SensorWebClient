@@ -26,8 +26,8 @@ package org.n52.server.service.rpc;
 import javax.servlet.ServletException;
 
 import org.n52.client.service.QueryService;
-import org.n52.server.oxf.util.logging.Statistics;
 import org.n52.server.service.QueryServiceImpl;
+import org.n52.server.util.Statistics;
 import org.n52.shared.requests.query.queries.QueryRequest;
 import org.n52.shared.requests.query.responses.QueryResponse;
 import org.n52.shared.service.rpc.RpcQueryService;

@@ -24,7 +24,7 @@
 package org.n52.server.service;
 
 import org.n52.client.service.EESDataService;
-import org.n52.server.oxf.util.generator.EESGenerator;
+import org.n52.server.sos.generator.EESGenerator;
 import org.n52.shared.requests.EESDataRequest;
 import org.n52.shared.responses.EESDataResponse;
 import org.slf4j.Logger;
