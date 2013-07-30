@@ -40,8 +40,8 @@ import javax.servlet.http.HttpServlet;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.n52.server.sos.connector.MetadataHandler;
-import org.n52.server.sos.parser.DefaultMetadataHandler;
+import org.n52.server.da.MetadataHandler;
+import org.n52.server.da.oxf.DefaultMetadataHandler;
 import org.n52.server.util.Statistics;
 import org.n52.shared.Constants;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;

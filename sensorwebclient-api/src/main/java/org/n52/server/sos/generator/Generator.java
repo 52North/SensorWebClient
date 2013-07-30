@@ -24,6 +24,8 @@
 
 package org.n52.server.sos.generator;
 
+import static org.n52.server.util.TimeUtil.createIso8601Formatter;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
@@ -47,9 +49,9 @@ import org.n52.oxf.feature.OXFFeatureCollection;
 import org.n52.oxf.feature.sos.ObservationSeriesCollection;
 import org.n52.oxf.ows.capabilities.ITime;
 import org.n52.oxf.valueDomains.time.TimeFactory;
-import org.n52.server.da.oxf.AccessException;
+import org.n52.server.da.AccessException;
 import org.n52.server.da.oxf.ObservationAccessor;
-import org.n52.server.da.oxf.extn.TimePosition_OXFExtension;
+import org.n52.server.da.oxf.TimePosition_OXFExtension;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.server.mgmt.GeneralizationConfiguration;
 import org.n52.shared.responses.RepresentationResponse;
@@ -61,17 +63,11 @@ import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * The Class Generator.
- * 
- * @author <a href="mailto:tremmersmann@uni-muenster.de">Thomas Remmersmann</a>
- * @author <a href="mailto:broering@52north.org">Arne Broering</a>
- */
 public abstract class Generator {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(Generator.class);
 
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+    private SimpleDateFormat dateFormat = createIso8601Formatter();
 
     protected String folderPostfix;
 
@@ -80,30 +76,33 @@ public abstract class Generator {
      * IMPORTANT: do not close the OutputStream within this method.
      * 
      * @param options
-     *            the options
+     *        the options
      * @return RepresentationResponse
-     * @throws Exception if generating presentation fails.
+     * @throws Exception
+     *         if generating presentation fails.
      */
     public abstract RepresentationResponse producePresentation(DesignOptions options) throws Exception;
 
     /**
-     * returns an object of type Map<String, OXFFeatureCollection>. The key is a
-     * composed String object consisting of the offering-ID and the SOS URL from
-     * which the observations of the corresponding OXFFeatureCollection have
-     * been requested. The key-String looks like this: "<offeringID>@<sosURL>".
-     *
-     * @param options the options
-     * @param onlyActiveTimeseries the only active timeseries
+     * returns an object of type Map<String, OXFFeatureCollection>. The key is a composed String object
+     * consisting of the offering-ID and the SOS URL from which the observations of the corresponding
+     * OXFFeatureCollection have been requested. The key-String looks like this: "<offeringID>@<sosURL>".
+     * 
+     * @param options
+     *        the options
+     * @param onlyActiveTimeseries
+     *        the only active timeseries
      * @return the map
      */
     protected Map<String, OXFFeatureCollection> getFeatureCollectionFor(DesignOptions options, boolean generalize) {
         ITime time = null;
         if (options.getTimeParam() == null) {
-            time = readOutTime(options);
-        } else {
+            time = getTimeFrom(options);
+        }
+        else {
             time = new TimePosition_OXFExtension(options.getTimeParam());
         }
-        
+
         for (TimeseriesProperties con : options.getProperties()) {
             SOSMetadata meta = ConfigurationContext.getSOSMetadata(con.getSosUrl());
             if (meta.canGeneralize() && generalize) {
@@ -112,9 +111,13 @@ public abstract class Generator {
                     String generalizer = GeneralizationConfiguration.getProperty(phenomenon);
                     if (generalizer != null) {
                         Procedure procedure = con.getProcedure();
-                        LOGGER.debug("Using generalizer '{}' for phenomenon '{}' and procedure '{}'", generalizer, phenomenon, procedure);
+                        LOGGER.debug("Using generalizer '{}' for phenomenon '{}' and procedure '{}'",
+                                     generalizer,
+                                     phenomenon,
+                                     procedure);
                     }
-                } catch (PropertyException e) {
+                }
+                catch (PropertyException e) {
                     LOGGER.error("Error loading generalizer property for '{}'.", phenomenon, e);
                 }
             }
@@ -124,7 +127,8 @@ public abstract class Generator {
         return collectionResult;
     }
 
-    private void updateTimeSeriesPropertiesForHavingData(DesignOptions options, Map<String, OXFFeatureCollection> entireCollMap) {
+    private void updateTimeSeriesPropertiesForHavingData(DesignOptions options,
+                                                         Map<String, OXFFeatureCollection> entireCollMap) {
         for (TimeseriesProperties prop : options.getProperties()) {
 
             OXFFeatureCollection obsColl = entireCollMap.get(prop.getOffering().getId() + "@" + prop.getSosUrl());
@@ -136,17 +140,18 @@ public abstract class Generator {
             // procID = procID.split(",")[0];
             // }
             ObservationSeriesCollection seriesCollection =
-                    new ObservationSeriesCollection(obsColl, new String[] { foiID }, new String[] { obsPropID },
-                            new String[] { procID }, true);
+                    new ObservationSeriesCollection(obsColl, new String[] {foiID}, new String[] {obsPropID},
+                                                    new String[] {procID}, true);
 
             if (seriesCollection.getSortedTimeArray().length > 0) {
                 prop.setHasData(true);
-            } else {
+            }
+            else {
                 prop.setHasData(false);
             }
         }
     }
-    
+
     protected String formatDate(Date date) {
         return dateFormat.format(date);
     }
@@ -154,7 +159,7 @@ public abstract class Generator {
     public String getFolderPostfix() {
         return this.folderPostfix;
     }
-    
+
     protected String createAndSaveImage(DesignOptions options, JFreeChart chart, ChartRenderingInfo renderingInfo) throws Exception {
         int width = options.getWidth();
         int height = options.getHeight();
@@ -166,7 +171,8 @@ public abstract class Generator {
 
         try {
             return ServletUtilities.saveChartAsPNG(chart, width, height, renderingInfo, null);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new Exception("Could not save PNG!", e);
         }
     }
@@ -176,11 +182,13 @@ public abstract class Generator {
         Map<String, OXFFeatureCollection> result = new HashMap<String, OXFFeatureCollection>();
         try {
             result = new ObservationAccessor().sendRequests(requests);
-        } catch (OXFRuntimeException e) {
+        }
+        catch (OXFRuntimeException e) {
             LOGGER.error("Failure when requesting GetObservation.", e);
-        } catch (AccessException e) {
-			LOGGER.error("Could not access features.", e);
-		}
+        }
+        catch (AccessException e) {
+            LOGGER.error("Could not access features.", e);
+        }
         return result;
     }
 
@@ -196,7 +204,7 @@ public abstract class Generator {
             observedProperties.add(property.getPhenomenon().getId());
             procedures.add(property.getProcedure().getId());
             fois.add(property.getFoi().getId());
-            
+
             String sosUrl = property.getSosUrl();
             String offeringId = offering.getId();
             requests.add(new RequestConfig(sosUrl, offeringId, fois, observedProperties, procedures, time));
@@ -204,14 +212,19 @@ public abstract class Generator {
         return requests;
     }
 
-    protected ITime readOutTime(DesignOptions prop) {
+    /**
+     * @param options
+     *        the design options to read the set time from.
+     * @return a time instance representing an ISO8601 period.
+     */
+    protected ITime getTimeFrom(DesignOptions options) {
         Calendar beginPos = Calendar.getInstance();
-        beginPos.setTimeInMillis(prop.getBegin());
+        beginPos.setTimeInMillis(options.getBegin());
         Calendar endPos = Calendar.getInstance();
-        endPos.setTimeInMillis(prop.getEnd());
+        endPos.setTimeInMillis(options.getEnd());
         String begin = dateFormat.format(beginPos.getTime());
         String end = dateFormat.format(endPos.getTime());
-        return TimeFactory.createTime(begin + "/" + end); 
+        return TimeFactory.createTime(begin + "/" + end);
     }
 
 }

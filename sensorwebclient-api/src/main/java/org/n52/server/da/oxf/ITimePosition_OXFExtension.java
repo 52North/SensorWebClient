@@ -23,17 +23,8 @@
  */
 package org.n52.server.da.oxf;
 
-public class AccessException extends Exception {
+import org.n52.oxf.ows.capabilities.ITime;
 
-    private static final long serialVersionUID = 7108063037688083963L;
-
-    public AccessException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public AccessException(String message) {
-        super(message);
-    }
-
-    
+public interface ITimePosition_OXFExtension extends ITime {
+    // asdf
 }

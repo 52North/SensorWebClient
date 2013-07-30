@@ -48,9 +48,9 @@ import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TimeSeriesDataGenerator extends Generator {
+public class TimeseriesDataGenerator extends Generator {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(TimeSeriesDataGenerator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TimeseriesDataGenerator.class);
 
     @Override
     public RepresentationResponse producePresentation(DesignOptions options) throws Exception {

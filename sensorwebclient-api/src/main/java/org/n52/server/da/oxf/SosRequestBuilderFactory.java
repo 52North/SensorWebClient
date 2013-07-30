@@ -23,21 +23,20 @@
  */
 package org.n52.server.da.oxf;
 
-import static java.util.concurrent.Executors.newFixedThreadPool;
-import static org.n52.server.mgmt.ConfigurationContext.THREAD_POOL_SIZE;
+import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
+import org.n52.oxf.sos.adapter.SOSRequestBuilderFactory;
+import org.n52.oxf.sos.util.SosUtil;
 
-import java.util.concurrent.ExecutorService;
+public class SosRequestBuilderFactory {
 
-public class AccessorThreadPool {
-
-    private static ExecutorService service = newFixedThreadPool(THREAD_POOL_SIZE);
-
-    public static void execute(Runnable command) {
-        service.execute(command);
-    }
-
-    public static ExecutorService getExecutor() {
-        return service;
+    public static ISOSRequestBuilder createRequestBuilder(String serviceVersion) {
+        if (SosUtil.isVersion100(serviceVersion)) {
+            return new SOSRequestBuilder_100_OXFExtension();
+        } else if (SosUtil.isVersion200(serviceVersion)) {
+            return new SOSRequestBuilder_200_OXFExtension();
+        } else {
+            return SOSRequestBuilderFactory.generateRequestBuilder(serviceVersion);
+        }
     }
 
 }

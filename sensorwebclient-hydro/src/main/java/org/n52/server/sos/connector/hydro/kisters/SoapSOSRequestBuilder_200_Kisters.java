@@ -35,7 +35,7 @@ import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.util.web.HttpClient;
 import org.n52.oxf.util.web.ProxyAwareHttpClient;
 import org.n52.oxf.util.web.SimpleHttpClient;
-import org.n52.server.da.oxf.extn.TimePosition_OXFExtension;
+import org.n52.server.da.oxf.TimePosition_OXFExtension;
 import org.n52.server.sos.connector.hydro.SoapSOSRequestBuilder_200;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
