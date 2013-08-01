@@ -112,9 +112,18 @@ public class LegendController {
 		HashMap<String, Timeseries> dataItems = dataStore.getDataItems();
 		if (!dataItems.isEmpty()) {
 			legend.startExportLoadingSpinner();
+			if( exportType == ExportType.DATADOWNLOAD_ZIP){
+				// TODO Generate Export ZIP with appl/data/direct_download/directDownload_XXXX.zip
+				System.out.println("------------------------------------------------------------");
+				for( String key: dataItems.keySet()){
+					System.out.println("Key: " + key );
+				}
+				System.out.println("------------------------------------------------------------");
+			} else {
             Collection<Timeseries> values = dataItems.values();
-			ExportEvent event = new ExportEvent(values, exportType);
-			EventBus.getMainEventBus().fireEvent(event);
+				ExportEvent event = new ExportEvent(values, exportType);
+				EventBus.getMainEventBus().fireEvent(event);
+			}
         }
 	}
 	

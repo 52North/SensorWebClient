@@ -416,7 +416,8 @@ public class Legend extends VLayout {
         exportMenu.setAutoHeight();
         exportMenu.setZIndex(1000000);
         exportMenu.addMember(createPDFLabel());
-        exportMenu.addMember(createCSVLabel());
+//        exportMenu.addMember(createCSVLabel());
+        exportMenu.addMember(createZIPLabel());
         exportMenu.setVisible(false);
     }
 
