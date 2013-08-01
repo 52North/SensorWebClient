@@ -24,6 +24,8 @@
 
 package org.n52.server.sos.generator;
 
+import static java.awt.image.BufferedImage.TYPE_INT_RGB;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
@@ -40,10 +42,14 @@ import org.n52.oxf.feature.OXFFeatureCollection;
 import org.n52.oxf.util.JavaHelper;
 import org.n52.server.sos.render.DesignDescriptionList;
 import org.n52.server.sos.render.DiagramRenderer;
-import org.n52.server.sos.render.DesignDescriptionList.DesignDescription;
+import org.n52.server.sos.render.RenderingDesign;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.shared.serializable.pojos.sos.Feature;
+import org.n52.shared.serializable.pojos.sos.Phenomenon;
+import org.n52.shared.serializable.pojos.sos.Procedure;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
 import com.sun.media.jai.codec.ImageCodec;
 import com.sun.media.jai.codec.ImageEncoder;
@@ -78,8 +84,9 @@ public class DiagramGenerator extends Generator {
 
         JFreeChart diagramChart = renderer.renderChart(entireCollMap, options, begin, end, compress);
         diagramChart.removeLegend();
+        
         // draw chart into image:
-        BufferedImage diagramImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        BufferedImage diagramImage = new BufferedImage(width, height, TYPE_INT_RGB);
         Graphics2D chartGraphics = diagramImage.createGraphics();
         chartGraphics.setColor(Color.white);
         chartGraphics.fillRect(0, 0, width, height);
@@ -121,11 +128,9 @@ public class DiagramGenerator extends Generator {
         legendGraphics.setColor(Color.white);
         legendGraphics.fillRect(0, 0, width, height);
 
-        for (int i = 0; i < ddList.size(); i++) {
-            DesignDescription dd = ddList.get(i);
-
-            // draw legend entry:
-            int yPos = topMargin + i * iconHeight + i * verticalSpaceBetweenEntries;
+        int offset = 0;
+        for (RenderingDesign dd : ddList.getAllDesigns()) {
+            int yPos = topMargin + offset * iconHeight + offset * verticalSpaceBetweenEntries;
 
             // icon:
             legendGraphics.setColor(dd.getColor());
@@ -134,9 +139,11 @@ public class DiagramGenerator extends Generator {
             // text:
             legendGraphics.setColor(Color.black);
 
-            legendGraphics.drawString(dd.getFeatureOfInterestDesc() + " - " //$NON-NLS-1$
+            legendGraphics.drawString(dd.getFeature().getLabel() + " - "
                     + dd.getLabel(), leftMargin + iconWidth
                     + horizontalSpaceBetweenIconAndText, yPos + iconHeight);
+            
+            offset++;
         }
 
         // draw legend into image:
@@ -159,23 +166,25 @@ public class DiagramGenerator extends Generator {
 
         String domainAxisLabel;
         if (options.getLanguage() != null && options.getLanguage().equals("de")) {
-            domainAxisLabel = "Zeit"; //$NON-NLS-1$
+            domainAxisLabel = "Zeit";
         } else { // default => "en"
-            domainAxisLabel = "Time"; //$NON-NLS-1$
+            domainAxisLabel = "Time";
         }
 
         DesignDescriptionList ddList = new DesignDescriptionList(domainAxisLabel);
-        String observedPropertyWithGrid = options.getProperties().get(0).getPhenomenon().getId();
+        String observedPropertyWithGrid = options.getProperties().get(0).getPhenomenon();
 
         for (TimeseriesProperties prop : options.getProperties()) {
 
             Color c = JavaHelper.transformToColor(prop.getHexColor());
-            boolean gridOn = observedPropertyWithGrid.equals(prop.getPhenomenon().getId());
+            boolean gridOn = observedPropertyWithGrid.equals(prop.getPhenomenon());
+            
+            TimeseriesParametersLookup lookup = getParameterLookup(prop.getServiceUrl());
+            Feature feature = lookup.getFeature(prop.getFeature());
+            Phenomenon phenomenon = lookup.getPhenomenon(prop.getPhenomenon());
+            Procedure procedure = lookup.getProcedure(prop.getProcedure());
 
-            ddList.add(prop.getPhenomenon().getId(), prop.getProcedure().getId(), prop.getFoi().getId(),
-                    prop.getPhenomenon().getLabel(), prop.getProcedure().getLabel(), prop
-                            .getFoi().getLabel(), prop.getLabel(), prop.getUnitOfMeasure(), c,
-                    prop.getGraphStyle(), prop.getLineWidth(), gridOn);
+            ddList.add(phenomenon, procedure, feature, prop, c,  prop.getGraphStyle(), prop.getLineWidth(), gridOn);
         }
 
         return ddList;
