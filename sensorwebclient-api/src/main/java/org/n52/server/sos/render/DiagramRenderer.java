@@ -24,6 +24,10 @@
 
 package org.n52.server.sos.render;
 
+import static org.n52.server.mgmt.ConfigurationContext.getServiceMetadata;
+import static org.n52.server.sos.parser.TimeseriesFactory.compressToTimeSeries;
+import static org.n52.server.sos.parser.TimeseriesFactory.createTimeSeries;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -63,11 +67,14 @@ import org.n52.oxf.util.JavaHelper;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.server.sos.generator.MetadataInURLGenerator;
 import org.n52.server.sos.parser.TimeseriesFactory;
-import org.n52.server.sos.render.DesignDescriptionList.DesignDescription;
 import org.n52.shared.serializable.pojos.Axis;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
+import org.n52.shared.serializable.pojos.sos.Procedure;
+import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
 public class DiagramRenderer {
     
@@ -122,27 +129,36 @@ public class DiagramRenderer {
         }
 
         DesignDescriptionList designDescriptions = new DesignDescriptionList(domainAxisLabel);
-
-        String observedPropertyWithGrid = options.getProperties().get(0).getPhenomenon().getId();
+        String observedPropertyWithGrid = options.getProperties().get(0).getPhenomenon();
 
         for (TimeseriesProperties tsProperties : options.getProperties()) {
-
             Color c = JavaHelper.transformToColor(tsProperties.getHexColor());
-            String phenomenonId = tsProperties.getPhenomenon().getId();
+            String phenomenonId = tsProperties.getPhenomenon();
+            String procedureId = tsProperties.getProcedure();
+            String featureId = tsProperties.getFeature();
             boolean drawGrid = observedPropertyWithGrid.equals(phenomenonId);
 
-            String procedureId = tsProperties.getProcedure().getId();
-            String featureId = tsProperties.getFoi().getId();
-            String phenomenonLabel = tsProperties.getPhenomenon().getLabel();
-            String procedureLabel = tsProperties.getProcedure().getLabel();
-            String featureLabel = tsProperties.getFoi().getLabel();
-            designDescriptions.add(phenomenonId, procedureId, featureId, phenomenonLabel, procedureLabel, featureLabel, tsProperties
-                    .getLabel(), tsProperties.getUnitOfMeasure(), new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) tsProperties
+            TimeseriesParametersLookup lookup = getParameterLookup(tsProperties);
+            Feature feature = lookup.getFeature(featureId);
+            Procedure procedure = lookup.getProcedure(procedureId);
+            Phenomenon phenomenon = lookup.getPhenomenon(phenomenonId);
+            
+            designDescriptions.add(phenomenon, procedure, feature, tsProperties, new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) tsProperties
                     .getOpacity() * 255 / 100), tsProperties.getLineStyle(), tsProperties.getLineWidth(), drawGrid);
         }
         return designDescriptions;
     }
 
+
+    private TimeseriesParametersLookup getParameterLookup(TimeseriesProperties properties) {
+        String serviceUrl = properties.getServiceUrl();
+        try {
+            SOSMetadata metadata = getServiceMetadata(serviceUrl);
+            return metadata.getTimeseriesParametersLookup();
+        } catch (Exception e) {
+            throw new IllegalStateException("No parameter lookup available for service '" + serviceUrl + "'.", e);
+        }
+    }
 
     /**
      * <pre>
@@ -213,11 +229,10 @@ public class DiagramRenderer {
 
             TimeseriesProperties prop = options.getProperties().get(i);
             
-            Phenomenon phenomenon = prop.getPhenomenon();
-            String phenomenonId = phenomenon.getId();
+            String phenomenonId = prop.getPhenomenon();
 
             TimeSeriesCollection dataset = createDataset(entireCollMap, prop, phenomenonId, compress);
-            dataset.setGroup(new DatasetGroup(prop.getTsID()));
+            dataset.setGroup(new DatasetGroup(prop.getTimeseriesId()));
             XYDataset additionalDataset = dataset;
 
             NumberAxis axe = (NumberAxis) plot.getRangeAxis(axes.get(phenomenonId));
@@ -246,7 +261,7 @@ public class DiagramRenderer {
 			}
             
             plot.setDataset(i, additionalDataset);
-            plot.mapDatasetToRangeAxis(i, axes.get(phenomenon.getId()));
+            plot.mapDatasetToRangeAxis(i, axes.get(phenomenonId));
 
             // set bounds new for reference values
             if (!referenceBounds.containsKey(phenomenonId)) {
@@ -284,7 +299,7 @@ public class DiagramRenderer {
                 axis.setMinY(axis.getMinY());
             }
             prop.setAxisData(axis);
-            this.axisMapping.put(prop.getTsID(), axis);
+            this.axisMapping.put(prop.getTimeseriesId(), axis);
 
             for (String string : prop.getReferenceValues()) {
                 if (prop.getRefValue(string).show()) {
@@ -336,13 +351,8 @@ public class DiagramRenderer {
 
             for (int seriesIndex = 0; seriesIndex < dataset.getSeriesCount(); seriesIndex++) {
 
-                String seriesID = (String) dataset.getSeries(seriesIndex).getKey();
-
-                String foiID = seriesID.split("___")[0];
-                String obsPropID = seriesID.split("___")[1];
-                String procID = seriesID.split("___")[2];
-
-                DesignDescription dd = designDescriptions.get(obsPropID, procID, foiID);
+                String timeseriesId = (String) dataset.getSeries(seriesIndex).getKey();
+                RenderingDesign dd = designDescriptions.get(timeseriesId);
 
                 if (dd != null) {
 
@@ -384,8 +394,7 @@ public class DiagramRenderer {
                         // lines and dots
                         XYLineAndShapeRenderer ren = new XYLineAndShapeRenderer(true, true);
                         int thickness = 2 * width;
-						ren.setShape(new Ellipse2D.Double(-width, -width,
-								thickness, thickness));
+						ren.setShape(new Ellipse2D.Double(-width, -width, thickness, thickness));
                         ren.setStroke(new BasicStroke(width));
                         plot.setRenderer(datasetIndex, ren);
                     } else {
@@ -422,7 +431,7 @@ public class DiagramRenderer {
                         plot.getRangeAxisForDataset(datasetIndex).setTickLabelFont(tickLabelDomain);
                         plot.getRangeAxisForDataset(datasetIndex).setTickLabelPaint(LABEL_COLOR);
                         StringBuilder unitOfMeasure = new StringBuilder();
-                        unitOfMeasure.append(dd.getObservedPropertyDesc());
+                        unitOfMeasure.append(dd.getPhenomenon().getLabel());
                         String uomLabel = dd.getUomLabel();
                         if (uomLabel != null && !uomLabel.isEmpty()) {
                             unitOfMeasure.append(" (").append(uomLabel).append(")");
@@ -491,11 +500,11 @@ public class DiagramRenderer {
     public TimeSeriesCollection createDataset(Map<String, OXFFeatureCollection> entireCollMap, TimeseriesProperties prop, String observedProperty, boolean compress) {
 
         TimeSeriesCollection dataset = new TimeSeriesCollection();
-        OXFFeatureCollection obsColl = entireCollMap.get(prop.getOffering().getId() + "@" + prop.getSosUrl());
+        OXFFeatureCollection obsColl = entireCollMap.get(prop.getOffering() + "@" + prop.getServiceUrl());
 
-        String foiID = prop.getFoi().getId();
-        String obsPropID = prop.getPhenomenon().getId();
-        String procID = prop.getProcedure().getId();
+        String foiID = prop.getFeature();
+        String obsPropID = prop.getPhenomenon();
+        String procID = prop.getProcedure();
 
         // only if the observation concerns the observedProperty, it
         // will be added to the dataset
@@ -505,18 +514,31 @@ public class DiagramRenderer {
             String[] procedureIds = new String[] { procID };
             String[] observedPropertyIds = new String[] { obsPropID };
             ObservationSeriesCollection seriesCollection = new ObservationSeriesCollection(obsColl, foiIds, observedPropertyIds, procedureIds, true);
+            
+            
             //
             // now let's put in the date-value pairs.
             // ! But put it only in if it differs from the previous
             // one !
             //
 
-            TimeSeries timeSeries = new TimeSeries(foiID + "___" + obsPropID + "___" + procID, Second.class);
+            
+            
+            
+            
+            //TimeSeries timeSeries = new TimeSeries(foiID + "___" + obsPropID + "___" + procID, Second.class);
+            TimeSeries timeSeries = new TimeSeries(prop.getTimeseriesId(), Second.class);
+            
+            
+            
+            
+            
+            
             if (seriesCollection.getSortedTimeArray().length > 0) {
                 if (compress) {
-                    timeSeries = TimeseriesFactory.compressToTimeSeries(seriesCollection, foiID, obsPropID, procID, isOverview, prop.getGraphStyle());
+                    timeSeries = compressToTimeSeries(seriesCollection, prop.getTimeseries(), isOverview, prop.getGraphStyle());
                 } else {
-                    timeSeries = TimeseriesFactory.createTimeSeries(seriesCollection, foiID, obsPropID, procID, prop.getGraphStyle());
+                    timeSeries = createTimeSeries(seriesCollection, prop.getTimeseries(), prop.getGraphStyle());
                 }
             }
             dataset.addSeries(timeSeries);

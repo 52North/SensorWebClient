@@ -166,7 +166,7 @@ public class FileDataServiceImpl implements FileDataService {
     private void generateSensorMLFile(OperationResult sendDescSens, TimeseriesProperties prop, String folderPostfix) throws ServerException {
         try {
             File f = JavaHelper.genFile(ConfigurationContext.GEN_DIR+"/"+folderPostfix, 
-                    "SensorML_" + prop.getProcedure().getId().replaceAll("/", "_"), "xml");
+                    "SensorML_" + prop.getProcedure().replaceAll("/", "_"), "xml");
             IOHelper.saveFile(f, sendDescSens.getIncomingResultAsStream());
         } catch (Exception e) {
             // wrap generic exception
@@ -176,7 +176,7 @@ public class FileDataServiceImpl implements FileDataService {
 
     private OperationResult sendDescSens(TimeseriesProperties prop) throws ServerException {
         try {
-            String sosUrl = prop.getSosUrl();
+            String sosUrl = prop.getServiceUrl();
             SOSMetadata meta = (SOSMetadata)ConfigurationContext.getServiceMetadata(sosUrl);
             
             OperationResult opResult = null;
@@ -184,7 +184,7 @@ public class FileDataServiceImpl implements FileDataService {
             ParameterContainer paramCon = new ParameterContainer();
     
             String sosVersion = meta.getSosVersion();
-            String procedureId = prop.getProcedure().getId();
+            String procedureId = prop.getProcedure();
             String smlVersion = meta.getSensorMLVersion();
             paramCon.addParameterShell(DESCRIBE_SENSOR_SERVICE_PARAMETER, "SOS");
             paramCon.addParameterShell(DESCRIBE_SENSOR_VERSION_PARAMETER, sosVersion);

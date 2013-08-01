@@ -23,13 +23,12 @@
  */
 package org.n52.client.ctrl;
 
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.sos.ctrl.SosDataManager.getDataManager;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.n52.client.sos.event.data.NewTimeSeriesEvent;
 import org.n52.client.sos.event.data.StoreFeatureEvent;
@@ -40,22 +39,36 @@ import org.n52.client.sos.event.data.handler.StoreFeatureEventHandler;
 import org.n52.client.sos.event.data.handler.StoreOfferingEventHandler;
 import org.n52.client.sos.event.data.handler.StoreProcedureEventHandler;
 import org.n52.client.sos.event.data.handler.StoreStationEventHandler;
+import org.n52.shared.serializable.pojos.TimeseriesRenderingOptions;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
 public class PermalinkController {
+    
+    private class LoadingStatus {
+        private SosTimeseries timeseriesToLoad;
+        private TimeseriesRenderingOptions options;
+        private LoadingStatus(SosTimeseries timeseriesToLoad, TimeseriesRenderingOptions options) {
+            this.timeseriesToLoad = timeseriesToLoad;
+            this.options = options;
+        }
+    }
 	
-	private Map<SosTimeseries, Boolean> timeseriesToLoad;
+    private List<LoadingStatus> timeseriesStatusList;
 	
 	public PermalinkController() {
-		new PermalinkControllerEventBroker();
-		this.timeseriesToLoad = new HashMap<SosTimeseries, Boolean>();
+        new PermalinkControllerEventBroker();
+	    timeseriesStatusList = new ArrayList<PermalinkController.LoadingStatus>();
 	}
 	
 	public void addTimeseries(SosTimeseries timeseries) {
-	    this.timeseriesToLoad.put(timeseries, FALSE);
+        timeseriesStatusList.add(new LoadingStatus(timeseries, null));
+    }
+	
+	public void addTimeseries(SosTimeseries timeseries, TimeseriesRenderingOptions options) {
+	    timeseriesStatusList.add(new LoadingStatus(timeseries, options));
 	}
 	
 	private class PermalinkControllerEventBroker implements
@@ -93,24 +106,28 @@ public class PermalinkController {
 	}
 
 	public void check() {
-	    for (SosTimeseries timeseries : PermalinkController.this.timeseriesToLoad.keySet()) {
-            String serviceUrl = timeseries.getServiceUrl();
-            SOSMetadata metadata = getDataManager().getServiceMetadata(serviceUrl);
+	    Iterator<LoadingStatus> iterator = timeseriesStatusList.iterator();
+	    while (iterator.hasNext()) {
+	        LoadingStatus loadingStatus = iterator.next();
+	        SosTimeseries timeseries = loadingStatus.timeseriesToLoad;
+            SOSMetadata metadata = getServiceMetadata(timeseries);
             TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
-            if (lookup.hasLoadedCompletely(timeseries) && !isNewTimeseriesEventAlreadyFired(timeseries)) {
+            if (lookup.hasLoadedCompletely(timeseries)) {
                 Station station = metadata.getStationByTimeSeries(timeseries);
-                PermalinkController.this.timeseriesToLoad.put(timeseries, TRUE);
-                
-                NewTimeSeriesEvent event = new NewTimeSeriesEvent.Builder(serviceUrl)
+                NewTimeSeriesEvent event = new NewTimeSeriesEvent.Builder()
                         .addStation(station)
                         .addTimeseries(timeseries)
+                        .addRenderingOptions(loadingStatus.options)
                         .build();
                 getMainEventBus().fireEvent(event);
+                iterator.remove();
             }
         }
 	}
 
-    private boolean isNewTimeseriesEventAlreadyFired(SosTimeseries timeseries) {
-        return PermalinkController.this.timeseriesToLoad.get(timeseries);
+    private SOSMetadata getServiceMetadata(SosTimeseries timeseries) {
+        String serviceUrl = timeseries.getServiceUrl();
+        return getDataManager().getServiceMetadata(serviceUrl);
     }
+
 }

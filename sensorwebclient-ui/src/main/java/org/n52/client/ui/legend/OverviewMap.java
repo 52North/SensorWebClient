@@ -39,10 +39,10 @@ import org.gwtopenmaps.openlayers.client.layer.Markers;
 import org.gwtopenmaps.openlayers.client.popup.Popup;
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.PropertiesManager;
-import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
+import org.n52.client.sos.data.TimeseriesDataStore;
 import org.n52.client.sos.event.InitEvent;
 import org.n52.client.sos.event.handler.InitEventHandler;
-import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.sos.legend.Timeseries;
 import org.n52.client.ui.map.Coordinate;
 import org.n52.client.ui.map.OpenLayersMapWrapper;
 import org.n52.client.ui.map.OpenlayersMarker;
@@ -125,8 +125,8 @@ public class OverviewMap extends OpenLayersMapWrapper {
     }
     
     public void updateMapContent() {
-    	DataStoreTimeSeriesImpl dataStore = DataStoreTimeSeriesImpl.getInst();
-		Collection<TimeSeries> ts = dataStore.getDataItems().values();
+    	TimeseriesDataStore dataStore = TimeseriesDataStore.getTimeSeriesDataStore();
+		Collection<Timeseries> ts = dataStore.getDataItems().values();
     	boolean updateExtent = isTimeSeriesAddedUpdate(ts); // check before update
         updateMarkersOnMap(ts);
         if(updateExtent){
@@ -138,9 +138,9 @@ public class OverviewMap extends OpenLayersMapWrapper {
         markSelectedMarker();
     }
 
-	private void updateMarkersOnMap(Collection<TimeSeries> ts) {
+	private void updateMarkersOnMap(Collection<Timeseries> ts) {
         removeAllMarkers();
-		for (TimeSeries timeSeries : ts) {
+		for (Timeseries timeSeries : ts) {
             Coordinate coords = timeSeries.getCoords();
             if (coords == null) {
                 GWT.log("TimeSeries has no coordinates; skip creating map button.");
@@ -176,7 +176,7 @@ public class OverviewMap extends OpenLayersMapWrapper {
         }
 	}
 
-	private boolean isTimeSeriesAddedUpdate(Collection<TimeSeries> newTimeSeries) {
+	private boolean isTimeSeriesAddedUpdate(Collection<Timeseries> newTimeSeries) {
 		return getMarkers().size() != newTimeSeries.size();
 	}
     

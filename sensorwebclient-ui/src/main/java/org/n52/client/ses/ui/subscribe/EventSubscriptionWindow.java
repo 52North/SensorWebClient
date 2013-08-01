@@ -37,7 +37,7 @@ import org.n52.client.ses.event.RuleCreatedEvent;
 import org.n52.client.ses.event.SubscribeEvent;
 import org.n52.client.ses.event.handler.RuleCreatedEventHandler;
 import org.n52.client.ses.ui.LoginWindow;
-import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.sos.legend.Timeseries;
 import org.n52.client.ui.ApplyCancelButtonLayout;
 import org.n52.shared.serializable.pojos.Rule;
 
@@ -64,7 +64,7 @@ public class EventSubscriptionWindow extends LoginWindow {
     /**
      * @param dataItem the timeseries item to create a subscription for.
      */
-    public EventSubscriptionWindow(TimeSeries dataItem) {
+    public EventSubscriptionWindow(Timeseries dataItem) {
     	super(COMPONENT_ID);
         new EventSubsriptionWindowEventBroker(this);
         controller.setEventSubscription(this);
@@ -102,7 +102,7 @@ public class EventSubscriptionWindow extends LoginWindow {
     }
 
     private Canvas createStationInfo() {
-        TimeSeries timeSeries = controller.getTimeSeries();
+        Timeseries timeSeries = controller.getTimeSeries();
         StaticTextItem stationName = createStationNameItem(timeSeries);
         StaticTextItem parameter = createPhenomenonItem(timeSeries);
         HeaderItem header = createHeaderItem();
@@ -111,14 +111,14 @@ public class EventSubscriptionWindow extends LoginWindow {
         return form;
     }
 
-    private StaticTextItem createStationNameItem(TimeSeries timeSeries) {
+    private StaticTextItem createStationNameItem(Timeseries timeSeries) {
         StaticTextItem stationName = new StaticTextItem();
         stationName.setTitle(i18n.station());
         stationName.setValue(timeSeries.getStationName());
         return stationName;
     }
 
-    private StaticTextItem createPhenomenonItem(TimeSeries timeSeries) {
+    private StaticTextItem createPhenomenonItem(Timeseries timeSeries) {
         StaticTextItem parameter = new StaticTextItem();
         parameter.setTitle(i18n.phenomenon());
         parameter.setValue(timeSeries.getPhenomenonId());
@@ -198,7 +198,7 @@ public class EventSubscriptionWindow extends LoginWindow {
         return htmlPane;
     }
 
-    public void setTimeseries(TimeSeries timeseries) {
+    public void setTimeseries(Timeseries timeseries) {
         controller.setTimeseries(timeseries);
     }
 

@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import org.n52.client.bus.EventBus;
-import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
+import org.n52.client.sos.data.TimeseriesDataStore;
 import org.n52.client.sos.event.LegendElementSelectedEvent;
 import org.n52.client.sos.event.data.DeleteTimeSeriesEvent;
 import org.n52.client.sos.event.data.ExportEvent;
@@ -40,7 +40,7 @@ import org.n52.client.sos.event.data.handler.DeleteTimeSeriesEventHandler;
 import org.n52.client.sos.event.data.handler.ExportFinishedEventHandler;
 import org.n52.client.sos.event.data.handler.FinishedLoadingTimeSeriesEventHandler;
 import org.n52.client.sos.event.handler.LegendElementSelectedEventHandler;
-import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.sos.legend.Timeseries;
 
 import com.google.gwt.user.client.Window;
 import com.smartgwt.client.util.BooleanCallback;
@@ -94,8 +94,8 @@ public class LegendController {
 
 		@Override
 		public void onDeleteTimeSeries(DeleteTimeSeriesEvent evt) {
-			DataStoreTimeSeriesImpl dataStore = DataStoreTimeSeriesImpl.getInst();
-			TimeSeries[] timeseries = dataStore.getTimeSeriesSorted();
+			TimeseriesDataStore dataStore = TimeseriesDataStore.getTimeSeriesDataStore();
+			Timeseries[] timeseries = dataStore.getTimeSeriesSorted();
 			if (timeseries.length <= 1) {
 				legend.setExportButtonActiv(false);
 			}
@@ -108,11 +108,11 @@ public class LegendController {
 	}
 
 	void exportTo(ExportType exportType) {
-		DataStoreTimeSeriesImpl dataStore = DataStoreTimeSeriesImpl.getInst();
-		HashMap<String, TimeSeries> dataItems = dataStore.getDataItems();
+		TimeseriesDataStore dataStore = TimeseriesDataStore.getTimeSeriesDataStore();
+		HashMap<String, Timeseries> dataItems = dataStore.getDataItems();
 		if (!dataItems.isEmpty()) {
 			legend.startExportLoadingSpinner();
-            Collection<TimeSeries> values = dataItems.values();
+            Collection<Timeseries> values = dataItems.values();
 			ExportEvent event = new ExportEvent(values, exportType);
 			EventBus.getMainEventBus().fireEvent(event);
         }

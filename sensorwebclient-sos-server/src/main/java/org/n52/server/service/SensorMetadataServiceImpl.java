@@ -53,10 +53,10 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
     public SensorMetadataResponse getSensorMetadata(TimeseriesProperties tsProperties) throws Exception {
         try {
             LOG.debug("Request -> GetSensorMetadata");
-            String sosUrl = tsProperties.getSosUrl();
+            String sosUrl = tsProperties.getServiceUrl();
             SOSMetadata metadata = getSOSMetadata(sosUrl);
-            String procedureId = tsProperties.getProcedure().getId();
-            String phenomenonId = tsProperties.getPhenomenon().getId();
+            String procedureId = tsProperties.getProcedure();
+            String phenomenonId = tsProperties.getPhenomenon();
             TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
             Procedure procedure = lookup.getProcedure(procedureId);
 

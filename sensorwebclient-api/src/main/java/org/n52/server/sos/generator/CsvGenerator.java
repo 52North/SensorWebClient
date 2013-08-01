@@ -42,40 +42,21 @@ import org.n52.shared.responses.FileResponse;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * The Class CsvGenerator.
- * 
- * @author <a href="mailto:tremmersmann@uni-muenster.de">Thomas Remmersmann</a>
- * @author <a href="mailto:broering@52north.org">Arne Broering</a>
- */
 public class CsvGenerator extends Generator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CsvGenerator.class);
 
-    /** The zip. */
 	private boolean zip;
 
-    /**
-     * Instantiates a new csv generator.
-     * 
-     * @param zip
-     *            the zip
-     */
+	// XXX zip is unused ATM
     public CsvGenerator(boolean zip, String folder) {
-        this.zip = zip;
         this.folderPostfix = folder;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.n52.server.oxf.util.generator.Generator#producePresentation(org.n52
-     * .shared.serializable.pojos.RepresentationDesignOptions)
-     */
     @Override
     public RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException {
 
@@ -91,7 +72,7 @@ public class CsvGenerator extends Generator {
 
         
         TimeseriesProperties pc = options.getProperties().get(0);
-        File csv = JavaHelper.genRndFile(ConfigurationContext.GEN_DIR+"/"+folderPostfix, pc.getProcedure().getId().replaceAll("/", "_")+"_"+formatDate(new Date(options.getBegin()))+"_"
+        File csv = JavaHelper.genRndFile(ConfigurationContext.GEN_DIR+"/"+folderPostfix, pc.getProcedure().replaceAll("/", "_")+"_"+formatDate(new Date(options.getBegin()))+"_"
                 +formatDate(new Date(options.getEnd()))+"_", "csv");
         OutputStream out;
         try {
@@ -109,20 +90,21 @@ public class CsvGenerator extends Generator {
 
             // fill cells:
 			for (TimeseriesProperties prop : options.getProperties()) {
-
-				String foiID = prop.getFoi().getId();
-				String obsPropsID = prop.getPhenomenon().getId();
+			    
+			    TimeseriesParametersLookup lookup = getParameterLookup(prop.getServiceUrl());
+				String featureId = prop.getFeature();
+				String phenomenonId = prop.getPhenomenon();
 
 				ObservationSeriesCollection seriesCollection = new ObservationSeriesCollection(
-						entireColl, new String[] { foiID },
-						new String[] { obsPropsID }, false);
+						entireColl, new String[] { featureId },
+						new String[] { phenomenonId }, false);
 				ITimePosition timeArray[] = seriesCollection
 						.getSortedTimeArray();
 
 				if (timeArray.length > 0) {
 					ObservedValueTuple nextObservation = seriesCollection
 							.getTuple(
-									new OXFFeature(foiID, entireColl
+									new OXFFeature(featureId, entireColl
 											.getFeatureType()), timeArray[0]);
 					ObservedValueTuple observation = nextObservation;
 
@@ -132,13 +114,13 @@ public class CsvGenerator extends Generator {
 
 						if (i + 1 < timeArray.length) {
 							nextObservation = seriesCollection.getTuple(
-									new OXFFeature(foiID, null),
+									new OXFFeature(featureId, null),
 									timeArray[i + 1]);
 						}
 
-						csvString += prop.getFoi().getLabel() + ";";
-						csvString += prop.getPhenomenon().getLabel()
-								+ " (" + prop.getPhenomenon().getUnitOfMeasure() + ")"
+						csvString += lookup.getFeature(featureId).getLabel() + ";";
+						csvString += lookup.getPhenomenon(phenomenonId).getLabel()
+								+ " (" + prop.getUnitOfMeasure() + ")"
 								+ ";";
 						csvString += observation.getTime().toISO8601Format()
 								+ ";";

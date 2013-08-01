@@ -83,7 +83,7 @@ public class DesignOptions implements Serializable {
     public String[] getAllPhenomenIds() {
         HashMap<String, String> obs = new HashMap<String, String>();
         for (TimeseriesProperties p : this.properties) {
-            String phenomenon = p.getPhenomenon().getId();
+            String phenomenon = p.getPhenomenon();
             obs.put(phenomenon, phenomenon);
         }
         return obs.values().toArray(new String[obs.size()]);

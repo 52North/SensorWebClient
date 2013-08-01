@@ -48,6 +48,7 @@ import org.n52.shared.responses.FileResponse;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +91,7 @@ public class XlsGenerator extends Generator {
                 (OXFFeatureCollection) observationCollList.toArray()[0];
         
         TimeseriesProperties pc = options.getProperties().get(0);
-        File xls = JavaHelper.genRndFile(ConfigurationContext.GEN_DIR+"/"+folderPostfix, pc.getProcedure().getId().replaceAll("/", "_")+"_"+formatDate(new Date(options.getBegin()))+"_"+formatDate(
+        File xls = JavaHelper.genRndFile(ConfigurationContext.GEN_DIR+"/"+folderPostfix, pc.getProcedure().replaceAll("/", "_")+"_"+formatDate(new Date(options.getBegin()))+"_"+formatDate(
                         new Date(options.getEnd()))+"_", "xls");
         try {
 
@@ -109,12 +110,13 @@ public class XlsGenerator extends Generator {
             // fill cells:
             // //
             for (TimeseriesProperties prop : options.getProperties()) {
-                String foiID = prop.getFoi().getId();
-                String obsPropsID = prop.getPhenomenon().getId();
+                TimeseriesParametersLookup lookup = getParameterLookup(prop.getServiceUrl());
+                String feature = prop.getFeature();
+                String phenomenon = prop.getPhenomenon();
 
                 ObservationSeriesCollection seriesCollection =
-                        new ObservationSeriesCollection(entireColl, new String[] { foiID },
-                                new String[] { obsPropsID }, false);
+                        new ObservationSeriesCollection(entireColl, new String[] { feature },
+                                new String[] { phenomenon }, false);
                 ITimePosition timeArray[] = seriesCollection.getSortedTimeArray();
                 
 
@@ -123,7 +125,7 @@ public class XlsGenerator extends Generator {
 					ObservedValueTuple prevObservation;
 					ObservedValueTuple nextObservation = seriesCollection
 							.getTuple(
-									new OXFFeature(foiID, entireColl
+									new OXFFeature(feature, entireColl
 											.getFeatureType()), timeArray[0]);
 					ObservedValueTuple observation = nextObservation;
 					
@@ -138,39 +140,28 @@ public class XlsGenerator extends Generator {
 
 						if (i + 1 < timeArray.length) {
 							nextObservation = seriesCollection.getTuple(
-									new OXFFeature(foiID, null),
+									new OXFFeature(feature, null),
 									timeArray[i + 1]);
 						}
 
 						String obsVal = observation.getValue(0).toString();
-						String prevObsVal = prevObservation.getValue(0)
-								.toString();
-						String nextObsVal = nextObservation.getValue(0)
-								.toString();
+						String prevObsVal = prevObservation.getValue(0).toString();
+						String nextObsVal = nextObservation.getValue(0).toString();
 
-						//                    if ((i == 0) || // first observation --> in
-						//                            (i == timeArray.length - 1) || // last
-						//                            // observation
-						//                            // --> in
-						//                            (!(prevObsVal.equals(obsVal) && nextObsVal.equals(obsVal)))) {
-
+						
 						// FOI
-						sheet.addCell(new Label(0, counter + 1, prop.getFoi()
-								.getLabel()));
+						sheet.addCell(new Label(0, counter + 1, lookup.getFeature(feature).getLabel()));
 
 						// ObservedProperty
-						sheet.addCell(new Label(1, counter + 1, prop.getPhenomenon()
-								.getLabel()
+						sheet.addCell(new Label(1, counter + 1, lookup.getPhenomenon(phenomenon).getLabel()
 								+ " ("
-								+ prop.getPhenomenon().getUnitOfMeasure() + ")"));
+								+ prop.getUnitOfMeasure() + ")"));
 
 						// Time
-						ITimePosition timePos = (ITimePosition) observation
-								.getTime();
+						ITimePosition timePos = (ITimePosition) observation.getTime();
 						Date date = timePos.getCalendar().getTime();
 
-						sheet.addCell(new DateTime(2, counter + 1, date,
-								dateFormat));
+						sheet.addCell(new DateTime(2, counter + 1, date, dateFormat));
 
 						// Value
 						Object value = observation.getValue(0);

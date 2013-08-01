@@ -28,7 +28,7 @@ import java.io.Serializable;
 import org.jfree.chart.urls.XYURLGenerator;
 import org.jfree.data.xy.XYDataset;
 import org.n52.server.sos.render.DesignDescriptionList;
-import org.n52.server.sos.render.DesignDescriptionList.DesignDescription;
+import org.n52.server.sos.render.RenderingDesign;
 
 public class MetadataInURLGenerator implements XYURLGenerator, Serializable {
 
@@ -43,11 +43,11 @@ public class MetadataInURLGenerator implements XYURLGenerator, Serializable {
     public String generateURL(XYDataset dataset, int series, int item) {
         String seriesID = (String) dataset.getSeriesKey(series);
 
-        String foiID = seriesID.split("___")[0];
-        String obsPropID = seriesID.split("___")[1];
-        String procID = seriesID.split("___")[2];
+//        String foiID = seriesID.split("___")[0];
+//        String obsPropID = seriesID.split("___")[1];
+//        String procID = seriesID.split("___")[2];
 
-        DesignDescription dd = designDescriptions.get(obsPropID, procID, foiID);
+        RenderingDesign dd = designDescriptions.get(seriesID);
         return dd.getUomLabel() + ";" + Integer.toHexString(dd.getColor().getRGB()).substring(2); 
     }
 

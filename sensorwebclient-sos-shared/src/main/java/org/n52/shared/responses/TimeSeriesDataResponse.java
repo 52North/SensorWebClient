@@ -30,10 +30,9 @@ public class TimeSeriesDataResponse extends RepresentationResponse {
 
     private static final long serialVersionUID = 6907927979169769766L;
 
-    /** The data. ts_id to date to data */
     private HashMap<String, HashMap<Long, String>> data = null;
 
-    private TimeSeriesDataResponse() {
+    TimeSeriesDataResponse() {
         // serializable for GWT needs empty default constructor
     }
 

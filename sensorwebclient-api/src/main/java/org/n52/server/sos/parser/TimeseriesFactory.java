@@ -23,6 +23,8 @@
  */
 package org.n52.server.sos.parser;
 
+import static org.n52.server.mgmt.ConfigurationContext.FACADE_COMPRESSION;
+
 import java.text.ParseException;
 import java.util.HashMap;
 
@@ -34,6 +36,7 @@ import org.n52.oxf.feature.sos.ObservedValueTuple;
 import org.n52.oxf.valueDomains.time.ITimePosition;
 import org.n52.oxf.valueDomains.time.TimePosition;
 import org.n52.server.mgmt.ConfigurationContext;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,16 +44,15 @@ public class TimeseriesFactory {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(TimeseriesFactory.class);
 
-    public static TimeSeries createTimeSeries(ObservationSeriesCollection seriesCollection, String foiID,
-            String obsPropID, String procID, String seriesType) {
+    public static TimeSeries createTimeSeries(ObservationSeriesCollection seriesCollection, SosTimeseries timeseries, String seriesType) {
 
         LOGGER.debug("Starting compression");
 
-        TimeSeries timeSeries = new TimeSeries(foiID + "___" + obsPropID + "___" + procID, Second.class);
+        TimeSeries timeSeries = new TimeSeries(timeseries.getTimeseriesId(), Second.class);
 
         ITimePosition timeArray[] = seriesCollection.getSortedTimeArray();
         ObservedValueTuple prevObservation;
-        ObservedValueTuple nextObservation = seriesCollection.getTuple(new OXFFeature(foiID, null), timeArray[0]);
+        ObservedValueTuple nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeature(), null), timeArray[0]);
         ObservedValueTuple observation = nextObservation;
 
         int counter = 0;
@@ -64,7 +66,7 @@ public class TimeseriesFactory {
             observation = nextObservation;
 
             if (i + 1 < timeArray.length) {
-                nextObservation = seriesCollection.getTuple(new OXFFeature(foiID, null), timeArray[i + 1]);
+                nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeature(), null), timeArray[i + 1]);
             }
 
             // String obsVal = observation.getValue(0).toString();
@@ -122,22 +124,21 @@ public class TimeseriesFactory {
      * @param seriesType
      * @return TimeSeries
      */
-    public static TimeSeries compressToTimeSeries(ObservationSeriesCollection seriesCollection, String foiID,
-            String obsPropID, String procID, boolean force, String seriesType) {
+    public static TimeSeries compressToTimeSeries(ObservationSeriesCollection seriesCollection, SosTimeseries timeseries, boolean force, String seriesType) {
 
         LOGGER.debug("Starting compression");
 
-        TimeSeries timeSeries = new TimeSeries(foiID + "___" + obsPropID + "___" + procID, Second.class);
+        TimeSeries timeSeries = new TimeSeries(timeseries.getTimeseriesId(), Second.class);
 
         ITimePosition timeArray[] = seriesCollection.getSortedTimeArray();
         ObservedValueTuple prevObservation;
-        ObservedValueTuple nextObservation = seriesCollection.getTuple(new OXFFeature(foiID, null), timeArray[0]);
+        ObservedValueTuple nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeature(), null), timeArray[0]);
         ObservedValueTuple observation = nextObservation;
 
         int counter = 0;
         Double sum = 0.0;
 
-        if (ConfigurationContext.FACADE_COMPRESSION || (timeArray.length > 6000 && force)) {
+        if (FACADE_COMPRESSION || (timeArray.length > 6000 && force)) {
             // just %6
             LOGGER.debug("Compressionlevel 6");
             for (int i = 0; i < timeArray.length; i += 6) {
@@ -146,7 +147,7 @@ public class TimeseriesFactory {
                 observation = nextObservation;
 
                 if (i + 1 < timeArray.length) {
-                    nextObservation = seriesCollection.getTuple(new OXFFeature(foiID, null), timeArray[i + 1]);
+                    nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeature(), null), timeArray[i + 1]);
                 }
 
                 String obsVal = observation.getValue(0).toString();
@@ -185,7 +186,7 @@ public class TimeseriesFactory {
 
             }
 
-        } else if (ConfigurationContext.FACADE_COMPRESSION && timeArray.length > 4000) {
+        } else if (FACADE_COMPRESSION && timeArray.length > 4000) {
             // just %4
             LOGGER.debug("Compressionlevel 4");
             for (int i = 0; i < timeArray.length; i += 4) {
@@ -194,7 +195,7 @@ public class TimeseriesFactory {
                 observation = nextObservation;
 
                 if (i + 1 < timeArray.length) {
-                    nextObservation = seriesCollection.getTuple(new OXFFeature(foiID, null), timeArray[i + 1]);
+                    nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeature(), null), timeArray[i + 1]);
                 }
 
                 String obsVal = observation.getValue(0).toString();
@@ -234,7 +235,7 @@ public class TimeseriesFactory {
 
             }
 
-        } else if (ConfigurationContext.FACADE_COMPRESSION && timeArray.length > 2000) {
+        } else if (FACADE_COMPRESSION && timeArray.length > 2000) {
             // just %2
             LOGGER.debug("Compressionlevel 2");
             for (int i = 0; i < timeArray.length; i += 2) {
@@ -243,7 +244,7 @@ public class TimeseriesFactory {
                 observation = nextObservation;
 
                 if (i + 1 < timeArray.length) {
-                    nextObservation = seriesCollection.getTuple(new OXFFeature(foiID, null), timeArray[i + 1]);
+                    nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeature(), null), timeArray[i + 1]);
                 }
 
                 String obsVal = observation.getValue(0).toString();
@@ -291,7 +292,7 @@ public class TimeseriesFactory {
                 observation = nextObservation;
 
                 if (i + 1 < timeArray.length) {
-                    nextObservation = seriesCollection.getTuple(new OXFFeature(foiID, null), timeArray[i + 1]);
+                    nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeature(), null), timeArray[i + 1]);
                 }
 
                 String obsVal = observation.getValue(0).toString();

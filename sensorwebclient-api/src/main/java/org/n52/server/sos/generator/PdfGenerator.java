@@ -48,6 +48,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.oxf.DocumentStructureDocument;
 import org.n52.oxf.DocumentStructureType;
+import org.n52.oxf.DocumentStructureType.TimeSeries;
 import org.n52.oxf.MetadataType;
 import org.n52.oxf.MetadataType.GenericMetadataPair;
 import org.n52.oxf.OXFException;
@@ -68,12 +69,12 @@ import org.n52.oxf.util.JavaHelper;
 import org.n52.oxf.valueDomains.time.ITimePosition;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.server.util.SosAdapterFactory;
-import org.n52.shared.exceptions.ServerException;
 import org.n52.shared.responses.FileResponse;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,18 +136,19 @@ public class PdfGenerator extends Generator {
         DocumentStructureType docStructure = docStructureDoc.addNewDocumentStructure();
 
         for (TimeseriesProperties prop : getRepresentationOp.getProperties()) {
+            
+            TimeseriesParametersLookup lookup = getParameterLookup(prop.getServiceUrl());
 
 //            Offering offering = prop.getOffering();
 
 //            OXFFeatureCollection obsColl =
 //                    observationCollMap.get(offering.getId() + "@" + prop.getSosUrl());
 
-            org.n52.oxf.DocumentStructureType.TimeSeries timeSeries =
-                    docStructure.addNewTimeSeries();
+            TimeSeries timeSeries = docStructure.addNewTimeSeries();
 
-            String foiDesc = prop.getFoi().getLabel();
-            String obsPropsDesc = prop.getPhenomenon().getLabel();
-            String procDesc = prop.getProcedure().getLabel();
+            String foiDesc = lookup.getFeature(prop.getFeature()).getLabel();
+            String obsPropsDesc = lookup.getPhenomenon(prop.getPhenomenon()).getLabel();
+            String procDesc = lookup.getProcedure(prop.getProcedure()).getLabel();
             if (procDesc.contains("urn:ogc:generalizationMethod")) {
                 procDesc = procDesc.substring(0, procDesc.indexOf(","));
             }
@@ -158,13 +160,13 @@ public class PdfGenerator extends Generator {
 
 //            String foiID = prop.getFoi().getID();
 //            String obsPropsID = prop.getPhenomenon().getID();
-            String procID = prop.getProcedure().getId();
+            String procID = prop.getProcedure();
             if (procID.contains("urn:ogc:generalizationMethod")) {
                 procID = procID.substring(0, procID.indexOf(","));
             }
 
             // create Metadata for each timeseries:
-            timeSeries.setMetadata(buildUpMetadata(prop.getSosUrl(), procID));
+            timeSeries.setMetadata(buildUpMetadata(prop.getServiceUrl(), procID));
 
             // create a table for each timeseries:
 //            timeSeries.setTable(buildUpTable(prop, obsColl, foiID, obsPropsID, procID));
@@ -272,6 +274,7 @@ public class PdfGenerator extends Generator {
 	private TableType buildUpTable(TimeseriesProperties prop, OXFFeatureCollection obsColl,
             String foiID, String obsPropID, String procID) {
 
+	    TimeseriesParametersLookup lookup = getParameterLookup(prop.getServiceUrl());
         TableType table = TableType.Factory.newInstance();
 
         //
@@ -286,8 +289,8 @@ public class PdfGenerator extends Generator {
 
         table.setLeftColHeader(leftColHeader);
 
-        table.setRightColHeader(prop.getPhenomenon().getLabel() + " ("
-                + prop.getPhenomenon().getUnitOfMeasure() + ")");
+        table.setRightColHeader(lookup.getPhenomenon(prop.getPhenomenon()).getLabel() + " ("
+                + prop.getUnitOfMeasure() + ")");
 
         //
         // fill cells:
@@ -426,7 +429,7 @@ public class PdfGenerator extends Generator {
             if (this.zip) {
                 TimeseriesProperties pc = options.getProperties().get(0);
                 this.pdfFile =
-                    JavaHelper.genRndFile(ConfigurationContext.GEN_DIR+"/"+folderPostfix, pc.getProcedure().getId().replaceAll("/", "_")+"_"+formatDate(new Date(options.getBegin()))+
+                    JavaHelper.genRndFile(ConfigurationContext.GEN_DIR+"/"+folderPostfix, pc.getProcedure().replaceAll("/", "_")+"_"+formatDate(new Date(options.getBegin()))+
                             "_"+formatDate(new Date(options.getEnd()))+"_", "pdf");
                 this.pdfURL = ConfigurationContext.GEN_URL + this.pdfFile.getName();
             } else {
@@ -437,7 +440,7 @@ public class PdfGenerator extends Generator {
                 } else {
                     TimeseriesProperties pc = options.getProperties().get(0);
                     this.pdfFile =
-                        JavaHelper.genRndFile(ConfigurationContext.GEN_DIR+"/"+folderPostfix, pc.getProcedure().getId().replaceAll("/", "_")
+                        JavaHelper.genRndFile(ConfigurationContext.GEN_DIR+"/"+folderPostfix, pc.getProcedure().replaceAll("/", "_")
                         		+formatDate(new Date(options.getBegin()))+
                                 "_"+formatDate(new Date(options.getEnd()))+"_", "pdf");
                     this.pdfURL = ConfigurationContext.GEN_URL +folderPostfix +"/"+ this.pdfFile.getName();
