@@ -2,62 +2,52 @@
 <props>
 	<tabs>
 		<tab>DiagramTab</tab>
-		<!-- 
-		If SES is not available or required comment out the 'SesTab'. Then the SES Tab 
-		will not be rendered in the client NOTE: Do not forget to comment out the SES 
-		related Servlet declared in the web.xml also.
-          -->
+		<!-- If SES is not available or required comment out the 'SesTab'. Then 
+			the SES Tab will not be rendered in the client NOTE: Do not forget to comment 
+			out the SES related Servlet declared in the web.xml also. -->
 		<!-- <tab>SesTab</tab> -->
 	</tabs>
-	
+
 	<!-- default time frame for loading timeseries data in days -->
 	<defaultInterval>1</defaultInterval>
-	<!-- default time frame for loading timeseries data for overview diagram in days -->
+	<!-- default time frame for loading timeseries data for overview diagram 
+		in days -->
 	<defaultOverviewInterval>5</defaultOverviewInterval>
 	<!-- default delay before hiding message toaster in seconds -->
 	<toasterFadeout>5</toasterFadeout>
 	<!-- if map selection modal window shall show up at client start -->
 	<showStationSelectorAtStartup>true</showStationSelectorAtStartup>
-	
-	<!-- Default styles for the line and sumline 
-	Possible values: 1=line, 2=area, 3=dots, 4=dashed-->
+
+	<!-- Default styles for the line and sumline Possible values: 1=line, 2=area, 
+		3=dots, 4=dashed -->
 	<defaultHydrographStyle>1</defaultHydrographStyle>
 	<defaultSumLineStyle>2</defaultSumLineStyle>
-	
-	<!-- Default styles values: 1=line, 2=area, 3=dots, 4=dashed
-	secondly for line=1 or sumline=2
-    and thirdly the color for this phenomenon in this format for eg. red #FF0000-->
+
+	<!-- We use the phenomoneId to map default styles. Format: "<phenomenonId>,<lineStyle>,<graphStyle>,<hexColor>" 
+		Default styles values are lineStyle: 1=line, 2=area, 3=dots, 4=dashed .., 
+		graphStyle: line=1 or sumline=2 for eg. red #FF0000 -->
 	<defaultPhenomenonMappings>
-		<phenomenon>urn:ogc:def:property:OGC::Temperature,3,1,#FF0000</phenomenon>
-		<phenomenon>urn:ogc:def:property:OGC::Precipitation1Hour,2,2,#0000FF</phenomenon>
+		<phenomenon>urn:ogc:def:property:OGC::Temperature,3,1,#FF0000
+		</phenomenon>
+		<phenomenon>urn:ogc:def:property:OGC::Precipitation1Hour,2,2,#0000FF
+		</phenomenon>
 	</defaultPhenomenonMappings>
-  
-    <!-- Minimum zoom in the timeframe in the diagram in minutes -->
-    <minTimeFrameZoom>1</minTimeFrameZoom>
-	
+
+	<!-- Minimum zoom in the timeframe in the diagram in minutes -->
+	<minTimeFrameZoom>1</minTimeFrameZoom>
+
 	<!-- default map projection used on maps -->
-    <mapSrs>EPSG:4326</mapSrs>
-    <!-- a WMS URL or just OSM -->
-    <mapUrl>OSM</mapUrl>
-    
-    
-	<!-- 
-	<mapUrl>http://wsvmapserv.wsv.bund.de/wmsdbwk1000</mapUrl> 
-    <wmsLayerName>WmsDBWK1000</wmsLayerName>
-    <wmsStyles>default</wmsStyles>
-    <wmsFormat>image/png</wmsFormat>
-    <wmsIsTransparent>true</wmsIsTransparent>
-    <wmsBGColor>0xffffff</wmsBGColor>
-     -->
-     
-    <!-- Extent where StationSelector is active -->
-    <!-- Fallback is lon/lat BBOX [(-90.0,-45.0);(90.0,45.0) srs: EPSG:4326] -->
-    <!-- 
-    <defaultExtent>
-	    <lleftX>5.8667</lleftX>
-	    <lleftY>45.2703</lleftY>
-	    <urightX>15.0419</urightX>
-	    <urightY>55.0556</urightY>
-    </defaultExtent>
-     -->
+	<mapSrs>EPSG:4326</mapSrs>
+	<!-- a WMS URL or just OSM -->
+	<mapUrl>OSM</mapUrl>
+
+
+	<!-- <mapUrl>http://wsvmapserv.wsv.bund.de/wmsdbwk1000</mapUrl> <wmsLayerName>WmsDBWK1000</wmsLayerName> 
+		<wmsStyles>default</wmsStyles> <wmsFormat>image/png</wmsFormat> <wmsIsTransparent>true</wmsIsTransparent> 
+		<wmsBGColor>0xffffff</wmsBGColor> -->
+
+	<!-- Extent where StationSelector is active -->
+	<!-- Fallback is lon/lat BBOX [(-90.0,-45.0);(90.0,45.0) srs: EPSG:4326] -->
+	<!-- <defaultExtent> <lleftX>5.8667</lleftX> <lleftY>45.2703</lleftY> <urightX>15.0419</urightX> 
+		<urightY>55.0556</urightY> </defaultExtent> -->
 </props>
