@@ -15,6 +15,7 @@ only application to just provide a SOS aggregation layer.
 Features:
 ---------
  * Add REST API to parameters, stations, timeseries raw data and metadata
+ * Add style options to permalink so that graphs of one permalink renders in same color and line width
  * Removed local repository from root pom.xml as all old dependencies are available from 52n repo now
  * Change Metadata structure, now stations in the metadata have a collection of parameter collections
  * RESTful interface expanded and option added to request metadata specific to an SOS (see https://wiki.52north.org/bin/view/SensorWeb/RESTfulTimeseriesWebApp)
