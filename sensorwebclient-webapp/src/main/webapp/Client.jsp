@@ -29,10 +29,11 @@
 			<span id="loadingMsg">Loading ${application.title}</span>
 		</div>
 	</div>
-	<script type="text/javascript" src="js/bookmark.js"></script>
-	<script type="text/javascript" src="js/proj4js-compressed.js"></script>
-	<script type="text/javascript" src="js/OpenLayers/OpenLayers.js"></script>
-	<script type="text/javascript" src="js/OpenStreetMap.js"></script>
-	<script type="text/javascript" src="client/client.nocache.js"></script>
+    <script type="text/javascript" src="client/client.nocache.js"></script>
+    <script type="text/javascript" src="js/OpenLayers/OpenLayers.js"></script>
+    <script type="text/javascript" src="js/proj4js-compressed.js"></script>
+    <script type="text/javascript" src="js/OpenStreetMap.js"></script>
+    <script type="text/javascript" src="js/bookmark.js"></script>
+    <script type="text/javascript" src="js/json2.js"></script>
 </body>
 </html>

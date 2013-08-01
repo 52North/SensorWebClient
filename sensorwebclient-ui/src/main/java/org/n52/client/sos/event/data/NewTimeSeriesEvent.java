@@ -26,6 +26,7 @@ package org.n52.client.sos.event.data;
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.data.handler.NewTimeSeriesEventHandler;
 import org.n52.client.ui.View;
+import org.n52.shared.serializable.pojos.TimeseriesRenderingOptions;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 
@@ -33,8 +34,6 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
 
     public static Type<NewTimeSeriesEventHandler> TYPE = new Type<NewTimeSeriesEventHandler>();
 
-    private String sos;
-    
     private Station station;
     
     private SosTimeseries timeseries;
@@ -45,19 +44,17 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
 
     private boolean requestSensorData;
 
+    private TimeseriesRenderingOptions renderingOptions;
+
     public static class Builder {
-		private String serviceURL; // required
 		private Station station; // required
 		private SosTimeseries timeseries; // required
 		private int width = View.getView().getDataPanelWidth();
 		private int height = View.getView().getDataPanelHeight();
+		private TimeseriesRenderingOptions renderingOptions;
 		private boolean requestSensorData = true;
 		private NewTimeSeriesEventHandler[] blockedHandlers = new NewTimeSeriesEventHandler[0];
     	
-    	public Builder(String sosURL) {
-    		this.serviceURL = sosURL;
-    	}
-
     	public Builder addStation(final Station station) {
     		this.station = station;
     		return this;
@@ -85,11 +82,12 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
     		this.blockedHandlers = handlers;
     		return this;
     	}
+        public Builder addRenderingOptions(TimeseriesRenderingOptions options) {
+            this.renderingOptions = options;
+            return this;
+        }
     	public NewTimeSeriesEvent build() {
     		return new NewTimeSeriesEvent(this);
-    	}
-    	String getServiceURL() {
-    		return this.serviceURL;
     	}
     	Station getStation() {
     		return this.station;
@@ -109,15 +107,18 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
     	NewTimeSeriesEventHandler[] getBlockedHandlers() {
     		return blockedHandlers;
     	}
+    	TimeseriesRenderingOptions getRenderingOptions() {
+    	    return renderingOptions;
+    	}
     }
     
     private NewTimeSeriesEvent(Builder builder) {
-    	this.sos = builder.getServiceURL();
     	this.station = builder.getStation();
     	this.timeseries = builder.getTimeseries();
     	this.width = builder.getWidth();
     	this.height = builder.getHeight();
     	this.requestSensorData = builder.isRequestSensordata();
+    	this.renderingOptions = builder.getRenderingOptions();
     }
     
     public boolean requestSensordata() {
@@ -125,7 +126,7 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
     }
 
     public String getServiceUrl() {
-        return this.sos;
+        return this.timeseries.getServiceUrl();
     }
     
     public Station getStation() {
@@ -142,6 +143,10 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
 
     public int getHeight() {
         return this.height;
+    }
+    
+    public TimeseriesRenderingOptions getRenderingOptions() {
+        return this.renderingOptions;
     }
 
     @Override
