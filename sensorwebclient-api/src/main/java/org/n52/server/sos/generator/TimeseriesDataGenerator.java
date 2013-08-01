@@ -44,7 +44,6 @@ import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
-import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,23 +111,22 @@ public class TimeseriesDataGenerator extends Generator {
                                 if (LOGGER.isDebugEnabled()) {
                                     LOGGER.debug(property.getOffFoiProcPhenCombination());
                                 }
-                                if (property.getFoi().getId().equals(foi)
-                                        && property.getPhenomenon().getId().equals(obsProp.getURN())
-                                        && property.getProcedure().getId().equals(procedure)) {
+                                if (property.getFeature().equals(foi)
+                                        && property.getPhenomenon().equals(obsProp.getURN())
+                                        && property.getProcedure().equals(procedure)) {
                                     selectedProperties = property;
-                                    Phenomenon phenomenon = selectedProperties.getPhenomenon();
-                                    String phenomenonId = phenomenon.getId();
+                                    String phenomenonId = selectedProperties.getPhenomenon();
                                     HashMap<Long, String> data = TimeseriesFactory.compressToHashMap(txCollection, foi, phenomenonId, procedure);
-                                    allTimeSeries.put(selectedProperties.getTsID(), data);
+                                    allTimeSeries.put(selectedProperties.getTimeseriesId(), data);
                                     break;
                                 } else {
                                     if (LOGGER.isDebugEnabled()) {
                                         StringBuilder sb = new StringBuilder();
                                         sb.append("Could not produce representation: ");
                                         sb.append("TimeSeries properties do not match [");
-                                        sb.append("foiId: ").append(property.getFoi().getId());
-                                        sb.append(", phenId: ").append(property.getPhenomenon().getId());
-                                        sb.append(", procId: ").append(property.getProcedure().getId());
+                                        sb.append("foiId: ").append(property.getFeature());
+                                        sb.append(", phenId: ").append(property.getPhenomenon());
+                                        sb.append(", procId: ").append(property.getProcedure());
                                         sb.append("]");
                                         LOGGER.debug(sb.toString());
                                     }
@@ -141,8 +139,8 @@ public class TimeseriesDataGenerator extends Generator {
 
             // check if some TS did not get data and fill blank spots
             for (TimeseriesProperties prop : options.getProperties()) {
-                if (!allTimeSeries.containsKey(prop.getTsID())) {
-                    allTimeSeries.put(prop.getTsID(), new HashMap<Long, String>());
+                if (!allTimeSeries.containsKey(prop.getTimeseriesId())) {
+                    allTimeSeries.put(prop.getTimeseriesId(), new HashMap<Long, String>());
                 }
             }
 

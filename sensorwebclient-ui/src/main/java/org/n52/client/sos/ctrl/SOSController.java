@@ -32,7 +32,7 @@ import org.eesgmbh.gimv.client.event.SetOverviewDomainBoundsEvent;
 import org.eesgmbh.gimv.client.event.SetOverviewDomainBoundsEventHandler;
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.ServiceController;
-import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
+import org.n52.client.sos.data.TimeseriesDataStore;
 import org.n52.client.sos.event.data.ExportEvent;
 import org.n52.client.sos.event.data.FinishedLoadingTimeSeriesEvent;
 import org.n52.client.sos.event.data.GetFeatureEvent;
@@ -65,7 +65,7 @@ import org.n52.client.sos.event.data.handler.StoreOfferingEventHandler;
 import org.n52.client.sos.event.data.handler.StoreProcedureEventHandler;
 import org.n52.client.sos.event.data.handler.StoreStationEventHandler;
 import org.n52.client.sos.event.data.handler.UpdateSOSMetadataEventHandler;
-import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.sos.legend.Timeseries;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
@@ -144,7 +144,7 @@ public class SOSController extends ServiceController {
         }
 
         public void onRequest(RequestSensorDataEvent evt) {
-            TimeSeries[] sortedTimeSeries = DataStoreTimeSeriesImpl.getInst().getTimeSeriesSorted();
+            Timeseries[] sortedTimeSeries = TimeseriesDataStore.getTimeSeriesDataStore().getTimeSeriesSorted();
             String id = evt.getID();
             if (id != null) {
             	getRequestManager().requestSensorData(sortedTimeSeries, id);

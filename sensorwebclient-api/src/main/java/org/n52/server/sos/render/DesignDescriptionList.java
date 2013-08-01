@@ -25,143 +25,57 @@
 package org.n52.server.sos.render;
 
 import java.awt.Color;
-import java.util.ArrayList;
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-public class DesignDescriptionList extends ArrayList<DesignDescriptionList.DesignDescription> {
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.shared.serializable.pojos.sos.Feature;
+import org.n52.shared.serializable.pojos.sos.Phenomenon;
+import org.n52.shared.serializable.pojos.sos.Procedure;
+
+public class DesignDescriptionList implements Serializable {
 
     private static final long serialVersionUID = -2304572574771192746L;
+    
+    private Map<String, RenderingDesign> designDescriptions;
 
     private String domainAxisLabel;
 
     public DesignDescriptionList(String domainAxisLabel) {
+        this.designDescriptions = new HashMap<String, RenderingDesign>();
         this.domainAxisLabel = domainAxisLabel;
     }
 
     public String getDomainAxisLabel() {
         return this.domainAxisLabel;
     }
-
-    public DesignDescription get(String observedPropertyID, String procedureID, String featureOfInterestID) {
-        int index =
-                super.indexOf(new DesignDescription(observedPropertyID, procedureID,
-                        featureOfInterestID, null, null, null, null, null, null, null, 1, false));
-        if (index != -1) {
-            return super.get(index);
-        }
-        return null;
+    
+    public Collection<RenderingDesign> getAllDesigns() {
+        return designDescriptions.values();
     }
 
-    public void add(String observedPropertyID, String procedureID, String featureOfInterestID,
-            String obsPropDesc, String procDesc, String foiDesc, String label,
-            String uomLabel, Color color, String lineStyle, int lineWidth, boolean grid) {
-        super.add(new DesignDescription(observedPropertyID, procedureID, featureOfInterestID,
-                obsPropDesc, procDesc, foiDesc, label, uomLabel, color, lineStyle, lineWidth, grid));
+    public RenderingDesign get(String timeseriesId) {
+        return designDescriptions.get(timeseriesId);
     }
 
-    public class DesignDescription {
-
-        private String observedPropertyID;
-
-        private String procedureID;
-
-        private String featureOfInterestID;
-
-        private String obsPropDesc;
-
-        private String procDesc;
-
-        private String foiDesc;
-
-        private String label;
-
-        private String uomLabel;
-
-        private Color color;
-
-        private String lineStyle;
-        
-        private int lineWidth;
-
-        private boolean grid;
-
-		public DesignDescription(String observedPropertyID, String procedureID,
-				String featureOfInterestID, String obsPropDesc,
-				String procDesc, String foiDesc, String label, String uomLabel,
-				Color color, String lineStyle, int lineWidth, boolean grid) {
-            this.observedPropertyID = observedPropertyID;
-            this.procedureID = procedureID;
-            this.featureOfInterestID = featureOfInterestID;
-            this.obsPropDesc = obsPropDesc;
-            this.procDesc = procDesc;
-            this.foiDesc = foiDesc;
-            this.label = label;
-            this.uomLabel = uomLabel;
-            this.color = color;
-            this.lineStyle = lineStyle;
-            this.lineWidth = lineWidth;
-            this.grid = grid;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            DesignDescription dDesc = (DesignDescription) o;
-            if (getFeatureOfInterestID().equals(dDesc.getFeatureOfInterestID())) {
-                if (getObservedPropertyID().equals(dDesc.getObservedPropertyID())) {
-                    if (getProcedureID().equals(dDesc.getProcedureID())) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        public Color getColor() {
-            return this.color;
-        }
-
-        public boolean isGrid() {
-            return this.grid;
-        }
-
-        public String getLineStyle() {
-            return this.lineStyle;
-        }
-        
-        public int getLineWidth() {
-			return this.lineWidth;
-		}
-
-        public String getFeatureOfInterestID() {
-            return this.featureOfInterestID;
-        }
-
-        public String getObservedPropertyID() {
-            return this.observedPropertyID;
-        }
-
-        public String getProcedureID() {
-            return this.procedureID;
-        }
-
-        public String getLabel() {
-            return this.label;
-        }
-
-        public String getUomLabel() {
-            return this.uomLabel;
-        }
-
-        public String getObservedPropertyDesc() {
-            return this.obsPropDesc;
-        }
-
-        public String getFeatureOfInterestDesc() {
-            return this.foiDesc;
-        }
-
-        public String getProcedureDesc() {
-            return this.procDesc;
-        }
+    public void add(Phenomenon phenomenon, Procedure procedure, Feature feature, TimeseriesProperties tsProperties, Color color, String lineStyle, int lineWidth, boolean grid) {
+        RenderingDesign designDescription = new RenderingDesign(phenomenon,
+                                                                    procedure,
+                                                                    feature,
+                                                                    tsProperties.getLabel(),
+                                                                    tsProperties.getUnitOfMeasure(),
+                                                                    color,
+                                                                    lineStyle,
+                                                                    lineWidth,
+                                                                    grid);
+        designDescriptions.put(tsProperties.getTimeseries().getTimeseriesId(), designDescription);
+    }
+    
+    public int size() {
+        return designDescriptions.size();
     }
 
+    
 }

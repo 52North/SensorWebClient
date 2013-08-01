@@ -42,10 +42,6 @@ import org.n52.server.api.v0.output.TimeseriesDataCollection;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.TimeseriesRenderingOptions;
-import org.n52.shared.serializable.pojos.sos.Feature;
-import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.Phenomenon;
-import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
@@ -118,26 +114,12 @@ public abstract class DataService {
         SOSMetadata metadata = getMetadataForTimeseriesId(timeseriesId);
         Station station = metadata.getStationByTimeSeriesId(timeseriesId);
         SosTimeseries timeseries = station.getTimeseriesById(timeseriesId);
-        String sosUrl = timeseries.getServiceUrl();
         TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
-        Feature foi = lookup.getFeature(timeseries.getFeature());
-        Phenomenon phenomenon = lookup.getPhenomenon(timeseries.getPhenomenon());
-        Procedure procedure = lookup.getProcedure(timeseries.getProcedure());
-        Offering offering = lookup.getOffering(timeseries.getOffering());
-        TimeseriesProperties properties = new TimeseriesProperties(sosUrl,
-                                                                   station,
-                                                                   offering,
-                                                                   foi,
-                                                                   procedure,
-                                                                   phenomenon,
-                                                                   0,
-                                                                   0,
-                                                                   "???",
-                                                                   true);
+        TimeseriesProperties properties = new TimeseriesProperties(timeseries, station, 0, 0, "???", true);
+        properties.setStationName(lookup.getFeature(timeseries.getFeature()).getLabel());
         if (renderingOptions != null) {
-            properties.setHexColor(renderingOptions.getHexColor());
+            properties.setRenderingOptions(renderingOptions);
         }
-        properties.setTsID(timeseriesId);
         return properties;
     }
 

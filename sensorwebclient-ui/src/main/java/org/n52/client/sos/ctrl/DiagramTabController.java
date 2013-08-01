@@ -24,6 +24,9 @@
 
 package org.n52.client.sos.ctrl;
 
+import static org.n52.client.bus.EventBus.getMainEventBus;
+import static org.n52.client.sos.data.TimeseriesDataStore.getTimeSeriesDataStore;
+
 import java.util.ArrayList;
 
 import org.eesgmbh.gimv.client.event.ChangeImagePixelBoundsEvent;
@@ -41,7 +44,7 @@ import org.n52.client.Application;
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.ATabEventBroker;
 import org.n52.client.ctrl.Controller;
-import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
+import org.n52.client.sos.data.TimeseriesDataStore;
 import org.n52.client.sos.event.DatesChangedEvent;
 import org.n52.client.sos.event.InitEvent;
 import org.n52.client.sos.event.ResizeEvent;
@@ -64,7 +67,7 @@ import org.n52.client.sos.event.handler.ResizeEventHandler;
 import org.n52.client.sos.event.handler.SwitchGridEventHandler;
 import org.n52.client.sos.event.handler.TabSelectedEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
-import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.sos.legend.Timeseries;
 import org.n52.client.sos.ui.DiagramTab;
 import org.n52.client.ui.View;
 import org.n52.client.ui.legend.LegendElement;
@@ -142,7 +145,7 @@ public class DiagramTabController extends Controller<DiagramTab> {
         private void contributeToLegend() {
             if (isSelfSelectedTab()) {
                 ArrayList<LegendElement> legendItems = new ArrayList<LegendElement>();
-                TimeSeries[] timeSeries = DataStoreTimeSeriesImpl.getInst().getTimeSeriesSorted();
+                Timeseries[] timeSeries = TimeseriesDataStore.getTimeSeriesDataStore().getTimeSeriesSorted();
                 for (int i = 0; i < timeSeries.length; i++) {
                     legendItems.add(timeSeries[i].getLegendElement());
                 }
@@ -169,21 +172,21 @@ public class DiagramTabController extends Controller<DiagramTab> {
 
         public void onTimeSeriesChanged(TimeSeriesChangedEvent evt) {
             contributeToLegend();
-            if (DataStoreTimeSeriesImpl.getInst().getDataItems().isEmpty()) {
+            if (getTimeSeriesDataStore().getDataItems().isEmpty()) {
                 DiagramTabController.this.tab.hideTooltips();
                 DiagramTabController.this.getTab().removeSlider();
-                EventBus.getMainEventBus().fireEvent(new LoadImageDataEvent());
+                getMainEventBus().fireEvent(new LoadImageDataEvent());
             }
             DiagramTabController.this.getTab().addSlider();
         }
 
         public void onRequestData(RequestDataEvent evt) {
-            EventBus.getMainEventBus().fireEvent(new LoadImageDataEvent());
+            getMainEventBus().fireEvent(new LoadImageDataEvent());
         }
 
         public void onDeleteTimeSeries(DeleteTimeSeriesEvent evt) {
         	getTab().showLoadingSpinner();
-            if (DataStoreTimeSeriesImpl.getInst().getDataItems().isEmpty()) {
+            if (getTimeSeriesDataStore().getDataItems().isEmpty()) {
                 DiagramTabController.this.tab.hideTooltips();
             }
         }
@@ -196,18 +199,14 @@ public class DiagramTabController extends Controller<DiagramTab> {
         public void onNewTimeSeries(NewTimeSeriesEvent evt) {
         	getTab().showLoadingSpinner();
             if (isSelfSelectedTab()) {
-                DiagramTabController.this.getTab().addSlider(); // TODO check, if onUpdate is enough
+                DiagramTabController.this.getTab().addSlider();
                 /*
                  * automatically switch on zoom and pan functionality
                  */
-                EventBus.getMainEventBus().fireEvent(StateChangeEvent.createMove());
-                EventBus.getMainEventBus().fireEvent(StateChangeEvent.createMove());
+                getMainEventBus().fireEvent(StateChangeEvent.createMove());
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.n52.client.eventBus.events.handler.InitEventHandler#onInit(org.n52.client.eventBus.events.InitEvent)
-         */
         public void onInit(InitEvent evt) {
             DiagramTabController.this.getTab().init();
         }

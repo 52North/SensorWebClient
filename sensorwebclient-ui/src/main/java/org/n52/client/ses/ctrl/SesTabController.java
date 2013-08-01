@@ -49,12 +49,12 @@ import org.n52.client.ses.event.handler.SetRoleEventHandler;
 import org.n52.client.ses.event.handler.ShowAllUserEventHandler;
 import org.n52.client.ses.ui.FormLayout.LayoutType;
 import org.n52.client.ses.ui.SesTab;
-import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
+import org.n52.client.sos.data.TimeseriesDataStore;
 import org.n52.client.sos.event.TabSelectedEvent;
 import org.n52.client.sos.event.TimeSeriesChangedEvent;
 import org.n52.client.sos.event.handler.TabSelectedEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
-import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.sos.legend.Timeseries;
 import org.n52.client.ui.View;
 import org.n52.client.ui.legend.LegendElement;
 import org.n52.shared.serializable.pojos.UserRole;
@@ -212,7 +212,7 @@ public class SesTabController extends Controller<SesTab> {
         private void contributeToLegend() {
             if (isSelfSelectedTab()) {
                 ArrayList<LegendElement> legendElems = new ArrayList<LegendElement>();
-                TimeSeries[] ts = DataStoreTimeSeriesImpl.getInst().getTimeSeriesSorted();
+                Timeseries[] ts = TimeseriesDataStore.getTimeSeriesDataStore().getTimeSeriesSorted();
                 for (int i = 0; i < ts.length; i++) {
                     legendElems.add(ts[i].getLegendElement());
                 }

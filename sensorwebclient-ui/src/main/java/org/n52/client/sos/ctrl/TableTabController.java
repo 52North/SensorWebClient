@@ -33,7 +33,7 @@ import org.n52.client.ctrl.Controller;
 import org.n52.client.ctrl.ExceptionHandler;
 import org.n52.client.ctrl.GUIException;
 import org.n52.client.ctrl.TimeManager;
-import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
+import org.n52.client.sos.data.TimeseriesDataStore;
 import org.n52.client.sos.event.LegendElementSelectedEvent;
 import org.n52.client.sos.event.ResizeEvent;
 import org.n52.client.sos.event.TabSelectedEvent;
@@ -49,7 +49,7 @@ import org.n52.client.sos.event.handler.LegendElementSelectedEventHandler;
 import org.n52.client.sos.event.handler.ResizeEventHandler;
 import org.n52.client.sos.event.handler.TabSelectedEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
-import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.sos.legend.Timeseries;
 import org.n52.client.sos.ui.TableTab;
 import org.n52.client.ui.View;
 import org.n52.client.ui.legend.Legend;
@@ -98,7 +98,7 @@ public class TableTabController extends Controller<TableTab> {
         private void contributeToLegend() {
             if (isSelfSelectedTab()) {
                 ArrayList<LegendElement> legendElems = new ArrayList<LegendElement>();
-                TimeSeries[] ts = DataStoreTimeSeriesImpl.getInst().getTimeSeriesSorted();
+                Timeseries[] ts = TimeseriesDataStore.getTimeSeriesDataStore().getTimeSeriesSorted();
                 for (int i = 0; i < ts.length; i++) {
                     legendElems.add(ts[i].getLegendElement());
                 }
@@ -183,8 +183,8 @@ public class TableTabController extends Controller<TableTab> {
             if (isSelfSelectedTab()) {
                 HashMap<Long, String> result = new HashMap<Long, String>();
 
-                HashMap<String, TimeSeries> data = DataStoreTimeSeriesImpl.getInst().getDataItems();
-                for (TimeSeries dw : data.values()) {
+                HashMap<String, Timeseries> data = TimeseriesDataStore.getTimeSeriesDataStore().getDataItems();
+                for (Timeseries dw : data.values()) {
 
                     if (dw.equals(TableTabController.this.getSelectedLegendElement().getDataWrapper())) {
                         result = dw.getData(TimeManager.getInst().getBegin(), TimeManager.getInst().getEnd());
@@ -212,8 +212,8 @@ public class TableTabController extends Controller<TableTab> {
         public void onDeleteTimeSeries(DeleteTimeSeriesEvent evt) {
 
             HashMap<Long, String> result = new HashMap<Long, String>();
-            HashMap<String, TimeSeries> data = DataStoreTimeSeriesImpl.getInst().getDataItems();
-            for (TimeSeries dw : data.values()) {
+            HashMap<String, Timeseries> data = TimeseriesDataStore.getTimeSeriesDataStore().getDataItems();
+            for (Timeseries dw : data.values()) {
             	//
             	try {
                     if (dw.equals(TableTabController.this.getSelectedLegendElement().getDataWrapper())) {
