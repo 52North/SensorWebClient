@@ -27,7 +27,7 @@ import java.util.Collection;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.data.handler.ExportEventHandler;
-import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.sos.legend.Timeseries;
 
 public class ExportEvent extends FilteredDispatchGwtEvent<ExportEventHandler> {
 
@@ -43,16 +43,16 @@ public class ExportEvent extends FilteredDispatchGwtEvent<ExportEventHandler> {
         PDF_ALL_IN_ONE;
     }
 
-    private Collection<TimeSeries> timeseries;
+    private Collection<Timeseries> timeseries;
 
     private ExportType type;
 
-    public ExportEvent(Collection<TimeSeries> ts, ExportType type) {
+    public ExportEvent(Collection<Timeseries> ts, ExportType type) {
         this.timeseries = ts;
         this.type = type;
     }
 
-    public Collection<TimeSeries> getTimeseries() {
+    public Collection<Timeseries> getTimeseries() {
         return this.timeseries;
     }
 

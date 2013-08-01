@@ -24,6 +24,8 @@
 
 package org.n52.client.sos.data;
 
+import static org.n52.client.bus.EventBus.getMainEventBus;
+import static org.n52.client.ctrl.ExceptionHandler.handleException;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.ArrayList;
@@ -67,34 +69,34 @@ import org.n52.client.sos.event.data.handler.UndoEventHandler;
 import org.n52.client.sos.event.handler.ChangeTimeSeriesStyleEventHandler;
 import org.n52.client.sos.event.handler.SwitchGridEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
-import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.sos.legend.Timeseries;
 import org.n52.client.ui.Toaster;
 import org.n52.client.ui.legend.LegendDataComparator;
 import org.n52.client.ui.legend.LegendElement;
 import org.n52.client.ui.legend.LegendEntryTimeSeries;
 import org.n52.shared.serializable.pojos.Axis;
 
-public class DataStoreTimeSeriesImpl extends ADataStore<TimeSeries> {
+public class TimeseriesDataStore extends ADataStore<Timeseries> {
 
-    private static DataStoreTimeSeriesImpl inst;
+    private static TimeseriesDataStore inst;
 
     private DataStoreTimeSeriesEventBroker eventBroker;
 
     private boolean gridEnabled = true;
 
-    private DataStoreTimeSeriesImpl() {
+    private TimeseriesDataStore() {
         this.eventBroker = new DataStoreTimeSeriesEventBroker();
     }
 
-    public static DataStoreTimeSeriesImpl getInst() {
+    public static TimeseriesDataStore getTimeSeriesDataStore() {
         if (inst == null) {
-            inst = new DataStoreTimeSeriesImpl();
+            inst = new TimeseriesDataStore();
         }
         return inst;
     }
 
-    public TimeSeries[] getTimeSeriesSorted() {
-        TimeSeries[] timeSeries = new TimeSeries[this.dataItems.size()];
+    public Timeseries[] getTimeSeriesSorted() {
+        Timeseries[] timeSeries = new Timeseries[this.dataItems.size()];
         Arrays.sort(getDataAsArray(timeSeries), new LegendDataComparator());
         return timeSeries;
     }
@@ -119,42 +121,42 @@ public class DataStoreTimeSeriesImpl extends ADataStore<TimeSeries> {
             SwitchGridEventHandler {
 
         public DataStoreTimeSeriesEventBroker() {
-            EventBus.getMainEventBus().addHandler(DeleteTimeSeriesEvent.TYPE, this);
-            EventBus.getMainEventBus().addHandler(StoreTimeSeriesPropsEvent.TYPE, this);
-            EventBus.getMainEventBus().addHandler(StoreTimeSeriesEvent.TYPE, this);
-            EventBus.getMainEventBus().addHandler(StoreTimeSeriesDataEvent.TYPE, this);
-            EventBus.getMainEventBus().addHandler(ChangeTimeSeriesStyleEvent.TYPE, this);
-            EventBus.getMainEventBus().addHandler(StoreAxisDataEvent.TYPE, this);
-            EventBus.getMainEventBus().addHandler(SetDomainBoundsEvent.TYPE, this);
-            EventBus.getMainEventBus().addHandler(UndoEvent.TYPE, this);
-            EventBus.getMainEventBus().addHandler(FirstValueOfTimeSeriesEvent.TYPE, this);
-            EventBus.getMainEventBus().addHandler(StoreTimeSeriesLastValueEvent.TYPE, this);
-            EventBus.getMainEventBus().addHandler(SwitchAutoscaleEvent.TYPE, this);
-            EventBus.getMainEventBus().addHandler(TimeSeriesHasDataEvent.TYPE, this);
-            EventBus.getMainEventBus().addHandler(SwitchGridEvent.TYPE, this);
+            getMainEventBus().addHandler(DeleteTimeSeriesEvent.TYPE, this);
+            getMainEventBus().addHandler(StoreTimeSeriesPropsEvent.TYPE, this);
+            getMainEventBus().addHandler(StoreTimeSeriesEvent.TYPE, this);
+            getMainEventBus().addHandler(StoreTimeSeriesDataEvent.TYPE, this);
+            getMainEventBus().addHandler(ChangeTimeSeriesStyleEvent.TYPE, this);
+            getMainEventBus().addHandler(StoreAxisDataEvent.TYPE, this);
+            getMainEventBus().addHandler(SetDomainBoundsEvent.TYPE, this);
+            getMainEventBus().addHandler(UndoEvent.TYPE, this);
+            getMainEventBus().addHandler(FirstValueOfTimeSeriesEvent.TYPE, this);
+            getMainEventBus().addHandler(StoreTimeSeriesLastValueEvent.TYPE, this);
+            getMainEventBus().addHandler(SwitchAutoscaleEvent.TYPE, this);
+            getMainEventBus().addHandler(TimeSeriesHasDataEvent.TYPE, this);
+            getMainEventBus().addHandler(SwitchGridEvent.TYPE, this);
         }
 
         public void onStore(StoreTimeSeriesEvent evt) {
             storeDataItem(evt.getTimeSeries().getId(), evt.getTimeSeries());
-            EventBus.getMainEventBus().fireEvent(new TimeSeriesChangedEvent());
+            getMainEventBus().fireEvent(new TimeSeriesChangedEvent());
         }
 
         public void onStore(StoreTimeSeriesDataEvent evt) {
             try {
                 Set<String> itemIds = evt.getData().keySet();
                 for (String id : itemIds) {
-                    TimeSeries timeSeries = getDataItem(id);
+                    Timeseries timeSeries = getDataItem(id);
                     timeSeries.addData(evt.getData().get(id));
                 }
-                EventBus.getMainEventBus().fireEvent(new TimeSeriesChangedEvent());
+                getMainEventBus().fireEvent(new TimeSeriesChangedEvent());
             }
             catch (DataparsingException e1) {
-                ExceptionHandler.handleException(e1);
+                handleException(e1);
             }
         }
 
-        public TimeSeries getFirst() {
-            if ( !DataStoreTimeSeriesImpl.this.dataItems.isEmpty()) {
+        public Timeseries getFirst() {
+            if ( !TimeseriesDataStore.this.dataItems.isEmpty()) {
                 return getTimeSeriesSorted()[0];
             }
             return null;
@@ -165,7 +167,7 @@ public class DataStoreTimeSeriesImpl extends ADataStore<TimeSeries> {
         }
 
         public void onDeleteTimeSeries(DeleteTimeSeriesEvent evt) {
-            TimeSeries tsDataItem = getDataItem(evt.getId());
+            Timeseries tsDataItem = getDataItem(evt.getId());
             tsDataItem.setLegendElement(null);
             deleteDataItem(evt.getId());
             if (getFirst() != null) {
@@ -175,8 +177,8 @@ public class DataStoreTimeSeriesImpl extends ADataStore<TimeSeries> {
             }
 
             ArrayList<TimeSeriesChangedEventHandler> updateHandlers = new ArrayList<TimeSeriesChangedEventHandler>();
-            Collection<TimeSeries> timeSeries = DataStoreTimeSeriesImpl.this.dataItems.values();
-            for (TimeSeries timeSerie : timeSeries) {
+            Collection<Timeseries> timeSeries = TimeseriesDataStore.this.dataItems.values();
+            for (Timeseries timeSerie : timeSeries) {
                 LegendEntryTimeSeries le = (LegendEntryTimeSeries) timeSerie.getLegendElement();
                 updateHandlers.add(le.getEventBroker());
             }
@@ -187,7 +189,7 @@ public class DataStoreTimeSeriesImpl extends ADataStore<TimeSeries> {
         }
 
         public void onChange(ChangeTimeSeriesStyleEvent evt) {
-            TimeSeries ts = getDataItem(evt.getID());
+            Timeseries ts = getDataItem(evt.getID());
             ts.setColor(evt.getHexColor());
             ts.setOpacity(evt.getOpacityPercentage());
             ts.setScaleToZero(evt.isZeroScaled());
@@ -197,7 +199,7 @@ public class DataStoreTimeSeriesImpl extends ADataStore<TimeSeries> {
 
         public void onStore(StoreAxisDataEvent evt) {
             try {
-                TimeSeries dataItem = getDataItem(evt.getTsID());
+                Timeseries dataItem = getDataItem(evt.getTsID());
                 if (dataItem.getProperties().isSetAxis()) {
                     dataItem.setAxisData(evt.getAxis());
                 }
@@ -208,7 +210,7 @@ public class DataStoreTimeSeriesImpl extends ADataStore<TimeSeries> {
         }
 
         public void onUndo() {
-            TimeSeries[] series = DataStoreTimeSeriesImpl.getInst().getTimeSeriesSorted();
+            Timeseries[] series = TimeseriesDataStore.getTimeSeriesDataStore().getTimeSeriesSorted();
             for (int i = 0; i < series.length; i++) {
                 series[i].popAxis();
                 series[i].getProperties().setSetAxis(false);
@@ -217,7 +219,7 @@ public class DataStoreTimeSeriesImpl extends ADataStore<TimeSeries> {
         }
 
         public void onStore(FirstValueOfTimeSeriesEvent evt) {
-            TimeSeries ts = getDataItem(evt.getTsID());
+            Timeseries ts = getDataItem(evt.getTsID());
             if (ts != null) {
                 ts.setFirstValueDate(evt.getDate());
                 ts.setFirstValue(evt.getVal());
@@ -225,7 +227,7 @@ public class DataStoreTimeSeriesImpl extends ADataStore<TimeSeries> {
         }
 
         public void onStore(StoreTimeSeriesLastValueEvent evt) {
-            TimeSeries ts = getDataItem(evt.getTsID());
+            Timeseries ts = getDataItem(evt.getTsID());
             if (ts != null) {
                 ts.setLastValueDate(evt.getDate());
                 ts.setLastValue(evt.getVal());
@@ -233,7 +235,7 @@ public class DataStoreTimeSeriesImpl extends ADataStore<TimeSeries> {
         }
 
         public void onSwitch(SwitchAutoscaleEvent evt) {
-            for (TimeSeries ts : getDataItems().values()) {
+            for (Timeseries ts : getDataItems().values()) {
                 ts.setAutoScale(evt.getSwitch());
             }
         }
@@ -251,7 +253,7 @@ public class DataStoreTimeSeriesImpl extends ADataStore<TimeSeries> {
 
             EventBus.getMainEventBus().fireEvent(new DatesChangedEvent(begin, end, true));
 
-            for (TimeSeries ts : DataStoreTimeSeriesImpl.getInst().getTimeSeriesSorted()) {
+            for (Timeseries ts : TimeseriesDataStore.getTimeSeriesDataStore().getTimeSeriesSorted()) {
                 if (ts.getProperties().isAutoScale() != true) {
                     Axis a = ts.getProperties().getAxis();
                     double topDiff = a.getMinY() - top;
@@ -271,7 +273,7 @@ public class DataStoreTimeSeriesImpl extends ADataStore<TimeSeries> {
                 } 
 
             }
-            if (DataStoreTimeSeriesImpl.getInst().getTimeSeriesSorted().length > 0) {
+            if (TimeseriesDataStore.getTimeSeriesDataStore().getTimeSeriesSorted().length > 0) {
                 // EventBus.getInst().fireEvent(new RequestDataEvent());
             }
 
@@ -279,14 +281,14 @@ public class DataStoreTimeSeriesImpl extends ADataStore<TimeSeries> {
 
         public void onHasData(TimeSeriesHasDataEvent evt) {
             try {
-                DataStoreTimeSeriesImpl.this.getDataItem(evt.getTSID()).setHasData(evt.hasData());
+                TimeseriesDataStore.this.getDataItem(evt.getTSID()).setHasData(evt.hasData());
             } catch (NullPointerException e) {
                 Toaster.getToasterInstance().addErrorMessage(i18n.timeSeriesNotExists());
             }
         }
 
         public void onSwitch() {
-            DataStoreTimeSeriesImpl.this.gridEnabled = !DataStoreTimeSeriesImpl.this.gridEnabled;
+            TimeseriesDataStore.this.gridEnabled = !TimeseriesDataStore.this.gridEnabled;
         }
     }
 

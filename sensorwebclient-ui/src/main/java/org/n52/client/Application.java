@@ -29,6 +29,7 @@ import static org.n52.client.ctrl.PropertiesManager.getPropertiesManager;
 import static org.n52.client.ctrl.RequestManager.hasUnfinishedRequests;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 import static org.n52.client.ui.Toaster.getToasterInstance;
+import static org.n52.client.util.ClientUtils.getDecodedParameters;
 import static org.n52.ext.link.sos.PermalinkParameter.BEGIN;
 import static org.n52.ext.link.sos.PermalinkParameter.END;
 import static org.n52.ext.link.sos.PermalinkParameter.FEATURES;
@@ -70,6 +71,7 @@ import org.n52.client.ui.View;
 import org.n52.client.util.ClientUtils;
 import org.n52.ext.link.sos.PermalinkParameter;
 import org.n52.ext.link.sos.TimeRange;
+import org.n52.shared.serializable.pojos.TimeseriesRenderingOptions;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SOSMetadataBuilder;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
@@ -77,10 +79,14 @@ import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.json.client.JSONNumber;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 
@@ -135,6 +141,7 @@ public final class Application implements EntryPoint {
                 String[] offerings = getDecodedParameters(OFFERINGS);
                 String[] procedures = getDecodedParameters(PROCEDURES);
                 String[] phenomenons = getDecodedParameters(PHENOMENONS);
+                String[] options = getDecodedParameters("options");
                 TimeRange timeRange = createTimeRange();
 
                 String locale = Window.Location.getParameter("locale");
@@ -159,7 +166,7 @@ public final class Application implements EntryPoint {
                     final String procedure = procedures[i];
                     final String phenomenon = phenomenons[i];
                     final String feature = features[i];
-
+                    
                     SosTimeseries sosTimeseries = new SosTimeseries();
                     sosTimeseries.setFeature(feature);
                     sosTimeseries.setOffering(offering);
@@ -167,7 +174,15 @@ public final class Application implements EntryPoint {
                     sosTimeseries.setServiceUrl(service);
                     sosTimeseries.setProcedure(procedure);
                     GWT.log("Timeseries to load: " + sosTimeseries);
-                    permalinkController.addTimeseries(sosTimeseries);
+                    
+                    TimeseriesRenderingOptions tsOptions = null;
+                    if (options != null && options.length > i) {
+                        tsOptions = createRenderingOptions(options[i]);
+                        GWT.log("with options: " + options[i]);
+                        permalinkController.addTimeseries(sosTimeseries, tsOptions);
+                    } else {
+                        permalinkController.addTimeseries(sosTimeseries);
+                    }
                     
                     SOSMetadataBuilder builder = new SOSMetadataBuilder()
                             .addServiceURL(service)
@@ -198,6 +213,27 @@ public final class Application implements EntryPoint {
             finalEvents();
         }
     }
+    
+    private static TimeseriesRenderingOptions createRenderingOptions(String options) {
+        if (options == null) {
+            return new TimeseriesRenderingOptions();
+        }
+        TimeseriesRenderingOptions tsOptions = new TimeseriesRenderingOptions();
+        JSONObject tsRenderingOptions = new JSONObject(parseUntrustedJson(options));
+        if (tsRenderingOptions.containsKey("color")) {
+            JSONString color = tsRenderingOptions.get("color").isString();
+            tsOptions.setColor(color.stringValue());
+        }
+        if (tsRenderingOptions.containsKey("lineWidth")) {
+            JSONNumber lineWidth = tsRenderingOptions.get("lineWidth").isNumber();
+            tsOptions.setLineWidth((int)lineWidth.doubleValue());
+        }
+        return tsOptions;
+    }
+
+    private native static JavaScriptObject parseUntrustedJson(String jsonString) /*-{ 
+        return $wnd.JSON.parse(jsonString);    
+    }-*/; 
 
     private static boolean isGwtHostedModeParameterOnly() {
         Map<String, List<String>> parameters = Window.Location.getParameterMap();
@@ -214,16 +250,6 @@ public final class Application implements EntryPoint {
 
     private static String getDecodedParameter(PermalinkParameter parameter) {
         return Window.Location.getParameter(parameter.nameLowerCase());
-    }
-
-    private static String[] getDecodedParameters(PermalinkParameter parameter) {
-        String value = Window.Location.getParameter(parameter.nameLowerCase());
-        if (value == null || value.isEmpty()) {
-            return new String[] {};
-        }
-        else {
-            return value.split(",");
-        }
     }
 
     private static void fireNewTimeRangeEvent(TimeRange timeRange) {

@@ -25,10 +25,10 @@
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>sensorwebclient-ui</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>org.n52.sensorweb</groupId>
-            <artifactId>sensorwebclient-sos-rest</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.n52.sensorweb</groupId>
+			<artifactId>sensorwebclient-sos-rest</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>sensorwebclient-sos-server</artifactId>
@@ -82,12 +82,12 @@
 				</excludes>
 			</resource>
 			<resource>
-                <!-- exclude cache data -->
-                <directory>src/main/webapp/cache</directory>
-                <excludes>
-                    <exclude>*</exclude>
-                </excludes>
-            </resource>
+				<!-- exclude cache data -->
+				<directory>src/main/webapp/cache</directory>
+				<excludes>
+					<exclude>*</exclude>
+				</excludes>
+			</resource>
 		</resources>
 		<plugins>
 			<plugin>
@@ -131,7 +131,14 @@
 					<cssSourceFiles>
 						<cssSourceFile>layout.css</cssSourceFile>
 					</cssSourceFiles>
-					<cssFinalFile>layout.min.css</cssFinalFile>
+					<cssFinalFile>style.css</cssFinalFile>
+
+					<jsSourceDir>js</jsSourceDir>
+					<jsSourceFiles>
+						<jsSourceFile>bookmark.js</jsSourceFile>
+						<jsSourceFile>json2.js</jsSourceFile>
+					</jsSourceFiles>
+					<jsFinalFile>script.js</jsFinalFile>
 				</configuration>
 				<executions>
 					<execution>
@@ -144,47 +151,47 @@
 				</executions>
 			</plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                    </execution>
-                </executions>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+					</execution>
+				</executions>
 
-                <configuration>
-                    <artifactItems>
-                        <artifactItem>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>sensorwebclient-sos-rest</artifactId>
-                            <includes>css/**,js/**,img/**,partials/**,lib/**</includes>
-                            <outputDirectory>${webappDirectory}</outputDirectory>
-                            <overWrite>false</overWrite>
-                        </artifactItem>
-                        
-                        <artifactItem>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>sensorwebclient-sos-rest</artifactId>
-                            <includes>index*.html</includes>
-                            <outputDirectory>${webappDirectory}/explore</outputDirectory>
-                            <overWrite>false</overWrite>
-                        </artifactItem>
+				<configuration>
+					<artifactItems>
+						<artifactItem>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>sensorwebclient-sos-rest</artifactId>
+							<includes>css/**,js/**,img/**,partials/**,lib/**</includes>
+							<outputDirectory>${webappDirectory}</outputDirectory>
+							<overWrite>false</overWrite>
+						</artifactItem>
 
-                        <artifactItem>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>sensorwebclient-sos-rest</artifactId>
-                            <includes>*.xml</includes>
-                            <!-- tmp files will be copied into WEB-INF/classes -->
-                            <outputDirectory>src/main/tmp</outputDirectory>
-                            <overWrite>true</overWrite>
-                        </artifactItem>
-                    </artifactItems>
-                </configuration>
-            </plugin>
+						<artifactItem>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>sensorwebclient-sos-rest</artifactId>
+							<includes>index*.html</includes>
+							<outputDirectory>${webappDirectory}/explore</outputDirectory>
+							<overWrite>false</overWrite>
+						</artifactItem>
+
+						<artifactItem>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>sensorwebclient-sos-rest</artifactId>
+							<includes>*.xml</includes>
+							<!-- tmp files will be copied into WEB-INF/classes -->
+							<outputDirectory>src/main/tmp</outputDirectory>
+							<overWrite>true</overWrite>
+						</artifactItem>
+					</artifactItems>
+				</configuration>
+			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

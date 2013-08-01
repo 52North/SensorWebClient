@@ -29,9 +29,9 @@ public class EastingNorthing extends Geometry implements Serializable {
 
     private static final long serialVersionUID = 4080241800833286545L;
     
-    private String easting;
-    private String northing;
-    private String altitude;
+    private double easting;
+    private double northing;
+    private double altitude;
     
     @SuppressWarnings("unused")
 	private EastingNorthing() {
@@ -40,23 +40,23 @@ public class EastingNorthing extends Geometry implements Serializable {
 
     public EastingNorthing(double easting, double northing, String srs) {
     	super(srs);
-        this.easting = Double.toString(easting);
-        this.northing = Double.toString(northing);
+        this.easting = easting;
+        this.northing = northing;
     }
     
     public double getEasting() {
-        return Double.parseDouble(easting);
+        return easting;
     }
 
     public double getNorthing() {
-        return Double.parseDouble(northing);
+        return northing;
     }
     
-    public String getAltitude() {
+    public double getAltitude() {
         return altitude;
     }
 
-    public void setAltitude(String altitude) {
+    public void setAltitude(double altitude) {
         this.altitude = altitude;
     }
 
@@ -64,9 +64,13 @@ public class EastingNorthing extends Geometry implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( (altitude == null) ? 0 : altitude.hashCode());
-        result = prime * result + ( (easting == null) ? 0 : easting.hashCode());
-        result = prime * result + ( (northing == null) ? 0 : northing.hashCode());
+        long temp;
+        temp = Double.doubleToLongBits(altitude);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(easting);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(northing);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
 
@@ -82,28 +86,13 @@ public class EastingNorthing extends Geometry implements Serializable {
             return false;
         }
         EastingNorthing other = (EastingNorthing) obj;
-        if (altitude == null) {
-            if (other.altitude != null) {
-                return false;
-            }
-        }
-        else if ( !altitude.equals(other.altitude)) {
+        if (Double.doubleToLongBits(altitude) != Double.doubleToLongBits(other.altitude)) {
             return false;
         }
-        if (easting == null) {
-            if (other.easting != null) {
-                return false;
-            }
-        }
-        else if ( !easting.equals(other.easting)) {
+        if (Double.doubleToLongBits(easting) != Double.doubleToLongBits(other.easting)) {
             return false;
         }
-        if (northing == null) {
-            if (other.northing != null) {
-                return false;
-            }
-        }
-        else if ( !northing.equals(other.northing)) {
+        if (Double.doubleToLongBits(northing) != Double.doubleToLongBits(other.northing)) {
             return false;
         }
         return true;

@@ -41,13 +41,13 @@ public class DesignedParameterSet extends ParameterSet {
     /**
      * The timeseriesIds of interest.
      */
-    private Map<String, TimeseriesRenderingOptions> timeseries;
+    private Map<String, TimeseriesRenderingOptions> renderingOptions;
 
     /**
      * Creates an instance with non-null default values.
      */
     public DesignedParameterSet() {
-        timeseries = new HashMap<String, TimeseriesRenderingOptions>();
+        renderingOptions = new HashMap<String, TimeseriesRenderingOptions>();
     }
 
     /**
@@ -73,19 +73,19 @@ public class DesignedParameterSet extends ParameterSet {
     }
 
     public String[] getTimeseries() {
-        return timeseries.keySet().toArray(new String[0]);
+        return renderingOptions.keySet().toArray(new String[0]);
     }
 
-    public void setTimeseries(Map<String, TimeseriesRenderingOptions> timeseries) {
-        this.timeseries = timeseries;
+    public void setRenderingOptions(Map<String, TimeseriesRenderingOptions> renderingOptions) {
+        this.renderingOptions = renderingOptions;
     }
     
     public TimeseriesRenderingOptions getTimeseriesRenderingOptions(String timeseriesId) {
-        return timeseries.get(timeseriesId);
+        return renderingOptions.get(timeseriesId);
     }
     
     public void addTimeseriesWithRenderingOptions(String timeseriesId, TimeseriesRenderingOptions renderingOptions) {
-        timeseries.put(timeseriesId, renderingOptions);
+        this.renderingOptions.put(timeseriesId, renderingOptions);
     }
     
 }

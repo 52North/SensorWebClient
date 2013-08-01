@@ -32,7 +32,7 @@ import java.util.HashMap;
 
 import org.n52.client.ctrl.DataControls;
 import org.n52.client.sos.ctrl.TableTabController;
-import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.sos.legend.Timeseries;
 import org.n52.client.ui.DataPanelTab;
 import org.n52.client.ui.legend.LegendElement;
 
@@ -177,7 +177,7 @@ public class TableTab extends DataPanelTab {
 
     public void update(HashMap<Long, String> data, LegendElement le) {
         try {
-            TimeSeries ts = (TimeSeries) le.getDataWrapper();
+            Timeseries ts = (Timeseries) le.getDataWrapper();
             this.valuesField.setTitle(ts.getUnitOfMeasure());
 
             ListGridRecord[] records = new ListGridRecord[data.size()];

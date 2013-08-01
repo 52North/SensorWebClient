@@ -49,7 +49,7 @@ public class SensorMetadataResponse implements Serializable {
         StringBuilder sb = new StringBuilder("SensorMetadataResponse: [ \n");
         sb.append("\tOffering: ").append(props.getOffering()).append("\n");
         sb.append("\tProcedure: ").append(props.getProcedure()).append("\n");
-        sb.append("\tFeature: ").append(props.getFoi()).append("\n");
+        sb.append("\tFeature: ").append(props.getFeature()).append("\n");
         sb.append("\tPhenomenon: ").append(props.getPhenomenon());
         return sb.append(" ]").toString();
     }

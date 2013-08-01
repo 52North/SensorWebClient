@@ -25,6 +25,7 @@
 package org.n52.client.sos.ui;
 
 import static org.n52.client.ctrl.PropertiesManager.getPropertiesManager;
+import static org.n52.client.ui.map.InfoMarker.createInfoMarker;
 import static org.n52.shared.Constants.DISPLAY_PROJECTION;
 import static org.n52.shared.Constants.EPSG_4326;
 
@@ -186,7 +187,7 @@ public class StationSelectorMap extends OpenLayersMapWrapper {
     }
 
     public void addStationToMap(final Station station) {
-        InfoMarker infoMarker = InfoMarker.createInfoMarker(station, controller);
+        InfoMarker infoMarker = createInfoMarker(station, controller);
         infoMarker.registerHoverHandler();
         addMarker(infoMarker);
     }

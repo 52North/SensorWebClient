@@ -24,7 +24,10 @@
 
 package org.n52.client.ui.legend;
 
+import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ctrl.PropertiesManager.getPropertiesManager;
+import static org.n52.client.sos.ctrl.SosDataManager.getDataManager;
+import static org.n52.client.sos.data.TimeseriesDataStore.getTimeSeriesDataStore;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.ArrayList;
@@ -35,12 +38,14 @@ import java.util.Set;
 
 import org.eesgmbh.gimv.client.event.LoadImageDataEvent;
 import org.n52.client.bus.EventBus;
+import org.n52.client.ctrl.DataManager;
 import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ctrl.TimeManager;
 import org.n52.client.ses.ui.LoginWindow;
 import org.n52.client.ses.ui.subscribe.EventSubscriptionWindow;
 import org.n52.client.sos.ctrl.SOSController;
-import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
+import org.n52.client.sos.ctrl.SosDataManager;
+import org.n52.client.sos.data.TimeseriesDataStore;
 import org.n52.client.sos.event.ChangeTimeSeriesStyleEvent;
 import org.n52.client.sos.event.DatesChangedEvent;
 import org.n52.client.sos.event.LegendElementSelectedEvent;
@@ -60,12 +65,15 @@ import org.n52.client.sos.event.data.handler.TimeSeriesHasDataEventHandler;
 import org.n52.client.sos.event.handler.LegendElementSelectedEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
 import org.n52.client.sos.event.handler.UpdateScaleEventHandler;
-import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.sos.legend.Timeseries;
 import org.n52.client.ui.Toaster;
 import org.n52.client.ui.View;
 import org.n52.client.ui.btn.ImageButton;
 import org.n52.client.ui.btn.SmallButton;
 import org.n52.client.util.ClientUtils;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.smartgwt.client.types.Alignment;
@@ -174,7 +182,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 
     private LoginWindow subsriptionWindow;
 
-	public LegendEntryTimeSeries(TimeSeries ts, String width, String height) {
+	public LegendEntryTimeSeries(Timeseries ts, String width, String height) {
 		this.width = width;
 		this.height = height;
 		this.timeseriesID = ts.getId();
@@ -200,8 +208,8 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 				if (canvas instanceof LegendElement) {
 					LegendElement element = (LegendElement) canvas;
 					element.setOrdering(entryIndex);
-					DataStoreTimeSeriesImpl dataStore = DataStoreTimeSeriesImpl
-							.getInst();
+					TimeseriesDataStore dataStore = TimeseriesDataStore
+							.getTimeSeriesDataStore();
 					dataStore.getDataItem(element.getElemId()).setOrdering(
 							entryIndex);
 				}
@@ -350,8 +358,8 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		return this.refvalLayout;
 	}
 
-	protected TimeSeries getTimeSeries() {
-		return ((TimeSeries) getDataWrapper());
+	protected Timeseries getTimeSeries() {
+		return ((Timeseries) getDataWrapper());
 	}
 
 	private Canvas createLegendTools() {
@@ -442,7 +450,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		exportPDF.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
-				ArrayList<TimeSeries> series = new ArrayList<TimeSeries>();
+				ArrayList<Timeseries> series = new ArrayList<Timeseries>();
 				series.add(getTimeSeries());
 				EventBus.getMainEventBus().fireEvent(
 						new ExportEvent(series, ExportEvent.ExportType.PDF));
@@ -460,7 +468,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		exportXLS.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
-				List<TimeSeries> series = new ArrayList<TimeSeries>();
+				List<Timeseries> series = new ArrayList<Timeseries>();
 				series.add(getTimeSeries());
 				EventBus.getMainEventBus().fireEvent(
 						new ExportEvent(series, ExportEvent.ExportType.XLS));
@@ -478,7 +486,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		exportCSV.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
-				List<TimeSeries> series = new ArrayList<TimeSeries>();
+				List<Timeseries> series = new ArrayList<Timeseries>();
 				series.add(getTimeSeries());
 				EventBus.getMainEventBus().fireEvent(
 						new ExportEvent(series, ExportEvent.ExportType.CSV));
@@ -541,13 +549,13 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-			    TimeSeries dataItem = DataStoreTimeSeriesImpl.getInst().getDataItem(timeseriesID);
+			    Timeseries dataItem = TimeseriesDataStore.getTimeSeriesDataStore().getDataItem(timeseriesID);
 			    LegendEntryTimeSeries.this.showSubscriptionWindow(dataItem);
 			}
 		});
 	}
 
-	private void showSubscriptionWindow(TimeSeries dataItem) {
+	private void showSubscriptionWindow(Timeseries dataItem) {
 	    if (subsriptionWindow == null) {
             subsriptionWindow = new EventSubscriptionWindow(dataItem);
         }
@@ -566,18 +574,22 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		});
 	}
 
+    private TimeseriesParametersLookup getParameterLookup(TimeseriesProperties properties) {
+        SOSMetadata metadata = getDataManager().getServiceMetadata(properties.getServiceUrl());
+        return metadata.getTimeseriesParametersLookup();
+    }
+    
 	public void update() {
 
-		TimeSeries dw = (TimeSeries) getDataWrapper();
-		
-		String phenomenon = this.getTimeSeries().getProperties()
-				.getPhenomenon().getLabel();
+		Timeseries timeseries = getTimeSeries();
+		TimeseriesProperties properties = timeseries.getProperties();
+		TimeseriesParametersLookup lookup = getParameterLookup(properties);
+		String phenomenon = lookup.getPhenomenon(properties.getPhenomenon()).getLabel();
 
-		this.titleLabel.setContents("<span>" + phenomenon + "@"
-				+ getStationName(dw) + "</span>");
-		this.titleCol.getCanvas().setBackgroundColor(dw.getColor());
-		this.styleChanger.setTitle(dw.getPhenomenonId() + "@" + getStationName(dw));
-		if (dw.hasData()) {
+		this.titleLabel.setContents("<span>" + phenomenon + "@" + getStationName(timeseries) + "</span>");
+		this.titleCol.getCanvas().setBackgroundColor(properties.getHexColor());
+		this.styleChanger.setTitle(timeseries.getPhenomenonId() + "@" + getStationName(timeseries));
+		if (timeseries.hasData()) {
 			this.noDataSign.hide();
 			if (this.isSelected) {
 				this.legendEntryHead.setStyleName("n52_sensorweb_client_legendEntryHeaderSelected");
@@ -606,29 +618,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.slider.setValue(getTimeSeries().getOpacity());
 		this.colors.setValue(getTimeSeries().getColor());
 
-		// String offering =
-		// this.getTimeSeries().getProperties().getOffering().getTitle();
-		// comment out, for eventually later use
-		// if (offering.contains("/")) {
-		// offering = offering.substring(offering.lastIndexOf("/") + 1);
-		// }
-		// this.offeringLabel.setContents("<span style='font-weight:bold;'>" +
-		// I18N.sosClient.offeringLabel()
-		// + "</span>: " + offering);
-
-		// String procedure =
-		// this.getTimeSeries().getProperties().getProcedure().getDescription();
-		// if (procedure.contains("/")) {
-		// procedure = procedure.substring(procedure.lastIndexOf("/") + 1);
-		// }
-		// this.procedureLabel.setContents("<span style='font-weight:bold;'>" +
-		// I18N.sosClient.procedureLabel()
-		// + "</span>: " + procedure);
-
 		String uom = this.getTimeSeries().getProperties().getUnitOfMeasure();
-		// if (phenomenon.contains("/")) {
-		// phenomenon = phenomenon.substring(phenomenon.lastIndexOf("/") + 1);
-		// }
 		StringBuilder phenomenonHtmlContent = new StringBuilder();
 		phenomenonHtmlContent.append("<span>");
 		phenomenonHtmlContent.append(i18n.phenomenonLabel());
@@ -643,9 +633,6 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		setFirstValueInterval();
 		setLastValueInterval();
 
-		// if (station.contains("/")) {
-		// station = station.substring(station.lastIndexOf("/") + 1);
-		// }
 		this.stationLabel.setContents("<span>"
 				+ i18n.foiLabel() + ":</span> "
 				+ getStationName(this.getTimeSeries()));
@@ -719,7 +706,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.loadingSpinner.hide();
 	}
 
-	private String getStationName(TimeSeries ts) {
+	private String getStationName(Timeseries ts) {
 		// TODO perhaps use regular expressions
 		String station = ts.getStationName();
 		// remove phenomenon identifier
@@ -817,8 +804,8 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		String levelLine = i18n.levelLine();
 		String sumLine = i18n.sumLine();
 		LinkedHashMap<String, String> levelstyle = new LinkedHashMap<String, String>();
-		levelstyle.put(TimeSeries.GRAPH_STYLE_GAUGELINE, levelLine);
-		levelstyle.put(TimeSeries.GRAPH_STYLE_SUMLINE, sumLine);
+		levelstyle.put(Timeseries.GRAPH_STYLE_GAUGELINE, levelLine);
+		levelstyle.put(Timeseries.GRAPH_STYLE_SUMLINE, sumLine);
 		this.seriesType.setValueMap(levelstyle);
 		this.seriesType.setWidth(85);
 		this.seriesType.setTitle(i18n.seriesType());
@@ -830,13 +817,13 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 				String selectedSeriesType = LegendEntryTimeSeries.this.seriesType
 						.getValue().toString();
 
-				if (selectedSeriesType.equals(TimeSeries.GRAPH_STYLE_GAUGELINE)) {
+				if (selectedSeriesType.equals(Timeseries.GRAPH_STYLE_GAUGELINE)) {
 					String defaultHydrographStyle = propertiesManager
 							.getParameterAsString("defaultHydrographStyle");
 					LegendEntryTimeSeries.this.lineStyles
 							.setValue(defaultHydrographStyle);
 				} else if (selectedSeriesType
-						.equals(TimeSeries.GRAPH_STYLE_SUMLINE)) {
+						.equals(Timeseries.GRAPH_STYLE_SUMLINE)) {
 					String defaultSumlineStyle = propertiesManager
 							.getParameterAsString("defaultSumLineStyle");
 					LegendEntryTimeSeries.this.lineStyles
@@ -893,7 +880,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 			public void onClick(ClickEvent event) {
 				LegendEntryTimeSeries.this.styleChanger.hide();
 
-				TimeSeries timeseries = DataStoreTimeSeriesImpl.getInst()
+				Timeseries timeseries = TimeseriesDataStore.getTimeSeriesDataStore()
 						.getDataItem(LegendEntryTimeSeries.this.timeseriesID);
 				timeseries.setLineStyle(LegendEntryTimeSeries.this.lineStyles
 						.getValue().toString());
@@ -971,7 +958,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 	}
 
 	public LegendData getDataWrapper() {
-		return DataStoreTimeSeriesImpl.getInst().getDataItem(this.timeseriesID);
+		return getTimeSeriesDataStore().getDataItem(timeseriesID);
 	}
 
 	public void updateLayout() {
@@ -1011,10 +998,10 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 								pred.setOrdering(le.getOrdering());
 								le.setOrdering(tmp);
 
-								DataStoreTimeSeriesImpl.getInst()
+								TimeseriesDataStore.getTimeSeriesDataStore()
 										.getDataItem(le.getElemId())
 										.setOrdering(le.getOrdering());
-								DataStoreTimeSeriesImpl.getInst()
+								TimeseriesDataStore.getTimeSeriesDataStore()
 										.getDataItem(pred.getElemId())
 										.setOrdering(pred.getOrdering());
 
@@ -1026,9 +1013,8 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 					}
 				}
 
-				EventBus.getMainEventBus().fireEvent(
-						new TimeSeriesChangedEvent());
-				EventBus.getMainEventBus().fireEvent(new LoadImageDataEvent());
+				getMainEventBus().fireEvent(new TimeSeriesChangedEvent());
+				getMainEventBus().fireEvent(new LoadImageDataEvent());
 			}
 		});
 
@@ -1046,18 +1032,16 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 
 						if (le.equals(LegendEntryTimeSeries.this)) {
 							try {
-								EventBus.getMainEventBus().fireEvent(
-										new LegendElementSelectedEvent(le,
-												false));
+								getMainEventBus().fireEvent(new LegendElementSelectedEvent(le, false));
 								LegendElement succ = (LegendElement) members[i + 1];
 								int tmp = succ.getOrdering();
 								succ.setOrdering(le.getOrdering());
 								le.setOrdering(tmp);
 
-								DataStoreTimeSeriesImpl.getInst()
+								TimeseriesDataStore.getTimeSeriesDataStore()
 										.getDataItem(le.getElemId())
 										.setOrdering(le.getOrdering());
-								DataStoreTimeSeriesImpl.getInst()
+								TimeseriesDataStore.getTimeSeriesDataStore()
 										.getDataItem(succ.getElemId())
 										.setOrdering(succ.getOrdering());
 

@@ -79,10 +79,9 @@ public class SosTimeseries implements Serializable {
     public String getTimeseriesId() {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
-
-//            if (serviceUrl != null) {
-//                md.update(serviceUrl.getBytes());
-//            }
+            if (serviceUrl != null) {
+                md.update(serviceUrl.getBytes());
+            }
             if (offering != null) {
                 md.update(offering.getBytes());
             }

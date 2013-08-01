@@ -28,33 +28,20 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.n52.shared.serializable.pojos.sos.Feature;
-import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.Phenomenon;
-import org.n52.shared.serializable.pojos.sos.Procedure;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 
 public class TimeseriesProperties implements Serializable {
 
 	private static final long serialVersionUID = 1813366884589984223L;
 
-	private String sosUrl;
-	
 	private Station station;
 
-	private Offering off;
+    private SosTimeseries timeseries;
 
-	private Feature foi;
-
-	private Procedure proc;
-
-	private Phenomenon phen;
-	
 	private int height;
 
 	private int width;
-
-	private String hexColor;
 
 	private String label;
 	
@@ -62,20 +49,18 @@ public class TimeseriesProperties implements Serializable {
 
 	private HashMap<String, ReferenceValue> refvalues = new HashMap<String, ReferenceValue>();
 
+    private TimeseriesRenderingOptions renderingOptions = new TimeseriesRenderingOptions();
+
 	/**
 	 * The series type. 1 = levelline 2 = sumline
 	 */
 	private String seriesType = "1";
 
 	private String lineStyle = "1";
-
-	private int lineWidth = 2; // default
-
+	
 	private String uom;
 
 	private String stationName;
-
-	private String timeSeriesId;
 
 	private String metadataUrl = "";
 
@@ -105,68 +90,54 @@ public class TimeseriesProperties implements Serializable {
 	private TimeseriesProperties() {
 		// do nothing
 	}
-
-	public TimeseriesProperties(String sosUrl, Station station, Offering offering,
-			Feature foi, Procedure procedure, Phenomenon phenomenon,
-			int width, int height) {
-		this(sosUrl, station, offering, foi, procedure, phenomenon, width, height, "", true);
+	    
+	public TimeseriesProperties(SosTimeseries timeseries, Station station, int width, int height) {
+	    this(timeseries, station, width, height, "", true);
 	}
 
-	public TimeseriesProperties(String sosUrl, Station station, Offering offering,
-			Feature foi, Procedure procedure, Phenomenon phenomenon,
+	public TimeseriesProperties(SosTimeseries timeseries, Station station,
 			int width, int height, String uom, boolean isAutoScale) {
-		this.sosUrl = sosUrl;
+	    this.timeseries = timeseries;
+        this.station = station;
+        this.width = width;
+        this.height = height;
 		this.station = station;
-		this.off = offering;
-		this.foi = foi;
-		this.proc = procedure;
-		this.phen = phenomenon;
-		this.width = width;
-		this.height = height;
-		this.uom = uom;
 		this.isAutoScale = isAutoScale;
+        this.uom = uom;
 	}
 
-	/**
-	 * @return A deep copy of this Object
-	 */
 	public TimeseriesProperties copy() {
-		TimeseriesProperties result = new TimeseriesProperties(this.sosUrl, this.station,
-				this.off, this.foi, this.proc, this.phen, this.width,
-				this.height, this.uom, this.isAutoScale);
+		TimeseriesProperties result = new TimeseriesProperties(this.timeseries, this.station, 
+		                                                       this.width, this.height, this.uom, 
+		                                                       this.isAutoScale);
 		result.setAxisData(this.axis); // XXX this is not a deep copy! => CBR
-		result.setHexColor(this.hexColor);
+		TimeseriesRenderingOptions options = new TimeseriesRenderingOptions();
+		options.setColor(renderingOptions.getColor());
+		options.setLineWidth(renderingOptions.getLineWidth());
+		result.setRenderingOptions(options);
 		result.setLabel(this.label);
 		result.setLanguage(this.language);
 		result.setLineStyle(this.lineStyle);
-		result.setLineWidth(this.lineWidth);
 		result.setMetadataUrl(this.metadataUrl);
 		result.setOpacity(this.opacity);
 		result.setScaledToZero(this.isScaledToZero);
 		result.setShowYAxis(this.isYAxisVisible);
 		result.setStationName(this.stationName);
-		result.setTsID(this.timeSeriesId);
 		result.setUnitOfMeasure(this.uom);
 		result.setSeriesType(this.seriesType);
-
 		return result;
 	}
 
-	/**
-	 * @return boolean
-	 */
 	public boolean showYAxis() {
 		return this.isYAxisVisible;
 	}
 
-	/**
-	 * @param showYAxis
-	 */
 	public void setShowYAxis(boolean showYAxis) {
 		this.isYAxisVisible = showYAxis;
 	}
 
 	public String getGraphStyle() {
+	    // XXX clear difference to lineStyle!
 		return this.seriesType;
 	}
 
@@ -233,9 +204,20 @@ public class TimeseriesProperties implements Serializable {
 	public void setLanguage(String language) {
 	    this.language = language;
 	}
+	
+	public void setTimeseries(SosTimeseries timeseries) {
+	    this.timeseries = timeseries;
+	}
+	
+	public SosTimeseries getTimeseries() {
+	    return timeseries;
+	}
 
 	public void setSosUrl(String sosUrl) {
-		this.sosUrl = sosUrl;
+	    if (timeseries == null) {
+            timeseries = new SosTimeseries();
+        }
+		timeseries.setServiceUrl(sosUrl);
 	}
 	
 	public void setStation(Station station) {
@@ -246,218 +228,168 @@ public class TimeseriesProperties implements Serializable {
 	    return station;
 	}
 
-	public void setOff(Offering off) {
-		this.off = off;
+	/**
+	 * @deprecated use {@link #setTimeseries(SosTimeseries)}
+	 */
+	public void setOffering(String offering) {
+		if (timeseries == null) {
+            timeseries = new SosTimeseries();
+        }
+		timeseries.setOffering(offering);
 	}
 
-	public void setFoi(Feature foi) {
-		this.foi = foi;
+	/**
+     * @deprecated use {@link #setTimeseries(SosTimeseries)}
+     */
+	public void setFeature(String feature) {
+	    if (timeseries == null) {
+            timeseries = new SosTimeseries();
+        }
+        timeseries.setFeature(feature);
 	}
 
-	public void setProc(Procedure proc) {
-		this.proc = proc;
+	/**
+     * @deprecated use {@link #setTimeseries(SosTimeseries)}
+     */
+	public void setProcedure(String procedure) {
+	    if (timeseries == null) {
+            timeseries = new SosTimeseries();
+        }
+        timeseries.setProcedure(procedure);
 	}
 
-	public void setPhen(Phenomenon phen) {
-		this.phen = phen;
+	/**
+     * @deprecated use {@link #setTimeseries(SosTimeseries)}
+     */
+	public void setPhenomenon(String phenomenon) {
+	    if (timeseries == null) {
+            timeseries = new SosTimeseries();
+        }
+        timeseries.setPhenomenon(phenomenon);
 	}
 
 	public String getStationName() {
-		if (this.stationName == null || this.stationName.isEmpty()) {
-			return this.foi.getLabel();
-		}
-		return this.stationName;
+//		if (this.stationName == null || this.stationName.isEmpty()) {
+//			return this.foi.getLabel();
+//		}
+		return stationName;
 	}
 
 	public void setStationName(String stationName) {
 		this.stationName = stationName;
 	}
 
-	public String getSosUrl() {
-		return this.sosUrl;
+	public String getServiceUrl() {
+		return timeseries.getServiceUrl();
 	}
 	
 	public String getLanguage() {
 	    return this.language;
 	}
 
-	public Offering getOffering() {
-		return this.off;
+	/**
+	 * @deprecated user {@link #getTimeseries()}
+	 */
+	public String getOffering() {
+		return timeseries.getOffering();
 	}
-
-	public Feature getFoi() {
-		return this.foi;
-	}
-
-	public Procedure getProcedure() {
-		return this.proc;
-	}
-
-	public Phenomenon getPhenomenon() {
-		return this.phen;
+	
+	/**
+     * @deprecated user {@link #getTimeseries()}
+     */
+	public String getFeature() {
+		return timeseries.getFeature();
 	}
 
 	/**
-	 * Gets the hex color.
-	 * 
-	 * @return the hex color
-	 */
-	public String getHexColor() {
-		return this.hexColor;
+     * @deprecated user {@link #getTimeseries()}
+     */
+	public String getProcedure() {
+		return timeseries.getProcedure();
 	}
 
 	/**
-	 * Gets the ts parameterId.
-	 * 
-	 * @return the ts parameterId
-	 */
-	public String getTsID() {
-		return this.timeSeriesId;
+     * @deprecated user {@link #getTimeseries()}
+     */
+	public String getPhenomenon() {
+		return timeseries.getPhenomenon();
 	}
 
-	/**
-	 * Sets the ts parameterId.
-	 * 
-	 * @param tsID
-	 *            the new ts parameterId
-	 */
-	public void setTsID(String tsID) {
-		this.timeSeriesId = tsID;
+	public String getTimeseriesId() {
+		return timeseries.getTimeseriesId();
 	}
 
-	/**
-	 * Sets the hex color.
-	 * 
-	 * @param hexColor
-	 *            the new hex color
-	 */
-	public void setHexColor(String hexColor) {
-		this.hexColor = hexColor;
-	}
-
-	/**
-	 * Gets the label.
-	 * 
-	 * @return the label
-	 */
 	public String getLabel() {
 		return this.label;
 	}
 
-	/**
-	 * Sets the label.
-	 * 
-	 * @param label
-	 *            the new label
-	 */
 	public void setLabel(String label) {
 		this.label = label;
 	}
 
-	/**
-	 * Gets the line style.
-	 * 
-	 * @return the line style
-	 */
 	public String getLineStyle() {
 		return this.lineStyle;
 	}
 
-	/**
-	 * Sets the line style.
-	 * 
-	 * @param lineStyle
-	 *            the new line style
-	 */
 	public void setLineStyle(String lineStyle) {
 		this.lineStyle = lineStyle;
 	}
 
+    /**
+     * @deprecated use {@link #getRenderingOptions()}
+     */
+    public String getHexColor() {
+        return renderingOptions.getColor();
+    }
+
+    /**
+     * @deprecated use {@link #setRenderingOptions(TimeseriesRenderingOptions)}
+     */
+    public void setHexColor(String hexColor) {
+        if (renderingOptions == null) {
+            renderingOptions = new TimeseriesRenderingOptions();
+        }
+        renderingOptions.setColor(hexColor);
+    }
+
 	/**
-	 * Gets the line width.
-	 * 
-	 * @return the line width
+	 * @deprecated use {@link #getRenderingOptions()}
 	 */
 	public int getLineWidth() {
-		return this.lineWidth;
-	}
-	
-	/**
-	 * Sets the line width.
-	 * @param lineWidth
-	 */
-	public void setLineWidth(int lineWidth) {
-		this.lineWidth = lineWidth;
+		return renderingOptions.getLineWidth();
 	}
 
 	/**
-	 * Gets the height.
-	 * 
-	 * @return the height
+	 * @deprecated use {@link #setRenderingOptions(TimeseriesRenderingOptions)}
 	 */
+	@Deprecated
+	public void setLineWidth(int lineWidth) {
+	    if (renderingOptions == null) {
+            renderingOptions = new TimeseriesRenderingOptions();
+        }
+	    renderingOptions.setLineWidth(lineWidth);
+	}
+	
+	public TimeseriesRenderingOptions getRenderingOptions() {
+	    return renderingOptions;
+	}
+	
+	/**
+	 * @param renderingOptions the timeseries' rendering options to set.
+	 */
+	public void setRenderingOptions(TimeseriesRenderingOptions renderingOptions) {
+	    if (renderingOptions != null) {
+	        this.renderingOptions = renderingOptions;
+        }
+	}
+
 	public int getHeight() {
 		return this.height;
 	}
 
-	/**
-	 * Gets the width.
-	 * 
-	 * @return the width
-	 */
 	public int getWidth() {
 		return this.width;
 	}
-
-	// public String getStartDateString() {
-	// // String ret = "";
-	// // //for getting the +/- encoding right
-	// // if (DateTimeFormat.getFormat("Z").format(startDate).indexOf("+") >
-	// // -1) {
-	// // ret =
-	// // DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss").format(startDate) +
-	// // "%2B";
-	// // } else {
-	// // ret =
-	// // DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss").format(startDate) +
-	// // "-";
-	// // }
-	// //
-	// // String tz =
-	// // DateTimeFormat.getFormat("Z").format(startDate).substring(1);
-	// // return ret + tz;
-	// return DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss").format(
-	// TimeManager.getInst().getBegin()) +
-	// DateTimeFormat.getFormat("Z").format(TimeManager.getInst().getBegin()).substring(0,
-	// 3)
-	// + ":" +
-	// DateTimeFormat.getFormat("Z").format(TimeManager.getInst().getBegin()).substring(3,
-	// 5);
-	// }
-
-	// public String getEndDateString() {
-	// // //for getting the +/- encoding right
-	// // if (DateTimeFormat.getFormat("Z").format(endDate).indexOf("+") > -1)
-	// // {
-	// // ret =
-	// // DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss").format(endDate) +
-	// // "%2B";
-	// // } else {
-	// // ret =
-	// // DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss").format(endDate) +
-	// // "-";
-	// // }
-	// //
-	// // String tz =
-	// // DateTimeFormat.getFormat("Z").format(endDate).substring(1);
-	// // return ret + tz;
-	// return DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss").format(
-	// TimeManager.getInst().getEnd()) +
-	// DateTimeFormat.getFormat("Z").format(TimeManager.getInst().getEnd()).substring(0,
-	// 3)
-	// + ":" +
-	// DateTimeFormat.getFormat("Z").format(TimeManager.getInst().getEnd()).substring(3,
-	// 5);
-	// }
 
 	public String getUnitOfMeasure() {
 		return this.uom;
@@ -465,7 +397,6 @@ public class TimeseriesProperties implements Serializable {
 
 	public void setUnitOfMeasure(String uom) {
 		this.uom = uom;
-		this.phen.setUnitOfMeasure(uom);
 	}
 
 	public double getLat() {
@@ -491,89 +422,40 @@ public class TimeseriesProperties implements Serializable {
 		this.opacity = opacityPercentage;
 	}
 
-	/**
-	 * Gets the opacity.
-	 * 
-	 * @return the opacity
-	 */
 	public double getOpacity() {
 		return this.opacity;
 	}
 
-	/**
-	 * Sets the scaled to zero.
-	 * 
-	 * @param zeroScaled
-	 *            the new scaled to zero
-	 */
 	public void setScaledToZero(boolean zeroScaled) {
 		this.isScaledToZero = zeroScaled;
 	}
 
-	/**
-	 * Checks if is zero scaled.
-	 * 
-	 * @return true, if is zero scaled
-	 */
 	public boolean isZeroScaled() {
 		return this.isScaledToZero;
 	}
 
-	/**
-	 * Adds the ref value.
-	 * 
-	 * @param s
-	 *            the s
-	 * @param v
-	 *            the v
-	 */
 	public void addRefValue(ReferenceValue v) {
 		this.refvalues.put(v.getID(), v);
 	}
 
-	/**
-	 * Gets the ref value.
-	 * 
-	 * @param s
-	 *            the s
-	 * @return the ref value
-	 */
 	public ReferenceValue getRefValue(String s) {
 		return this.refvalues.get(s);
 	}
 
-	/**
-	 * Gets the ref values.
-	 * 
-	 * @return the ref values
-	 */
 	public Set<String> getReferenceValues() {
 		return this.refvalues.keySet();
 	}
 
-	/**
-	 * Adds the all ref values.
-	 * 
-	 * @param refvalues2
-	 *            the refvalues2
-	 */
 	public void addAllRefValues(HashMap<String, ReferenceValue> refvalues2) {
 
 		this.refvalues.putAll(refvalues2);
 
 	}
 
-	/**
-	 * @return the setAxis
-	 */
 	public boolean isSetAxis() {
 		return this.setAxis;
 	}
 
-	/**
-	 * @param setAxis
-	 *            the setAxis to set
-	 */
 	public void setSetAxis(boolean setAxis) {
 		this.setAxis = setAxis;
 	}
@@ -581,10 +463,10 @@ public class TimeseriesProperties implements Serializable {
 	public String getOffFoiProcPhenCombination() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("TimeSeriesProperties: [");
-		sb.append("Offering: ").append(off.getId()).append(", ");
-		sb.append("Feature: ").append(foi.getId()).append(", ");
-		sb.append("Procedure: ").append(proc.getId()).append(", ");
-		sb.append("Phenomenon: ").append(phen.getId()).append("]");
+		sb.append("Offering: ").append(timeseries.getOffering()).append(", ");
+		sb.append("Feature: ").append(timeseries.getFeature()).append(", ");
+		sb.append("Procedure: ").append(timeseries.getProcedure()).append(", ");
+		sb.append("Phenomenon: ").append(timeseries.getPhenomenon()).append("]");
 		return sb.toString();
 	}
 

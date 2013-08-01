@@ -25,8 +25,10 @@
 package org.n52.client.sos.ctrl;
 
 import static org.n52.client.bus.EventBus.getMainEventBus;
+import static org.n52.client.ctrl.ExceptionHandler.handleException;
 import static org.n52.client.ctrl.ExceptionHandler.handleUnexpectedException;
 import static org.n52.client.sos.ctrl.SosDataManager.getDataManager;
+import static org.n52.client.sos.data.TimeseriesDataStore.getTimeSeriesDataStore;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 import static org.n52.shared.serializable.pojos.DesignOptions.SOS_PARAM_FIRST;
 import static org.n52.shared.serializable.pojos.DesignOptions.SOS_PARAM_LAST;
@@ -61,7 +63,7 @@ import org.n52.client.ctrl.callbacks.GetProcedureDetailsUrlCallback;
 import org.n52.client.ctrl.callbacks.QueryCallback;
 import org.n52.client.ctrl.callbacks.SensorMetadataCallback;
 import org.n52.client.ctrl.callbacks.TimeSeriesDataCallback;
-import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
+import org.n52.client.sos.data.TimeseriesDataStore;
 import org.n52.client.sos.event.DeleteMarkersEvent;
 import org.n52.client.sos.event.LegendElementSelectedEvent;
 import org.n52.client.sos.event.data.FinishedLoadingTimeSeriesEvent;
@@ -83,7 +85,7 @@ import org.n52.client.sos.event.data.StoreTimeSeriesEvent;
 import org.n52.client.sos.event.data.StoreTimeSeriesLastValueEvent;
 import org.n52.client.sos.event.data.StoreTimeSeriesPropsEvent;
 import org.n52.client.sos.event.data.TimeSeriesHasDataEvent;
-import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.sos.legend.Timeseries;
 import org.n52.client.sos.ui.DiagramTab;
 import org.n52.client.ui.Toaster;
 import org.n52.client.ui.View;
@@ -111,12 +113,13 @@ import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.shared.serializable.pojos.TimeseriesRenderingOptions;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.n52.shared.service.rpc.RpcEESDataService;
@@ -173,8 +176,8 @@ public class SOSRequestManager extends RequestManager {
             public void onSuccess(SensorMetadataResponse result) {
                 removeRequest();
                 try {
-                    String tsID = result.getProps().getTsID();
-                    DataStoreTimeSeriesImpl dataManager = DataStoreTimeSeriesImpl.getInst();
+                    String tsID = result.getProps().getTimeseriesId();
+                    TimeseriesDataStore dataManager = TimeseriesDataStore.getTimeSeriesDataStore();
                     LegendElement legendElement = dataManager.getDataItem(tsID).getLegendElement();
                     EventBus.getMainEventBus().fireEvent(new StoreTimeSeriesPropsEvent(tsID, result.getProps()));
                     EventBus.getMainEventBus().fireEvent(new LegendElementSelectedEvent(legendElement, true));
@@ -194,13 +197,14 @@ public class SOSRequestManager extends RequestManager {
 
     public void requestSensorMetadata(NewTimeSeriesEvent evt) throws Exception {
         TimeseriesProperties props = createTimeseriesProperties(evt, evt.getServiceUrl());
-        TimeSeries timeSeries = new TimeSeries("TS_" + System.currentTimeMillis(), props);
+        
+        Timeseries timeSeries = new Timeseries(evt.getTimeseries().getTimeseriesId(), props);
 
         try {
-            EventBus.getMainEventBus().fireEvent(new StoreTimeSeriesEvent(timeSeries));
+            getMainEventBus().fireEvent(new StoreTimeSeriesEvent(timeSeries));
         }
         catch (Exception e) {
-            ExceptionHandler.handleUnexpectedException(e);
+            handleUnexpectedException(e);
         }
         finally {
             try {
@@ -209,7 +213,7 @@ public class SOSRequestManager extends RequestManager {
                 getSensorData(props, evt.requestSensordata());
             }
             catch (Exception e) {
-                ExceptionHandler.handleException(new RequestFailedException("Server did not respond!", e));
+                handleException(new RequestFailedException("Server did not respond!", e));
             }
         }
     }
@@ -218,13 +222,11 @@ public class SOSRequestManager extends RequestManager {
         int width = evt.getWidth();
         int height = evt.getHeight();
         Station station = evt.getStation();
-        TimeseriesParametersLookup lookup = getTimeseriesParameterLookupFor(serviceUrl);
         SosTimeseries timeseries = evt.getTimeseries();
-        Feature feature = lookup.getFeature(timeseries.getFeature());
-        Phenomenon phenomenon = lookup.getPhenomenon(timeseries.getPhenomenon());
-        Procedure procedure = lookup.getProcedure(timeseries.getProcedure());
-        Offering offering = lookup.getOffering(timeseries.getOffering());
-        return new TimeseriesProperties(serviceUrl, station, offering, feature, procedure, phenomenon, width, height);
+        TimeseriesProperties properties = new TimeseriesProperties(timeseries, station, width, height);
+        TimeseriesRenderingOptions renderingOptions = evt.getRenderingOptions();
+        properties.setRenderingOptions(renderingOptions);
+        return properties;
     }
 
     private TimeseriesParametersLookup getTimeseriesParameterLookupFor(String serviceUrl) {
@@ -232,12 +234,12 @@ public class SOSRequestManager extends RequestManager {
         return meta.getTimeseriesParametersLookup();
     }
 
-    public void requestFirstValueOf(TimeSeries timeSeries) {
+    public void requestFirstValueOf(Timeseries timeSeries) {
         try {
             ArrayList<TimeseriesProperties> series = new ArrayList<TimeseriesProperties>();
             series.add(timeSeries.getProperties());
 
-            boolean grid = DataStoreTimeSeriesImpl.getInst().isGridEnabled();
+            boolean grid = TimeseriesDataStore.getTimeSeriesDataStore().isGridEnabled();
             long begin = TimeManager.getInst().getBegin();
             long end = TimeManager.getInst().getEnd();
             DesignOptions options = new DesignOptions(series, begin, end, SOS_PARAM_FIRST, grid);
@@ -251,11 +253,11 @@ public class SOSRequestManager extends RequestManager {
         }
     }
 
-    public void requestLastValueOf(TimeSeries timeSeries) {
+    public void requestLastValueOf(Timeseries timeSeries) {
         try {
             ArrayList<TimeseriesProperties> series = new ArrayList<TimeseriesProperties>();
             series.add(timeSeries.getProperties());
-            boolean grid = DataStoreTimeSeriesImpl.getInst().isGridEnabled();
+            boolean grid = TimeseriesDataStore.getTimeSeriesDataStore().isGridEnabled();
             long begin = TimeManager.getInst().getBegin();
             long end = TimeManager.getInst().getEnd();
             DesignOptions options = new DesignOptions(series, begin, end, SOS_PARAM_LAST, grid);
@@ -269,10 +271,10 @@ public class SOSRequestManager extends RequestManager {
         }
     }
 
-    public void requestSensorData(TimeSeries[] timeSeries, String id) {
+    public void requestSensorData(Timeseries[] timeSeries, String id) {
         try {
             ArrayList<TimeseriesProperties> series = new ArrayList<TimeseriesProperties>();
-            for (TimeSeries timeSerie : timeSeries) {
+            for (Timeseries timeSerie : timeSeries) {
                 if (timeSerie.getId().equals(id)) {
                     timeSerie.getProperties().setHeight(View.getView().getDataPanelHeight());
                     timeSerie.getProperties().setWidth(View.getView().getDataPanelWidth());
@@ -280,7 +282,7 @@ public class SOSRequestManager extends RequestManager {
                     break;
                 }
             }
-            boolean grid = DataStoreTimeSeriesImpl.getInst().isGridEnabled();
+            boolean grid = TimeseriesDataStore.getTimeSeriesDataStore().isGridEnabled();
             long begin = TimeManager.getInst().getBegin();
             long end = TimeManager.getInst().getEnd();
             DesignOptions options = new DesignOptions(series, begin, end, grid);
@@ -294,7 +296,7 @@ public class SOSRequestManager extends RequestManager {
         }
     }
 
-    private void requestFirstValueFromTimeSeries(TimeSeriesDataRequest request, final TimeSeries timeSeries) throws Exception {
+    private void requestFirstValueFromTimeSeries(TimeSeriesDataRequest request, final Timeseries timeSeries) throws Exception {
         final long startTimeOfRequest = System.currentTimeMillis();
         addRequest();
 
@@ -334,7 +336,7 @@ public class SOSRequestManager extends RequestManager {
         this.timeSeriesDataService.getTimeSeriesData(request, callback);
     }
 
-    private void requestLastTimeSeriesData(TimeSeriesDataRequest request, final TimeSeries timeSeries) throws Exception {
+    private void requestLastTimeSeriesData(TimeSeriesDataRequest request, final Timeseries timeSeries) throws Exception {
         final long startRequest = System.currentTimeMillis();
         addRequest();
 
@@ -397,15 +399,15 @@ public class SOSRequestManager extends RequestManager {
         this.timeSeriesDataService.getTimeSeriesData(req, callback);
     }
 
-    public void requestSensorData(TimeSeries[] timeseriesArray) {
+    public void requestSensorData(Timeseries[] timeseriesArray) {
         if (timeseriesArray.length > 0) {
             ArrayList<TimeseriesProperties> series = new ArrayList<TimeseriesProperties>();
             for (int i = 0; i < timeseriesArray.length; i++) {
-                TimeSeries timeseries = timeseriesArray[i];
+                Timeseries timeseries = timeseriesArray[i];
                 series.add(timeseries.getProperties());
             }
             try {
-                boolean gridEnabled = DataStoreTimeSeriesImpl.getInst().isGridEnabled();
+                boolean gridEnabled = TimeseriesDataStore.getTimeSeriesDataStore().isGridEnabled();
                 long begin = TimeManager.getInst().getBegin();
                 long end = TimeManager.getInst().getEnd();
 				DesignOptions options = new DesignOptions(series, begin, end, gridEnabled);
@@ -418,7 +420,7 @@ public class SOSRequestManager extends RequestManager {
     }
 
     public void requestDiagram() {
-        TimeSeries[] timeSeries = DataStoreTimeSeriesImpl.getInst().getTimeSeriesSorted();
+        Timeseries[] timeSeries = getTimeSeriesDataStore().getTimeSeriesSorted();
         if (timeSeries.length == 0) {
             // reset diagram to blank image
             EventBus.getMainEventBus().fireEvent(new SetImageUrlEvent("img/blank.gif"));
@@ -428,7 +430,7 @@ public class SOSRequestManager extends RequestManager {
         }
 
         ArrayList<TimeseriesProperties> properties = new ArrayList<TimeseriesProperties>();
-        for (TimeSeries timeSerie : timeSeries) {
+        for (Timeseries timeSerie : timeSeries) {
             timeSerie.getProperties().setHeight(DiagramTab.getPanelHeight());
             timeSerie.getProperties().setWidth(DiagramTab.getPanelWidth());
             properties.add(timeSerie.getProperties());
@@ -436,7 +438,7 @@ public class SOSRequestManager extends RequestManager {
 
         long begin = TimeManager.getInst().getBegin();
         long end = TimeManager.getInst().getEnd();
-        boolean grid = DataStoreTimeSeriesImpl.getInst().isGridEnabled();
+        boolean grid = TimeseriesDataStore.getTimeSeriesDataStore().isGridEnabled();
 
         try {
             DesignOptions o1 = new DesignOptions(properties, begin, end, grid);
@@ -448,11 +450,6 @@ public class SOSRequestManager extends RequestManager {
 
             long ovBegin = middle - timeRangeOverview / 2;
             long ovEnd = middle + timeRangeOverview / 2;
-//            long currentTime = System.currentTimeMillis() + (middle - ovBegin) / 20; 
-//            if (ovEnd > currentTime) {
-//				ovEnd = currentTime;
-//				ovBegin = ovEnd - timeRangeOverview;
-//			}
 
             ArrayList<TimeseriesProperties> copySeries = new ArrayList<TimeseriesProperties>();
             for (TimeseriesProperties pc : properties) {
@@ -476,17 +473,22 @@ public class SOSRequestManager extends RequestManager {
         }
     }
 
-    private void setDefaultValues(TimeseriesProperties copy) {
+    private void setDefaultValues(TimeseriesProperties tsProperties) {
+        
+        /*
+         * TODO refactor default rendering properties for a phenomenon
+         */
+        
         PropertiesManager properties = PropertiesManager.getPropertiesManager();
         ArrayList<String> mappings = properties.getParameters("phenomenon");
         for (String mapping : mappings) {
             String[] values = mapping.split(",");
-            if (copy.getPhenomenon().getLabel().equals(values[0])) {
+            if (tsProperties.getPhenomenon().equals(values[0])) {
                 try {
-                    copy.setLineStyle(values[1]);
-                    copy.setSeriesType(values[2]);
+                    tsProperties.setLineStyle(values[1]);
+                    tsProperties.setSeriesType(values[2]);
                     if (RegExp.compile("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$").test(values[3])) {
-                        copy.setHexColor(values[3]);
+                        tsProperties.setHexColor(values[3]);
                     } else {
                         throw new Exception("Pattern for hex color do not match");
                     }
@@ -577,7 +579,7 @@ public class SOSRequestManager extends RequestManager {
                     }
 
                     for (TimeseriesProperties prop : result.getPropertiesList()) {
-                        TimeSeriesHasDataEvent hasDataEvent = new TimeSeriesHasDataEvent(prop.getTsID(), prop.hasData());
+                        TimeSeriesHasDataEvent hasDataEvent = new TimeSeriesHasDataEvent(prop.getTimeseriesId(), prop.hasData());
                         EventBus.getMainEventBus().fireEvent(hasDataEvent);
                     }
 
@@ -591,7 +593,7 @@ public class SOSRequestManager extends RequestManager {
                     Bounds maxDomainBounds = new Bounds(left, right, null, null);
                     EventBus.getMainEventBus().fireEvent(new SetMaxDomainBoundsEvent(maxDomainBounds));
 
-                    SetDomainBoundsEventHandler[] blocked = {DataStoreTimeSeriesImpl.getInst().getEventBroker()};
+                    SetDomainBoundsEventHandler[] blocked = {TimeseriesDataStore.getTimeSeriesDataStore().getEventBroker()};
                     Double mainLeft = new Double(result.getBegin() + 0.0);
                     Double mainRight = new Double(result.getEnd() + 0.0);
                     Double mainTop = result.getPlotArea().getTop();
@@ -640,7 +642,7 @@ public class SOSRequestManager extends RequestManager {
         }
     }
 
-    public void requestExportPDF(Collection<TimeSeries> timeseries) {
+    public void requestExportPDF(Collection<Timeseries> timeseries) {
         try {
             getPDF(timeseries);
         }
@@ -657,19 +659,19 @@ public class SOSRequestManager extends RequestManager {
      * @throws TimeoutException
      *         the timeout exception
      */
-    private void getPDF(Collection<TimeSeries> timeseries) throws TimeoutException {
+    private void getPDF(Collection<Timeseries> timeseries) throws TimeoutException {
         addRequest();
         TimeSeriesDataRequest req = createTimeSeriesDataRequest(timeseries);
         this.fileDataService.getPDF(req, new FileCallback(SOSRequestManager.this));
     }
 
-    private TimeSeriesDataRequest createTimeSeriesDataRequest(Collection<TimeSeries> tsCollection) {
+    private TimeSeriesDataRequest createTimeSeriesDataRequest(Collection<Timeseries> tsCollection) {
         ArrayList<TimeseriesProperties> series = new ArrayList<TimeseriesProperties>();
-        for (TimeSeries timeSeries : tsCollection) {
+        for (Timeseries timeSeries : tsCollection) {
             timeSeries.getProperties().setLanguage(PropertiesManager.language);
 			series.add(timeSeries.getProperties());
 		}
-        boolean grid = DataStoreTimeSeriesImpl.getInst().isGridEnabled();
+        boolean grid = TimeseriesDataStore.getTimeSeriesDataStore().isGridEnabled();
         long begin = TimeManager.getInst().getBegin();
         long end = TimeManager.getInst().getEnd();
         DesignOptions options = new DesignOptions(series, begin, end, grid);
@@ -677,7 +679,7 @@ public class SOSRequestManager extends RequestManager {
         return req;
     }
 
-    public void requestExportXLS(Collection<TimeSeries> timeseries) {
+    public void requestExportXLS(Collection<Timeseries> timeseries) {
         try {
             getXLS(timeseries);
         }
@@ -686,7 +688,7 @@ public class SOSRequestManager extends RequestManager {
         }
     }
 
-    private void getXLS(Collection<TimeSeries> timeseries) throws TimeoutException {
+    private void getXLS(Collection<Timeseries> timeseries) throws TimeoutException {
         addRequest();
         TimeSeriesDataRequest req = createTimeSeriesDataRequest(timeseries);
 
@@ -694,7 +696,7 @@ public class SOSRequestManager extends RequestManager {
 
     }
 
-    public void requestExportCSV(Collection<TimeSeries> timeseries) {
+    public void requestExportCSV(Collection<Timeseries> timeseries) {
         try {
             getCSV(timeseries);
         }
@@ -703,13 +705,13 @@ public class SOSRequestManager extends RequestManager {
         }
     }
 
-    private void getCSV(Collection<TimeSeries> timeseries) throws TimeoutException {
+    private void getCSV(Collection<Timeseries> timeseries) throws TimeoutException {
         addRequest();
         TimeSeriesDataRequest req = createTimeSeriesDataRequest(timeseries);
         this.fileDataService.getCSV(req, new FileCallback(SOSRequestManager.this));
     }
 
-    public void requestExportPDFzip(Collection<TimeSeries> timeseries) {
+    public void requestExportPDFzip(Collection<Timeseries> timeseries) {
         try {
             getPDFzip(timeseries);
         }
@@ -718,7 +720,7 @@ public class SOSRequestManager extends RequestManager {
         }
     }
 
-    private void getPDFzip(Collection<TimeSeries> timeseries) throws TimeoutException {
+    private void getPDFzip(Collection<Timeseries> timeseries) throws TimeoutException {
         addRequest();
         TimeSeriesDataRequest req = createTimeSeriesDataRequest(timeseries);
 
@@ -727,19 +729,19 @@ public class SOSRequestManager extends RequestManager {
     
     
 
-    public void requestExportXLSzip(Collection<TimeSeries> timeseries) {
+    public void requestExportXLSzip(Collection<Timeseries> timeseries) {
         addRequest();
         TimeSeriesDataRequest req = createTimeSeriesDataRequest(timeseries);
         this.fileDataService.getXLSzip(req, new FileCallback(SOSRequestManager.this));
     }
 
-    public void requestExportCSVzip(Collection<TimeSeries> timeseries) {
+    public void requestExportCSVzip(Collection<Timeseries> timeseries) {
         addRequest();
         TimeSeriesDataRequest req = createTimeSeriesDataRequest(timeseries);
         this.fileDataService.getCSVzip(req, new FileCallback(SOSRequestManager.this));
     }
 
-    public void requestExportPDFallInOne(Collection<TimeSeries> timeseries) {
+    public void requestExportPDFallInOne(Collection<Timeseries> timeseries) {
         try {
             getPDF(timeseries);
         }

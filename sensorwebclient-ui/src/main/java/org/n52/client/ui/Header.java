@@ -24,7 +24,9 @@
 package org.n52.client.ui;
 
 
+import static com.google.gwt.http.client.URL.encodeQueryString;
 import static com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat.ISO_8601;
+import static org.n52.client.sos.data.TimeseriesDataStore.getTimeSeriesDataStore;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.Date;
@@ -32,18 +34,20 @@ import java.util.Date;
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.TimeManager;
 import org.n52.client.sos.ctrl.SosDataManager;
-import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
+import org.n52.client.sos.data.TimeseriesDataStore;
 import org.n52.client.sos.event.data.UpdateSOSMetadataEvent;
-import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.sos.legend.Timeseries;
 import org.n52.client.util.ClientUtils;
 import org.n52.ext.ExternalToolsException;
 import org.n52.ext.link.AccessLinkFactory;
 import org.n52.ext.link.sos.TimeRange;
 import org.n52.ext.link.sos.TimeSeriesParameters;
 import org.n52.ext.link.sos.TimeSeriesPermalinkBuilder;
+import org.n52.shared.serializable.pojos.TimeseriesRenderingOptions;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.smartgwt.client.types.Alignment;
@@ -180,7 +184,28 @@ public class Header extends HLayout {
         restart.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent evt) {
                 String currentUrl = Window.Location.getHref();
-                Window.Location.assign(createPermaLink(currentUrl));
+                String permalink = createPermaLink(currentUrl);
+                Window.Location.assign(addDesignOptions(permalink));
+            }
+
+            private String addDesignOptions(String permalink) {
+                Timeseries[] ts = getTimeSeriesDataStore().getTimeSeriesSorted();
+                if (ts == null || ts.length == 0) {
+                    return permalink;
+                }
+                StringBuilder options = new StringBuilder();
+                for (Timeseries timeSeries : ts) {
+                    TimeseriesRenderingOptions renderingOptions = new TimeseriesRenderingOptions();
+                    renderingOptions.setColor(timeSeries.getColor());
+                    renderingOptions.setLineWidth(timeSeries.getLineWidth());
+                    options.append(renderingOptions.asJson()).append(",");
+                }
+                // delete last commas
+                options.deleteCharAt(options.length() - 1);
+                StringBuilder sb = new StringBuilder(permalink);
+                String urlEncodedValue = encodeQueryString(options.toString());
+                sb.append("&").append("options=").append(urlEncodedValue);
+                return sb.toString();
             }
         });
 		return restart;
@@ -253,13 +278,13 @@ public class Header extends HLayout {
     }
     
     private String createPermaLink(String baseUrl) {
-        TimeSeries[] ts = DataStoreTimeSeriesImpl.getInst().getTimeSeriesSorted();
+        Timeseries[] ts = getTimeSeriesDataStore().getTimeSeriesSorted();
         if (ts == null || ts.length == 0) {
             return baseUrl;
         }
         
         TimeSeriesPermalinkBuilder builder = new TimeSeriesPermalinkBuilder();
-        for (TimeSeries timeSeries : ts) {
+        for (Timeseries timeSeries : ts) {
             TimeSeriesParameters parameters = createTimeSeriesParameters(timeSeries);
             parameters.setTimeRange(createTimeRange());
             builder.addParameters(parameters);
@@ -280,7 +305,7 @@ public class Header extends HLayout {
         return TimeRange.createTimeRange(format.format(start), format.format(end));
     }
 
-    private TimeSeriesParameters createTimeSeriesParameters(TimeSeries timeSeries) {
+    private TimeSeriesParameters createTimeSeriesParameters(Timeseries timeSeries) {
         String sos = timeSeries.getSosUrl();
         String offering = timeSeries.getOfferingId();
         String procedure = timeSeries.getProcedureId();

@@ -24,6 +24,7 @@
 
 package org.n52.server.sos.generator;
 
+import static org.n52.server.mgmt.ConfigurationContext.getServiceMetadata;
 import static org.n52.server.util.TimeUtil.createIso8601Formatter;
 
 import java.awt.Color;
@@ -57,9 +58,8 @@ import org.n52.server.mgmt.GeneralizationConfiguration;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
-import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,6 +82,15 @@ public abstract class Generator {
      *         if generating presentation fails.
      */
     public abstract RepresentationResponse producePresentation(DesignOptions options) throws Exception;
+    
+    protected TimeseriesParametersLookup getParameterLookup(String serviceUrl) {
+        try {
+            SOSMetadata metadata = getServiceMetadata(serviceUrl);
+            return metadata.getTimeseriesParametersLookup();
+        } catch (Exception e) {
+            throw new IllegalStateException("No parameter lookup available for service '" + serviceUrl + "'.", e);
+        }
+    }
 
     /**
      * returns an object of type Map<String, OXFFeatureCollection>. The key is a composed String object
@@ -104,13 +113,13 @@ public abstract class Generator {
         }
 
         for (TimeseriesProperties con : options.getProperties()) {
-            SOSMetadata meta = ConfigurationContext.getSOSMetadata(con.getSosUrl());
+            SOSMetadata meta = ConfigurationContext.getSOSMetadata(con.getServiceUrl());
             if (meta.canGeneralize() && generalize) {
-                String phenomenon = con.getPhenomenon().getId();
+                String phenomenon = con.getPhenomenon();
                 try {
                     String generalizer = GeneralizationConfiguration.getProperty(phenomenon);
                     if (generalizer != null) {
-                        Procedure procedure = con.getProcedure();
+                        String procedure = con.getProcedure();
                         LOGGER.debug("Using generalizer '{}' for phenomenon '{}' and procedure '{}'",
                                      generalizer,
                                      phenomenon,
@@ -131,11 +140,11 @@ public abstract class Generator {
                                                          Map<String, OXFFeatureCollection> entireCollMap) {
         for (TimeseriesProperties prop : options.getProperties()) {
 
-            OXFFeatureCollection obsColl = entireCollMap.get(prop.getOffering().getId() + "@" + prop.getSosUrl());
+            OXFFeatureCollection obsColl = entireCollMap.get(prop.getOffering() + "@" + prop.getServiceUrl());
 
-            String foiID = prop.getFoi().getId();
-            String obsPropID = prop.getPhenomenon().getId();
-            String procID = prop.getProcedure().getId();
+            String foiID = prop.getFeature();
+            String obsPropID = prop.getPhenomenon();
+            String procID = prop.getProcedure();
             // if (procID.contains("urn:ogc:generalizationMethod:")) {
             // procID = procID.split(",")[0];
             // }
@@ -200,13 +209,13 @@ public abstract class Generator {
             List<String> observedProperties = new ArrayList<String>();
 
             // extract request parameters from offering
-            Offering offering = property.getOffering();
-            observedProperties.add(property.getPhenomenon().getId());
-            procedures.add(property.getProcedure().getId());
-            fois.add(property.getFoi().getId());
+            String offering = property.getOffering();
+            observedProperties.add(property.getPhenomenon());
+            procedures.add(property.getProcedure());
+            fois.add(property.getFeature());
 
-            String sosUrl = property.getSosUrl();
-            String offeringId = offering.getId();
+            String sosUrl = property.getServiceUrl();
+            String offeringId = property.getOffering();
             requests.add(new RequestConfig(sosUrl, offeringId, fois, observedProperties, procedures, time));
         }
         return requests;

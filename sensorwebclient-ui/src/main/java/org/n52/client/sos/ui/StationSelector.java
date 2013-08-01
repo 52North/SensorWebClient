@@ -25,6 +25,7 @@
 package org.n52.client.sos.ui;
 
 import static com.smartgwt.client.types.Overflow.HIDDEN;
+import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 import static org.n52.client.sos.ui.SelectionMenuModel.createListGrid;
 import static org.n52.client.ui.Toaster.getToasterInstance;
@@ -39,7 +40,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.gwtopenmaps.openlayers.client.MapWidget;
-import org.n52.client.bus.EventBus;
 import org.n52.client.sos.event.data.NewTimeSeriesEvent;
 import org.n52.client.ui.ApplyCancelButtonLayout;
 import org.n52.client.ui.InteractionWindow;
@@ -345,15 +345,13 @@ public class StationSelector extends Window {
 	}
 
 	private void loadTimeSeries() {
-        final String selectedServiceURL = controller.getSelectedServiceURL();
 		final Station station = controller.getSelectedStation();
 		SosTimeseries timeseries = controller.getSelectedTimeseries();
-		
-		NewTimeSeriesEvent event = new NewTimeSeriesEvent.Builder(selectedServiceURL)
+		NewTimeSeriesEvent event = new NewTimeSeriesEvent.Builder()
 				.addStation(station)
 				.addTimeseries(timeseries)
 				.build();
-		EventBus.getMainEventBus().fireEvent(event);
+		getMainEventBus().fireEvent(event);
 	}
 
 	protected void closeStationpicker() {
@@ -444,21 +442,8 @@ public class StationSelector extends Window {
 		if (controller.getSelectedPhenomenon() != null) {
 			selectedPhenomenon = controller.getSelectedPhenomenon().getLabel();
 		}
-		String foiDesc = null;
-//		if (controller.getSelectedFeature() != null) {
-//			foiDesc = controller.getSelectedFeature().getLabel();
-//		}
 		if (selectedPhenomenon != null && !selectedPhenomenon.isEmpty()) {
 			phenomenonBox.setValue(selectedPhenomenon);
-//			phenomenonInfoLabel.setContents(i18n.phenomenonLabel() + ": " + phenDesc);
-//			phenomenonInfoLabel.show();
-		} else {
-//			phenomenonInfoLabel.hide();
-		}
-		if (foiDesc != null && !foiDesc.isEmpty()) {
-			stationInfoLabel.setContents(i18n.foiLabel() + ": " + foiDesc);
-			stationInfoLabel.show();
-		} else {
 			stationInfoLabel.hide();
 		}
 	}

@@ -24,6 +24,9 @@
 
 package org.n52.client.sos.legend;
 
+import static org.n52.client.sos.ctrl.SosDataManager.getDataManager;
+import static org.n52.client.ui.map.OpenLayersMapWrapper.currentMapProjection;
+
 import java.util.HashMap;
 
 import org.n52.client.sos.DataparsingException;
@@ -34,11 +37,14 @@ import org.n52.client.ui.map.Coordinate;
 import org.n52.client.ui.map.OpenLayersMapWrapper;
 import org.n52.client.util.ClientUtils;
 import org.n52.shared.serializable.pojos.Axis;
+import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Procedure;
+import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
-public class TimeSeries implements LegendData {
+public class Timeseries implements LegendData {
 
 	public static final String GRAPH_STYLE_GAUGELINE = "1";
 
@@ -66,23 +72,17 @@ public class TimeSeries implements LegendData {
 
 	private Coordinate coords;
 
-	public TimeSeries(String id, TimeseriesProperties properties) {
+	public Timeseries(String id, TimeseriesProperties properties) {
 		this.id = id;
 		this.properties = properties;
-		this.properties.setTsID(id);
-
 		this.data = new HashMap<Long, String>();
 		init();
 	}
 
 	private void init() {
+        this.ordering = 0;
 		this.properties.setLabel(this.id);
-		if (this.properties.getHexColor() == null) {
-			this.properties.setHexColor(ClientUtils.getRandomHexColor());
-		}
-		this.ordering = 0;
 		this.legendElement = new LegendEntryTimeSeries(this, "100%", "30");
-		// this.legendElement = new LegendEntryTimeSeries(this, "320px", "30");
 	}
 
 	public void addData(HashMap<Long, String> datamap) throws DataparsingException {
@@ -136,7 +136,7 @@ public class TimeSeries implements LegendData {
 	/**
 	 * The coordinate has to be set explicitly, due to missing spatial
 	 * information at the time of instance creation. Use this method when
-	 * spatial information for this {@link TimeSeries} instance is available.
+	 * spatial information for this {@link Timeseries} instance is available.
 	 * 
 	 * @param coords
 	 *            the spatial information as coordinate.
@@ -218,26 +218,32 @@ public class TimeSeries implements LegendData {
 		return this.properties;
 	}
 
+    private TimeseriesParametersLookup getParameterLookup(TimeseriesProperties properties) {
+        SOSMetadata metadata = getDataManager().getServiceMetadata(properties.getServiceUrl());
+        return metadata.getTimeseriesParametersLookup();
+    }
+
 	public String getTimeSeriesLabel() {
-		if (properties.getStationName() != null && properties.getStationName() != "") {
-		    StringBuilder sb = new StringBuilder();
-		    sb.append(properties.getPhenomenon().getLabel());
-		    sb.append("@").append(properties.getStationName());
-			return sb.toString();
-		}
-		return properties.getFoi().getLabel();
+//		if (properties.getStationName() != null && properties.getStationName() != "") {
+//		    StringBuilder sb = new StringBuilder();
+//		    sb.append(properties.getPhenomenon().getLabel());
+//		    sb.append("@").append(properties.getStationName());
+//			return sb.toString();
+//		}
+	    TimeseriesParametersLookup lookup = getParameterLookup(properties);
+		return lookup.getFeature(properties.getFeature()).getLabel();
 	}
 
 	public String getFeatureId() {
-		return properties.getFoi().getId();
+		return properties.getFeature();
 	}
 
 	public String getPhenomenonId() {
-		return properties.getPhenomenon().getId();
+		return properties.getPhenomenon();
 	}
 
 	public String getProcedureId() {
-		return properties.getProcedure().getId();
+		return properties.getProcedure();
 	}
 
 	public String getUnitOfMeasure() {
@@ -249,11 +255,11 @@ public class TimeSeries implements LegendData {
 	}
 
 	public String getOfferingId() {
-		return properties.getOffering().getId();
+		return properties.getOffering();
 	}
 
 	public String getSosUrl() {
-		return properties.getSosUrl();
+		return properties.getServiceUrl();
 	}
 
 	public double getLat() {
@@ -311,7 +317,7 @@ public class TimeSeries implements LegendData {
 
 	public void setProperties(TimeseriesProperties props) {
 		this.properties = props;
-		this.coords = getCoords(props.getProcedure());
+		this.coords = getCoords(props.getStation());
 		updateLegendElement();
 	}
 
@@ -320,21 +326,15 @@ public class TimeSeries implements LegendData {
 	 * {@link Procedure}. If no spatial information is available yet (eg the
 	 * client was started from a permalink), <code>null</code> is returned.
 	 * 
-	 * @param proc
-	 *            containing the spatial information (if already available)
 	 * @return the coordinate or <code>null</code> if spatial information was
 	 *         not already available
 	 */
-	private Coordinate getCoords(Procedure proc) {
+	private Coordinate getCoords(Station station) {
 		if (properties.getSrs() == null) {
-			// coords not available yet (eg client start from permalink)
+			// coords not available yet (eg client started from permalink)
 			return null;
 		}
-		double lon = properties.getLon();
-		double lat = properties.getLat();
-		String srs = properties.getSrs();
-		Coordinate coordsTemp = new Coordinate(lon, lat, OpenLayersMapWrapper.currentMapProjection, srs);
-		return coordsTemp;
+		return new Coordinate(station.getLocation(), currentMapProjection);
 	}
 
 	public boolean hasData() {

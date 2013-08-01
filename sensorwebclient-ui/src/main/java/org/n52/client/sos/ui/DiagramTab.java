@@ -46,7 +46,7 @@ import org.n52.client.ctrl.ExceptionHandler;
 import org.n52.client.sos.ctrl.DiagramTabController;
 import org.n52.client.sos.ctrl.DragImageControl;
 import org.n52.client.sos.ctrl.MouseWheelControl;
-import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
+import org.n52.client.sos.data.TimeseriesDataStore;
 import org.n52.client.ui.DataPanelTab;
 import org.n52.shared.Constants;
 
@@ -362,7 +362,7 @@ public class DiagramTab extends DataPanelTab {
     protected class MousePointerDomainBoundsHandler implements SetDomainBoundsEventHandler {
 
         public void onSetDomainBounds(SetDomainBoundsEvent event) {
-            if ( !DataStoreTimeSeriesImpl.getInst().getDataItems().isEmpty()) {
+            if ( !TimeseriesDataStore.getTimeSeriesDataStore().getDataItems().isEmpty()) {
                 String[] widthHeight = getBoundValues(event);
 
                 Element mousePointerElement = DiagramTab.this.getMousePointerLineElement();

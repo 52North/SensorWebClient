@@ -24,6 +24,8 @@
 
 package org.n52.client.ui.map;
 
+import static org.n52.client.sos.ctrl.SosDataManager.getDataManager;
+
 import java.util.ArrayList;
 
 import org.gwtopenmaps.openlayers.client.Icon;
@@ -35,7 +37,11 @@ import org.gwtopenmaps.openlayers.client.event.EventHandler;
 import org.gwtopenmaps.openlayers.client.event.EventObject;
 import org.gwtopenmaps.openlayers.client.popup.FramedCloud;
 import org.gwtopenmaps.openlayers.client.popup.Popup;
-import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.sos.ctrl.SosDataManager;
+import org.n52.client.sos.legend.Timeseries;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
 /**
  * The Class OpenlayersMarker.
@@ -46,7 +52,7 @@ public class OpenlayersMarker extends Marker {
 
     private String infoTxt;
 
-    private TimeSeries timeseries;
+    private Timeseries timeseries;
 
     private ArrayList<String> timeseriesIds = new ArrayList<String>();
 
@@ -57,7 +63,7 @@ public class OpenlayersMarker extends Marker {
     private final static String UNMARKED_IMG_RELPATH = "img/icons/marker_unsel.png";
     private final static String MARKED_IMG_RELPATH = "img/icons/marker_sel.png";
 
-    public OpenlayersMarker(Coordinate coords, TimeSeries ts) {
+    public OpenlayersMarker(Coordinate coords, Timeseries ts) {
         super(coords);
         this.timeseries = ts;
         this.coords = coords;
@@ -113,20 +119,27 @@ public class OpenlayersMarker extends Marker {
     }
 
     public String getInfoTxt() {
+        TimeseriesProperties properties = timeseries.getProperties();
+        TimeseriesParametersLookup lookup = getParameterLookup(properties);
         if (infoTxt == null || infoTxt.length() == 0) {
             StringBuilder sb = new StringBuilder();
             sb.append("Offering: ");
-            sb.append(this.timeseries.getProperties().getOffering().getLabel());
+            sb.append(lookup.getOffering(properties.getOffering()).getLabel());
             sb.append("</br>Feature: ");
-            sb.append(this.timeseries.getProperties().getFoi().getLabel());
+            sb.append(lookup.getFeature(properties.getFeature()).getLabel());
             sb.append("</br>Procedure: ");
-            sb.append(this.timeseries.getProperties().getProcedure().getLabel());
+            sb.append(lookup.getProcedure(properties.getProcedure()).getLabel());
             sb.append("</br>Phenomenon: ");
-            sb.append(this.timeseries.getProperties().getPhenomenon().getLabel());
-            sb.append("[" + this.timeseries.getProperties().getPhenomenon().getUnitOfMeasure() + "]</br>");
+            sb.append(lookup.getPhenomenon(properties.getPhenomenon()).getLabel());
+            sb.append("[" + properties.getUnitOfMeasure() + "]</br>");
             infoTxt = sb.toString();
         }
         return infoTxt;
+    }
+
+    private TimeseriesParametersLookup getParameterLookup(TimeseriesProperties properties) {
+        SOSMetadata metadata = getDataManager().getServiceMetadata(properties.getServiceUrl());
+        return metadata.getTimeseriesParametersLookup();
     }
 
     public boolean containsTS(String id) {
