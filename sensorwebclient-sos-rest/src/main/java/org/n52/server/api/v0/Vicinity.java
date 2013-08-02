@@ -10,7 +10,7 @@ import static org.n52.server.util.crs.WGS84Util.getLongitudeDelta;
 import static org.n52.server.util.crs.WGS84Util.normalizeLatitude;
 import static org.n52.server.util.crs.WGS84Util.normalizeLongitude;
 
-import org.n52.server.api.geojson.GeojsonPoint;
+import org.n52.server.io.geojson.GeojsonPoint;
 import org.n52.server.util.crs.AReferencingHelper;
 import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.EastingNorthing;
