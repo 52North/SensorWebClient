@@ -511,6 +511,12 @@
 				</plugin>
 
 				<plugin>
+					<groupId>com.atlassian.maven.plugins</groupId>
+					<artifactId>maven-jgitflow-plugin</artifactId>
+					<version>1.0-alpha9</version>
+				</plugin>
+
+				<plugin>
 					<!-- NOTE: We don't need a groupId specification because the group is 
 						org.apache.maven.plugins ...which is assumed by default. -->
 					<artifactId>maven-assembly-plugin</artifactId>
@@ -666,16 +672,21 @@
 
 		<profile>
 			<id>release</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>ci</value>
+				</property>
+			</activation>
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-release-plugin</artifactId>
-						<version>2.3.2</version>
+						<groupId>com.atlassian.maven.plugins</groupId>
+						<artifactId>maven-jgitflow-plugin</artifactId>
+						<version>1.0-alpha9</version>
 						<configuration>
-							<preparationGoals>clean</preparationGoals>
+							<!-- see goals wiki page for configuration options -->
 							<autoVersionSubmodules>true</autoVersionSubmodules>
-							<goals>deploy, assembly:single</goals>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -772,7 +783,7 @@
 		<logback.version>1.0.11</logback.version>
 		<smartgwt.version>3.1</smartgwt.version>
 		<geotools.version>8.2</geotools.version>
-		<oxf.version>2.0.0-alpha.3-SNAPSHOT</oxf.version>
+		<oxf.version>2.0.0-alpha.3</oxf.version>
 		<hibernate.version>3.5.0-Final</hibernate.version>
 		<n52.xml.commons.version>1.1.5</n52.xml.commons.version>
 		<org.springframework.version>3.2.0.RELEASE</org.springframework.version>
