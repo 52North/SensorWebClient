@@ -122,34 +122,33 @@ public class HydroMetadataHandler extends MetadataHandler {
 		
 		// create list of timeseries of GDA requests
 		Collection<SosTimeseries> timeseries = executeGDATasks(getDataAvailabilityTasks);
-		LOGGER.info("{} timeseries constellations are created", timeseries.size());
 		
 		// iterate over tasks of getFOI and add them to metadata
         executeFoiTasks(getFoiAccessTasks, metadata);
 		
 		// iterate over timeseries and add them to station with according feature id
         for (SosTimeseries timeserie : timeseries) {
-			Station station = metadata.getStation(timeserie.getFeature());
+			String feature = timeserie.getFeature();
+            Station station = metadata.getStation(feature);
 			if (station != null) {
 				station.addTimeseries(timeserie);	
 			} else {
-				LOGGER.error("Station with id {} doesn't exist", timeserie.getFeature());
+				LOGGER.warn("{} not added! No station for feature '{}'.", timeserie, feature);
 			}
 		}
 		
-		LOGGER.info("{} stations are created", metadata.getStations().size());
-		
+        infoLogServiceSummary(metadata);
 		metadata.setHasDonePositionRequest(true);
 	}
 
-	private Collection<SosTimeseries> executeGDATasks(
+    private Collection<SosTimeseries> executeGDATasks(
 			Map<SosTimeseries, FutureTask<OperationResult>> getDataAvailabilityTasks)
 			throws InterruptedException, ExecutionException, TimeoutException, XmlException, IOException {
 		int counter = getDataAvailabilityTasks.size();
-		LOGGER.info("Sending " + counter + " GetDataAvailability requests");
+		LOGGER.debug("Sending " + counter + " GetDataAvailability requests");
 		Collection<SosTimeseries> timeseries = new ArrayList<SosTimeseries>();
 		for (SosTimeseries timeserie : getDataAvailabilityTasks.keySet()) {
-			LOGGER.info("Sending #{} GetDataAvailability request for procedure " + timeserie.getProcedure(), counter--);
+			LOGGER.debug("Sending #{} GetDataAvailability request for procedure " + timeserie.getProcedure(), counter--);
 			FutureTask<OperationResult> futureTask = getDataAvailabilityTasks.get(timeserie);
 			AccessorThreadPool.execute(futureTask);
 			OperationResult result = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
@@ -171,9 +170,9 @@ public class HydroMetadataHandler extends MetadataHandler {
 		TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
 		counter = getFoiAccessTasks.size();
         AReferencingHelper referenceHelper = createReferencingHelper();
-		LOGGER.info("Sending " + counter + " GetFeatureOfInterest requests");
+		LOGGER.debug("Sending {} GetFeatureOfInterest requests", counter);
 		for (String procedureID : getFoiAccessTasks.keySet()) {
-			LOGGER.info("Sending #{} GetFeatureOfInterest request for procedure " + procedureID, counter--);
+			LOGGER.debug("Sending #{} GetFeatureOfInterest request for procedure '{}'", counter--, procedureID);
 			FutureTask<OperationResult> futureTask = getFoiAccessTasks.get(procedureID);
 			AccessorThreadPool.execute(futureTask);
 			try {

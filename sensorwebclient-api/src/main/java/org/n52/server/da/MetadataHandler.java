@@ -60,6 +60,7 @@ import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
+import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +74,16 @@ public abstract class MetadataHandler {
 	private SOSAdapter adapter;
 	
 	private SOSMetadata sosMetadata;
+	
+	protected void infoLogServiceSummary(SOSMetadata metadata) {
+        int timeseriesCount = 0;
+        int stationCount = metadata.getStations().size();
+        for (Station station : metadata.getStations()) {
+            timeseriesCount += station.getObservedTimeseries().size();
+        }
+        String serviceName = metadata.getConfiguredItemName();
+        LOGGER.info("{} cached: {} stations with {} timeseries.", serviceName, stationCount, timeseriesCount);
+    }
 
 	public abstract SOSMetadata performMetadataCompletion(String sosUrl, String sosVersion) throws Exception;
 	

@@ -24,6 +24,8 @@
 
 package org.n52.server.mgmt;
 
+import static org.n52.shared.Constants.DEFAULT_SOS_VERSION;
+
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -213,7 +215,7 @@ public class ConfigurationContext extends HttpServlet {
         url = url.trim();
         if (!containsServiceMetadata(url)) {
             new URL(url);
-            serviceMetadatas.put(url, new SOSMetadata(url, url, Constants.DEFAULT_SOS_VERSION));
+            serviceMetadatas.put(url, new SOSMetadata(url, url, DEFAULT_SOS_VERSION));
 //            throw new IllegalArgumentException("Unkown service url!");
         }
         if (isMetadataAvailable(url)) {
