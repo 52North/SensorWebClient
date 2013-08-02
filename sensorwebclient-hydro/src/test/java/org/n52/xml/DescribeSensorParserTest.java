@@ -34,7 +34,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.oxf.xmlbeans.parser.XMLHandlingException;
-import org.n52.server.sos.parser.DescribeSensorParser;
+import org.n52.server.parser.DescribeSensorParser;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SOSMetadataBuilder;
 

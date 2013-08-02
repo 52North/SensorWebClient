@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.server.sos.parser;
+package org.n52.server.parser;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -79,7 +79,7 @@ import org.n52.oxf.xml.NcNameResolver;
 import org.n52.oxf.xmlbeans.parser.XMLBeansParser;
 import org.n52.oxf.xmlbeans.parser.XMLHandlingException;
 import org.n52.server.mgmt.ConfigurationContext;
-import org.n52.server.sos.parser.utils.ParsedPoint;
+import org.n52.server.parser.utils.ParsedPoint;
 import org.n52.server.util.crs.AReferencingHelper;
 import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;

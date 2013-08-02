@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.server.sos.parser;
+package org.n52.server.parser;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.n52.server.mgmt.ConfigurationContext.SERVER_TIMEOUT;
