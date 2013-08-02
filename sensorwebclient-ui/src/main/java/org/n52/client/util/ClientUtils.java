@@ -27,11 +27,15 @@ package org.n52.client.util;
 import static org.n52.client.ctrl.PropertiesManager.getPropertiesManager;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
-import org.n52.client.ctrl.PropertiesManager;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.n52.client.ui.Toaster;
+import org.n52.ext.link.sos.PermalinkParameter;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Random;
+import com.google.gwt.user.client.Window;
 
 public class ClientUtils {
 
@@ -77,6 +81,46 @@ public class ClientUtils {
         Toaster.getToasterInstance().addMessage(i18n.maxZoomInTime());
         return false;
     }
+    
+    public static String[] getDecodedParameters(PermalinkParameter parameter) {
+        return getDecodedParameters(parameter.nameLowerCase());
+    }
+    
+    public static String[] getDecodedParameters(String parameter) {
+        String value = Window.Location.getParameter(parameter);
+        if (value == null || value.isEmpty()) {
+            return new String[] {};
+        }
+        if (value.startsWith("{")) {
+            return splitJsonObjects(value);
+        }
+        else {
+            return value.split(",");
+        }
+    }
+
+    public static String[] splitJsonObjects(String value) {
+        int openCurlies = 0;
+        List<String> objects = new ArrayList<String>();
+        StringBuilder object = new StringBuilder();
+        for (int i=0; i < value.length() ; i++) {
+            char currentChar = value.charAt(i);
+            object.append(currentChar);
+            if (currentChar == '{') {
+                openCurlies++;
+            }
+            if (currentChar == '}') {
+                openCurlies--;
+            }
+            if (openCurlies == 0) {
+                objects.add(object.toString());
+                object = new StringBuilder();
+                i++; // skip separating comma
+            }
+        }
+        return objects.toArray(new String[0]);
+    }
+
     
     public static boolean isSesEnabled() {
         return getPropertiesManager().getTabsFromPropertiesFile().contains("SesTab");

@@ -16,7 +16,6 @@
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-opengis</artifactId>
 		</dependency>
-		<!-- ### 52n DEPENDENCIES ### -->
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>sensorwebclient-api</artifactId>
@@ -37,15 +36,6 @@
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>oxf-common</artifactId>
 		</dependency>
-		<!-- ### GWT DEPENDENCIES ### -->
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-servlet</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-user</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
@@ -54,21 +44,6 @@
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
 			<classifier>sources</classifier>
-		</dependency>
-		<!-- ### EXTERNAL DEPENDENCIES ### -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>

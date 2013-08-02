@@ -35,9 +35,8 @@ import org.n52.client.bus.EventBus;
 import org.n52.client.bus.EventCallback;
 import org.n52.client.ctrl.DataControls;
 import org.n52.client.ctrl.LoaderManager;
-import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ctrl.TimeManager;
-import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
+import org.n52.client.sos.data.TimeseriesDataStore;
 import org.n52.client.sos.event.DatesChangedEvent;
 import org.n52.client.sos.event.SwitchGridEvent;
 import org.n52.client.sos.event.data.ExportEvent;
@@ -51,7 +50,7 @@ import org.n52.client.sos.event.data.handler.OverviewIntervalChangedEventHandler
 import org.n52.client.sos.event.data.handler.StoreTimeSeriesFirstValueEventHandler;
 import org.n52.client.sos.event.data.handler.StoreTimeSeriesLastValueEventHandler;
 import org.n52.client.sos.event.handler.DatesChangedEventHandler;
-import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.sos.legend.Timeseries;
 import org.n52.client.sos.ui.DiagramTab;
 import org.n52.client.ui.InteractionWindow;
 import org.n52.client.ui.Toaster;
@@ -931,9 +930,9 @@ public abstract class DataControlsTimeSeries extends DataControls {
         this.exportZipPDF.addClickHandler(new ClickHandler() {
 
             public void onClick(ClickEvent event) {
-                if (!DataStoreTimeSeriesImpl.getInst().getDataItems().isEmpty()) {
-                    List<TimeSeries> series = new ArrayList<TimeSeries>();
-                    series.addAll(DataStoreTimeSeriesImpl.getInst().getDataItems().values());
+                if (!TimeseriesDataStore.getTimeSeriesDataStore().getDataItems().isEmpty()) {
+                    List<Timeseries> series = new ArrayList<Timeseries>();
+                    series.addAll(TimeseriesDataStore.getTimeSeriesDataStore().getDataItems().values());
                     EventBus.getMainEventBus().fireEvent(new ExportEvent(series, ExportEvent.ExportType.PD_ZIP));
                 }
             }
@@ -943,9 +942,9 @@ public abstract class DataControlsTimeSeries extends DataControls {
         this.exportZipCSV.addClickHandler(new ClickHandler() {
 
             public void onClick(ClickEvent event) {
-                if (!DataStoreTimeSeriesImpl.getInst().getDataItems().isEmpty()) {
-                    List<TimeSeries> series = new ArrayList<TimeSeries>();
-                    series.addAll(DataStoreTimeSeriesImpl.getInst().getDataItems().values());
+                if (!TimeseriesDataStore.getTimeSeriesDataStore().getDataItems().isEmpty()) {
+                    List<Timeseries> series = new ArrayList<Timeseries>();
+                    series.addAll(TimeseriesDataStore.getTimeSeriesDataStore().getDataItems().values());
                     EventBus.getMainEventBus().fireEvent(new ExportEvent(series, ExportEvent.ExportType.CSV_ZIP));
                 }
             }
@@ -955,9 +954,9 @@ public abstract class DataControlsTimeSeries extends DataControls {
         this.exportZipXLS.addClickHandler(new ClickHandler() {
 
             public void onClick(ClickEvent event) {
-                if (!DataStoreTimeSeriesImpl.getInst().getDataItems().isEmpty()) {
-                    List<TimeSeries> series = new ArrayList<TimeSeries>();
-                    series.addAll(DataStoreTimeSeriesImpl.getInst().getDataItems().values());
+                if (!TimeseriesDataStore.getTimeSeriesDataStore().getDataItems().isEmpty()) {
+                    List<Timeseries> series = new ArrayList<Timeseries>();
+                    series.addAll(TimeseriesDataStore.getTimeSeriesDataStore().getDataItems().values());
                     EventBus.getMainEventBus().fireEvent(new ExportEvent(series, ExportEvent.ExportType.XLS_ZIP));
                 }
             }
@@ -967,9 +966,9 @@ public abstract class DataControlsTimeSeries extends DataControls {
         this.exportPDFallInOne.addClickHandler(new ClickHandler() {
 
             public void onClick(ClickEvent event) {
-                if (!DataStoreTimeSeriesImpl.getInst().getDataItems().isEmpty()) {
-                    List<TimeSeries> series = new ArrayList<TimeSeries>();
-                    series.addAll(DataStoreTimeSeriesImpl.getInst().getDataItems().values());
+                if (!TimeseriesDataStore.getTimeSeriesDataStore().getDataItems().isEmpty()) {
+                    List<Timeseries> series = new ArrayList<Timeseries>();
+                    series.addAll(TimeseriesDataStore.getTimeSeriesDataStore().getDataItems().values());
                     EventBus.getMainEventBus().fireEvent(new ExportEvent(series, ExportEvent.ExportType.PDF_ALL_IN_ONE));
                 }
             }

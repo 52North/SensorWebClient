@@ -21,39 +21,39 @@ public class SosAdapterFactory {
      * @return the custom adapter implementation, or the default {@link SOSAdapter}.
      */
     public static SOSAdapter createSosAdapter(SOSMetadata metadata) {
-        // TODO switch to new oxf interface when ready
+        String adapter = metadata.getAdapter();
+        String sosVersion = metadata.getSosVersion();
         try {
-            String adapter = metadata.getAdapter();
-            String sosVersion = metadata.getSosVersion();
             if (adapter == null) {
                 return new SOSAdapter(sosVersion);
             }
             else {
-                if (SOSAdapter.class.isAssignableFrom(Class.forName(adapter))) {
-                    Class<SOSAdapter> clazz = (Class<SOSAdapter>) Class.forName(adapter);
-                    Class< ? >[] arguments = new Class< ? >[] {String.class};
-                    Constructor<SOSAdapter> constructor = clazz.getConstructor(arguments);
-                    return constructor.newInstance(sosVersion);
-                } else {
+                
+                if (!SOSAdapter.class.isAssignableFrom(Class.forName(adapter))) {
                     LOGGER.warn("'{}' is not an SOSAdapter implementation! Create default.", adapter);
                     return new SOSAdapter(sosVersion);
                 }
+                @SuppressWarnings("unchecked") // unassignable case handled already
+                Class<SOSAdapter> clazz = (Class<SOSAdapter>) Class.forName(adapter);
+                Class< ? >[] arguments = new Class< ? >[] {String.class};
+                Constructor<SOSAdapter> constructor = clazz.getConstructor(arguments);
+                return constructor.newInstance(sosVersion);
             }
         }
         catch (ClassNotFoundException e) {
-            throw new RuntimeException("Could not find Adapter class.", e);
+            throw new RuntimeException("Could not find Adapter class '" + adapter + "'.", e);
         }
         catch (NoSuchMethodException e) {
-            throw new RuntimeException("Invalid Adapter constructor. ", e);
+            throw new RuntimeException("Invalid Adapter constructor for '" + adapter + "'.", e);
         }
         catch (InstantiationException e) {
-            throw new RuntimeException("Could not create Adapter.", e);
+            throw new RuntimeException("Could not create Adapter for '" + adapter + "'.", e);
         }
         catch (IllegalAccessException e) {
-            throw new RuntimeException("Not allowed to create Adapter.", e);
+            throw new RuntimeException("Not allowed to create Adapter for '" + adapter + "'.", e);
         }
         catch (InvocationTargetException e) {
-            throw new RuntimeException("Instantiation of Adapter failed.", e);
+            throw new RuntimeException("Instantiation failed for Adapter " + adapter + "'.", e);
         }
     }
 }

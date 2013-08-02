@@ -47,7 +47,7 @@ public class StoreOfferingEvent extends FilteredDispatchGwtEvent<StoreOfferingEv
 	}
 
 	@Override
-	public com.google.gwt.event.shared.GwtEvent.Type<StoreOfferingEventHandler> getAssociatedType() {
+	public Type<StoreOfferingEventHandler> getAssociatedType() {
 		return TYPE;
 	}
 

@@ -30,7 +30,7 @@ import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.OVER_UNDER
 import static org.n52.client.view.gui.elements.layouts.SimpleRuleType.SENSOR_LOSS;
 import static org.n52.shared.util.MathSymbolUtil.getIndexFor;
 
-import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.sos.legend.Timeseries;
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 import org.n52.shared.serializable.pojos.Rule;
 import org.n52.shared.serializable.pojos.RuleBuilder;
@@ -44,7 +44,7 @@ class EventSubscriptionController {
 
     private EventNameForm eventNameForm;
 
-    private TimeSeries timeseries;
+    private Timeseries timeseries;
 
     private String selectedAbonnementName;
 
@@ -64,11 +64,11 @@ class EventSubscriptionController {
         this.eventNameForm = eventNameForm;
     }
 
-    public void setTimeseries(TimeSeries timeseries) {
+    public void setTimeseries(Timeseries timeseries) {
         this.timeseries = timeseries;
     }
 
-    public TimeSeries getTimeSeries() {
+    public Timeseries getTimeSeries() {
         return timeseries;
     }
     
@@ -250,7 +250,7 @@ class EventSubscriptionController {
     }
     
     private TimeseriesMetadata createTimeseriesMetadata() {
-        final TimeSeries timeseries = this.timeseries;
+        final Timeseries timeseries = this.timeseries;
         TimeseriesMetadata metadata = new TimeseriesMetadata();
         metadata.setServiceUrl(timeseries.getSosUrl());
         metadata.setOffering(timeseries.getOfferingId());

@@ -1,0 +1,20 @@
+
+<div ng-controller="ProcedureListCtrl">
+
+	<div class="masthead">
+		<ul class="nav nav-pills pull-right">
+			<li><a href="#/{{serviceId}}s">back</a></li>
+		</ul>
+		<h3 class="muted">Procedures</h3>
+	</div>
+	
+    <div class="span5 pull-left parameterList">
+        <input type="text" ng-model="search" placeholder="Filter by name...">
+		<ul class="procedures">
+			<li ng-repeat="procedure in procedures | filter:searchInRelevantProperties">
+				<!-- decode twice since browser decodes automatically when routing -->
+				<a href="#/{{serviceId}}/procedures/{{utils.doubleEncode(procedure.id)}}">{{procedure.id}}</a>
+			</li>
+		</ul>
+	</div>
+</div>

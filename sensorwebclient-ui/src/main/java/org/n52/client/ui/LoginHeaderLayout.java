@@ -10,14 +10,11 @@ import static org.n52.shared.serializable.pojos.UserRole.LOGOUT;
 import static org.n52.shared.serializable.pojos.UserRole.USER;
 
 import org.n52.client.bus.EventBus;
-import org.n52.client.ses.event.ChangeLayoutEvent;
 import org.n52.client.ses.event.LogoutEvent;
 import org.n52.client.ses.event.SessionExpiredEvent;
 import org.n52.client.ses.event.SetRoleEvent;
-import org.n52.client.ses.event.handler.ChangeLayoutEventHandler;
 import org.n52.client.ses.event.handler.SessionExpiredEventHandler;
 import org.n52.client.ses.event.handler.SetRoleEventHandler;
-import org.n52.client.util.ClientSessionManager;
 import org.n52.shared.serializable.pojos.UserRole;
 
 import com.smartgwt.client.types.Alignment;

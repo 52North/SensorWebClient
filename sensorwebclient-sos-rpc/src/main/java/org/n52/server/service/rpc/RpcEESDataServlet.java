@@ -26,8 +26,8 @@ package org.n52.server.service.rpc;
 import javax.servlet.ServletException;
 
 import org.n52.client.service.EESDataService;
-import org.n52.server.oxf.util.logging.Statistics;
 import org.n52.server.service.EESDataServiceImpl;
+import org.n52.server.util.Statistics;
 import org.n52.shared.requests.EESDataRequest;
 import org.n52.shared.responses.EESDataResponse;
 import org.n52.shared.service.rpc.RpcEESDataService;

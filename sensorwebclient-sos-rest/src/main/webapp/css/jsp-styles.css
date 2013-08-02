@@ -1,0 +1,8 @@
+#map {
+	height: 600px;
+}
+
+.parameterList {
+	height: 600px;
+	overflow: auto;
+}

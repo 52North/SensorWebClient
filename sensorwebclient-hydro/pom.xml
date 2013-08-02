@@ -18,17 +18,16 @@
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>52n-xml-soap-v12</artifactId>
-			<version>${n52.xml.commons.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-oxf-xmlbeans</artifactId>
+        </dependency>
 		<!-- ### EXTERNAL DEPENDENCIES ### -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
 		</dependency>
 	</dependencies>
 </project>

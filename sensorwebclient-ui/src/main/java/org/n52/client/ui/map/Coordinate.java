@@ -25,46 +25,22 @@
 package org.n52.client.ui.map;
 
 import org.gwtopenmaps.openlayers.client.LonLat;
+import org.n52.shared.serializable.pojos.EastingNorthing;
 
-/**
- * Represents a lon/lat Coordinate.
- * 
- * @author <a href="mailto:f.bache@52north.de">Felix Bache</a>
- */
 public class Coordinate extends LonLat {
 
     /**
-     * Instantiates a new lon/lat coordinate.
+     * Creates a {@link LonLat} coordinate ready to be rendered on a map.
      * 
-     * @param lng
-     *        the lng
-     * @param lat
-     *        the lat
+     * @param location
+     *        the location to be mapped.
      * @param mapProjection
-     *        the mapProjection
-     * @param srs
-     *        the coord projection
+     *        the projection of the map in which the coordinate will be rendered.
      */
-    public Coordinate(double lng, double lat, String mapProjection, String srs) {
-        super(lng, lat);
-        if (srs == null) {
-			srs = mapProjection; // FIXME aussumption ok?
-		}
-        if (!mapProjection.equals(srs)) {
-            transform(srs, mapProjection);
+    public Coordinate(EastingNorthing location, String mapProjection) {
+        super(location.getEasting(), location.getNorthing());
+        if (location.getSrs() != null && !mapProjection.equals(location.getSrs())) {
+            transform(location.getSrs(), mapProjection);
         }
     }
-
-    // /** XXX is this constructor needed?
-    // * Instantiates a new coordinates.
-    // *
-    // * @param lon
-    // * the lon
-    // * @param lat
-    // * the lat
-    // */
-    // public Coordinate(double lon, double lat) {
-    // super(lon, lat);
-    // }
-
 }

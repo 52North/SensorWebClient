@@ -23,12 +23,7 @@
  */
 package org.n52.client.sos.ui;
 
-import org.n52.client.bus.EventBus;
-import org.n52.client.sos.ctrl.DataManagerSosImpl;
-import org.n52.client.sos.event.data.GetPhenomenonsEvent;
-import org.n52.client.sos.event.data.GetStationsEvent;
-import org.n52.shared.serializable.pojos.BoundingBox;
-import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.client.sos.ctrl.SosDataManager;
 import org.n52.shared.serializable.pojos.sos.SOSMetadataBuilder;
 
 import com.google.gwt.core.client.GWT;
@@ -50,13 +45,13 @@ final class SOSSelectionChangedHandler implements SelectionChangedHandler {
 		if (event.getState() && record != null) {
 			String serviceURL = record.getAttribute("url");
 			parseAndStoreSOSMetadata(serviceURL, record);
-			performSOSDataRequests(serviceURL);
+			this.controller.performSOSDataRequests(serviceURL);
 		}
 	}
 
 	private void parseAndStoreSOSMetadata(String serviceURL, Record record) {
 		SOSMetadataBuilder builder = new SOSMetadataBuilder();
-		DataManagerSosImpl dataManager = DataManagerSosImpl.getInst();
+		SosDataManager dataManager = SosDataManager.getDataManager();
 		if (!dataManager.contains(serviceURL)) {
 	        parseAndSetServiceConfiguration(builder, record);
 			dataManager.storeData(serviceURL, builder.build());
@@ -87,22 +82,4 @@ final class SOSSelectionChangedHandler implements SelectionChangedHandler {
         return value == null || value.isEmpty() ? null: value;
 	}
 
-	private void performSOSDataRequests(String serviceURL) {
-	    /*
-	     * XXX
-	     * Using the current extent would require the client to get missing stations
-	     * from the server part. this would make neccessary an interaction (zoom, pan) 
-	     * based rendering of stations!
-	     */
-//		BoundingBox bbox = controller.getCurrentExtent();
-	    DataManagerSosImpl dataManager = DataManagerSosImpl.getInst();
-	    SOSMetadata metadata = dataManager.getServiceMetadata(serviceURL);
-        BoundingBox bbox = metadata.getConfiguredExtent();
-		GetStationsEvent getStations = new GetStationsEvent(serviceURL, bbox);
-		controller.loadingStations(true);
-		GetPhenomenonsEvent getPhenomenons = new GetPhenomenonsEvent.Builder(serviceURL).build();
-		EventBus.getMainEventBus().fireEvent(getStations);
-		EventBus.getMainEventBus().fireEvent(getPhenomenons);
-		controller.setSelectedServiceURL(serviceURL);
-	}
 }

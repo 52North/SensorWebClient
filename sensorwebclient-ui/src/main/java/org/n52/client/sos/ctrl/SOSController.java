@@ -32,7 +32,7 @@ import org.eesgmbh.gimv.client.event.SetOverviewDomainBoundsEvent;
 import org.eesgmbh.gimv.client.event.SetOverviewDomainBoundsEventHandler;
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.ServiceController;
-import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
+import org.n52.client.sos.data.TimeseriesDataStore;
 import org.n52.client.sos.event.data.ExportEvent;
 import org.n52.client.sos.event.data.FinishedLoadingTimeSeriesEvent;
 import org.n52.client.sos.event.data.GetFeatureEvent;
@@ -40,14 +40,15 @@ import org.n52.client.sos.event.data.GetOfferingEvent;
 import org.n52.client.sos.event.data.GetPhenomenonsEvent;
 import org.n52.client.sos.event.data.GetProcedureDetailsUrlEvent;
 import org.n52.client.sos.event.data.GetProcedureEvent;
-import org.n52.client.sos.event.data.GetStationEvent;
-import org.n52.client.sos.event.data.GetStationsEvent;
+import org.n52.client.sos.event.data.GetStationForTimeseriesEvent;
+import org.n52.client.sos.event.data.GetStationsWithinBBoxEvent;
 import org.n52.client.sos.event.data.NewTimeSeriesEvent;
 import org.n52.client.sos.event.data.RequestSensorDataEvent;
 import org.n52.client.sos.event.data.StoreFeatureEvent;
 import org.n52.client.sos.event.data.StoreOfferingEvent;
 import org.n52.client.sos.event.data.StoreProcedureEvent;
 import org.n52.client.sos.event.data.StoreStationEvent;
+import org.n52.client.sos.event.data.UpdateSOSMetadataEvent;
 import org.n52.client.sos.event.data.handler.ExportEventHandler;
 import org.n52.client.sos.event.data.handler.FinishedLoadingTimeSeriesEventHandler;
 import org.n52.client.sos.event.data.handler.GetFeatureEventHandler;
@@ -55,24 +56,22 @@ import org.n52.client.sos.event.data.handler.GetOfferingEventHandler;
 import org.n52.client.sos.event.data.handler.GetPhenomenonsEventHandler;
 import org.n52.client.sos.event.data.handler.GetProcedureDetailsUrlEventHandler;
 import org.n52.client.sos.event.data.handler.GetProcedureEventHandler;
-import org.n52.client.sos.event.data.handler.GetStationEventHandler;
-import org.n52.client.sos.event.data.handler.GetStationsEventHandler;
+import org.n52.client.sos.event.data.handler.GetStationForTimeseriesEventHandler;
+import org.n52.client.sos.event.data.handler.GetStationsWithinBBoxEventHandler;
 import org.n52.client.sos.event.data.handler.NewTimeSeriesEventHandler;
 import org.n52.client.sos.event.data.handler.RequestSensorDataEventHandler;
 import org.n52.client.sos.event.data.handler.StoreFeatureEventHandler;
 import org.n52.client.sos.event.data.handler.StoreOfferingEventHandler;
 import org.n52.client.sos.event.data.handler.StoreProcedureEventHandler;
 import org.n52.client.sos.event.data.handler.StoreStationEventHandler;
-import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.sos.event.data.handler.UpdateSOSMetadataEventHandler;
+import org.n52.client.sos.legend.Timeseries;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
 import com.google.gwt.core.client.GWT;
 
 public class SOSController extends ServiceController {
-
-    public static final String SOS_PARAM_FIRST = "getFirst";
-
-    public static final String SOS_PARAM_LAST = "latest";
 
     protected boolean isAddingNewTimeSeries;
     
@@ -91,7 +90,8 @@ public class SOSController extends ServiceController {
             LoadImageDataEventHandler,
             RequestSensorDataEventHandler,
             GetPhenomenonsEventHandler,
-            GetStationsEventHandler,
+            GetStationsWithinBBoxEventHandler,
+            GetStationForTimeseriesEventHandler,
             GetProcedureDetailsUrlEventHandler,
             GetProcedureEventHandler,
             StoreProcedureEventHandler,
@@ -99,12 +99,12 @@ public class SOSController extends ServiceController {
             StoreOfferingEventHandler,
             GetFeatureEventHandler,
             StoreFeatureEventHandler,
-            GetStationEventHandler,
             StoreStationEventHandler,
             ExportEventHandler,
             FinishedLoadingTimeSeriesEventHandler,
             SetOverviewDomainBoundsEventHandler,
-            SetDomainBoundsEventHandler {
+            SetDomainBoundsEventHandler,
+            UpdateSOSMetadataEventHandler {
 
         public SosControllerEventBroker() {
             EventBus.getMainEventBus().addHandler(NewTimeSeriesEvent.TYPE, this);
@@ -118,22 +118,24 @@ public class SOSController extends ServiceController {
             EventBus.getMainEventBus().addHandler(StoreOfferingEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(GetFeatureEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(StoreFeatureEvent.TYPE, this);
-            EventBus.getMainEventBus().addHandler(GetStationsEvent.TYPE, this);
-            EventBus.getMainEventBus().addHandler(GetStationEvent.TYPE, this);
+            EventBus.getMainEventBus().addHandler(GetStationsWithinBBoxEvent.TYPE, this);
+            EventBus.getMainEventBus().addHandler(GetStationForTimeseriesEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(StoreStationEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(ExportEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(FinishedLoadingTimeSeriesEvent.TYPE, this);
             EventBus.getOverviewChartEventBus().addHandler(SetOverviewDomainBoundsEvent.TYPE, this);
             EventBus.getMainEventBus().addHandler(SetDomainBoundsEvent.TYPE, this);
+            EventBus.getMainEventBus().addHandler(UpdateSOSMetadataEvent.TYPE, this);
         }
 
         public void onNewTimeSeries(NewTimeSeriesEvent evt) {
             try {
+                GWT.log("load new timeseries: " + evt.getTimeseries());
                 SOSController.this.isAddingNewTimeSeries = true;
                 getRequestManager().requestSensorMetadata(evt);
             }
             catch (Exception e1) {
-                GWT.log("", e1);
+                GWT.log("Could not request timeseries.", e1);
             }
         }
 
@@ -142,7 +144,7 @@ public class SOSController extends ServiceController {
         }
 
         public void onRequest(RequestSensorDataEvent evt) {
-            TimeSeries[] sortedTimeSeries = DataStoreTimeSeriesImpl.getInst().getTimeSeriesSorted();
+            Timeseries[] sortedTimeSeries = TimeseriesDataStore.getTimeSeriesDataStore().getTimeSeriesSorted();
             String id = evt.getID();
             if (id != null) {
             	getRequestManager().requestSensorData(sortedTimeSeries, id);
@@ -158,8 +160,8 @@ public class SOSController extends ServiceController {
             }
         }
 
-        public void onGetProcedurePositions(GetStationsEvent evt) {
-        	getRequestManager().requestProcedurePositions(evt.getSOSURL(), evt.getBBox());
+        public void onGetStations(GetStationsWithinBBoxEvent evt) {
+        	getRequestManager().requestStations(evt.getSOSURL(), evt.getBBox());
         }
 
         public void onExport(ExportEvent evt) {
@@ -218,21 +220,33 @@ public class SOSController extends ServiceController {
 		}
 
 		@Override
-		public void onStore(StoreProcedureEvent evt) {
-			SOSMetadata serviceMetadata = DataManagerSosImpl.getInst().getServiceMetadata(evt.getServiceURL());
-			serviceMetadata.addProcedure(evt.getProcedure());
-		}
-
-		@Override
 		public void onGetOffering(GetOfferingEvent evt) {
 			getRequestManager().requestOffering(evt.getServiceURL(), evt.getOfferingID());
 		}
 
+        @Override
+        public void onStore(StoreProcedureEvent evt) {
+            TimeseriesParametersLookup lookup = getParametersLookup(evt.getServiceURL());
+            lookup.addProcedure(evt.getProcedure());
+        }
+
 		@Override
 		public void onStore(StoreOfferingEvent evt) {
-			SOSMetadata serviceMetadata = DataManagerSosImpl.getInst().getServiceMetadata(evt.getServiceURL());
-			serviceMetadata.addOffering(evt.getOffering());
+            TimeseriesParametersLookup lookup = getParametersLookup(evt.getServiceURL());
+			lookup.addOffering(evt.getOffering());
 		}
+
+        @Override
+        public void onStore(StoreFeatureEvent evt) {
+            TimeseriesParametersLookup lookup = getParametersLookup(evt.getServiceURL());
+            lookup.addFeature(evt.getFeature());
+        }
+
+        private TimeseriesParametersLookup getParametersLookup(String serviceUrl) {
+            SosDataManager dataManager = SosDataManager.getDataManager();
+            SOSMetadata serviceMetadata = dataManager.getServiceMetadata(serviceUrl);
+            return serviceMetadata.getTimeseriesParametersLookup();
+        }
 
 		@Override
 		public void onGetFeature(GetFeatureEvent evt) {
@@ -240,20 +254,19 @@ public class SOSController extends ServiceController {
 		}
 
 		@Override
-		public void onStore(StoreFeatureEvent evt) {
-			SOSMetadata serviceMetadata = DataManagerSosImpl.getInst().getServiceMetadata(evt.getServiceURL());
-			serviceMetadata.addFeature(evt.getFeature());
-		}
-
-		@Override
-		public void onGetStation(GetStationEvent evt) {
-			getRequestManager().requestStation(evt.getServiceURL(), evt.getOfferingID(), evt.getProcedureID(), evt.getPhenomenonID(), evt.getFeatureID());
+		public void onGetStation(GetStationForTimeseriesEvent evt) {
+			getRequestManager().requestStationWith(evt.getTimseries());
 		}
 
 		@Override
 		public void onStore(StoreStationEvent evt) {
-			SOSMetadata serviceMetadata = DataManagerSosImpl.getInst().getServiceMetadata(evt.getServiceURL());
+			SOSMetadata serviceMetadata = SosDataManager.getDataManager().getServiceMetadata(evt.getServiceURL());
 			serviceMetadata.addStation(evt.getStation());
+		}
+
+		@Override
+		public void onUpdate(UpdateSOSMetadataEvent evt) {
+			getRequestManager().requestUpdateSOSMetadata();
 		}
     }
 }

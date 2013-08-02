@@ -30,7 +30,7 @@ import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDU
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_SERVICE_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_VERSION_PARAMETER;
 import static org.n52.oxf.sos.adapter.SOSAdapter.DESCRIBE_SENSOR;
-import static org.n52.server.oxf.util.ConfigurationContext.SERVER_TIMEOUT;
+import static org.n52.server.mgmt.ConfigurationContext.SERVER_TIMEOUT;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -45,22 +45,22 @@ import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.sos.util.SosUtil;
 import org.n52.oxf.util.IOHelper;
 import org.n52.oxf.util.JavaHelper;
-import org.n52.server.oxf.util.ConfigurationContext;
-import org.n52.server.oxf.util.access.AccessorThreadPool;
-import org.n52.server.oxf.util.access.OperationAccessor;
-import org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension;
-import org.n52.server.oxf.util.access.oxfExtensions.SosRequestBuilderFactory;
-import org.n52.server.oxf.util.generator.CsvGenerator;
-import org.n52.server.oxf.util.generator.Generator;
-import org.n52.server.oxf.util.generator.PdfGenerator;
-import org.n52.server.oxf.util.generator.XlsGenerator;
-import org.n52.server.oxf.util.generator.ZipGenerator;
+import org.n52.server.da.AccessorThreadPool;
+import org.n52.server.da.oxf.OperationAccessor;
+import org.n52.server.da.oxf.SOSAdapter_OXFExtension;
+import org.n52.server.da.oxf.SosRequestBuilderFactory;
+import org.n52.server.mgmt.ConfigurationContext;
+import org.n52.server.sos.generator.CsvGenerator;
+import org.n52.server.sos.generator.Generator;
+import org.n52.server.sos.generator.PdfGenerator;
+import org.n52.server.sos.generator.XlsGenerator;
+import org.n52.server.sos.generator.ZipGenerator;
 import org.n52.shared.exceptions.ServerException;
 import org.n52.shared.exceptions.TimeoutException;
 import org.n52.shared.requests.TimeSeriesDataRequest;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,9 +146,9 @@ public class FileDataServiceImpl implements FileDataService {
 
     private RepresentationResponse generateZipPresentation(TimeSeriesDataRequest req, Generator gen) throws ServerException {
         try {
-            for (TimeSeriesProperties prop : req.getOptions().getProperties()) {
+            for (TimeseriesProperties prop : req.getOptions().getProperties()) {
                 generateSensorMLFile(sendDescSens(prop), prop, gen.getFolderPostfix());
-                ArrayList<TimeSeriesProperties> props = new ArrayList<TimeSeriesProperties>();
+                ArrayList<TimeseriesProperties> props = new ArrayList<TimeseriesProperties>();
                 props.add(prop);
                 gen.producePresentation(new DesignOptions(props, req.getOptions()
                         .getBegin(), req.getOptions().getEnd(), req.getOptions().getGrid()));
@@ -163,10 +163,10 @@ public class FileDataServiceImpl implements FileDataService {
     }
     
 
-    private void generateSensorMLFile(OperationResult sendDescSens, TimeSeriesProperties prop, String folderPostfix) throws ServerException {
+    private void generateSensorMLFile(OperationResult sendDescSens, TimeseriesProperties prop, String folderPostfix) throws ServerException {
         try {
             File f = JavaHelper.genFile(ConfigurationContext.GEN_DIR+"/"+folderPostfix, 
-                    "SensorML_" + prop.getProcedure().getId().replaceAll("/", "_"), "xml");
+                    "SensorML_" + prop.getProcedure().replaceAll("/", "_"), "xml");
             IOHelper.saveFile(f, sendDescSens.getIncomingResultAsStream());
         } catch (Exception e) {
             // wrap generic exception
@@ -174,9 +174,9 @@ public class FileDataServiceImpl implements FileDataService {
         }
     }
 
-    private OperationResult sendDescSens(TimeSeriesProperties prop) throws ServerException {
+    private OperationResult sendDescSens(TimeseriesProperties prop) throws ServerException {
         try {
-            String sosUrl = prop.getSosUrl();
+            String sosUrl = prop.getServiceUrl();
             SOSMetadata meta = (SOSMetadata)ConfigurationContext.getServiceMetadata(sosUrl);
             
             OperationResult opResult = null;
@@ -184,7 +184,7 @@ public class FileDataServiceImpl implements FileDataService {
             ParameterContainer paramCon = new ParameterContainer();
     
             String sosVersion = meta.getSosVersion();
-            String procedureId = prop.getProcedure().getId();
+            String procedureId = prop.getProcedure();
             String smlVersion = meta.getSensorMLVersion();
             paramCon.addParameterShell(DESCRIBE_SENSOR_SERVICE_PARAMETER, "SOS");
             paramCon.addParameterShell(DESCRIBE_SENSOR_VERSION_PARAMETER, sosVersion);
