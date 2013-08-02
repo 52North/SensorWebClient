@@ -1,4 +1,4 @@
-package org.n52.server.api.geojson;
+package org.n52.server.io.geojson;
 
 public abstract class GeojsonGeometry extends GeojsonObject {
 

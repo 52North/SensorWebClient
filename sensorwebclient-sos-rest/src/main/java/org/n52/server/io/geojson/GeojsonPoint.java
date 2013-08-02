@@ -1,5 +1,5 @@
 
-package org.n52.server.api.geojson;
+package org.n52.server.io.geojson;
 
 import java.util.Arrays;
 
