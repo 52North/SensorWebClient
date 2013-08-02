@@ -151,8 +151,8 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 				futureTasks.remove(timeseries);
 			}
 		} 
-		
-		LOGGER.info("Retrieved #{} stations from SOS '{}'", metadata.getStations().size(), sosUrl);
+
+        infoLogServiceSummary(metadata);
 		metadata.setHasDonePositionRequest(true);
 		return metadata;
 	}
@@ -231,8 +231,7 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 
 	@Override
 	public SOSMetadata updateMetadata(SOSMetadata metadata) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 }

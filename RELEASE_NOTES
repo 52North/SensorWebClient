@@ -14,6 +14,7 @@ only application to just provide a SOS aggregation layer.
 
 Features:
 ---------
+ * Simple REST Client to explore cached metadata
  * Add REST API to parameters, stations, timeseries raw data and metadata
  * Add style options to permalink so that graphs of one permalink renders in same color and line width
  * Removed local repository from root pom.xml as all old dependencies are available from 52n repo now

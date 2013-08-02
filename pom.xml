@@ -119,11 +119,11 @@
 				<artifactId>oxf-ses-adapter</artifactId>
 				<version>${oxf.version}</version>
 			</dependency>
-	        <dependency>
-	            <groupId>org.n52.sensorweb</groupId>
-	            <artifactId>52n-oxf-xmlbeans</artifactId>
-                <version>${oxf.version}</version>
-	        </dependency>
+			<dependency>
+				<groupId>org.n52.sensorweb</groupId>
+				<artifactId>52n-oxf-xmlbeans</artifactId>
+				<version>${oxf.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>org.n52.sensorweb</groupId>
 				<artifactId>52n-xml-soap-v12</artifactId>
@@ -673,14 +673,8 @@
 						<artifactId>maven-release-plugin</artifactId>
 						<version>2.3.2</version>
 						<configuration>
-							<!-- no build in release:prepare (takes too long time), so in bad 
-								cases release fails on perform -->
 							<preparationGoals>clean</preparationGoals>
 							<autoVersionSubmodules>true</autoVersionSubmodules>
-							<tagBase>https://svn.52north.org/svn/swe/main/Clients/SensorWebClient/tags/</tagBase>
-							<connectionUrl>
-								scm:svn:https://svn.52north.org/svn/swe/main/Clients/SensorWebClient/trunk/
-							</connectionUrl>
 							<goals>deploy, assembly:single</goals>
 						</configuration>
 					</plugin>

@@ -90,8 +90,6 @@ public class DefaultMetadataHandler extends MetadataHandler {
                 LOGGER.warn("Could not retrieve relations between procedures and fois", e);
             }
         }
-
-        LOGGER.debug("Got metadata for SOS " + sosMetadata.getId());
         sosMetadata.setInitialized(true);
         return sosMetadata;
     }
@@ -256,8 +254,8 @@ public class DefaultMetadataHandler extends MetadataHandler {
             }
             LOGGER.warn("#{} procedures are unavailable. {}", illegalProcedures.size(), sb.toString());
         }
-
-        LOGGER.info("Retrieved #{} stations from SOS '{}'", metadata.getStations().size(), sosUrl);
+        
+        infoLogServiceSummary(metadata);
         metadata.setHasDonePositionRequest(true);
     }
 
