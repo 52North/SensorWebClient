@@ -150,9 +150,9 @@ public class GrdcMetadataHandler extends MetadataHandler {
 		}
 		
 		// execute the GetFeatureOfInterest requests
-		LOGGER.info("Sending " + futureTasks.size() + " GetFeatureOfInterest requests");
+		LOGGER.debug("Sending " + futureTasks.size() + " GetFeatureOfInterest requests");
 		for (String getFoi : futureTasks.keySet()) {
-			LOGGER.info("Sending request for " + getFoi);
+			LOGGER.debug("Sending request for " + getFoi);
 			AccessorThreadPool.execute(futureTasks.get(getFoi));
 		}
 		
@@ -220,7 +220,8 @@ public class GrdcMetadataHandler extends MetadataHandler {
 				}
 			} 
 		}
-		
+
+        infoLogServiceSummary(metadata);
 		metadata.setHasDonePositionRequest(true);
 		return metadata;
 	}
