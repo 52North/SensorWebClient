@@ -23,13 +23,13 @@
  */
 package org.n52.shared.service.rpc;
 
-import org.n52.shared.requests.query.QueryRequest;
+import org.n52.shared.requests.query.queries.QueryRequest;
 import org.n52.shared.requests.query.responses.QueryResponse;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface RpcQueryServiceAsync {
 
-    void doQuery(QueryRequest request, AsyncCallback<QueryResponse> callback);
+    void doQuery(QueryRequest request, AsyncCallback<QueryResponse<?>> callback);
     
 }

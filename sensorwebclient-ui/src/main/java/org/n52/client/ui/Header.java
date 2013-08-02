@@ -24,24 +24,30 @@
 package org.n52.client.ui;
 
 
+import static com.google.gwt.http.client.URL.encodeQueryString;
 import static com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat.ISO_8601;
+import static org.n52.client.sos.data.TimeseriesDataStore.getTimeSeriesDataStore;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.Date;
 
+import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.TimeManager;
-import org.n52.client.sos.ctrl.DataManagerSosImpl;
-import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
-import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.sos.ctrl.SosDataManager;
+import org.n52.client.sos.data.TimeseriesDataStore;
+import org.n52.client.sos.event.data.UpdateSOSMetadataEvent;
+import org.n52.client.sos.legend.Timeseries;
 import org.n52.client.util.ClientUtils;
 import org.n52.ext.ExternalToolsException;
 import org.n52.ext.link.AccessLinkFactory;
 import org.n52.ext.link.sos.TimeRange;
 import org.n52.ext.link.sos.TimeSeriesParameters;
 import org.n52.ext.link.sos.TimeSeriesPermalinkBuilder;
+import org.n52.shared.serializable.pojos.TimeseriesRenderingOptions;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.smartgwt.client.types.Alignment;
@@ -59,8 +65,6 @@ public class Header extends HLayout {
 
     private String elemID;
 
-    private String url;
-    
     public static com.google.gwt.user.client.ui.Label requestCounter;
 
     public Header (String id){
@@ -84,6 +88,10 @@ public class Header extends HLayout {
 //        linkLayout.addMember(getVersionInfo());
 //        linkLayout.addMember(getSeparator());
         
+        // temporary button for metadata reset
+        //linkLayout.addMember(getMetadatareset());
+        //linkLayout.addMember(getSeparator());
+        
         linkLayout.addMember(getPermalinkLink());
         linkLayout.addMember(getSeparator());
         linkLayout.addMember(getHelpLink());
@@ -101,6 +109,18 @@ public class Header extends HLayout {
         
         addMember(rightLayout);
     }
+
+	private Label getMetadatareset() {
+        Label label = getHeaderLinkLabel("reset Metadata");
+        label.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+            	Toaster.getToasterInstance().addMessage("Update protected services");
+            	EventBus.getMainEventBus().fireEvent(new UpdateSOSMetadataEvent());
+            }
+        });
+        return label;
+	}
 
 	private Layout getHomeLabel() {
 		Layout layout = new VLayout();
@@ -163,26 +183,29 @@ public class Header extends HLayout {
 		Label restart = getHeaderLinkLabel(i18n.permalink());
         restart.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent evt) {
-            	String localeParameter = Window.Location.getParameter("locale");
-                String href = Window.Location.getHref();
-				String permaLink = getPermaLink(href);
-				if (isEnglishLocale(localeParameter)) {
-                    url = href.substring(0, href.indexOf("?"));
-                    url += "?locale=en" + permaLink;
+                String currentUrl = Window.Location.getHref();
+                String permalink = createPermaLink(currentUrl);
+                Window.Location.assign(addDesignOptions(permalink));
+            }
+
+            private String addDesignOptions(String permalink) {
+                Timeseries[] ts = getTimeSeriesDataStore().getTimeSeriesSorted();
+                if (ts == null || ts.length == 0) {
+                    return permalink;
                 }
-                else if (isGermanLocale(localeParameter)) {
-                    url = href.substring(0, href.indexOf("?"));
-                    url += "?locale=de" + permaLink;
+                StringBuilder options = new StringBuilder();
+                for (Timeseries timeSeries : ts) {
+                    TimeseriesRenderingOptions renderingOptions = new TimeseriesRenderingOptions();
+                    renderingOptions.setColor(timeSeries.getColor());
+                    renderingOptions.setLineWidth(timeSeries.getLineWidth());
+                    options.append(renderingOptions.asJson()).append(",");
                 }
-                else {
-                	url = permaLink;
-//                	if (GWT.isProdMode()) {
-//                        url = href + "?" + permaLink.substring(1);
-//					} else {
-//						url = permaLink;
-//					}
-                }
-                Window.Location.assign(url);
+                // delete last commas
+                options.deleteCharAt(options.length() - 1);
+                StringBuilder sb = new StringBuilder(permalink);
+                String urlEncodedValue = encodeQueryString(options.toString());
+                sb.append("&").append("options=").append(urlEncodedValue);
+                return sb.toString();
             }
         });
 		return restart;
@@ -191,6 +214,10 @@ public class Header extends HLayout {
 	private LoginHeaderLayout createLoginInfo() {
 		return new LoginHeaderLayout();
 	}
+	
+    private boolean hasLocaleParameter(String value) {
+        return value != null && !value.isEmpty();
+    }
 	
 	private boolean isEnglishLocale(String value) {
 		return value != null && value.equals("en");
@@ -250,10 +277,14 @@ public class Header extends HLayout {
         return pipe;
     }
     
-    String getPermaLink(String baseUrl) {
-        TimeSeries[] ts = DataStoreTimeSeriesImpl.getInst().getTimeSeriesSorted();
+    private String createPermaLink(String baseUrl) {
+        Timeseries[] ts = getTimeSeriesDataStore().getTimeSeriesSorted();
+        if (ts == null || ts.length == 0) {
+            return baseUrl;
+        }
+        
         TimeSeriesPermalinkBuilder builder = new TimeSeriesPermalinkBuilder();
-        for (TimeSeries timeSeries : ts) {
+        for (Timeseries timeSeries : ts) {
             TimeSeriesParameters parameters = createTimeSeriesParameters(timeSeries);
             parameters.setTimeRange(createTimeRange());
             builder.addParameters(parameters);
@@ -274,13 +305,13 @@ public class Header extends HLayout {
         return TimeRange.createTimeRange(format.format(start), format.format(end));
     }
 
-    private TimeSeriesParameters createTimeSeriesParameters(TimeSeries timeSeries) {
+    private TimeSeriesParameters createTimeSeriesParameters(Timeseries timeSeries) {
         String sos = timeSeries.getSosUrl();
         String offering = timeSeries.getOfferingId();
         String procedure = timeSeries.getProcedureId();
         String phenomenon = timeSeries.getPhenomenonId();
         String feature = timeSeries.getFeatureId();
-        SOSMetadata metadata = DataManagerSosImpl.getInst().getServiceMetadata(sos);
+        SOSMetadata metadata = SosDataManager.getDataManager().getServiceMetadata(sos);
         String sosVersion = metadata.getSosVersion();
         return new TimeSeriesParameters(sos, sosVersion, offering, procedure, phenomenon, feature);
     }

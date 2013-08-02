@@ -1,0 +1,58 @@
+
+<div ng-controller="StationDetailCtrl">
+
+	<div class="masthead">
+		<ul class="nav nav-pills pull-right">
+			<li><a href="#/{{serviceId}}/stations">back</a></li>
+		</ul>
+		<h3 class="muted">Station</h3>
+	</div>
+
+	<section>
+        <map id="single-station-map" data-features="station" class="span4"></map>
+		<div class="span7 pull-right">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>ID</th>
+					</tr>
+				</thead>
+				<tr>
+					<td>{{station.properties.station}}</td>
+				</tr>
+			</table>
+		</div>
+		
+	</section>
+
+	<section class="span12">
+
+		<h4>Timeseries</h4>
+
+		<table class="table table-condensed">
+			<thead>
+				<tr>
+					<th>#</th>
+                    <th>ID</th>
+					<th>Offering</th>
+					<th>Feature</th>
+					<th>Procedure</th>
+					<th>Phenomenon</th>
+					<th>Diagram</th>
+				</tr>
+			</thead>
+			<tr ng-repeat="timeseries in station.properties.timeseries">
+                <td>{{$index + 1}}</td>
+				<td>{{timeseries.timeseriesId}}</td>
+				<td>{{timeseries.offering}}</td>
+				<td>{{timeseries.feature}}</td>
+				<td>{{timeseries.procedure}}</td>
+				<td>{{timeseries.phenomenon}}</td>
+				<td><a ng-href="../api/v0/services/{{serviceId}}/timeseries/{{timeseries.timeseriesId}}.png">diagram</a></td>
+			</tr>
+			</tr>
+		</table>
+	</section>
+
+
+</div>

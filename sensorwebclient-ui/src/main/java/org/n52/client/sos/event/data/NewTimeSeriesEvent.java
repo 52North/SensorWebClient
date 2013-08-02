@@ -26,18 +26,17 @@ package org.n52.client.sos.event.data;
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.data.handler.NewTimeSeriesEventHandler;
 import org.n52.client.ui.View;
-import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
+import org.n52.shared.serializable.pojos.TimeseriesRenderingOptions;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 
 public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEventHandler> {
 
     public static Type<NewTimeSeriesEventHandler> TYPE = new Type<NewTimeSeriesEventHandler>();
 
-    private String sos;
-    
     private Station station;
     
-    private ParameterConstellation parameterConstellation;
+    private SosTimeseries timeseries;
     
     private int width;
 
@@ -45,28 +44,23 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
 
     private boolean requestSensorData;
 
+    private TimeseriesRenderingOptions renderingOptions;
+
     public static class Builder {
-		private String serviceURL; // required
 		private Station station; // required
-		private ParameterConstellation parameterConstellation; // required
+		private SosTimeseries timeseries; // required
 		private int width = View.getView().getDataPanelWidth();
 		private int height = View.getView().getDataPanelHeight();
+		private TimeseriesRenderingOptions renderingOptions;
 		private boolean requestSensorData = true;
 		private NewTimeSeriesEventHandler[] blockedHandlers = new NewTimeSeriesEventHandler[0];
     	
-    	public Builder(String sosURL) {
-    		assert(sosURL != null);
-    		this.serviceURL = sosURL;
-    	}
-
     	public Builder addStation(final Station station) {
-    		assert(station != null);
     		this.station = station;
     		return this;
     	}
-    	public Builder addParameterConstellation(final ParameterConstellation paramConst) {
-    		assert(paramConst != null);
-    		this.parameterConstellation = paramConst;
+    	public Builder addTimeseries(final SosTimeseries timeseries) {
+    		this.timeseries = timeseries;
     		return this;
     	}
     	public Builder addWidth(final int width) {
@@ -88,17 +82,18 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
     		this.blockedHandlers = handlers;
     		return this;
     	}
+        public Builder addRenderingOptions(TimeseriesRenderingOptions options) {
+            this.renderingOptions = options;
+            return this;
+        }
     	public NewTimeSeriesEvent build() {
     		return new NewTimeSeriesEvent(this);
-    	}
-    	String getServiceURL() {
-    		return this.serviceURL;
     	}
     	Station getStation() {
     		return this.station;
     	}
-    	ParameterConstellation getParameterConstellation() {
-    		return this.parameterConstellation;
+    	SosTimeseries getTimeseries() {
+    		return this.timeseries;
     	}
     	int getWidth() {
     		return this.width;
@@ -112,31 +107,34 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
     	NewTimeSeriesEventHandler[] getBlockedHandlers() {
     		return blockedHandlers;
     	}
+    	TimeseriesRenderingOptions getRenderingOptions() {
+    	    return renderingOptions;
+    	}
     }
     
     private NewTimeSeriesEvent(Builder builder) {
-    	this.sos = builder.getServiceURL();
     	this.station = builder.getStation();
-    	this.parameterConstellation = builder.getParameterConstellation();
+    	this.timeseries = builder.getTimeseries();
     	this.width = builder.getWidth();
     	this.height = builder.getHeight();
     	this.requestSensorData = builder.isRequestSensordata();
+    	this.renderingOptions = builder.getRenderingOptions();
     }
     
     public boolean requestSensordata() {
         return this.requestSensorData;
     }
 
-    public String getSos() {
-        return this.sos;
+    public String getServiceUrl() {
+        return this.timeseries.getServiceUrl();
     }
     
     public Station getStation() {
     	return this.station;
     }
 
-    public ParameterConstellation getParameterConstellation() {
-        return this.parameterConstellation;
+    public SosTimeseries getTimeseries() {
+        return this.timeseries;
     }
 
     public int getWidth() {
@@ -145,6 +143,10 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
 
     public int getHeight() {
         return this.height;
+    }
+    
+    public TimeseriesRenderingOptions getRenderingOptions() {
+        return this.renderingOptions;
     }
 
     @Override

@@ -27,11 +27,9 @@ import org.n52.client.ctrl.RequestManager;
 import org.n52.client.ctrl.ServerCallback;
 import org.n52.shared.requests.query.responses.QueryResponse;
 
-public abstract class QueryCallback extends
-		ServerCallback<QueryResponse> {
+public abstract class QueryCallback extends ServerCallback<QueryResponse<?>> {
 
-	public QueryCallback(RequestManager requestMgr,
-			String errorMsg) {
+	public QueryCallback(RequestManager requestMgr, String errorMsg) {
 		super(requestMgr, errorMsg);
 	}
 

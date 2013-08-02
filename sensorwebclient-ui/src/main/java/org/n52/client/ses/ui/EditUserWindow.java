@@ -31,7 +31,6 @@ import java.util.Date;
 import org.n52.client.bus.EventBus;
 import org.n52.client.ses.data.UserDataSourceRecord;
 import org.n52.client.ses.event.UpdateUserEvent;
-import org.n52.client.util.ClientSessionManager;
 import org.n52.shared.serializable.pojos.UserDTO;
 import org.n52.shared.serializable.pojos.UserRole;
 
@@ -42,7 +41,6 @@ import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.ButtonItem;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
-import com.smartgwt.client.widgets.form.fields.SpacerItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.ClickHandler;

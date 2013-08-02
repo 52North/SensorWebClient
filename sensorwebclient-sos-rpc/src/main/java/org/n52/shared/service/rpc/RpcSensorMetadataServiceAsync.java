@@ -24,15 +24,18 @@
 package org.n52.shared.service.rpc;
 
 import org.n52.shared.responses.GetProcedureDetailsUrlResponse;
+import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.responses.SensorMetadataResponse;
-import org.n52.shared.serializable.pojos.TimeSeriesProperties;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface RpcSensorMetadataServiceAsync {
 
-    void getSensorMetadata(TimeSeriesProperties properties, AsyncCallback<SensorMetadataResponse> callback) throws Exception;
+    void getSensorMetadata(TimeseriesProperties properties, AsyncCallback<SensorMetadataResponse> callback) throws Exception;
 
 	void getProcedureDetailsUrl(String serviceURL, String procedure, AsyncCallback<GetProcedureDetailsUrlResponse> callback);
+	
+	void getUpdatedSOSMetadata(AsyncCallback<SOSMetadataResponse> callback);
 
 }

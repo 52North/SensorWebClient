@@ -24,6 +24,9 @@
 
 package org.n52.client.sos.ui;
 
+import static org.n52.client.bus.EventBus.getMainEventBus;
+import static org.n52.client.sos.ctrl.SosDataManager.getDataManager;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,37 +36,42 @@ import java.util.Map.Entry;
 
 import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.n52.client.bus.EventBus;
-import org.n52.client.sos.ctrl.DataManagerSosImpl;
+import org.n52.client.sos.ctrl.SosDataManager;
 import org.n52.client.sos.event.AddMarkerEvent;
 import org.n52.client.sos.event.data.GetFeatureEvent;
 import org.n52.client.sos.event.data.GetOfferingEvent;
+import org.n52.client.sos.event.data.GetPhenomenonsEvent;
 import org.n52.client.sos.event.data.GetProcedureDetailsUrlEvent;
 import org.n52.client.sos.event.data.GetProcedureEvent;
 import org.n52.client.sos.event.data.GetProcedurePositionsFinishedEvent;
+import org.n52.client.sos.event.data.GetStationsWithinBBoxEvent;
 import org.n52.client.sos.event.data.NewPhenomenonsEvent;
 import org.n52.client.sos.event.data.NewStationPositionsEvent;
 import org.n52.client.sos.event.data.PropagateOfferingsFullEvent;
 import org.n52.client.sos.event.data.StoreFeatureEvent;
 import org.n52.client.sos.event.data.StoreProcedureDetailsUrlEvent;
+import org.n52.client.sos.event.data.StoreSOSMetadataEvent;
 import org.n52.client.sos.event.data.handler.GetProcedurePositionsFinishedEventHandler;
 import org.n52.client.sos.event.data.handler.NewPhenomenonsEventHandler;
 import org.n52.client.sos.event.data.handler.NewStationPositionsEventHandler;
 import org.n52.client.sos.event.data.handler.PropagateOfferingFullEventHandler;
 import org.n52.client.sos.event.data.handler.StoreFeatureEventHandler;
 import org.n52.client.sos.event.data.handler.StoreProcedureDetailsUrlEventHandler;
+import org.n52.client.sos.event.data.handler.StoreSOSMetadataEventHandler;
 import org.n52.client.sos.event.handler.AddMarkerEventHandler;
 import org.n52.client.ui.Toaster;
 import org.n52.client.ui.map.InfoMarker;
 import org.n52.client.ui.map.MapController;
 import org.n52.shared.Constants;
 import org.n52.shared.serializable.pojos.BoundingBox;
-import org.n52.shared.serializable.pojos.sos.FeatureOfInterest;
+import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.ParameterConstellation;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
 import com.google.gwt.core.client.GWT;
 
@@ -83,7 +91,7 @@ class StationSelectorController implements MapController {
 
     public StationSelectorController() {
         map = new StationSelectorMap(this);
-        new StationPickerControllerEventBroker(this);
+        new StationSelectorControllerEventBroker(this);
         this.selectedStationFilterByServiceUrl = new HashMap<String, String>();
     }
 
@@ -160,7 +168,7 @@ class StationSelectorController implements MapController {
         
         String category = getSelectedStationFilter();
         if(category != null) {
-        	loadParameterConstellationByCategory(category);
+        	loadTimeseriesByCategory(category);
         }
 
         map.selectMarker(infoMarker);
@@ -169,31 +177,21 @@ class StationSelectorController implements MapController {
         stationSelector.showInfoWindow(infoMarker, selectedStation.getId());
     }
     
-    public void loadParameterConstellationByCategory(String category) {
+    public void loadTimeseriesByCategory(String category) {
     	selectedCategory = category;
-    	ParameterConstellation paramConst = selectedStation.getParameterConstellationByCategory(selectedCategory);
-    	if (paramConst != null) {
-    		fireGetParameterConstellation(paramConst);
+    	SosTimeseries timeseries = selectedStation.getTimeseriesByCategory(selectedCategory);
+    	if (timeseries != null) {
+    		fireGetTimeseries(timeseries);
+    	} else {
+    	    GWT.log("Timseries to load was null!");
     	}
     }
 
-	private void fireGetParameterConstellation(ParameterConstellation paramConst) {
-		GetProcedureEvent getProcEvent = new GetProcedureEvent(
-				selectedServiceUrl,
-				paramConst.getProcedure());
-		EventBus.getMainEventBus().fireEvent(getProcEvent);
-		GetOfferingEvent getOffEvent = new GetOfferingEvent(selectedServiceUrl,
-				paramConst.getOffering());
-		EventBus.getMainEventBus().fireEvent(getOffEvent);
-		GetFeatureEvent getFoiEvent = new GetFeatureEvent(selectedServiceUrl,
-				paramConst.getFeatureOfInterest());
-		EventBus.getMainEventBus().fireEvent(getFoiEvent);
-
-		// Get procedure details
-		GetProcedureDetailsUrlEvent getProcDetailsEvent = new GetProcedureDetailsUrlEvent(
-				selectedServiceUrl,
-				paramConst.getProcedure());
-		EventBus.getMainEventBus().fireEvent(getProcDetailsEvent);
+	private void fireGetTimeseries(SosTimeseries timeseries) {
+		getMainEventBus().fireEvent(new GetProcedureEvent(selectedServiceUrl, timeseries.getProcedure()));
+		getMainEventBus().fireEvent(new GetOfferingEvent(selectedServiceUrl, timeseries.getOffering()));
+		getMainEventBus().fireEvent(new GetFeatureEvent(selectedServiceUrl, timeseries.getFeature()));
+		getMainEventBus().fireEvent(new GetProcedureDetailsUrlEvent(selectedServiceUrl, timeseries.getProcedure()));
 	}
 
 	private boolean isServiceSelected() {
@@ -234,63 +232,71 @@ class StationSelectorController implements MapController {
         return selectedStation;
     }
     
-    public ParameterConstellation getSelectedParameterConstellation() {
-		return selectedStation.getParameterConstellationByCategory(selectedCategory);
+    public SosTimeseries getSelectedTimeseries() {
+		return selectedStation.getTimeseriesByCategory(selectedCategory);
 	}
 
     public Phenomenon getSelectedPhenomenon() {
-        return getCurrentMetadata().getPhenomenon(selectedCategory);
+        return getParametersLookup().getPhenomenon(selectedCategory);
     }
 
-    public FeatureOfInterest getSelectedFeature() {
-        return getCurrentMetadata().getFeature(getSelectedFeatureId());
+    public Feature getSelectedFeature() {
+        return getParametersLookup().getFeature(getSelectedFeatureId());
     }
 
     public BoundingBox getCurrentExtent() {
         return map.getCurrentExtent();
     }
-
-    public SOSMetadata getCurrentMetadata() {
-        return DataManagerSosImpl.getInst().getServiceMetadata(selectedServiceUrl);
+    
+    private TimeseriesParametersLookup getParametersLookup() {
+        final SOSMetadata metadata = getCurrentMetadata();
+        return metadata.getTimeseriesParametersLookup();
     }
 
-    private class StationPickerControllerEventBroker implements
+    public SOSMetadata getCurrentMetadata() {
+        return getDataManager().getServiceMetadata(selectedServiceUrl);
+    }
+    
+
+    private class StationSelectorControllerEventBroker implements
             NewPhenomenonsEventHandler,
             NewStationPositionsEventHandler,
             PropagateOfferingFullEventHandler,
             StoreProcedureDetailsUrlEventHandler,
             StoreFeatureEventHandler,
             AddMarkerEventHandler,
-            GetProcedurePositionsFinishedEventHandler {
+            GetProcedurePositionsFinishedEventHandler,
+            StoreSOSMetadataEventHandler {
 
         private StationSelectorController controller;
 
-        public StationPickerControllerEventBroker(StationSelectorController controller) {
+        public StationSelectorControllerEventBroker(StationSelectorController controller) {
             this.controller = controller;
             EventBus bus = EventBus.getMainEventBus();
             bus.addHandler(NewPhenomenonsEvent.TYPE, this);
             bus.addHandler(NewStationPositionsEvent.TYPE, this);
             bus.addHandler(PropagateOfferingsFullEvent.TYPE, this);
             bus.addHandler(StoreProcedureDetailsUrlEvent.TYPE, this);
+            bus.addHandler(GetProcedurePositionsFinishedEvent.TYPE, this);
             bus.addHandler(StoreFeatureEvent.TYPE, this);
             bus.addHandler(AddMarkerEvent.TYPE, this);
-            bus.addHandler(GetProcedurePositionsFinishedEvent.TYPE, this);
+            bus.addHandler(StoreSOSMetadataEvent.TYPE, this);
         }
 
         @Override
         public void onNewPhenomenons(NewPhenomenonsEvent evt) {
             if ( !GWT.isProdMode()) {
-                final SOSMetadata metadata = controller.getCurrentMetadata();
-                Collection<Phenomenon> phenomenons = metadata.getPhenomenons();
+                TimeseriesParametersLookup lookup = controller.getParametersLookup();
+                Collection<Phenomenon> phenomenons = lookup.getPhenomenons();
                 GWT.log("#" + phenomenons.size() + " new Phenomenons");
             }
         }
 
         @Override
         public void onNewStationPositions(NewStationPositionsEvent evt) {
-            final SOSMetadata metadata = controller.getCurrentMetadata();
             if ( !GWT.isProdMode()) {
-                ArrayList<Procedure> procedures = metadata.getProcedures();
+                TimeseriesParametersLookup lookup = controller.getParametersLookup();
+                ArrayList<Procedure> procedures = lookup.getProcedures();
                 int proceduresSize = procedures.size();
                 GWT.log("#" + proceduresSize + " new Procedures");
             }
@@ -302,8 +308,8 @@ class StationSelectorController implements MapController {
         @Override
         public void onNewFullOfferings(PropagateOfferingsFullEvent evt) {
             if ( !GWT.isProdMode()) {
-                final SOSMetadata metadata = controller.getCurrentMetadata();
-                ArrayList<Offering> offerings = metadata.getOfferings();
+                TimeseriesParametersLookup lookup = controller.getParametersLookup();
+                Collection<Offering> offerings = lookup.getOfferings();
                 int offeringsSize = offerings.size();
                 GWT.log("#" + offeringsSize + " new Offerings");
             }
@@ -335,6 +341,13 @@ class StationSelectorController implements MapController {
         public void onStore(StoreFeatureEvent evt) {
             stationSelector.updateInfoLabels();
         }
+
+		@Override
+		public void onStore(StoreSOSMetadataEvent evt) {
+			if (evt.getMetadata().getServiceUrl().equals(controller.selectedServiceUrl)) {
+				controller.performSOSDataRequests(selectedServiceUrl);
+			}
+		}
     }
 
     /**
@@ -359,6 +372,25 @@ class StationSelectorController implements MapController {
         }
         return mostCommonCategory;
     }
+    
+    public void performSOSDataRequests(String serviceURL) {
+	    /*
+	     * XXX
+	     * Using the current extent would require the client to get missing stations
+	     * from the server part. this would make neccessary an interaction (zoom, pan) 
+	     * based rendering of stations!
+	     */
+//		BoundingBox bbox = controller.getCurrentExtent();
+	    SosDataManager dataManager = SosDataManager.getDataManager();
+	    SOSMetadata metadata = dataManager.getServiceMetadata(serviceURL);
+        BoundingBox bbox = metadata.getConfiguredExtent();
+		GetStationsWithinBBoxEvent getStations = new GetStationsWithinBBoxEvent(serviceURL, bbox);
+		loadingStations(true);
+		GetPhenomenonsEvent getPhenomenons = new GetPhenomenonsEvent.Builder(serviceURL).build();
+		EventBus.getMainEventBus().fireEvent(getStations);
+		EventBus.getMainEventBus().fireEvent(getPhenomenons);
+		setSelectedServiceURL(serviceURL);
+	}
 
     @SuppressWarnings("unused")
 	private void increaseAmountOf(String category, Map<String, Integer> countResults) {

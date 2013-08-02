@@ -24,8 +24,8 @@
 
 package org.n52.ext.link.sos;
 
+import static org.junit.Assert.fail;
 import static org.n52.ext.link.sos.PermalinkGeneratorTestUtil.BASE_URL;
-import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -57,7 +57,7 @@ public class TimeSeriesPermalinkGeneratorTest {
         }
         catch (ExternalToolsException e) {
             e.printStackTrace();
-            Assert.fail(String.format("Failed, in spite of valid base URL: '%s'", BASE_URL));
+            fail(String.format("Failed, in spite of valid base URL: '%s'", BASE_URL));
         }
 
     }
@@ -72,7 +72,7 @@ public class TimeSeriesPermalinkGeneratorTest {
         }
         catch (ExternalToolsException e) {
             e.printStackTrace();
-            Assert.fail(String.format("Failed, in spite of valid base URL: '%s'", BASE_URL));
+            fail(String.format("Failed, in spite of valid base URL: '%s'", BASE_URL));
         }
     }
 

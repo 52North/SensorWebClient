@@ -46,7 +46,7 @@ import org.n52.client.ctrl.ExceptionHandler;
 import org.n52.client.sos.ctrl.DiagramTabController;
 import org.n52.client.sos.ctrl.DragImageControl;
 import org.n52.client.sos.ctrl.MouseWheelControl;
-import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
+import org.n52.client.sos.data.TimeseriesDataStore;
 import org.n52.client.ui.DataPanelTab;
 import org.n52.shared.Constants;
 
@@ -62,6 +62,7 @@ import com.smartgwt.client.widgets.Img;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VStack;
+import org.eesgmbh.gimv.client.presenter.OverviewPresenter;
 
 public class DiagramTab extends DataPanelTab {
 
@@ -93,14 +94,14 @@ public class DiagramTab extends DataPanelTab {
     private HTML rightHandleWidget;
 
     private HTML mainHandleWidget;
-    
+
     private Img mainChartLoadingSpinner;
-    
+
 
     public DiagramTab(String ID, String title) {
         super("DiagramTab");
     	layout = new Layout();
-    	
+
         MousePointerDomainBoundsHandler listener = new MousePointerDomainBoundsHandler();
         this.mainChartEventBus.addHandler(SetDomainBoundsEvent.TYPE, listener);
 
@@ -128,18 +129,18 @@ public class DiagramTab extends DataPanelTab {
     public void init() {
         try {
             setPane(layout);
-            
+
             DiagramTab.layout.setVertical(true);
 
             this.mainChartViewport = getMainChartViewport();
             this.overviewChartViewport = getOverviewChartViewport();
-            
+
             DiagramTab.layout.addMember(this.mainChartViewport);
             DiagramTab.layout.addMember(this.overviewChartViewport);
             initKeyControls();
             initZooming();
             initTooltips();
-            
+
             this.mainChartLoadingSpinner = new Img("../img/loader.gif");
             this.mainChartLoadingSpinner.setWidth(32);
             this.mainChartLoadingSpinner.setHeight(32);
@@ -147,7 +148,7 @@ public class DiagramTab extends DataPanelTab {
             this.mainChartLoadingSpinner.setTop(getPanelHeight()/2);
             this.mainChartLoadingSpinner.hide();
             this.mainChartViewport.add(this.mainChartLoadingSpinner);
-            
+
             this.mainChartViewport.setHandlerManager(this.mainChartEventBus);
             this.overviewChartViewport.setHandlerManager(this.overviewEventBus);
             this.overviewEventBus.fireEvent(StateChangeEvent.createMove());
@@ -170,20 +171,20 @@ public class DiagramTab extends DataPanelTab {
 
     private Viewport getMainChartViewport() {
         Image mainChartImage = new Image("img/blank.gif");
-    
+
         Viewport mainchart = new Viewport("100%", "100%");
         mainchart.setEnableZoomWhenShiftkeyPressed(true);
         mainchart.add(mainChartImage);
-    
+
         // as it is focusable, we do not want to see an outline
         DOM.setStyleAttribute(mainchart.getElement(), "outline", "none");
         DOM.setStyleAttribute(mainchart.getElement(), "overflow", "visible");
         ImageViewImpl imageView = new ImageViewImpl(mainChartImage);
-    
+
         new ImagePresenter(this.mainChartEventBus, imageView);
         new DragImageControl(this.mainChartEventBus);
         new MouseWheelControl(this.mainChartEventBus);
-    
+
         return mainchart;
     }
 
@@ -191,11 +192,11 @@ public class DiagramTab extends DataPanelTab {
         Image overviewChartImage = new Image("img/blank.gif");
         Viewport overview = new Viewport("100%", "100px");
         overview.add(overviewChartImage);
-    
+
         DOM.setStyleAttribute(overview.getElement(), "outline", "none");
         this.horizontalSlider = createOverviewSlider();
         overview.add(this.horizontalSlider);
-    
+
         ImageViewImpl imageView = new ImageViewImpl(overviewChartImage);
         new ImagePresenter(this.overviewEventBus, imageView);
         return overview;
@@ -204,18 +205,18 @@ public class DiagramTab extends DataPanelTab {
     /**
      * Creates the Slider the user can interact with to change the shown time intervals of the given
      * timeseries'.
-     * 
+     *
      * @return the TimeSlider as a whole
      */
     private HorizontalPanel createOverviewSlider() {
         HorizontalPanel horizontalSlider = new HorizontalPanel();
         DOM.setStyleAttribute(horizontalSlider.getElement(), "marginTop", "6px");
         horizontalSlider.setHeight("75px");
-    
+
         this.leftHandleWidget = buildSliderPart("8px", "75px", "w-resize", "#6585d0", 0.5);
         this.rightHandleWidget = buildSliderPart("8px", "75px", "e-resize", "#6585d0", 0.5);
         this.mainHandleWidget = buildSliderPart("100%", "75px", "move", "#aaa", 0.5);
-    
+
         horizontalSlider.add(this.leftHandleWidget);
         horizontalSlider.setCellWidth(this.leftHandleWidget, "15px");
         horizontalSlider.add(this.mainHandleWidget);
@@ -223,21 +224,21 @@ public class DiagramTab extends DataPanelTab {
         horizontalSlider.add(this.rightHandleWidget);
         horizontalSlider.setCellWidth(this.rightHandleWidget, "15px");
         DOM.setStyleAttribute(horizontalSlider.getElement(), "visibility", "hidden");
-        
+
         GenericWidgetViewImpl view = new GenericWidgetViewImpl(horizontalSlider);
         OverviewPresenter overviewPresenter = new OverviewPresenter(view, this.overviewEventBus, this.mainChartEventBus);
-    
+
         // Define handles for overview control
         GenericWidgetView leftHandle = new GenericWidgetViewImpl(this.leftHandleWidget);
         GenericWidgetView mainHandle = new GenericWidgetViewImpl(this.mainHandleWidget);
         GenericWidgetView rightHandle = new GenericWidgetViewImpl(this.rightHandleWidget);
-    
+
         overviewPresenter.addHandle(leftHandle, Bound.LEFT);
         overviewPresenter.addHandle(mainHandle, Bound.RIGHT, Bound.LEFT);
         overviewPresenter.addHandle(rightHandle, Bound.RIGHT);
         overviewPresenter.setMinClippingWidth(40); // min width
         overviewPresenter.setVerticallyLocked(true); // drag horizontally only
-    
+
         return horizontalSlider;
     }
 
@@ -247,7 +248,7 @@ public class DiagramTab extends DataPanelTab {
         container.setHeight(height);
         DOM.setStyleAttribute(container.getElement(), "cursor", cursor);
         DOM.setStyleAttribute(container.getElement(), "backgroundColor", color);
-        
+
         // transparency styling (see also bug#449 and http://www.quirksmode.org/css/opacity.html)
         // note: since GWT complains, '-msFilter' has to be in plain camelCase (w/o '-')
         // ordering is important here
@@ -264,13 +265,13 @@ public class DiagramTab extends DataPanelTab {
         kCtrl.addTargetElement(this.mainChartViewport.getElement());
         kCtrl.addTargetElement(this.overviewChartViewport.getElement());
         kCtrl.addDocumentAndBodyAsTarget();
-    
+
         // 10px offset each
         kCtrl.registerKey(KeyCodes.KEY_LEFT, Direction.EAST, 10);
         kCtrl.registerKey(KeyCodes.KEY_UP, Direction.SOUTH, 10);
         kCtrl.registerKey(KeyCodes.KEY_RIGHT, Direction.WEST, 10);
         kCtrl.registerKey(KeyCodes.KEY_DOWN, Direction.NORTH, 10);
-    
+
         // 30px offset if ctrl is pressed
         kCtrl.registerKey(KeyCodes.KEY_LEFT, true, false, false, false, Direction.EAST, 30);
         kCtrl.registerKey(KeyCodes.KEY_UP, true, false, false, false, Direction.NORTH, 30);
@@ -284,7 +285,7 @@ public class DiagramTab extends DataPanelTab {
         DOM.setStyleAttribute(zoomBox.getElement(), "mozOpacity", "0.15");
         DOM.setStyleAttribute(zoomBox.getElement(), "msFilter", "\"progid:DXImageTransform.Microsoft.Alpha(Opacity=15)\"");
         DOM.setStyleAttribute(zoomBox.getElement(), "filter", "alpha(opacity=15)");
-        
+
         DOM.setStyleAttribute(zoomBox.getElement(), "outline", "black dashed 1px");
         DOM.setStyleAttribute(zoomBox.getElement(), "backgroundColor", "blue");
         DOM.setStyleAttribute(zoomBox.getElement(), "visibility", "hidden");
@@ -295,7 +296,7 @@ public class DiagramTab extends DataPanelTab {
     }
 
     private void initTooltips() {
-    
+
         Element mousePointerElement = getMousePointerLineElement();
         DOM.setStyleAttribute(mousePointerElement, "backgroundColor", "blue");
         DOM.setStyleAttribute(mousePointerElement, "width", "0px");
@@ -303,12 +304,12 @@ public class DiagramTab extends DataPanelTab {
         DOM.setStyleAttribute(mousePointerElement, "visibility", "hidden");
         DOM.setStyleAttribute(mousePointerElement, "marginTop", "6px");
         this.mainChartViewport.add(this.verticalMousePointerLine);
-    
+
         this.tooltipPresenter = new TooltipPresenter(this.mainChartEventBus);
-    
+
         this.tooltipPresenter.configureHoverMatch(true, false, false);
         this.tooltipPresenter.setTooltipZIndex(Constants.Z_INDEX_ON_TOP);
-    
+
         GenericWidgetViewImpl widget = new GenericWidgetViewImpl(this.verticalMousePointerLine);
         MousePointerPresenter mpp = new MousePointerPresenter(this.mainChartEventBus, widget);
         mpp.configure(true, false);
@@ -361,7 +362,7 @@ public class DiagramTab extends DataPanelTab {
     protected class MousePointerDomainBoundsHandler implements SetDomainBoundsEventHandler {
 
         public void onSetDomainBounds(SetDomainBoundsEvent event) {
-            if ( !DataStoreTimeSeriesImpl.getInst().getDataItems().isEmpty()) {
+            if ( !TimeseriesDataStore.getTimeSeriesDataStore().getDataItems().isEmpty()) {
                 String[] widthHeight = getBoundValues(event);
 
                 Element mousePointerElement = DiagramTab.this.getMousePointerLineElement();
@@ -396,36 +397,36 @@ public class DiagramTab extends DataPanelTab {
     }
 
     /**
-     * 
+     *
      */
     public void hideTooltips() {
         DOM.setStyleAttribute(DiagramTab.this.verticalMousePointerLine.getElement(), "width", "0px");
         this.tooltipPresenter.setTooltipZIndex(0);
     }
 
-    
+
     class DraggableVStack extends VStack{
-    	
+
     	public DraggableVStack(){
     		setSize("200", "30");
     		setCanDrag(true);
     		setBackgroundColor("#000000");
     	}
-    	
-    }  
-    public static class DragLabel extends Label {  
-        public DragLabel() {  
-            setAlign(Alignment.CENTER);  
-            setPadding(4);  
-            setShowEdges(true);  
-            setMinWidth(70);  
-            setMinHeight(70);  
-            setMaxWidth(300);  
-            setMaxHeight(200);  
-            setKeepInParentRect(true);  
-            setCanDragReposition(true);  
-            setDragAppearance(DragAppearance.TARGET);  
-        }  
+
+    }
+    public static class DragLabel extends Label {
+        public DragLabel() {
+            setAlign(Alignment.CENTER);
+            setPadding(4);
+            setShowEdges(true);
+            setMinWidth(70);
+            setMinHeight(70);
+            setMaxWidth(300);
+            setMaxHeight(200);
+            setKeepInParentRect(true);
+            setCanDragReposition(true);
+            setDragAppearance(DragAppearance.TARGET);
+        }
     }
 
 	public void hideLoadingSpinner() {
@@ -434,8 +435,8 @@ public class DiagramTab extends DataPanelTab {
 
 	public void showLoadingSpinner() {
 		if (mainChartLoadingSpinner != null) {
-			mainChartLoadingSpinner.show();			
+			mainChartLoadingSpinner.show();
 		}
-	}  
+	}
 
 }

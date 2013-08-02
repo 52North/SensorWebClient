@@ -24,6 +24,7 @@
 package org.n52.shared.responses;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 
@@ -31,22 +32,19 @@ public class SOSMetadataResponse implements Serializable {
 
     private static final long serialVersionUID = -3132736306248724045L;
     
-    private SOSMetadata sos;
+    private Map<String, SOSMetadata> metadatas;
 
+    @SuppressWarnings("unused")
     private SOSMetadataResponse() {
         // serializable for GWT needs empty default constructor
     }
 
-    public SOSMetadataResponse(SOSMetadata sos) {
-        this.sos = sos;
+    public SOSMetadataResponse(Map<String, SOSMetadata> metadatas) {
+        this.metadatas = metadatas;
     }
 
-    public SOSMetadata getServiceMetadata() {
-        return this.sos;
-    }
-
-    public String toDebugString() {
-        return this.sos.toDebugString();
+    public Map<String, SOSMetadata> getServiceMetadata() {
+        return this.metadatas;
     }
 
 }

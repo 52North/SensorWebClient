@@ -1,0 +1,15 @@
+/* app css stylesheet */
+
+#station-overview-map {
+    height: 600px;
+}
+
+#single-station-map {
+	height: 250px;
+}
+
+.parameterList {
+    height: 600px;
+    overflow: auto;
+    border-bottom: 1px solid #EEE;
+}

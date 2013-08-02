@@ -1,9 +1,9 @@
-<configuration scan="true">
+<configuration scan="false">
 
 	<!-- refer to http://logback.qos.ch/manual/appenders.html -->
 
 	<property name="logFile"
-		value="${config.logger.fileappender.filepath}/${pom.artifactId}-${project.version}" />
+		value="${config.logger.fileappender.filepath}/${sensorwebclient.webapp.name}" />
 
 	<appender name="FILE"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -16,6 +16,7 @@
 		</rollingPolicy>
 
 		<encoder>
+			<charset>UTF-8</charset>
 			<pattern>
 				%date %level [%thread] [%file:%line] %msg%n
 			</pattern>
@@ -24,6 +25,7 @@
 
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
+            <charset>UTF-8</charset>
 			<pattern>
 				%d{HH:mm:ss.SSS} [%thread] %-5level %logger{0} - %msg%n
 			</pattern>
@@ -34,12 +36,14 @@
 	<logger name="org.n52.oxf" level="${config.logger.level.oxf}" />
 	<logger name="org.n52.client" level="${config.logger.level.client}" />
 	<logger name="org.n52.server" level="${config.logger.level.server}" />
-	
+
 	<logger name="org.geotools" level="WARN" />
 	<logger name="org.apache" level="WARN" />
-	
+
 	<logger name="com.sun.xml" level="ERROR" />
 	<logger name="org.geotools" level="WARN" />
+	<logger name="org.springframework.web.servlet.mvc.method.annotation" level="WARN" />
+	<logger name="org.jboss.logging" level="WARN" />
 
 	<root level="INFO">
 		<appender-ref ref="FILE" />

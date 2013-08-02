@@ -59,14 +59,8 @@ public class SOSMetadata implements Serializable {
     private String sensorMLVersion;
 
     private String omVersion;
-
-    private HashMap<String, FeatureOfInterest> features = new HashMap<String, FeatureOfInterest>();
-
-    private HashMap<String, Phenomenon> phenomenons = new HashMap<String, Phenomenon>();
-
-    private HashMap<String, Procedure> procedures = new HashMap<String, Procedure>();
-
-    private HashMap<String, Offering> offerings = new HashMap<String, Offering>();
+    
+    private TimeseriesParametersLookup timeseriesParametersLookup;
 
     private HashMap<String, Station> stations = new HashMap<String, Station>();
 
@@ -81,15 +75,17 @@ public class SOSMetadata implements Serializable {
     private boolean waterML = false; // default
 
     private boolean autoZoom = true; // default
+    
+    private boolean protectedService = false; // default
 
-    private int requestChunk = 100; // default
+    private int requestChunk = 300; // default
 
     private boolean forceXYAxisOrder = false; // default
 
     private BoundingBox configuredExtent;
 
     @SuppressWarnings("unused")
-	private SOSMetadata() {
+    private SOSMetadata() {
         // for serialization
     }
 
@@ -142,6 +138,7 @@ public class SOSMetadata implements Serializable {
         this.forceXYAxisOrder = builder.isForceXYAxisOrder();
         this.requestChunk = builder.getRequestChunk();
         this.configuredExtent = builder.getConfiguredServiceExtent();
+        this.protectedService = builder.isProctectedService();
         this.setSosMetadataHandler(builder.getSosMetadataHandler());
         this.setAdapter(builder.getAdapter());
     }
@@ -169,6 +166,9 @@ public class SOSMetadata implements Serializable {
         this.version = version;
     }
 
+    /**
+     * @return the configured SOS metadata handler or <code>null</code> when called from client side.
+     */
     public String getSosMetadataHandler() {
         return sosMetadataHandler;
     }
@@ -178,6 +178,9 @@ public class SOSMetadata implements Serializable {
         this.sosMetadataHandler = handler != null ? handler.trim() : null;
     }
 
+    /**
+     * @return the configured SOS adapter or <code>null</code> when called from client side.
+     */
     public String getAdapter() {
         return adapter;
     }
@@ -198,67 +201,7 @@ public class SOSMetadata implements Serializable {
     public void setSrs(String srs) {
         this.srs = srs;
     }
-
-    public String toDebugString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("\nSOS URL: ").append(getId()).append("\n");
-        sb.append("\tversion: ").append(getSosVersion()).append("\n");
-        sb.append("\tsensorML version: ").append(this.sensorMLVersion).append("\n");
-        int offs = 10;
-        sb.append("\tFirst ").append(offs).append(" Offerings of ").append(this.offerings.size()).append(" :\n");
-        for (Offering off : this.offerings.values()) {
-            sb.append("\t\t").append(off.getLabel()).append("\n");
-            offs--;
-            if (offs == 0) {
-                break;
-            }
-        }
-        sb.append("bbox: ").append(getConfiguredExtent());
-        return sb.toString();
-    }
-
-    public void addOffering(Offering off) {
-        if ( !this.offerings.containsKey(off.getId())) {
-            this.offerings.put(off.getId(), off);
-        }
-    }
-
-    public Procedure getProcedure(String ID) {
-        return this.procedures.get(ID);
-    }
-
-    public ArrayList<Offering> getOfferings() {
-        ArrayList<Offering> offs = new ArrayList<Offering>(this.offerings.values());
-        return offs;
-    }
-
-    public Offering getOffering(String ID) {
-        return this.offerings.get(ID);
-    }
-
-    public FeatureOfInterest getFeature(String ID) {
-        return this.features.get(ID);
-    }
-
-    public Collection<FeatureOfInterest> getFeatures() {
-        ArrayList<FeatureOfInterest> features = new ArrayList<FeatureOfInterest>(this.features.values());
-        return features;
-    }
-
-    public Collection<Phenomenon> getPhenomenons() {
-        return new ArrayList<Phenomenon>(this.phenomenons.values());
-    }
-
-    public Phenomenon getPhenomenon(String ID) {
-        return this.phenomenons.get(ID);
-    }
-
-    public ArrayList<Procedure> getProcedures() {
-        ArrayList<Procedure> procs = new ArrayList<Procedure>();
-        procs.addAll(this.procedures.values());
-        return procs;
-    }
-
+    
     public String getTitle() {
         return this.title;
     }
@@ -303,18 +246,7 @@ public class SOSMetadata implements Serializable {
         this.hasDonePositionRequest = hasDonePositionRequest;
     }
 
-    public void addProcedure(Procedure p) {
-        this.procedures.put(p.getId(), p);
-    }
-
-    public void addPhenomenon(Phenomenon phenomenon) {
-        this.phenomenons.put(phenomenon.getId(), phenomenon);
-    }
-
-    public void addFeature(FeatureOfInterest f) {
-        this.features.put(f.getId(), f);
-    }
-
+    
     public boolean canGeneralize() {
         return this.canGeneralize;
     }
@@ -334,6 +266,10 @@ public class SOSMetadata implements Serializable {
     public boolean isForceXYAxisOrder() {
         return forceXYAxisOrder;
     }
+    
+    public boolean isProtectedService() {
+    	return protectedService;
+    }
 
     public int getRequestChunk() {
         return requestChunk;
@@ -346,6 +282,64 @@ public class SOSMetadata implements Serializable {
         return configuredExtent;
     }
 
+    public void addStation(Station station) {
+        stations.put(station.getId(), station);
+    }
+
+    public Collection<Station> getStations() {
+        return new ArrayList<Station>(this.stations.values());
+    }
+    
+    public Station getStationByTimeSeriesId(String timeseriesId) {
+        for (Station station : stations.values()) {
+            if (station.contains(timeseriesId)) {
+                return station;
+            }
+        }
+        return null;
+    }
+    
+    public boolean containsStationWithTimeseriesId(String timeseriesId) {
+        for (Station station : stations.values()) {
+            if (station.contains(timeseriesId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public Station getStationByTimeSeries(SosTimeseries timeseries) {
+        for (Station station : stations.values()) {
+            if (station.contains(timeseries)) {
+                return station;
+            }
+        }
+        return null;
+    }
+
+    public boolean containsTimeseriesWith(SosTimeseries timeseries) {
+        for (Station station : stations.values()) {
+            if (station.contains(timeseries)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Station getStation(String stationId) {
+        return stations.get(stationId);
+    }
+
+    /**
+     * @return a lookup helper for timeseries parameters.
+     */
+    public TimeseriesParametersLookup getTimeseriesParametersLookup() {
+        timeseriesParametersLookup = timeseriesParametersLookup == null 
+                ? new TimeseriesParametersLookup()
+                : timeseriesParametersLookup;
+        return timeseriesParametersLookup;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -356,29 +350,18 @@ public class SOSMetadata implements Serializable {
         sb.append(" ]");
         return sb.toString();
     }
-
-    public void addStation(Station station) {
-        stations.put(station.getId(), station);
+    
+    public SOSMetadata clone() {
+    	SOSMetadata clone = new SOSMetadata(this.id,this.version,this.sensorMLVersion,this.omVersion,this.title);
+    	clone.waterML = this.waterML;
+    	clone.autoZoom = this.autoZoom;
+        clone.forceXYAxisOrder = this.forceXYAxisOrder;
+        clone.requestChunk = this.requestChunk;
+        clone.configuredExtent = this.configuredExtent;
+        clone.protectedService = this.protectedService;
+        clone.setSosMetadataHandler(this.getSosMetadataHandler());
+        clone.setAdapter(this.getAdapter());
+    	return clone;
     }
 
-    public Collection<Station> getStations() {
-        return new ArrayList<Station>(this.stations.values());
-    }
-
-    public Station getStationByParameterConstellation(String offeringId, String featureId, String procedureId, String phenomenonId) {
-        for (Station station : stations.values()) {
-        	if (station.hasParameterConstellation(offeringId, featureId, procedureId, phenomenonId)) {
-        		return station;
-        	}
-        }
-        return null;
-    }
-
-    public Station getStation(String id) {
-        return stations.get(id);
-    }
-
-	public void removeProcedure(String procedure) {
-		this.procedures.remove(procedure);
-	}
 }
