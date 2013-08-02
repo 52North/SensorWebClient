@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.server.sos.render;
+package org.n52.server.io.render;
 
 import java.awt.Color;
 import java.io.Serializable;

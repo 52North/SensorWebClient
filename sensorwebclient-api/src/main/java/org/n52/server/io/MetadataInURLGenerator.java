@@ -21,14 +21,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.server.sos.generator;
+package org.n52.server.io;
 
 import java.io.Serializable;
 
 import org.jfree.chart.urls.XYURLGenerator;
 import org.jfree.data.xy.XYDataset;
-import org.n52.server.sos.render.DesignDescriptionList;
-import org.n52.server.sos.render.RenderingDesign;
+import org.n52.server.io.render.DesignDescriptionList;
+import org.n52.server.io.render.RenderingDesign;
 
 public class MetadataInURLGenerator implements XYURLGenerator, Serializable {
 

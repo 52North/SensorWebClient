@@ -22,11 +22,11 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.server.sos.render;
+package org.n52.server.io.render;
 
+import static org.n52.server.io.TimeseriesFactory.compressToTimeSeries;
+import static org.n52.server.io.TimeseriesFactory.createTimeSeries;
 import static org.n52.server.mgmt.ConfigurationContext.getServiceMetadata;
-import static org.n52.server.sos.parser.TimeseriesFactory.compressToTimeSeries;
-import static org.n52.server.sos.parser.TimeseriesFactory.createTimeSeries;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -64,9 +64,9 @@ import org.jfree.ui.VerticalAlignment;
 import org.n52.oxf.feature.OXFFeatureCollection;
 import org.n52.oxf.feature.sos.ObservationSeriesCollection;
 import org.n52.oxf.util.JavaHelper;
+import org.n52.server.io.MetadataInURLGenerator;
+import org.n52.server.io.TimeseriesFactory;
 import org.n52.server.mgmt.ConfigurationContext;
-import org.n52.server.sos.generator.MetadataInURLGenerator;
-import org.n52.server.sos.parser.TimeseriesFactory;
 import org.n52.shared.serializable.pojos.Axis;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;

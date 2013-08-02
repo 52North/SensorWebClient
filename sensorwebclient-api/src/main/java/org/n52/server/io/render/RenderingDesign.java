@@ -1,4 +1,4 @@
-package org.n52.server.sos.render;
+package org.n52.server.io.render;
 
 import java.awt.Color;
 import java.io.Serializable;

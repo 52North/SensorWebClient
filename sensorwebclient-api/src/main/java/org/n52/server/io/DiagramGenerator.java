@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.server.sos.generator;
+package org.n52.server.io;
 
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 
@@ -40,9 +40,9 @@ import org.jfree.chart.JFreeChart;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.feature.OXFFeatureCollection;
 import org.n52.oxf.util.JavaHelper;
-import org.n52.server.sos.render.DesignDescriptionList;
-import org.n52.server.sos.render.DiagramRenderer;
-import org.n52.server.sos.render.RenderingDesign;
+import org.n52.server.io.render.DesignDescriptionList;
+import org.n52.server.io.render.DiagramRenderer;
+import org.n52.server.io.render.RenderingDesign;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;

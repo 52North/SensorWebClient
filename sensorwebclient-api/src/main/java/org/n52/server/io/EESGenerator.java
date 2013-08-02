@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.server.sos.generator;
+package org.n52.server.io;
 
 import static org.n52.server.mgmt.ConfigurationContext.FACADE_COMPRESSION;
 import static org.n52.server.mgmt.ConfigurationContext.TOOLTIP_MIN_COUNT;
@@ -46,8 +46,8 @@ import org.jfree.chart.entity.StandardEntityCollection;
 import org.jfree.chart.entity.XYItemEntity;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.feature.OXFFeatureCollection;
+import org.n52.server.io.render.DiagramRenderer;
 import org.n52.server.mgmt.ConfigurationContext;
-import org.n52.server.sos.render.DiagramRenderer;
 import org.n52.shared.responses.EESDataResponse;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.Axis;
