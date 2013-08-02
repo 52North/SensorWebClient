@@ -1,6 +1,7 @@
-package org.n52.server.api.geojson;
+package org.n52.server.io.geojson;
 
 import org.junit.Test;
+import org.n52.server.io.geojson.GeojsonPoint;
 
 
 
