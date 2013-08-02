@@ -4,8 +4,8 @@ package org.n52.server.api.v0.output;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.n52.server.api.geojson.GeojsonFeature;
-import org.n52.server.api.geojson.GeojsonPoint;
+import org.n52.server.io.geojson.GeojsonFeature;
+import org.n52.server.io.geojson.GeojsonPoint;
 import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
