@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping(value = "/v0/services", produces = {"text/html", "application/*"})
 @RequestMapping(value = DEFAULT_PATH, produces = {"application/json*"})
 public class RestfulFeaturesController extends QueryController implements RestfulKvp, RestfulUrls {
 
