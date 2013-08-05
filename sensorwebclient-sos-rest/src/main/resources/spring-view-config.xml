@@ -18,25 +18,12 @@
 		<property name="mediaTypes">
 			<value>
 				json=application/json
-				html=text/html
-				*=*/*
 			</value>
 		</property>
 	</bean>
 
 	<bean
 		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
-		<property name="order" value="1" />
-		<property name="viewResolvers">
-			<list>
-				<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
-				<bean
-					class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-					<property name="prefix" value="/WEB-INF/pages/" />
-					<property name="suffix" value=".jsp" />
-				</bean>
-			</list>
-		</property>
 		<property name="defaultViews">
 			<list>
 				<bean
@@ -53,7 +40,6 @@
 				</bean>
 			</list>
 		</property>
-		<property name="ignoreAcceptHeader" value="false" />
 		<property name="defaultContentType" value="application/json" />
 	</bean>
 </beans>
