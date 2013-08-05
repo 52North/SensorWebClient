@@ -1,6 +1,8 @@
 
 package org.n52.server.api.v0.ctrl;
 
+import static org.n52.server.api.v0.ctrl.RestfulServiceInstancesController.DEFAULT_PATH;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -15,14 +17,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-@RequestMapping(value = "/v0/services", produces = {"text/html", "application/*"})
+@RequestMapping(value = DEFAULT_PATH, produces = { "application/json*" })
 public class RestfulServiceInstancesController implements RestfulKvp {
-
+    
+    
+    static final String DEFAULT_PATH = "/v0/services";
+    
     private ServiceInstancesService serviceInstancesService;
     
     @RequestMapping(value = "/")
     public String forwardToServicesSite() throws IOException {
-        return "redirect:/api/v0/services";
+        return "redirect:" + DEFAULT_PATH;
     }
     
     @RequestMapping(method = RequestMethod.GET)
