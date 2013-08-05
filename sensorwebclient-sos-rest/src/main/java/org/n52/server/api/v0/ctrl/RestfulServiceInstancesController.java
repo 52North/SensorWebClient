@@ -1,7 +1,7 @@
 
 package org.n52.server.api.v0.ctrl;
 
-import static org.n52.server.api.v0.ctrl.RestfulServiceInstancesController.DEFAULT_PATH;
+import static org.n52.server.api.v0.ctrl.RestfulUrls.DEFAULT_PATH;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -19,9 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 @RequestMapping(value = DEFAULT_PATH, produces = { "application/json*" })
 public class RestfulServiceInstancesController implements RestfulKvp {
-    
-    
-    static final String DEFAULT_PATH = "/v0/services";
     
     private ServiceInstancesService serviceInstancesService;
     

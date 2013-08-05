@@ -80,7 +80,7 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
         }
     }
 
-    @RequestMapping(value = "/v0/timeseries", produces = "application/json", method = POST)
+    @RequestMapping(value = "/v0/timeseries", produces = "application/json*", method = POST)
     public ModelAndView getTimeseriesDataForMultipleTimeseries(@RequestBody UndesignedParameterSet parameterSet) throws Exception {
         TimeseriesDataCollection results = new TimeseriesDataCollection();
         results.addAll(dataService.getTimeSeriesFromParameterSet(parameterSet));
@@ -88,7 +88,7 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
         return mav.addObject("multipleTimeseries", results.getAllTimeseries());
     }
 
-    @RequestMapping(value = "/v0/services/{instance}/timeseries", produces = "application/json", method = GET)
+    @RequestMapping(value = "/v0/services/{instance}/timeseries", produces = "application/json*", method = GET)
     public ModelAndView getAllTimeseries(@PathVariable String instance,
                                          @RequestParam(value = KVP_SHOW, required = false) String details,
                                          @RequestParam(value = KVP_OFFSET, defaultValue = KVP_DEFAULT_OFFSET) int offset,
@@ -125,7 +125,7 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
         }
     }
 
-    @RequestMapping(value = "/v0/services/{instance}/timeseries/{timeseriesId}", produces = "application/json", method = GET)
+    @RequestMapping(value = "/v0/services/{instance}/timeseries/{timeseriesId}", produces = "application/json*", method = GET)
     public ModelAndView getTimeseriesData(@PathVariable String instance,
                                           @PathVariable String timeseriesId,
                                           @RequestParam(required = false) String timespan) throws Exception {
