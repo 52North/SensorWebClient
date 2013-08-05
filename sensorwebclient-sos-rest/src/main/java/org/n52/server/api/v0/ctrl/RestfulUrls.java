@@ -8,6 +8,11 @@ package org.n52.server.api.v0.ctrl;
  * <b>Note:</b> Do not code against this type.
  */
 public interface RestfulUrls {
+    
+    /**
+     * The base URL to be used as RESTful entry point.
+     */
+    static final String DEFAULT_PATH = "/v0/services";
 
     /**
      * Subpath identifying a collection of configured service instances.

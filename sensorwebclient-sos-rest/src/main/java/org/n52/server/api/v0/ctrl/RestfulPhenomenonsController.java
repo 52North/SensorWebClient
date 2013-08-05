@@ -1,6 +1,8 @@
 
 package org.n52.server.api.v0.ctrl;
 
+import static org.n52.server.api.v0.ctrl.RestfulUrls.DEFAULT_PATH;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.n52.server.api.v0.output.ModelAndViewPager;
@@ -17,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping(value = "/v0/services", produces = {"text/html", "application/*"})
+@RequestMapping(value = DEFAULT_PATH, produces = {"application/json*"})
 public class RestfulPhenomenonsController extends QueryController implements RestfulKvp, RestfulUrls {
 
     @RequestMapping(value = "/{instance}/" + COLLECTION_PHENOMENONS, method = RequestMethod.GET)
