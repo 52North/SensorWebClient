@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping(value = DEFAULT_PATH, produces = {"application/json*"})
-public class RestfulProceduresController extends QueryController implements RestfulKvp, RestfulUrls {
+@RequestMapping(value = "/v0/services", produces = {"text/html", "application/*"})
+@RequestMapping(value = DEFAULT_PATH, produces = {"application/json*"})public class RestfulProceduresController extends QueryController implements RestfulKvp, RestfulUrls {
 
     @RequestMapping(value = "/{instance}/" + COLLECTION_PROCEDURES, method = RequestMethod.GET)
     public ModelAndView getProceduresByGET(@PathVariable("instance") String instance,

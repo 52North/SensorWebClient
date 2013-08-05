@@ -29,8 +29,8 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
-@RequestMapping(value = DEFAULT_PATH, produces = {"application/json*"})
-public class RestfulStationsController extends QueryController implements RestfulKvp, RestfulUrls {
+@RequestMapping(value = "/v0/services", produces = {"text/html", "application/*"})
+@RequestMapping(value = DEFAULT_PATH, produces = {"application/json*"})public class RestfulStationsController extends QueryController implements RestfulKvp, RestfulUrls {
 
     @RequestMapping(value = "/{instance}/" + COLLECTION_STATIONS, method = RequestMethod.GET)
     public ModelAndView getStationsByGET(@PathVariable("instance") String instance,
