@@ -41,6 +41,8 @@ import org.n52.client.sos.event.data.handler.ExportFinishedEventHandler;
 import org.n52.client.sos.event.data.handler.FinishedLoadingTimeSeriesEventHandler;
 import org.n52.client.sos.event.handler.LegendElementSelectedEventHandler;
 import org.n52.client.sos.legend.Timeseries;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gwt.user.client.Window;
 import com.smartgwt.client.util.BooleanCallback;
@@ -52,6 +54,8 @@ import com.smartgwt.client.util.SC;
  */
 public class LegendController {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(LegendController.class);
+	
 	private Legend legend;
 
 	public LegendController(Legend legend) {
@@ -114,12 +118,13 @@ public class LegendController {
 			legend.startExportLoadingSpinner();
 			if( exportType == ExportType.DATADOWNLOAD_ZIP){
 				// TODO Generate Export ZIP with appl/data/direct_download/directDownload_XXXX.zip
-				System.out.println("------------------------------------------------------------");
+				LOGGER.debug("--------EXPORT TYPE DATADOWNLOAD_ZIP -----------------------");
 				for( String key: dataItems.keySet()){
-					System.out.println("Key: " + key );
+					LOGGER.debug("Key: " + key );
 				}
-				System.out.println("------------------------------------------------------------");
+				LOGGER.debug("------------------------------------------------------------");
 			} else {
+				LOGGER.debug("--------EXPORT TYPE OTHER ----------------------------------");
             Collection<Timeseries> values = dataItems.values();
 				ExportEvent event = new ExportEvent(values, exportType);
 				EventBus.getMainEventBus().fireEvent(event);

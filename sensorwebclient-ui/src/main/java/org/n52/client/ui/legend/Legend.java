@@ -40,6 +40,8 @@ import org.n52.client.ui.Impressum;
 import org.n52.client.ui.View;
 import org.n52.client.ui.btn.ImageButton;
 import org.n52.client.util.ClientUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
@@ -57,6 +59,8 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
 
 public class Legend extends VLayout {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(Legend.class);
 
     private ArrayList<LegendElement> legendEntries = new ArrayList<LegendElement>();
 
@@ -382,6 +386,9 @@ public class Legend extends VLayout {
         toZIP.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+            	LOGGER.debug("------------------------------------------------------------");
+            	LOGGER.debug("ClickHandler ZIP geklickt");
+            	LOGGER.debug("------------------------------------------------------------");
                 controller.exportTo(ExportType.DATADOWNLOAD_ZIP);
                 exportMenu.hide();
             }
@@ -415,7 +422,7 @@ public class Legend extends VLayout {
         exportMenu.setStyleName("n52_sensorweb_client_interactionmenu");
         exportMenu.setAutoHeight();
         exportMenu.setZIndex(1000000);
-        exportMenu.addMember(createPDFLabel());
+//        exportMenu.addMember(createPDFLabel());
 //        exportMenu.addMember(createCSVLabel());
         exportMenu.addMember(createZIPLabel());
         exportMenu.setVisible(false);
