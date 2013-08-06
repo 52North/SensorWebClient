@@ -3,8 +3,6 @@ package org.n52.server.io.geojson;
 
 import java.util.Arrays;
 
-import org.apache.bcel.generic.IALOAD;
-
 public class GeojsonPoint extends GeojsonGeometry {
 
     private String[] coordinates;
