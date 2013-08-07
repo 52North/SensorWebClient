@@ -27,6 +27,7 @@
 					<li><a href="#resources"><i class="icon-chevron-right"></i> Resources</a></li>
 					<li><a href="#stations"><i class="icon-chevron-right"></i> Stations</a></li>
 					<li><a href="#timeseries"><i class="icon-chevron-right"></i> Timeseries</a></li>
+					<li><a href="#styles"><i class="icon-chevron-right"></i> Styles</a></li>
 					<li><a href="#parameters"><i class="icon-chevron-right"></i> Parameters</a></li>
 				</ul>
 			</div>
@@ -472,7 +473,8 @@ Content-Type: application/json;charset=UTF-8
 					
 					<h3>Query Parameters</h3>
 					
-					<p>Timeseries can be queried with the following filter parameters.</p>
+					<p>Timeseries can be queried with the following filter parameters. </p>
+					<div class="n52-callout n52-callout-info">Note that the options have to be <b>URL-encoded</b> appropriately!</div>
 					<table class="table" style="table-layout:fixed">
 						<thead>
 							<th style="width:15%">Parameter</th>
@@ -548,10 +550,21 @@ Content-Type: application/json;charset=UTF-8
 									<code>style</code>
 								</td>
 								<td>
-									<pre>style={"color":"#2f2f2f","lineWidth"=2}</pre>
+									<pre>style={
+  "color": "#2f2f2f",
+  "diagram": {
+    "type": "graph",
+    "properties": {
+      "lineType": "solid",
+      "lineWidth": 2
+    }
+  }
+}</pre>
 								</td>
 								<td><p>Style options how the timeseries shall be rendered if <code>image/png</code> header was set.</p>
-								<p>Note that the options have to be URL-encoded appropriately!</p></td>
+								
+								<p>A more detailed explanation about styling can be found under the <a href="#styles">styles section</a>.</p>
+								</td>
 							</tr>
 						</tbody>
 					</table>
@@ -652,6 +665,41 @@ Content-Type: application/json;charset=UTF-8
 			
 			
 			
+			
+			
+			<!-- Styles
+			================================================== -->
+			<section id="styles">
+				<div class="page-header">
+					<h1>Styles</h1>
+					<p class="pull-right up-link">
+						<a href="#"><i class="icon-chevron-up"></i> top</a>
+					</p>
+				</div>
+				<div>
+					<h3>Diagram Types</h3>
+					
+					<h4>Line Charts</h4>
+					The following style properties can be set.
+					<table class="table">
+						<thead>
+							<th>Property</th>
+						</thead>
+						<tbody>
+							<tr>
+								<td><code>lineType</code></td>
+								<td>The line style. Possible values are <code>solid</code>, <code>dotted</code> or <code>dashed</code></td>
+							</tr>
+							<tr>
+								<td><code>lineWidth</code></td>
+								<td></td>
+							</tr>
+						</tbody>
+					</table>
+					
+					<h4>Bar Charts</h4>
+				</div>
+			</section>
 			
 
 			
