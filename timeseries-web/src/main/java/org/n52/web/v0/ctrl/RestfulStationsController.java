@@ -1,14 +1,10 @@
 
 package org.n52.web.v0.ctrl;
 
-<<<<<<< HEAD:sensorwebclient-sos-rest/src/main/java/org/n52/server/api/v0/ctrl/RestfulStationsController.java
-import static org.n52.server.api.v0.ctrl.RestfulUrls.DEFAULT_PATH;
-import static org.n52.server.api.v0.output.StationOutput.createCompleteStationOutput;
-import static org.n52.server.api.v0.output.StationOutput.createSimpleStationOutput;
-=======
+
+import static org.n52.web.v0.ctrl.RestfulUrls.DEFAULT_PATH;
 import static org.n52.io.v0.output.StationOutput.createCompleteStationOutput;
 import static org.n52.io.v0.output.StationOutput.createSimpleStationOutput;
->>>>>>> ridoo/dev3.3:timeseries-web/src/main/java/org/n52/web/v0/ctrl/RestfulStationsController.java
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,7 +1,7 @@
 
 package org.n52.web.v0.ctrl;
 
-import static org.n52.server.api.v0.ctrl.RestfulUrls.DEFAULT_PATH;
+import static org.n52.web.v0.ctrl.RestfulUrls.DEFAULT_PATH;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
