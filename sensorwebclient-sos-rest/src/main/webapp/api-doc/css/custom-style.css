@@ -1,0 +1,54 @@
+.n52-request-example {
+  
+}
+
+/* Base styles (regardless of theme) */
+.n52-callout {
+  margin: 20px 0;
+  padding: 15px 30px 15px 15px;
+  border-left: 5px solid #eee;
+}
+.n52-callout h4 {
+  margin-top: 0;
+}
+.n52-callout p:last-child {
+  margin-bottom: 0;
+}
+.n52-callout code,
+.n52-callout .highlight {
+  background-color: #fff;
+}
+
+.n52-callout-todo,
+.n52-callout-todo:before {
+  content: "TODO: ";
+  background-color: #fcf2f2;
+  border-color: #dFb5b4;
+}
+
+.n52-callout-info {
+  background-color: #f0f7fd;
+  border-color: #d0e3f0;
+}
+
+
+.footer {
+  padding: 70px 0;
+  margin-top: 70px;
+  border-top: 1px solid #e5e5e5;
+  background-color: #f5f5f5;
+}
+.footer p {
+  margin-bottom: 0;
+  color: #777;
+}
+.footer-links {
+  margin: 10px 0;
+}
+.footer-links li {
+  display: inline;
+  padding: 0 2px;
+}
+.footer-links li:first-child {
+  padding-left: 0;
+}

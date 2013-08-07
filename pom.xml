@@ -18,7 +18,7 @@
 	<modules>
 	   
         <module>timeseries-io</module>
-        <module>timeseries-rest</module>
+        <module>timeseries-web</module>
 		<module>sensorwebclient-api</module>
 		<module>sensorwebclient-ext</module>
 		<module>sensorwebclient-ses-rpc</module>
@@ -43,7 +43,7 @@
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
-                <artifactId>timeseries-rest</artifactId>
+                <artifactId>timeseries-web</artifactId>
                 <version>${project.version}</version>
             </dependency>
 			
@@ -440,6 +440,7 @@
 							<artifact>org.n52.sensorweb:sensorwebclient-ext</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-sos-rpc</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-sos-shared</artifact>
+                            <artifact>org.n52.sensorweb:timeseries-io</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-ses-rpc</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-ses-shared</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-ui</artifact>
