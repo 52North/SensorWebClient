@@ -615,6 +615,11 @@
 
         <profile>
             <id>connector-eea</id>
+			<activation>
+			  <property>
+				<name>with-all-connectors</name>
+			  </property>
+			</activation>
             <modules>
                 <module>sensorwebclient-eea</module>
             </modules>
@@ -632,6 +637,11 @@
 
         <profile>
             <id>connector-grdc</id>
+			<activation>
+			  <property>
+				<name>with-all-connectors</name>
+			  </property>
+			</activation>
             <modules>
                 <module>sensorwebclient-grdc</module>
             </modules>
@@ -649,6 +659,11 @@
 
         <profile>
             <id>connector-hydro</id>
+			<activation>
+			  <property>
+				<name>with-all-connectors</name>
+			  </property>
+			</activation>
             <modules>
                 <module>sensorwebclient-hydro</module>
             </modules>
@@ -666,6 +681,12 @@
 
         <profile>
             <id>release</id>
+			<activation>
+			  <property>
+				<name>env</name>
+				<value>ci</value>
+			  </property>
+			</activation>
             <build>
                 <plugins>
                     <plugin>
