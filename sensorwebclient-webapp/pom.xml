@@ -183,7 +183,7 @@
 
 						<artifactItem>
 							<groupId>${project.groupId}</groupId>
-							<artifactId>sensorwebclient-sos-rest</artifactId>
+							<artifactId>timeseries-web</artifactId>
 							<includes>*.xml</includes>
 							<!-- tmp files will be copied into WEB-INF/classes -->
 							<outputDirectory>src/main/tmp</outputDirectory>
