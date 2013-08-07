@@ -37,7 +37,7 @@ import org.n52.oxf.ows.capabilities.IBoundingBox;
 import org.n52.oxf.valueDomains.spatial.BoundingBox;
 import org.n52.server.parser.utils.ParsedPoint;
 import org.n52.server.sos.connector.eea.ArcGISSoeMetadataHandler;
-import org.n52.server.util.crs.AReferencingHelper;
+import org.n52.io.crs.AReferencingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

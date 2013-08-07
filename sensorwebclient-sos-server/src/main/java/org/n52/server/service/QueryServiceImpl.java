@@ -33,7 +33,7 @@ import java.util.List;
 
 import org.n52.client.service.QueryService;
 import org.n52.server.mgmt.ConfigurationContext;
-import org.n52.server.util.crs.AReferencingHelper;
+import org.n52.io.crs.AReferencingHelper;
 import org.n52.shared.exceptions.ServiceOccupiedException;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.requests.query.ResultPage;

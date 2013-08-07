@@ -1,21 +1,21 @@
 
-package org.n52.server.util.crs;
+package org.n52.io.crs;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.toRadians;
 import static org.hamcrest.Matchers.closeTo;
 import static org.junit.Assert.assertThat;
-import static org.n52.server.util.crs.WGS84Util.EARTH_MEAN_RADIUS;
-import static org.n52.server.util.crs.WGS84Util.EPSG_4326;
-import static org.n52.server.util.crs.WGS84Util.getLatitudeDelta;
-import static org.n52.server.util.crs.WGS84Util.getLatitutesCircleRadius;
-import static org.n52.server.util.crs.WGS84Util.getLongitudeDelta;
-import static org.n52.server.util.crs.WGS84Util.shortestDistanceBetween;
+import static org.n52.io.crs.WGS84Util.EARTH_MEAN_RADIUS;
+import static org.n52.io.crs.WGS84Util.EPSG_4326;
+import static org.n52.io.crs.WGS84Util.getLatitudeDelta;
+import static org.n52.io.crs.WGS84Util.getLatitutesCircleRadius;
+import static org.n52.io.crs.WGS84Util.getLongitudeDelta;
+import static org.n52.io.crs.WGS84Util.shortestDistanceBetween;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.server.util.crs.AReferencingHelper;
-import org.n52.server.util.crs.WGS84Util;
+import org.n52.io.crs.AReferencingHelper;
+import org.n52.io.crs.WGS84Util;
 import org.opengis.referencing.FactoryException;
 
 import com.vividsolutions.jts.geom.GeometryFactory;

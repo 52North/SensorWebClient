@@ -53,7 +53,7 @@ import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.server.parser.ConnectorUtils;
 import org.n52.server.util.SosAdapterFactory;
-import org.n52.server.util.crs.AReferencingHelper;
+import org.n52.io.crs.AReferencingHelper;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;

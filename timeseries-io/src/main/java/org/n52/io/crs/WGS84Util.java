@@ -1,5 +1,5 @@
 
-package org.n52.server.util.crs;
+package org.n52.io.crs;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.acos;

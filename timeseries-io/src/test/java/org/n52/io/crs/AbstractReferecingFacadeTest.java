@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.server.util.crs;
+package org.n52.io.crs;
 
 import static org.junit.Assert.assertEquals;
 
@@ -30,7 +30,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.server.util.crs.AReferencingHelper;
+import org.n52.io.crs.AReferencingHelper;
 import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.sos.Station;
 

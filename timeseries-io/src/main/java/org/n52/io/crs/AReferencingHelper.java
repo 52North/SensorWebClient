@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.server.util.crs;
+package org.n52.io.crs;
 
 import java.util.Collection;
 import java.util.List;

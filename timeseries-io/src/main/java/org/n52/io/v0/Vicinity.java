@@ -3,15 +3,15 @@ package org.n52.io.v0;
 
 import static java.lang.Double.parseDouble;
 import static java.lang.Math.toRadians;
-import static org.n52.server.util.crs.AReferencingHelper.createEpsgForcedXYAxisOrder;
-import static org.n52.server.util.crs.WGS84Util.EPSG_4326;
-import static org.n52.server.util.crs.WGS84Util.getLatitudeDelta;
-import static org.n52.server.util.crs.WGS84Util.getLongitudeDelta;
-import static org.n52.server.util.crs.WGS84Util.normalizeLatitude;
-import static org.n52.server.util.crs.WGS84Util.normalizeLongitude;
+import static org.n52.io.crs.AReferencingHelper.createEpsgForcedXYAxisOrder;
+import static org.n52.io.crs.WGS84Util.EPSG_4326;
+import static org.n52.io.crs.WGS84Util.getLatitudeDelta;
+import static org.n52.io.crs.WGS84Util.getLongitudeDelta;
+import static org.n52.io.crs.WGS84Util.normalizeLatitude;
+import static org.n52.io.crs.WGS84Util.normalizeLongitude;
 
 import org.n52.io.geojson.GeojsonPoint;
-import org.n52.server.util.crs.AReferencingHelper;
+import org.n52.io.crs.AReferencingHelper;
 import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.opengis.referencing.FactoryException;
