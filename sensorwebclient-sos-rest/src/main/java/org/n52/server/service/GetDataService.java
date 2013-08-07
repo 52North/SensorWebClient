@@ -24,17 +24,17 @@
 
 package org.n52.server.service;
 
-import static org.n52.server.api.v0.output.TimeseriesData.newTimeseriesData;
+import static org.n52.io.v0.output.TimeseriesData.newTimeseriesData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.n52.client.service.TimeSeriesDataService;
-import org.n52.server.api.v0.InternalServiceException;
-import org.n52.server.api.v0.ParameterSet;
-import org.n52.server.api.v0.output.TimeseriesData;
-import org.n52.server.api.v0.output.TimeseriesDataCollection;
+import org.n52.io.v0.InternalServiceException;
+import org.n52.io.v0.ParameterSet;
+import org.n52.io.v0.output.TimeseriesData;
+import org.n52.io.v0.output.TimeseriesDataCollection;
 import org.n52.shared.requests.TimeSeriesDataRequest;
 import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;

@@ -27,7 +27,7 @@ package org.n52.server.da;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER;
 import static org.n52.oxf.sos.adapter.SOSAdapter.GET_FEATURE_OF_INTEREST;
-import static org.n52.server.sos.parser.ConnectorUtils.setVersionNumbersToMetadata;
+import static org.n52.server.parser.ConnectorUtils.setVersionNumbersToMetadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,7 +51,7 @@ import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.adapter.SOSAdapter;
 import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.server.mgmt.ConfigurationContext;
-import org.n52.server.sos.parser.ConnectorUtils;
+import org.n52.server.parser.ConnectorUtils;
 import org.n52.server.util.SosAdapterFactory;
 import org.n52.server.util.crs.AReferencingHelper;
 import org.n52.shared.serializable.pojos.sos.Feature;
