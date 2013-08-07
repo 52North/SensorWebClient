@@ -77,42 +77,124 @@
 					</p>
 				</div>
 				<div>
-					<div>
+					<div> <!-- Content-Types -->
 						<h3>Content-Types</h3>
 						<p>The API provides the following content types
 							<ul>
 								<li><code>application/json</code>: JSON data to be used as raw information input.</li>
 								<li><code>application/pdf</code>: A PDF report for timeseries </li>
 								<li><code>image/png</code>: A rendered representation of one or multiple timeseries.</li>
+								<li><code>application/vnd.ms-excel</code>: A Microsoft Excel output (optional).</li>
+								<li><code>text/csv</code>: Text containing Comma Separated Values (optional).</li>
 							</ul>
 						</p>
 					</div>
+          
+          <div id="common-query-parameters"> <!-- Common Query Parameters -->
+            <h3>Common Query Parameters</h3>
+            <p>Except the <a href="#resources"><code>Resources</code> collection</a> all other collections can be queries/filtered by using the following query parameters. Each parameter is optional and can only be contain one value. Multiple paramters are combined to an <code>AND</code> query. A resource may specify further query parameters to control/filter output.</p>
+            <table class="table">
+              <thead>
+                <th>Parameter</th>
+                <th style="width:25%">Example</th>
+                <th>Description</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <code>expanded</code><br/>
+                  </td>
+                  <td>
+                    <pre>expanded=true</pre>
+                  </td>
+                  <td><p>If <code>true</code> a list of partially expanded resource items is returned. The expansion provides more detailed information up to a certain point. However, it does not necessarily provide all item information as one may get when request the resource item itself.</p>
+                  
+                  <p>The default is <code>false</code>.</p></td>
+                </tr>
+                <tr>
+                  <td>
+                    <code>service</code><br/>
+                  </td>
+                  <td>
+                    <pre>service=srv_sdlfj2</pre>
+                  </td>
+                  <td>All resources where the given <a href="#parameter-services">service</a> id does match.</td>
+                </tr>
+                <tr>
+                  <td>
+                    <code>category</code><br/>
+                  </td>
+                  <td>
+                    <pre>category=cat_sadf2d</pre>
+                  </td>
+                  <td>All resources where the given <a href="#parameter-categories">category</a> id does match.</td>
+                </tr>
+                <tr>
+                  <td>
+                    <code>offering</code><br/>
+                  </td>
+                  <td>
+                    <pre>offering=off_fdoi23</pre>
+                  </td>
+                  <td>All resources where the given <a href="#parameter-offerings">offering</a> id does match.</td>
+                </tr>
+                <tr>
+                  <td>
+                    <code>feature</code><br/>
+                  </td>
+                  <td>
+                    <pre>feature=foi_adf092e</pre>
+                  </td>
+                  <td>All resources where the given <a href="#parameter-features">feature</a> id does match.</td>
+                </tr>
+                <tr>
+                  <td>
+                    <code>procedure</code><br/>
+                  </td>
+                  <td>
+                    <pre>procedure=pro_asd23</pre>
+                  </td>
+                  <td>All resources where the given <a href="#parameter-procedures">procedure</a> id does match.</td>
+                </tr>
+                <tr>
+                  <td>
+                    <code>observedProperty</code>
+                  </td>
+                  <td>
+                    <pre>observedProperty=phe_sdjf210</pre>
+                  </td>
+                  <td>All resources where the given <a href="#parameter-observedProperties">observed property</a> id does match.</td>
+                </tr>
+              </tbody>
+            </table>
+            
+						<div class="n52-callout n52-callout-info">Note that the options have to be <b>URL-encoded</b> appropriately!</div>
+          </div>
 				
-					<div>
+					<div id="paging"> <!-- paging -->
 						<h3>Paging</h3>
 						<p>Resource collections are paged by default to restrict large data access (<span class="text-info">configurable by the API provider .. use <code>size=MAX</code> to get the maximum of a page</span>). The query parameters <code>offset</code> and <code>size</code> can be used to define exactly that part of the collection to be returned by the server.</p>
 						<p>Considering the <a href="http://tools.ietf.org/html/rfc5988">Web Linking (RFC5988)</a> approach the exact location within a collection can be retrieved from response header information.</p> 
 						
-						<h4>Pageing Example</h4>
+						<h4>Paging Example</h4>
 						<div class="n52-request-example">
 							<pre>GET /api/v1/stations?offset=4&size=2 HTTP/1.1
-	Host: sensorweb.demo.52north.org
-	Accept: application/json</pre>
-							<pre>HTTP/1.1 200 OK
-	Content-Type: application/json;charset=UTF-8
-	Link: &lt;/api/v1/stations?offset=4&size=2>; rel="self"
-	Link: &lt;/api/v1/stations?offset=0&size=2>; rel="first"; title="first page"
-	Link: &lt;/api/v1/stations?offset=2349&size=2>; rel="last"; title="last page"
-	Link: &lt;/api/v1/stations?offset=2&size=2>; rel="prev"; title="previous page"
-	Link: &lt;/api/v1/stations?offset=6&size=2>; rel="next"; title="next page"
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+            <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Link: &lt;/api/v1/stations?offset=4&size=2>; rel="self"
+Link: &lt;/api/v1/stations?offset=0&size=2>; rel="first"; title="first page"
+Link: &lt;/api/v1/stations?offset=2349&size=2>; rel="last"; title="last page"
+Link: &lt;/api/v1/stations?offset=2&size=2>; rel="prev"; title="previous page"
+Link: &lt;/api/v1/stations?offset=6&size=2>; rel="next"; title="next page"
 
-	Content omitted for brevity.
-	</pre>
+Content omitted for brevity.
+</pre>
 						</div>
 					</div>
 					
-					
-					<div>
+					<div> <!-- fuzzy search -->
 						<h3>Fuzzy Search</h3>
 						<p>The query parameter <code>q</code> allows simple search over all available <a href="#parameters">timeseries parameters</a>.</p>
 						<div class="n52-callout n52-callout-todo">Clear if this shall be for every resource! I'd prefer only having this at the root URL </div>
@@ -135,50 +217,53 @@
 					</p>
 				</div>
 				<div>
-					<h3>URLs</h3>
-					<p>API calls are triggered by using the following URLs.</p>
-					<table class="table">
-						<thead>
-							<th>Method</th>
-							<th>Relative Path</th>
-							<th>Description</th>
-						</thead>
-						<tbody>
-							<tr>
-								<td><code>GET</code></td>
-								<td><code>/api/v1/</code></td>
-								<td>Lists all resource collections available.</td>
-							</tr>
-						</tbody>
-					</table>
+					<div> <!-- URLs -->
+            <h3>URLs</h3>
+            <p>API calls are triggered by using the following URLs.</p>
+            <table class="table">
+              <thead>
+                <th>Method</th>
+                <th>Path</th>
+                <th>Description</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>GET</code></td>
+                  <td><code>/api/v1/</code></td>
+                  <td>Lists all resource collections available.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 					
-					<h3>Status Codes</h3>
+					<div> <!-- Status Codes -->
+            <h3>Status Codes</h3>
+            <p>HTTP Status codes indicate the following states.</p>
+            <table class="table">
+              <thead>
+                <th>Code</th>
+                <th>When</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>200</code></td>
+                  <td>Status <code>OK</code>. All went fine.</td>
+                </tr>
+                <tr>
+                  <td><code>500</code></td>
+                  <td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 					
-					<p>HTTP Status codes indicate the following states.</p>
-					<table class="table">
-						<thead>
-							<th>Code</th>
-							<th>When</th>
-						</thead>
-						<tbody>
-							<tr>
-								<td><code>200</code></td>
-								<td>Status <code>OK</code>. All went fine.</td>
-							</tr>
-							<tr>
-								<td><code>500</code></td>
-								<td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
-							</tr>
-						</tbody>
-					</table>
-					
-					
-					<h3>Response Example</h3>
-					<div class="n52-request-example">
-						<pre>GET /api/v1/ HTTP/1.1
+					<div> <!-- Response Example -->
+            <h3>Response Example</h3>
+            <div>
+              <pre>GET /api/v1/ HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
-						<pre>HTTP/1.1 200 OK
+              <pre>HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 {
@@ -191,11 +276,12 @@ Content-Type: application/json;charset=UTF-8
   "stations": "./stations",
   "timeseries": "./timeseries"
 }</pre>
-					</div>
+            </div>
+          </div>
 					
 				</div>
-					
 			</section>
+			
 			
 			
 			
@@ -211,133 +297,70 @@ Content-Type: application/json;charset=UTF-8
 					</p>
 				</div>
 				<div>
-					<h3>URLs</h3>
-					<p>API calls are triggered by using the following URLs.</p>
-					<table class="table">
-						<thead>
-							<th>Method</th>
-							<th>Relative Path</th>
-							<th>Description</th>
-						</thead>
-						<tbody>
-							<tr>
-								<td><code>GET</code></td>
-								<td><code>/api/v1/stations</code></td>
-								<td>Lists all measured stations available.</td>
-							</tr>
-							<tr>
-								<td><code>GET</code></td>
-								<td><code>/api/v1/stations/{id}</code></td>
-								<td>Lists the measured stations with id <code>{id}</code>.</td>
-							</tr>
-						</tbody>
-					</table>
+					<div><!-- URLs -->
+            <h3>URLs</h3>
+            <p>API calls are triggered by using the following URLs.</p>
+            <table class="table">
+              <thead>
+                <th>Method</th>
+                <th>Path</th>
+                <th>Description</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>GET</code></td>
+                  <td><code>/api/v1/stations</code></td>
+                  <td>Lists all measured stations available.</td>
+                </tr>
+                <tr>
+                  <td><code>GET</code></td>
+                  <td><code>/api/v1/stations/{id}</code></td>
+                  <td>Lists the measured stations with id <code>{id}</code>.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 					
-					<h3>Status Codes</h3>
+          <div> <!-- Status Codes -->
+            <h3>Status Codes</h3>
+            
+            <p>HTTP Status codes indicate the following states.</p>
+            <table class="table">
+              <thead>
+                <th>Code</th>
+                <th>When</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>200</code></td>
+                  <td>Status <code>OK</code>. All went fine.</td>
+                </tr>
+                <tr>
+                  <td><code>404</code></td>
+                  <td>Status <code>Not Found</code>. The resource is not available.</td>
+                </tr>
+                <tr>
+                  <td><code>500</code></td>
+                  <td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 					
-					<p>HTTP Status codes indicate the following states.</p>
-					<table class="table">
-						<thead>
-							<th>Code</th>
-							<th>When</th>
-						</thead>
-						<tbody>
-							<tr>
-								<td><code>200</code></td>
-								<td>Status <code>OK</code>. All went fine.</td>
-							</tr>
-							<tr>
-								<td><code>404</code></td>
-								<td>Status <code>Not Found</code>. The resource is not available.</td>
-							</tr>
-							<tr>
-								<td><code>500</code></td>
-								<td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
-							</tr>
-						</tbody>
-					</table>
-					
-					<h3>Query Parameters</h3>
-					
-					<p>Stations can be queried with the following filter parameters.</p>
-					<table class="table" style="table-layout:fixed">
-						<thead>
-							<th style="width:15%">Parameter</th>
-							<th>Example</th>
-							<th>Description</th>
-						</thead>
-						<tbody>
-							<tr>
-								<td>
-									<code>service</code><br/>
-								</td>
-								<td>
-									<pre>service=srv_sdlfj2</pre>
-								</td>
-								<td>All stations where the given <a href="#parameter-services">service</a> id do match.</td>
-							</tr>
-							<tr>
-								<td>
-									<code>category</code><br/>
-								</td>
-								<td>
-									<pre>category=cat_sadf2d</pre>
-								</td>
-								<td>All stations where the given <a href="#parameter-categories">category</a> id do match.</td>
-							</tr>
-							<tr>
-								<td>
-									<code>offering</code><br/>
-								</td>
-								<td>
-									<pre>offering=off_fdoi23</pre>
-								</td>
-								<td>All stations where the given <a href="#parameter-offerings">offering</a> id do match.</td>
-							</tr>
-							<tr>
-								<td>
-									<code>feature</code><br/>
-								</td>
-								<td>
-									<pre>feature=foi_adf092e</pre>
-								</td>
-								<td>All stations where the given <a href="#parameter-features">feature</a> id do match.</td>
-							</tr>
-							<tr>
-								<td>
-									<code>procedure</code><br/>
-								</td>
-								<td>
-									<pre>procedure=pro_asd23</pre>
-								</td>
-								<td>All stations where the given <a href="#parameter-procedures">procedure</a> id do match.</td>
-							</tr>
-							<tr>
-								<td>
-									<code>observedProperty</code>
-								</td>
-								<td>
-									<pre>observedProperty=phe_sdjf210</pre>
-								</td>
-								<td>All stations where the given <a href="#parameter-observedProperties">observed property</a> id do match.</td>
-							</tr>
-							<tr>
-								<td><code>near</code></td>
-								<td><pre>near={
-  "center": { 
-    "type": "Point", 
-    "coordinates": [&lt;lgt>,&lt;lat>]
-  }, 
-  "radius":"500" 
-}</pre></td>
-								<td><p>Stations around a given point. The radius unit is in kilometers (km).</p>
-								
-								<p>If you want a different CRS than the default (WGS84) you can add your own to the GeoJSON geometry, e.g. <code>'crs':{'type':'name','properties'{'name':'EPSG:25832'}}</code>.</p>
-								</td>
-							</tr>
-							<tr>
-								<td><code>within</code></td>
-								<td><pre>within={
+          <div> <!-- Query Parameters -->
+            <h3>Query Parameters</h3>
+            <p>The collection can be queried by optional filter parameters.</p>
+            
+            <table class="table" style="table-layout:fixed">
+              <thead>
+                <th style="width:15%">Parameter</th>
+                <th>Example</th>
+                <th>Description</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>within</code> <br/><em>[without CRS]</em></td>
+                  <td><pre>within={
   'll': { 
     "type": "Point", 
     "coordinates": [&lt;lgt>,&lt;lat>]
@@ -347,25 +370,130 @@ Content-Type: application/json;charset=UTF-8
     "coordinates": [&lt;lgt>,&lt;lat>]
   } 
 }</pre></td>
-								<td><p>Stations within a given bounding box.</p>
-								
-								<p>If you want a different CRS than the default (WGS84) you can add your own to the GeoJSON geometry, e.g. <code>'crs':{'type':'name','properties'{'name':'EPSG:25832'}}</code>.</p></td>
-							</tr>
-						</tbody>
-					</table>
+                  <td><p>Stations within a given bounding box.</p>
+                  
+                  <p>If you want a different CRS than the default (WGS84) you can add your own to the <a href="http://geojson.org/geojson-spec.html">GeoJSON geometry</a>, e.g. <code>'crs':{'type':'name','properties'{'name':'EPSG:25832'}}</code>.</p>
+                  
+                  <p>See the following example where to set the CRS attribute.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>near</code> <br/> <em>[without CRS]</em></td>
+                  <td><pre>near={
+  "center": { 
+    "type": "Point", 
+    "coordinates": [&lt;lgt>,&lt;lat>]
+  }, 
+  "radius":"500" 
+}</pre></td>
+                  <td><p>Stations around a given point. The radius unit is in kilometers (km).</p>
+                  
+                  <p>If you want a different CRS than the default (WGS84) you can add your own to the <a href="http://geojson.org/geojson-spec.html">GeoJSON geometry</a>, e.g. <code>'crs':{'type':'name','properties'{'name':'EPSG:25832'}}</code>.</p>
+                  
+                  <p>See the following example where to set the CRS attribute.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>near</code> <br/><em>[with CRS]</em></td>
+                  <td><pre>near={
+  "center": { 
+    "type": "Point", 
+    "coordinates": [&lt;lgt>,&lt;lat>],
+    "crs": {
+      "type": "name",
+      "properties": {
+        "name": "EPSG:25832"
+      }
+    }
+  }, 
+  "radius":"500" 
+}</pre></td>
+                  <td><p>Stations around a given point. The radius unit is in kilometers (km). The point's coordinates relate to CRS 'EPSG:25832' (ETRS89 / UTM zone 32N).</p>
+                  
+                  <p>You may be interested in the official <a href="http://www.epsg-registry.org">EPSG database</a> or <a href="http://spatialreference.org/">other links</a> you can <a href="http://spatialreference.org/ref/epsg/25832/ogcwkt/">resolve spatial reference systems</a> by code</a>.</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">further common query parameters</a> can be used.</div>
+            
+            <div class="n52-callout n52-callout-info">Note that the options have to be <b>URL-encoded</b> appropriately!</div>
+          </div>
 					
-					
-					<h3>Response Examples</h3>
-					<div>
-						<code>GET /api/v1/stations/ HTTP/1.1</code>
-						<pre>[
-  "./sta_lasdfo",
-  "./sta_384f22"
+					<div> <!-- Response Examples -->
+            <h3>Response Examples</h3>
+            <div>
+              <h4>Simple Collection</h4>
+              <pre>GET /api/v1/stations/ HTTP/1.1
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+              <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+[
+  {
+    "href": "./sta_lasdfo",
+    "label": "Bramsche"
+  },
+  {
+    "href": "./sta_384f22",
+    "label": "Deggendorf"
+  }
 ]</pre>
-					</div>
-					<div>
-						<code>GET /api/v1/stations/sta_lasdfo/ HTTP/1.1</code>
-						<pre>{
+              <div class="n52-callout n52-callout-info">
+                As <a href="#common-query-parameters">noted above</a> <code>expanded=false</code> is the default. Setting the parameter to <code>false</code> explicitly will have the same effect. 
+              </div>
+            </div>
+            <div>
+              <h4>Expanded Collection</h4>
+              <pre>GET /api/v1/stations/?expanded=true HTTP/1.1
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+              <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+[
+  {
+    "id": "sta_lasdfo",
+    "label": "Bramsche",
+    "geometry": {
+      "coordinates": [
+        "7.978186816994513",
+        "52.3961713226858"
+      ],
+      "type": "Point"
+    },
+    "type": "Feature"
+    }
+  },
+  {
+    "id": "sta_384f22",
+    "label": "Deggendorf",
+    "geometry": {
+      "coordinates": [
+        "8.978186816994513",
+        "51.3961713226858"
+      ],
+      "type": "Point"
+    },
+    "type": "Feature"
+    }
+  }
+]</pre>
+              <div class="n52-callout n52-callout-info">
+                Please refer to the <a href="http://geojson.org">GeoJSON specification</a> if you need more detailed information about the geometry types used.
+              </div>
+            </div>
+            <div>
+              <h4>Item</h4>
+              <pre>GET /api/v1/stations/sta_lasdfo/ HTTP/1.1
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+              <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+{
   "properties": {
     "id": "sta_lasdfo",
     "label": "Bramsche",
@@ -388,17 +516,16 @@ Content-Type: application/json;charset=UTF-8
   },
   "type": "Feature"
 }</pre>
-					</div>
+              <div class="n52-callout n52-callout-todo">
+                Do we want the timeseries collection to be expandable as well?
+              </div>
+            </div>
+          </div>
 				</div>
 			</section>
 					
 					
-					
-					
-					
-					
-					
-					
+
 					
 						
 			<!-- Timeseries
@@ -411,146 +538,86 @@ Content-Type: application/json;charset=UTF-8
 					</p>
 				</div>
 				<div>
-					<h3>URLs</h3>
-					<p>API calls are triggered by using the following URLs.</p>
-					<table class="table">
-						<thead>
-							<th>Method</th>
-							<th>Relative Path</th>
-							<th>Description</th>
-						</thead>
-						<tbody>
-							<tr>
-								<td><code>GET</code></td>
-								<td><code>/api/v1/timeseries</code></td>
-								<td>Lists all timeseries available.</td>
-							</tr>
-							<tr>
-								<td><code>POST</code></td>
-								<td><code>/api/v1/timeseries</code></td>
-								<td>Request to obtain multiple timeseries. Set the <code>Accept: application/json</code> header to obtain JSON data, or set <code>Accept: image/png</code> to obtain a rendered graph displaying the timeseries with requested style options
-								<div class="n52-callout n52-callout-todo">document request POST structure with <code>style</code> options.</div></td>
-							</tr>
-							<tr>
-								<td><code>GET</code></td>
-								<td><code>/api/v1/timeseries/{id}</code></td>
-								<td><p>Lists the timeseries with id <code>{id}</code>. Set the <code>Accept: application/json</code> header to obtain JSON data, or set <code>Accept: image/png</code> to obtain a rendered graph displaying the timeseries with requested style options.</p>
-								
-								<div class="n52-callout n52-callout-todo">Document query parameter <code>style</code>. Also available <code>refValues</code> must be stylable.</div>
-								
-								</td>
-							</tr>
-						</tbody>
-					</table>
+					<div> <!-- URLs -->
+						<h3>URLs</h3>
+						<p>API calls are triggered by using the following URLs.</p>
+						<table class="table">
+							<thead>
+								<th>Method</th>
+								<th>Path</th>
+								<th>Description</th>
+							</thead>
+							<tbody>
+								<tr>
+									<td><code>GET</code></td>
+									<td><code>/api/v1/timeseries</code></td>
+									<td>Lists all timeseries available.</td>
+								</tr>
+								<tr>
+									<td><code>POST</code></td>
+									<td><code>/api/v1/timeseries</code></td>
+									<td>Request to obtain multiple timeseries. Set the <code>Accept: application/json</code> header to obtain JSON data, or set <code>Accept: image/png</code> to obtain a rendered graph displaying the timeseries with requested style options
+									<div class="n52-callout n52-callout-todo">document request POST structure with <code>style</code> options.</div></td>
+								</tr>
+								<tr>
+									<td><code>GET</code></td>
+									<td><code>/api/v1/timeseries/{id}</code></td>
+									<td><p>Lists the timeseries with id <code>{id}</code>. Set the <code>Accept: application/json</code> header to obtain JSON data, or set <code>Accept: image/png</code> to obtain a rendered graph displaying the timeseries with requested style options.</p>
+									
+									<div class="n52-callout n52-callout-todo">Document query parameter <code>style</code>. Also available <code>refValues</code> must be stylable.</div>
+									
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 					
-					<h3>Status Codes</h3>
+					<div> <!-- Status Codes -->
+						<h3>Status Codes</h3>
+						<p>HTTP Status codes indicate the following states.</p>
+						<table class="table">
+							<thead>
+								<th>Code</th>
+								<th>When</th>
+							</thead>
+							<tbody>
+								<tr>
+									<td><code>200</code></td>
+									<td>Status <code>OK</code>. All went fine.</td>
+								</tr>
+								<tr>
+									<td><code>400</code></td>
+									<td>Status <code>Bad Request</code>. The request data cannot be read.</td>
+								</tr>
+								<tr>
+									<td><code>404</code></td>
+									<td>Status <code>Not Found</code>. The resource is not available.</td>
+								</tr>
+								<tr>
+									<td><code>500</code></td>
+									<td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 					
-					<p>HTTP Status codes indicate the following states.</p>
-					<table class="table">
-						<thead>
-							<th>Code</th>
-							<th>When</th>
-						</thead>
-						<tbody>
-							<tr>
-								<td><code>200</code></td>
-								<td>Status <code>OK</code>. All went fine.</td>
-							</tr>
-							<tr>
-								<td><code>400</code></td>
-								<td>Status <code>Bad Request</code>. The request data cannot be read.</td>
-							</tr>
-							<tr>
-								<td><code>404</code></td>
-								<td>Status <code>Not Found</code>. The resource is not available.</td>
-							</tr>
-							<tr>
-								<td><code>500</code></td>
-								<td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
-							</tr>
-						</tbody>
-					</table>
-					
-					<h3>Query Parameters</h3>
-					
-					<p>Timeseries can be queried with the following filter parameters. </p>
-					<div class="n52-callout n52-callout-info">Note that the options have to be <b>URL-encoded</b> appropriately!</div>
-					<table class="table" style="table-layout:fixed">
-						<thead>
-							<th style="width:15%">Parameter</th>
-							<th>Example</th>
-							<th>Description</th>
-						</thead>
-						<tbody>
-							<tr>
-								<td>
-									<code>service</code><br/>
-								</td>
-								<td>
-									<pre>service=srv_sdlfj2</pre>
-								</td>
-								<td>All timeseries where the given <a href="#parameter-services">service</a> id do match.</td>
-							</tr>
-							<tr>
-								<td>
-									<code>service</code><br/>
-								</td>
-								<td>
-									<pre>service=srv_sdlfj2</pre>
-								</td>
-								<td>All timeseries where the given <a href="#parameter-services">service</a> id do match.</td>
-							</tr>
-							<tr>
-								<td>
-									<code>category</code><br/>
-								</td>
-								<td>
-									<pre>category=cat_sadf2d</pre>
-								</td>
-								<td>All timeseries where the given <a href="#parameter-categories">category</a> id do match.</td>
-							</tr>
-							<tr>
-								<td>
-									<code>offering</code><br/>
-								</td>
-								<td>
-									<pre>offering=off_fdoi23</pre>
-								</td>
-								<td>All timeseries where the given <a href="#parameter-offerings">offering</a> id do match.</td>
-							</tr>
-							<tr>
-								<td>
-									<code>feature</code><br/>
-								</td>
-								<td>
-									<pre>feature=foi_adf092e</pre>
-								</td>
-								<td>All timeseries where the given <a href="#parameter-features">feature</a> id do match.</td>
-							</tr>
-							<tr>
-								<td>
-									<code>procedure</code><br/>
-								</td>
-								<td>
-									<pre>procedure=pro_asd23</pre>
-								</td>
-								<td>All timeseries where the given <a href="#parameter-procedures">procedure</a> id do match.</td>
-							</tr>
-							<tr>
-								<td>
-									<code>observedProperty</code>
-								</td>
-								<td>
-									<pre>observedProperty=phe_sdjf210</pre>
-								</td>
-								<td>All timeseries where the given <a href="#parameter-observedProperties">observed property</a> id do match.</td>
-							</tr>
-							<tr>
-								<td>
-									<code>style</code>
-								</td>
-								<td>
-									<pre>style={
+					<div> <!-- Query Parameters -->
+						<h3>Query Parameters</h3>
+						<p>Timeseries can be queried with the following filter parameters. </p>
+            
+						<table class="table" style="table-layout:fixed">
+							<thead>
+								<th style="width:15%">Parameter</th>
+								<th>Example</th>
+								<th>Description</th>
+							</thead>
+							<tbody>
+								<tr>
+									<td>
+										<code>style</code>
+									</td>
+									<td>
+										<pre>style={
   "color": "#2f2f2f",
   "diagram": {
     "type": "graph",
@@ -560,33 +627,119 @@ Content-Type: application/json;charset=UTF-8
     }
   }
 }</pre>
-								</td>
-								<td><p>Style options how the timeseries shall be rendered if <code>image/png</code> header was set.</p>
-								
-								<p>A more detailed explanation about styling can be found under the <a href="#styles">styles section</a>.</p>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-					
-					
-					<h3>Response Examples</h3>
-					<h4>Collection</h4>
-					<div>
-						<code>/api/v1/timeseries</code>
-						<pre>[
-  "./ts_35559ca6b2248629e6dcdc65ceead0ed",
+									</td>
+									<td><p>Style options how the timeseries shall be rendered if an <code>image/png</code> shall be the output.</p>
+									
+									<p>A more detailed explanation about styling can be found under the <a href="#styles">styles section</a>.</p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+            
+            <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">further common query parameters</a> can be used.</div>
+            
+						<div class="n52-callout n52-callout-info">Note that the options have to be <b>URL-encoded</b> appropriately!</div>
+					</div>
+
+					<div> <!-- Response Examples -->
+						<h3>Response Examples</h3>
+            <div>
+              <h4>Simple Collection</h4>
+              <pre>GET /api/v1/timeseries HTTP/1.1
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+              <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+[
   "./ts_aca9c4d1438091af1f0d362f1d04e40d",
   "./ts_875e2cd936b7ab7ebca9e9bb311a44c2",
   "./ts_c6dcc7a8fd96f0a34380ea14439904c2",
   "./ts_47a07ae5ad3e7787402a8f0cb5a862ea",
   "./ts_e56832a2df30973a5531a85f73acb28a"
 ]</pre>
-					</div>
-					<h4>Item</h4>
-					<div>
-						<code>/api/v1/timeseries/ts_35559ca6b2248629e6dcdc65ceead0ed</code>
-						<pre>{
+              <div class="n52-callout n52-callout-info">
+                As <a href="#common-query-parameters">noted above</a> <code>expanded=false</code> is the default. Setting the parameter to <code>false</code> explicitly will have the same effect. 
+              </div>
+						</div>
+            <div>
+              <h4>Expanded Collection</h4>
+              <pre>GET /api/v1/timeseries/?expanded=true HTTP/1.1
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+              <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+[
+  {
+    "id": "ts_35559ca6b2248629e6dcdc65ceead0ed",
+    "parameters": {
+      "service": "../services/srv_823sd",
+      "offering": "../offerings/off_sadf23",
+      "procedure": "../procedures/pro_dfg232",
+      "observedProperty": "../observedProperties/phe_sdf231",
+      "feature": "../features/foi_dg234",
+      "category": "../categories/cat_asda09fj"
+    }
+  },
+  {
+    "id": "ts_e56832a2df30973a5531a85f73acb28a",
+    "parameters": {
+      "service": "../services/srv_8we3we",
+      "offering": "../offerings/off_sadwe23",
+      "procedure": "../procedures/pro_dffg32",
+      "observedProperty": "../observedProperties/phe_asddf231",
+      "feature": "../features/foi_dg2adf34",
+      "category": "../categories/cat_asdlkfj"
+    }
+  }
+]</pre>
+						</div>
+						<div>
+              <h4>Simple Item</h4>
+              <pre>GET /api/v1/timeseries/ts_35559ca6b2248629e6dcdc65ceead0ed HTTP/1.1
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+              <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+{
+  "id": "ts_35559ca6b2248629e6dcdc65ceead0ed",
+  "uom": "cm",
+  "station": {
+    "href": "../stations/sta_adsf09",
+    "label": "Bramsche"
+  },
+  "firstValue": {
+    "timestamp": 1375599900000,
+    "value": 23.4
+  },
+  "lastValue": {
+    "timestamp": 1375599900000,
+    "value": 43.4
+  },
+  "parameters": {
+    "service": "../services/srv_823sd",
+    "offering": "../offerings/off_sadf23",
+    "procedure": "../procedures/pro_dfg232",
+    "observedProperty": "../observedProperties/phe_sdf231",
+    "feature": "../features/foi_dg234"
+    "category": "../categories/cat_asda09fj"
+  }
+}</pre>
+              <div class="n52-callout n52-callout-info">
+                As <a href="#common-query-parameters">noted above</a> <code>expanded=false</code> is the default. Setting the parameter to <code>false</code> explicitly will have the same effect. 
+              </div>
+						</div>
+            <div>
+              <h4>Expanded Item</h4>
+              <pre>GET /api/v1/timeseries/ts_35559ca6b2248629e6dcdc65ceead0ed/?expanded=true HTTP/1.1
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+              <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+{
   "id": "ts_35559ca6b2248629e6dcdc65ceead0ed",
   "uom": "cm",
   "refValues": [
@@ -606,9 +759,9 @@ Content-Type: application/json;charset=UTF-8
         }
       ]
     },
-    "ref_45030": {
-      "reference": "Mittelwasser",
-      "values": [
+      "ref_45030": {
+        "reference": "Mittelwasser",
+        "values": [
         {
           "from": 1375570800000,
           "to": 1375590860000,
@@ -623,6 +776,10 @@ Content-Type: application/json;charset=UTF-8
       ]
     }
   ],
+  "station": {
+    "href": "../stations/sta_adsf09",
+    "label": "Bramsche"
+  },
   "firstValue": {
     "timestamp": 1375599900000,
     "value": 23.4
@@ -639,12 +796,18 @@ Content-Type: application/json;charset=UTF-8
     "feature": "../features/foi_dg234"
   }
 }</pre>
-					</div>
-					<h4>Data</h4>
-					<div class="n52-callout n52-callout-todo">a query parameter which asks for formatting the output to be directly consumable by JS chart APIs?</div>
-					<div>
-						<code>/api/v1/timeseries/ts_35559ca6b2248629e6dcdc65ceead0ed</code>
-						<pre>[
+						</div>
+            
+						<h4>Data</h4>
+						<div class="n52-callout n52-callout-todo">a query parameter which asks for formatting the output to be directly consumable by JS chart APIs?</div>
+						<div>
+              <pre>GET /api/v1/timeseries/ts_35559ca6b2248629e6dcdc65ceead0ed/data HTTP/1.1
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+                <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+[
   {
     "timestamp": 1375570800000,
     "value": "230.81"
@@ -658,15 +821,17 @@ Content-Type: application/json;charset=UTF-8
     "value": "235.97"
   }
 ]</pre>
+              <div class="n52-callout n52-callout-info">
+                Timeseries data can be very big! Naive clients can bother data providers when trying to request huge datasets by accident. Therefore data requests are limited to a maximum value. Have a look <a href="#paging">at the paging documentation</a> how to get more data.
+              </div>
+						</div>
 					</div>
 				</div>
 			</section>
 			
 			
 			
-			
-			
-			
+						
 			<!-- Styles
 			================================================== -->
 			<section id="styles">
@@ -678,28 +843,40 @@ Content-Type: application/json;charset=UTF-8
 				</div>
 				<div>
 					<h3>Diagram Types</h3>
-					
-					<h4>Line Charts</h4>
-					The following style properties can be set.
-					<table class="table">
-						<thead>
-							<th>Property</th>
-						</thead>
-						<tbody>
-							<tr>
-								<td><code>lineType</code></td>
-								<td>The line style. Possible values are <code>solid</code>, <code>dotted</code> or <code>dashed</code></td>
-							</tr>
-							<tr>
-								<td><code>lineWidth</code></td>
-								<td></td>
-							</tr>
-						</tbody>
-					</table>
-					
-					<h4>Bar Charts</h4>
+					<p>The following diagram types are available and can be set via <code>style</code> options:
+						<ul>
+							<li>line charts</li>
+							<li>bar charts</li>
+						</ul>
+						<div class="n52-callout n52-callout-todo">add images which show up an example?</div>
+					</p>
+					<div>
+						<h4>Line Charts</h4>
+						<p>The following style properties can be set.</p>
+						<table class="table">
+							<thead>
+								<th>Property</th>
+							</thead>
+							<tbody>
+								<tr>
+									<td><code>lineType</code></td>
+									<td><p>The line style. Possible values are <code>solid</code>, <code>dotted</code> or <code>dashed</code></p></td>
+								</tr>
+								<tr>
+									<td><code>lineWidth</code></td>
+									<td>The thickness of a line.</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div>
+						<h4>Bar Charts</h4>
+						<div class="n52-callout n52-callout-todo">add bar chart styling when it is clear what is possible to render in jfreechart.</div>
+					</div>
 				</div>
 			</section>
+			
+
 			
 
 			
@@ -712,309 +889,408 @@ Content-Type: application/json;charset=UTF-8
 						<a href="#"><i class="icon-chevron-up"></i> top</a>
 					</p>
 				</div>
-				
-				<div>
-					<h2 id="parameter-services">Services</h2>
+					
+				<div id="parameter-services">
+					<h2>Services</h2>
 					<div>
-						<h3>URLs</h3>
-						<p>API calls are triggered by using the following URLs.</p>
-						<table class="table">
-							<thead>
-								<th>Method</th>
-								<th>Relative Path</th>
-								<th>Description</th>
-							</thead>
-							<tbody>
-								<tr>
-									<td><code>GET</code></td>
-									<td><code>/api/v1/services</code></td>
-									<td>Lists all services available.</td>
-								</tr>
-								<tr>
-									<td><code>GET</code></td>
-									<td><code>/api/v1/services/{id}</code></td>
-									<td>Lists the service with id <code>{id}</code>.</td>
-								</tr>
-							</tbody>
-						</table>
+            <div> <!-- URLs -->
+              <h3>URLs</h3>
+              <p>API calls are triggered by using the following URLs.</p>
+              <table class="table">
+                <thead>
+                  <th>Method</th>
+                  <th>Path</th>
+                  <th>Description</th>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>GET</code></td>
+                    <td><code>/api/v1/services</code></td>
+                    <td>Lists all services available.</td>
+                  </tr>
+                  <tr>
+                    <td><code>GET</code></td>
+                    <td><code>/api/v1/services/{id}</code></td>
+                    <td>Lists the service with id <code>{id}</code>.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 						
-						<h3>Status Codes</h3>
+            <div> <!-- Status Codes -->
+              <h3>Status Codes</h3>
+              <p>HTTP Status codes indicate the following states.</p>
+              <table class="table">
+                <thead>
+                  <th>Code</th>
+                  <th>When</th>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>200</code></td>
+                    <td>Status <code>OK</code>. All went fine.</td>
+                  </tr>
+                  <tr>
+                    <td><code>404</code></td>
+                    <td>Status <code>Not Found</code>. The resource is not available.</td>
+                  </tr>
+                  <tr>
+                    <td><code>500</code></td>
+                    <td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 						
-						<p>HTTP Status codes indicate the following states.</p>
-						<table class="table">
-							<thead>
-								<th>Code</th>
-								<th>When</th>
-							</thead>
-							<tbody>
-								<tr>
-									<td><code>200</code></td>
-									<td>Status <code>OK</code>. All went fine.</td>
-								</tr>
-								<tr>
-									<td><code>404</code></td>
-									<td>Status <code>Not Found</code>. The resource is not available.</td>
-								</tr>
-								<tr>
-									<td><code>500</code></td>
-									<td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
-								</tr>
-							</tbody>
-						</table>
+            <div> <!-- Query Parameters -->
+              <h3>Query Parameters</h3>
+              <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">common query parameters</a> can be used.</div>
+              
+            </div>
 						
-						
-						<h3>Response Examples</h3><div>
-							<code>/api/v1/services</code>
-							<pre>[
-  "./srv_823sd",
-  "./srv_4asdf";
+            <div> <!-- Response Examples -->
+              <h3>Response Examples</h3>
+              <div>
+                <h4>Collection</h4>
+                <pre>GET /api/v1/services/ HTTP/1.1
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+                <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+[
+  {
+    "href": "./srv_823sd",
+    "label": "PEGELONLINE"
+  },
+  {
+    "href": "./srv_8asdfd",
+    "label": "Wupperverband"
+  }
 ]</pre>
-						</div>
-						<div>
-							<code>/api/v1/services/srv_823sd</code>
-							<pre>{
+              </div>
+              <div>
+                <h4>Item</h4>
+                <pre>GET /api/v1/services/srv_823sd HTTP/1.1
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+                <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+{
   "id": "srv_823sd",
   "label": "PEGELONLINE",
   "serviceUrl": "http://pegelonline.wsv.de/webservices/gis/gdi-sos",
   "type": "SOS",
   "version": "1.0.0"
 }</pre>
-						</div>
+              </div>
+            </div>
 
 					</div>
 				
 				</div>
 				
-				<div>
-					<h2 id="parameter-categories">Categories</h2>
-					<div>
-						<h3>URLs</h3>
-						<p>API calls are triggered by using the following URLs.</p>
-						<table class="table">
-							<thead>
-								<th>Method</th>
-								<th>Relative Path</th>
-								<th>Description</th>
-							</thead>
-							<tbody>
-								<tr>
-									<td><code>GET</code></td>
-									<td><code>/api/v1/categories</code></td>
-									<td>Lists all measured categories available.</td>
-								</tr>
-								<tr>
-									<td><code>GET</code></td>
-									<td><code>/api/v1/categories/{id}</code></td>
-									<td>Lists the measured categories with id <code>{id}</code>.</td>
-								</tr>
-							</tbody>
-						</table>
-						
-						<h3>Status Codes</h3>
-						
-						<p>HTTP Status codes indicate the following states.</p>
-						<table class="table">
-							<thead>
-								<th>Code</th>
-								<th>When</th>
-							</thead>
-							<tbody>
-								<tr>
-									<td><code>200</code></td>
-									<td>Status <code>OK</code>. All went fine.</td>
-								</tr>
-								<tr>
-									<td><code>404</code></td>
-									<td>Status <code>Not Found</code>. The resource is not available.</td>
-								</tr>
-								<tr>
-									<td><code>500</code></td>
-									<td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
-								</tr>
-							</tbody>
-						</table>
-						
-						
-						<h3>Response Examples</h3>
-						<div>
-							<code>/api/v1/categories</code>
-							<pre>[
-  "./cat_h7234u",
-  "./cat_eddfnq"
-]</pre>
-						</div>
-						<div>
-							<code>/api/v1/categories/cat_h7234u</code>
-							<pre>{
-  "id": "cat_h7234u",
-  "label": "air",
-  "service": "../services/srv_823sd"
-}</pre>
-						</div>
+				<div id="parameter-categories">
+					<h2>Categories</h2>
+          <div> <!-- URLs -->
+            <h3>URLs</h3>
+            <p>API calls are triggered by using the following URLs.</p>
+            <table class="table">
+              <thead>
+                <th>Method</th>
+                <th>Path</th>
+                <th>Description</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>GET</code></td>
+                  <td><code>/api/v1/categories</code></td>
+                  <td>Lists all measured categories available.</td>
+                </tr>
+                <tr>
+                  <td><code>GET</code></td>
+                  <td><code>/api/v1/categories/{id}</code></td>
+                  <td>Lists the measured categories with id <code>{id}</code>.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div> <!-- Status Codes -->
+            <h3>Status Codes</h3>
+            
+            <p>HTTP Status codes indicate the following states.</p>
+            <table class="table">
+              <thead>
+                <th>Code</th>
+                <th>When</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>200</code></td>
+                  <td>Status <code>OK</code>. All went fine.</td>
+                </tr>
+                <tr>
+                  <td><code>404</code></td>
+                  <td>Status <code>Not Found</code>. The resource is not available.</td>
+                </tr>
+                <tr>
+                  <td><code>500</code></td>
+                  <td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div> <!-- Query Parameters -->
+              <h3>Query Parameters</h3>
+              <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">common query parameters</a> can be used.</div>
+          </div>
+          
+          <div> <!-- Response Examples -->
+              <h3>Response Examples</h3>
+              <div>
+                <h4>Collection</h4>
+                <pre>GET /api/v1/categories HTTP/1.1
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+                <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
 
-					</div>
+[
+  {
+    "href": "./cat_h7234u",
+    "label": "Water"
+  },
+  {
+    "href": "./cat_eddfnq",
+    "label": "Air"
+  }
+]</pre>
+              </div>
+              <div>
+                <h4>Item</h4>
+                <pre>GET /api/v1/categories/cat_eddfnq HTTP/1.1
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+                <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+{
+  "id": "cat_eddfnq",
+  "label": "Air",
+  "service": {
+    "href": "../services/srv_823sd",
+    "label": "PEGELONLINE"
+  }
+}</pre>
+              </div>
+            </div>
 				</div>
 				
-				<div>
-					<h2 id="parameter-offerings">Offerings</h2>
-					<div>
-						<h3>URLs</h3>
-						<p>API calls are triggered by using the following URLs.</p>
-						<table class="table">
-							<thead>
-								<th>Method</th>
-								<th>Relative Path</th>
-								<th>Description</th>
-							</thead>
-							<tbody>
-								<tr>
-									<td><code>GET</code></td>
-									<td><code>/api/v1/offerings</code></td>
-									<td>Lists all offerings available.</td>
-								</tr>
-								<tr>
-									<td><code>GET</code></td>
-									<td><code>/api/v1/offerings/{id}</code></td>
-									<td>Lists the offering with id <code>{id}</code>.</td>
-								</tr>
-							</tbody>
-						</table>
-						
-						<h3>Status Codes</h3>
-						
-						<p>HTTP Status codes indicate the following states.</p>
-						<table class="table">
-							<thead>
-								<th>Code</th>
-								<th>When</th>
-							</thead>
-							<tbody>
-								<tr>
-									<td><code>200</code></td>
-									<td>Status <code>OK</code>. All went fine.</td>
-								</tr>
-								<tr>
-									<td><code>404</code></td>
-									<td>Status <code>Not Found</code>. The resource is not available.</td>
-								</tr>
-								<tr>
-									<td><code>500</code></td>
-									<td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
-								</tr>
-							</tbody>
-						</table>
-						
-						
-						<h3>Response Examples</h3>
-						<div>
-							<code>/api/v1/offerings</code>
-							<pre>[
-  "./off_4fh74",
-  "./off_9u234"
+				<div id="parameter-offerings">
+					<h2>Offerings</h2>
+          <div> <!-- URLs -->
+            <h3>URLs</h3>
+            <p>API calls are triggered by using the following URLs.</p>
+            <table class="table">
+              <thead>
+                <th>Method</th>
+                <th>Path</th>
+                <th>Description</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>GET</code></td>
+                  <td><code>/api/v1/offerings</code></td>
+                  <td>Lists all offerings available.</td>
+                </tr>
+                <tr>
+                  <td><code>GET</code></td>
+                  <td><code>/api/v1/offerings/{id}</code></td>
+                  <td>Lists the offering with id <code>{id}</code>.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div> <!-- Status Codes -->
+            <h3>Status Codes</h3>
+            
+            <p>HTTP Status codes indicate the following states.</p>
+            <table class="table">
+              <thead>
+                <th>Code</th>
+                <th>When</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>200</code></td>
+                  <td>Status <code>OK</code>. All went fine.</td>
+                </tr>
+                <tr>
+                  <td><code>404</code></td>
+                  <td>Status <code>Not Found</code>. The resource is not available.</td>
+                </tr>
+                <tr>
+                  <td><code>500</code></td>
+                  <td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div> <!-- Query Parameters -->
+              <h3>Query Parameters</h3>
+              <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">common query parameters</a> can be used.</div>
+          </div>
+          
+          <div> <!-- Response Examples -->
+              <h3>Response Examples</h3>
+              <div>
+                <h4>Collection</h4>
+                <pre>GET /api/v1/offerings HTTP/1.1
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+                <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+[
+  {
+    "href": "./off_h7234u",
+    "label": "ABFLUSS_ROHDATEN"
+  },
+  {
+    "href": "./off_eddfnq",
+    "label": "WINDGESCHWINDIGKEIT"
+  }
 ]</pre>
-						</div>
-						<div>
-							<code>/api/v1/offerings/off_4fh74</code>
-							<pre>{
-  "id": "off_4fh74",
-  "label": "PEGELONLINE",
+              </div>
+              <div>
+                <h4>Item</h4>
+                <pre>GET /api/v1/offerings/off_h7234u HTTP/1.1
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+                <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+{
+  "id": "off_h7234u",
+  "label": "ABFLUSS_ROHDATEN"
   "service": "../services/srv_823sd"
 }</pre>
-						</div>
-					
-					
-					</div>
+              </div>
+            </div>
 				</div>
 				
-				<div>
-					<h2 id="parameter-features">Features</h2>
-						<div>
-						<h3>URLs</h3>
-						<p>API calls are triggered by using the following URLs.</p>
-						<table class="table">
-							<thead>
-								<th>Method</th>
-								<th>Relative Path</th>
-								<th>Description</th>
-							</thead>
-							<tbody>
-								<tr>
-									<td><code>GET</code></td>
-									<td><code>/api/v1/features</code></td>
-									<td>Lists all features available.</td>
-								</tr>
-								<tr>
-									<td><code>GET</code></td>
-									<td><code>/api/v1/features/{id}</code></td>
-									<td>Lists the feature with id <code>{id}</code>.</td>
-								</tr>
-							</tbody>
-						</table>
-						
-						<h3>Status Codes</h3>
-						
-						<p>HTTP Status codes indicate the following states.</p>
-						<table class="table">
-							<thead>
-								<th>Code</th>
-								<th>When</th>
-							</thead>
-							<tbody>
-								<tr>
-									<td><code>200</code></td>
-									<td>Status <code>OK</code>. All went fine.</td>
-								</tr>
-								<tr>
-									<td><code>404</code></td>
-									<td>Status <code>Not Found</code>. The resource is not available.</td>
-								</tr>
-								<tr>
-									<td><code>500</code></td>
-									<td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
-								</tr>
-							</tbody>
-						</table>
-						
-						
-						<h3>Response Examples</h3>
-						<div>
-							<code>/api/v1/features</code>
-							<pre>[
-  "./foi_adsf23",
-  "./foi_adsads"
+				<div id="parameter-features">
+					<h2>Features</h2>
+          <div> <!-- URLs -->
+            <h3>URLs</h3>
+            <p>API calls are triggered by using the following URLs.</p>
+            <table class="table">
+              <thead>
+                <th>Method</th>
+                <th>Path</th>
+                <th>Description</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>GET</code></td>
+                  <td><code>/api/v1/features</code></td>
+                  <td>Lists all features available.</td>
+                </tr>
+                <tr>
+                  <td><code>GET</code></td>
+                  <td><code>/api/v1/features/{id}</code></td>
+                  <td>Lists the feature with id <code>{id}</code>.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        
+          <div> <!-- Status Codes -->
+              <h3>Status Codes</h3>
+              
+              <p>HTTP Status codes indicate the following states.</p>
+              <table class="table">
+                <thead>
+                  <th>Code</th>
+                  <th>When</th>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>200</code></td>
+                    <td>Status <code>OK</code>. All went fine.</td>
+                  </tr>
+                  <tr>
+                    <td><code>404</code></td>
+                    <td>Status <code>Not Found</code>. The resource is not available.</td>
+                  </tr>
+                  <tr>
+                    <td><code>500</code></td>
+                    <td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          
+          <div> <!-- Query Parameters -->
+              <h3>Query Parameters</h3>
+              <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">common query parameters</a> can be used.</div>
+          </div>
+          
+          <div> <!-- Response Examples -->
+            <h3>Response Examples</h3>
+            <div>
+              <h4>Collection</h4>
+              <pre>GET /api/v1/features HTTP/1.1
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+              <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+[
+  {
+    "href": "./foi_h7234u",
+    "label": "Bramsche"
+  },
+  {
+    "href": "./foi_adsf221",
+    "label": "Suelfeld"
+  }
 ]</pre>
-						</div>
-						<div>
-							<code>/api/v1/features/foi_adsf23</code>
-							<pre>{
-  "id": "foi_adsf23",
+            </div>
+            <div>
+              <h4>Item</h4>
+              <pre>GET /api/v1/features/foi_h7234u HTTP/1.1
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+              <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+{
+  "id": "foi_h7234u",
   "label": "Bramsche",
-  "service": "../services/srv_823sd"
+  "service": {
+    "href": "../services/srv_823sd",
+    "label": "PEGELONLINE"
+  }
 }</pre>
-						</div>
-					
-					
-						<!--
-						<div class="content-sensorweb-side-img">
-							<img src="img/sensor-web.png" class="img-polaroid pull-right">
-							<p class="img-source pull-right">Quelle: A. Bröring</p>
-						</div>
-						-->
-			
-
-					</div>
+            </div>
+          </div>
 				</div>
 				
-				
-				<div>
-					<h2 id="parameter-procedures">Procedures</h2>
-					<div>
+				<div id="parameter-procedures">
+					<h2>Procedures</h2>
+					<div> <!-- URLs -->
 						<h3>URLs</h3>
 						<p>API calls are triggered by using the following URLs.</p>
 						<table class="table">
 							<thead>
 								<th>Method</th>
-								<th>Relative Path</th>
+								<th>Path</th>
 								<th>Description</th>
 							</thead>
 							<tbody>
@@ -1030,7 +1306,9 @@ Content-Type: application/json;charset=UTF-8
 								</tr>
 							</tbody>
 						</table>
+          </div>
 						
+          <div> <!-- Status Codes -->
 						<h3>Status Codes</h3>
 						
 						<p>HTTP Status codes indicate the following states.</p>
@@ -1054,46 +1332,63 @@ Content-Type: application/json;charset=UTF-8
 								</tr>
 							</tbody>
 						</table>
-						
-						
-						<h3>Response Examples</h3>
-						<div>
-							<code>/api/v1/procedures</code>
-							<pre>[
-  "./pro_hsde823",
-  "./pro_9a8sd0g"
-]</pre>
-						</div>
-						<div>
-							<code>/api/v1/procedures/pro_hsde823</code>
-							<pre>{
-  "id": "pro_hsde823",
-  "label": "Air Temperature Bramsche",
-  "service": "../services/srv_823sd"
-}</pre>
-						</div>
-					
-					
-						<!--
-						<div class="content-sensorweb-side-img">
-							<img src="img/sensor-web.png" class="img-polaroid pull-right">
-							<p class="img-source pull-right">Quelle: A. Bröring</p>
-						</div>
-						-->
-			
+          </div>
+          
+          <div> <!-- Query Parameters -->
+            <h3>Query Parameters</h3>
+            <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">common query parameters</a> can be used.</div>
+          </div>
+          
+          <div> <!-- Response Examples -->
+            <h3>Response Examples</h3>
+            <div>
+              <h4>Collection</h4>
+              <pre>GET /api/v1/procedures HTTP/1.1
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+              <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
 
-					</div>
+[
+  {
+    "href": "./pro_h7234u",
+    "label": "Wasserstand-Ruwer"
+  },
+  {
+    "href": "./pro_adsf221",
+    "label": "Wasserstand-Krotzenburg"
+  }
+]</pre>
+            </div>
+            <div>
+              <h4>Item</h4>
+              <pre>GET /api/v1/procedures/pro_adsf221 HTTP/1.1
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+              <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+{
+  "id": "pro_h7234u",
+  "label": "Wasserstand-Krotzenburg",
+  "service": {
+    "href": "../services/srv_823sd",
+    "label": "PEGELONLINE"
+  }
+}</pre>
+            </div>
+          </div>
 				</div>
 				
-				<div>
-					<h2 id="parameter-observedProperties">Observed Properties</h2>
-					<div>
+				<div id="parameter-observedProperties">
+					<h2>Observed Properties</h2>
+					<div> <!-- URLs -->
 						<h3>URLs</h3>
 						<p>API calls are triggered by using the following URLs.</p>
 						<table class="table">
 							<thead>
 								<th>Method</th>
-								<th>Relative Path</th>
+								<th>Path</th>
 								<th>Description</th>
 							</thead>
 							<tbody>
@@ -1109,9 +1404,10 @@ Content-Type: application/json;charset=UTF-8
 								</tr>
 							</tbody>
 						</table>
-						
+          </div>
+          
+          <div> <!-- Status Codes -->
 						<h3>Status Codes</h3>
-						
 						<p>HTTP Status codes indicate the following states.</p>
 						<table class="table">
 							<thead>
@@ -1133,36 +1429,52 @@ Content-Type: application/json;charset=UTF-8
 								</tr>
 							</tbody>
 						</table>
-						
-						
-						<h3>Response Examples</h3>
-						<div>
-							<code>/api/v1/observedProperties</code>
-							<pre>[
-  "./phe_sd3sd",
-  "./phe_3lo09"
-]</pre>
-						</div>
-						<div>
-							<code>/api/v1/observedProperties/phe_sd3sd</code>
-							<pre>{
-  "id": "phe_sd3sd",
-  "label": "Temperature",
-  "service": "../services/srv_823sd"
-}</pre>
-						</div>
-					
-						
-					
-						<!--
-						<div class="content-sensorweb-side-img">
-							<img src="img/sensor-web.png" class="img-polaroid pull-right">
-							<p class="img-source pull-right">Quelle: A. Bröring</p>
-						</div>
-						-->
-			
+          </div>
 
-					</div>
+          <div> <!-- Query Parameters -->
+            <h3>Query Parameters</h3>
+            <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">common query parameters</a> can be used.</div>
+          </div>
+          
+          <div> <!-- Response Examples -->
+            <h3>Response Examples</h3>
+            <div>
+              <h4>Collection</h4>
+              <pre>GET /api/v1/observedProperties HTTP/1.1
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+              <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+[
+  {
+    "href": "./phe_adsf221",
+    "label": "Lufttemperatur"
+  },
+  {
+    "href": "./phe_adsf221",
+    "label": "Wasserstand"
+  }
+]</pre>
+            </div>
+            <div>
+              <h4>Item</h4>
+              <pre>GET /api/v1/observedProperties/phe_adsf221 HTTP/1.1
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+              <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+{
+  "id": "phe_adsf221",
+  "label": "Wasserstand-Krotzenburg",
+  "service": {
+    "href": "../services/srv_823sd",
+    "label": "PEGELONLINE"
+  }
+}</pre>
+            </div>
+          </div>
 				</div>
 				
 			</section>

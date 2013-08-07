@@ -382,7 +382,7 @@ public class DiagramRenderer {
 
                     }
                     // "4" is dashed
-                    else if (lineStyle.equalsIgnoreCase("4")) {
+                    else if (lineStyle.equalsIgnoreCase("4")) { // dashed
                         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(true, false);
 						renderer.setSeriesStroke(0, new BasicStroke(width,
 								BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
