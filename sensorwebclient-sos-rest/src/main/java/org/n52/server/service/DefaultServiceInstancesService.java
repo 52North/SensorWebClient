@@ -6,9 +6,10 @@ import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.n52.server.api.v0.ctrl.ResourceNotFoundException;
-import org.n52.server.api.v0.output.ServiceInstance;
+import org.n52.io.v0.output.ServiceInstance;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.web.v0.ctrl.ResourceNotFoundException;
+import org.n52.web.v0.srv.ServiceInstancesService;
 
 public class DefaultServiceInstancesService implements ServiceInstancesService {
 
