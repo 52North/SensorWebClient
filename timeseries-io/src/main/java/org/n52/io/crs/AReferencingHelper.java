@@ -31,7 +31,6 @@ import org.geotools.factory.Hints;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.ReferencingFactoryFinder;
-import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.shared.Constants;
 import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.sos.Station;
@@ -114,9 +113,6 @@ public abstract class AReferencingHelper {
      *         parameter
      */
     private static AReferencingHelper createReferencingHelper(CRSAuthorityFactory crsFactory) {
-        if (ConfigurationContext.IS_DEV_MODE) {
-            return new ReferencingMockupHelper(crsFactory);
-        }
         return new ReferencingHelper(crsFactory);
     }
 

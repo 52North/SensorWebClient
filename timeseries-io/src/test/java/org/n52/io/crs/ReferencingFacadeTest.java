@@ -31,8 +31,6 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.server.mgmt.ConfigurationContext;
-import org.n52.io.crs.AReferencingHelper;
 import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.Station;
@@ -51,7 +49,6 @@ public class ReferencingFacadeTest {
 
     @Before
     public void setUp() throws Exception {
-        ConfigurationContext.IS_DEV_MODE = false;
         referencingFacade = AReferencingHelper.createEpsgStrictAxisOrder();
         EastingNorthing ll = new EastingNorthing(6.4, 51.9, "EPSG:4326");
         EastingNorthing ur = new EastingNorthing(8.9, 53.4, "EPSG:4326");
