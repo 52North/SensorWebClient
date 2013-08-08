@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-@RequestMapping(value = DEFAULT_PATH, produces = { "application/json*" })
+@RequestMapping(value = DEFAULT_PATH, produces = { "application/json" })
 public class RestfulServiceInstancesController implements RestfulKvp {
     
     private ServiceInstancesService serviceInstancesService;
