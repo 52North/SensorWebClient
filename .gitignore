@@ -4,3 +4,5 @@ target
 .externalToolBuilders
 .settings
 META-INF
+bin/
+/sensorwebclient-ui/.gwt/.gwt-log
