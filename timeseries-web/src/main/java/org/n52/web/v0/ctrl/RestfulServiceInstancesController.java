@@ -8,9 +8,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collection;
 
+import org.n52.io.input.ServiceInstancesService;
 import org.n52.io.v0.output.ModelAndViewPager;
 import org.n52.io.v0.output.ServiceInstance;
-import org.n52.web.v0.srv.ServiceInstancesService;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

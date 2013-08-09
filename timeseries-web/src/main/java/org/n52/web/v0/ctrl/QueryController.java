@@ -9,7 +9,8 @@ import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 
 import org.n52.client.service.QueryService;
-import org.n52.server.mgmt.ConfigurationContext;
+import org.n52.io.input.ResourceNotFoundException;
+import org.n52.io.input.ServiceInstancesService;
 import org.n52.shared.requests.query.QueryFactory;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.requests.query.queries.QueryRequest;
@@ -19,7 +20,9 @@ import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 public abstract class QueryController {
 
     private QueryService queryService;
-
+    
+    private ServiceInstancesService serviceInstancesService;
+    
     /**
      * @param kvpDetailsValue
      *        the value of KVP parameter <code>details</code>.
@@ -51,13 +54,17 @@ public abstract class QueryController {
      *         if no service is configured with the given item name.
      */
     protected SOSMetadata findServiceMetadataForItemName(String serviceInstance) {
-        SOSMetadata metadata = ConfigurationContext.getSOSMetadataForItemName(serviceInstance);
+    	SOSMetadata metadata = serviceInstancesService.getSOSMetadataForItemName(serviceInstance);
         if (metadata == null) {
             throw new ResourceNotFoundException();
         }
         return metadata;
     }
-
+    
+    protected boolean containsServiceInstance(String serviceInstance) {
+    	return serviceInstancesService.containsServiceInstance(serviceInstance);
+    }
+    
     protected abstract QueryResponse< ? > performQuery(String instance, QueryParameters parameters) throws Exception;
 
     protected QueryResponse< ? > doQuery(QueryRequest queryRequest) throws Exception {
@@ -123,5 +130,14 @@ public abstract class QueryController {
     public void setQueryService(QueryService queryService) {
         this.queryService = queryService;
     }
+
+	public ServiceInstancesService getServiceInstancesService() {
+		return serviceInstancesService;
+	}
+
+	public void setServiceInstancesService(
+			ServiceInstancesService serviceInstancesService) {
+		this.serviceInstancesService = serviceInstancesService;
+	}
 
 }

@@ -15,34 +15,35 @@
     
     <bean class="org.n52.web.v0.ctrl.RestfulProceduresController">
         <property name="queryService" ref="queryServiceImpl"/>
+        <property name="serviceInstancesService" ref="serviceInstancesService"/>
     </bean>
     
     <bean class="org.n52.web.v0.ctrl.RestfulStationsController">
         <property name="queryService" ref="queryServiceImpl"/>
+        <property name="serviceInstancesService" ref="serviceInstancesService"/>
     </bean>
     
     <bean class="org.n52.web.v0.ctrl.RestfulFeaturesController">
         <property name="queryService" ref="queryServiceImpl"/>
+        <property name="serviceInstancesService" ref="serviceInstancesService"/>
     </bean>
     
     <bean class="org.n52.web.v0.ctrl.RestfulPhenomenonsController">
         <property name="queryService" ref="queryServiceImpl"/>
+        <property name="serviceInstancesService" ref="serviceInstancesService"/>
     </bean>
-    
     
     <bean class="org.n52.web.v0.ctrl.RestfulOfferingsController">
         <property name="queryService" ref="queryServiceImpl"/>
+        <property name="serviceInstancesService" ref="serviceInstancesService"/>
     </bean>
 	
 	
-	
-	
-	
-	
     <bean class="org.n52.web.v0.ctrl.RestfulTimeSeriesController">
-        <property name="dataService" ref="dataService" />
-        <property name="imageService" ref="imageService" />
+        <!-- <property name="dataService" ref="dataService" />
+        <property name="imageService" ref="imageService" /> -->
         <property name="queryService" ref="queryServiceImpl"/>
+        <property name="serviceInstancesService" ref="serviceInstancesService"/>
     </bean>
     
 	

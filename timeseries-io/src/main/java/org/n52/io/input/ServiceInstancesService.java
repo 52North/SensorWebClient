@@ -1,10 +1,10 @@
 
-package org.n52.web.v0.srv;
+package org.n52.io.input;
 
 import java.util.Collection;
 
 import org.n52.io.v0.output.ServiceInstance;
-import org.n52.web.v0.ctrl.ResourceNotFoundException;
+import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 
 public interface ServiceInstancesService {
 
@@ -24,4 +24,13 @@ public interface ServiceInstancesService {
      *         service instance is not available.
      */
     public ServiceInstance getServiceInstance(String id) throws ResourceNotFoundException;
+
+	public boolean containsServiceInstance(String serviceInstance);
+
+	
+	/** 
+	 * similar to {@link ServiceInstancesService.getServiceInstance}
+	 */
+	// TODO remove this method
+	public SOSMetadata getSOSMetadataForItemName(String serviceInstance);
 }

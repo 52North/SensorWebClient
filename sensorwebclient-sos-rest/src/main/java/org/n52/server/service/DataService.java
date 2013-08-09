@@ -33,6 +33,7 @@ import java.util.Map;
 
 import org.joda.time.Interval;
 import org.n52.client.service.SensorMetadataService;
+import org.n52.io.input.ResourceNotFoundException;
 import org.n52.io.v0.InternalServiceException;
 import org.n52.io.v0.ParameterSet;
 import org.n52.io.v0.output.TimeseriesData;
@@ -45,7 +46,6 @@ import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.n52.web.v0.ctrl.InvalidSosTimeseriesException;
-import org.n52.web.v0.ctrl.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

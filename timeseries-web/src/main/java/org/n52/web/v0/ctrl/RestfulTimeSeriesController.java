@@ -24,8 +24,6 @@
 
 package org.n52.web.v0.ctrl;
 
-import static org.n52.server.mgmt.ConfigurationContext.containsServiceInstance;
-import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadataForItemName;
 import static org.n52.shared.requests.query.QueryParameters.createEmptyFilterQuery;
 import static org.n52.shared.serializable.pojos.TimeseriesRenderingOptions.createDefaultRenderingOptions;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -36,13 +34,14 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.n52.io.input.ResourceNotFoundException;
 import org.n52.io.v0.DesignedParameterSet;
 import org.n52.io.v0.UndesignedParameterSet;
 import org.n52.io.v0.output.ModelAndViewPager;
 import org.n52.io.v0.output.TimeseriesData;
 import org.n52.io.v0.output.TimeseriesDataCollection;
-import org.n52.server.service.GetDataService;
-import org.n52.server.service.GetImageService;
+//import org.n52.server.service.GetDataService;
+//import org.n52.server.service.GetImageService;
 import org.n52.shared.requests.query.QueryFactory;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.requests.query.queries.QueryRequest;
@@ -63,17 +62,17 @@ import org.springframework.web.servlet.ModelAndView;
 public class RestfulTimeSeriesController extends QueryController implements RestfulKvp, RestfulUrls {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestfulTimeSeriesController.class);
-
-    private GetDataService dataService;
-
-    private GetImageService imageService;
+    
+//    private GetDataService dataService;
+//
+//    private GetImageService imageService;
 
     @RequestMapping(value = "/v0/timeseries", produces = "image/png", method = POST)
     public void getTimeseriesGraphForMultipleTimeseries(HttpServletResponse response,
                                                         @RequestBody DesignedParameterSet parameterSet) throws Exception {
         try {
             response.setContentType("image/png");
-            imageService.writeTimeSeriesChart(parameterSet, response.getOutputStream());
+//            imageService.writeTimeSeriesChart(parameterSet, response.getOutputStream());
         }
         finally {
             response.getOutputStream().close();
@@ -83,7 +82,7 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
     @RequestMapping(value = "/v0/timeseries", produces = "application/json", method = POST)
     public ModelAndView getTimeseriesDataForMultipleTimeseries(@RequestBody UndesignedParameterSet parameterSet) throws Exception {
         TimeseriesDataCollection results = new TimeseriesDataCollection();
-        results.addAll(dataService.getTimeSeriesFromParameterSet(parameterSet));
+//        results.addAll(dataService.getTimeSeriesFromParameterSet(parameterSet));
         ModelAndView mav = new ModelAndView("multipleTimeseries");
         return mav.addObject("multipleTimeseries", results.getAllTimeseries());
     }
@@ -135,7 +134,7 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
             if (station.contains(timeseriesId)) {
                 UndesignedParameterSet parameterSet = createUndesignedParameterSet(timespan);
                 parameterSet.setTimeseries(new String[] { timeseriesId });
-                results.addAll(dataService.getTimeSeriesFromParameterSet(parameterSet));
+//                results.addAll(dataService.getTimeSeriesFromParameterSet(parameterSet));
                 break;
             }
         }
@@ -158,11 +157,11 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
                                    @RequestParam(defaultValue = "-1") int width,
                                    @RequestParam(defaultValue = "-1") int height) throws Exception {
         try {
-            if ( !containsServiceInstance(instance)) {
+            if (!containsServiceInstance(instance)) {
                 LOGGER.info("SOS instance {} is not available.", instance);
                 throw new ResourceNotFoundException();
             }
-            SOSMetadata metadata = getSOSMetadataForItemName(instance);
+            SOSMetadata metadata = findServiceMetadataForItemName(instance);
             if ( !metadata.containsStationWithTimeseriesId(timeseriesId)) {
                 LOGGER.info("Timeseries {} is not available.", timeseriesId);
                 throw new ResourceNotFoundException();
@@ -173,7 +172,7 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
                     response.setContentType("image/png");
                     DesignedParameterSet parameterSet = createDesignedParameterSet(timespan, width, height);
                     parameterSet.addTimeseriesWithRenderingOptions(timeseriesId, createDefaultRenderingOptions());
-                    imageService.writeTimeSeriesChart(parameterSet, response.getOutputStream());
+//                    imageService.writeTimeSeriesChart(parameterSet, response.getOutputStream());
                     break;
                 }
             }
@@ -242,20 +241,20 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
         return doQuery(query);
     }
 
-    public GetDataService getDataService() {
-        return dataService;
-    }
-
-    public void setDataService(GetDataService dataService) {
-        this.dataService = dataService;
-    }
-
-    public GetImageService getImageService() {
-        return imageService;
-    }
-
-    public void setImageService(GetImageService imageService) {
-        this.imageService = imageService;
-    }
+//    public GetDataService getDataService() {
+//        return dataService;
+//    }
+//
+//    public void setDataService(GetDataService dataService) {
+//        this.dataService = dataService;
+//    }
+//
+//    public GetImageService getImageService() {
+//        return imageService;
+//    }
+//
+//    public void setImageService(GetImageService imageService) {
+//        this.imageService = imageService;
+//    }
 
 }

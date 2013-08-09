@@ -7,6 +7,7 @@ import static org.n52.io.v0.output.ProcedureOutput.createSimpleProcedureOutput;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.n52.io.input.ResourceNotFoundException;
 import org.n52.io.v0.output.ModelAndViewPager;
 import org.n52.shared.requests.query.QueryFactory;
 import org.n52.shared.requests.query.QueryParameters;
