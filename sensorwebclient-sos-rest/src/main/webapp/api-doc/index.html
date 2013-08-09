@@ -9,61 +9,70 @@
   </head>
   <body>
 
-	
-	
 	<div class="container-fluid">
-	
-		<div class="page-header">
-			<h1>52&deg;North Timeseries REST-API, V1</h1>
-		</div>
-	
-	
-		<div class="span3">
-			<!-- Content nav
-			================================================== -->
-			<div class="bs-docs-sidebar">
-				<ul class="nav nav-list bs-docs-sidenav" data-spy="affix" data-offset-top="100">
-					<li><a href="#general"><i class="icon-chevron-right"></i> General</a></li>
-					<li><a href="#resources"><i class="icon-chevron-right"></i> Resources</a></li>
-					<li><a href="#stations"><i class="icon-chevron-right"></i> Stations</a></li>
-					<li><a href="#timeseries"><i class="icon-chevron-right"></i> Timeseries</a></li>
-					<li><a href="#styles"><i class="icon-chevron-right"></i> Styles</a></li>
-					<li><a href="#parameters"><i class="icon-chevron-right"></i> Parameters</a></li>
-				</ul>
-			</div>
-		</div>
-	
-		<div class="span12">
-			<h4>Document status</h4>
-			<div class="n52-callout n52-callout-info">
-				<table class="table">
-					<thead>
-						<th>Who</th>
-						<th>What</th>
-						<th>When</th>
-					</thead>
-					<tbody>
-						<tr>
-							<td>Henning Bredel</td>
-							<td>Init first draft</td>
-							<td>2013-08-06</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
 		
-			<div class="n52-callout n52-callout-todo">
-				<ul>
-				    <li>Prerendered/Cached images</li>
-					<li>Generalizing timeseries</li>
-					<li>Multiple language support</li>
-					<li>PDF report/export</li>
-					<li><code>sortBy</code> Parameter</li>
-					<li>error code review</li>
-					<li>CRUD API for eventing</li>
-					<li><code>show=simple|detailed</code> Parameter</li>
-				</ul>
-			</div>
+    <!-- Content nav
+    ================================================== -->
+    <div class="col-lg-2">
+      <div class="bs-sidebar pull-right">
+        <ul class="nav bs-sidenav" data-spy="affix" data-offset-top="100">
+          <li><a href="#general">
+            <i class="icon-chevron-right"></i> General</a>
+          </li>
+          <li>
+            <a href="#resources"><i class="icon-chevron-right"></i> Resources</a>
+          </li>
+          <li>
+            <a href="#stations"><i class="icon-chevron-right"></i> Stations</a>
+          </li>
+          <li>
+            <a href="#timeseries"><i class="icon-chevron-right"></i> Timeseries</a>
+          </li>
+          <li>
+            <a href="#styles"><i class="icon-chevron-right"></i> Styles</a>
+          </li>
+          <li>
+            <a href="#parameters"><i class="icon-chevron-right"></i> Parameters</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+	
+    <div class="col-lg-10">
+    
+      <!-- Document status
+      ================================================== -->
+      <section id="document-status">
+        <h4>Document status</h4>
+        <div class="n52-callout n52-callout-info">
+          <table class="table">
+            <thead>
+              <th>Who</th>
+              <th>What</th>
+              <th>When</th>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Henning Bredel</td>
+                <td>Init first draft</td>
+                <td>2013-08-06</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      
+        <div class="n52-callout n52-callout-todo">
+          <ul>
+            <li>Create and link JSONSchemas for responses</li>
+            <li>Prerendered/Cached images</li>
+            <li>Generalizing timeseries</li>
+            <li>Multiple language support</li>
+            <li>PDF report/export</li>
+            <li>error code review</li>
+            <li>CRUD API for eventing</li>
+          </ul>
+        </div>
+    </section>
 		
 		
 		
@@ -77,22 +86,15 @@
 					</p>
 				</div>
 				<div>
-					<div> <!-- Content-Types -->
+					<div id="content-types"> <!-- Content-Types -->
 						<h3>Content-Types</h3>
-						<p>The API provides the following content types
-							<ul>
-								<li><code>application/json</code>: JSON data to be used as raw information input.</li>
-								<li><code>application/pdf</code>: A PDF report for timeseries </li>
-								<li><code>image/png</code>: A rendered representation of one or multiple timeseries.</li>
-								<li><code>application/vnd.ms-excel</code>: A Microsoft Excel output (optional).</li>
-								<li><code>text/csv</code>: Text containing Comma Separated Values (optional).</li>
-							</ul>
-						</p>
+						<p>The API provides different content types which can be used to retrieve different types of representation of a requested resource. The actual content types differ for each resource so the ones supported are documented in the appropriate section.</p>
+            <p>The only content type supported by each resource is <code>application/json</code>.</p>
 					</div>
           
           <div id="common-query-parameters"> <!-- Common Query Parameters -->
             <h3>Common Query Parameters</h3>
-            <p>Except the <a href="#resources"><code>Resources</code> collection</a> all other collections can be queries/filtered by using the following query parameters. Each parameter is optional and can only be contain one value. Multiple paramters are combined to an <code>AND</code> query. A resource may specify further query parameters to control/filter output.</p>
+            <p>Except the <a href="#resources"><code>Resources</code> collection</a> all other collections can be queried/filtered by using the following query parameters. Each parameter is optional and can only be contain one value. Multiple paramters are combined to an <code>AND</code> query. A resource may specify further query parameters to control/filter output. Special query parameters are described in each section.</p>
             <table class="table">
               <thead>
                 <th>Parameter</th>
@@ -165,6 +167,21 @@
                   </td>
                   <td>All resources where the given <a href="#parameter-observedProperties">observed property</a> id does match.</td>
                 </tr>
+                <tr>
+                  <td>
+                    <code>lang</code>
+                  </td>
+                  <td>
+                    <pre>lang=de</pre>
+                  </td>
+                  <td><p>Specifies the language the response data shall have. English shall be the fallback. The REST-API should consider the following order to detect a locale:
+                  <ul>
+                    <li>User-agent (e.g. header information)</li>
+                    <li><code>locale</code> parameter</li>
+                  </ul>
+                  A fallback language cannot be specified as it depends on the data of the service provider.</p>
+                  </td>
+                </tr>
               </tbody>
             </table>
             
@@ -174,7 +191,7 @@
 					<div id="paging"> <!-- paging -->
 						<h3>Paging</h3>
 						<p>Resource collections are paged by default to restrict large data access (<span class="text-info">configurable by the API provider .. use <code>size=MAX</code> to get the maximum of a page</span>). The query parameters <code>offset</code> and <code>size</code> can be used to define exactly that part of the collection to be returned by the server.</p>
-						<p>Considering the <a href="http://tools.ietf.org/html/rfc5988">Web Linking (RFC5988)</a> approach the exact location within a collection can be retrieved from response header information.</p> 
+						<p>Considering the <a href="http://tools.ietf.org/html/rfc5988">Web Linking (RFC5988)</a> approach the exact location of a page within a collection can be retrieved from response header information.</p> 
 						
 						<h4>Paging Example</h4>
 						<div class="n52-request-example">
@@ -194,12 +211,66 @@ Content omitted for brevity.
 						</div>
 					</div>
 					
-					<div> <!-- fuzzy search -->
+					<div id="fuzzy-search"> <!-- fuzzy search -->
 						<h3>Fuzzy Search</h3>
-						<p>The query parameter <code>q</code> allows simple search over all available <a href="#parameters">timeseries parameters</a>.</p>
-						<div class="n52-callout n52-callout-todo">Clear if this shall be for every resource! I'd prefer only having this at the root URL </div>
+						<p>The query parameter <code>q</code> allows simple search over all available <a href="#parameters">timeseries parameters</a>:
+            <ul>
+              <li><a href="#parameter-categories">Category</a></li>
+              <li><a href="#parameter-services">Service</a></li>
+              <li><a href="#parameter-offerings">Offering</a></li>
+              <li><a href="#parameter-features">Feature</a></li>
+              <li><a href="#parameter-observedProperties">Phenomenon</a></li>
+              <li><a href="#parameter-procedures">Procedure</a></li>
+            </ul></p>
+            
+            <table class="table">
+              <thead>
+                <th>Method</th>
+                <th>Path</th>
+                <th>Content-Type</th>
+                <th>Description</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>GET</code></td>
+                  <td><code>/api/v1/?q=my%20search</code></td>
+                  <td><code>application/json</code></td>
+                  <td>Lists all resource collections available.</td>
+                </tr>
+              </tbody>
+            </table>
 					</div>
-				</div>
+				
+					<div id="common-status-codes"> <!-- Status Codes -->
+            <h3>Common Status Codes</h3>
+            <p>A client shall expect the following HTTP status codes returned by the API.</p>
+            <table class="table">
+              <thead>
+                <th>Code</th>
+                <th>When</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>200</code></td>
+                  <td>Status <code>OK</code>. All went fine.</td>
+                </tr>
+								<tr>
+									<td><code>400</code></td>
+									<td>Status <code>Bad Request</code>. The request data cannot be read.</td>
+								</tr>
+                <tr>
+                  <td><code>404</code></td>
+                  <td>Status <code>Not Found</code>. The resource is not available.</td>
+                </tr>
+                <tr>
+                  <td><code>500</code></td>
+                  <td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+					
+        </div>
 			</section>
 			
 			
@@ -224,34 +295,15 @@ Content omitted for brevity.
               <thead>
                 <th>Method</th>
                 <th>Path</th>
+                <th>Content-Type</th>
                 <th>Description</th>
               </thead>
               <tbody>
                 <tr>
                   <td><code>GET</code></td>
                   <td><code>/api/v1/</code></td>
+                  <td><code>application/json</code></td>
                   <td>Lists all resource collections available.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-					
-					<div> <!-- Status Codes -->
-            <h3>Status Codes</h3>
-            <p>HTTP Status codes indicate the following states.</p>
-            <table class="table">
-              <thead>
-                <th>Code</th>
-                <th>When</th>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><code>200</code></td>
-                  <td>Status <code>OK</code>. All went fine.</td>
-                </tr>
-                <tr>
-                  <td><code>500</code></td>
-                  <td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
                 </tr>
               </tbody>
             </table>
@@ -266,20 +318,52 @@ Accept: application/json</pre>
               <pre>HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
-{
-  "services": "./services",
-  "categories": "./categories",
-  "offerings": "./offerings",
-  "features": "./features",
-  "procedures": "./procedures",
-  "observedProperties": "./observedProperties",
-  "stations": "./stations",
-  "timeseries": "./timeseries"
-}</pre>
+[
+  "services": {
+    "href": "./services",
+    "label": "Service Providers",
+    "description": "A collection of service providers each offering timeseries data."
+  },
+  "categories": {
+    "href": "./categories",
+    "label": "Categories",
+    "description": "A collection of categories wherein the available timeseries data can be grouped."
+  },
+  "offerings": {
+    "href": "./offerings",
+    "label": "Offerings.",
+    "description": "A collection of offerings (organizing unit) to filter timeseries data."
+  },
+  "features": {
+    "href": "./features",
+    "label": "Features.",
+    "description": "A collection of features (organizing unit) to filter timeseries data."
+  },
+  "procedures": {
+    "href": "./procedures",
+    "label": "Procedures.",
+    "description": "A collection of procedures (organizing unit) to filter timeseries data."
+  },
+  "observedProperties": {
+    "href": "./observedProperties",
+    "label": "Phenomena.",
+    "description": "A collection of phenomena (organizing unit) to filter timeseries data."
+  },
+  "stations": {
+    "href": "./stations",
+    "label": "Stations.",
+    "description": "A collection of stations where measurements took/takes place."
+  },
+  "timeseries": {
+    "href": "./timeseries",
+    "label": "Timeseries.",
+    "description": "A collection of timeseries each representing a sequence of data values measured over time."
+  }
+]</pre>
             </div>
           </div>
 					
-				</div>
+        </div>
 			</section>
 			
 			
@@ -304,44 +388,21 @@ Content-Type: application/json;charset=UTF-8
               <thead>
                 <th>Method</th>
                 <th>Path</th>
+                <th>Content-Type</th>
                 <th>Description</th>
               </thead>
               <tbody>
                 <tr>
                   <td><code>GET</code></td>
                   <td><code>/api/v1/stations</code></td>
+                  <td><code>application/json</code></td>
                   <td>Lists all measured stations available.</td>
                 </tr>
                 <tr>
                   <td><code>GET</code></td>
                   <td><code>/api/v1/stations/{id}</code></td>
+                  <td><code>application/json</code></td>
                   <td>Lists the measured stations with id <code>{id}</code>.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-					
-          <div> <!-- Status Codes -->
-            <h3>Status Codes</h3>
-            
-            <p>HTTP Status codes indicate the following states.</p>
-            <table class="table">
-              <thead>
-                <th>Code</th>
-                <th>When</th>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><code>200</code></td>
-                  <td>Status <code>OK</code>. All went fine.</td>
-                </tr>
-                <tr>
-                  <td><code>404</code></td>
-                  <td>Status <code>Not Found</code>. The resource is not available.</td>
-                </tr>
-                <tr>
-                  <td><code>500</code></td>
-                  <td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
                 </tr>
               </tbody>
             </table>
@@ -521,7 +582,8 @@ Content-Type: application/json;charset=UTF-8
               </div>
             </div>
           </div>
-				</div>
+					
+        </div>
 			</section>
 					
 					
@@ -545,57 +607,68 @@ Content-Type: application/json;charset=UTF-8
 							<thead>
 								<th>Method</th>
 								<th>Path</th>
+                <th style="width: 21%">Content-Type</th>
 								<th>Description</th>
 							</thead>
 							<tbody>
 								<tr>
 									<td><code>GET</code></td>
 									<td><code>/api/v1/timeseries</code></td>
+                  <td><code>application/json</code></td>
 									<td>Lists all timeseries available.</td>
-								</tr>
-								<tr>
-									<td><code>POST</code></td>
-									<td><code>/api/v1/timeseries</code></td>
-									<td>Request to obtain multiple timeseries. Set the <code>Accept: application/json</code> header to obtain JSON data, or set <code>Accept: image/png</code> to obtain a rendered graph displaying the timeseries with requested style options
-									<div class="n52-callout n52-callout-todo">document request POST structure with <code>style</code> options.</div></td>
 								</tr>
 								<tr>
 									<td><code>GET</code></td>
 									<td><code>/api/v1/timeseries/{id}</code></td>
-									<td><p>Lists the timeseries with id <code>{id}</code>. Set the <code>Accept: application/json</code> header to obtain JSON data, or set <code>Accept: image/png</code> to obtain a rendered graph displaying the timeseries with requested style options.</p>
+                  <td><code>application/json</code></td>
+									<td><p>Lists the metadata of timeseries with id <code>{id}</code>.</p></td>
+                </tr>
+								<tr>
+									<td><code>GET</code></td>
+									<td><code>/api/v1/timeseries/{id}/data</code></td>
+                  <td><code>application/json</code></td>
+									<td><p>Lists the raw data of timeseries with id <code>{id}</code>.</p></td>
+								</tr>
+								<tr>
+									<td><code>GET</code></td>
+									<td><code>/api/v1/timeseries/{id}/data/{interval}</code></td>
+                  <td><code>image/png</code></td>
+									<td><p>Returns an image containing a pre-rendered graph for timeseries with id <code>{id}</code>. Supported <code>interval</code> values are the following:
+                    <ul>
+                      <li><code>lastDay</code></li>
+                      <li><code>lastWeek</code></li>
+                      <li><code>lastMonth</code></li>
+                    </ul>
+                  </p>
+                  </td>
+								</tr>
+								<tr>
+									<td><code>POST</code></td>
+									<td><code>/api/v1/timeseries</code></td>
+                  <td><code>application/json</code></td>
+									<td>Request the metadata for multiple timeseries. The requested timeseries ids have to be contained in the POST request.
+                  <div class="n52-callout n52-callout-todo">document request POST structure.</div></td>
+								</tr>
+								<tr>
+									<td><code>POST</code></td>
+									<td><code>/api/v1/timeseries</code></td>
+                  <td>
+                    <code>application/pdf</code><br/>
+                    <code>application/vnd.ms-excel</code><br/>
+                    <code>text/csv</code>
+                  </td>
+									<td>Exports the given stack of timeseries. The requested timeseries ids have to be contained in the POST request. Note that Excel and CSV export are optional.
+                  <div class="n52-callout n52-callout-todo">document request POST structure.</div></td>
+								</tr>
+								<tr>
+									<td><code>POST</code></td>
+									<td><code>/api/v1/timeseries/{id}/data</code></td>
+                  <td><code>image/png</code></td>
+									<td><p>Renders the data of timeseries with id <code>{id}</code>. You can control the rendered output (color, line width, etc) by passing style options.</p>
 									
 									<div class="n52-callout n52-callout-todo">Document query parameter <code>style</code>. Also available <code>refValues</code> must be stylable.</div>
 									
 									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-					
-					<div> <!-- Status Codes -->
-						<h3>Status Codes</h3>
-						<p>HTTP Status codes indicate the following states.</p>
-						<table class="table">
-							<thead>
-								<th>Code</th>
-								<th>When</th>
-							</thead>
-							<tbody>
-								<tr>
-									<td><code>200</code></td>
-									<td>Status <code>OK</code>. All went fine.</td>
-								</tr>
-								<tr>
-									<td><code>400</code></td>
-									<td>Status <code>Bad Request</code>. The request data cannot be read.</td>
-								</tr>
-								<tr>
-									<td><code>404</code></td>
-									<td>Status <code>Not Found</code>. The resource is not available.</td>
-								</tr>
-								<tr>
-									<td><code>500</code></td>
-									<td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
 								</tr>
 							</tbody>
 						</table>
@@ -612,6 +685,17 @@ Content-Type: application/json;charset=UTF-8
 								<th>Description</th>
 							</thead>
 							<tbody>
+                <tr>
+									<td>
+										<code>timespan</code>
+									</td>
+                  <td>
+                    <pre>timespan=PT12H/2013-08-06</pre>
+                  </td>
+                  <td>
+                    An <a href="http://en.wikipedia.org/wiki/ISO_8601#Time_intervals">ISO8601 formatted period</a>. Only backslash formatted values are supported.
+                  </td>
+                </tr>
 								<tr>
 									<td>
 										<code>style</code>
@@ -633,6 +717,23 @@ Content-Type: application/json;charset=UTF-8
 									<p>A more detailed explanation about styling can be found under the <a href="#styles">styles section</a>.</p>
 									</td>
 								</tr>
+                <tr>
+									<td>
+										<code>generalize</code>
+									</td>
+                  <td>
+                    <pre>generalize=true</pre>
+                  </td>
+                  <td>
+                    Indicates that timeseries data shall be generalized. Default is <code>false</code>.
+                    <div class="n52-callout n52-callout-todo">Discuss: this actually contradicts with the <a href="#paging">max size of a page</a> strategy ... but: 
+                      <ul>
+                        <li>what about exporting timeseries? automatically generalize, generate with all data? do we want the service throwing an error? </li>
+                        <li>It does not makes any sense that the REST-API decides in general if the data set which has been requested is too large (under which criteria) .. </li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
 							</tbody>
 						</table>
             
@@ -826,7 +927,8 @@ Content-Type: application/json;charset=UTF-8
               </div>
 						</div>
 					</div>
-				</div>
+				
+        </div>
 			</section>
 			
 			
@@ -892,70 +994,47 @@ Content-Type: application/json;charset=UTF-8
 					
 				<div id="parameter-services">
 					<h2>Services</h2>
-					<div>
-            <div> <!-- URLs -->
-              <h3>URLs</h3>
-              <p>API calls are triggered by using the following URLs.</p>
-              <table class="table">
-                <thead>
-                  <th>Method</th>
-                  <th>Path</th>
-                  <th>Description</th>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><code>GET</code></td>
-                    <td><code>/api/v1/services</code></td>
-                    <td>Lists all services available.</td>
-                  </tr>
-                  <tr>
-                    <td><code>GET</code></td>
-                    <td><code>/api/v1/services/{id}</code></td>
-                    <td>Lists the service with id <code>{id}</code>.</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-						
-            <div> <!-- Status Codes -->
-              <h3>Status Codes</h3>
-              <p>HTTP Status codes indicate the following states.</p>
-              <table class="table">
-                <thead>
-                  <th>Code</th>
-                  <th>When</th>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><code>200</code></td>
-                    <td>Status <code>OK</code>. All went fine.</td>
-                  </tr>
-                  <tr>
-                    <td><code>404</code></td>
-                    <td>Status <code>Not Found</code>. The resource is not available.</td>
-                  </tr>
-                  <tr>
-                    <td><code>500</code></td>
-                    <td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-						
-            <div> <!-- Query Parameters -->
-              <h3>Query Parameters</h3>
-              <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">common query parameters</a> can be used.</div>
-              
-            </div>
-						
-            <div> <!-- Response Examples -->
-              <h3>Response Examples</h3>
-              <div>
-                <h4>Collection</h4>
-                <pre>GET /api/v1/services/ HTTP/1.1
+          <div> <!-- URLs -->
+            <h3>URLs</h3>
+            <p>API calls are triggered by using the following URLs.</p>
+            <table class="table">
+              <thead>
+                <th>Method</th>
+                <th>Path</th>
+                <th>Content-Type</th>
+                <th>Description</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>GET</code></td>
+                  <td><code>/api/v1/services</code></td>
+                  <td><code>application/json</code></td>
+                  <td>Lists all services available.</td>
+                </tr>
+                <tr>
+                  <td><code>GET</code></td>
+                  <td><code>/api/v1/services/{id}</code></td>
+                  <td><code>application/json</code></td>
+                  <td>Lists the service with id <code>{id}</code>.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div> <!-- Query Parameters -->
+            <h3>Query Parameters</h3>
+            <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">common query parameters</a> can be used.</div>
+            
+          </div>
+          
+          <div> <!-- Response Examples -->
+            <h3>Response Examples</h3>
+            <div>
+              <h4>Collection</h4>
+              <pre>GET /api/v1/services/ HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
-                <pre>HTTP/1.1 200 OK
+              <pre>HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 [
@@ -968,13 +1047,13 @@ Content-Type: application/json;charset=UTF-8
     "label": "Wupperverband"
   }
 ]</pre>
-              </div>
-              <div>
-                <h4>Item</h4>
-                <pre>GET /api/v1/services/srv_823sd HTTP/1.1
+            </div>
+            <div>
+              <h4>Item</h4>
+              <pre>GET /api/v1/services/srv_823sd HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
-                <pre>HTTP/1.1 200 OK
+              <pre>HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 {
@@ -984,42 +1063,11 @@ Content-Type: application/json;charset=UTF-8
   "type": "SOS",
   "version": "1.0.0"
 }</pre>
-              </div>
             </div>
-
-					</div>
-				
-				</div>
-				
-				<div id="parameter-categories">
-					<h2>Categories</h2>
-          <div> <!-- URLs -->
-            <h3>URLs</h3>
-            <p>API calls are triggered by using the following URLs.</p>
-            <table class="table">
-              <thead>
-                <th>Method</th>
-                <th>Path</th>
-                <th>Description</th>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><code>GET</code></td>
-                  <td><code>/api/v1/categories</code></td>
-                  <td>Lists all measured categories available.</td>
-                </tr>
-                <tr>
-                  <td><code>GET</code></td>
-                  <td><code>/api/v1/categories/{id}</code></td>
-                  <td>Lists the measured categories with id <code>{id}</code>.</td>
-                </tr>
-              </tbody>
-            </table>
           </div>
-          
+
           <div> <!-- Status Codes -->
             <h3>Status Codes</h3>
-            
             <p>HTTP Status codes indicate the following states.</p>
             <table class="table">
               <thead>
@@ -1038,6 +1086,36 @@ Content-Type: application/json;charset=UTF-8
                 <tr>
                   <td><code>500</code></td>
                   <td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+				</div>
+				
+				<div id="parameter-categories">
+					<h2>Categories</h2>
+          <div> <!-- URLs -->
+            <h3>URLs</h3>
+            <p>API calls are triggered by using the following URLs.</p>
+            <table class="table">
+              <thead>
+                <th>Method</th>
+                <th>Path</th>
+                <th>Content-Type</th>
+                <th>Description</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>GET</code></td>
+                  <td><code>/api/v1/categories</code></td>
+                  <td><code>application/json</code></td>
+                  <td>Lists all measured categories available.</td>
+                </tr>
+                <tr>
+                  <td><code>GET</code></td>
+                  <td><code>/api/v1/categories/{id}</code></td>
+                  <td><code>application/json</code></td>
+                  <td>Lists the measured categories with id <code>{id}</code>.</td>
                 </tr>
               </tbody>
             </table>
@@ -1087,34 +1165,7 @@ Content-Type: application/json;charset=UTF-8
 }</pre>
               </div>
             </div>
-				</div>
 				
-				<div id="parameter-offerings">
-					<h2>Offerings</h2>
-          <div> <!-- URLs -->
-            <h3>URLs</h3>
-            <p>API calls are triggered by using the following URLs.</p>
-            <table class="table">
-              <thead>
-                <th>Method</th>
-                <th>Path</th>
-                <th>Description</th>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><code>GET</code></td>
-                  <td><code>/api/v1/offerings</code></td>
-                  <td>Lists all offerings available.</td>
-                </tr>
-                <tr>
-                  <td><code>GET</code></td>
-                  <td><code>/api/v1/offerings/{id}</code></td>
-                  <td>Lists the offering with id <code>{id}</code>.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          
           <div> <!-- Status Codes -->
             <h3>Status Codes</h3>
             
@@ -1136,6 +1187,37 @@ Content-Type: application/json;charset=UTF-8
                 <tr>
                   <td><code>500</code></td>
                   <td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+        </div>
+				
+				<div id="parameter-offerings">
+					<h2>Offerings</h2>
+          <div> <!-- URLs -->
+            <h3>URLs</h3>
+            <p>API calls are triggered by using the following URLs.</p>
+            <table class="table">
+              <thead>
+                <th>Method</th>
+                <th>Path</th>
+                <th>Content-Type</th>
+                <th>Description</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>GET</code></td>
+                  <td><code>/api/v1/offerings</code></td>
+                  <td><code>application/json</code></td>
+                  <td>Lists all offerings available.</td>
+                </tr>
+                <tr>
+                  <td><code>GET</code></td>
+                  <td><code>/api/v1/offerings/{id}</code></td>
+                  <td><code>application/json</code></td>
+                  <td>Lists the offering with id <code>{id}</code>.</td>
                 </tr>
               </tbody>
             </table>
@@ -1182,7 +1264,34 @@ Content-Type: application/json;charset=UTF-8
 }</pre>
               </div>
             </div>
-				</div>
+				
+          <div> <!-- Status Codes -->
+            <h3>Status Codes</h3>
+            
+            <p>HTTP Status codes indicate the following states.</p>
+            <table class="table">
+              <thead>
+                <th>Code</th>
+                <th>When</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>200</code></td>
+                  <td>Status <code>OK</code>. All went fine.</td>
+                </tr>
+                <tr>
+                  <td><code>404</code></td>
+                  <td>Status <code>Not Found</code>. The resource is not available.</td>
+                </tr>
+                <tr>
+                  <td><code>500</code></td>
+                  <td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+        </div>
 				
 				<div id="parameter-features">
 					<h2>Features</h2>
@@ -1193,49 +1302,26 @@ Content-Type: application/json;charset=UTF-8
               <thead>
                 <th>Method</th>
                 <th>Path</th>
+                <th>Content-Type</th>
                 <th>Description</th>
               </thead>
               <tbody>
                 <tr>
                   <td><code>GET</code></td>
                   <td><code>/api/v1/features</code></td>
+                  <td><code>application/json</code></td>
                   <td>Lists all features available.</td>
                 </tr>
                 <tr>
                   <td><code>GET</code></td>
                   <td><code>/api/v1/features/{id}</code></td>
+                  <td><code>application/json</code></td>
                   <td>Lists the feature with id <code>{id}</code>.</td>
                 </tr>
               </tbody>
             </table>
           </div>
         
-          <div> <!-- Status Codes -->
-              <h3>Status Codes</h3>
-              
-              <p>HTTP Status codes indicate the following states.</p>
-              <table class="table">
-                <thead>
-                  <th>Code</th>
-                  <th>When</th>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><code>200</code></td>
-                    <td>Status <code>OK</code>. All went fine.</td>
-                  </tr>
-                  <tr>
-                    <td><code>404</code></td>
-                    <td>Status <code>Not Found</code>. The resource is not available.</td>
-                  </tr>
-                  <tr>
-                    <td><code>500</code></td>
-                    <td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          
           <div> <!-- Query Parameters -->
               <h3>Query Parameters</h3>
               <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">common query parameters</a> can be used.</div>
@@ -1280,7 +1366,34 @@ Content-Type: application/json;charset=UTF-8
 }</pre>
             </div>
           </div>
-				</div>
+				
+          <div> <!-- Status Codes -->
+              <h3>Status Codes</h3>
+              
+              <p>HTTP Status codes indicate the following states.</p>
+              <table class="table">
+                <thead>
+                  <th>Code</th>
+                  <th>When</th>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>200</code></td>
+                    <td>Status <code>OK</code>. All went fine.</td>
+                  </tr>
+                  <tr>
+                    <td><code>404</code></td>
+                    <td>Status <code>Not Found</code>. The resource is not available.</td>
+                  </tr>
+                  <tr>
+                    <td><code>500</code></td>
+                    <td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          
+        </div>
 				
 				<div id="parameter-procedures">
 					<h2>Procedures</h2>
@@ -1291,49 +1404,26 @@ Content-Type: application/json;charset=UTF-8
 							<thead>
 								<th>Method</th>
 								<th>Path</th>
+                <th>Content-Type</th>
 								<th>Description</th>
 							</thead>
 							<tbody>
 								<tr>
 									<td><code>GET</code></td>
 									<td><code>/api/v1/procedures</code></td>
+                  <td><code>application/json</code></td>
 									<td>Lists all procedures available.</td>
 								</tr>
 								<tr>
 									<td><code>GET</code></td>
 									<td><code>/api/v1/procedures/{id}</code></td>
+                  <td><code>application/json</code></td>
 									<td>Lists the procedure with id <code>{id}</code>.</td>
 								</tr>
 							</tbody>
 						</table>
           </div>
 						
-          <div> <!-- Status Codes -->
-						<h3>Status Codes</h3>
-						
-						<p>HTTP Status codes indicate the following states.</p>
-						<table class="table">
-							<thead>
-								<th>Code</th>
-								<th>When</th>
-							</thead>
-							<tbody>
-								<tr>
-									<td><code>200</code></td>
-									<td>Status <code>OK</code>. All went fine.</td>
-								</tr>
-								<tr>
-									<td><code>404</code></td>
-									<td>Status <code>Not Found</code>. The resource is not available.</td>
-								</tr>
-								<tr>
-									<td><code>500</code></td>
-									<td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
-								</tr>
-							</tbody>
-						</table>
-          </div>
-          
           <div> <!-- Query Parameters -->
             <h3>Query Parameters</h3>
             <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">common query parameters</a> can be used.</div>
@@ -1378,36 +1468,10 @@ Content-Type: application/json;charset=UTF-8
 }</pre>
             </div>
           </div>
-				</div>
 				
-				<div id="parameter-observedProperties">
-					<h2>Observed Properties</h2>
-					<div> <!-- URLs -->
-						<h3>URLs</h3>
-						<p>API calls are triggered by using the following URLs.</p>
-						<table class="table">
-							<thead>
-								<th>Method</th>
-								<th>Path</th>
-								<th>Description</th>
-							</thead>
-							<tbody>
-								<tr>
-									<td><code>GET</code></td>
-									<td><code>/api/v1/observedProperties</code></td>
-									<td>Lists all measured phenomena available.</td>
-								</tr>
-								<tr>
-									<td><code>GET</code></td>
-									<td><code>/api/v1/observedProperties/{id}</code></td>
-									<td>Lists the measured phenomenon with id <code>{id}</code>.</td>
-								</tr>
-							</tbody>
-						</table>
-          </div>
-          
           <div> <!-- Status Codes -->
 						<h3>Status Codes</h3>
+						
 						<p>HTTP Status codes indicate the following states.</p>
 						<table class="table">
 							<thead>
@@ -1430,7 +1494,38 @@ Content-Type: application/json;charset=UTF-8
 							</tbody>
 						</table>
           </div>
-
+          
+        </div>
+				
+				<div id="parameter-observedProperties">
+					<h2>Phenomena</h2>
+					<div> <!-- URLs -->
+						<h3>URLs</h3>
+						<p>API calls are triggered by using the following URLs.</p>
+						<table class="table">
+							<thead>
+								<th>Method</th>
+								<th>Path</th>
+                <th>Conetnet-Type</th>
+								<th>Description</th>
+							</thead>
+							<tbody>
+								<tr>
+									<td><code>GET</code></td>
+									<td><code>/api/v1/observedProperties</code></td>
+                  <td><code>application/json</code></td>
+									<td>Lists all measured phenomena available.</td>
+								</tr>
+								<tr>
+									<td><code>GET</code></td>
+									<td><code>/api/v1/observedProperties/{id}</code></td>
+                  <td><code>application/json</code></td>
+									<td>Lists the measured phenomenon with id <code>{id}</code>.</td>
+								</tr>
+							</tbody>
+						</table>
+          </div>
+          
           <div> <!-- Query Parameters -->
             <h3>Query Parameters</h3>
             <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">common query parameters</a> can be used.</div>
@@ -1475,46 +1570,71 @@ Content-Type: application/json;charset=UTF-8
 }</pre>
             </div>
           </div>
-				</div>
+				
+          <div> <!-- Status Codes -->
+						<h3>Status Codes</h3>
+						<p>HTTP Status codes indicate the following states.</p>
+						<table class="table">
+							<thead>
+								<th>Code</th>
+								<th>When</th>
+							</thead>
+							<tbody>
+								<tr>
+									<td><code>200</code></td>
+									<td>Status <code>OK</code>. All went fine.</td>
+								</tr>
+								<tr>
+									<td><code>404</code></td>
+									<td>Status <code>Not Found</code>. The resource is not available.</td>
+								</tr>
+								<tr>
+									<td><code>500</code></td>
+									<td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
+								</tr>
+							</tbody>
+						</table>
+          </div>
+
+        </div>
 				
 			</section>
-		
 			
 		</div>
+    
+    
+    <!-- Footer
+    ================================================== -->
+    
+    <div class="col-lg-12">
+      <footer class="footer">
+          <div>
+            <div class="pull-right">
+              <a href="#">top</a>
+            </div>
+            
+            <p>Design and Content <a href="http://52north.org/" target="_blank">52&deg;North</a>.</p>
+            
+            <p>Content licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
+            
+            <p><a href="http://glyphicons.com">Glyphicons Free</a> licensed under <a
+                href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
+                
+            <p>
+              <ul class="footer-links">
+                <li><a href="http://blog.52north.org">Blog</a></li>
+                <li class="muted">&middot;</li>
+                <li><a href="http://52north.org/swe">Sensor Web Community</a></li>
+              </ul>
+            </p>
+          </div>
+      </footer>
+    </div>
+	
 	</div>
 	
-	<!-- Footer
-	================================================== -->
-	<footer class="footer">
-		<div class="container">
-			<div class="row">
-				<div class="span11">
-				
-					<p class="pull-right">
-						<a href="#">top</a>
-					</p>
-					<p>
-						Design and Content <a href="http://52north.org/" target="_blank">52&deg;North</a>.
-					</p>
-					<p>
-						Content licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.
-					</p>
-					<p>
-						<a href="http://glyphicons.com">Glyphicons Free</a> licensed under <a
-							href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.
-					</p>
-					<ul class="footer-links">
-						<li><a href="http://blog.52north.org">Blog</a></li>
-						<li class="muted">&middot;</li>
-						<li><a href="http://52north.org/swe">Sensor Web Community</a></li>
-					</ul>
-				</div>
-			</div>
-		</div>
-	</footer>
-	
-	<script src="js/jquery-1.10.2.min.js"></script>
-	<script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery-1.10.2.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
     <script src="http://code.jquery.com/jquery-latest.js"></script>
     <script src="js/bootstrap.min.js"></script>
   </body>
