@@ -16,9 +16,9 @@
 	<inceptionYear>2012</inceptionYear>
 
 	<modules>
-	   
-        <module>timeseries-io</module>
-        <module>timeseries-web</module>
+
+		<module>timeseries-io</module>
+		<module>timeseries-web</module>
 		<module>sensorwebclient-api</module>
 		<module>sensorwebclient-ext</module>
 		<module>sensorwebclient-ses-rpc</module>
@@ -35,19 +35,19 @@
 
 	<dependencyManagement>
 		<dependencies>
-			
-            <dependency>
-                <groupId>org.n52.sensorweb</groupId>
-                <artifactId>timeseries-io</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.n52.sensorweb</groupId>
-                <artifactId>timeseries-web</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-			
-            <dependency>
+
+			<dependency>
+				<groupId>org.n52.sensorweb</groupId>
+				<artifactId>timeseries-io</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.n52.sensorweb</groupId>
+				<artifactId>timeseries-web</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
 				<!-- ensure loading before ealier versions -->
 				<groupId>org.geotools</groupId>
 				<artifactId>gt-opengis</artifactId>
@@ -331,6 +331,13 @@
 				<artifactId>gimv</artifactId>
 				<version>0.4.2</version>
 			</dependency>
+
+			<dependency>
+				<groupId>com.github.fge</groupId>
+				<artifactId>json-schema-validator</artifactId>
+				<version>2.0.1</version>
+				<scope>provided</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -440,7 +447,7 @@
 							<artifact>org.n52.sensorweb:sensorwebclient-ext</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-sos-rpc</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-sos-shared</artifact>
-                            <artifact>org.n52.sensorweb:timeseries-io</artifact>
+							<artifact>org.n52.sensorweb:timeseries-io</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-ses-rpc</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-ses-shared</artifact>
 							<artifact>org.n52.sensorweb:sensorwebclient-ui</artifact>
@@ -698,12 +705,12 @@
 				<plugins>
 					<plugin>
 						<artifactId>maven-release-plugin</artifactId>
-					 <version>2.3.2</version>
-					 <configuration>
-					   <preparationGoals>clean</preparationGoals>
-					   <autoVersionSubmodules>true</autoVersionSubmodules>
-					 </configuration>
-				   </plugin>
+						<version>2.3.2</version>
+						<configuration>
+							<preparationGoals>clean</preparationGoals>
+							<autoVersionSubmodules>true</autoVersionSubmodules>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
