@@ -21,29 +21,30 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.server.io;
+package org.n52.web;
 
-import java.io.Serializable;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
-import org.jfree.chart.urls.XYURLGenerator;
-import org.jfree.data.xy.XYDataset;
-import org.n52.server.io.render.DesignDescriptionList;
-import org.n52.server.io.render.RenderingDesign;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-public class MetadataInURLGenerator implements XYURLGenerator, Serializable {
+@ResponseStatus(value = INTERNAL_SERVER_ERROR)
+public class InternalServiceException extends RuntimeException {
 
-    private static final long serialVersionUID = -3191226455244301588L;
+    private static final long serialVersionUID = -299285770822168789L;
 
-    private DesignDescriptionList designDescriptions;
+    @Deprecated
+	public InternalServiceException() {
+    	super();
+	}
 
-    public MetadataInURLGenerator(DesignDescriptionList designDesciptions) {
-        this.designDescriptions = designDesciptions;
-    }
+	public InternalServiceException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
-    public String generateURL(XYDataset dataset, int series, int item) {
-        String seriesID = (String) dataset.getSeriesKey(series);
-        RenderingDesign dd = designDescriptions.get(seriesID);
-        return dd.getUomLabel() + ";" + Integer.toHexString(dd.getColor().getRGB()).substring(2); 
-    }
+	public InternalServiceException(String message) {
+		super(message);
+	}
+    
+    
 
 }

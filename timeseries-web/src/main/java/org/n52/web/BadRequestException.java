@@ -21,29 +21,27 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.server.io;
+package org.n52.web;
 
-import java.io.Serializable;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.jfree.chart.urls.XYURLGenerator;
-import org.jfree.data.xy.XYDataset;
-import org.n52.server.io.render.DesignDescriptionList;
-import org.n52.server.io.render.RenderingDesign;
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+public class BadRequestException extends RuntimeException {
 
-public class MetadataInURLGenerator implements XYURLGenerator, Serializable {
+    private static final long serialVersionUID = -299285770822168789L;
 
-    private static final long serialVersionUID = -3191226455244301588L;
+    @Deprecated
+	public BadRequestException() {
+		super();
+	}
 
-    private DesignDescriptionList designDescriptions;
+	public BadRequestException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
-    public MetadataInURLGenerator(DesignDescriptionList designDesciptions) {
-        this.designDescriptions = designDesciptions;
-    }
-
-    public String generateURL(XYDataset dataset, int series, int item) {
-        String seriesID = (String) dataset.getSeriesKey(series);
-        RenderingDesign dd = designDescriptions.get(seriesID);
-        return dd.getUomLabel() + ";" + Integer.toHexString(dd.getColor().getRGB()).substring(2); 
-    }
-
+	public BadRequestException(String message) {
+		super(message);
+	}
+    
 }

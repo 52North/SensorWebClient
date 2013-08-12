@@ -21,29 +21,26 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.server.io;
+package org.n52.web;
 
-import java.io.Serializable;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.jfree.chart.urls.XYURLGenerator;
-import org.jfree.data.xy.XYDataset;
-import org.n52.server.io.render.DesignDescriptionList;
-import org.n52.server.io.render.RenderingDesign;
+@ResponseStatus(value = HttpStatus.NOT_FOUND)
+public final class ResourceNotFoundException extends RuntimeException {
 
-public class MetadataInURLGenerator implements XYURLGenerator, Serializable {
-
-    private static final long serialVersionUID = -3191226455244301588L;
-
-    private DesignDescriptionList designDescriptions;
-
-    public MetadataInURLGenerator(DesignDescriptionList designDesciptions) {
-        this.designDescriptions = designDesciptions;
+    private static final long serialVersionUID = 7127133546245639752L;
+    
+    @Deprecated
+    public ResourceNotFoundException() {
+    	super();
     }
 
-    public String generateURL(XYDataset dataset, int series, int item) {
-        String seriesID = (String) dataset.getSeriesKey(series);
-        RenderingDesign dd = designDescriptions.get(seriesID);
-        return dd.getUomLabel() + ";" + Integer.toHexString(dd.getColor().getRGB()).substring(2); 
-    }
+	public ResourceNotFoundException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
+	public ResourceNotFoundException(String message) {
+		super(message);
+	}
 }

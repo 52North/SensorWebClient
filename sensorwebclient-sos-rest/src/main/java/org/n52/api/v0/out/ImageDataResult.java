@@ -21,29 +21,26 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.server.io;
+package org.n52.api.v0.out;
 
-import java.io.Serializable;
-
-import org.jfree.chart.urls.XYURLGenerator;
-import org.jfree.data.xy.XYDataset;
-import org.n52.server.io.render.DesignDescriptionList;
-import org.n52.server.io.render.RenderingDesign;
-
-public class MetadataInURLGenerator implements XYURLGenerator, Serializable {
-
-    private static final long serialVersionUID = -3191226455244301588L;
-
-    private DesignDescriptionList designDescriptions;
-
-    public MetadataInURLGenerator(DesignDescriptionList designDesciptions) {
-        this.designDescriptions = designDesciptions;
+public class ImageDataResult {
+    
+    private String imageUrl;
+    
+    public ImageDataResult() {
+        // for serialization
+    }
+    
+    public ImageDataResult(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
-    public String generateURL(XYDataset dataset, int series, int item) {
-        String seriesID = (String) dataset.getSeriesKey(series);
-        RenderingDesign dd = designDescriptions.get(seriesID);
-        return dd.getUomLabel() + ";" + Integer.toHexString(dd.getColor().getRGB()).substring(2); 
+    public String getImageUrl() {
+        return imageUrl;
     }
 
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+    
 }

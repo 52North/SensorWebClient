@@ -21,29 +21,26 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.server.io;
+package org.n52.api.v0.srv;
 
-import java.io.Serializable;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 
-import org.jfree.chart.urls.XYURLGenerator;
-import org.jfree.data.xy.XYDataset;
-import org.n52.server.io.render.DesignDescriptionList;
-import org.n52.server.io.render.RenderingDesign;
 
-public class MetadataInURLGenerator implements XYURLGenerator, Serializable {
+public class InvalidSosTimeseriesException extends Exception {
 
-    private static final long serialVersionUID = -3191226455244301588L;
+    private static final long serialVersionUID = 3129135716623019120L;
 
-    private DesignDescriptionList designDescriptions;
+    private SosTimeseries timeseries;
 
-    public MetadataInURLGenerator(DesignDescriptionList designDesciptions) {
-        this.designDescriptions = designDesciptions;
+    public InvalidSosTimeseriesException(SosTimeseries constellation) {
+        timeseries = constellation;
     }
 
-    public String generateURL(XYDataset dataset, int series, int item) {
-        String seriesID = (String) dataset.getSeriesKey(series);
-        RenderingDesign dd = designDescriptions.get(seriesID);
-        return dd.getUomLabel() + ";" + Integer.toHexString(dd.getColor().getRGB()).substring(2); 
+    public String getMessage() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Invalid Paramter Constellation: \n");
+        sb.append(timeseries.toString());
+        return sb.toString();
     }
 
 }

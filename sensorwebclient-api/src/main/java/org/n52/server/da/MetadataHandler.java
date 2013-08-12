@@ -41,6 +41,7 @@ import net.opengis.sampling.x20.SFSamplingFeatureType;
 import net.opengis.sos.x20.GetFeatureOfInterestResponseDocument;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.io.crs.AReferencingHelper;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
@@ -53,7 +54,6 @@ import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.server.parser.ConnectorUtils;
 import org.n52.server.util.SosAdapterFactory;
-import org.n52.io.crs.AReferencingHelper;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
