@@ -175,17 +175,17 @@
 					<artifactItems>
 						<artifactItem>
 							<groupId>${project.groupId}</groupId>
-							<artifactId>sensorwebclient-sos-rest</artifactId>
-							<includes>css/**,js/**,img/**,partials/**,lib/**</includes>
+							<artifactId>timeseries-web</artifactId>
+							<includes>api-doc/**</includes>
 							<outputDirectory>${webappDirectory}</outputDirectory>
 							<overWrite>false</overWrite>
 						</artifactItem>
-
+					
 						<artifactItem>
 							<groupId>${project.groupId}</groupId>
 							<artifactId>sensorwebclient-sos-rest</artifactId>
-							<includes>index*.html</includes>
-							<outputDirectory>${webappDirectory}/explore</outputDirectory>
+							<includes>explorer/**</includes>
+							<outputDirectory>${webappDirectory}</outputDirectory>
 							<overWrite>false</overWrite>
 						</artifactItem>
 

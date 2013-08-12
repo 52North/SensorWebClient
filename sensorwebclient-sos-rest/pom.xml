@@ -58,7 +58,7 @@
 							<outputDirectory>${project.basedir}/target/classes/</outputDirectory>
 							<resources>
                                 <resource>
-                                    <directory>src/main/webapp/client</directory>
+                                    <directory>src/main/webapp</directory>
                                     <includes>
                                         <include>**</include>
                                     </includes>

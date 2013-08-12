@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "${sensorwebclient.webapp.baseurl}/api/v1/schemas/vicinity.json#",
   "title": "vicinity",
   "description": "An geographical surrounding defined by a point and a radius.",
   "type": "object",

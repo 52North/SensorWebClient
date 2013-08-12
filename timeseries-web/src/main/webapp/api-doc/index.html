@@ -4,8 +4,8 @@
     <title>Documentation REST-API, Version 1</title>
 	
     <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/custom-style.css" rel="stylesheet">
+    <link href="css/bootstrap-3.0.0-rc1/bootstrap.min.css" rel="stylesheet">
+    <link href="css/n52/apidoc-style.css" rel="stylesheet">
   </head>
   <body>
 
@@ -320,42 +320,42 @@ Content-Type: application/json;charset=UTF-8
 
 [
   "services": {
-    "id": "./services",
+    "id": "services",
     "label": "Service Providers",
     "description": "A collection of service providers each offering timeseries data."
   },
   "categories": {
-    "id": "./categories",
+    "id": "categories",
     "label": "Categories",
     "description": "A collection of categories wherein the available timeseries data can be grouped."
   },
   "offerings": {
-    "id": "./offerings",
+    "id": "offerings",
     "label": "Offerings.",
     "description": "A collection of offerings (organizing unit) to filter timeseries data."
   },
   "features": {
-    "id": "./features",
+    "id": "features",
     "label": "Features.",
     "description": "A collection of features (organizing unit) to filter timeseries data."
   },
   "procedures": {
-    "id": "./procedures",
+    "id": "procedures",
     "label": "Procedures.",
     "description": "A collection of procedures (organizing unit) to filter timeseries data."
   },
   "phenomena": {
-    "id": "./phenomena",
+    "id": "phenomena",
     "label": "Phenomena.",
     "description": "A collection of phenomena (organizing unit) to filter timeseries data."
   },
   "stations": {
-    "id": "./stations",
+    "id": "stations",
     "label": "Stations.",
     "description": "A collection of stations where measurements took/takes place."
   },
   "timeseries": {
-    "id": "./timeseries",
+    "id": "timeseries",
     "label": "Timeseries.",
     "description": "A collection of timeseries each representing a sequence of data values measured over time."
   }
@@ -494,11 +494,11 @@ Content-Type: application/json;charset=UTF-8
 
 [
   {
-    "id": "./sta_lasdfo",
+    "id": "sta_lasdfo",
     "label": "Bramsche"
   },
   {
-    "id": "./sta_384f22",
+    "id": "sta_384f22",
     "label": "Deggendorf"
   }
 ]</pre>
@@ -516,8 +516,10 @@ Content-Type: application/json;charset=UTF-8
 
 [
   {
-    "id": "sta_lasdfo",
-    "label": "Bramsche",
+    "properties": {
+      "id": "sta_lasdfo",
+      "label": "Bramsche"
+    },
     "geometry": {
       "coordinates": [
         "7.978186816994513",
@@ -526,11 +528,12 @@ Content-Type: application/json;charset=UTF-8
       "type": "Point"
     },
     "type": "Feature"
-    }
   },
   {
-    "id": "sta_384f22",
-    "label": "Deggendorf",
+    "properties": {
+      "id": "sta_384f22",
+      "label": "Deggendorf",
+    },
     "geometry": {
       "coordinates": [
         "8.978186816994513",
@@ -539,7 +542,6 @@ Content-Type: application/json;charset=UTF-8
       "type": "Point"
     },
     "type": "Feature"
-    }
   }
 ]</pre>
               <div class="n52-callout n52-callout-info">
@@ -1040,11 +1042,11 @@ Content-Type: application/json;charset=UTF-8
 
 [
   {
-    "id": "./srv_823sd",
+    "id": "srv_823sd",
     "label": "PEGELONLINE"
   },
   {
-    "id": "./srv_8asdfd",
+    "id": "srv_8asdfd",
     "label": "Wupperverband"
   }
 ]</pre>
@@ -1139,11 +1141,11 @@ Content-Type: application/json;charset=UTF-8
 
 [
   {
-    "id": "./cat_h7234u",
+    "id": "cat_h7234u",
     "label": "Water"
   },
   {
-    "id": "./cat_eddfnq",
+    "id": "cat_eddfnq",
     "label": "Air"
   }
 ]</pre>
@@ -1241,11 +1243,11 @@ Content-Type: application/json;charset=UTF-8
 
 [
   {
-    "id": "./off_h7234u",
+    "id": "off_h7234u",
     "label": "ABFLUSS_ROHDATEN"
   },
   {
-    "id": "./off_eddfnq",
+    "id": "off_eddfnq",
     "label": "WINDGESCHWINDIGKEIT"
   }
 ]</pre>
@@ -1340,11 +1342,11 @@ Content-Type: application/json;charset=UTF-8
 
 [
   {
-    "id": "./foi_h7234u",
+    "id": "foi_h7234u",
     "label": "Bramsche"
   },
   {
-    "id": "./foi_adsf221",
+    "id": "foi_adsf221",
     "label": "Suelfeld"
   }
 ]</pre>
@@ -1442,11 +1444,11 @@ Content-Type: application/json;charset=UTF-8
 
 [
   {
-    "id": "./pro_h7234u",
+    "id": "pro_h7234u",
     "label": "Wasserstand-Ruwer"
   },
   {
-    "id": "./pro_adsf221",
+    "id": "pro_adsf221",
     "label": "Wasserstand-Krotzenburg"
   }
 ]</pre>
@@ -1544,11 +1546,11 @@ Content-Type: application/json;charset=UTF-8
 
 [
   {
-    "id": "./phe_adsf221",
+    "id": "phe_adsf221",
     "label": "Lufttemperatur"
   },
   {
-    "id": "./phe_adsf221",
+    "id": "phe_adsf221",
     "label": "Wasserstand"
   }
 ]</pre>
@@ -1635,8 +1637,7 @@ Content-Type: application/json;charset=UTF-8
 	</div>
 	
     <script src="js/jquery-1.10.2.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="http://code.jquery.com/jquery-latest.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap-3.0.0-rc1/bootstrap.min.js"></script>
+    <script src="js/bootstrap-3.0.0-rc1/bootstrap.min.js"></script>
   </body>
 </html>
