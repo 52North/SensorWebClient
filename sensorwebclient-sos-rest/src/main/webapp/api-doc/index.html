@@ -160,12 +160,12 @@
                 </tr>
                 <tr>
                   <td>
-                    <code>observedProperty</code>
+                    <code>phenomenon</code>
                   </td>
                   <td>
-                    <pre>observedProperty=phe_sdjf210</pre>
+                    <pre>phenomenon=phe_sdjf210</pre>
                   </td>
-                  <td>All resources where the given <a href="#parameter-observedProperties">observed property</a> id does match.</td>
+                  <td>All resources where the given <a href="#parameter-phenomena">phenomenon</a> id does match.</td>
                 </tr>
                 <tr>
                   <td>
@@ -219,7 +219,7 @@ Content omitted for brevity.
               <li><a href="#parameter-services">Service</a></li>
               <li><a href="#parameter-offerings">Offering</a></li>
               <li><a href="#parameter-features">Feature</a></li>
-              <li><a href="#parameter-observedProperties">Phenomenon</a></li>
+              <li><a href="#parameter-phenomena">Phenomenon</a></li>
               <li><a href="#parameter-procedures">Procedure</a></li>
             </ul></p>
             
@@ -320,42 +320,42 @@ Content-Type: application/json;charset=UTF-8
 
 [
   "services": {
-    "href": "./services",
+    "id": "./services",
     "label": "Service Providers",
     "description": "A collection of service providers each offering timeseries data."
   },
   "categories": {
-    "href": "./categories",
+    "id": "./categories",
     "label": "Categories",
     "description": "A collection of categories wherein the available timeseries data can be grouped."
   },
   "offerings": {
-    "href": "./offerings",
+    "id": "./offerings",
     "label": "Offerings.",
     "description": "A collection of offerings (organizing unit) to filter timeseries data."
   },
   "features": {
-    "href": "./features",
+    "id": "./features",
     "label": "Features.",
     "description": "A collection of features (organizing unit) to filter timeseries data."
   },
   "procedures": {
-    "href": "./procedures",
+    "id": "./procedures",
     "label": "Procedures.",
     "description": "A collection of procedures (organizing unit) to filter timeseries data."
   },
-  "observedProperties": {
-    "href": "./observedProperties",
+  "phenomena": {
+    "id": "./phenomena",
     "label": "Phenomena.",
     "description": "A collection of phenomena (organizing unit) to filter timeseries data."
   },
   "stations": {
-    "href": "./stations",
+    "id": "./stations",
     "label": "Stations.",
     "description": "A collection of stations where measurements took/takes place."
   },
   "timeseries": {
-    "href": "./timeseries",
+    "id": "./timeseries",
     "label": "Timeseries.",
     "description": "A collection of timeseries each representing a sequence of data values measured over time."
   }
@@ -471,7 +471,7 @@ Content-Type: application/json;charset=UTF-8
 }</pre></td>
                   <td><p>Stations around a given point. The radius unit is in kilometers (km). The point's coordinates relate to CRS 'EPSG:25832' (ETRS89 / UTM zone 32N).</p>
                   
-                  <p>You may be interested in the official <a href="http://www.epsg-registry.org">EPSG database</a> or <a href="http://spatialreference.org/">other links</a> you can <a href="http://spatialreference.org/ref/epsg/25832/ogcwkt/">resolve spatial reference systems</a> by code</a>.</p>
+                  <p>You may be interested in the official <a href="http://www.epsg-registry.org">EPSG database</a> or <a href="http://spatialreference.org/">other links</a> where you can <a href="http://spatialreference.org/ref/epsg/25832/ogcwkt/">resolve spatial reference systems</a> by code</a>.</p>
                   </td>
                 </tr>
               </tbody>
@@ -494,11 +494,11 @@ Content-Type: application/json;charset=UTF-8
 
 [
   {
-    "href": "./sta_lasdfo",
+    "id": "./sta_lasdfo",
     "label": "Bramsche"
   },
   {
-    "href": "./sta_384f22",
+    "id": "./sta_384f22",
     "label": "Deggendorf"
   }
 ]</pre>
@@ -558,7 +558,10 @@ Content-Type: application/json;charset=UTF-8
   "properties": {
     "id": "sta_lasdfo",
     "label": "Bramsche",
-    "service": "../services/srv_823sd",
+    "service": {
+      "id": "../services/srv_823sd",
+      "label": "PEGELONLINE"
+    }
     "timeseries": [
       "../timeseries/ts_35559ca6b2248629e6dcdc65ceead0ed",
       "../timeseries/ts_aca9c4d1438091af1f0d362f1d04e40d",
@@ -702,13 +705,11 @@ Content-Type: application/json;charset=UTF-8
 									</td>
 									<td>
 										<pre>style={
-  "color": "#2f2f2f",
-  "diagram": {
-    "type": "graph",
-    "properties": {
-      "lineType": "solid",
-      "lineWidth": 2
-    }
+  "type": "graph",
+  "properties": {
+    "color": "#2f2f2f",
+    "lineType": "solid",
+    "lineWidth": 2
   }
 }</pre>
 									</td>
@@ -778,7 +779,7 @@ Content-Type: application/json;charset=UTF-8
       "service": "../services/srv_823sd",
       "offering": "../offerings/off_sadf23",
       "procedure": "../procedures/pro_dfg232",
-      "observedProperty": "../observedProperties/phe_sdf231",
+      "phenomenon": "../phenomena/phe_sdf231",
       "feature": "../features/foi_dg234",
       "category": "../categories/cat_asda09fj"
     }
@@ -789,7 +790,7 @@ Content-Type: application/json;charset=UTF-8
       "service": "../services/srv_8we3we",
       "offering": "../offerings/off_sadwe23",
       "procedure": "../procedures/pro_dffg32",
-      "observedProperty": "../observedProperties/phe_asddf231",
+      "phenomenon": "../phenomena/phe_asddf231",
       "feature": "../features/foi_dg2adf34",
       "category": "../categories/cat_asdlkfj"
     }
@@ -808,7 +809,7 @@ Content-Type: application/json;charset=UTF-8
   "id": "ts_35559ca6b2248629e6dcdc65ceead0ed",
   "uom": "cm",
   "station": {
-    "href": "../stations/sta_adsf09",
+    "id": "../stations/sta_adsf09",
     "label": "Bramsche"
   },
   "firstValue": {
@@ -823,7 +824,7 @@ Content-Type: application/json;charset=UTF-8
     "service": "../services/srv_823sd",
     "offering": "../offerings/off_sadf23",
     "procedure": "../procedures/pro_dfg232",
-    "observedProperty": "../observedProperties/phe_sdf231",
+    "phenomenon": "../phenomena/phe_sdf231",
     "feature": "../features/foi_dg234"
     "category": "../categories/cat_asda09fj"
   }
@@ -878,7 +879,7 @@ Content-Type: application/json;charset=UTF-8
     }
   ],
   "station": {
-    "href": "../stations/sta_adsf09",
+    "id": "../stations/sta_adsf09",
     "label": "Bramsche"
   },
   "firstValue": {
@@ -893,7 +894,7 @@ Content-Type: application/json;charset=UTF-8
     "service": "../services/srv_823sd",
     "offering": "../offerings/off_sadf23",
     "procedure": "../procedures/pro_dfg232",
-    "observedProperty": "../observedProperties/phe_sdf231",
+    "phenomenon": "../phenomena/phe_sdf231",
     "feature": "../features/foi_dg234"
   }
 }</pre>
@@ -1039,11 +1040,11 @@ Content-Type: application/json;charset=UTF-8
 
 [
   {
-    "href": "./srv_823sd",
+    "id": "./srv_823sd",
     "label": "PEGELONLINE"
   },
   {
-    "href": "./srv_8asdfd",
+    "id": "./srv_8asdfd",
     "label": "Wupperverband"
   }
 ]</pre>
@@ -1085,7 +1086,7 @@ Content-Type: application/json;charset=UTF-8
                 </tr>
                 <tr>
                   <td><code>500</code></td>
-                  <td>Status <code>Internal Server Error</code>. Please contact the webadmin. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
+                  <td>Status <code>Internal Server Error</code>. Please contact the service provider. In some cases an error message will be shown. But in general the server logs will help to trace the problem.</td>
                 </tr>
               </tbody>
             </table>
@@ -1138,11 +1139,11 @@ Content-Type: application/json;charset=UTF-8
 
 [
   {
-    "href": "./cat_h7234u",
+    "id": "./cat_h7234u",
     "label": "Water"
   },
   {
-    "href": "./cat_eddfnq",
+    "id": "./cat_eddfnq",
     "label": "Air"
   }
 ]</pre>
@@ -1159,7 +1160,7 @@ Content-Type: application/json;charset=UTF-8
   "id": "cat_eddfnq",
   "label": "Air",
   "service": {
-    "href": "../services/srv_823sd",
+    "id": "../services/srv_823sd",
     "label": "PEGELONLINE"
   }
 }</pre>
@@ -1240,11 +1241,11 @@ Content-Type: application/json;charset=UTF-8
 
 [
   {
-    "href": "./off_h7234u",
+    "id": "./off_h7234u",
     "label": "ABFLUSS_ROHDATEN"
   },
   {
-    "href": "./off_eddfnq",
+    "id": "./off_eddfnq",
     "label": "WINDGESCHWINDIGKEIT"
   }
 ]</pre>
@@ -1339,11 +1340,11 @@ Content-Type: application/json;charset=UTF-8
 
 [
   {
-    "href": "./foi_h7234u",
+    "id": "./foi_h7234u",
     "label": "Bramsche"
   },
   {
-    "href": "./foi_adsf221",
+    "id": "./foi_adsf221",
     "label": "Suelfeld"
   }
 ]</pre>
@@ -1360,7 +1361,7 @@ Content-Type: application/json;charset=UTF-8
   "id": "foi_h7234u",
   "label": "Bramsche",
   "service": {
-    "href": "../services/srv_823sd",
+    "id": "../services/srv_823sd",
     "label": "PEGELONLINE"
   }
 }</pre>
@@ -1441,11 +1442,11 @@ Content-Type: application/json;charset=UTF-8
 
 [
   {
-    "href": "./pro_h7234u",
+    "id": "./pro_h7234u",
     "label": "Wasserstand-Ruwer"
   },
   {
-    "href": "./pro_adsf221",
+    "id": "./pro_adsf221",
     "label": "Wasserstand-Krotzenburg"
   }
 ]</pre>
@@ -1462,7 +1463,7 @@ Content-Type: application/json;charset=UTF-8
   "id": "pro_h7234u",
   "label": "Wasserstand-Krotzenburg",
   "service": {
-    "href": "../services/srv_823sd",
+    "id": "../services/srv_823sd",
     "label": "PEGELONLINE"
   }
 }</pre>
@@ -1497,7 +1498,7 @@ Content-Type: application/json;charset=UTF-8
           
         </div>
 				
-				<div id="parameter-observedProperties">
+				<div id="parameter-phenomena">
 					<h2>Phenomena</h2>
 					<div> <!-- URLs -->
 						<h3>URLs</h3>
@@ -1512,13 +1513,13 @@ Content-Type: application/json;charset=UTF-8
 							<tbody>
 								<tr>
 									<td><code>GET</code></td>
-									<td><code>/api/v1/observedProperties</code></td>
+									<td><code>/api/v1/phenomena</code></td>
                   <td><code>application/json</code></td>
 									<td>Lists all measured phenomena available.</td>
 								</tr>
 								<tr>
 									<td><code>GET</code></td>
-									<td><code>/api/v1/observedProperties/{id}</code></td>
+									<td><code>/api/v1/phenomena/{id}</code></td>
                   <td><code>application/json</code></td>
 									<td>Lists the measured phenomenon with id <code>{id}</code>.</td>
 								</tr>
@@ -1535,7 +1536,7 @@ Content-Type: application/json;charset=UTF-8
             <h3>Response Examples</h3>
             <div>
               <h4>Collection</h4>
-              <pre>GET /api/v1/observedProperties HTTP/1.1
+              <pre>GET /api/v1/phenomena HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
               <pre>HTTP/1.1 200 OK
@@ -1543,18 +1544,18 @@ Content-Type: application/json;charset=UTF-8
 
 [
   {
-    "href": "./phe_adsf221",
+    "id": "./phe_adsf221",
     "label": "Lufttemperatur"
   },
   {
-    "href": "./phe_adsf221",
+    "id": "./phe_adsf221",
     "label": "Wasserstand"
   }
 ]</pre>
             </div>
             <div>
               <h4>Item</h4>
-              <pre>GET /api/v1/observedProperties/phe_adsf221 HTTP/1.1
+              <pre>GET /api/v1/phenomena/phe_adsf221 HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
               <pre>HTTP/1.1 200 OK
@@ -1564,7 +1565,7 @@ Content-Type: application/json;charset=UTF-8
   "id": "phe_adsf221",
   "label": "Wasserstand-Krotzenburg",
   "service": {
-    "href": "../services/srv_823sd",
+    "id": "../services/srv_823sd",
     "label": "PEGELONLINE"
   }
 }</pre>
