@@ -64,7 +64,7 @@ import org.n52.server.da.MetadataHandler;
 import org.n52.server.da.oxf.OperationAccessor;
 import org.n52.server.parser.ConnectorUtils;
 import org.n52.server.parser.utils.ParsedPoint;
-import org.n52.server.util.crs.AReferencingHelper;
+import org.n52.io.crs.AReferencingHelper;
 import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;

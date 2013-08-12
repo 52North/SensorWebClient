@@ -42,11 +42,6 @@ public class MetadataInURLGenerator implements XYURLGenerator, Serializable {
 
     public String generateURL(XYDataset dataset, int series, int item) {
         String seriesID = (String) dataset.getSeriesKey(series);
-
-//        String foiID = seriesID.split("___")[0];
-//        String obsPropID = seriesID.split("___")[1];
-//        String procID = seriesID.split("___")[2];
-
         RenderingDesign dd = designDescriptions.get(seriesID);
         return dd.getUomLabel() + ";" + Integer.toHexString(dd.getColor().getRGB()).substring(2); 
     }

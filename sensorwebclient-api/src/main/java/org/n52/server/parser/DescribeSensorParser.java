@@ -80,7 +80,7 @@ import org.n52.oxf.xmlbeans.parser.XMLBeansParser;
 import org.n52.oxf.xmlbeans.parser.XMLHandlingException;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.server.parser.utils.ParsedPoint;
-import org.n52.server.util.crs.AReferencingHelper;
+import org.n52.io.crs.AReferencingHelper;
 import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
