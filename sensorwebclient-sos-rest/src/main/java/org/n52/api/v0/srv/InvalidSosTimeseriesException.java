@@ -32,8 +32,8 @@ public class InvalidSosTimeseriesException extends Exception {
 
     private SosTimeseries timeseries;
 
-    public InvalidSosTimeseriesException(SosTimeseries constellation) {
-        timeseries = constellation;
+    public InvalidSosTimeseriesException(SosTimeseries timeseries) {
+        this.timeseries = timeseries;
     }
 
     public String getMessage() {

@@ -81,7 +81,7 @@ public class SosInstanceContentHandlerTest {
 
     private void assertCorrectPegelOnline(SOSMetadata serviceMetadata) {
         SOSMetadata metadata = (SOSMetadata) serviceMetadata;
-        assertEquals(PEGELONLINE_URL, metadata.getId());
+        assertEquals(PEGELONLINE_URL, metadata.getServiceUrl());
         assertEquals("1.0.0", metadata.getVersion());
         assertEquals(true, metadata.isWaterML());
         assertEquals(DEFAULT_CONNECTOR, metadata.getSosMetadataHandler());
@@ -95,7 +95,7 @@ public class SosInstanceContentHandlerTest {
 
     private void assertCorrectIrceLine(SOSMetadata serviceMetadata) {
         SOSMetadata metadata = (SOSMetadata) serviceMetadata;
-        assertEquals(IRCELINE_URL, metadata.getId());
+        assertEquals(IRCELINE_URL, metadata.getServiceUrl());
         assertEquals("1.0.0", metadata.getVersion());
         assertEquals(false, metadata.isWaterML());
         assertEquals(DEFAULT_CONNECTOR, metadata.getSosMetadataHandler());
@@ -108,7 +108,7 @@ public class SosInstanceContentHandlerTest {
     
     private void assertCorrectEeaSos(SOSMetadata serviceMetadata) {
         SOSMetadata metadata = (SOSMetadata) serviceMetadata;
-        assertEquals(EEA_SOE_URL, metadata.getId());
+        assertEquals(EEA_SOE_URL, metadata.getServiceUrl());
         assertEquals("2.0.0", metadata.getVersion());
         assertEquals(false, metadata.isWaterML());
         assertEquals(EEA_CONNECTOR, metadata.getSosMetadataHandler());
@@ -121,7 +121,7 @@ public class SosInstanceContentHandlerTest {
 
     private void assertCorrectFluggsSos(SOSMetadata serviceMetadata) {
         SOSMetadata metadata = (SOSMetadata) serviceMetadata;
-        assertEquals(FLUGGS_URL, metadata.getId());
+        assertEquals(FLUGGS_URL, metadata.getServiceUrl());
         assertEquals("1.0.0", metadata.getVersion());
         assertEquals(false, metadata.isWaterML());
         assertEquals(DEFAULT_CONNECTOR, metadata.getSosMetadataHandler());

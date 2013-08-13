@@ -24,16 +24,16 @@
 
 package org.n52.api.v1.srv;
 
-import static org.n52.io.v1.data.out.TimeseriesData.newTimeseriesData;
+import static org.n52.io.v1.data.TimeseriesData.newTimeseriesData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.n52.client.service.TimeSeriesDataService;
-import org.n52.io.v1.data.in.UndesignedParameterSet;
-import org.n52.io.v1.data.out.TimeseriesData;
-import org.n52.io.v1.data.out.TimeseriesDataCollection;
+import org.n52.io.v1.data.TimeseriesData;
+import org.n52.io.v1.data.TimeseriesDataCollection;
+import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.shared.requests.TimeSeriesDataRequest;
 import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
@@ -71,7 +71,6 @@ public class GetDataService extends DataService {
             Map<String, HashMap<Long, String>> data = timeSeriesData.getPayloadData();
             
             for (String timeseriesId : timeSeriesResults.getAllTimeseries().keySet()) {
-                TimeseriesData result = timeSeriesResults.getTimeseries(timeseriesId);
                 HashMap<Long, String> values = data.get(timeseriesId);
                 TimeseriesData timeseriesData = newTimeseriesData(values);
                 timeSeriesResults.addNewTimeseries(timeseriesId, timeseriesData);

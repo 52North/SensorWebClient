@@ -36,23 +36,25 @@ public class Station implements Serializable {
 
     private static final long serialVersionUID = 5016550440955260625L;
 
-    private String id;
+    private ArrayList<SosTimeseries> observingTimeseries;
 
     private EastingNorthing location;
 
-    private ArrayList<SosTimeseries> observingTimeseries;
+    private String label;
+    
+    // TODO make station identifiable
 
     Station() {
         // for serialization
     }
 
-    public Station(String stationId) {
-        this.id = stationId;
+    public Station(String label) {
+        this.label = label;
         observingTimeseries = new ArrayList<SosTimeseries>();
     }
 
-    public String getId() {
-        return id;
+    public String getLabel() {
+        return label;
     }
 
     public void setLocation(EastingNorthing location) {
@@ -92,7 +94,7 @@ public class Station implements Serializable {
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("Station: [ ").append("\n");
-        sb.append("\tId: ").append(id).append("\n");
+        sb.append("\tId: ").append(label).append("\n");
         sb.append("\tLocation: ").append(location).append("\n");
         sb.append("\t#Timeseries: ").append(observingTimeseries.size()).append(" ]\n");
         return sb.toString();
@@ -122,7 +124,7 @@ public class Station implements Serializable {
 
     // @Override // fails during gwt compile
     public Station clone() {
-        Station station = new Station(id);
+        Station station = new Station(label);
         station.setLocation(location);
         station.setObservingTimeseries(new ArrayList<SosTimeseries>(observingTimeseries));
         return station;

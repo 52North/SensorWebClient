@@ -214,6 +214,13 @@
 				<artifactId>jstl</artifactId>
 				<version>1.2</version>
 			</dependency>
+			
+			<dependency>
+				<groupId>org.geotools</groupId>
+				<artifactId>gt-api</artifactId>
+				<version>${geotools.version}</version>
+			</dependency>
+		
 			<dependency>
 				<groupId>org.geotools</groupId>
 				<artifactId>gt-main</artifactId>

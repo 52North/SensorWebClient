@@ -4,7 +4,7 @@ import static org.n52.client.ses.i18n.SesStringsAccessor.i18n;
 
 import java.util.Set;
 
-import org.n52.client.sos.legend.Timeseries;
+import org.n52.client.sos.legend.TimeseriesLegendData;
 import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 
@@ -34,7 +34,7 @@ public class TimeSeriesMetadataTable extends VLayout {
 
     public void updateTimeSeriesMetadata() {
         metadataTable.removeAllRows();
-        Timeseries timeSeries = controller.getTimeSeries();
+        TimeseriesLegendData timeSeries = controller.getTimeSeries();
         addRow(i18n.provider(),timeSeries.getSosUrl());
         addRow(i18n.station(), timeSeries.getStationName());
         addRow(i18n.phenomenon(), timeSeries.getTimeSeriesLabel());
@@ -43,7 +43,7 @@ public class TimeSeriesMetadataTable extends VLayout {
         markForRedraw();
     }
     
-    private void addRowsForReferenceValues(Timeseries timeSeries) {
+    private void addRowsForReferenceValues(TimeseriesLegendData timeSeries) {
         TimeseriesProperties properties = timeSeries.getProperties();
         Set<String> refValues = properties.getReferenceValues();
         if (refValues != null && refValues.size() > 0) {

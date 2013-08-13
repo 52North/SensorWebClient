@@ -69,7 +69,11 @@ import org.n52.server.parser.utils.ParsedPoint;
 import org.n52.io.crs.AReferencingHelper;
 import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.Feature;
+import org.n52.shared.serializable.pojos.sos.Offering;
+import org.n52.shared.serializable.pojos.sos.Phenomenon;
+import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosService;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
@@ -115,20 +119,20 @@ public class HydroMetadataHandler extends MetadataHandler {
 		
 		// create tasks by iteration over procedures
 		for (SosTimeseries timeserie : observingTimeseries) {
-			String procedureID = timeserie.getProcedure();
+			String procedureID = timeserie.getProcedureId();
 			getFoiAccessTasks.put(procedureID, new FutureTask<OperationResult>(createGetFoiAccess(metadata.getServiceUrl(), metadata.getVersion(), procedureID)));
 			getDataAvailabilityTasks.put(timeserie, new FutureTask<OperationResult>(createGDAAccess(metadata.getServiceUrl(), metadata.getVersion(), timeserie)));
 		}
 		
 		// create list of timeseries of GDA requests
-		Collection<SosTimeseries> timeseries = executeGDATasks(getDataAvailabilityTasks);
+		Collection<SosTimeseries> timeseries = executeGDATasks(getDataAvailabilityTasks, metadata.getVersion());
 		
 		// iterate over tasks of getFOI and add them to metadata
         executeFoiTasks(getFoiAccessTasks, metadata);
 		
 		// iterate over timeseries and add them to station with according feature id
         for (SosTimeseries timeserie : timeseries) {
-			String feature = timeserie.getFeature();
+			String feature = timeserie.getFeatureId();
             Station station = metadata.getStation(feature);
 			if (station != null) {
 				station.addTimeseries(timeserie);	
@@ -142,13 +146,13 @@ public class HydroMetadataHandler extends MetadataHandler {
 	}
 
     private Collection<SosTimeseries> executeGDATasks(
-			Map<SosTimeseries, FutureTask<OperationResult>> getDataAvailabilityTasks)
+			Map<SosTimeseries, FutureTask<OperationResult>> getDataAvailabilityTasks, String version)
 			throws InterruptedException, ExecutionException, TimeoutException, XmlException, IOException {
 		int counter = getDataAvailabilityTasks.size();
 		LOGGER.debug("Sending " + counter + " GetDataAvailability requests");
 		Collection<SosTimeseries> timeseries = new ArrayList<SosTimeseries>();
 		for (SosTimeseries timeserie : getDataAvailabilityTasks.keySet()) {
-			LOGGER.debug("Sending #{} GetDataAvailability request for procedure " + timeserie.getProcedure(), counter--);
+			LOGGER.debug("Sending #{} GetDataAvailability request for procedure " + timeserie.getProcedureId(), counter--);
 			FutureTask<OperationResult> futureTask = getDataAvailabilityTasks.get(timeserie);
 			AccessorThreadPool.execute(futureTask);
 			OperationResult result = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
@@ -156,7 +160,7 @@ public class HydroMetadataHandler extends MetadataHandler {
 				LOGGER.error("Get no result for GetDataAvailability with parameter constellation: " + timeserie + "!");
 			}
 			XmlObject result_xb = XmlObject.Factory.parse(result.getIncomingResultAsStream());
-			timeseries.addAll(getAvailableTimeseries(result_xb, timeserie));
+			timeseries.addAll(getAvailableTimeseries(result_xb, timeserie, version));
 		}
 		return timeseries;
 	}
@@ -238,7 +242,7 @@ public class HydroMetadataHandler extends MetadataHandler {
 		}
 	}
 	
-	private Collection<SosTimeseries> getAvailableTimeseries(XmlObject result_xb, SosTimeseries timeserie) throws XmlException, IOException {
+	private Collection<SosTimeseries> getAvailableTimeseries(XmlObject result_xb, SosTimeseries timeserie, String version) throws XmlException, IOException {
 		ArrayList<SosTimeseries> timeseries = new ArrayList<SosTimeseries>();
 		String queryExpression = "declare namespace sos='http://www.opengis.net/sos/2.0'; $this/sos:GetDataAvailabilityResponse/sos:dataAvailabilityMember";
 		XmlObject[] response = result_xb.selectPath(queryExpression);
@@ -247,14 +251,14 @@ public class HydroMetadataHandler extends MetadataHandler {
 			String feature = getAttributeOfChildren(xmlObject, "featureOfInterest", "href");
 			String phenomenon = getAttributeOfChildren(xmlObject, "observedProperty", "href");
 			String procedure = getAttributeOfChildren(xmlObject, "procedure", "href");
-			addedtimeserie.setFeature(feature);
-			addedtimeserie.setPhenomenon(phenomenon);
-			addedtimeserie.setProcedure(procedure);
+			addedtimeserie.setFeature(new Feature(feature));
+			addedtimeserie.setPhenomenon(new Phenomenon(phenomenon));
+			addedtimeserie.setProcedure(new Procedure(procedure));
 			// create the category for every parameter constellation out of phenomenon and procedure
 			String category = getLastPartOf(phenomenon) + " (" + getLastPartOf(procedure) + ")";
 			addedtimeserie.setCategory(category);
-			addedtimeserie.setOffering(timeserie.getOffering());
-			addedtimeserie.setServiceUrl(timeserie.getServiceUrl());
+			addedtimeserie.setOffering(new Offering(timeserie.getOfferingId()));
+			addedtimeserie.setSosService(new SosService(timeserie.getServiceUrl(), version));
 			timeseries.add(addedtimeserie);
 		}
 		return timeseries;
@@ -332,7 +336,7 @@ public class HydroMetadataHandler extends MetadataHandler {
 
 	private Callable<OperationResult> createGDAAccess(String sosUrl, String version, SosTimeseries timeserie) throws OXFException {
 		ParameterContainer container = new ParameterContainer();
-        container.addParameterShell("procedure", timeserie.getProcedure());
+        container.addParameterShell("procedure", timeserie.getProcedureId());
         container.addParameterShell("version", version);
         Operation operation = new Operation(GET_DATA_AVAILABILITY, sosUrl, sosUrl);
 		return new OperationAccessor(getSosAdapter(), operation, container);

@@ -4,7 +4,7 @@ package org.n52.web.v1.ctrl;
 import static org.n52.web.v1.ctrl.RestfulUrls.COLLECTION_SERVICES;
 import static org.n52.web.v1.ctrl.RestfulUrls.DEFAULT_PATH;
 
-import org.n52.io.v1.data.out.Service;
+import org.n52.io.v1.data.ServiceOutput;
 import org.n52.web.ResourceNotFoundException;
 import org.n52.web.v1.srv.ServicesParameterService;
 import org.springframework.stereotype.Controller;
@@ -17,13 +17,13 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(value = DEFAULT_PATH + "/" + COLLECTION_SERVICES, produces = {"application/json"})
 public class ServicesParameterController extends ParameterController {
 	
-	private ServicesParameterService servicesParameterService;
+	private ServicesParameterService serviceParameterService;
 
 	public ModelAndView getCollection(@RequestParam(defaultValue = KVP_DEFAULT_OFFSET) int offset, @RequestParam(defaultValue = KVP_DEFAULT_SIZE) int size) {
 		
 		// TODO check parameters and throw BAD_REQUEST if invalid
 
-		Service[] allServices = servicesParameterService.getServices(offset, size);
+		ServiceOutput[] allServices = serviceParameterService.getServices(offset, size);
 		
 		// TODO add paging
 		
@@ -34,7 +34,7 @@ public class ServicesParameterController extends ParameterController {
 		
 		// TODO check parameters and throw BAD_REQUEST if invalid
 		
-		Service service = servicesParameterService.getService(item);
+		ServiceOutput service = serviceParameterService.getService(item);
 		
 		if (service == null) {
 			throw new ResourceNotFoundException("Found no service with given id.");
@@ -43,12 +43,12 @@ public class ServicesParameterController extends ParameterController {
 		return new ModelAndView().addObject(service);
 	}
 
-	public ServicesParameterService getServicesParameterService() {
-		return servicesParameterService;
+	public ServicesParameterService getServiceParameterService() {
+		return serviceParameterService;
 	}
 
-	public void setServicesParameterService(ServicesParameterService servicesParameterService) {
-		this.servicesParameterService = servicesParameterService;
+	public void setServiceParameterService(ServicesParameterService serviceParameterService) {
+		this.serviceParameterService = serviceParameterService;
 	}
 	
 }

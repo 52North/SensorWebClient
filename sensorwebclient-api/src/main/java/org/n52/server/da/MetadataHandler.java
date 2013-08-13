@@ -59,6 +59,7 @@ import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosService;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
@@ -175,10 +176,10 @@ public abstract class MetadataHandler {
 						 * operations.
 						 */
 						SosTimeseries timeseries = new SosTimeseries();
-						timeseries.setPhenomenon(phenomenon);
-						timeseries.setProcedure(procedure);
-						timeseries.setOffering(offeringId);
-						timeseries.setServiceUrl(sosMetadata.getServiceUrl());
+						timeseries.setPhenomenon(new Phenomenon(phenomenon));
+						timeseries.setProcedure(new Procedure(procedure));
+						timeseries.setOffering(new Offering(offeringId));
+						timeseries.setSosService(new SosService(sosMetadata.getServiceUrl(), sosMetadata.getVersion()));
 						allObservedTimeseries.add(timeseries);
 					}
 					// add procedures
@@ -196,7 +197,7 @@ public abstract class MetadataHandler {
 	
 	protected void normalizeDefaultCategories(Collection<SosTimeseries> observingTimeseries) {
 		for (SosTimeseries timeseries : observingTimeseries) {
-			String phenomenon = timeseries.getPhenomenon();
+			String phenomenon = timeseries.getPhenomenonId();
 			String category = phenomenon.substring(phenomenon.lastIndexOf(":") + 1);
 			timeseries.setCategory(category);
 		}

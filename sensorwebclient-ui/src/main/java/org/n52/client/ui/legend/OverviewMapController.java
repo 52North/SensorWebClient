@@ -38,7 +38,7 @@ import org.n52.client.sos.event.data.handler.TimeSeriesHasDataEventHandler;
 import org.n52.client.sos.event.handler.LegendElementSelectedEventHandler;
 import org.n52.client.sos.event.handler.ResizeEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
-import org.n52.client.sos.legend.Timeseries;
+import org.n52.client.sos.legend.TimeseriesLegendData;
 import org.n52.client.ui.map.InfoMarker;
 import org.n52.client.ui.map.MapController;
 import org.n52.client.ui.map.OpenlayersMarker;
@@ -120,9 +120,9 @@ public class OverviewMapController implements MapController {
 		
 		public void onSelected(LegendElementSelectedEvent evt) {
 		
-		    if (evt.getElement().getDataWrapper() instanceof Timeseries) {
+		    if (evt.getElement().getDataWrapper() instanceof TimeseriesLegendData) {
 		
-		        Timeseries ts = (Timeseries) evt.getElement().getDataWrapper();
+		        TimeseriesLegendData ts = (TimeseriesLegendData) evt.getElement().getDataWrapper();
 		        controller.setSelectedTimeSeries(ts.getId());
 		        ArrayList<Marker> markers = controller.getMarkers();
 		

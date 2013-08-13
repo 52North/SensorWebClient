@@ -2,7 +2,7 @@ package org.n52.web.v1.ctrl;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-import org.n52.io.v1.data.out.TimeseriesMetadata;
+import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.web.ResourceNotFoundException;
 import org.n52.web.v1.srv.ServicesParameterService;
 import org.n52.web.v1.srv.TimeseriesMetadataService;
@@ -30,7 +30,7 @@ public class TimeseriesMetadataController {
 			throw new ResourceNotFoundException("The timeseries with id '" + timeseriesId + "' was not found.");
 		}
 		
-		TimeseriesMetadata timeseriesMetaData = timeseriesMetadataService.getMetadata(timeseriesId);
+		TimeseriesMetadataOutput timeseriesMetaData = timeseriesMetadataService.getMetadata(timeseriesId);
 		
 		// TODO add paging
 

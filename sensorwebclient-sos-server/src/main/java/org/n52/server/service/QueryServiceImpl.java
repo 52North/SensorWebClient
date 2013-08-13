@@ -113,7 +113,7 @@ public class QueryServiceImpl implements QueryService {
                 List<Station> filteredStations = new ArrayList<Station>();
                 for (Station station : stations) {
                     if (spatialFilter == null || referencing.isStationContainedByBBox(spatialFilter, station)) {
-                        if (parameters.getStation() == null || station.getId().equals(parameters.getStation())) {
+                        if (parameters.getStation() == null || station.getLabel().equals(parameters.getStation())) {
                             station = cloneAndMatchAgainstQuery(station, parameters);
                             if (station.hasAtLeastOneParameterConstellation()) {
                                 filteredStations.add(station);

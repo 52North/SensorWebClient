@@ -67,7 +67,7 @@ import org.n52.client.sos.event.handler.ResizeEventHandler;
 import org.n52.client.sos.event.handler.SwitchGridEventHandler;
 import org.n52.client.sos.event.handler.TabSelectedEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
-import org.n52.client.sos.legend.Timeseries;
+import org.n52.client.sos.legend.TimeseriesLegendData;
 import org.n52.client.sos.ui.DiagramTab;
 import org.n52.client.ui.View;
 import org.n52.client.ui.legend.LegendElement;
@@ -145,7 +145,7 @@ public class DiagramTabController extends Controller<DiagramTab> {
         private void contributeToLegend() {
             if (isSelfSelectedTab()) {
                 ArrayList<LegendElement> legendItems = new ArrayList<LegendElement>();
-                Timeseries[] timeSeries = TimeseriesDataStore.getTimeSeriesDataStore().getTimeSeriesSorted();
+                TimeseriesLegendData[] timeSeries = TimeseriesDataStore.getTimeSeriesDataStore().getTimeSeriesSorted();
                 for (int i = 0; i < timeSeries.length; i++) {
                     legendItems.add(timeSeries[i].getLegendElement());
                 }

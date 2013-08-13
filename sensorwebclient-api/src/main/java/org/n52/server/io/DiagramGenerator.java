@@ -46,10 +46,6 @@ import org.n52.server.io.render.RenderingDesign;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
-import org.n52.shared.serializable.pojos.sos.Feature;
-import org.n52.shared.serializable.pojos.sos.Phenomenon;
-import org.n52.shared.serializable.pojos.sos.Procedure;
-import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
 import com.sun.media.jai.codec.ImageCodec;
 import com.sun.media.jai.codec.ImageEncoder;
@@ -61,12 +57,6 @@ public class DiagramGenerator extends Generator {
 
     /**
      * Creates a time series chart diagram and writes it to the OutputStream.
-     * 
-     * @param entireCollMap
-     * @param options
-     * @param out
-     * @throws OXFException
-     * @throws IOException
      */
     public void producePresentation(Map<String, OXFFeatureCollection> entireCollMap,
             DesignOptions options, FileOutputStream out, boolean compress) throws OXFException,
@@ -100,16 +90,6 @@ public class DiagramGenerator extends Generator {
         encoder.encode(diagramImage);
     }
 
-    /**
-     * Produce legend.
-     * 
-     * @param options
-     *            the options
-     * @param out
-     *            the out
-     * @throws OXFException
-     *             the oXF exception
-     */
     public void createLegend(DesignOptions options, OutputStream out) throws OXFException, IOException {
 
         int topMargin = 10;
@@ -157,10 +137,6 @@ public class DiagramGenerator extends Generator {
     /**
      * Builds up a DesignDescriptionList object which stores the information
      * about the style of each timeseries.
-     * 
-     * @param options
-     *            the options
-     * @return the design description list
      */
     private DesignDescriptionList buildUpDesignDescriptionList(DesignOptions options) {
 
@@ -175,16 +151,9 @@ public class DiagramGenerator extends Generator {
         String observedPropertyWithGrid = options.getProperties().get(0).getPhenomenon();
 
         for (TimeseriesProperties prop : options.getProperties()) {
-
             Color c = JavaHelper.transformToColor(prop.getHexColor());
             boolean gridOn = observedPropertyWithGrid.equals(prop.getPhenomenon());
-            
-            TimeseriesParametersLookup lookup = getParameterLookup(prop.getServiceUrl());
-            Feature feature = lookup.getFeature(prop.getFeature());
-            Phenomenon phenomenon = lookup.getPhenomenon(prop.getPhenomenon());
-            Procedure procedure = lookup.getProcedure(prop.getProcedure());
-
-            ddList.add(phenomenon, procedure, feature, prop, c,  prop.getGraphStyle(), prop.getLineWidth(), gridOn);
+            ddList.add(prop, c,  prop.getGraphStyle(), prop.getLineWidth(), gridOn);
         }
 
         return ddList;

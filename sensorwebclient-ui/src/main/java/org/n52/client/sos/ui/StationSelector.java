@@ -379,7 +379,7 @@ public class StationSelector extends Window {
 				sortedCategories.put(category, category);
 			}
 		}
-		String serviceUrl = currentMetadata.getId();
+		String serviceUrl = currentMetadata.getServiceUrl();
 		RadioGroupItem selector = stationFilterGroups.get(serviceUrl);
 		LinkedHashMap<String, String> categories = new LinkedHashMap<String, String>(sortedCategories);
 		selector.setValueMap(categories);

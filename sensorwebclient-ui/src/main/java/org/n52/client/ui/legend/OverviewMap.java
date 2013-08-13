@@ -42,7 +42,7 @@ import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.sos.data.TimeseriesDataStore;
 import org.n52.client.sos.event.InitEvent;
 import org.n52.client.sos.event.handler.InitEventHandler;
-import org.n52.client.sos.legend.Timeseries;
+import org.n52.client.sos.legend.TimeseriesLegendData;
 import org.n52.client.ui.map.Coordinate;
 import org.n52.client.ui.map.OpenLayersMapWrapper;
 import org.n52.client.ui.map.OpenlayersMarker;
@@ -126,7 +126,7 @@ public class OverviewMap extends OpenLayersMapWrapper {
     
     public void updateMapContent() {
     	TimeseriesDataStore dataStore = TimeseriesDataStore.getTimeSeriesDataStore();
-		Collection<Timeseries> ts = dataStore.getDataItems().values();
+		Collection<TimeseriesLegendData> ts = dataStore.getDataItems().values();
     	boolean updateExtent = isTimeSeriesAddedUpdate(ts); // check before update
         updateMarkersOnMap(ts);
         if(updateExtent){
@@ -138,9 +138,9 @@ public class OverviewMap extends OpenLayersMapWrapper {
         markSelectedMarker();
     }
 
-	private void updateMarkersOnMap(Collection<Timeseries> ts) {
+	private void updateMarkersOnMap(Collection<TimeseriesLegendData> ts) {
         removeAllMarkers();
-		for (Timeseries timeSeries : ts) {
+		for (TimeseriesLegendData timeSeries : ts) {
             Coordinate coords = timeSeries.getCoords();
             if (coords == null) {
                 GWT.log("TimeSeries has no coordinates; skip creating map button.");
@@ -176,7 +176,7 @@ public class OverviewMap extends OpenLayersMapWrapper {
         }
 	}
 
-	private boolean isTimeSeriesAddedUpdate(Collection<Timeseries> newTimeSeries) {
+	private boolean isTimeSeriesAddedUpdate(Collection<TimeseriesLegendData> newTimeSeries) {
 		return getMarkers().size() != newTimeSeries.size();
 	}
     

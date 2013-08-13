@@ -29,13 +29,14 @@ import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.joda.time.Interval;
 import org.n52.client.service.SensorMetadataService;
-import org.n52.io.v1.data.in.UndesignedParameterSet;
-import org.n52.io.v1.data.out.TimeseriesData;
-import org.n52.io.v1.data.out.TimeseriesDataCollection;
+import org.n52.io.v1.data.TimeseriesData;
+import org.n52.io.v1.data.TimeseriesDataCollection;
+import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -84,8 +85,7 @@ public abstract class DataService {
         return metadata;
     }
 
-    protected TimeseriesDataCollection prepareTimeseriesResults(UndesignedParameterSet parameterSet,
-                                                                ArrayList<TimeseriesProperties> props) {
+    protected TimeseriesDataCollection prepareTimeseriesResults(UndesignedParameterSet parameterSet, List<TimeseriesProperties> props) {
         TimeseriesDataCollection timeseriesCollection = new TimeseriesDataCollection();
         for (String timeseriesId : parameterSet.getTimeseries()) {
             try {
@@ -107,7 +107,7 @@ public abstract class DataService {
         SosTimeseries timeseries = station.getTimeseriesById(timeseriesId);
         TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
         TimeseriesProperties properties = new TimeseriesProperties(timeseries, station, 0, 0, "???", true);
-        properties.setStationName(lookup.getFeature(timeseries.getFeature()).getLabel());
+        properties.setStationName(lookup.getFeature(timeseries.getFeatureId()).getLabel());
         return properties;
     }
 

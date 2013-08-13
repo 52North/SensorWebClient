@@ -65,7 +65,7 @@ import org.n52.client.sos.event.data.handler.StoreOfferingEventHandler;
 import org.n52.client.sos.event.data.handler.StoreProcedureEventHandler;
 import org.n52.client.sos.event.data.handler.StoreStationEventHandler;
 import org.n52.client.sos.event.data.handler.UpdateSOSMetadataEventHandler;
-import org.n52.client.sos.legend.Timeseries;
+import org.n52.client.sos.legend.TimeseriesLegendData;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
@@ -144,7 +144,7 @@ public class SOSController extends ServiceController {
         }
 
         public void onRequest(RequestSensorDataEvent evt) {
-            Timeseries[] sortedTimeSeries = TimeseriesDataStore.getTimeSeriesDataStore().getTimeSeriesSorted();
+            TimeseriesLegendData[] sortedTimeSeries = TimeseriesDataStore.getTimeSeriesDataStore().getTimeSeriesSorted();
             String id = evt.getID();
             if (id != null) {
             	getRequestManager().requestSensorData(sortedTimeSeries, id);

@@ -46,7 +46,6 @@ import org.jfree.chart.entity.StandardEntityCollection;
 import org.jfree.chart.entity.XYItemEntity;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.feature.OXFFeatureCollection;
-import org.n52.server.io.Generator;
 import org.n52.server.io.render.DiagramRenderer;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.shared.responses.EESDataResponse;

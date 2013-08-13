@@ -79,14 +79,14 @@ public class StationOutput extends GeojsonFeature {
     private static StationOutput createMinimalStation(Station station) {
         StationOutput stationOutput = new StationOutput();
         stationOutput.setGeometry(getCoordinates(station));
-        stationOutput.addProperty("station", station.getId());
+        stationOutput.addProperty("station", station.getLabel());
         return stationOutput;
     }
 
     private static SosTimeseries[] createCompleteTimeseriesList(Station station) {
-        List<SosTimeseries> timeseriesIds = new ArrayList<SosTimeseries>();
+        List<TimeseriesOutput> timeseriesIds = new ArrayList<TimeseriesOutput>();
         for (SosTimeseries timeseries : station.getObservedTimeseries()) {
-            timeseriesIds.add(timeseries);
+            timeseriesIds.add(new TimeseriesOutput(timeseries));
         }
         return timeseriesIds.toArray(new SosTimeseries[0]);
     }

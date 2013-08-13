@@ -1,3 +1,4 @@
+
 package org.n52.server.io.render;
 
 import java.awt.Color;
@@ -9,52 +10,37 @@ import org.n52.shared.serializable.pojos.TimeseriesRenderingOptions;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 
 /**
- * XXX suspect to be refactored (see {@link DesignOptions}, {@link TimeseriesProperties}, {@link TimeseriesRenderingOptions}, etc)
+ * XXX suspect to be refactored (see {@link DesignOptions}, {@link TimeseriesProperties},
+ * {@link TimeseriesRenderingOptions}, etc)
  */
 public class RenderingDesign implements Serializable {
 
     private static final long serialVersionUID = 232118551592451740L;
 
-    private Phenomenon phenomenon;
-
-    private Procedure procedure;
-
-    private Feature feature;
-
-    private String label;
-
-    private String uomLabel;
+    private TimeseriesProperties timeseriesProperties;
 
     private Color color;
 
-    private String lineStyle;
+    private String lineStyle; // chart type actually
 
     private int lineWidth;
 
-    private boolean grid;
-
-    public RenderingDesign(Phenomenon phenomenon, Procedure procedure,
-                             Feature feature, String label, String uomLabel,
-                             Color color, String lineStyle, int lineWidth, boolean grid) {
-        this.phenomenon = phenomenon;
-        this.procedure = procedure;
-        this.feature = feature;
-        this.label = label;
-        this.uomLabel = uomLabel;
+    public RenderingDesign(TimeseriesProperties properties, Color color, String lineStyle, int lineWidth) {
+        SosTimeseries timeseries = properties.getTimeseries();
+        if (timeseries == null) {
+            throw new NullPointerException("Properties do not contain a timeseries.");
+        }
+        this.timeseriesProperties = properties;
         this.color = color;
         this.lineStyle = lineStyle;
         this.lineWidth = lineWidth;
-        this.grid = grid;
     }
 
     public Color getColor() {
         return this.color;
-    }
-
-    public boolean isGrid() {
-        return this.grid;
     }
 
     public String getLineStyle() {
@@ -66,32 +52,41 @@ public class RenderingDesign implements Serializable {
     }
 
     public String getLabel() {
-        return this.label;
+        return timeseriesProperties.getLabel();
     }
 
     public String getUomLabel() {
-        return this.uomLabel;
+        return timeseriesProperties.getUnitOfMeasure();
     }
 
     public Phenomenon getPhenomenon() {
-        return phenomenon;
+        return getTimeseries().getPhenomenon();
     }
 
     public Procedure getProcedure() {
-        return procedure;
+        return getTimeseries().getProcedure();
     }
 
     public Feature getFeature() {
-        return feature;
+        return getTimeseries().getFeature();
+    }
+    
+    
+    public SosTimeseries getTimeseries() {
+        return timeseriesProperties.getTimeseries();
+    }
+
+    public void setTimeseriesProperties(TimeseriesProperties timeseriesProperties) {
+        this.timeseriesProperties = timeseriesProperties;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( (feature == null) ? 0 : feature.hashCode());
-        result = prime * result + ( (phenomenon == null) ? 0 : phenomenon.hashCode());
-        result = prime * result + ( (procedure == null) ? 0 : procedure.hashCode());
+        result = prime * result + ( (getFeature() == null) ? 0 : getFeature().hashCode());
+        result = prime * result + ( (getPhenomenon() == null) ? 0 : getPhenomenon().hashCode());
+        result = prime * result + ( (getProcedure() == null) ? 0 : getProcedure().hashCode());
         return result;
     }
 
@@ -107,32 +102,31 @@ public class RenderingDesign implements Serializable {
             return false;
         }
         RenderingDesign other = (RenderingDesign) obj;
-        if (feature == null) {
-            if (other.feature != null) {
+        if (getFeature() == null) {
+            if (other.getFeature() != null) {
                 return false;
             }
         }
-        else if ( !feature.equals(other.feature)) {
+        else if ( !getFeature().equals(other.getFeature())) {
             return false;
         }
-        if (phenomenon == null) {
-            if (other.phenomenon != null) {
+        if (getPhenomenon() == null) {
+            if (other.getPhenomenon() != null) {
                 return false;
             }
         }
-        else if ( !phenomenon.equals(other.phenomenon)) {
+        else if ( !getPhenomenon().equals(other.getPhenomenon())) {
             return false;
         }
-        if (procedure == null) {
-            if (other.procedure != null) {
+        if (getProcedure() == null) {
+            if (other.getProcedure() != null) {
                 return false;
             }
         }
-        else if ( !procedure.equals(other.procedure)) {
+        else if ( !getProcedure().equals(other.getProcedure())) {
             return false;
         }
         return true;
     }
 
 }
-

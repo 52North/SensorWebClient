@@ -114,7 +114,7 @@ public abstract class DataService {
         SosTimeseries timeseries = station.getTimeseriesById(timeseriesId);
         TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
         TimeseriesProperties properties = new TimeseriesProperties(timeseries, station, 0, 0, "???", true);
-        properties.setStationName(lookup.getFeature(timeseries.getFeature()).getLabel());
+        properties.setStationName(lookup.getFeature(timeseries.getFeatureId()).getLabel());
         if (renderingOptions != null) {
             properties.setRenderingOptions(renderingOptions);
         }
