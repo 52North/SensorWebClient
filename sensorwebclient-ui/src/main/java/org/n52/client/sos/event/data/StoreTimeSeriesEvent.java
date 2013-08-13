@@ -25,22 +25,22 @@ package org.n52.client.sos.event.data;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.data.handler.StoreTimeSeriesEventHandler;
-import org.n52.client.sos.legend.Timeseries;
+import org.n52.client.sos.legend.TimeseriesLegendData;
 
 public class StoreTimeSeriesEvent extends
         FilteredDispatchGwtEvent<StoreTimeSeriesEventHandler> {
 
     public static Type<StoreTimeSeriesEventHandler> TYPE = new Type<StoreTimeSeriesEventHandler>();
 
-    private Timeseries ts;
+    private TimeseriesLegendData ts;
 
-    public StoreTimeSeriesEvent(Timeseries ts, StoreTimeSeriesEventHandler... blockedHandlers) {
+    public StoreTimeSeriesEvent(TimeseriesLegendData ts, StoreTimeSeriesEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.ts = ts;
 
     }
 
-    public Timeseries getTimeSeries() {
+    public TimeseriesLegendData getTimeSeries() {
         return this.ts;
     }
 

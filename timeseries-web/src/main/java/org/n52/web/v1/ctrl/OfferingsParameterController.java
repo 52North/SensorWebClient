@@ -4,7 +4,7 @@ package org.n52.web.v1.ctrl;
 import static org.n52.web.v1.ctrl.RestfulUrls.COLLECTION_OFFERINGS;
 import static org.n52.web.v1.ctrl.RestfulUrls.DEFAULT_PATH;
 
-import org.n52.io.v1.data.out.Offering;
+import org.n52.io.v1.data.OfferingOutput;
 import org.n52.web.v1.srv.OfferingsParameterService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +22,7 @@ public class OfferingsParameterController extends ParameterController implements
 		
 		// TODO check parameters and throw BAD_REQUEST if invalid
 		
-		Offering[] allOfferings = service.getOfferings(offset, size);
+		OfferingOutput[] allOfferings = service.getOfferings(offset, size);
 		
 		// TODO add paging
 		
@@ -37,7 +37,7 @@ public class OfferingsParameterController extends ParameterController implements
 		
 		// TODO add expand check
 		
-		Offering offering = service.getOffering(item);
+		OfferingOutput offering = service.getOffering(item);
 		
 		return new ModelAndView().addObject(offering);
 	}

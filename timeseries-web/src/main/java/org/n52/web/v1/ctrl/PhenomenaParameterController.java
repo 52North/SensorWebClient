@@ -4,7 +4,7 @@ package org.n52.web.v1.ctrl;
 import static org.n52.web.v1.ctrl.RestfulUrls.COLLECTION_OBSERVED_PROPERTIES;
 import static org.n52.web.v1.ctrl.RestfulUrls.DEFAULT_PATH;
 
-import org.n52.io.v1.data.out.Phenomenon;
+import org.n52.io.v1.data.PhenomenonOutput;
 import org.n52.web.ResourceNotFoundException;
 import org.n52.web.v1.srv.PhenomenaParameterService;
 import org.springframework.stereotype.Controller;
@@ -23,7 +23,7 @@ public class PhenomenaParameterController extends ParameterController {
 		
 		// TODO check parameters and throw BAD_REQUEST if invalid
 
-		Phenomenon[] allPhenomena = phenomenaParameterService.getPhenomena(offset, size);
+		PhenomenonOutput[] allPhenomena = phenomenaParameterService.getPhenomena(offset, size);
 		
 		// TODO add paging
 		
@@ -34,7 +34,7 @@ public class PhenomenaParameterController extends ParameterController {
 		
 		// TODO check parameters and throw BAD_REQUEST if invalid
 		
-		Phenomenon phenomenon = phenomenaParameterService.getPhenomenon(item);
+		PhenomenonOutput phenomenon = phenomenaParameterService.getPhenomenon(item);
 		
 		if (phenomenon == null) {
 			throw new ResourceNotFoundException("Found no feature with given id.");

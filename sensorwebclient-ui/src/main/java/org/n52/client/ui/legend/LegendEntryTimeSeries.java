@@ -38,13 +38,11 @@ import java.util.Set;
 
 import org.eesgmbh.gimv.client.event.LoadImageDataEvent;
 import org.n52.client.bus.EventBus;
-import org.n52.client.ctrl.DataManager;
 import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ctrl.TimeManager;
 import org.n52.client.ses.ui.LoginWindow;
 import org.n52.client.ses.ui.subscribe.EventSubscriptionWindow;
 import org.n52.client.sos.ctrl.SOSController;
-import org.n52.client.sos.ctrl.SosDataManager;
 import org.n52.client.sos.data.TimeseriesDataStore;
 import org.n52.client.sos.event.ChangeTimeSeriesStyleEvent;
 import org.n52.client.sos.event.DatesChangedEvent;
@@ -65,7 +63,7 @@ import org.n52.client.sos.event.data.handler.TimeSeriesHasDataEventHandler;
 import org.n52.client.sos.event.handler.LegendElementSelectedEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
 import org.n52.client.sos.event.handler.UpdateScaleEventHandler;
-import org.n52.client.sos.legend.Timeseries;
+import org.n52.client.sos.legend.TimeseriesLegendData;
 import org.n52.client.ui.Toaster;
 import org.n52.client.ui.View;
 import org.n52.client.ui.btn.ImageButton;
@@ -182,7 +180,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 
     private LoginWindow subsriptionWindow;
 
-	public LegendEntryTimeSeries(Timeseries ts, String width, String height) {
+	public LegendEntryTimeSeries(TimeseriesLegendData ts, String width, String height) {
 		this.width = width;
 		this.height = height;
 		this.timeseriesID = ts.getId();
@@ -358,8 +356,8 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		return this.refvalLayout;
 	}
 
-	protected Timeseries getTimeSeries() {
-		return ((Timeseries) getDataWrapper());
+	protected TimeseriesLegendData getTimeSeries() {
+		return ((TimeseriesLegendData) getDataWrapper());
 	}
 
 	private Canvas createLegendTools() {
@@ -450,7 +448,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		exportPDF.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
-				ArrayList<Timeseries> series = new ArrayList<Timeseries>();
+				ArrayList<TimeseriesLegendData> series = new ArrayList<TimeseriesLegendData>();
 				series.add(getTimeSeries());
 				EventBus.getMainEventBus().fireEvent(
 						new ExportEvent(series, ExportEvent.ExportType.PDF));
@@ -468,7 +466,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		exportXLS.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
-				List<Timeseries> series = new ArrayList<Timeseries>();
+				List<TimeseriesLegendData> series = new ArrayList<TimeseriesLegendData>();
 				series.add(getTimeSeries());
 				EventBus.getMainEventBus().fireEvent(
 						new ExportEvent(series, ExportEvent.ExportType.XLS));
@@ -486,7 +484,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		exportCSV.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
-				List<Timeseries> series = new ArrayList<Timeseries>();
+				List<TimeseriesLegendData> series = new ArrayList<TimeseriesLegendData>();
 				series.add(getTimeSeries());
 				EventBus.getMainEventBus().fireEvent(
 						new ExportEvent(series, ExportEvent.ExportType.CSV));
@@ -549,13 +547,13 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-			    Timeseries dataItem = TimeseriesDataStore.getTimeSeriesDataStore().getDataItem(timeseriesID);
+			    TimeseriesLegendData dataItem = TimeseriesDataStore.getTimeSeriesDataStore().getDataItem(timeseriesID);
 			    LegendEntryTimeSeries.this.showSubscriptionWindow(dataItem);
 			}
 		});
 	}
 
-	private void showSubscriptionWindow(Timeseries dataItem) {
+	private void showSubscriptionWindow(TimeseriesLegendData dataItem) {
 	    if (subsriptionWindow == null) {
             subsriptionWindow = new EventSubscriptionWindow(dataItem);
         }
@@ -581,7 +579,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
     
 	public void update() {
 
-		Timeseries timeseries = getTimeSeries();
+		TimeseriesLegendData timeseries = getTimeSeries();
 		TimeseriesProperties properties = timeseries.getProperties();
 		TimeseriesParametersLookup lookup = getParameterLookup(properties);
 		String phenomenon = lookup.getPhenomenon(properties.getPhenomenon()).getLabel();
@@ -706,7 +704,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.loadingSpinner.hide();
 	}
 
-	private String getStationName(Timeseries ts) {
+	private String getStationName(TimeseriesLegendData ts) {
 		// TODO perhaps use regular expressions
 		String station = ts.getStationName();
 		// remove phenomenon identifier
@@ -804,8 +802,8 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		String levelLine = i18n.levelLine();
 		String sumLine = i18n.sumLine();
 		LinkedHashMap<String, String> levelstyle = new LinkedHashMap<String, String>();
-		levelstyle.put(Timeseries.GRAPH_STYLE_GAUGELINE, levelLine);
-		levelstyle.put(Timeseries.GRAPH_STYLE_SUMLINE, sumLine);
+		levelstyle.put(TimeseriesLegendData.GRAPH_STYLE_GAUGELINE, levelLine);
+		levelstyle.put(TimeseriesLegendData.GRAPH_STYLE_SUMLINE, sumLine);
 		this.seriesType.setValueMap(levelstyle);
 		this.seriesType.setWidth(85);
 		this.seriesType.setTitle(i18n.seriesType());
@@ -817,13 +815,13 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 				String selectedSeriesType = LegendEntryTimeSeries.this.seriesType
 						.getValue().toString();
 
-				if (selectedSeriesType.equals(Timeseries.GRAPH_STYLE_GAUGELINE)) {
+				if (selectedSeriesType.equals(TimeseriesLegendData.GRAPH_STYLE_GAUGELINE)) {
 					String defaultHydrographStyle = propertiesManager
 							.getParameterAsString("defaultHydrographStyle");
 					LegendEntryTimeSeries.this.lineStyles
 							.setValue(defaultHydrographStyle);
 				} else if (selectedSeriesType
-						.equals(Timeseries.GRAPH_STYLE_SUMLINE)) {
+						.equals(TimeseriesLegendData.GRAPH_STYLE_SUMLINE)) {
 					String defaultSumlineStyle = propertiesManager
 							.getParameterAsString("defaultSumLineStyle");
 					LegendEntryTimeSeries.this.lineStyles
@@ -880,7 +878,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 			public void onClick(ClickEvent event) {
 				LegendEntryTimeSeries.this.styleChanger.hide();
 
-				Timeseries timeseries = TimeseriesDataStore.getTimeSeriesDataStore()
+				TimeseriesLegendData timeseries = TimeseriesDataStore.getTimeSeriesDataStore()
 						.getDataItem(LegendEntryTimeSeries.this.timeseriesID);
 				timeseries.setLineStyle(LegendEntryTimeSeries.this.lineStyles
 						.getValue().toString());

@@ -53,7 +53,6 @@ import org.n52.oxf.valueDomains.time.TimeFactory;
 import org.n52.server.da.AccessException;
 import org.n52.server.da.oxf.ObservationAccessor;
 import org.n52.server.da.oxf.TimePosition_OXFExtension;
-import org.n52.server.io.RequestConfig;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.server.mgmt.GeneralizationConfiguration;
 import org.n52.shared.responses.RepresentationResponse;

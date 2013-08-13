@@ -3,7 +3,7 @@ package org.n52.web.v1.ctrl;
 
 import static org.n52.web.v1.ctrl.RestfulUrls.DEFAULT_PATH;
 
-import org.n52.io.v1.data.out.Procedure;
+import org.n52.io.v1.data.ProcedureOutput;
 import org.n52.web.ResourceNotFoundException;
 import org.n52.web.v1.srv.ProceduresParameterService;
 import org.springframework.stereotype.Controller;
@@ -22,7 +22,7 @@ public class ProceduresParameterController extends ParameterController {
 		
 		// TODO check parameters and throw BAD_REQUEST if invalid
 
-		Procedure[] allProcedures = proceduresParameterService.getProcedures(offset, size);
+		ProcedureOutput[] allProcedures = proceduresParameterService.getProcedures(offset, size);
 		
 		// TODO add paging
 		
@@ -33,7 +33,7 @@ public class ProceduresParameterController extends ParameterController {
 		
 		// TODO check parameters and throw BAD_REQUEST if invalid
 		
-		Procedure procedure = proceduresParameterService.getProcedure(item);
+		ProcedureOutput procedure = proceduresParameterService.getProcedure(item);
 		
 		if (procedure == null) {
 			throw new ResourceNotFoundException("Found no procedure with given id.");

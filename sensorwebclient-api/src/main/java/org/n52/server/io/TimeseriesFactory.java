@@ -52,7 +52,7 @@ public class TimeseriesFactory {
 
         ITimePosition timeArray[] = seriesCollection.getSortedTimeArray();
         ObservedValueTuple prevObservation;
-        ObservedValueTuple nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeature(), null), timeArray[0]);
+        ObservedValueTuple nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeatureId(), null), timeArray[0]);
         ObservedValueTuple observation = nextObservation;
 
         int counter = 0;
@@ -66,7 +66,7 @@ public class TimeseriesFactory {
             observation = nextObservation;
 
             if (i + 1 < timeArray.length) {
-                nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeature(), null), timeArray[i + 1]);
+                nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeatureId(), null), timeArray[i + 1]);
             }
 
             // String obsVal = observation.getValue(0).toString();
@@ -132,7 +132,7 @@ public class TimeseriesFactory {
 
         ITimePosition timeArray[] = seriesCollection.getSortedTimeArray();
         ObservedValueTuple prevObservation;
-        ObservedValueTuple nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeature(), null), timeArray[0]);
+        ObservedValueTuple nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeatureId(), null), timeArray[0]);
         ObservedValueTuple observation = nextObservation;
 
         int counter = 0;
@@ -147,7 +147,7 @@ public class TimeseriesFactory {
                 observation = nextObservation;
 
                 if (i + 1 < timeArray.length) {
-                    nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeature(), null), timeArray[i + 1]);
+                    nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeatureId(), null), timeArray[i + 1]);
                 }
 
                 String obsVal = observation.getValue(0).toString();
@@ -195,7 +195,7 @@ public class TimeseriesFactory {
                 observation = nextObservation;
 
                 if (i + 1 < timeArray.length) {
-                    nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeature(), null), timeArray[i + 1]);
+                    nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeatureId(), null), timeArray[i + 1]);
                 }
 
                 String obsVal = observation.getValue(0).toString();
@@ -244,7 +244,7 @@ public class TimeseriesFactory {
                 observation = nextObservation;
 
                 if (i + 1 < timeArray.length) {
-                    nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeature(), null), timeArray[i + 1]);
+                    nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeatureId(), null), timeArray[i + 1]);
                 }
 
                 String obsVal = observation.getValue(0).toString();
@@ -292,7 +292,7 @@ public class TimeseriesFactory {
                 observation = nextObservation;
 
                 if (i + 1 < timeArray.length) {
-                    nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeature(), null), timeArray[i + 1]);
+                    nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeatureId(), null), timeArray[i + 1]);
                 }
 
                 String obsVal = observation.getValue(0).toString();

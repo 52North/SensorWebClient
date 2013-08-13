@@ -4,7 +4,7 @@ package org.n52.web.v1.ctrl;
 import static org.n52.web.v1.ctrl.RestfulUrls.COLLECTION_SERVICES;
 import static org.n52.web.v1.ctrl.RestfulUrls.DEFAULT_PATH;
 
-import org.n52.io.v1.data.out.Service;
+import org.n52.io.v1.data.ServiceOutput;
 import org.n52.web.ResourceNotFoundException;
 import org.n52.web.v1.srv.ServicesParameterService;
 import org.springframework.stereotype.Controller;
@@ -23,7 +23,7 @@ public class ServicesParameterController extends ParameterController {
 		
 		// TODO check parameters and throw BAD_REQUEST if invalid
 
-		Service[] allServices = servicesParameterService.getServices(offset, size);
+		ServiceOutput[] allServices = servicesParameterService.getServices(offset, size);
 		
 		// TODO add paging
 		
@@ -34,7 +34,7 @@ public class ServicesParameterController extends ParameterController {
 		
 		// TODO check parameters and throw BAD_REQUEST if invalid
 		
-		Service service = servicesParameterService.getService(item);
+		ServiceOutput service = servicesParameterService.getService(item);
 		
 		if (service == null) {
 			throw new ResourceNotFoundException("Found no service with given id.");

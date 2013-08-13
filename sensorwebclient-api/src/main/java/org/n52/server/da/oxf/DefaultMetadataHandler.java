@@ -132,7 +132,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
         for (Procedure proc : procedures) {
             OperationAccessor opAccessorCallable = createDescribeSensorAccessor(
                                                                                 sosUrl, sosVersion, smlVersion, proc);
-            futureTasks.put(proc.getId(), new FutureTask<OperationResult>(opAccessorCallable));
+            futureTasks.put(proc.getProcedureId(), new FutureTask<OperationResult>(opAccessorCallable));
         }
 
         int i = 1;
@@ -170,14 +170,14 @@ public class DefaultMetadataHandler extends MetadataHandler {
                         LOGGER.warn("No FOI references found for procedure '{}'.", procedureId);
                         LOGGER.warn("==> Reference all ({}) available.", features.size());
                         for (Feature foi : features) {
-                            fois.add(foi.getId());
+                            fois.add(foi.getFeatureId());
                         }
                     }
 
-                    for (String foi : fois) {
-                        Station station = metadata.getStation(foi);
+                    for (String featureId : fois) {
+                        Station station = metadata.getStation(featureId);
                         if (station == null) {
-                            station = new Station(foi);
+                            station = new Station(featureId);
                             station.setLocation(eastingNorthing);
                             metadata.addStation(station);
                         }
@@ -189,7 +189,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
 
                             station.setLocation(eastingNorthing);
                             for (SosTimeseries timseries : paramConstellations) {
-                                timseries.setFeature(foi);
+                                timseries.setFeature(new Feature(featureId));
                                 station.addTimeseries(timseries);
                             }
                         }
@@ -266,7 +266,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
         ParameterContainer paramCon = new ParameterContainer();
         paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_SERVICE_PARAMETER, "SOS");
         paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_VERSION_PARAMETER, sosVersion);
-        paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_PARAMETER, proc.getId());
+        paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_PARAMETER, proc.getProcedureId());
         if (SosUtil.isVersion100(sosVersion)) {
             paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_OUTPUT_FORMAT, smlVersion);
         }

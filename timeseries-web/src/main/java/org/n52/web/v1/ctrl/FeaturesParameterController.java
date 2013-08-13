@@ -4,7 +4,7 @@ package org.n52.web.v1.ctrl;
 import static org.n52.web.v1.ctrl.RestfulUrls.COLLECTION_FEATURES;
 import static org.n52.web.v1.ctrl.RestfulUrls.DEFAULT_PATH;
 
-import org.n52.io.v1.data.out.Feature;
+import org.n52.io.v1.data.FeatureOutput;
 import org.n52.web.ResourceNotFoundException;
 import org.n52.web.v1.srv.FeaturesParameterService;
 import org.springframework.stereotype.Controller;
@@ -23,7 +23,7 @@ public class FeaturesParameterController extends ParameterController {
 		
 		// TODO check parameters and throw BAD_REQUEST if invalid
 
-		Feature[] allFeatures = featuresParameterService.getFeatures(offset, size);
+		FeatureOutput[] allFeatures = featuresParameterService.getFeatures(offset, size);
 		
 		// TODO add paging
 		
@@ -34,7 +34,7 @@ public class FeaturesParameterController extends ParameterController {
 		
 		// TODO check parameters and throw BAD_REQUEST if invalid
 		
-		Feature feature = featuresParameterService.getFeature(item);
+		FeatureOutput feature = featuresParameterService.getFeature(item);
 		
 		if (feature == null) {
 			throw new ResourceNotFoundException("Found no feature with given id.");

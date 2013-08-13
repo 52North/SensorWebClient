@@ -1,17 +1,21 @@
 package org.n52.web.v1.ctrl;
 
+import static org.n52.io.MimeType.IMAGE_PNG;
+import static org.n52.io.v1.data.DesignedParameterSet.createContextForSingleTimeseries;
+import static org.n52.io.v1.data.UndesignedParameterSet.createForSingleTimeseries;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.n52.io.DataRenderer;
 import org.n52.io.IOFactory;
-import org.n52.io.v1.data.in.StyleOptions;
-import org.n52.io.v1.data.in.UndesignedParameterSet;
-import org.n52.io.v1.data.out.TimeseriesDataCollection;
-import org.n52.io.v1.data.out.TimeseriesMetadata;
+import org.n52.io.render.ChartRenderer;
+import org.n52.io.render.RenderingContext;
+import org.n52.io.v1.data.StyleProperties;
+import org.n52.io.v1.data.TimeseriesDataCollection;
+import org.n52.io.v1.data.TimeseriesMetadata;
+import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.web.ResourceNotFoundException;
 import org.n52.web.v1.srv.ServicesParameterService;
 import org.n52.web.v1.srv.TimeseriesDataService;
@@ -35,8 +39,6 @@ public class TimeseriesDataController {
 	
 	private TimeseriesDataService timeseriesDataService;
 	
-	private IOFactory ioFactory;
-	
 	@RequestMapping(value = "/v1/timeseries/{timeseriesId}/data", produces = "application/json", method = GET)
 	public ModelAndView getTimeseriesData(@PathVariable String timeseriesId,  @RequestParam(required = false) String timespan) {
 
@@ -46,7 +48,7 @@ public class TimeseriesDataController {
 			throw new ResourceNotFoundException("The timeseries with id '" + timeseriesId + "' was not found.");
 		}
 		
-		UndesignedParameterSet parameters = createUndesignedParamterSet(timeseriesId, timespan);
+		UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, timespan);
 		TimeseriesDataCollection timeseriesData = timeseriesDataService.getTimeseries(parameters);
 
 		// TODO add paging
@@ -54,28 +56,23 @@ public class TimeseriesDataController {
 		return new ModelAndView().addObject(timeseriesData);
 	}
 
-	private UndesignedParameterSet createUndesignedParamterSet(String timeseriesId, String timespan) {
-		UndesignedParameterSet parameters = new UndesignedParameterSet();
-		parameters.setTimeseries(new String[] { timeseriesId });
-		parameters.setTimespan(timespan);
-		return parameters;
-	}
 	
 	@RequestMapping(value = "/api/v1/timeseries/{timeseriesId}/data", produces = "image/png", method = GET)
 	public void getOfferingsCollection(HttpServletResponse response, @PathVariable String timeseriesId,  @RequestParam(required = false) String timespan,
-			@RequestParam(required = false) StyleOptions style) {
+			@RequestParam(required = false) StyleProperties style) {
 		
 		if (!servicesParameterService.isKnownTimeseries(timeseriesId)) {
 			throw new ResourceNotFoundException("The timeseries with id '" + timeseriesId + "' was not found.");
 		}
 		
-		response.setContentType("image/png");
-		UndesignedParameterSet parameters = createUndesignedParamterSet(timeseriesId, timespan);
-		TimeseriesDataCollection timeseriesData = timeseriesDataService.getTimeseries(parameters);
-		DataRenderer renderer = ioFactory.createDataRenderer(timeseriesData, "image/png");
+		response.setContentType(IMAGE_PNG.getMimeType());
+        TimeseriesMetadata metadata = timeseriesMetadataService.getMetadata(timeseriesId);
+        RenderingContext context = createContextForSingleTimeseries(metadata, style);
+        ChartRenderer renderer = IOFactory.create().createChartRenderer(context);
+        UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, timespan);
+        TimeseriesDataCollection timeseriesData = timeseriesDataService.getTimeseries(parameters);
 		try {
-			TimeseriesMetadata metadata = timeseriesMetadataService.getMetadata(timeseriesId);
-			renderer.renderToOutputStream(style, metadata, response.getOutputStream());
+            renderer.writeToOutputStream(timeseriesData, response.getOutputStream());
 		} catch (IOException e) {
 			LOGGER.error("Error writing to output stream.");
 		} finally {
@@ -88,14 +85,6 @@ public class TimeseriesDataController {
 		}
 	}
 	
-	public IOFactory getIoFactory() {
-		return ioFactory;
-	}
-
-	public void setIoFactory(IOFactory ioFactory) {
-		this.ioFactory = ioFactory;
-	}
-
 	public ServicesParameterService getServicesParameterService() {
 		return servicesParameterService;
 	}

@@ -1,11 +1,11 @@
 package org.n52.web.v1.srv;
 
-import org.n52.io.v1.data.out.Phenomenon;
+import org.n52.io.v1.data.PhenomenonOutput;
 
 public interface PhenomenaParameterService {
 
-	Phenomenon[] getPhenomena(int offset, int size);
+	PhenomenonOutput[] getPhenomena(int offset, int size);
 
-	Phenomenon getPhenomenon(String item);
+	PhenomenonOutput getPhenomenon(String item);
 
 }

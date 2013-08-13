@@ -65,7 +65,6 @@ import org.n52.oxf.feature.OXFFeatureCollection;
 import org.n52.oxf.feature.sos.ObservationSeriesCollection;
 import org.n52.oxf.util.JavaHelper;
 import org.n52.server.io.MetadataInURLGenerator;
-import org.n52.server.io.TimeseriesFactory;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.shared.serializable.pojos.Axis;
 import org.n52.shared.serializable.pojos.DesignOptions;
@@ -134,31 +133,14 @@ public class DiagramRenderer {
         for (TimeseriesProperties tsProperties : options.getProperties()) {
             Color c = JavaHelper.transformToColor(tsProperties.getHexColor());
             String phenomenonId = tsProperties.getPhenomenon();
-            String procedureId = tsProperties.getProcedure();
-            String featureId = tsProperties.getFeature();
             boolean drawGrid = observedPropertyWithGrid.equals(phenomenonId);
 
-            TimeseriesParametersLookup lookup = getParameterLookup(tsProperties);
-            Feature feature = lookup.getFeature(featureId);
-            Procedure procedure = lookup.getProcedure(procedureId);
-            Phenomenon phenomenon = lookup.getPhenomenon(phenomenonId);
-            
-            designDescriptions.add(phenomenon, procedure, feature, tsProperties, new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) tsProperties
+            designDescriptions.add(tsProperties, new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) tsProperties
                     .getOpacity() * 255 / 100), tsProperties.getLineStyle(), tsProperties.getLineWidth(), drawGrid);
         }
         return designDescriptions;
     }
 
-
-    private TimeseriesParametersLookup getParameterLookup(TimeseriesProperties properties) {
-        String serviceUrl = properties.getServiceUrl();
-        try {
-            SOSMetadata metadata = getServiceMetadata(serviceUrl);
-            return metadata.getTimeseriesParametersLookup();
-        } catch (Exception e) {
-            throw new IllegalStateException("No parameter lookup available for service '" + serviceUrl + "'.", e);
-        }
-    }
 
     /**
      * <pre>
@@ -211,6 +193,11 @@ public class DiagramRenderer {
         dateAxis.setRange(begin.getTime(), end.getTime());
         dateAxis.setDateFormatOverride(new SimpleDateFormat());
 
+        
+        
+        
+        
+        
         // add all axes
         String[] phenomenaIds = options.getAllPhenomenIds();
         // all the axis indices to map them later
@@ -335,6 +322,15 @@ public class DiagramRenderer {
                 axe.setRange(boundsEntry.getValue()[0], boundsEntry.getValue()[1]);
         	}
 		}
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         /**** SECOND RUN ***/
 
@@ -524,12 +520,7 @@ public class DiagramRenderer {
 
             
             
-            
-            
-            //TimeSeries timeSeries = new TimeSeries(foiID + "___" + obsPropID + "___" + procID, Second.class);
             TimeSeries timeSeries = new TimeSeries(prop.getTimeseriesId(), Second.class);
-            
-            
             
             
             

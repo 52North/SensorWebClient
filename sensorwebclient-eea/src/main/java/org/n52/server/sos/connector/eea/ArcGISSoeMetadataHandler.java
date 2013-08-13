@@ -95,7 +95,7 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
         Map<String, String> offeringBBoxMap = getOfferingBBoxMap();
         Map<SosTimeseries, FutureTask<OperationResult>> futureTasks = new ConcurrentHashMap<SosTimeseries, FutureTask<OperationResult>>();
         for (SosTimeseries timeseries : observingTimeseries) {
-        	String bboxString = offeringBBoxMap.get(timeseries.getOffering());
+        	String bboxString = offeringBBoxMap.get(timeseries.getOfferingId());
         	futureTasks.put(timeseries,	new FutureTask<OperationResult>(createGetFoiAccess(sosUrl, sosVersion, bboxString, timeseries)));
 		}
 		// execute the GetFeatureOfInterest requests
@@ -141,7 +141,7 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
                         lookup.addFeature(feature);
                         
                         SosTimeseries tmp = timeseries.clone();
-                        tmp.setFeature(id);
+                        tmp.setFeature(new Feature(id));
                         station.addTimeseries(tmp);
 					}
 				}
@@ -223,8 +223,8 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 		ParameterContainer container = new ParameterContainer();
 		container.addParameterShell(ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER, "SOS");
         container.addParameterShell(ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER, sosVersion);
-        container.addParameterShell("phenomenon", timeseries.getPhenomenon());
-        container.addParameterShell("procedure", timeseries.getProcedure());
+        container.addParameterShell("phenomenon", timeseries.getPhenomenonId());
+        container.addParameterShell("procedure", timeseries.getProcedureId());
         container.addParameterShell("bbox", bboxString);
 		return new OperationAccessor(adapter, operation, container);
 	}

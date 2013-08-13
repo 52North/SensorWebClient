@@ -31,9 +31,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
-import org.n52.shared.serializable.pojos.sos.Feature;
-import org.n52.shared.serializable.pojos.sos.Phenomenon;
-import org.n52.shared.serializable.pojos.sos.Procedure;
 
 public class DesignDescriptionList implements Serializable {
 
@@ -60,16 +57,8 @@ public class DesignDescriptionList implements Serializable {
         return designDescriptions.get(timeseriesId);
     }
 
-    public void add(Phenomenon phenomenon, Procedure procedure, Feature feature, TimeseriesProperties tsProperties, Color color, String lineStyle, int lineWidth, boolean grid) {
-        RenderingDesign designDescription = new RenderingDesign(phenomenon,
-                                                                    procedure,
-                                                                    feature,
-                                                                    tsProperties.getLabel(),
-                                                                    tsProperties.getUnitOfMeasure(),
-                                                                    color,
-                                                                    lineStyle,
-                                                                    lineWidth,
-                                                                    grid);
+    public void add(TimeseriesProperties tsProperties, Color color, String lineStyle, int lineWidth, boolean grid) {
+        RenderingDesign designDescription = new RenderingDesign(tsProperties, color, lineStyle, lineWidth);
         designDescriptions.put(tsProperties.getTimeseries().getTimeseriesId(), designDescription);
     }
     

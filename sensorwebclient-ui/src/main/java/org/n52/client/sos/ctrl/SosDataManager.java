@@ -85,7 +85,7 @@ public class SosDataManager implements DataManager<SOSMetadata> {
         }
 
         public void onStore(StoreSOSMetadataEvent evt) {
-            storeData(evt.getMetadata().getId(), evt.getMetadata());
+            storeData(evt.getMetadata().getServiceUrl(), evt.getMetadata());
         }
 
 		public void onStore(StorePhenomenaEvent evt) {
@@ -101,9 +101,9 @@ public class SosDataManager implements DataManager<SOSMetadata> {
 			TimeseriesParametersLookup lookup = meta.getTimeseriesParametersLookup();
 			for (Phenomenon phenomenon : evt.getPhenomenons()) {
 				lookup.addPhenomenon(phenomenon);
-				phenomenonIds.add(phenomenon.getId());
+				phenomenonIds.add(phenomenon.getPhenomenonId());
 			}
-			EventBus.getMainEventBus().fireEvent(new NewPhenomenonsEvent(meta.getId(), phenomenonIds));
+			EventBus.getMainEventBus().fireEvent(new NewPhenomenonsEvent(meta.getServiceUrl(), phenomenonIds));
 		}
 
 		public void onStore(StoreStationsEvent evt) {
