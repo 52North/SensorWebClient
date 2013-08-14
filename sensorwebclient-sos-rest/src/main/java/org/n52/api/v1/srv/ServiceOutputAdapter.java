@@ -27,7 +27,7 @@ public class ServiceOutputAdapter implements ServiceParameterService {
 	@Override
 	public ServiceOutput[] getExpandedParameters(int offset, int size) {
 		List<ServiceOutput> allServices = new ArrayList<ServiceOutput>();
-		for (SOSMetadata metadata : ConfigurationContext.getSOSMetadatas()) {
+		for (SOSMetadata metadata : getSOSMetadatas()) {
 		    ServiceConverter converter = new ServiceConverter(metadata);
 			allServices.add(converter.convertExpanded(metadata));
 		}
@@ -37,7 +37,7 @@ public class ServiceOutputAdapter implements ServiceParameterService {
 	@Override
     public ServiceOutput[] getCondensedParameters(int offset, int size) {
         List<ServiceOutput> allServices = new ArrayList<ServiceOutput>();
-        for (SOSMetadata metadata : ConfigurationContext.getSOSMetadatas()) {
+        for (SOSMetadata metadata : getSOSMetadatas()) {
             ServiceConverter converter = new ServiceConverter(metadata);
             allServices.add(converter.convertCondensed(metadata));
         }

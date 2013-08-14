@@ -4,6 +4,7 @@ package org.n52.web.v1.ctrl;
 import static org.n52.web.v1.ctrl.RestfulUrls.COLLECTION_FEATURES;
 import static org.n52.web.v1.ctrl.RestfulUrls.DEFAULT_PATH;
 
+import org.apache.regexp.REUtil;
 import org.n52.io.v1.data.FeatureOutput;
 import org.n52.web.ResourceNotFoundException;
 import org.n52.web.v1.srv.ParameterService;

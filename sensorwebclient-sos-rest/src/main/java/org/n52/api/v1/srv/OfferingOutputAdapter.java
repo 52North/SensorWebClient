@@ -1,6 +1,6 @@
 package org.n52.api.v1.srv;
 
-import static org.n52.server.mgmt.ConfigurationContext.getServiceMetadatas;
+import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ public class OfferingOutputAdapter implements ParameterService<OfferingOutput> {
 	@Override
 	public OfferingOutput[] getExpandedParameters(int offset, int size) {
 		List<OfferingOutput> allOfferings = new ArrayList<OfferingOutput>();
-		for (SOSMetadata metadata : getServiceMetadatas().values()) {
+		for (SOSMetadata metadata : getSOSMetadatas()) {
 		    OfferingConverter converter = new OfferingConverter(metadata);
 			TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
 			allOfferings.addAll(converter.convertExpanded(lookup.getOfferingsAsArray()));
@@ -27,7 +27,7 @@ public class OfferingOutputAdapter implements ParameterService<OfferingOutput> {
 	@Override
     public OfferingOutput[] getCondensedParameters(int offset, int size) {
         List<OfferingOutput> allOfferings = new ArrayList<OfferingOutput>();
-        for (SOSMetadata metadata : getServiceMetadatas().values()) {
+        for (SOSMetadata metadata : getSOSMetadatas()) {
             OfferingConverter converter = new OfferingConverter(metadata);
             TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
             allOfferings.addAll(converter.convertCondensed(lookup.getOfferingsAsArray()));
@@ -37,7 +37,7 @@ public class OfferingOutputAdapter implements ParameterService<OfferingOutput> {
 
 	@Override
 	public OfferingOutput getParameter(String offeringId) {
-		for (SOSMetadata metadata : getServiceMetadatas().values()) {
+		for (SOSMetadata metadata : getSOSMetadatas()) {
 			TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
 			if(lookup.containsOffering(offeringId)) {
 			    OfferingConverter converter = new OfferingConverter(metadata);
