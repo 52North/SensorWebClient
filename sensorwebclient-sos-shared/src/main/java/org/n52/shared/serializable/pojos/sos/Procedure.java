@@ -47,10 +47,6 @@ public class Procedure extends TimeseriesParameter implements Serializable {
     public String getProcedureId() {
         return getId();
     }
-    
-    public String getProcedureId() {
-        return getId();
-    }
 
     public Map<String, ReferenceValue> getReferenceValues() {
         return refvalues;
