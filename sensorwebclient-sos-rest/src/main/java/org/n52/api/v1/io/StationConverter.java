@@ -54,5 +54,4 @@ public class StationConverter extends OutputConverter<Station, StationOutput> {
         Double y = location.getNorthing();
         return createWithCoordinates(new Double[] {x, y});
     }
-
 }

@@ -9,10 +9,8 @@ import java.util.Date;
 import javax.servlet.ServletOutputStream;
 
 import org.joda.time.Interval;
-import org.n52.io.v1.data.DesignedParameterSet;
 import org.n52.io.v1.data.StyleProperties;
 import org.n52.io.v1.data.TimeseriesDataCollection;
-import org.n52.io.v1.data.TimeseriesMetadataOutput;
 
 public abstract class ChartRenderer {
 

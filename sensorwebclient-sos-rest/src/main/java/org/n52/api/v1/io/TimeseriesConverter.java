@@ -2,7 +2,6 @@ package org.n52.api.v1.io;
 
 import java.util.Map;
 
-import org.n52.api.v0.out.TimeseriesData.TimeseriesValue;
 import org.n52.io.v1.data.FeatureOutput;
 import org.n52.io.v1.data.OfferingOutput;
 import org.n52.io.v1.data.PhenomenonOutput;

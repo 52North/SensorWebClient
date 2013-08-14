@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.n52.api.v1.io.ServiceConverter;
 import org.n52.io.v1.data.ServiceOutput;
-import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.web.v1.srv.ServiceParameterService;
 

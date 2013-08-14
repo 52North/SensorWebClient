@@ -49,5 +49,4 @@ public class StationOutputAdapter implements ParameterService<StationOutput> {
     private Station[] getStationsAsArray(SOSMetadata metadata) {
         return metadata.getStations().toArray(new Station[0]);
     }
-
 }
