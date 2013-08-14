@@ -50,7 +50,7 @@ import org.n52.client.sos.event.data.handler.OverviewIntervalChangedEventHandler
 import org.n52.client.sos.event.data.handler.StoreTimeSeriesFirstValueEventHandler;
 import org.n52.client.sos.event.data.handler.StoreTimeSeriesLastValueEventHandler;
 import org.n52.client.sos.event.handler.DatesChangedEventHandler;
-import org.n52.client.sos.legend.Timeseries;
+import org.n52.client.sos.legend.TimeseriesLegendData;
 import org.n52.client.sos.ui.DiagramTab;
 import org.n52.client.ui.InteractionWindow;
 import org.n52.client.ui.Toaster;
@@ -931,7 +931,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
 
             public void onClick(ClickEvent event) {
                 if (!TimeseriesDataStore.getTimeSeriesDataStore().getDataItems().isEmpty()) {
-                    List<Timeseries> series = new ArrayList<Timeseries>();
+                    List<TimeseriesLegendData> series = new ArrayList<TimeseriesLegendData>();
                     series.addAll(TimeseriesDataStore.getTimeSeriesDataStore().getDataItems().values());
                     EventBus.getMainEventBus().fireEvent(new ExportEvent(series, ExportEvent.ExportType.PD_ZIP));
                 }
@@ -943,7 +943,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
 
             public void onClick(ClickEvent event) {
                 if (!TimeseriesDataStore.getTimeSeriesDataStore().getDataItems().isEmpty()) {
-                    List<Timeseries> series = new ArrayList<Timeseries>();
+                    List<TimeseriesLegendData> series = new ArrayList<TimeseriesLegendData>();
                     series.addAll(TimeseriesDataStore.getTimeSeriesDataStore().getDataItems().values());
                     EventBus.getMainEventBus().fireEvent(new ExportEvent(series, ExportEvent.ExportType.CSV_ZIP));
                 }
@@ -955,7 +955,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
 
             public void onClick(ClickEvent event) {
                 if (!TimeseriesDataStore.getTimeSeriesDataStore().getDataItems().isEmpty()) {
-                    List<Timeseries> series = new ArrayList<Timeseries>();
+                    List<TimeseriesLegendData> series = new ArrayList<TimeseriesLegendData>();
                     series.addAll(TimeseriesDataStore.getTimeSeriesDataStore().getDataItems().values());
                     EventBus.getMainEventBus().fireEvent(new ExportEvent(series, ExportEvent.ExportType.XLS_ZIP));
                 }
@@ -967,7 +967,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
 
             public void onClick(ClickEvent event) {
                 if (!TimeseriesDataStore.getTimeSeriesDataStore().getDataItems().isEmpty()) {
-                    List<Timeseries> series = new ArrayList<Timeseries>();
+                    List<TimeseriesLegendData> series = new ArrayList<TimeseriesLegendData>();
                     series.addAll(TimeseriesDataStore.getTimeSeriesDataStore().getDataItems().values());
                     EventBus.getMainEventBus().fireEvent(new ExportEvent(series, ExportEvent.ExportType.PDF_ALL_IN_ONE));
                 }

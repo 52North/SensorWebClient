@@ -54,7 +54,12 @@ public class SosMetadataUpdate {
 
     private static void performServiceUpdateFor(Iterable<String> sosUrls) throws Exception {
         for (String url : sosUrls) {
-            updateService(url);
+            try {
+                updateService(url);
+            } catch (Exception e) {
+                LOGGER.error("Could not cache metadata for service " + url);
+                continue; // ignore service and try next one.
+            }
         }
     }
 

@@ -27,7 +27,7 @@ package org.n52.server.da;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER;
 import static org.n52.oxf.sos.adapter.SOSAdapter.GET_FEATURE_OF_INTEREST;
-import static org.n52.server.sos.parser.ConnectorUtils.setVersionNumbersToMetadata;
+import static org.n52.server.parser.ConnectorUtils.setVersionNumbersToMetadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,6 +41,7 @@ import net.opengis.sampling.x20.SFSamplingFeatureType;
 import net.opengis.sos.x20.GetFeatureOfInterestResponseDocument;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.io.crs.CRSUtils;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
@@ -51,14 +52,14 @@ import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.adapter.SOSAdapter;
 import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.server.mgmt.ConfigurationContext;
-import org.n52.server.sos.parser.ConnectorUtils;
+import org.n52.server.parser.ConnectorUtils;
 import org.n52.server.util.SosAdapterFactory;
-import org.n52.server.util.crs.AReferencingHelper;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosService;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
@@ -175,10 +176,10 @@ public abstract class MetadataHandler {
 						 * operations.
 						 */
 						SosTimeseries timeseries = new SosTimeseries();
-						timeseries.setPhenomenon(phenomenon);
-						timeseries.setProcedure(procedure);
-						timeseries.setOffering(offeringId);
-						timeseries.setServiceUrl(sosMetadata.getServiceUrl());
+						timeseries.setPhenomenon(new Phenomenon(phenomenon));
+						timeseries.setProcedure(new Procedure(procedure));
+						timeseries.setOffering(new Offering(offeringId));
+						timeseries.setSosService(new SosService(sosMetadata.getServiceUrl(), sosMetadata.getVersion()));
 						allObservedTimeseries.add(timeseries);
 					}
 					// add procedures
@@ -196,7 +197,7 @@ public abstract class MetadataHandler {
 	
 	protected void normalizeDefaultCategories(Collection<SosTimeseries> observingTimeseries) {
 		for (SosTimeseries timeseries : observingTimeseries) {
-			String phenomenon = timeseries.getPhenomenon();
+			String phenomenon = timeseries.getPhenomenonId();
 			String category = phenomenon.substring(phenomenon.lastIndexOf(":") + 1);
 			timeseries.setCategory(category);
 		}
@@ -233,18 +234,18 @@ public abstract class MetadataHandler {
 	}
 
 	/**
-	 * Creates an {@link AReferencingHelper} according to metadata settings
+	 * Creates an {@link CRSUtils} according to metadata settings
 	 * (e.g. if XY axis order shall be enforced during coordinate
 	 * transformation).
 	 * 
 	 * @param metadata
 	 *            the SOS metadata containing SOS instance configuration.
 	 */
-	protected AReferencingHelper createReferencingHelper() {
+	protected CRSUtils createReferencingHelper() {
 		if (sosMetadata.isForceXYAxisOrder()) {
-			return AReferencingHelper.createEpsgForcedXYAxisOrder();
+			return CRSUtils.createEpsgForcedXYAxisOrder();
 		} else {
-			return AReferencingHelper.createEpsgStrictAxisOrder();
+			return CRSUtils.createEpsgStrictAxisOrder();
 		}
 	}
 	

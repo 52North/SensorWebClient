@@ -25,7 +25,7 @@
 package org.n52.client.ui.map;
 
 import org.gwtopenmaps.openlayers.client.LonLat;
-import org.n52.shared.serializable.pojos.EastingNorthing;
+import org.n52.io.crs.EastingNorthing;
 
 public class Coordinate extends LonLat {
 
@@ -39,8 +39,8 @@ public class Coordinate extends LonLat {
      */
     public Coordinate(EastingNorthing location, String mapProjection) {
         super(location.getEasting(), location.getNorthing());
-        if (location.getSrs() != null && !mapProjection.equals(location.getSrs())) {
-            transform(location.getSrs(), mapProjection);
+        if (location.getCrsDefinition() != null && !mapProjection.equals(location.getCrsDefinition())) {
+            transform(location.getCrsDefinition(), mapProjection);
         }
     }
 }

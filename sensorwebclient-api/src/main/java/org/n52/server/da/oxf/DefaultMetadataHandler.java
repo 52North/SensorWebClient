@@ -42,6 +42,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.n52.io.crs.EastingNorthing;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
@@ -53,9 +54,8 @@ import org.n52.oxf.xmlbeans.parser.XMLHandlingException;
 import org.n52.server.da.AccessorThreadPool;
 import org.n52.server.da.MetadataHandler;
 import org.n52.server.mgmt.ConfigurationContext;
-import org.n52.server.sos.parser.DescribeSensorParser;
-import org.n52.server.sos.parser.utils.ParsedPoint;
-import org.n52.shared.serializable.pojos.EastingNorthing;
+import org.n52.server.parser.DescribeSensorParser;
+import org.n52.server.parser.utils.ParsedPoint;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -132,7 +132,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
         for (Procedure proc : procedures) {
             OperationAccessor opAccessorCallable = createDescribeSensorAccessor(
                                                                                 sosUrl, sosVersion, smlVersion, proc);
-            futureTasks.put(proc.getId(), new FutureTask<OperationResult>(opAccessorCallable));
+            futureTasks.put(proc.getProcedureId(), new FutureTask<OperationResult>(opAccessorCallable));
         }
 
         int i = 1;
@@ -170,14 +170,14 @@ public class DefaultMetadataHandler extends MetadataHandler {
                         LOGGER.warn("No FOI references found for procedure '{}'.", procedureId);
                         LOGGER.warn("==> Reference all ({}) available.", features.size());
                         for (Feature foi : features) {
-                            fois.add(foi.getId());
+                            fois.add(foi.getFeatureId());
                         }
                     }
 
-                    for (String foi : fois) {
-                        Station station = metadata.getStation(foi);
+                    for (String featureId : fois) {
+                        Station station = metadata.getStation(featureId);
                         if (station == null) {
-                            station = new Station(foi);
+                            station = new Station(featureId);
                             station.setLocation(eastingNorthing);
                             metadata.addStation(station);
                         }
@@ -189,7 +189,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
 
                             station.setLocation(eastingNorthing);
                             for (SosTimeseries timseries : paramConstellations) {
-                                timseries.setFeature(foi);
+                                timseries.setFeature(new Feature(featureId));
                                 station.addTimeseries(timseries);
                             }
                         }
@@ -266,7 +266,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
         ParameterContainer paramCon = new ParameterContainer();
         paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_SERVICE_PARAMETER, "SOS");
         paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_VERSION_PARAMETER, sosVersion);
-        paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_PARAMETER, proc.getId());
+        paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_PARAMETER, proc.getProcedureId());
         if (SosUtil.isVersion100(sosVersion)) {
             paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_OUTPUT_FORMAT, smlVersion);
         }

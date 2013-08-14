@@ -45,9 +45,9 @@ import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ui.map.InfoMarker;
 import org.n52.client.ui.map.MapController;
 import org.n52.client.ui.map.OpenLayersMapWrapper;
+import org.n52.io.crs.BoundingBox;
+import org.n52.io.crs.EastingNorthing;
 import org.n52.shared.Constants;
-import org.n52.shared.serializable.pojos.BoundingBox;
-import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
 

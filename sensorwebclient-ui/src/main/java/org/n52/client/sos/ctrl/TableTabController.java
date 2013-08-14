@@ -49,7 +49,7 @@ import org.n52.client.sos.event.handler.LegendElementSelectedEventHandler;
 import org.n52.client.sos.event.handler.ResizeEventHandler;
 import org.n52.client.sos.event.handler.TabSelectedEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
-import org.n52.client.sos.legend.Timeseries;
+import org.n52.client.sos.legend.TimeseriesLegendData;
 import org.n52.client.sos.ui.TableTab;
 import org.n52.client.ui.View;
 import org.n52.client.ui.legend.Legend;
@@ -98,7 +98,7 @@ public class TableTabController extends Controller<TableTab> {
         private void contributeToLegend() {
             if (isSelfSelectedTab()) {
                 ArrayList<LegendElement> legendElems = new ArrayList<LegendElement>();
-                Timeseries[] ts = TimeseriesDataStore.getTimeSeriesDataStore().getTimeSeriesSorted();
+                TimeseriesLegendData[] ts = TimeseriesDataStore.getTimeSeriesDataStore().getTimeSeriesSorted();
                 for (int i = 0; i < ts.length; i++) {
                     legendElems.add(ts[i].getLegendElement());
                 }
@@ -183,8 +183,8 @@ public class TableTabController extends Controller<TableTab> {
             if (isSelfSelectedTab()) {
                 HashMap<Long, String> result = new HashMap<Long, String>();
 
-                HashMap<String, Timeseries> data = TimeseriesDataStore.getTimeSeriesDataStore().getDataItems();
-                for (Timeseries dw : data.values()) {
+                HashMap<String, TimeseriesLegendData> data = TimeseriesDataStore.getTimeSeriesDataStore().getDataItems();
+                for (TimeseriesLegendData dw : data.values()) {
 
                     if (dw.equals(TableTabController.this.getSelectedLegendElement().getDataWrapper())) {
                         result = dw.getData(TimeManager.getInst().getBegin(), TimeManager.getInst().getEnd());
@@ -212,8 +212,8 @@ public class TableTabController extends Controller<TableTab> {
         public void onDeleteTimeSeries(DeleteTimeSeriesEvent evt) {
 
             HashMap<Long, String> result = new HashMap<Long, String>();
-            HashMap<String, Timeseries> data = TimeseriesDataStore.getTimeSeriesDataStore().getDataItems();
-            for (Timeseries dw : data.values()) {
+            HashMap<String, TimeseriesLegendData> data = TimeseriesDataStore.getTimeSeriesDataStore().getDataItems();
+            for (TimeseriesLegendData dw : data.values()) {
             	//
             	try {
                     if (dw.equals(TableTabController.this.getSelectedLegendElement().getDataWrapper())) {

@@ -25,11 +25,12 @@ package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.n52.shared.serializable.pojos.ReferenceValue;
 
-public class Procedure extends ObservationParameter implements Serializable {
+public class Procedure extends TimeseriesParameter implements Serializable {
 
     private static final long serialVersionUID = 6941911617808330972L;
 
@@ -42,7 +43,19 @@ public class Procedure extends ObservationParameter implements Serializable {
     public Procedure(String parameterId) {
         super(parameterId);
     }
+    
+    public String getProcedureId() {
+        return getId();
+    }
+    
+    public String getProcedureId() {
+        return getId();
+    }
 
+    public Map<String, ReferenceValue> getReferenceValues() {
+        return refvalues;
+    }
+    
     public void addRefValue(ReferenceValue v) {
         this.refvalues.put(v.getID(), v);
     }
@@ -62,8 +75,8 @@ public class Procedure extends ObservationParameter implements Serializable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(getClass().getName());
-        sb.append(" [").append("procedureId: '").append(parameterId);
-        sb.append("', ").append("label: '").append(label);
+        sb.append(" [").append("procedureId: '").append(getProcedureId());
+        sb.append("', ").append("label: '").append(getLabel());
         return sb.append("']").toString();
     }
 
@@ -71,8 +84,8 @@ public class Procedure extends ObservationParameter implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( (label == null) ? 0 : label.hashCode());
-        result = prime * result + ( (parameterId == null) ? 0 : parameterId.hashCode());
+        result = prime * result + ( (getLabel() == null) ? 0 : getLabel().hashCode());
+        result = prime * result + ( (getProcedureId() == null) ? 0 : getProcedureId().hashCode());
         return result;
     }
 
@@ -85,11 +98,11 @@ public class Procedure extends ObservationParameter implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         Procedure other = (Procedure) obj;
-        if (parameterId == null) {
+        if (getProcedureId() == null) {
             if (other.getId() != null)
                 return false;
         }
-        else if ( !parameterId.equals(other.parameterId))
+        else if ( !getProcedureId().equals(other.getProcedureId()))
             return false;
         return true;
     }

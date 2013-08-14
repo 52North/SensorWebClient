@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.n52.sensorweb</groupId>
 		<artifactId>sensorwebclient</artifactId>
-		<version>3.2.0-SNAPSHOT</version>
+		<version>3.3.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>sensorwebclient-webapp</artifactId>
 	<packaging>war</packaging>
@@ -17,6 +17,14 @@
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.n52.sensorweb</groupId>
+			<artifactId>timeseries-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.n52.sensorweb</groupId>
+			<artifactId>timeseries-web</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>sensorwebclient-api</artifactId>
@@ -167,23 +175,23 @@
 					<artifactItems>
 						<artifactItem>
 							<groupId>${project.groupId}</groupId>
+							<artifactId>timeseries-web</artifactId>
+							<includes>api-doc/**</includes>
+							<outputDirectory>${webappDirectory}</outputDirectory>
+							<overWrite>false</overWrite>
+						</artifactItem>
+					
+						<artifactItem>
+							<groupId>${project.groupId}</groupId>
 							<artifactId>sensorwebclient-sos-rest</artifactId>
-							<includes>css/**,js/**,img/**,partials/**,lib/**</includes>
+							<includes>explorer/**</includes>
 							<outputDirectory>${webappDirectory}</outputDirectory>
 							<overWrite>false</overWrite>
 						</artifactItem>
 
 						<artifactItem>
 							<groupId>${project.groupId}</groupId>
-							<artifactId>sensorwebclient-sos-rest</artifactId>
-							<includes>index*.html</includes>
-							<outputDirectory>${webappDirectory}/explore</outputDirectory>
-							<overWrite>false</overWrite>
-						</artifactItem>
-
-						<artifactItem>
-							<groupId>${project.groupId}</groupId>
-							<artifactId>sensorwebclient-sos-rest</artifactId>
+							<artifactId>timeseries-web</artifactId>
 							<includes>*.xml</includes>
 							<!-- tmp files will be copied into WEB-INF/classes -->
 							<outputDirectory>src/main/tmp</outputDirectory>

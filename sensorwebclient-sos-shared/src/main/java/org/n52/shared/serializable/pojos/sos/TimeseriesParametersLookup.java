@@ -237,10 +237,10 @@ public class TimeseriesParametersLookup implements Serializable {
      * @return <code>true</code> if all parameters are already loaded, <code>false</code> otherwise.
      */
     public boolean hasLoadedCompletely(SosTimeseries timeseries) {
-        boolean procedureLoaded = procedures.containsKey(timeseries.getProcedure());
-        boolean featureLoaded = features.containsKey(timeseries.getFeature());
-        boolean offeringLoaded = offerings.containsKey(timeseries.getOffering());
-        boolean phenomenonLoaded = phenomenons.containsKey(timeseries.getPhenomenon());
+        boolean procedureLoaded = procedures.containsKey(timeseries.getProcedureId());
+        boolean featureLoaded = features.containsKey(timeseries.getFeatureId());
+        boolean offeringLoaded = offerings.containsKey(timeseries.getOfferingId());
+        boolean phenomenonLoaded = phenomenons.containsKey(timeseries.getPhenomenonId());
         return procedureLoaded && featureLoaded && offeringLoaded && phenomenonLoaded;
 
     }
