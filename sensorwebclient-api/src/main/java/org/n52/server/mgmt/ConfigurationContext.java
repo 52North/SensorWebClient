@@ -294,14 +294,14 @@ public class ConfigurationContext extends HttpServlet {
     }
 
     public static void initializeMetadata(SOSMetadata metadata) {
-        SOSMetadata old = serviceMetadatas.put(metadata.getId(), metadata);
+        SOSMetadata old = serviceMetadatas.put(metadata.getServiceUrl(), metadata);
         LOGGER.debug("Replace old metadata for: " + old);
         metadata.setInitialized(true);
     }
 
 	public static void addNewSOSMetadata(SOSMetadata metadata) {
 		try {
-			String serviceURL = metadata.getId();
+			String serviceURL = metadata.getServiceUrl();
 			LOGGER.debug(String.format("Add new SOS metadata for '%s' ", serviceURL));
 			serviceMetadatas.put(serviceURL, metadata);
 //			SosMetadataUpdate.loadLocation(metadata.getId());

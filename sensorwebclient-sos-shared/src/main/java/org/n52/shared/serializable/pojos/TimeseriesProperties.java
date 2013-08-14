@@ -213,13 +213,6 @@ public class TimeseriesProperties implements Serializable {
 	    return timeseries;
 	}
 
-	public void setSosUrl(String sosUrl) {
-	    if (timeseries == null) {
-            timeseries = new SosTimeseries();
-        }
-		timeseries.setServiceUrl(sosUrl);
-	}
-	
 	public void setStation(Station station) {
 	    this.station = station;
 	}
@@ -228,50 +221,8 @@ public class TimeseriesProperties implements Serializable {
 	    return station;
 	}
 
-	/**
-	 * @deprecated use {@link #setTimeseries(SosTimeseries)}
-	 */
-	public void setOffering(String offering) {
-		if (timeseries == null) {
-            timeseries = new SosTimeseries();
-        }
-		timeseries.setOffering(offering);
-	}
-
-	/**
-     * @deprecated use {@link #setTimeseries(SosTimeseries)}
-     */
-	public void setFeature(String feature) {
-	    if (timeseries == null) {
-            timeseries = new SosTimeseries();
-        }
-        timeseries.setFeature(feature);
-	}
-
-	/**
-     * @deprecated use {@link #setTimeseries(SosTimeseries)}
-     */
-	public void setProcedure(String procedure) {
-	    if (timeseries == null) {
-            timeseries = new SosTimeseries();
-        }
-        timeseries.setProcedure(procedure);
-	}
-
-	/**
-     * @deprecated use {@link #setTimeseries(SosTimeseries)}
-     */
-	public void setPhenomenon(String phenomenon) {
-	    if (timeseries == null) {
-            timeseries = new SosTimeseries();
-        }
-        timeseries.setPhenomenon(phenomenon);
-	}
 
 	public String getStationName() {
-//		if (this.stationName == null || this.stationName.isEmpty()) {
-//			return this.foi.getLabel();
-//		}
 		return stationName;
 	}
 
@@ -291,28 +242,28 @@ public class TimeseriesProperties implements Serializable {
 	 * @deprecated user {@link #getTimeseries()}
 	 */
 	public String getOffering() {
-		return timeseries.getOffering();
+		return timeseries.getOfferingId();
 	}
 	
 	/**
      * @deprecated user {@link #getTimeseries()}
      */
 	public String getFeature() {
-		return timeseries.getFeature();
+		return timeseries.getFeatureId();
 	}
 
 	/**
      * @deprecated user {@link #getTimeseries()}
      */
 	public String getProcedure() {
-		return timeseries.getProcedure();
+		return timeseries.getProcedureId();
 	}
 
 	/**
      * @deprecated user {@link #getTimeseries()}
      */
 	public String getPhenomenon() {
-		return timeseries.getPhenomenon();
+		return timeseries.getPhenomenonId();
 	}
 
 	public String getTimeseriesId() {
@@ -411,11 +362,7 @@ public class TimeseriesProperties implements Serializable {
         if (station == null || station.getLocation() == null) {
             return null;
         }
-        return station.getLocation().getSrs();
-    }
-
-    public void setSrs(String srs) {
-        this.station.getLocation().setSrs(srs);
+        return station.getLocation().getCrsDefinition();
     }
 
 	public void setOpacity(double opacityPercentage) {
@@ -463,10 +410,10 @@ public class TimeseriesProperties implements Serializable {
 	public String getOffFoiProcPhenCombination() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("TimeSeriesProperties: [");
-		sb.append("Offering: ").append(timeseries.getOffering()).append(", ");
-		sb.append("Feature: ").append(timeseries.getFeature()).append(", ");
-		sb.append("Procedure: ").append(timeseries.getProcedure()).append(", ");
-		sb.append("Phenomenon: ").append(timeseries.getPhenomenon()).append("]");
+		sb.append("Offering: ").append(timeseries.getOfferingId()).append(", ");
+		sb.append("Feature: ").append(timeseries.getFeatureId()).append(", ");
+		sb.append("Procedure: ").append(timeseries.getProcedureId()).append(", ");
+		sb.append("Phenomenon: ").append(timeseries.getPhenomenonId()).append("]");
 		return sb.toString();
 	}
 

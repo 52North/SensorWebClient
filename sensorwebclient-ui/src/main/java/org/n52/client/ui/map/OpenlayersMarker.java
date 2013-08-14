@@ -38,7 +38,7 @@ import org.gwtopenmaps.openlayers.client.event.EventObject;
 import org.gwtopenmaps.openlayers.client.popup.FramedCloud;
 import org.gwtopenmaps.openlayers.client.popup.Popup;
 import org.n52.client.sos.ctrl.SosDataManager;
-import org.n52.client.sos.legend.Timeseries;
+import org.n52.client.sos.legend.TimeseriesLegendData;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
@@ -52,7 +52,7 @@ public class OpenlayersMarker extends Marker {
 
     private String infoTxt;
 
-    private Timeseries timeseries;
+    private TimeseriesLegendData timeseries;
 
     private ArrayList<String> timeseriesIds = new ArrayList<String>();
 
@@ -63,7 +63,7 @@ public class OpenlayersMarker extends Marker {
     private final static String UNMARKED_IMG_RELPATH = "img/icons/marker_unsel.png";
     private final static String MARKED_IMG_RELPATH = "img/icons/marker_sel.png";
 
-    public OpenlayersMarker(Coordinate coords, Timeseries ts) {
+    public OpenlayersMarker(Coordinate coords, TimeseriesLegendData ts) {
         super(coords);
         this.timeseries = ts;
         this.coords = coords;

@@ -72,8 +72,13 @@ import org.n52.client.util.ClientUtils;
 import org.n52.ext.link.sos.PermalinkParameter;
 import org.n52.ext.link.sos.TimeRange;
 import org.n52.shared.serializable.pojos.TimeseriesRenderingOptions;
+import org.n52.shared.serializable.pojos.sos.Feature;
+import org.n52.shared.serializable.pojos.sos.Offering;
+import org.n52.shared.serializable.pojos.sos.Phenomenon;
+import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SOSMetadataBuilder;
+import org.n52.shared.serializable.pojos.sos.SosService;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -168,11 +173,11 @@ public final class Application implements EntryPoint {
                     final String feature = features[i];
                     
                     SosTimeseries sosTimeseries = new SosTimeseries();
-                    sosTimeseries.setFeature(feature);
-                    sosTimeseries.setOffering(offering);
-                    sosTimeseries.setPhenomenon(phenomenon);
-                    sosTimeseries.setServiceUrl(service);
-                    sosTimeseries.setProcedure(procedure);
+                    sosTimeseries.setFeature(new Feature(feature));
+                    sosTimeseries.setOffering(new Offering(offering));
+                    sosTimeseries.setPhenomenon(new Phenomenon(phenomenon));
+                    sosTimeseries.setSosService(new SosService(service, version));
+                    sosTimeseries.setProcedure(new Procedure(procedure));
                     GWT.log("Timeseries to load: " + sosTimeseries);
                     
                     TimeseriesRenderingOptions tsOptions = null;

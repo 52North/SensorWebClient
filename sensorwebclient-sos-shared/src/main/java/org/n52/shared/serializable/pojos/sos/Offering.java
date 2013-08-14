@@ -26,7 +26,7 @@ package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
 
-public class Offering extends ObservationParameter implements Serializable {
+public class Offering extends TimeseriesParameter implements Serializable {
 
     private static final long serialVersionUID = -544290033391799572L;
 
@@ -40,11 +40,15 @@ public class Offering extends ObservationParameter implements Serializable {
         super(parameterId);
     }
     
+    public String getOfferingId() {
+        return getId();
+    }
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(getClass().getName());
-        sb.append(" [").append("offeringId: '").append(parameterId);
-        sb.append("', ").append("label: '").append(label);
+        sb.append(" [").append("offeringId: '").append(getOfferingId());
+        sb.append("', ").append("label: '").append(getLabel());
         return sb.append("']").toString();
     }
     
@@ -52,8 +56,8 @@ public class Offering extends ObservationParameter implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( (label == null) ? 0 : label.hashCode());
-        result = prime * result + ( (parameterId == null) ? 0 : parameterId.hashCode());
+        result = prime * result + ( (getLabel() == null) ? 0 : getLabel().hashCode());
+        result = prime * result + ( (getOfferingId() == null) ? 0 : getOfferingId().hashCode());
         return result;
     }
     
@@ -66,11 +70,11 @@ public class Offering extends ObservationParameter implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         Offering other = (Offering) obj;
-        if (parameterId == null) {
+        if (getOfferingId() == null) {
             if (other.getId() != null)
                 return false;
         }
-        else if ( !parameterId.equals(other.parameterId))
+        else if ( !getOfferingId().equals(other.getOfferingId()))
             return false;
         return true;
     }

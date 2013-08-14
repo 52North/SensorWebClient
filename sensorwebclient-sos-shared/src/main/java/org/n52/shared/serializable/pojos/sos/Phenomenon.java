@@ -25,7 +25,7 @@ package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
 
-public class Phenomenon extends ObservationParameter implements Serializable {
+public class Phenomenon extends TimeseriesParameter implements Serializable {
 
     private static final long serialVersionUID = 207874913321466876L;
 
@@ -37,6 +37,10 @@ public class Phenomenon extends ObservationParameter implements Serializable {
 
     public Phenomenon(String phenomenonId) {
         super(phenomenonId);
+    }
+    
+    public String getPhenomenonId() {
+        return getId();
     }
 
     public String getUnitOfMeasure() {
@@ -50,8 +54,8 @@ public class Phenomenon extends ObservationParameter implements Serializable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(getClass().getName());
-        sb.append(" [").append("phenomenonId: '").append(parameterId);
-        sb.append("', ").append("label: '").append(label);
+        sb.append(" [").append("phenomenonId: '").append(getPhenomenonId());
+        sb.append("', ").append("label: '").append(getLabel());
         return sb.append("']").toString();
     }
     
@@ -59,8 +63,8 @@ public class Phenomenon extends ObservationParameter implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( (label == null) ? 0 : label.hashCode());
-        result = prime * result + ( (parameterId == null) ? 0 : parameterId.hashCode());
+        result = prime * result + ( (getLabel() == null) ? 0 : getLabel().hashCode());
+        result = prime * result + ( (getPhenomenonId() == null) ? 0 : getPhenomenonId().hashCode());
         result = prime * result + ( (unitOfMeasure == null) ? 0 : unitOfMeasure.hashCode());
         return result;
     }
@@ -74,6 +78,12 @@ public class Phenomenon extends ObservationParameter implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         Phenomenon other = (Phenomenon) obj;
+        if (getPhenomenonId() == null) {
+            if (other.getPhenomenonId() != null)
+                return false;
+        }
+        else if ( !getPhenomenonId().equals(other.getPhenomenonId()))
+            return false;
         if (unitOfMeasure == null) {
             if (other.unitOfMeasure != null)
                 return false;

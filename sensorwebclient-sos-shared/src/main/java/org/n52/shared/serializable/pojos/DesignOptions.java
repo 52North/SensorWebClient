@@ -47,11 +47,11 @@ public class DesignOptions implements Serializable {
 
     private int width;
 
+    private boolean grid;
+
     private String language;
 
-    private String timeParam;
-
-    private boolean grid;
+    private String timeExtensionTerm; // getFirst or latest
 
     @SuppressWarnings("unused")
 	private DesignOptions() {
@@ -60,7 +60,7 @@ public class DesignOptions implements Serializable {
 
     public DesignOptions(ArrayList<TimeseriesProperties> props, long begin, long end, String timeParam, boolean grid) {
         this(props, begin, end, grid);
-        this.timeParam = timeParam;
+        this.timeExtensionTerm = timeParam;
     }
 
     public DesignOptions(ArrayList<TimeseriesProperties> props, long begin, long end, boolean grid) {
@@ -122,7 +122,7 @@ public class DesignOptions implements Serializable {
     }
 
     public String getTimeParam() {
-        return this.timeParam;
+        return this.timeExtensionTerm;
     }
 
     public void setBegin(long i) {

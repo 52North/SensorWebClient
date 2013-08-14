@@ -10,7 +10,7 @@ import static org.n52.shared.util.MathSymbolUtil.getInverse;
 import static org.n52.shared.util.MathSymbolUtil.getMathSymbols;
 import static org.n52.shared.util.MathSymbolUtil.getSymbolForIndex;
 
-import org.n52.client.sos.legend.Timeseries;
+import org.n52.client.sos.legend.TimeseriesLegendData;
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 
 import com.smartgwt.client.widgets.Canvas;
@@ -112,7 +112,7 @@ public class OverUndershootRuleTemplate extends SubscriptionTemplate {
         StaticTextItem unitItem = new StaticTextItem();
         unitItem.setTitle(i18n.unit());
         unitItem.setTitleOrientation(TOP);
-        Timeseries unitOfMeasure = controller.getTimeSeries();
+        TimeseriesLegendData unitOfMeasure = controller.getTimeSeries();
         unitItem.setValue(unitOfMeasure.getUnitOfMeasure());
         data.setUnit(unitOfMeasure.getUnitOfMeasure());
         return unitItem;

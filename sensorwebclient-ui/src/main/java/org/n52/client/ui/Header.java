@@ -36,7 +36,7 @@ import org.n52.client.ctrl.TimeManager;
 import org.n52.client.sos.ctrl.SosDataManager;
 import org.n52.client.sos.data.TimeseriesDataStore;
 import org.n52.client.sos.event.data.UpdateSOSMetadataEvent;
-import org.n52.client.sos.legend.Timeseries;
+import org.n52.client.sos.legend.TimeseriesLegendData;
 import org.n52.client.util.ClientUtils;
 import org.n52.ext.ExternalToolsException;
 import org.n52.ext.link.AccessLinkFactory;
@@ -189,12 +189,12 @@ public class Header extends HLayout {
             }
 
             private String addDesignOptions(String permalink) {
-                Timeseries[] ts = getTimeSeriesDataStore().getTimeSeriesSorted();
+                TimeseriesLegendData[] ts = getTimeSeriesDataStore().getTimeSeriesSorted();
                 if (ts == null || ts.length == 0) {
                     return permalink;
                 }
                 StringBuilder options = new StringBuilder();
-                for (Timeseries timeSeries : ts) {
+                for (TimeseriesLegendData timeSeries : ts) {
                     TimeseriesRenderingOptions renderingOptions = new TimeseriesRenderingOptions();
                     renderingOptions.setColor(timeSeries.getColor());
                     renderingOptions.setLineWidth(timeSeries.getLineWidth());
@@ -278,13 +278,13 @@ public class Header extends HLayout {
     }
     
     private String createPermaLink(String baseUrl) {
-        Timeseries[] ts = getTimeSeriesDataStore().getTimeSeriesSorted();
+        TimeseriesLegendData[] ts = getTimeSeriesDataStore().getTimeSeriesSorted();
         if (ts == null || ts.length == 0) {
             return baseUrl;
         }
         
         TimeSeriesPermalinkBuilder builder = new TimeSeriesPermalinkBuilder();
-        for (Timeseries timeSeries : ts) {
+        for (TimeseriesLegendData timeSeries : ts) {
             TimeSeriesParameters parameters = createTimeSeriesParameters(timeSeries);
             parameters.setTimeRange(createTimeRange());
             builder.addParameters(parameters);
@@ -305,7 +305,7 @@ public class Header extends HLayout {
         return TimeRange.createTimeRange(format.format(start), format.format(end));
     }
 
-    private TimeSeriesParameters createTimeSeriesParameters(Timeseries timeSeries) {
+    private TimeSeriesParameters createTimeSeriesParameters(TimeseriesLegendData timeSeries) {
         String sos = timeSeries.getSosUrl();
         String offering = timeSeries.getOfferingId();
         String procedure = timeSeries.getProcedureId();

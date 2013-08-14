@@ -35,9 +35,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.n52.oxf.ows.capabilities.IBoundingBox;
 import org.n52.oxf.valueDomains.spatial.BoundingBox;
+import org.n52.server.parser.utils.ParsedPoint;
 import org.n52.server.sos.connector.eea.ArcGISSoeMetadataHandler;
-import org.n52.server.sos.parser.utils.ParsedPoint;
-import org.n52.server.util.crs.AReferencingHelper;
+import org.n52.io.crs.CRSUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +47,7 @@ public class EeaSosConnectorTest {
     
     private static final String SF_SPATIAL_FEATURE = "/files/sf_spatial_feature.xml";
     
-    private static final AReferencingHelper referenceHelper = AReferencingHelper.createEpsgForcedXYAxisOrder();
+    private static final CRSUtils referenceHelper = CRSUtils.createEpsgForcedXYAxisOrder();
     
     private SFSamplingFeatureDocument sfSamplingFeature;
 

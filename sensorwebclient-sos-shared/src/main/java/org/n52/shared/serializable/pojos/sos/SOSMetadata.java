@@ -29,8 +29,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
+import org.n52.io.crs.BoundingBox;
 import org.n52.shared.Constants;
-import org.n52.shared.serializable.pojos.BoundingBox;
 
 /**
  * A shared metadata representation for an SOS instance. An {@link SOSMetadata} is used from both (!) Client
@@ -44,7 +44,7 @@ public class SOSMetadata implements Serializable {
 
     private static final long serialVersionUID = -3721927620888635622L;
 
-    private String id; // mandatory
+    private String serviceUrl; // mandatory
 
     private String version; // mandatory
 
@@ -109,8 +109,8 @@ public class SOSMetadata implements Serializable {
      * @see {@link #SOSMetadata(String, String)} to explicitly set version
      */
     @Deprecated
-    public SOSMetadata(String id) {
-        this.id = id;
+    public SOSMetadata(String serviceUrl) {
+        this.serviceUrl = serviceUrl;
     }
 
     /**
@@ -141,10 +141,6 @@ public class SOSMetadata implements Serializable {
         this.protectedService = builder.isProctectedService();
         this.setSosMetadataHandler(builder.getSosMetadataHandler());
         this.setAdapter(builder.getAdapter());
-    }
-
-    public String getId() {
-        return id;
     }
 
     public void setInitialized(boolean initialized) {
@@ -191,7 +187,7 @@ public class SOSMetadata implements Serializable {
     }
 
     public String getServiceUrl() {
-        return getId();
+        return serviceUrl;
     }
 
     public String getSrs() {
@@ -283,7 +279,7 @@ public class SOSMetadata implements Serializable {
     }
 
     public void addStation(Station station) {
-        stations.put(station.getId(), station);
+        stations.put(station.getLabel(), station);
     }
 
     public Collection<Station> getStations() {
@@ -344,7 +340,7 @@ public class SOSMetadata implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("SOSMetadata [ ");
-        sb.append("parameterId: ").append(id).append(", ");
+        sb.append("parameterId: ").append(serviceUrl).append(", ");
         sb.append("initialized: ").append(initialized).append(", ");
         sb.append("version: ").append(version);
         sb.append(" ]");
@@ -352,7 +348,7 @@ public class SOSMetadata implements Serializable {
     }
     
     public SOSMetadata clone() {
-    	SOSMetadata clone = new SOSMetadata(this.id,this.version,this.sensorMLVersion,this.omVersion,this.title);
+    	SOSMetadata clone = new SOSMetadata(this.serviceUrl,this.version,this.sensorMLVersion,this.omVersion,this.title);
     	clone.waterML = this.waterML;
     	clone.autoZoom = this.autoZoom;
         clone.forceXYAxisOrder = this.forceXYAxisOrder;
@@ -363,5 +359,40 @@ public class SOSMetadata implements Serializable {
         clone.setAdapter(this.getAdapter());
     	return clone;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ( (serviceUrl == null) ? 0 : serviceUrl.hashCode());
+        result = prime * result + ( (version == null) ? 0 : version.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        SOSMetadata other = (SOSMetadata) obj;
+        if (serviceUrl == null) {
+            if (other.serviceUrl != null)
+                return false;
+        }
+        else if ( !serviceUrl.equals(other.serviceUrl))
+            return false;
+        if (version == null) {
+            if (other.version != null)
+                return false;
+        }
+        else if ( !version.equals(other.version))
+            return false;
+        return true;
+    }
+    
+    
 
 }

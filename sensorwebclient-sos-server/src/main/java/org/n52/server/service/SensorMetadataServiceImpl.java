@@ -33,7 +33,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.client.service.SensorMetadataService;
 import org.n52.oxf.util.JavaHelper;
 import org.n52.server.mgmt.ConfigurationContext;
-import org.n52.server.sos.parser.DescribeSensorParser;
+import org.n52.server.parser.DescribeSensorParser;
 import org.n52.shared.responses.GetProcedureDetailsUrlResponse;
 import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.responses.SensorMetadataResponse;

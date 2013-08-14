@@ -62,14 +62,14 @@ import org.n52.client.sos.event.handler.AddMarkerEventHandler;
 import org.n52.client.ui.Toaster;
 import org.n52.client.ui.map.InfoMarker;
 import org.n52.client.ui.map.MapController;
+import org.n52.io.crs.BoundingBox;
 import org.n52.shared.Constants;
-import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
@@ -174,7 +174,7 @@ class StationSelectorController implements MapController {
         map.selectMarker(infoMarker);
 
         // open info window for the marker
-        stationSelector.showInfoWindow(infoMarker, selectedStation.getId());
+        stationSelector.showInfoWindow(infoMarker, selectedStation.getLabel());
     }
     
     public void loadTimeseriesByCategory(String category) {
@@ -188,10 +188,10 @@ class StationSelectorController implements MapController {
     }
 
 	private void fireGetTimeseries(SosTimeseries timeseries) {
-		getMainEventBus().fireEvent(new GetProcedureEvent(selectedServiceUrl, timeseries.getProcedure()));
-		getMainEventBus().fireEvent(new GetOfferingEvent(selectedServiceUrl, timeseries.getOffering()));
-		getMainEventBus().fireEvent(new GetFeatureEvent(selectedServiceUrl, timeseries.getFeature()));
-		getMainEventBus().fireEvent(new GetProcedureDetailsUrlEvent(selectedServiceUrl, timeseries.getProcedure()));
+		getMainEventBus().fireEvent(new GetProcedureEvent(selectedServiceUrl, timeseries.getProcedureId()));
+		getMainEventBus().fireEvent(new GetOfferingEvent(selectedServiceUrl, timeseries.getOfferingId()));
+		getMainEventBus().fireEvent(new GetFeatureEvent(selectedServiceUrl, timeseries.getFeatureId()));
+		getMainEventBus().fireEvent(new GetProcedureDetailsUrlEvent(selectedServiceUrl, timeseries.getProcedureId()));
 	}
 
 	private boolean isServiceSelected() {
