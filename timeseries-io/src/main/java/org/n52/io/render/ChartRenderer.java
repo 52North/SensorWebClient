@@ -9,14 +9,8 @@ import java.util.Date;
 import javax.servlet.ServletOutputStream;
 
 import org.joda.time.Interval;
-import org.n52.io.v1.data.DesignedParameterSet;
 import org.n52.io.v1.data.StyleProperties;
 import org.n52.io.v1.data.TimeseriesDataCollection;
-<<<<<<< HEAD
-import org.n52.io.v1.data.TimeseriesMetadataOutput;
-=======
-import org.n52.io.v1.data.TimeseriesMetadata;
->>>>>>> branch 'master' of ssh://git@github.com/ridoo/SensorWebClient.git
 
 public abstract class ChartRenderer {
 

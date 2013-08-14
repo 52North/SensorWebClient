@@ -23,7 +23,6 @@ import org.jfree.ui.RectangleInsets;
 import org.n52.io.v1.data.DesignedParameterSet;
 import org.n52.io.v1.data.StyleProperties;
 import org.n52.io.v1.data.TimeseriesDataCollection;
-<<<<<<< HEAD
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,110 +125,6 @@ public class DefaultChartRenderer extends ChartRenderer {
     private String[] getAllPhenomena(TimeseriesMetadataOutput[] timeseriesMetadatas) {
         List<String> allPhenomena = new ArrayList<String>();
         for (TimeseriesMetadataOutput metadata : timeseriesMetadatas) {
-=======
-import org.n52.io.v1.data.TimeseriesMetadata;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class DefaultChartRenderer extends ChartRenderer {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultChartRenderer.class);
-
-    private RenderingContext context;
-
-    private boolean tooltips;
-
-    private String language;
-
-    private String mimeType;
-
-    private boolean drawLegend;
-
-    private boolean showGrid;
-
-    @Override
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    @Override
-    public void setShowTooltips(boolean tooltips) {
-        this.tooltips = tooltips;
-    }
-
-    @Override
-    public void setDrawLegend(boolean drawLegend) {
-        this.drawLegend = drawLegend;
-    }
-    
-    @Override
-    public void setMimeType(String mimetype) {
-        this.mimeType = mimetype;
-    }
-
-    @Override
-    public void setContext(RenderingContext context) {
-        this.context = context;
-    }
-    
-    public DesignedParameterSet getStyledTimeseries() {
-        return context.getStyledTimeseries();
-    }
-    
-    public TimeseriesMetadata[] getTimeseriesMetadatas() {
-        return context.getTimeseriesMetadatas();
-    }
-
-    @Override
-    public void writeToOutputStream(TimeseriesDataCollection data,
-                                    ServletOutputStream stream) {
-        try {
-
-            
-            
-            /*
-             * As each timeseries may define its custom styling and different chart types we have to iterate
-             * over all styles and process chart rendering iteratively
-             */
-
-            for (String timeseriesId : getStyledTimeseries().getTimeseries()) {
-                StyleProperties properties = getStyledTimeseries().getStyleOptions(timeseriesId);
-                if (isLineStyle(properties)) {
-
-                    JFreeChart chart = createTimeSeriesChart(null, "Time", "Value", null, drawLegend, tooltips, true);
-                    XYPlot xyPlot = createPlotArea(chart);
-                    
-                    String[] phenomena = getAllPhenomena(getTimeseriesMetadatas());
-                    
-                    
-                    // do a line chart run
-
-                }
-                else if (isBarStyle(properties)) {
-
-                    
-                    // do a bar chart run
-
-                }
-            }
-
-        }
-        finally {
-            try {
-                stream.flush();
-                stream.close();
-            }
-            catch (IOException e) {
-                LOGGER.debug("Stream already flushed and closed.");
-            }
-        }
-
-    }
-
-    private String[] getAllPhenomena(TimeseriesMetadata[] timeseriesMetadatas) {
-        List<String> allPhenomena = new ArrayList<String>();
-        for (TimeseriesMetadata metadata : timeseriesMetadatas) {
->>>>>>> branch 'master' of ssh://git@github.com/ridoo/SensorWebClient.git
             
             // TODO get all phenomena labels from timeseriesIds
             
