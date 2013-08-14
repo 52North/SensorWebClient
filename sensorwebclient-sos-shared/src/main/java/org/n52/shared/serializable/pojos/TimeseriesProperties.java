@@ -362,11 +362,7 @@ public class TimeseriesProperties implements Serializable {
         if (station == null || station.getLocation() == null) {
             return null;
         }
-        return station.getLocation().getSrs();
-    }
-
-    public void setSrs(String srs) {
-        this.station.getLocation().setSrs(srs);
+        return station.getLocation().getCrsDefinition();
     }
 
 	public void setOpacity(double opacityPercentage) {

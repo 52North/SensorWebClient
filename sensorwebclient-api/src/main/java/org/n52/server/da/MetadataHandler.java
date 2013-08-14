@@ -41,7 +41,7 @@ import net.opengis.sampling.x20.SFSamplingFeatureType;
 import net.opengis.sos.x20.GetFeatureOfInterestResponseDocument;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.io.crs.AReferencingHelper;
+import org.n52.io.crs.CRSUtils;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
@@ -234,18 +234,18 @@ public abstract class MetadataHandler {
 	}
 
 	/**
-	 * Creates an {@link AReferencingHelper} according to metadata settings
+	 * Creates an {@link CRSUtils} according to metadata settings
 	 * (e.g. if XY axis order shall be enforced during coordinate
 	 * transformation).
 	 * 
 	 * @param metadata
 	 *            the SOS metadata containing SOS instance configuration.
 	 */
-	protected AReferencingHelper createReferencingHelper() {
+	protected CRSUtils createReferencingHelper() {
 		if (sosMetadata.isForceXYAxisOrder()) {
-			return AReferencingHelper.createEpsgForcedXYAxisOrder();
+			return CRSUtils.createEpsgForcedXYAxisOrder();
 		} else {
-			return AReferencingHelper.createEpsgStrictAxisOrder();
+			return CRSUtils.createEpsgStrictAxisOrder();
 		}
 	}
 	

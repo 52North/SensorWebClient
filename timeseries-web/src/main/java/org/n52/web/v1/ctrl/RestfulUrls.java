@@ -42,7 +42,7 @@ public interface RestfulUrls {
     /**
      * Subpath identifying a collection of phenomenons available.
      */
-    static final String COLLECTION_OBSERVED_PROPERTIES = "observedProperties";
+    static final String COLLECTION_PHENOMENA = "phenomena";
 
     /**
      * Subpath identifying a collection of stations available.

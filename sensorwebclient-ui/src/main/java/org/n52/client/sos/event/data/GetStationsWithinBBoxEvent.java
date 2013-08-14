@@ -25,7 +25,7 @@ package org.n52.client.sos.event.data;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.data.handler.GetStationsWithinBBoxEventHandler;
-import org.n52.shared.serializable.pojos.BoundingBox;
+import org.n52.io.crs.BoundingBox;
 
 public class GetStationsWithinBBoxEvent extends FilteredDispatchGwtEvent<GetStationsWithinBBoxEventHandler> {
 

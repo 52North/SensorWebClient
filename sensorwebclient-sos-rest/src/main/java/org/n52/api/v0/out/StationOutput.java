@@ -1,12 +1,14 @@
 
 package org.n52.api.v0.out;
 
+import static org.n52.io.geojson.GeojsonPoint.createWithCoordinates;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import org.n52.io.crs.EastingNorthing;
 import org.n52.io.geojson.GeojsonFeature;
 import org.n52.io.geojson.GeojsonPoint;
-import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 
@@ -14,6 +16,12 @@ import org.n52.shared.serializable.pojos.sos.Station;
  * {@link Station} output data to be used for de-/marshalling web views.
  */
 public class StationOutput extends GeojsonFeature {
+
+    private static final long serialVersionUID = 7780608582026293480L;
+
+    StationOutput() {
+        // for serialization
+    }
 
     /**
      * Creates a full view on the given stations.
@@ -101,13 +109,9 @@ public class StationOutput extends GeojsonFeature {
 
     private static GeojsonPoint getCoordinates(Station station) {
         EastingNorthing location = station.getLocation();
-        String x = Double.toString(location.getEasting());
-        String y = Double.toString(location.getNorthing());
-        return GeojsonPoint.create(new String[] {x, y});
-    }
-
-    private StationOutput() {
-        // for serialization
+        Double x = location.getEasting();
+        Double y = location.getNorthing();
+        return createWithCoordinates(new Double[] {x, y});
     }
 
 }

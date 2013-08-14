@@ -22,32 +22,49 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.shared.serializable.pojos;
+package org.n52.io.crs;
 
 import java.io.Serializable;
 
-public class BoundingBox extends Geometry implements Serializable {
+import org.n52.io.geojson.GeojsonPoint;
+
+public class BoundingBox implements Serializable {
 	
     private static final long serialVersionUID = -674668726920006020L;
 
     private EastingNorthing ll;
 
     private EastingNorthing ur;
-
+    
+    private String srs;
+    
 	@SuppressWarnings("unused")
 	private BoundingBox() {
         // client requires to be default instantiable
+    }
+	
+	/**
+     * @param ll the lower left corner
+     * @param ur the upper right corner
+     */
+    public BoundingBox(GeojsonPoint ll, GeojsonPoint ur) {
+        this.srs = ll.getCrs().getName();
+        this.ll = new EastingNorthing(ll.getCrs(), ll.getCoordinates());
+        this.ur = new EastingNorthing(ur.getCrs(), ur.getCoordinates());
     }
 
     /**
      * @param ll the lower left corner
      * @param ur the upper right corner
-     * @param srs the srs code (e.g. EPSG:4326)
      */
     public BoundingBox(EastingNorthing ll, EastingNorthing ur) {
-    	setSrs(ll.getSrs());
+    	this.srs = ll.getCrsDefinition();
     	this.ll = ll;
         this.ur = ur;
+    }
+
+    public String getSrs() {
+        return srs;
     }
 
     @Override
@@ -55,8 +72,8 @@ public class BoundingBox extends Geometry implements Serializable {
         StringBuilder sb = new StringBuilder("BBOX [ (");
         sb.append(ll.getEasting()).append(",").append(ll.getNorthing()).append(");(");
         sb.append(ur.getEasting()).append(",").append(ur.getNorthing()).append(") ");
-        sb.append("srs: ").append(getSrs()).append(" ]");
-        return sb.toString();
+        sb.append("srs: ").append(getSrs());
+        return sb.append(" ]").toString();
     }
     
     /**

@@ -48,8 +48,8 @@
  *********************************************************************************/
 package org.n52.shared;
 
-import org.n52.shared.serializable.pojos.BoundingBox;
-import org.n52.shared.serializable.pojos.EastingNorthing;
+import org.n52.io.crs.BoundingBox;
+import org.n52.io.crs.EastingNorthing;
 
 
 public abstract class Constants {
@@ -79,8 +79,8 @@ public abstract class Constants {
     /**
      * A fall back extent if no other extent was configured (data source instance, or global).
      */
-    public static final BoundingBox FALLBACK_EXTENT = new BoundingBox(new EastingNorthing(-180, -90, DISPLAY_PROJECTION), 
-                                                                      new EastingNorthing(180, 90, DISPLAY_PROJECTION));
+    public static final BoundingBox FALLBACK_EXTENT = new BoundingBox(new EastingNorthing(-180d, -90d, DISPLAY_PROJECTION), 
+                                                                      new EastingNorthing(180d, 90d, DISPLAY_PROJECTION));
     
     public static final String SES_OP_SEPARATOR = "-X-";
 }

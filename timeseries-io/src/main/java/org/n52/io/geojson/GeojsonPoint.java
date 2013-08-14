@@ -1,35 +1,32 @@
 
 package org.n52.io.geojson;
 
-import java.util.Arrays;
 
 public class GeojsonPoint extends GeojsonGeometry {
 
-    private String[] coordinates;
+    private static final long serialVersionUID = 4348077077881433456L;
+    
+    private static final String GEOJSON_TYPE_POINT = "Point";
 
-    public static GeojsonPoint create(String[] coordinates) {
+    protected Double[] coordinates;
+    
+    public static GeojsonPoint createWithCoordinates(Double[] coordinates) {
         GeojsonPoint sfGeometry = new GeojsonPoint();
         sfGeometry.setCoordinates(coordinates);
         return sfGeometry;
     }
+    
+    public void setCoordinates(Double[] coordinates) {
+        this.coordinates = checkCoordinates(coordinates);
+    }
+
 
     public String getType() {
         return GEOJSON_TYPE_POINT;
     }
-
-    public String[] getCoordinates() {
+    
+    public Double[] getCoordinates() {
         return coordinates;
     }
 
-    /**
-     * @throws IllegalArgumentException
-     *         if coordinates are <code>null</code> or do not contain two dimensional point.
-     */
-    public void setCoordinates(String[] coordinates) {
-        if (coordinates == null || coordinates.length != 2) {
-            String asString = Arrays.toString(coordinates);
-            throw new IllegalArgumentException("Invalid Point coordinates: " + asString);
-        }
-        this.coordinates = coordinates;
-    }
 }

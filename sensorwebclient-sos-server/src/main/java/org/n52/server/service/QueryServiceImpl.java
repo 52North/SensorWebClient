@@ -32,8 +32,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.n52.client.service.QueryService;
+import org.n52.io.crs.BoundingBox;
+import org.n52.io.crs.CRSUtils;
 import org.n52.server.mgmt.ConfigurationContext;
-import org.n52.io.crs.AReferencingHelper;
 import org.n52.shared.exceptions.ServiceOccupiedException;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.requests.query.ResultPage;
@@ -49,7 +50,6 @@ import org.n52.shared.requests.query.responses.PhenomenonQueryResponse;
 import org.n52.shared.requests.query.responses.ProcedureQueryResponse;
 import org.n52.shared.requests.query.responses.QueryResponse;
 import org.n52.shared.requests.query.responses.StationQueryResponse;
-import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
@@ -102,7 +102,7 @@ public class QueryServiceImpl implements QueryService {
 
             BoundingBox spatialFilter = parameters.getSpatialFilter();
             boolean shallForceXYAxisOrder = metadata.isForceXYAxisOrder();
-            AReferencingHelper referencing = createReferenceHelper(shallForceXYAxisOrder);
+            CRSUtils referencing = createReferenceHelper(shallForceXYAxisOrder);
 
             int currentPageIndex = 0;
             int offset = query.getOffset();
@@ -112,7 +112,7 @@ public class QueryServiceImpl implements QueryService {
                 // when query is done from server side without paging
                 List<Station> filteredStations = new ArrayList<Station>();
                 for (Station station : stations) {
-                    if (spatialFilter == null || referencing.isStationContainedByBBox(spatialFilter, station)) {
+                    if (spatialFilter == null || referencing.isContainedByBBox(spatialFilter, station.asGeoJSON())) {
                         if (parameters.getStation() == null || station.getLabel().equals(parameters.getStation())) {
                             station = cloneAndMatchAgainstQuery(station, parameters);
                             if (station.hasAtLeastOneParameterConstellation()) {
@@ -128,7 +128,7 @@ public class QueryServiceImpl implements QueryService {
                 Station[] finalStations = new Station[pageSize];
                 for (int i = offset; i < stations.size() && currentPageIndex < pageSize; i++) {
                     Station station = stations.get(i);
-                    if (spatialFilter == null || referencing.isStationContainedByBBox(spatialFilter, station)) {
+                    if (spatialFilter == null || referencing.isContainedByBBox(spatialFilter, station.asGeoJSON())) {
                         station = cloneAndMatchAgainstQuery(station, parameters);
                         if (station.hasAtLeastOneParameterConstellation()) {
                             finalStations[currentPageIndex++] = station;
@@ -330,12 +330,12 @@ public class QueryServiceImpl implements QueryService {
         return metadata.getTimeseriesParametersLookup();
     }
 
-    private AReferencingHelper createReferenceHelper(boolean forceXYAxisOrder) {
+    private CRSUtils createReferenceHelper(boolean forceXYAxisOrder) {
         if (forceXYAxisOrder) {
-            return AReferencingHelper.createEpsgForcedXYAxisOrder();
+            return CRSUtils.createEpsgForcedXYAxisOrder();
         }
         else {
-            return AReferencingHelper.createEpsgStrictAxisOrder();
+            return CRSUtils.createEpsgStrictAxisOrder();
         }
     }
 }

@@ -14,7 +14,7 @@ import static org.n52.io.crs.WGS84Util.shortestDistanceBetween;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.io.crs.AReferencingHelper;
+import org.n52.io.crs.CRSUtils;
 import org.n52.io.crs.WGS84Util;
 import org.opengis.referencing.FactoryException;
 
@@ -27,13 +27,13 @@ public class WGS84UtilTest {
 
     private GeometryFactory factory;
 
-    private AReferencingHelper helper;
+    private CRSUtils helper;
 
     @Before
     public void
             setUp()
     {
-        helper = AReferencingHelper.createEpsgForcedXYAxisOrder();
+        helper = CRSUtils.createEpsgForcedXYAxisOrder();
         factory = helper.createGeometryFactory(EPSG_4326);
     }
 

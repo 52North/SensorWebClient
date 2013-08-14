@@ -66,8 +66,8 @@ import org.n52.server.da.MetadataHandler;
 import org.n52.server.da.oxf.OperationAccessor;
 import org.n52.server.parser.ConnectorUtils;
 import org.n52.server.parser.utils.ParsedPoint;
-import org.n52.io.crs.AReferencingHelper;
-import org.n52.shared.serializable.pojos.EastingNorthing;
+import org.n52.io.crs.CRSUtils;
+import org.n52.io.crs.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
@@ -173,7 +173,7 @@ public class HydroMetadataHandler extends MetadataHandler {
 		int counter;
 		TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
 		counter = getFoiAccessTasks.size();
-        AReferencingHelper referenceHelper = createReferencingHelper();
+        CRSUtils referenceHelper = createReferencingHelper();
 		LOGGER.debug("Sending {} GetFeatureOfInterest requests", counter);
 		for (String procedureID : getFoiAccessTasks.keySet()) {
 			LOGGER.debug("Sending #{} GetFeatureOfInterest request for procedure '{}'", counter--, procedureID);
@@ -274,7 +274,7 @@ public class HydroMetadataHandler extends MetadataHandler {
         return phenomenonId.substring(phenomenonId.lastIndexOf("/") + 1);
     }
 
-	private ParsedPoint createParsedPoint(XmlObject feature, AReferencingHelper referenceHelper) throws XmlException {
+	private ParsedPoint createParsedPoint(XmlObject feature, CRSUtils referenceHelper) throws XmlException {
 		ParsedPoint point2D = new ParsedPoint();
 		XmlCursor cursor = feature.newCursor();
 		if (cursor.toChild(new QName("http://www.opengis.net/samplingSpatial/2.0", "shape"))) {

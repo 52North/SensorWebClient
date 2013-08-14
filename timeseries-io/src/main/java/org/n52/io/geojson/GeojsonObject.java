@@ -1,12 +1,21 @@
 
 package org.n52.io.geojson;
 
-public abstract class GeojsonObject {
+import java.io.Serializable;
 
-    protected static final String GEOJSON_TYPE_POINT = "Point";
+public abstract class GeojsonObject implements Serializable {
     
-    protected static final String GEOJSON_TYPE_FEATURE = "Feature";
+    private static final long serialVersionUID = -6879838545330014414L;
     
+    private GeojsonCrs crs;
+    
+    public void setCrs(GeojsonCrs crs) {
+        this.crs = crs;
+    }
+
+    public GeojsonCrs getCrs() {
+        return crs;
+    }
 
     /**
      * @return the geojson type of the object (e.g. <code>Feature</code>, <code>Point</code>, etc.).

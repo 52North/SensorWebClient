@@ -25,7 +25,7 @@ package org.n52.shared.requests.query;
 
 import java.io.Serializable;
 
-import org.n52.shared.serializable.pojos.BoundingBox;
+import org.n52.io.crs.BoundingBox;
 
 
 public class QueryParameters implements Serializable {

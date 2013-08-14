@@ -24,16 +24,16 @@
 
 package org.n52.io.crs;
 
-import java.util.Collection;
-import java.util.List;
+import static com.vividsolutions.jts.geom.PrecisionModel.FLOATING;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+import static org.geotools.factory.Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER;
+import static org.geotools.referencing.ReferencingFactoryFinder.getCRSAuthorityFactory;
 
 import org.geotools.factory.Hints;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
-import org.geotools.referencing.ReferencingFactoryFinder;
-import org.n52.shared.Constants;
-import org.n52.shared.serializable.pojos.BoundingBox;
-import org.n52.shared.serializable.pojos.sos.Station;
+import org.n52.io.geojson.GeojsonPoint;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
@@ -48,20 +48,21 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
-public abstract class AReferencingHelper {
-
+public class CRSUtils {
+    
+    public static final String CRS84 = "urn:ogc:def:crs:OGC:1.3:CRS84";
+    
+    public static final String EPSG_4326 = "EPSG:4326";
+    
     protected CRSAuthorityFactory crsFactory;
 
     /**
-     * Creates an {@link AReferencingHelper} which offers assistance when doing spatial opererations. Strict
-     * means that all CRS defined with lat/lon axis ordering will be handled as defined. <br>
-     * <br>
-     * If {@link ConfigurationContext#IS_DEV_MODE} is set to <code>true</code> a
-     * {@link ReferencingMockupHelper} is created.
+     * Creates an {@link CRSUtils} which offers assistance when doing spatial opererations. Strict
+     * means that all CRS defined with lat/lon axis ordering will be handled as defined.
      * 
      * @return creates a reference helper which (strictly) handles referencing operations.
      */
-    public static AReferencingHelper createEpsgStrictAxisOrder() {
+    public static CRSUtils createEpsgStrictAxisOrder() {
         /*
          * Setting FORCE_LONGITUDE_FIRST_AXIS_ORDER to FALSE seems to be unnecessary as this is geotools
          * default value for this. It becomes necessary, when property org.geotools.referencing.forceXY was
@@ -70,57 +71,57 @@ public abstract class AReferencingHelper {
          * FORCE_LONGITUDE_FIRST_AXIS_ORDER parameter is preferred to org.geotools.referencing.forceXY so we
          * have to set it explicitly to find the correct CRS factory.
          */
-        Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.FALSE);
+        Hints hints = new Hints(FORCE_LONGITUDE_FIRST_AXIS_ORDER, FALSE);
         return createEpsgReferenceHelper(hints);
     }
 
     /**
-     * Creates an {@link AReferencingHelper} which offers assistance when doing spatial opererations. Forcing
-     * XY means that CRS axis ordering is considered lon/lat ordering, even if defined lat/lon. <br>
-     * <br>
-     * If {@link ConfigurationContext#IS_DEV_MODE} is set to <code>true</code> a
-     * {@link ReferencingMockupHelper} is created.
+     * Creates an {@link CRSUtils} which offers assistance when doing spatial opererations. Forcing
+     * XY means that CRS axis ordering is considered lon/lat ordering, even if defined lat/lon.
      * 
      * @return creates a reference helper which (strictly) handles referencing operations.
      */
-    public static AReferencingHelper createEpsgForcedXYAxisOrder() {
-        Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
+    public static CRSUtils createEpsgForcedXYAxisOrder() {
+        Hints hints = new Hints(FORCE_LONGITUDE_FIRST_AXIS_ORDER, TRUE);
         return createEpsgReferenceHelper(hints);
     }
 
     /**
-     * Creates an {@link AReferencingHelper} which offers assistance when doing spatial opererations.
+     * Creates an {@link CRSUtils} which offers assistance when doing spatial opererations.
      * 
      * @param hints
      *        Some Geotools {@link Hints} which set behavior and special considerations regarding to the
      *        spatial operations.
      */
-    public static AReferencingHelper createEpsgReferenceHelper(Hints hints) {
-        return createReferencingHelper(ReferencingFactoryFinder.getCRSAuthorityFactory("EPSG", hints));
+    public static CRSUtils createEpsgReferenceHelper(Hints hints) {
+        return new CRSUtils(getCRSAuthorityFactory("EPSG", hints));
     }
 
-    protected AReferencingHelper(CRSAuthorityFactory crsFactory) {
+    private CRSUtils(CRSAuthorityFactory crsFactory) {
         this.crsFactory = crsFactory;
     }
 
-    /**
-     * Creates an {@link AReferencingHelper} which offeres assistance when doing spatial operations. <br>
-     * <br>
-     * If {@link ConfigurationContext#IS_DEV_MODE} is set to <code>true</code> a
-     * {@link ReferencingMockupHelper} is created.
-     * 
-     * @return a referencing facade implementation depending on {@link ConfigurationContext#IS_DEV_MODE}
-     *         parameter
-     */
-    private static AReferencingHelper createReferencingHelper(CRSAuthorityFactory crsFactory) {
-        return new ReferencingHelper(crsFactory);
+    public boolean isContainedByBBox(BoundingBox bbox, GeojsonPoint point) throws FactoryException,
+            TransformException {
+        String sourceSrs = point.getCrs() == null ? EPSG_4326 : point.getCrs().getName();
+        String targetSrs = bbox.getSrs();
+        if (sourceSrs != null) {
+            CoordinateReferenceSystem sourceCrs = crsFactory.createCoordinateReferenceSystem(sourceSrs);
+            CoordinateReferenceSystem targetCrs = crsFactory.createCoordinateReferenceSystem(targetSrs);
+//            CoordinateReferenceSystem sourceCrs = CRS.decode(sourceSrs);
+//            CoordinateReferenceSystem targetCrs = CRS.decode(targetSrs);
+            GeometryFactory geometryFactory = createGeometryFactory(sourceSrs);
+            Coordinate coordinate = createCoordinate(sourceCrs, point.getCoordinates()[0], point.getCoordinates()[1], null);
+            Point location = geometryFactory.createPoint(coordinate);
+            location = transform(location, sourceCrs, targetCrs);
+            if (isAxesSwitched(sourceCrs, targetCrs)) {
+                return bbox.contains(location.getX(), location.getY());
+            } else {
+                return bbox.contains(location.getY(), location.getX());
+            }
+        }
+        return false;
     }
-
-    public abstract List<Station> getContainingStations(BoundingBox bbox, Collection<Station> stations) throws FactoryException,
-            TransformException;
-
-    public abstract boolean isStationContainedByBBox(BoundingBox bbox, Station station) throws FactoryException,
-            TransformException;
 
     /**
      * Transforms a given point from a given reference to WGS84 (EPSG:4328).
@@ -137,7 +138,7 @@ public abstract class AReferencingHelper {
      *         if transformation fails for any other reason.
      */
     public Point transformToWgs84(Point point, String refFrame) throws FactoryException, TransformException {
-        return transform(point, refFrame, Constants.EPSG_4326);
+        return transform(point, refFrame, EPSG_4326);
     }
 
     /**
@@ -174,7 +175,7 @@ public abstract class AReferencingHelper {
     }
     
     public GeometryFactory createGeometryFactory(int srsId) {
-        PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING);
+        PrecisionModel pm = new PrecisionModel(FLOATING);
         return new GeometryFactory(pm, srsId);
     }
     
@@ -302,6 +303,22 @@ public abstract class AReferencingHelper {
             return Integer.parseInt(epsgParts[epsgParts.length - 1]);
         }
         return Integer.parseInt(srs);
+    }
+    
+    /**
+     * @param first
+     *        the first CRS.
+     * @param second
+     *        the second CRS.
+     * @return <code>true</code> if the first axes of both given CRS do not point in the same direction,
+     *         <code>false</code> otherwise.
+     */
+    private boolean isAxesSwitched(CoordinateReferenceSystem first, CoordinateReferenceSystem second) {
+        AxisDirection sourceFirstAxis = first.getCoordinateSystem().getAxis(0).getDirection();
+        AxisDirection targetFirstAxis = second.getCoordinateSystem().getAxis(0).getDirection();
+        return sourceFirstAxis.equals(AxisDirection.NORTH) && !targetFirstAxis.equals(AxisDirection.NORTH)
+                || !sourceFirstAxis.equals(AxisDirection.NORTH) && targetFirstAxis.equals(AxisDirection.NORTH);
+
     }
 
 }

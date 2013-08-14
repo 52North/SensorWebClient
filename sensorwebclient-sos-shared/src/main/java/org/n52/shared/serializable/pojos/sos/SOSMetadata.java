@@ -29,8 +29,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
+import org.n52.io.crs.BoundingBox;
 import org.n52.shared.Constants;
-import org.n52.shared.serializable.pojos.BoundingBox;
 
 /**
  * A shared metadata representation for an SOS instance. An {@link SOSMetadata} is used from both (!) Client

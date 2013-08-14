@@ -80,7 +80,7 @@ import org.n52.oxf.xmlbeans.parser.XMLBeansParser;
 import org.n52.oxf.xmlbeans.parser.XMLHandlingException;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.server.parser.utils.ParsedPoint;
-import org.n52.io.crs.AReferencingHelper;
+import org.n52.io.crs.CRSUtils;
 import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
@@ -96,7 +96,7 @@ public class DescribeSensorParser {
 
     private SensorMLDocument smlDoc = null;
     
-    private AReferencingHelper referenceHelper = AReferencingHelper.createEpsgStrictAxisOrder();
+    private CRSUtils referenceHelper = CRSUtils.createEpsgStrictAxisOrder();
 
     /**
      * Creates a SensorML Parser considering individual service settings contained by the 
@@ -114,7 +114,7 @@ public class DescribeSensorParser {
             XMLHandlingException {
         setDataStreamToParse(inputStream);
         if (metadata.isForceXYAxisOrder()) {
-            referenceHelper = AReferencingHelper.createEpsgForcedXYAxisOrder();
+            referenceHelper = CRSUtils.createEpsgForcedXYAxisOrder();
         }
     }
     
@@ -673,7 +673,7 @@ public class DescribeSensorParser {
         }
     }
 
-    public void setReferencingHelper(AReferencingHelper refHelper) {
+    public void setReferencingHelper(CRSUtils refHelper) {
         this.referenceHelper = refHelper;
     }
 }

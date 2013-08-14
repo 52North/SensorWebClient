@@ -5,9 +5,13 @@ import java.util.Map;
 
 public class GeojsonFeature extends GeojsonObject {
 
+    private static final long serialVersionUID = 863297394860249486L;
+
+    private static final String GEOJSON_TYPE_FEATURE = "Feature";
+    
     protected Map<String, Object> properties = null;
     
-    private GeojsonPoint geometry;
+    private GeojsonPoint geometry; // XXX should be GeojsonGeometry, but generics are different here 
     
     public String getType() {
         return GEOJSON_TYPE_FEATURE;

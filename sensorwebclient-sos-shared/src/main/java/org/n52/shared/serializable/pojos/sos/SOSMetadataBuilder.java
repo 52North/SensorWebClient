@@ -24,9 +24,9 @@
 
 package org.n52.shared.serializable.pojos.sos;
 
+import org.n52.io.crs.BoundingBox;
+import org.n52.io.crs.EastingNorthing;
 import org.n52.shared.Constants;
-import org.n52.shared.serializable.pojos.BoundingBox;
-import org.n52.shared.serializable.pojos.EastingNorthing;
 
 public class SOSMetadataBuilder {
 

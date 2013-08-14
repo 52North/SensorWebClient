@@ -62,14 +62,14 @@ import org.n52.client.sos.event.handler.AddMarkerEventHandler;
 import org.n52.client.ui.Toaster;
 import org.n52.client.ui.map.InfoMarker;
 import org.n52.client.ui.map.MapController;
+import org.n52.io.crs.BoundingBox;
 import org.n52.shared.Constants;
-import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 

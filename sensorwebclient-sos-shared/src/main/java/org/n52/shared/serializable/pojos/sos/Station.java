@@ -24,10 +24,13 @@
 
 package org.n52.shared.serializable.pojos.sos;
 
+import static org.n52.io.geojson.GeojsonPoint.createWithCoordinates;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import org.n52.shared.serializable.pojos.EastingNorthing;
+import org.n52.io.crs.EastingNorthing;
+import org.n52.io.geojson.GeojsonPoint;
 
 /**
  * A {@link Station} represents a location where timeseries data is observed.
@@ -63,6 +66,13 @@ public class Station implements Serializable {
 
     public EastingNorthing getLocation() {
         return location;
+    }
+    
+    public GeojsonPoint asGeoJSON() {
+        Double[] coordinates = new Double[] {location.getEasting(), location.getNorthing()};
+        GeojsonPoint point = createWithCoordinates(coordinates);
+        point.setCrs(location.getCrs());
+        return point;
     }
 
     public void addTimeseries(SosTimeseries timeseries) {

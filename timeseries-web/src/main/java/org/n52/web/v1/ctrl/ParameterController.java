@@ -1,17 +1,30 @@
+
 package org.n52.web.v1.ctrl;
 
-import org.springframework.web.bind.annotation.PathVariable;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import org.n52.web.v1.srv.ServiceParameterService;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-public abstract class ParameterController implements RestfulKvp, RestfulUrls{
-	
-	@RequestMapping(method=RequestMethod.GET)
-	public abstract ModelAndView getCollection(@RequestParam(defaultValue = KVP_DEFAULT_OFFSET) int offset, @RequestParam(defaultValue = KVP_DEFAULT_SIZE) int size);
-	
-	@RequestMapping(value="/{item}", method=RequestMethod.GET)
-	public abstract ModelAndView getItem(@PathVariable("item") String item);
+public abstract class ParameterController implements RestfulUrls {
+
+    protected ServiceParameterService serviceParameterService;
+
+    @RequestMapping(method = GET)
+    public abstract ModelAndView getCollection(MultiValueMap<String, String> query);
+
+    @RequestMapping(value = "/{item}", method = GET)
+    public abstract ModelAndView getItem(String item, MultiValueMap<String, String> query);
+
+
+    public ServiceParameterService getServiceParameterService() {
+        return serviceParameterService;
+    }
+
+    public void setServiceParameterService(ServiceParameterService serviceParameterService) {
+        this.serviceParameterService = serviceParameterService;
+    }
 
 }

@@ -64,8 +64,8 @@ import org.n52.server.da.MetadataHandler;
 import org.n52.server.da.oxf.OperationAccessor;
 import org.n52.server.parser.ConnectorUtils;
 import org.n52.server.parser.utils.ParsedPoint;
-import org.n52.io.crs.AReferencingHelper;
-import org.n52.shared.serializable.pojos.EastingNorthing;
+import org.n52.io.crs.CRSUtils;
+import org.n52.io.crs.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
@@ -91,7 +91,7 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
         
         // TODO send DescribeSensor for every procedure to get the UOM, when the EEA-SOS deliver the uom
 
-        AReferencingHelper referenceHelper = createReferencingHelper();
+        CRSUtils referenceHelper = createReferencingHelper();
         Map<String, String> offeringBBoxMap = getOfferingBBoxMap();
         Map<SosTimeseries, FutureTask<OperationResult>> futureTasks = new ConcurrentHashMap<SosTimeseries, FutureTask<OperationResult>>();
         for (SosTimeseries timeseries : observingTimeseries) {
@@ -157,7 +157,7 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 		return metadata;
 	}
 
-	public ParsedPoint getPointOfSamplingFeatureType(SFSamplingFeatureType sfSamplingFeature, AReferencingHelper referenceHelper) throws XmlException {
+	public ParsedPoint getPointOfSamplingFeatureType(SFSamplingFeatureType sfSamplingFeature, CRSUtils referenceHelper) throws XmlException {
 		ParsedPoint point = new ParsedPoint();
 		XmlCursor cursor = sfSamplingFeature.newCursor();
 		if (cursor.toChild(new QName("http://www.opengis.net/samplingSpatial/2.0", "shape"))) {
@@ -205,7 +205,7 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 		return offeringBBox;
 	}
 
-	public String createBboxString(IBoundingBox bbox, AReferencingHelper referenceHelper) {
+	public String createBboxString(IBoundingBox bbox, CRSUtils referenceHelper) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("om:featureOfInterest/*/sams:shape,");
 		sb.append(bbox.getLowerCorner()[0]).append(",");

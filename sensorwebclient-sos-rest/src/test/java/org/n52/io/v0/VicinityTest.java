@@ -9,7 +9,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 import org.n52.api.v0.io.Vicinity;
-import org.n52.shared.serializable.pojos.BoundingBox;
+import org.n52.io.crs.BoundingBox;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;

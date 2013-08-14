@@ -42,6 +42,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.n52.io.crs.EastingNorthing;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
@@ -55,7 +56,6 @@ import org.n52.server.da.MetadataHandler;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.server.parser.DescribeSensorParser;
 import org.n52.server.parser.utils.ParsedPoint;
-import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;

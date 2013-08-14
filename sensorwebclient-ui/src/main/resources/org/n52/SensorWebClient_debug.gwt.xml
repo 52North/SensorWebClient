@@ -21,5 +21,6 @@
 	<source path='client' />
 	<source path='shared' />
 	<source path='server' />
+    <source path='io' />
 
 </module>

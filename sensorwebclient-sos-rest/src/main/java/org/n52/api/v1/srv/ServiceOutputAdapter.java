@@ -1,6 +1,7 @@
 package org.n52.api.v1.srv;
 
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadataForItemName;
+import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,9 +10,19 @@ import org.n52.api.v1.io.ServiceConverter;
 import org.n52.io.v1.data.ServiceOutput;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
-import org.n52.web.v1.srv.ParameterService;
+import org.n52.web.v1.srv.ServiceParameterService;
 
-public class ServiceOutputAdapter implements ParameterService<ServiceOutput> {
+public class ServiceOutputAdapter implements ServiceParameterService {
+
+    @Override
+    public boolean isKnownTimeseries(String timeseriesId) {
+        for (SOSMetadata metadatas : getSOSMetadatas()) {
+            if (metadatas.getStationByTimeSeriesId(timeseriesId) != null) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 	@Override
 	public ServiceOutput[] getExpandedParameters(int offset, int size) {

@@ -57,7 +57,7 @@ import org.n52.server.da.oxf.SOSAdapter_OXFExtension;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.server.parser.ConnectorUtils;
 import org.n52.server.parser.utils.ParsedPoint;
-import org.n52.io.crs.AReferencingHelper;
+import org.n52.io.crs.CRSUtils;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
@@ -168,7 +168,7 @@ public class GrdcMetadataHandler extends MetadataHandler {
             LOGGER.error("Could not insert spatial metadata", e);
         }
 
-        AReferencingHelper referenceHelper = createReferencingHelper();
+        CRSUtils referenceHelper = createReferencingHelper();
         
         while (!futureTasks.isEmpty()) {
         	Set<String> keys = new HashSet<String>();
@@ -226,7 +226,7 @@ public class GrdcMetadataHandler extends MetadataHandler {
 		return metadata;
 	}
 
-	private ParsedPoint getPositionOfGRDCSamplingPoint(GrdcSamplingPointType grdcSamplingPoint, AReferencingHelper referenceHelper) {
+	private ParsedPoint getPositionOfGRDCSamplingPoint(GrdcSamplingPointType grdcSamplingPoint, CRSUtils referenceHelper) {
 		DirectPositionType pos = grdcSamplingPoint.getPosition().getPoint().getPos();
 		String[] coords = pos.getStringValue().split(" ");
 		
