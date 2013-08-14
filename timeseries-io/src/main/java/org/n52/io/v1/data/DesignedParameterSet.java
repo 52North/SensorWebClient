@@ -113,7 +113,11 @@ public class DesignedParameterSet extends ParameterSet {
         this.styleOptions.put(timeseriesId, styleOptions);
     }
     
+<<<<<<< HEAD
     public static RenderingContext createContextForSingleTimeseries(TimeseriesMetadataOutput metadata, StyleProperties style) {
+=======
+    public static RenderingContext createContextForSingleTimeseries(TimeseriesMetadata metadata, StyleProperties style) {
+>>>>>>> branch 'master' of ssh://git@github.com/ridoo/SensorWebClient.git
         DesignedParameterSet parameters = new DesignedParameterSet();
         parameters.addTimeseriesWithStyleOptions(metadata.getId(), style);
         return RenderingContext.createWith(parameters, metadata);

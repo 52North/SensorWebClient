@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.n52.io.v1.data.ServiceOutput;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+<<<<<<< HEAD
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
 public abstract class OutputConverter<T,E> {
@@ -23,6 +24,15 @@ public abstract class OutputConverter<T,E> {
     
     protected TimeseriesParametersLookup getLookup() {
         return metadata.getTimeseriesParametersLookup();
+=======
+
+public abstract class OutputConverter<T,E> {
+
+    private SOSMetadata metadata;
+
+    public OutputConverter(SOSMetadata metadata) {
+        this.metadata = metadata;
+>>>>>>> branch 'master' of ssh://git@github.com/ridoo/SensorWebClient.git
     }
 
     protected ServiceOutput convertCondensedService() {
