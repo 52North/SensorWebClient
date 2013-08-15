@@ -4,7 +4,8 @@
 	   ${project.artifactId} (built on ${timestamp})
 	</display-name>
 	
-	<!-- Cross origin resource sharing (uncomment to share REST-API) 
+	<!-- Cross origin resource sharing (uncomment to share REST-API)
+	       Filter requires Tomcat 7.0.32 or higher
     <filter>
         <filter-name>CorsFilter</filter-name>
         <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
@@ -13,7 +14,7 @@
         <filter-name>CorsFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    -->
+     -->
 
 	<!-- listen for spring related configuration files -->
 	<listener>

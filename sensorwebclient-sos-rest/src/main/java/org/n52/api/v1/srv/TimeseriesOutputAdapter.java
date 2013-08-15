@@ -20,7 +20,7 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Timeserie
     private GetDataService dataService;
 
 	@Override
-	public TimeseriesDataCollection getTimeseries(UndesignedParameterSet parameters) {
+	public TimeseriesDataCollection getTimeseriesData(UndesignedParameterSet parameters) {
 		return dataService.getTimeSeriesFromParameterSet(parameters);
 	}
 

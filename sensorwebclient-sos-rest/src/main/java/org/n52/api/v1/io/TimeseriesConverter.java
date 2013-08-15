@@ -10,6 +10,7 @@ import org.n52.io.v1.data.StationOutput;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.TimeseriesOutput;
 import org.n52.shared.serializable.pojos.ReferenceValue;
+import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
@@ -38,6 +39,8 @@ public class TimeseriesConverter extends OutputConverter<SosTimeseries, Timeseri
         
         // TODO Auto-generated method stub
         
+        Phenomenon phenomenon = getLookup().getPhenomenon(timeseries.getPhenomenonId());
+        convertedTimeseries.setUom(phenomenon.getUnitOfMeasure());
         return convertedTimeseries;
         
     }

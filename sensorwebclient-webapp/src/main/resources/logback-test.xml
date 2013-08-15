@@ -4,7 +4,7 @@
 
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-            <encoding>UTF-8</encoding>
+			<encoding>UTF-8</encoding>
 			<pattern>
 				%d{HH:mm:ss.SSS} [%thread] %-5level %logger{0} - %msg%n
 			</pattern>
@@ -25,7 +25,6 @@
 	<logger name="org.jboss.logging" level="WARN" />
 
 	<root level="INFO">
-		<appender-ref ref="FILE" />
 		<appender-ref ref="STDOUT" />
 	</root>
 </configuration>
