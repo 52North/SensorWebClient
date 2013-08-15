@@ -3,11 +3,15 @@ package org.n52.web.v1.ctrl;
 
 import static org.n52.web.v1.ctrl.RestfulUrls.COLLECTION_FEATURES;
 import static org.n52.web.v1.ctrl.RestfulUrls.DEFAULT_PATH;
+import static org.n52.web.v1.ctrl.Stopwatch.startStopwatch;
 
 import org.apache.regexp.REUtil;
+import org.joda.time.DateTime;
 import org.n52.io.v1.data.FeatureOutput;
 import org.n52.web.ResourceNotFoundException;
 import org.n52.web.v1.srv.ParameterService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +22,8 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping(value = DEFAULT_PATH + "/" + COLLECTION_FEATURES, produces = {"application/json"})
 public class FeaturesParameterController extends ParameterController {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(FeaturesParameterController.class);
 
     private ParameterService<FeatureOutput> featureParameterService;
 
@@ -27,7 +33,9 @@ public class FeaturesParameterController extends ParameterController {
         int size = map.getSize();
         
         if (map.isExpanded()) {
+            Stopwatch stopwatch = startStopwatch();
             Object[] result = featureParameterService.getExpandedParameters(offset, size);
+            LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());
 
             // TODO add paging
             

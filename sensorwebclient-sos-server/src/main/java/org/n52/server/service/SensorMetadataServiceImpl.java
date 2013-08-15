@@ -63,8 +63,11 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
             XmlObject sml = getSensorDescriptionAsSensorML(procedureId, metadata);
             DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), metadata);
             tsProperties.setMetadataUrl(parser.buildUpSensorMetadataHtmlUrl(procedureId, sosUrl));
+            
+            // XXX this could have already been read while creating the cache!
             tsProperties.setStationName(parser.buildUpSensorMetadataStationName());
             tsProperties.setUnitOfMeasure(parser.buildUpSensorMetadataUom(phenomenonId));
+            // end xxx
             
             HashMap<String, ReferenceValue> refvalues = parser.parseReferenceValues();
             tsProperties.addAllRefValues(refvalues);

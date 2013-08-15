@@ -337,6 +337,18 @@
 						<version>${project.version}</version>
 						<scope>provided</scope>
 					</dependency>
+                    <dependency>
+                        <groupId>org.n52.sensorweb</groupId>
+                        <artifactId>timeseries-io</artifactId>
+                        <version>${project.version}</version>
+                        <scope>provided</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.n52.sensorweb</groupId>
+                        <artifactId>timeseries-web</artifactId>
+                        <version>${project.version}</version>
+                        <scope>provided</scope>
+                    </dependency>
 				</dependencies>
 			</dependencyManagement>
 		</profile>
