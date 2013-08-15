@@ -77,8 +77,8 @@ public class GetDataService extends DataService {
             }
         }
         catch (Exception e) {
-            LOGGER.error("Could not get timeseries data for options: " + options);
-            throw new InternalServiceException("Could not get timeseries data for options: " + options);
+            LOGGER.error("Could not get timeseries data for options: " + options, e);
+            throw new InternalServiceException("Could not get timeseries data for options: " + options, e);
         }
         return timeSeriesResults;
     }

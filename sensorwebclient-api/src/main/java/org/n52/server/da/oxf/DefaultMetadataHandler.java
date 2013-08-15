@@ -183,6 +183,8 @@ public class DefaultMetadataHandler extends MetadataHandler {
                         }
 
                         for (String phenomenon : phenomenons) {
+                            String uom = parser.buildUpSensorMetadataUom(phenomenon);
+                            lookup.getPhenomenon(phenomenon).setUnitOfMeasure(uom);
                             Collection<SosTimeseries> paramConstellations = getMatchingConstellations(observingTimeseries,
                                                                                                       procedureId,
                                                                                                       phenomenon);

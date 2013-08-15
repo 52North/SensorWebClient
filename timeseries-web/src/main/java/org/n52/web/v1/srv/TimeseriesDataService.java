@@ -5,6 +5,6 @@ import org.n52.io.v1.data.UndesignedParameterSet;
 
 public interface TimeseriesDataService {
 
-	TimeseriesDataCollection getTimeseries(UndesignedParameterSet parameters);
+	TimeseriesDataCollection getTimeseriesData(UndesignedParameterSet parameters);
 
 }

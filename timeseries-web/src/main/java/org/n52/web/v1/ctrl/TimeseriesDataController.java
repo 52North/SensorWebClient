@@ -6,6 +6,7 @@ import static org.n52.io.v1.data.DesignedParameterSet.createContextForSingleTime
 import static org.n52.io.v1.data.UndesignedParameterSet.createForSingleTimeseries;
 import static org.n52.web.v1.ctrl.RestfulUrls.COLLECTION_TIMESERIES;
 import static org.n52.web.v1.ctrl.RestfulUrls.DEFAULT_PATH;
+import static org.n52.web.v1.ctrl.Stopwatch.startStopwatch;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.io.IOException;
@@ -43,7 +44,7 @@ public class TimeseriesDataController {
 
     private TimeseriesDataService timeseriesDataService;
     
-    @RequestMapping(value = DEFAULT_PATH + "/" + COLLECTION_TIMESERIES + "/data", produces = "application/json", method = GET)
+    @RequestMapping(value = "/{timeseriesId}/data", produces = "application/json", method = GET)
     public ModelAndView getTimeseriesData(@PathVariable String timeseriesId,
                                           @RequestParam(required = false) String timespan) {
 
@@ -54,14 +55,17 @@ public class TimeseriesDataController {
         }
 
         UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, timespan);
-        TimeseriesDataCollection timeseriesData = timeseriesDataService.getTimeseries(parameters);
+        
+        Stopwatch stopwatch = startStopwatch();
+        TimeseriesDataCollection timeseriesData = timeseriesDataService.getTimeseriesData(parameters);
+        LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());
 
         // TODO add paging
 
-        return new ModelAndView().addObject(timeseriesData);
+        return new ModelAndView().addObject(timeseriesData.getAllTimeseries());
     }
 
-    @RequestMapping(value = DEFAULT_PATH + "/" + COLLECTION_TIMESERIES + "/data", produces = "image/png", method = GET)
+    @RequestMapping(value = "/{timeseriesId}/data", produces = "image/png", method = GET)
     public void getTimeseriesCollection(HttpServletResponse response,
                                        @PathVariable String timeseriesId,
                                        @RequestParam(required = false) String timespan,
@@ -76,7 +80,10 @@ public class TimeseriesDataController {
         RenderingContext context = createContextForSingleTimeseries(metadata, style);
         ChartRenderer renderer = IOFactory.create().createChartRenderer(context);
         UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, timespan);
-        TimeseriesDataCollection timeseriesData = timeseriesDataService.getTimeseries(parameters);
+        
+        Stopwatch stopwatch = startStopwatch();
+        TimeseriesDataCollection timeseriesData = timeseriesDataService.getTimeseriesData(parameters);
+        LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());
         try {
             renderer.writeToOutputStream(timeseriesData, response.getOutputStream());
         }
