@@ -92,6 +92,7 @@ public abstract class DataService {
                 TimeseriesProperties propertiesInstance = createTimeseriesProperties(timeseriesId);
                 TimeseriesData timeseriesData = createTimeseriesData(propertiesInstance);
                 timeseriesCollection.addNewTimeseries(timeseriesId, timeseriesData);
+                props.add(propertiesInstance);
             }
             catch (Exception e) {
                 LOGGER.error("Could not process time series request.", e);
