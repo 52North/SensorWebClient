@@ -9,12 +9,13 @@ import org.n52.api.v1.io.ProcedureConverter;
 import org.n52.io.v1.data.ProcedureOutput;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
+import org.n52.web.v1.ctrl.QueryMap;
 import org.n52.web.v1.srv.ParameterService;
 
 public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput> {
 
 	@Override
-	public ProcedureOutput[] getExpandedParameters(int offset, int size) {
+	public ProcedureOutput[] getExpandedParameters(QueryMap map) {
 		List<ProcedureOutput> allProcedures = new ArrayList<ProcedureOutput>();
 		for (SOSMetadata metadata : getSOSMetadatas()) {
 		    ProcedureConverter converter = new ProcedureConverter(metadata);
@@ -25,7 +26,7 @@ public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput>
 	}
 	
 	@Override
-    public ProcedureOutput[] getCondensedParameters(int offset, int size) {
+    public ProcedureOutput[] getCondensedParameters(QueryMap map) {
         List<ProcedureOutput> allProcedures = new ArrayList<ProcedureOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             ProcedureConverter converter = new ProcedureConverter(metadata);
