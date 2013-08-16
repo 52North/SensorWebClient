@@ -196,7 +196,7 @@ public class QueryMap {
      * @throws BadRequestException
      *         if parameter could not be parsed.
      */
-    public boolean isExpanded() {
+    public boolean shallExpand() {
         if ( !query.containsKey(EXPANDED)) {
             return DEFAULT_EXPANDED;
         }

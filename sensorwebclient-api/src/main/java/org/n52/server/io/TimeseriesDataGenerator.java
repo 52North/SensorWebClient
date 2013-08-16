@@ -57,7 +57,7 @@ public class TimeseriesDataGenerator extends Generator {
             Map<String, OXFFeatureCollection> entireCollMap = getFeatureCollectionFor(options, false);
             Collection<OXFFeatureCollection> observationCollList = entireCollMap.values();
 
-            HashMap<String, HashMap<Long, String>> allTimeSeries = new HashMap<String, HashMap<Long, String>>();
+            HashMap<String, HashMap<Long, Double>> allTimeSeries = new HashMap<String, HashMap<Long, Double>>();
 
             for (OXFFeatureCollection coll : observationCollList) {
 
@@ -115,7 +115,7 @@ public class TimeseriesDataGenerator extends Generator {
                                         && property.getProcedure().equals(procedure)) {
                                     selectedProperties = property;
                                     String phenomenonId = selectedProperties.getPhenomenon();
-                                    HashMap<Long, String> data = TimeseriesFactory.compressToHashMap(txCollection, foi, phenomenonId, procedure);
+                                    HashMap<Long, Double> data = TimeseriesFactory.compressToHashMap(txCollection, foi, phenomenonId, procedure);
                                     allTimeSeries.put(selectedProperties.getTimeseriesId(), data);
                                     break;
                                 } else {
@@ -139,7 +139,7 @@ public class TimeseriesDataGenerator extends Generator {
             // check if some TS did not get data and fill blank spots
             for (TimeseriesProperties prop : options.getProperties()) {
                 if (!allTimeSeries.containsKey(prop.getTimeseriesId())) {
-                    allTimeSeries.put(prop.getTimeseriesId(), new HashMap<Long, String>());
+                    allTimeSeries.put(prop.getTimeseriesId(), new HashMap<Long, Double>());
                 }
             }
 

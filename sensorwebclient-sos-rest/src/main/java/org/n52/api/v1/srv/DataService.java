@@ -131,7 +131,7 @@ public abstract class DataService {
     }
 
     private TimeseriesData createTimeseriesData(TimeseriesProperties timeseriesProperties) {
-        Map<Long, String> dummyMap = Collections.emptyMap();
+        Map<Long, Double> dummyMap = Collections.emptyMap();
         return TimeseriesData.newTimeseriesData(dummyMap);
     }
 

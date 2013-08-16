@@ -5,13 +5,13 @@ public class TimeseriesValue implements Comparable<TimeseriesValue>{
 
     private Long timestamp;
 
-    private String value;
+    private Double value;
 
     public TimeseriesValue() {
         // for serialization
     }
 
-    public TimeseriesValue(Long timestamp, String value) {
+    public TimeseriesValue(long timestamp, Double value) {
         this.timestamp = timestamp;
         this.value = value;
     }
@@ -24,11 +24,11 @@ public class TimeseriesValue implements Comparable<TimeseriesValue>{
         this.timestamp = timestamp;
     }
 
-    public String getValue() {
+    public double getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(Double value) {
         this.value = value;
     }
     

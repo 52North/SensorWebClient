@@ -9,12 +9,13 @@ import org.n52.api.v1.io.FeatureConverter;
 import org.n52.io.v1.data.FeatureOutput;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
+import org.n52.web.v1.ctrl.QueryMap;
 import org.n52.web.v1.srv.ParameterService;
 
 public class FeatureOutputAdapter implements ParameterService<FeatureOutput> {
 
 	@Override
-	public FeatureOutput[] getExpandedParameters(int offset, int size) {
+	public FeatureOutput[] getExpandedParameters(QueryMap map) {
 		List<FeatureOutput> allFeatures = new ArrayList<FeatureOutput>();
 		for (SOSMetadata metadata : getSOSMetadatas()) {
 		    FeatureConverter converter = new FeatureConverter(metadata);
@@ -26,7 +27,7 @@ public class FeatureOutputAdapter implements ParameterService<FeatureOutput> {
 
 
     @Override
-    public FeatureOutput[] getCondensedParameters(int offset, int size) {
+    public FeatureOutput[] getCondensedParameters(QueryMap map) {
         List<FeatureOutput> allFeatures = new ArrayList<FeatureOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             FeatureConverter converter = new FeatureConverter(metadata);

@@ -9,6 +9,7 @@ import java.util.List;
 import org.n52.api.v1.io.ServiceConverter;
 import org.n52.io.v1.data.ServiceOutput;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.web.v1.ctrl.QueryMap;
 import org.n52.web.v1.srv.ServiceParameterService;
 
 public class ServiceOutputAdapter implements ServiceParameterService {
@@ -24,7 +25,7 @@ public class ServiceOutputAdapter implements ServiceParameterService {
     }
 
 	@Override
-	public ServiceOutput[] getExpandedParameters(int offset, int size) {
+	public ServiceOutput[] getExpandedParameters(QueryMap map) {
 		List<ServiceOutput> allServices = new ArrayList<ServiceOutput>();
 		for (SOSMetadata metadata : getSOSMetadatas()) {
 		    ServiceConverter converter = new ServiceConverter(metadata);
@@ -34,7 +35,7 @@ public class ServiceOutputAdapter implements ServiceParameterService {
 	}
 	
 	@Override
-    public ServiceOutput[] getCondensedParameters(int offset, int size) {
+    public ServiceOutput[] getCondensedParameters(QueryMap map) {
         List<ServiceOutput> allServices = new ArrayList<ServiceOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             ServiceConverter converter = new ServiceConverter(metadata);

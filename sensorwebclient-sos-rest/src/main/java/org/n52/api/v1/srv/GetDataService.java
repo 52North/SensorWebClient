@@ -68,10 +68,10 @@ public class GetDataService extends DataService {
         try {
             TimeSeriesDataRequest tsRequest = new TimeSeriesDataRequest(options);
             TimeSeriesDataResponse timeSeriesData = timeSeriesDataService.getTimeSeriesData(tsRequest);
-            Map<String, HashMap<Long, String>> data = timeSeriesData.getPayloadData();
+            Map<String, HashMap<Long, Double>> data = timeSeriesData.getPayloadData();
             
             for (String timeseriesId : timeSeriesResults.getAllTimeseries().keySet()) {
-                HashMap<Long, String> values = data.get(timeseriesId);
+                HashMap<Long, Double> values = data.get(timeseriesId);
                 TimeseriesData timeseriesData = newTimeseriesData(values);
                 timeSeriesResults.addNewTimeseries(timeseriesId, timeseriesData);
             }

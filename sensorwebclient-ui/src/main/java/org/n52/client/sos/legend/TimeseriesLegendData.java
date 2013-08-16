@@ -57,7 +57,7 @@ public class TimeseriesLegendData implements LegendData {
 
 	private LegendElement legendElement;
 
-	private HashMap<Long, String> data;
+	private HashMap<Long, Double> data;
 
 	private long firstValueDate = 0;
 
@@ -72,7 +72,7 @@ public class TimeseriesLegendData implements LegendData {
 	public TimeseriesLegendData(String id, TimeseriesProperties properties) {
 		this.id = id;
 		this.properties = properties;
-		this.data = new HashMap<Long, String>();
+		this.data = new HashMap<Long, Double>();
 		init();
 	}
 
@@ -82,7 +82,7 @@ public class TimeseriesLegendData implements LegendData {
 		this.legendElement = new LegendEntryTimeSeries(this, "100%", "30");
 	}
 
-	public void addData(HashMap<Long, String> datamap) throws DataparsingException {
+	public void addData(HashMap<Long, Double> datamap) throws DataparsingException {
 		try {
 			// TODO do it this way, when enable caching
 			// this.data.putAll(data);
@@ -97,7 +97,7 @@ public class TimeseriesLegendData implements LegendData {
 		}
 	}
 
-	public HashMap<Long, String> getData() {
+	public HashMap<Long, Double> getData() {
 		return this.data;
 	}
 
@@ -105,9 +105,9 @@ public class TimeseriesLegendData implements LegendData {
 		this.properties.setAxisData(a);
 	}
 
-	public HashMap<Long, String> getData(long begin, long end) {
+	public HashMap<Long, Double> getData(long begin, long end) {
 
-		HashMap<Long, String> result = new HashMap<Long, String>();
+		HashMap<Long, Double> result = new HashMap<Long, Double>();
 		if (this.data.isEmpty()) {
 			return result; // TODO perform caching?
 		}

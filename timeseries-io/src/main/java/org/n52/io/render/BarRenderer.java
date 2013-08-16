@@ -1,16 +1,31 @@
 package org.n52.io.render;
 
-public class BarRenderer implements Renderer {
-    
-    public static final String BAR_CHART_TYPE = "bar";
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 
-    public BarRenderer() {
+class BarRenderer implements Renderer {
+    
+    static final String BAR_CHART_TYPE = "bar";
+
+    BarRenderer() {
         // TODO Auto-generated constructor stub
     }
 
     @Override
     public String getRendererType() {
         return BAR_CHART_TYPE;
+    }
+
+    @Override
+    public XYItemRenderer getXYRenderer() {
+        // TODO Auto-generated method stub
+        return null;
+        
+    }
+
+    @Override
+    public void setColorForSeriesAt(int index) {
+        // TODO Auto-generated method stub
+        
     }
 }
 

@@ -9,12 +9,13 @@ import org.n52.api.v1.io.OfferingConverter;
 import org.n52.io.v1.data.OfferingOutput;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
+import org.n52.web.v1.ctrl.QueryMap;
 import org.n52.web.v1.srv.ParameterService;
 
 public class OfferingOutputAdapter implements ParameterService<OfferingOutput> {
 
 	@Override
-	public OfferingOutput[] getExpandedParameters(int offset, int size) {
+	public OfferingOutput[] getExpandedParameters(QueryMap map) {
 		List<OfferingOutput> allOfferings = new ArrayList<OfferingOutput>();
 		for (SOSMetadata metadata : getSOSMetadatas()) {
 		    OfferingConverter converter = new OfferingConverter(metadata);
@@ -25,7 +26,7 @@ public class OfferingOutputAdapter implements ParameterService<OfferingOutput> {
 	}
 	
 	@Override
-    public OfferingOutput[] getCondensedParameters(int offset, int size) {
+    public OfferingOutput[] getCondensedParameters(QueryMap map) {
         List<OfferingOutput> allOfferings = new ArrayList<OfferingOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             OfferingConverter converter = new OfferingConverter(metadata);

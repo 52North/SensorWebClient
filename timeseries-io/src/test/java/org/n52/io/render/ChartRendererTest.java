@@ -5,8 +5,6 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Date;
 
-import javax.servlet.ServletOutputStream;
-
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,6 +39,10 @@ public class ChartRendererTest {
 
     static class MyChartRenderer extends ChartRenderer {
 
+        public MyChartRenderer() {
+            super(null);
+        }
+
         @Override
         public void setLanguage(String language) {
             throw new UnsupportedOperationException();
@@ -62,13 +64,7 @@ public class ChartRendererTest {
         }
 
         @Override
-        public void setContext(RenderingContext context) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void writeToOutputStream(TimeseriesDataCollection data,
-                                        ServletOutputStream stream) {
+        public void renderChart(TimeseriesDataCollection data) {
             throw new UnsupportedOperationException();
         }
 
