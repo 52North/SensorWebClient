@@ -15,6 +15,10 @@ public class RenderingContext {
         this.chartStyleDefinitions = timeseriesStyles;
     }
     
+    public static RenderingContext createEmpty() {
+        return new RenderingContext(new DesignedParameterSet(), new TimeseriesMetadataOutput[0]);
+    }
+    
     public static RenderingContext createWith(DesignedParameterSet timeseriesStyles, TimeseriesMetadataOutput ... timeseriesMetadatas ) {
         if (timeseriesStyles == null || timeseriesMetadatas == null) {
             throw new NullPointerException("Designs and metadatas cannot be null.!");
