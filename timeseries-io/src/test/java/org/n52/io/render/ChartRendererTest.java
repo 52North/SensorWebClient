@@ -43,6 +43,10 @@ public class ChartRendererTest {
             super(context);
         }
 
+        public MyChartRenderer() {
+            super(null);
+        }
+
         @Override
         public void setLanguage(String language) {
             throw new UnsupportedOperationException();
