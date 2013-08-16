@@ -46,8 +46,8 @@ public class ExceptionResponse {
         return causedBy == null ? null : causedBy.getMessage();
     }
 
-    public String[] getHints() {
-        return hints;
-    }
+//    public String[] getHints() {
+//        return hints;
+//    }
     
 }

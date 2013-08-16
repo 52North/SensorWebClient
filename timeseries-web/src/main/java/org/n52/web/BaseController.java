@@ -1,6 +1,8 @@
 package org.n52.web;
 
 import static org.n52.io.MimeType.APPLICATION_JSON;
+import static org.n52.io.MimeType.APPLICATION_PDF;
+import static org.n52.io.MimeType.IMAGE_PNG;
 import static org.n52.web.ExceptionResponse.createExceptionResponse;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -18,10 +20,22 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-public abstract class ExceptionHandlingController {
+public abstract class BaseController {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourcesController.class);
 
+    protected boolean isRequestingJsonData(HttpServletRequest request) {
+        return APPLICATION_JSON.getMimeType().equals(request.getHeader("Accept"));
+    }
+    
+    protected boolean isRequestingPdfData(HttpServletRequest request) {
+        return APPLICATION_PDF.getMimeType().equals(request.getHeader("Accept"));
+    }
+    
+    protected boolean isRequestingPngData(HttpServletRequest request) {
+        return IMAGE_PNG.getMimeType().equals(request.getHeader("Accept"));
+    }
+    
     // TODO make stack tracing configurable
     
     @ExceptionHandler(value = BadRequestException.class)

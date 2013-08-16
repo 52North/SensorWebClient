@@ -3,13 +3,13 @@ package org.n52.web.v1.ctrl;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-import org.n52.web.ExceptionHandlingController;
+import org.n52.web.BaseController;
 import org.n52.web.v1.srv.ServiceParameterService;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-public abstract class ParameterController extends ExceptionHandlingController implements RestfulUrls {
+public abstract class ParameterController extends BaseController implements RestfulUrls {
 
     protected ServiceParameterService serviceParameterService;
 

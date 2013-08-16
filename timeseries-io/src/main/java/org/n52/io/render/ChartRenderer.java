@@ -20,12 +20,12 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.imageio.ImageIO;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
-import javax.servlet.ServletOutputStream;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
@@ -45,7 +45,7 @@ public abstract class ChartRenderer {
     private JFreeChart chart;
 
     private XYPlot xyPlot;
-    
+
     private RenderingContext context;
 
     private String mimeType;
@@ -53,7 +53,7 @@ public abstract class ChartRenderer {
     private boolean drawLegend;
 
     private boolean showGrid;
-    
+
     private boolean showTooltips;
 
     private String language;
@@ -64,8 +64,14 @@ public abstract class ChartRenderer {
     }
 
     public abstract void renderChart(TimeseriesDataCollection data);
-    
-    public void writeChartTo(ServletOutputStream stream) throws IOException {
+
+    /**
+     * @param stream
+     *        the stream to write on the rendered chart.
+     * @throws IOException
+     *         if writing chart to output stream fails.
+     */
+    public void writeChartTo(OutputStream stream) throws IOException {
         JPEGImageWriteParam p = new JPEGImageWriteParam(null);
         p.setCompressionMode(JPEGImageWriteParam.MODE_DEFAULT);
         ImageIO.write(drawChartToImage(), "png", stream);
@@ -81,11 +87,11 @@ public abstract class ChartRenderer {
         chart.draw(chartGraphics, new Rectangle2D.Float(0, 0, width, height));
         return chartImage;
     }
-    
+
     public XYPlot getXYPlot() {
         return xyPlot;
     }
-    
+
     public RenderingContext getRenderingContext() {
         return context;
     }
@@ -131,9 +137,9 @@ public abstract class ChartRenderer {
     }
 
     private XYPlot createChart(RenderingContext context) {
-        
+
         // TODO add language context
-        
+
         this.chart = createTimeSeriesChart(null, "Time", "Value", null, false, showTooltips, true);
         return createPlotArea(chart);
     }
@@ -158,7 +164,7 @@ public abstract class ChartRenderer {
         domainAxis.setTickLabelPaint(COLOR);
         domainAxis.setLabelPaint(COLOR);
     }
-    
+
     private void showCrosshairsOnAxes(XYPlot xyPlot) {
         xyPlot.setDomainCrosshairVisible(true);
         xyPlot.setRangeCrosshairVisible(true);
@@ -208,7 +214,7 @@ public abstract class ChartRenderer {
     protected DesignedParameterSet getChartStyleDefinitions() {
         return context.getChartStyleDefinitions();
     }
-    
+
     protected boolean isLineStyle(StyleProperties properties) {
         return isLineStyleDefault(properties) || LINE_CHART_TYPE.equals(properties.getType());
     }
@@ -230,7 +236,6 @@ public abstract class ChartRenderer {
         Interval interval = Interval.parse(timespan);
         return interval.getEnd().toDate();
     }
-    
 
     static class LabelConstants {
         static final Color COLOR = BLACK;

@@ -23,6 +23,9 @@
  */
 package org.n52.web;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -30,8 +33,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class BadRequestException extends RuntimeException implements WebException {
 
     private static final long serialVersionUID = -299285770822168789L;
-    
-    private String[] details;
+
+    private List<String> details;
 
     @Deprecated
 	public BadRequestException() {
@@ -47,14 +50,20 @@ public class BadRequestException extends RuntimeException implements WebExceptio
 	}
 
 
-    @Override
-    public void setHints(String[] details) {
-        this.details = details;
+	@Override
+    public void addHint(String details) {
+        if (details == null) {
+            return;
+        }
+        if (getHints() == null) {
+            this.details = new ArrayList<String>();
+        }
+        this.details.add(details);
     }
 
     @Override
     public String[] getHints() {
-        return details;
+        return details == null ? null : details.toArray(new String[0]);
     }
 
     @Override

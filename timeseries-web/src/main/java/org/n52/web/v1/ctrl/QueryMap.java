@@ -1,12 +1,20 @@
 
 package org.n52.web.v1.ctrl;
 
+import java.io.IOException;
+
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.n52.io.crs.BoundingBox;
+import org.n52.io.v1.data.StyleProperties;
 import org.n52.io.v1.data.Vicinity;
 import org.n52.web.BadRequestException;
+import org.n52.web.InternalServiceException;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class QueryMap {
@@ -72,7 +80,7 @@ public class QueryMap {
      * Determines the feature filter
      */
     private static final String FEATURE = "feature";
-    
+
     /**
      * Determines the service filter
      */
@@ -87,27 +95,36 @@ public class QueryMap {
      * Determines the phenomenon filter
      */
     private static final String PHENOMENON = "phenomenon";
-    
+
     /**
      * Determines the category filter
      */
     private static final String CATEGORY = "category";
-    
+
     /**
      * Determines the within filter
      */
     private static final String WITHIN = "within";
-    
+
     /**
      * Determines the bbox filter
      */
     private static final String BBOX = "bbox";
+
+    /**
+     * Determines the style parameter
+     */
+    private static final String STYLE = "style";
     
+    /**
+     * Determines the timespan parameter
+     */
+    private static final String TIMESPAN = "timespan";
 
     private MultiValueMap<String, String> query;
 
     /**
-     *  Use static constructor {@link #createFromQuery(MultiValueMap)}.
+     * Use static constructor {@link #createFromQuery(MultiValueMap)}.
      */
     private QueryMap(MultiValueMap<String, String> queryParameters) {
         if (queryParameters == null) {
@@ -153,6 +170,61 @@ public class QueryMap {
         return query.getFirst(LANGUAGE);
     }
 
+    /**
+     * @return the value of {@value #STYLE} parameter. If not present, the default styles are returned.
+     */
+    public StyleProperties getStyle() {
+        if ( !query.containsKey(STYLE)) {
+            return StyleProperties.createDefaults();
+        }
+        return parseStyleProperties(query.getFirst(STYLE));
+    }
+
+    private StyleProperties parseStyleProperties(String style) {
+        try {
+            return style == null ?
+                                StyleProperties.createDefaults() :
+                                new ObjectMapper().readValue(style, StyleProperties.class);
+        }
+        catch (JsonMappingException e) {
+            throw new BadRequestException("Could not read style properties: " + style, e);
+        }
+        catch (JsonParseException e) {
+            throw new BadRequestException("Could not parse style properties: " + style, e);
+        }
+        catch (IOException e) {
+            throw new InternalServiceException("An error occured during request handling.", e);
+        }
+    }
+
+    /**
+     * @return the value of {@value #TIMESPAN} parameter. If not present, the default timespan is returned.
+     */
+    public String getTimespan() {
+        if ( !query.containsKey(TIMESPAN)) {
+            return createDefaultTimespan();
+        }
+        return validateTimespan(query.getFirst(TIMESPAN));
+    }
+    
+    private String createDefaultTimespan() {
+        DateTime now = new DateTime();
+        DateTime lastWeek = now.minusWeeks(1);
+        return new Interval(lastWeek, now).toString();
+    }
+    
+    private String validateTimespan(String timespan) {
+        try {
+            return Interval.parse(timespan).toString();
+        } catch (IllegalArgumentException e) {
+            String message = "Could not parse timespan parameter: " + timespan;
+            BadRequestException badRequest = new BadRequestException(message, e);
+            badRequest.addHint("Valid timespans have to be in ISO8601 period format.");
+            badRequest.addHint("Valid examples: 'PT6H/2013-08-13TZ' or '2013-07-13TZ/2013-08-13TZ'.");
+            throw badRequest;
+        }
+    }
+
     public String getCategory() {
         return query.getFirst(CATEGORY);
     }
@@ -176,18 +248,17 @@ public class QueryMap {
     public String getPhenomenon() {
         return query.getFirst(PHENOMENON);
     }
-    
 
     public BoundingBox getSpatialFilter() {
-        if (! query.containsKey(WITHIN)) {
+        if ( !query.containsKey(WITHIN)) {
             return null;
         }
         String value = query.getFirst(WITHIN);
         ObjectMapper mapper = new ObjectMapper();
         Vicinity vicinity = mapper.convertValue(value, Vicinity.class);
-        
+
         // TODO if bbox is present, merge bounds!
-        
+
         return vicinity.calculateBounds();
     }
 

@@ -25,6 +25,9 @@ package org.n52.web;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = NOT_FOUND)
@@ -32,7 +35,7 @@ public final class ResourceNotFoundException extends RuntimeException implements
 
     private static final long serialVersionUID = 7127133546245639752L;
     
-    private String[] details;
+    private List<String> details;
     
     @Deprecated
     public ResourceNotFoundException() {
@@ -48,13 +51,19 @@ public final class ResourceNotFoundException extends RuntimeException implements
 	}
 
     @Override
-    public void setHints(String[] details) {
-        this.details = details;
+    public void addHint(String details) {
+        if (details == null) {
+            return;
+        }
+        if (getHints() == null) {
+            this.details = new ArrayList<String>();
+        }
+        this.details.add(details);
     }
 
     @Override
     public String[] getHints() {
-        return details;
+        return details == null ? null : details.toArray(new String[0]);
     }
 
     @Override

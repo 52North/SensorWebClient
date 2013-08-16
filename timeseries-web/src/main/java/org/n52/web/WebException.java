@@ -3,7 +3,7 @@ package org.n52.web;
 
 public interface WebException {
     
-    public void setHints(String[] details);
+    public void addHint(String details);
     
     public String[] getHints();
     
