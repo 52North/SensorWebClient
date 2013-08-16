@@ -21,7 +21,7 @@ public class ChartRendererTest {
 
     @Before public void
     setUp() {
-        this.chartRenderer = new MyChartRenderer();
+        this.chartRenderer = new MyChartRenderer(RenderingContext.createEmpty());
     }
     
     
@@ -38,6 +38,10 @@ public class ChartRendererTest {
     }
 
     static class MyChartRenderer extends ChartRenderer {
+
+        public MyChartRenderer(RenderingContext context) {
+            super(context);
+        }
 
         public MyChartRenderer() {
             super(null);
