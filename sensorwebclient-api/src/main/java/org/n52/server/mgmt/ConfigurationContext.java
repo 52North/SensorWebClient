@@ -94,7 +94,7 @@ public class ConfigurationContext extends HttpServlet {
 
     public static int TOOLTIP_MIN_COUNT = 50;
     
-    public static List<Double> NO_DATA_VALUES;
+    public static List<String> NO_DATA_VALUES;
     
     @Override
     public void init() throws ServletException {
@@ -163,8 +163,8 @@ public class ConfigurationContext extends HttpServlet {
         return p.trim();
     }
 
-    private List<Double> getNoDataValues(String noDatas) {
-        List<Double> values = new ArrayList<Double>();
+    private List<String> getNoDataValues(String noDatas) {
+        List<String> values = new ArrayList<String>();
         if (noDatas.length() > 1) {
             String[] seperatedNoDatas = noDatas.split(",");
             for (String sepNoData : seperatedNoDatas) {
@@ -173,7 +173,7 @@ public class ConfigurationContext extends HttpServlet {
                         .replaceAll("\n", "")
                         .replaceAll("\t", "")
                         .replaceAll(" ", "");
-                    values.add(new Double(sepNoData));
+                    values.add(sepNoData);
                 }
                 catch (NumberFormatException e) {
                     LOGGER.error("NumberFormatException in the NoDataValues");

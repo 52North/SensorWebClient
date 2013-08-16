@@ -26,12 +26,10 @@ public class ProceduresParameterController extends ParameterController {
 
     public ModelAndView getCollection(@RequestParam(required=false) MultiValueMap<String, String> query) {
         QueryMap map = QueryMap.createFromQuery(query);
-        int offset = map.getOffset();
-        int size = map.getSize();
         
-        if (map.isExpanded()) {
+        if (map.shallExpand()) {
             Stopwatch stopwatch = startStopwatch();
-            Object[] result = procedureParameterService.getExpandedParameters(offset, size);
+            Object[] result = procedureParameterService.getExpandedParameters(map);
             LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());
 
             // TODO add paging
@@ -39,7 +37,7 @@ public class ProceduresParameterController extends ParameterController {
             return new ModelAndView().addObject(result);
         } else {
             Stopwatch stopwatch = startStopwatch();
-            Object[] result = procedureParameterService.getCondensedParameters(offset, size);
+            Object[] result = procedureParameterService.getCondensedParameters(map);
             LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());
 
             // TODO add paging

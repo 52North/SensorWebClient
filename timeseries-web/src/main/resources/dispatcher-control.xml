@@ -76,6 +76,9 @@
     <bean id="queryServiceImpl" class="org.n52.server.service.QueryServiceImpl" />
 
     <!-- ###################### api/v1 ###################### -->
+    
+    
+    <bean class="org.n52.web.v1.ctrl.ResourcesController" />
 
     <bean class="org.n52.web.v1.ctrl.OfferingsParameterController">
         <property name="offeringParameterService" ref="offeringParameterService" />
@@ -93,11 +96,11 @@
         <property name="procedureParameterService" ref="procedureParameterService" />
     </bean>
 
-    <bean class="org.n52.web.v1.ctrl.PhenomenonParameterController">
+    <bean class="org.n52.web.v1.ctrl.PhenomenaParameterController">
         <property name="phenomenonParameterService" ref="phenomenonParameterService" />
     </bean>
 
-    <bean class="org.n52.web.v1.ctrl.StationParameterController">
+    <bean class="org.n52.web.v1.ctrl.StationsParameterController">
         <property name="stationParameterService" ref="stationParameterService" />
     </bean>
 

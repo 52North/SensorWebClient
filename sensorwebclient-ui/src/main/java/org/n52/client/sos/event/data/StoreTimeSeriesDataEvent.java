@@ -28,64 +28,32 @@ import java.util.HashMap;
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.data.handler.StoreTimeSeriesDataEventHandler;
 
-/**
- * The Class StoreTimeSeriesDataEvent.
- * 
- * @author <a href="mailto:f.bache@52north.de">Felix Bache</a>
- */
 public class StoreTimeSeriesDataEvent extends
         FilteredDispatchGwtEvent<StoreTimeSeriesDataEventHandler> {
 
-    /** The TYPE. */
     public static Type<StoreTimeSeriesDataEventHandler> TYPE =
             new Type<StoreTimeSeriesDataEventHandler>();
 
-    /** The data. */
-    private HashMap<String, HashMap<Long, String>> data;
+    private HashMap<String, HashMap<Long, Double>> data;
 
-    /**
-     * Instantiates a new store time series data event.
-     * 
-     * @param data
-     *            the data
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
-    public StoreTimeSeriesDataEvent(HashMap<String, HashMap<Long, String>> data,
+    public StoreTimeSeriesDataEvent(HashMap<String, HashMap<Long, Double>> data,
             StoreTimeSeriesDataEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.data = data;
 
     }
 
-    /**
-     * Gets the data.
-     * 
-     * @return the data
-     */
-    public HashMap<String, HashMap<Long, String>> getData() {
+    public HashMap<String, HashMap<Long, Double>> getData() {
         return this.data;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(StoreTimeSeriesDataEventHandler handler) {
         handler.onStore(this);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<StoreTimeSeriesDataEventHandler> getAssociatedType() {
+    public Type<StoreTimeSeriesDataEventHandler> getAssociatedType() {
         return TYPE;
     }
 

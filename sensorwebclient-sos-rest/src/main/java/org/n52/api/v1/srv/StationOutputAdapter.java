@@ -9,12 +9,13 @@ import org.n52.api.v1.io.StationConverter;
 import org.n52.io.v1.data.StationOutput;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
+import org.n52.web.v1.ctrl.QueryMap;
 import org.n52.web.v1.srv.ParameterService;
 
 public class StationOutputAdapter implements ParameterService<StationOutput> {
 
     @Override
-    public StationOutput[] getExpandedParameters(int offset, int size) {
+    public StationOutput[] getExpandedParameters(QueryMap map) {
         List<StationOutput> allStations = new ArrayList<StationOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             StationConverter converter = new StationConverter(metadata);
@@ -25,7 +26,7 @@ public class StationOutputAdapter implements ParameterService<StationOutput> {
     }
 
     @Override
-    public StationOutput[] getCondensedParameters(int offset, int size) {
+    public StationOutput[] getCondensedParameters(QueryMap map) {
         List<StationOutput> allStations = new ArrayList<StationOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             StationConverter converter = new StationConverter(metadata);

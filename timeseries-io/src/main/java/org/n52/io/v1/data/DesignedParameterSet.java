@@ -37,12 +37,12 @@ public class DesignedParameterSet extends ParameterSet {
     /**
      * The width of the chart image to render.
      */
-    private int width = -1;
+    private int width = 800;
 
     /**
      * The height of the chart image to render.
      */
-    private int height = -1;
+    private int height = 500;
 
     /**
      * Indicates a grid as rendering background. <code>true</code> is the default.

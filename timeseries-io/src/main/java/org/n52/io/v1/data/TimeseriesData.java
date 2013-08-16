@@ -16,10 +16,10 @@ public class TimeseriesData {
      *        the timestamp &lt;-&gt; value map.
      * @return a timeseries object.
      */
-    public static TimeseriesData newTimeseriesData(Map<Long, String> values) {
+    public static TimeseriesData newTimeseriesData(Map<Long, Double> values) {
         TimeseriesData timeseries = new TimeseriesData();
         for (Long timestamp : values.keySet()) {
-            String value = values.get(timestamp);
+            Double value = values.get(timestamp);
             timeseries.addNewValue(timestamp, value);
         }
         return timeseries;
@@ -37,7 +37,7 @@ public class TimeseriesData {
         this.values = Arrays.asList(values);
     }
 
-    private void addNewValue(Long timestamp, String value) {
+    private void addNewValue(Long timestamp, Double value) {
         values.add(new TimeseriesValue(timestamp, value));
     }
 

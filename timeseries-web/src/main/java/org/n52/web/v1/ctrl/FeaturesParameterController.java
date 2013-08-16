@@ -5,8 +5,6 @@ import static org.n52.web.v1.ctrl.RestfulUrls.COLLECTION_FEATURES;
 import static org.n52.web.v1.ctrl.RestfulUrls.DEFAULT_PATH;
 import static org.n52.web.v1.ctrl.Stopwatch.startStopwatch;
 
-import org.apache.regexp.REUtil;
-import org.joda.time.DateTime;
 import org.n52.io.v1.data.FeatureOutput;
 import org.n52.web.ResourceNotFoundException;
 import org.n52.web.v1.srv.ParameterService;
@@ -28,20 +26,18 @@ public class FeaturesParameterController extends ParameterController {
     private ParameterService<FeatureOutput> featureParameterService;
 
     public ModelAndView getCollection(@RequestParam(required=false) MultiValueMap<String, String> query) {
-        QueryMap map = QueryMap.createFromQuery(query);
-        int offset = map.getOffset();
-        int size = map.getSize();
+        QueryMap queryMap = QueryMap.createFromQuery(query);
         
-        if (map.isExpanded()) {
+        if (queryMap.shallExpand()) {
             Stopwatch stopwatch = startStopwatch();
-            Object[] result = featureParameterService.getExpandedParameters(offset, size);
+            Object[] result = featureParameterService.getExpandedParameters(queryMap);
             LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());
 
             // TODO add paging
             
             return new ModelAndView().addObject(result);
         } else {
-            Object[] result = featureParameterService.getCondensedParameters(offset, size);
+            Object[] result = featureParameterService.getCondensedParameters(queryMap);
 
             // TODO add paging
             

@@ -181,7 +181,7 @@ public class TableTabController extends Controller<TableTab> {
 
         void requestData() {
             if (isSelfSelectedTab()) {
-                HashMap<Long, String> result = new HashMap<Long, String>();
+                HashMap<Long, Double> result = new HashMap<Long, Double>();
 
                 HashMap<String, TimeseriesLegendData> data = TimeseriesDataStore.getTimeSeriesDataStore().getDataItems();
                 for (TimeseriesLegendData dw : data.values()) {
@@ -211,7 +211,7 @@ public class TableTabController extends Controller<TableTab> {
          */
         public void onDeleteTimeSeries(DeleteTimeSeriesEvent evt) {
 
-            HashMap<Long, String> result = new HashMap<Long, String>();
+            HashMap<Long, Double> result = new HashMap<Long, Double>();
             HashMap<String, TimeseriesLegendData> data = TimeseriesDataStore.getTimeSeriesDataStore().getDataItems();
             for (TimeseriesLegendData dw : data.values()) {
             	//

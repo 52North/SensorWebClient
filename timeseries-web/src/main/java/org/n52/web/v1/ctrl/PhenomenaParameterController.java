@@ -1,10 +1,11 @@
 
 package org.n52.web.v1.ctrl;
 
+import static org.n52.web.v1.ctrl.RestfulUrls.COLLECTION_PHENOMENA;
 import static org.n52.web.v1.ctrl.RestfulUrls.DEFAULT_PATH;
 import static org.n52.web.v1.ctrl.Stopwatch.startStopwatch;
 
-import org.n52.io.v1.data.StationOutput;
+import org.n52.io.v1.data.PhenomenonOutput;
 import org.n52.web.ResourceNotFoundException;
 import org.n52.web.v1.srv.ParameterService;
 import org.slf4j.Logger;
@@ -17,21 +18,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping(value = DEFAULT_PATH + "/" + RestfulUrls.COLLECTION_STATIONS, produces = {"application/json"})
-public class StationParameterController extends ParameterController {
+@RequestMapping(value = DEFAULT_PATH + "/" + COLLECTION_PHENOMENA, produces = {"application/json"})
+public class PhenomenaParameterController extends ParameterController {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(StationParameterController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PhenomenaParameterController.class);
 
-    private ParameterService<StationOutput> stationParameterService;
+    private ParameterService<PhenomenonOutput> phenomenonParameterService;
 
     public ModelAndView getCollection(@RequestParam(required=false) MultiValueMap<String, String> query) {
         QueryMap map = QueryMap.createFromQuery(query);
-        int offset = map.getOffset();
-        int size = map.getSize();
         
-        if (map.isExpanded()) {
+        if (map.shallExpand()) {
             Stopwatch stopwatch = startStopwatch();
-            Object[] result = stationParameterService.getExpandedParameters(offset, size);
+            Object[] result = phenomenonParameterService.getExpandedParameters(map);
             LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());
 
             // TODO add paging
@@ -39,7 +38,7 @@ public class StationParameterController extends ParameterController {
             return new ModelAndView().addObject(result);
         } else {
             Stopwatch stopwatch = startStopwatch();
-            Object[] result = stationParameterService.getCondensedParameters(offset, size);
+            Object[] result = phenomenonParameterService.getCondensedParameters(map);
             LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());
 
             // TODO add paging
@@ -48,28 +47,28 @@ public class StationParameterController extends ParameterController {
         }
     }
 
-    public ModelAndView getItem(@PathVariable("item") String procedureId, @RequestParam(required=false) MultiValueMap<String, String> query) {
+    public ModelAndView getItem(@PathVariable("item") String phenomenonId, @RequestParam(required=false) MultiValueMap<String, String> query) {
         QueryMap map = QueryMap.createFromQuery(query);
 
         // TODO check parameters and throw BAD_REQUEST if invalid
 
         Stopwatch stopwatch = startStopwatch();
-        StationOutput procedure = stationParameterService.getParameter(procedureId);
+        PhenomenonOutput phenomenon = phenomenonParameterService.getParameter(phenomenonId);
         LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());
 
-        if (procedure == null) {
-            throw new ResourceNotFoundException("Found no procedure with given id.");
+        if (phenomenon == null) {
+            throw new ResourceNotFoundException("Found no feature with given id.");
         }
 
-        return new ModelAndView().addObject(procedure);
+        return new ModelAndView().addObject(phenomenon);
     }
 
-    public ParameterService<StationOutput> getStationParameterService() {
-        return stationParameterService;
+    public ParameterService<PhenomenonOutput> getPhenomenonParameterService() {
+        return phenomenonParameterService;
     }
 
-    public void setStationParameterService(ParameterService<StationOutput> stationParameterService) {
-        this.stationParameterService = stationParameterService;
+    public void setPhenomenonParameterService(ParameterService<PhenomenonOutput> phenomenonParameterService) {
+        this.phenomenonParameterService = phenomenonParameterService;
     }
 
 }

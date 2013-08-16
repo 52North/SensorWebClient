@@ -20,6 +20,8 @@ import org.n52.io.v1.data.StyleProperties;
 import org.n52.io.v1.data.TimeseriesDataCollection;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.UndesignedParameterSet;
+import org.n52.web.BadRequestException;
+import org.n52.web.InternalServiceException;
 import org.n52.web.ResourceNotFoundException;
 import org.n52.web.v1.srv.ServiceParameterService;
 import org.n52.web.v1.srv.TimeseriesDataService;
@@ -32,9 +34,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Controller
 @RequestMapping(value = DEFAULT_PATH + "/" + COLLECTION_TIMESERIES, produces = {"application/json"})
-public class TimeseriesDataController {
+public class TimeseriesDataController extends RestController {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(TimeseriesDataController.class);
 
@@ -69,15 +75,16 @@ public class TimeseriesDataController {
     public void getTimeseriesCollection(HttpServletResponse response,
                                        @PathVariable String timeseriesId,
                                        @RequestParam(required = false) String timespan,
-                                       @RequestParam(required = false) StyleProperties style) {
+                                       @RequestParam(required = false) String style) {
 
         if ( !serviceParameterService.isKnownTimeseries(timeseriesId)) {
             throw new ResourceNotFoundException("The timeseries with id '" + timeseriesId + "' was not found.");
         }
 
         response.setContentType(IMAGE_PNG.getMimeType());
+        StyleProperties styleProperties = parseStyleProperties(style);
         TimeseriesMetadataOutput metadata = timeseriesMetadataService.getParameter(timeseriesId);
-        RenderingContext context = createContextForSingleTimeseries(metadata, style);
+        RenderingContext context = createContextForSingleTimeseries(metadata, styleProperties);
         ChartRenderer renderer = IOFactory.create().createChartRenderer(context);
         UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, timespan);
         
@@ -85,7 +92,8 @@ public class TimeseriesDataController {
         TimeseriesDataCollection timeseriesData = timeseriesDataService.getTimeseriesData(parameters);
         LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());
         try {
-            renderer.writeToOutputStream(timeseriesData, response.getOutputStream());
+            renderer.renderChart(timeseriesData);
+            renderer.writeChartTo(response.getOutputStream());
         }
         catch (IOException e) {
             LOGGER.error("Error writing to output stream.");
@@ -98,6 +106,20 @@ public class TimeseriesDataController {
             catch (IOException e) {
                 LOGGER.debug("OutputStream already flushed and closed.");
             }
+        }
+    }
+
+    private StyleProperties parseStyleProperties(String style) {
+        try {
+            return new ObjectMapper().readValue(style, StyleProperties.class);
+        } catch (JsonMappingException e) {
+            throw new BadRequestException("Could not read style properties: " + style, e);
+        }
+        catch (JsonParseException e) {
+            throw new BadRequestException("Could not parse style properties: " + style, e);
+        }
+        catch (IOException e) {
+            throw new InternalServiceException("An error occured during request handling.", e);
         }
     }
 

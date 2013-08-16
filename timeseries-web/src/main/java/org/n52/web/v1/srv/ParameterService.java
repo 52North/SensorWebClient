@@ -1,11 +1,13 @@
 package org.n52.web.v1.srv;
 
+import org.n52.web.v1.ctrl.QueryMap;
+
 
 public interface ParameterService<T> {
     
-	T[] getExpandedParameters(int offset, int size);
+	T[] getExpandedParameters(QueryMap query);
 
-    T[] getCondensedParameters(int offset, int size);
+    T[] getCondensedParameters(QueryMap query);
     
 	T getParameter(String item);
 

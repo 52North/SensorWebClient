@@ -30,17 +30,17 @@ public class TimeSeriesDataResponse extends RepresentationResponse {
 
     private static final long serialVersionUID = 6907927979169769766L;
 
-    private HashMap<String, HashMap<Long, String>> data = null;
+    private HashMap<String, HashMap<Long, Double>> data = null;
 
     TimeSeriesDataResponse() {
         // serializable for GWT needs empty default constructor
     }
 
-    public TimeSeriesDataResponse(HashMap<String, HashMap<Long, String>> data) {
+    public TimeSeriesDataResponse(HashMap<String, HashMap<Long, Double>> data) {
         this.data = data;
     }
 
-    public HashMap<String, HashMap<Long, String>> getPayloadData() {
+    public HashMap<String, HashMap<Long, Double>> getPayloadData() {
         return this.data;
     }
 
