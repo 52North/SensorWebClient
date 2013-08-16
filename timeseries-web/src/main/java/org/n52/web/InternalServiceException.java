@@ -28,10 +28,12 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = INTERNAL_SERVER_ERROR)
-public class InternalServiceException extends RuntimeException {
+public class InternalServiceException extends RuntimeException implements WebException {
 
     private static final long serialVersionUID = -299285770822168789L;
-
+    
+    private String[] details;
+    
     @Deprecated
 	public InternalServiceException() {
     	super();
@@ -44,7 +46,21 @@ public class InternalServiceException extends RuntimeException {
 	public InternalServiceException(String message) {
 		super(message);
 	}
-    
-    
+
+
+    @Override
+    public void setHints(String[] details) {
+        this.details = details;
+    }
+
+    @Override
+    public String[] getHints() {
+        return details;
+    }
+
+    @Override
+    public Throwable getThrowable() {
+        return this;
+    }
 
 }

@@ -1,7 +1,6 @@
 
 package org.n52.web.v1.ctrl;
 
-import static org.n52.io.MimeType.IMAGE_PNG;
 import static org.n52.io.v1.data.DesignedParameterSet.createContextForSingleTimeseries;
 import static org.n52.io.v1.data.UndesignedParameterSet.createForSingleTimeseries;
 import static org.n52.web.v1.ctrl.RestfulUrls.COLLECTION_TIMESERIES;
@@ -21,6 +20,7 @@ import org.n52.io.v1.data.TimeseriesDataCollection;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.web.BadRequestException;
+import org.n52.web.ExceptionHandlingController;
 import org.n52.web.InternalServiceException;
 import org.n52.web.ResourceNotFoundException;
 import org.n52.web.v1.srv.ServiceParameterService;
@@ -40,16 +40,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping(value = DEFAULT_PATH + "/" + COLLECTION_TIMESERIES, produces = {"application/json"})
-public class TimeseriesDataController extends RestController {
+public class TimeseriesDataController extends ExceptionHandlingController {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(TimeseriesDataController.class);
 
     private ServiceParameterService serviceParameterService;
-    
+
     private TimeseriesMetadataService timeseriesMetadataService;
 
     private TimeseriesDataService timeseriesDataService;
-    
+
     @RequestMapping(value = "/{timeseriesId}/data", produces = "application/json", method = GET)
     public ModelAndView getTimeseriesData(@PathVariable String timeseriesId,
                                           @RequestParam(required = false) String timespan) {
@@ -61,7 +61,7 @@ public class TimeseriesDataController extends RestController {
         }
 
         UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, timespan);
-        
+
         Stopwatch stopwatch = startStopwatch();
         TimeseriesDataCollection timeseriesData = timeseriesDataService.getTimeseriesData(parameters);
         LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());
@@ -71,23 +71,23 @@ public class TimeseriesDataController extends RestController {
         return new ModelAndView().addObject(timeseriesData.getAllTimeseries());
     }
 
-    @RequestMapping(value = "/{timeseriesId}/data", produces = "image/png", method = GET)
+    @RequestMapping(value = "/{timeseriesId}/data", produces = {"image/png"}, method = GET)
     public void getTimeseriesCollection(HttpServletResponse response,
-                                       @PathVariable String timeseriesId,
-                                       @RequestParam(required = false) String timespan,
-                                       @RequestParam(required = false) String style) {
+                                        @PathVariable String timeseriesId,
+                                        @RequestParam(required = false) String timespan,
+                                        @RequestParam(required = false) String style) {
 
         if ( !serviceParameterService.isKnownTimeseries(timeseriesId)) {
             throw new ResourceNotFoundException("The timeseries with id '" + timeseriesId + "' was not found.");
         }
 
-        response.setContentType(IMAGE_PNG.getMimeType());
+//        response.setContentType(IMAGE_PNG.getMimeType());
         StyleProperties styleProperties = parseStyleProperties(style);
         TimeseriesMetadataOutput metadata = timeseriesMetadataService.getParameter(timeseriesId);
         RenderingContext context = createContextForSingleTimeseries(metadata, styleProperties);
         ChartRenderer renderer = IOFactory.create().createChartRenderer(context);
         UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, timespan);
-        
+
         Stopwatch stopwatch = startStopwatch();
         TimeseriesDataCollection timeseriesData = timeseriesDataService.getTimeseriesData(parameters);
         LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());
@@ -111,8 +111,11 @@ public class TimeseriesDataController extends RestController {
 
     private StyleProperties parseStyleProperties(String style) {
         try {
-            return new ObjectMapper().readValue(style, StyleProperties.class);
-        } catch (JsonMappingException e) {
+            return style == null ?
+                                StyleProperties.createDefaults() :
+                                new ObjectMapper().readValue(style, StyleProperties.class);
+        }
+        catch (JsonMappingException e) {
             throw new BadRequestException("Could not read style properties: " + style, e);
         }
         catch (JsonParseException e) {
