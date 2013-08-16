@@ -5,13 +5,18 @@ import org.n52.io.v1.data.TimeseriesMetadataOutput;
 
 public class RenderingContext {
     
-    private DesignedParameterSet styledTimeseries;
+    private DesignedParameterSet chartStyleDefinitions;
     
     private TimeseriesMetadataOutput[] timeseriesMetadatas;
     
     // use static constructors
-    private RenderingContext(DesignedParameterSet timeseriesStyles) {
-        timeseriesMetadatas = new TimeseriesMetadataOutput[0];
+    private RenderingContext(DesignedParameterSet timeseriesStyles, TimeseriesMetadataOutput[] timeseriesMetadatas) {
+        this.timeseriesMetadatas = timeseriesMetadatas == null ? new TimeseriesMetadataOutput[0] : timeseriesMetadatas;
+        this.chartStyleDefinitions = timeseriesStyles;
+    }
+    
+    public static RenderingContext createEmpty() {
+        return new RenderingContext(new DesignedParameterSet(), new TimeseriesMetadataOutput[0]);
     }
     
     public static RenderingContext createWith(DesignedParameterSet timeseriesStyles, TimeseriesMetadataOutput ... timeseriesMetadatas ) {
@@ -28,13 +33,11 @@ public class RenderingContext {
             sb.append("#Metadatas: ").append(amountMetadatas);
             throw new IllegalStateException(sb.toString());
         }
-        RenderingContext context = new RenderingContext(timeseriesStyles);
-        context.timeseriesMetadatas = timeseriesMetadatas;
-        return context;
+        return new RenderingContext(timeseriesStyles, timeseriesMetadatas);
     }
 
-    public DesignedParameterSet getStyledTimeseries() {
-        return styledTimeseries;
+    public DesignedParameterSet getChartStyleDefinitions() {
+        return chartStyleDefinitions;
     }
 
     public TimeseriesMetadataOutput[] getTimeseriesMetadatas() {

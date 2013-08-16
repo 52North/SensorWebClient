@@ -165,7 +165,7 @@ public class TableTab extends DataPanelTab {
 
     }
 
-    public ArrayList<Long> getValueOrder(HashMap<Long, String> values) {
+    public ArrayList<Long> getValueOrder(HashMap<Long, Double> values) {
         ArrayList<Long> order = new ArrayList<Long>();
         Long[] sorted = values.keySet().toArray(new Long[values.size()]);
         Arrays.sort(sorted);
@@ -175,7 +175,7 @@ public class TableTab extends DataPanelTab {
         return order;
     }
 
-    public void update(HashMap<Long, String> data, LegendElement le) {
+    public void update(HashMap<Long, Double> data, LegendElement le) {
         try {
             TimeseriesLegendData ts = (TimeseriesLegendData) le.getDataWrapper();
             this.valuesField.setTitle(ts.getUnitOfMeasure());

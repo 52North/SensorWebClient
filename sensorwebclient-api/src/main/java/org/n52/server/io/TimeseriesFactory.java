@@ -23,7 +23,9 @@
  */
 package org.n52.server.io;
 
+import static java.lang.Double.parseDouble;
 import static org.n52.server.mgmt.ConfigurationContext.FACADE_COMPRESSION;
+import static org.n52.server.mgmt.ConfigurationContext.NO_DATA_VALUES;
 
 import java.text.ParseException;
 import java.util.HashMap;
@@ -35,7 +37,6 @@ import org.n52.oxf.feature.sos.ObservationSeriesCollection;
 import org.n52.oxf.feature.sos.ObservedValueTuple;
 import org.n52.oxf.valueDomains.time.ITimePosition;
 import org.n52.oxf.valueDomains.time.TimePosition;
-import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -336,30 +337,17 @@ public class TimeseriesFactory {
 
     }
 
-    /**
-     * @param obsVal
-     * @return
-     */
     private static Double getValidData(String obsVal) {
-        // XXX no data as double? double comparison via equals? switch to NO_DATA value string
-        Double tmp = null;
-        try {
-            tmp = new Double(obsVal);
-            for (Double noData : ConfigurationContext.NO_DATA_VALUES) {
-                if (tmp.equals(noData)) {
-                    return null;
-                }
-            }
-        } catch (NumberFormatException e) {
-            LOGGER.error("Not a double or integer value " + obsVal, e);
+        if (NO_DATA_VALUES.contains(obsVal)) {
+            return null;
         }
-        return tmp;
+        return parseDouble(obsVal);
     }
 
-    public static HashMap<Long, String> compressToHashMap(ObservationSeriesCollection coll, String foiID,
+    public static HashMap<Long, Double> compressToHashMap(ObservationSeriesCollection coll, String foiID,
             String phenID, String procID) throws NumberFormatException, ParseException {
 
-        HashMap<Long, String> data = new HashMap<Long, String>();
+        HashMap<Long, Double> data = new HashMap<Long, Double>();
 
         if (coll.getAllTuples().size() > 0) {
 
@@ -388,11 +376,15 @@ public class TimeseriesFactory {
                     nextObservation = coll.getTuple(new OXFFeature(foiID, null), timeArray[i + 1]);
                 }
 
-                String obsVal;
+                Double obsVal = null;
                 try {
-                    obsVal = getValidData(observation.getValue(0).toString()).toString();
+                    obsVal = getValidData(observation.getValue(0).toString());
                 } catch (NullPointerException e) {
-                    obsVal = "no Data available"; // TODO finish
+                    LOGGER.debug("Missing observation value: {}.", obsVal, e);
+                    continue;
+                } catch (NumberFormatException e) {
+                    LOGGER.error("Not a number value: {}.", obsVal, e);
+                    continue;
                 }
                 
                 TimePosition timePosition = (TimePosition) observation.getTime();

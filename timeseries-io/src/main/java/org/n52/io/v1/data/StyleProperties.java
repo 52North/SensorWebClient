@@ -14,7 +14,7 @@ public class StyleProperties {
      */
     private String chartType = "line";
     
-    private Map<String, Object> properties = new HashMap<String, Object>();
+    private Map<String, String> properties = new HashMap<String, String>();
 
     /**
      * @return the chart type, e.g. <code>line</code>, or <code>bar</code>.
@@ -27,11 +27,11 @@ public class StyleProperties {
         this.chartType = type;
     }
     
-    public Map<String, Object> getProperties() {
+    public Map<String, String> getProperties() {
         return properties;
     }
 
-    public void setProperties(Map<String, Object> properties) {
+    public void setProperties(Map<String, String> properties) {
         this.properties = properties;
     }
 
