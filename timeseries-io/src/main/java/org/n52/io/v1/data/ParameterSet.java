@@ -39,5 +39,5 @@ public abstract class ParameterSet {
     }
 
     public abstract String[] getTimeseries();
-        
+
 }

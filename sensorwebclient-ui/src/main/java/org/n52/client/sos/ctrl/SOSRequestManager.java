@@ -311,13 +311,13 @@ public class SOSRequestManager extends RequestManager {
 
             public void onSuccess(TimeSeriesDataResponse response) {
                 removeRequest(System.currentTimeMillis() - startTimeOfRequest);
-                HashMap<String, HashMap<Long, String>> payloadData = response.getPayloadData();
+                HashMap<String, HashMap<Long, Double>> payloadData = response.getPayloadData();
                 try {
                     if (payloadData.isEmpty()) {
                         return;
                     }
                     String id = timeSeries.getId();
-                    HashMap<Long, String> timeSeriesData = payloadData.get(id);
+                    HashMap<Long, Double> timeSeriesData = payloadData.get(id);
                     if (timeSeriesData.keySet().iterator().hasNext()) {
                         long timestamp = timeSeriesData.keySet().iterator().next().longValue();
                         String firstValue = timeSeriesData.get(timestamp).toString();
@@ -350,7 +350,7 @@ public class SOSRequestManager extends RequestManager {
 
             public void onSuccess(TimeSeriesDataResponse response) {
                 removeRequest(System.currentTimeMillis() - startRequest);
-                HashMap<String, HashMap<Long, String>> payloadData = response.getPayloadData();
+                HashMap<String, HashMap<Long, Double>> payloadData = response.getPayloadData();
 
                 try {
                     if (payloadData.isEmpty()) {
@@ -358,7 +358,7 @@ public class SOSRequestManager extends RequestManager {
                     }
 
                     String id = timeSeries.getId();
-                    HashMap<Long, String> timeSeriesData = payloadData.get(id);
+                    HashMap<Long, Double> timeSeriesData = payloadData.get(id);
                     if (timeSeriesData.keySet().iterator().hasNext()) {
                         long date = timeSeriesData.keySet().iterator().next().longValue();
                         String lastValue = timeSeriesData.get(date).toString();

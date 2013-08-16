@@ -1,20 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.5">
 	<display-name>
-	   ${project.artifactId} (built on ${timestamp})
+		${project.artifactId} (built on ${timestamp})
 	</display-name>
-	
-	<!-- Cross origin resource sharing (uncomment to share REST-API)
-	       Filter requires Tomcat 7.0.32 or higher
-    <filter>
-        <filter-name>CorsFilter</filter-name>
-        <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>CorsFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-     -->
+
+	<!-- Cross origin resource sharing (uncomment to share REST-API) Filter 
+		requires Tomcat 7.0.32 or higher <filter> <filter-name>CorsFilter</filter-name> 
+		<filter-class>org.apache.catalina.filters.CorsFilter</filter-class> </filter> 
+		<filter-mapping> <filter-name>CorsFilter</filter-name> <url-pattern>/*</url-pattern> 
+		</filter-mapping> -->
 
 	<!-- listen for spring related configuration files -->
 	<listener>
@@ -220,7 +214,13 @@
 
 	<welcome-file-list>
 		<welcome-file>Client.jsp</welcome-file>
+		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
+
+	<error-page>
+		<exception-type>java.lang.Exception</exception-type>
+		<location>/WEB-INF/jsp/exception.jsp</location>
+	</error-page>
 
 
 	<!-- SES specific Servlets. Comment them out if SES is not needed in the 
