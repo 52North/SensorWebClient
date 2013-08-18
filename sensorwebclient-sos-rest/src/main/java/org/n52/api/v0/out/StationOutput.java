@@ -91,12 +91,12 @@ public class StationOutput extends GeojsonFeature {
         return stationOutput;
     }
 
-    private static SosTimeseries[] createCompleteTimeseriesList(Station station) {
+    private static TimeseriesOutput[] createCompleteTimeseriesList(Station station) {
         List<TimeseriesOutput> timeseriesIds = new ArrayList<TimeseriesOutput>();
         for (SosTimeseries timeseries : station.getObservedTimeseries()) {
             timeseriesIds.add(new TimeseriesOutput(timeseries));
         }
-        return timeseriesIds.toArray(new SosTimeseries[0]);
+        return timeseriesIds.toArray(new TimeseriesOutput[0]);
     }
     
     private static String[] createSimpleTimeseriesList(Station station) {

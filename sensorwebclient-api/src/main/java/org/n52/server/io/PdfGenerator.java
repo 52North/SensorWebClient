@@ -78,60 +78,30 @@ import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * The Class PdfGenerator.
- * 
- * @author <a href="mailto:tremmersmann@uni-muenster.de">Thomas Remmersmann</a>
- * @author <a href="mailto:broering@52north.org">Arne Broering</a>
- */
 public class PdfGenerator extends Generator {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(PdfGenerator.class);
 
-    // private static String ENCODING = "ISO-8859-1";
-    /** The ENCODING. */
-    private static String ENCODING = "UTF-8"; //$NON-NLS-1$
+    private static String ENCODING = "UTF-8";
 
-    /** The pdf url. */
     private String pdfURL;
 
-    /** The zip. */
     private boolean zip;
 
-    /** The pdf file. */
     private File pdfFile;
 
 
-    /**
-     * Instantiates a new pdf generator.
-     * 
-     * @param zip
-     *            the zip
-     * @param folder 
-     */
     public PdfGenerator(boolean zip, String folder) {
         super();
         this.zip = zip;
         this.folderPostfix = folder;
     }
 
-    /**
-     * Builds the up document structure.
-     * 
-     * @param getRepresentationOp
-     *            the get representation op
-     * @param observationCollMap
-     *            the observation coll map
-     * @return the document structure document
-     * @throws Exception
-     *             the exception
-     */
     private DocumentStructureDocument buildUpDocumentStructure(
             DesignOptions getRepresentationOp,
             Map<String, OXFFeatureCollection> observationCollMap) throws Exception {
 
-        DocumentStructureDocument docStructureDoc =
-                DocumentStructureDocument.Factory.newInstance();
+        DocumentStructureDocument docStructureDoc = DocumentStructureDocument.Factory.newInstance();
 
         DocumentStructureType docStructure = docStructureDoc.addNewDocumentStructure();
 
@@ -175,17 +145,6 @@ public class PdfGenerator extends Generator {
         return docStructureDoc;
     }
 
-    /**
-     * Builds the up metadata.
-     * 
-     * @param sosURL
-     *            the sos url
-     * @param procedureID
-     *            the procedure parameterId
-     * @return the metadata type
-     * @throws Exception
-     *             the exception
-     */
     private MetadataType buildUpMetadata(String sosURL, String procedureID) throws Exception {
 
         SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosURL);
@@ -352,13 +311,6 @@ public class PdfGenerator extends Generator {
         return table;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.n52.server.oxf.ui.sosFacade.generator.Generator#producePresentation
-     * (org.n52.shared.pojos.RepresentationDesignOptions)
-     */
     @Override
     public RepresentationResponse producePresentation(DesignOptions options) throws Exception {
         Map<String, OXFFeatureCollection> observationCollMap = getFeatureCollectionFor(options, false);
