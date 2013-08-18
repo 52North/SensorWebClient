@@ -15,6 +15,10 @@ public class StyleProperties {
     private String chartType = "line";
     
     private Map<String, String> properties = new HashMap<String, String>();
+    
+    private StyleProperties() {
+        // use static constructor
+    }
 
     /**
      * @return the chart type, e.g. <code>line</code>, or <code>bar</code>.
@@ -33,6 +37,10 @@ public class StyleProperties {
 
     public void setProperties(Map<String, String> properties) {
         this.properties = properties;
+    }
+    
+    public static StyleProperties createDefaults() {
+        return new StyleProperties();
     }
 
 }

@@ -6,7 +6,7 @@ package org.n52.io;
  */
 public enum MimeType {
 
-    APPLICATION_JSON("application/json"), IMAGE_PNG("image/png");
+    APPLICATION_JSON("application/json"), IMAGE_PNG("image/png"), APPLICATION_PDF("application/pdf");
     
     private String mimeType;
     

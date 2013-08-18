@@ -12,11 +12,6 @@
 	<name>Sensor Web Timeseries WEB Binding</name>
 	<url>http://52north.org/communities/sensorweb/</url>
 	<dependencies>
-		<dependency>
-			<!-- ensure loading before ealier versions -->
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-opengis</artifactId>
-		</dependency>
 		<!-- ### 52n DEPENDENCIES ### -->
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
@@ -33,43 +28,8 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.vividsolutions</groupId>
-			<artifactId>jts</artifactId>
-			<exclusions>
-				<exclusion>
-					<!-- old version dependency causes conclicts -->
-					<groupId>xerces</groupId>
-					<artifactId>xercesImpl</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-main</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-epsg-hsql</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-metadata</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.sourceforge.jexcelapi</groupId>
-			<artifactId>jxl</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.xmlgraphics</groupId>
-			<artifactId>fop</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
