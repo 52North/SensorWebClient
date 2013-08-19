@@ -33,7 +33,7 @@ import org.n52.io.img.RenderingContext;
  * Represents a parameter object to request data from multiple timeseries.
  */
 public class DesignedParameterSet extends ParameterSet {
-    
+
     /**
      * The width of the chart image to render.
      */
@@ -48,6 +48,11 @@ public class DesignedParameterSet extends ParameterSet {
      * Indicates a grid as rendering background. <code>true</code> is the default.
      */
     private boolean grid = true;
+
+    /**
+     * Determines the 2-character language code.
+     */
+    private String language;
 
     /**
      * Style options for each timeseriesId of interest.
@@ -86,9 +91,10 @@ public class DesignedParameterSet extends ParameterSet {
     public String[] getTimeseries() {
         return styleOptions.keySet().toArray(new String[0]);
     }
-    
+
     /**
-     * @param grid <code>true</code> if charts shall be rendered on a grid, <code>false</code> otherwise.
+     * @param grid
+     *        <code>true</code> if charts shall be rendered on a grid, <code>false</code> otherwise.
      */
     public void setGrid(boolean grid) {
         this.grid = grid;
@@ -99,6 +105,21 @@ public class DesignedParameterSet extends ParameterSet {
      */
     public boolean isGrid() {
         return this.grid;
+    }
+
+    /**
+     * @return the language as 2-character locale.
+     */
+    public String getLanguage() {
+        return language;
+    }
+
+    /**
+     * @param language
+     *        the language to set as 2-character locale.
+     */
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
     public void setStyleOptions(Map<String, StyleProperties> renderingOptions) {
@@ -112,8 +133,9 @@ public class DesignedParameterSet extends ParameterSet {
     public void addTimeseriesWithStyleOptions(String timeseriesId, StyleProperties styleOptions) {
         this.styleOptions.put(timeseriesId, styleOptions);
     }
-    
-    public static RenderingContext createContextForSingleTimeseries(TimeseriesMetadataOutput metadata, StyleProperties style) {
+
+    public static RenderingContext createContextForSingleTimeseries(TimeseriesMetadataOutput metadata,
+                                                                    StyleProperties style) {
         DesignedParameterSet parameters = new DesignedParameterSet();
         parameters.addTimeseriesWithStyleOptions(metadata.getId(), style);
         return RenderingContext.createWith(parameters, metadata);
