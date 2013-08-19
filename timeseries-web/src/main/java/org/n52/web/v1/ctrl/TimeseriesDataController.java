@@ -15,8 +15,9 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.n52.io.IOFactory;
-import org.n52.io.render.ChartRenderer;
-import org.n52.io.render.RenderingContext;
+import org.n52.io.IOHandler;
+import org.n52.io.TimeseriesIOException;
+import org.n52.io.img.RenderingContext;
 import org.n52.io.v1.data.TimeseriesDataCollection;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.UndesignedParameterSet;
@@ -46,13 +47,15 @@ public class TimeseriesDataController extends BaseController {
 
     private TimeseriesDataService timeseriesDataService;
 
-    @RequestMapping(value = "/{timeseriesId}/data", produces = {"application/json", "application/pdf"}, method = GET)
+    @RequestMapping(value = "/{timeseriesId}/data", produces = {"application/json"}, method = GET)
     public ModelAndView getTimeseriesData(HttpServletResponse response,
                                           @PathVariable String timeseriesId,
-                                          @RequestParam(required = false) String timespan) {
+                                          @RequestParam(required = false) MultiValueMap<String, String> query) {
 
         checkIfUnknownTimeseries(timeseriesId);
-        UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, timespan);
+
+        QueryMap map = createFromQuery(query);
+        UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, map.getTimespan());
 
         Stopwatch stopwatch = startStopwatch();
         TimeseriesDataCollection timeseriesData = timeseriesDataService.getTimeseriesData(parameters);
@@ -64,33 +67,41 @@ public class TimeseriesDataController extends BaseController {
     }
 
     @RequestMapping(value = "/{timeseriesId}/data", produces = {"application/pdf"}, method = GET)
-    public ModelAndView getTimeseriesData(HttpServletResponse response,
-                                          @PathVariable String timeseriesId,
-                                          @RequestParam(required=false) MultiValueMap<String, String> query) {
+    public void getTimeseriesReport(HttpServletResponse response,
+                                    @PathVariable String timeseriesId,
+                                    @RequestParam(required = false) MultiValueMap<String, String> query) throws Exception {
 
-        QueryMap map = createFromQuery(query);
         checkIfUnknownTimeseries(timeseriesId);
 
         /*
          * The following code is copied code from #getTimeseriesCollection ... do refactor
          */
+        QueryMap map = createFromQuery(query);
         TimeseriesMetadataOutput metadata = timeseriesMetadataService.getParameter(timeseriesId);
         RenderingContext context = createContextForSingleTimeseries(metadata, map.getStyle());
         UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, map.getTimespan());
-        ChartRenderer renderer = IOFactory.create()
+        IOHandler renderer = IOFactory.create()
                 .forMimeType(APPLICATION_PDF)
-                .createChartRenderer(context);
+                .inLanguage(map.getLanguage())
+                .createIOHandler(context);
 
         Stopwatch stopwatch = startStopwatch();
         TimeseriesDataCollection timeseriesData = timeseriesDataService.getTimeseriesData(parameters);
         LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());
         // end of copied code
 
-        /*
-         * TODO generate PDF report
-         */
-
-        return new ModelAndView().addObject(null);
+        try {
+            renderer.generateOutput(timeseriesData);
+            renderer.encodeAndWriteTo(response.getOutputStream());
+        }
+        catch (IOException e) {
+            LOGGER.error("Error handling output stream.");
+            throw e; // handled by BaseController
+        }
+        catch (TimeseriesIOException e) {
+            LOGGER.error("Could not write report to stream.");
+            throw e; // handled by BaseController
+        }
     }
 
     private void checkIfUnknownTimeseries(String timeseriesId) {
@@ -100,37 +111,40 @@ public class TimeseriesDataController extends BaseController {
     }
 
     @RequestMapping(value = "/{timeseriesId}/data", produces = {"image/png"}, method = GET)
-    public void getTimeseriesCollection(HttpServletResponse response,
-                                        @PathVariable String timeseriesId,
-                                        @RequestParam(required=false) MultiValueMap<String, String> query) {
+    public void getTimeseriesChart(HttpServletResponse response,
+                                   @PathVariable String timeseriesId,
+                                   @RequestParam(required = false) MultiValueMap<String, String> query) throws Exception {
+
+        /*
+         * If anything goes wrong or is invalid, no appropriate exception view can be resolved because we are
+         * writing on the output stream directly.
+         * 
+         * TODO check how BaseController is able to resolve json view when exceptions occur
+         */
 
         checkIfUnknownTimeseries(timeseriesId);
-        
+
         QueryMap map = createFromQuery(query);
         TimeseriesMetadataOutput metadata = timeseriesMetadataService.getParameter(timeseriesId);
         RenderingContext context = createContextForSingleTimeseries(metadata, map.getStyle());
         UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, map.getTimespan());
-        ChartRenderer renderer = IOFactory.create().createChartRenderer(context);
+        IOHandler renderer = IOFactory.create().inLanguage(map.getLanguage()).createIOHandler(context);
 
         Stopwatch stopwatch = startStopwatch();
         TimeseriesDataCollection timeseriesData = timeseriesDataService.getTimeseriesData(parameters);
         LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());
 
         try {
-            renderer.renderChart(timeseriesData);
-            renderer.writeChartTo(response.getOutputStream());
+            renderer.generateOutput(timeseriesData);
+            renderer.encodeAndWriteTo(response.getOutputStream());
         }
         catch (IOException e) {
             LOGGER.error("Error handling output stream.");
+            throw e; // handled by BaseController
         }
-        finally {
-            try {
-                response.getOutputStream().flush();
-                response.getOutputStream().close();
-            }
-            catch (IOException e) {
-                LOGGER.debug("OutputStream already flushed and closed.");
-            }
+        catch (TimeseriesIOException e) {
+            LOGGER.error("Could not write chart image to stream.");
+            throw e; // handled by BaseController
         }
     }
 

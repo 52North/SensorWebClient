@@ -1,5 +1,5 @@
 
-package org.n52.io.render;
+package org.n52.io.img;
 
 import static java.awt.Color.BLACK;
 import static java.awt.Color.LIGHT_GRAY;
@@ -7,12 +7,15 @@ import static java.awt.Color.WHITE;
 import static java.awt.Font.BOLD;
 import static java.awt.Font.PLAIN;
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
+import static javax.imageio.ImageIO.write;
 import static org.jfree.chart.ChartFactory.createTimeSeriesChart;
-import static org.n52.io.render.BarRenderer.BAR_CHART_TYPE;
-import static org.n52.io.render.ChartRenderer.LabelConstants.COLOR;
-import static org.n52.io.render.ChartRenderer.LabelConstants.FONT_DOMAIN;
-import static org.n52.io.render.ChartRenderer.LabelConstants.FONT_LABEL;
-import static org.n52.io.render.LineRenderer.LINE_CHART_TYPE;
+import static org.n52.io.I18N.getDefaultLocalizer;
+import static org.n52.io.I18N.getMessageLocalizer;
+import static org.n52.io.img.BarRenderer.BAR_CHART_TYPE;
+import static org.n52.io.img.ChartRenderer.LabelConstants.COLOR;
+import static org.n52.io.img.ChartRenderer.LabelConstants.FONT_DOMAIN;
+import static org.n52.io.img.ChartRenderer.LabelConstants.FONT_LABEL;
+import static org.n52.io.img.LineRenderer.LINE_CHART_TYPE;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -24,7 +27,6 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.imageio.ImageIO;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 
 import org.jfree.chart.JFreeChart;
@@ -33,14 +35,24 @@ import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.ui.RectangleInsets;
 import org.joda.time.Interval;
+import org.n52.io.I18N;
+import org.n52.io.IOHandler;
+import org.n52.io.MimeType;
+import org.n52.io.TimeseriesIOException;
 import org.n52.io.v1.data.DesignedParameterSet;
 import org.n52.io.v1.data.PhenomenonOutput;
 import org.n52.io.v1.data.StyleProperties;
 import org.n52.io.v1.data.TimeseriesDataCollection;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.TimeseriesOutput;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public abstract class ChartRenderer {
+public abstract class ChartRenderer implements IOHandler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChartRenderer.class);
+
+    protected I18N i18n = getDefaultLocalizer();
 
     private JFreeChart chart;
 
@@ -48,7 +60,7 @@ public abstract class ChartRenderer {
 
     private RenderingContext context;
 
-    private String mimeType;
+    private MimeType mimeType;
 
     private boolean drawLegend;
 
@@ -56,25 +68,33 @@ public abstract class ChartRenderer {
 
     private boolean showTooltips;
 
-    private String language;
-
-    public ChartRenderer(RenderingContext context) {
+    public ChartRenderer(RenderingContext context, String language) {
+        if (language != null) {
+            i18n = getMessageLocalizer(language);
+        }
         this.context = context;
-        this.xyPlot = createChart(context);
     }
 
-    public abstract void renderChart(TimeseriesDataCollection data);
+    public abstract void generateOutput(TimeseriesDataCollection data) throws TimeseriesIOException;
 
-    /**
-     * @param stream
-     *        the stream to write on the rendered chart.
-     * @throws IOException
-     *         if writing chart to output stream fails.
-     */
-    public void writeChartTo(OutputStream stream) throws IOException {
-        JPEGImageWriteParam p = new JPEGImageWriteParam(null);
-        p.setCompressionMode(JPEGImageWriteParam.MODE_DEFAULT);
-        ImageIO.write(drawChartToImage(), "png", stream);
+    public void encodeAndWriteTo(OutputStream stream) throws TimeseriesIOException {
+        try {
+            JPEGImageWriteParam p = new JPEGImageWriteParam(null);
+            p.setCompressionMode(JPEGImageWriteParam.MODE_DEFAULT);
+            write(drawChartToImage(), mimeType.getFormatName(), stream);
+        }
+        catch (IOException e) {
+            throw new TimeseriesIOException("Could not write image to output stream.", e);
+        }
+        finally {
+            try {
+                stream.flush();
+                stream.close();
+            }
+            catch (IOException e) {
+                LOGGER.debug("Stream already flushed and closed.", e);
+            }
+        }
     }
 
     private BufferedImage drawChartToImage() {
@@ -89,6 +109,9 @@ public abstract class ChartRenderer {
     }
 
     public XYPlot getXYPlot() {
+        if (xyPlot == null) {
+            this.xyPlot = createChart(context);
+        }
         return xyPlot;
     }
 
@@ -96,11 +119,11 @@ public abstract class ChartRenderer {
         return context;
     }
 
-    public String getMimeType() {
+    public MimeType getMimeType() {
         return mimeType;
     }
 
-    public void setMimeType(String mimeType) {
+    public void setMimeType(MimeType mimeType) {
         this.mimeType = mimeType;
     }
 
@@ -128,19 +151,14 @@ public abstract class ChartRenderer {
         this.showTooltips = showTooltips;
     }
 
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
     private XYPlot createChart(RenderingContext context) {
-
-        // TODO add language context
-
-        this.chart = createTimeSeriesChart(null, "Time", "Value", null, false, showTooltips, true);
+        this.chart = createTimeSeriesChart(null,
+                                           i18n.get("time"),
+                                           i18n.get("value"),
+                                           null,
+                                           drawLegend,
+                                           showTooltips,
+                                           true);
         return createPlotArea(chart);
     }
 

@@ -1,4 +1,4 @@
-package org.n52.io.render;
+package org.n52.io.img;
 
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 

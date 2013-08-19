@@ -1,20 +1,19 @@
 
-package org.n52.io.render;
+package org.n52.io.img;
 
-import static org.n52.io.render.LineRenderer.createStyledLineRenderer;
+import static org.n52.io.img.LineRenderer.createStyledLineRenderer;
 import static org.n52.io.style.LineStyle.createLineStyle;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
-import org.jfree.chart.plot.DefaultDrawingSupplier;
-import org.jfree.chart.plot.DrawingSupplier;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.n52.io.style.LineStyle;
+import org.n52.io.v1.data.FeatureOutput;
 import org.n52.io.v1.data.StyleProperties;
 import org.n52.io.v1.data.TimeseriesData;
 import org.n52.io.v1.data.TimeseriesDataCollection;
@@ -23,12 +22,12 @@ import org.n52.io.v1.data.TimeseriesValue;
 
 public class MultipleChartsRenderer extends ChartRenderer {
 
-    public MultipleChartsRenderer(RenderingContext context) {
-        super(context);
+    public MultipleChartsRenderer(RenderingContext context, String language) {
+        super(context, language);
     }
 
     @Override
-    public void renderChart(TimeseriesDataCollection data) {
+    public void generateOutput(TimeseriesDataCollection data) {
         Map<String, TimeseriesData> allTimeseries = data.getAllTimeseries();
         TimeseriesMetadataOutput[] timeseriesMetadatas = getTimeseriesMetadataOutputs();
         for (int rendererIndex = 0; rendererIndex < timeseriesMetadatas.length; rendererIndex++) {
@@ -38,11 +37,20 @@ public class MultipleChartsRenderer extends ChartRenderer {
              */
             
             TimeseriesMetadataOutput timeseriesMetadata = timeseriesMetadatas[rendererIndex];
+            String timeseriesLabel = createTimeseriesLabel(timeseriesMetadata);
             TimeseriesData timeseriesData = allTimeseries.get(timeseriesMetadata.getId());
-            putDataAtIndex(rendererIndex, timeseriesData, timeseriesMetadata.getId());
+            putDataAtIndex(rendererIndex, timeseriesData, timeseriesLabel);
             putRendererAtIndex(rendererIndex, timeseriesMetadata.getId());
             configureRangeAxis(timeseriesMetadata, rendererIndex);
         }
+    }
+
+    private String createTimeseriesLabel(TimeseriesMetadataOutput metadata) {
+        FeatureOutput feature = metadata.getParameters().getFeature();
+        StringBuilder timeseriesLabel = new StringBuilder();
+        timeseriesLabel.append(feature.getLabel());
+        timeseriesLabel.append(" (").append(metadata.getId()).append(")");
+        return timeseriesLabel.toString();
     }
 
     private void putRendererAtIndex(int rendererIndex, String timeseriesId) {
