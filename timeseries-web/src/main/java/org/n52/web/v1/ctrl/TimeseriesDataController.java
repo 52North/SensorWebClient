@@ -53,7 +53,7 @@ public class TimeseriesDataController extends BaseController {
 
     private TimeseriesDataService timeseriesDataService;
     
-    @RequestMapping(value = "/data", produces = {"application/json"}, method = POST)
+    @RequestMapping(value = "/getData", produces = {"application/json"}, method = POST)
     public ModelAndView getTimeseriesCollectionData(HttpServletResponse response,
                                                     @RequestBody UndesignedParameterSet parameters) throws Exception {
         
@@ -68,7 +68,7 @@ public class TimeseriesDataController extends BaseController {
         return new ModelAndView().addObject(timeseriesData);
     }
 
-    @RequestMapping(value = "/{timeseriesId}/data", produces = {"application/json"}, method = GET)
+    @RequestMapping(value = "/{timeseriesId}/getData", produces = {"application/json"}, method = GET)
     public ModelAndView getTimeseriesData(HttpServletResponse response,
                                           @PathVariable String timeseriesId,
                                           @RequestParam(required = false) MultiValueMap<String, String> query) {
@@ -87,7 +87,7 @@ public class TimeseriesDataController extends BaseController {
         return new ModelAndView().addObject(timeseriesData.getAllTimeseries());
     }
 
-    @RequestMapping(value = "/{timeseriesId}/data", produces = {"application/pdf"}, method = POST)
+    @RequestMapping(value = "/{timeseriesId}/getData", produces = {"application/pdf"}, method = POST)
     public void getTimeseriesCollectionReport(HttpServletResponse response,
                                               @RequestBody DesignedParameterSet parameters) throws Exception {
 
@@ -97,10 +97,16 @@ public class TimeseriesDataController extends BaseController {
          * 
          * TODO check how BaseController is able to resolve json view when exceptions occur
          */
+        
+        for (String timeseriesId : parameters.getTimeseries()) {
+            checkIfUnknownTimeseries(timeseriesId);
+        }
 
+//        QueryMap map = createFromQuery(query);
+        
     }
 
-    @RequestMapping(value = "/{timeseriesId}/data", produces = {"application/pdf"}, method = GET)
+    @RequestMapping(value = "/{timeseriesId}/getData", produces = {"application/pdf"}, method = GET)
     public void getTimeseriesReport(HttpServletResponse response,
                                     @PathVariable String timeseriesId,
                                     @RequestParam(required = false) MultiValueMap<String, String> query) throws Exception {
@@ -145,7 +151,7 @@ public class TimeseriesDataController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/{timeseriesId}/data", produces = {"image/png"}, method = POST)
+    @RequestMapping(value = "/{timeseriesId}/getData", produces = {"image/png"}, method = POST)
     public void getTimeseriesCollectionChart(HttpServletResponse response,
                                              @RequestBody DesignedParameterSet parameters) throws Exception {
 
@@ -158,7 +164,7 @@ public class TimeseriesDataController extends BaseController {
 
     }
 
-    @RequestMapping(value = "/{timeseriesId}/data", produces = {"image/png"}, method = GET)
+    @RequestMapping(value = "/{timeseriesId}/getData", produces = {"image/png"}, method = GET)
     public void getTimeseriesChart(HttpServletResponse response,
                                    @PathVariable String timeseriesId,
                                    @RequestParam(required = false) MultiValueMap<String, String> query) throws Exception {
