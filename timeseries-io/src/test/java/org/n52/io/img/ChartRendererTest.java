@@ -1,4 +1,4 @@
-package org.n52.io.render;
+package org.n52.io.img;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -8,6 +8,9 @@ import java.util.Date;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.n52.io.MimeType;
+import org.n52.io.img.ChartRenderer;
+import org.n52.io.img.RenderingContext;
 import org.n52.io.v1.data.TimeseriesDataCollection;
 
 
@@ -40,20 +43,15 @@ public class ChartRendererTest {
     static class MyChartRenderer extends ChartRenderer {
 
         public MyChartRenderer(RenderingContext context) {
-            super(context);
+            super(context, null);
         }
 
         public MyChartRenderer() {
-            super(null);
+            super(null, null);
         }
 
         @Override
-        public void setLanguage(String language) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void setMimeType(String mimetype) {
+        public void setMimeType(MimeType mimetype) {
             throw new UnsupportedOperationException();
         }
 
@@ -68,7 +66,7 @@ public class ChartRendererTest {
         }
 
         @Override
-        public void renderChart(TimeseriesDataCollection data) {
+        public void generateOutput(TimeseriesDataCollection data) {
             throw new UnsupportedOperationException();
         }
 

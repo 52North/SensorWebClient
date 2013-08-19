@@ -27,7 +27,7 @@ package org.n52.io.v1.data;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.n52.io.render.RenderingContext;
+import org.n52.io.img.RenderingContext;
 
 /**
  * Represents a parameter object to request data from multiple timeseries.

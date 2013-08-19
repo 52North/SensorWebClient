@@ -1,5 +1,5 @@
 
-package org.n52.io.render;
+package org.n52.io.img;
 
 import static java.awt.BasicStroke.CAP_ROUND;
 import static java.awt.BasicStroke.JOIN_ROUND;

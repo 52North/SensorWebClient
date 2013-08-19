@@ -1,4 +1,4 @@
-package org.n52.io.render;
+package org.n52.io.img;
 
 import org.n52.io.v1.data.DesignedParameterSet;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;

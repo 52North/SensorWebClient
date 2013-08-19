@@ -62,7 +62,7 @@ public class QueryMap {
     /**
      * Determines the language the output shall have.
      */
-    private static final String LANGUAGE = "lang";
+    private static final String LANGUAGE = "locale";
 
     /**
      * The default language.

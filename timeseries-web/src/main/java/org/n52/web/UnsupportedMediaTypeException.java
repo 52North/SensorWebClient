@@ -23,30 +23,30 @@
  */
 package org.n52.web;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = BAD_REQUEST)
-public class BadRequestException extends RuntimeException implements WebException {
+@ResponseStatus(value = UNSUPPORTED_MEDIA_TYPE)
+public class UnsupportedMediaTypeException extends RuntimeException implements WebException {
 
     private static final long serialVersionUID = -299285770822168789L;
 
     private List<String> details;
 
     @Deprecated
-	public BadRequestException() {
+	public UnsupportedMediaTypeException() {
 		super();
 	}
 
-	public BadRequestException(String message, Throwable cause) {
+	public UnsupportedMediaTypeException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
-	public BadRequestException(String message) {
+	public UnsupportedMediaTypeException(String message) {
 		super(message);
 	}
 
