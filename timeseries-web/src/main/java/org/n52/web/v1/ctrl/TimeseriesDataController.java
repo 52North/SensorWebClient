@@ -18,6 +18,7 @@ import org.n52.io.IOFactory;
 import org.n52.io.IOHandler;
 import org.n52.io.TimeseriesIOException;
 import org.n52.io.img.RenderingContext;
+import org.n52.io.v1.data.DesignedParameterSet;
 import org.n52.io.v1.data.TimeseriesDataCollection;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.UndesignedParameterSet;
@@ -127,6 +128,7 @@ public class TimeseriesDataController extends BaseController {
         QueryMap map = createFromQuery(query);
         TimeseriesMetadataOutput metadata = timeseriesMetadataService.getParameter(timeseriesId);
         RenderingContext context = createContextForSingleTimeseries(metadata, map.getStyle());
+        setChartDimension(context.getChartStyleDefinitions(), map);
         UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, map.getTimespan());
         IOHandler renderer = IOFactory.create().inLanguage(map.getLanguage()).createIOHandler(context);
 
@@ -146,6 +148,11 @@ public class TimeseriesDataController extends BaseController {
             LOGGER.error("Could not write chart image to stream.");
             throw e; // handled by BaseController
         }
+    }
+
+    private void setChartDimension(DesignedParameterSet chartStyleDefinitions, QueryMap map) {
+        chartStyleDefinitions.setWidth(map.getWidth());
+        chartStyleDefinitions.setHeight(map.getHeight());
     }
 
     public ServiceParameterService getServiceParameterService() {

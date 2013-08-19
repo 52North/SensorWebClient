@@ -69,7 +69,8 @@ public class MultipleChartsRenderer extends ChartRenderer {
             lineRenderer.setColorForSeriesAt(rendererIndex);
         }
         else if (isBarStyle(properties)) {
-            // do bar chart rendering
+            
+            // TODO do bar chart rendering
 
         }
     }
