@@ -120,6 +120,7 @@ public class IOFactory {
         MultipleChartsRenderer chartRenderer = new MultipleChartsRenderer(context, language);
         chartRenderer.setShowTooltips(tooltips);
         chartRenderer.setDrawLegend(drawLegend);
+        chartRenderer.setMimeType(mimeType);
         chartRenderer.setShowGrid(showGrid);
         return chartRenderer;
     }
