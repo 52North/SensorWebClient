@@ -38,7 +38,8 @@ public class TimeseriesConverter extends OutputConverter<SosTimeseries, Timeseri
 //        convertedTimeseries.setLastValue(lastValue);
         
         // TODO Auto-generated method stub
-        
+
+        convertedTimeseries.setParameters(getCondensedParameters(timeseries));
         Phenomenon phenomenon = getLookup().getPhenomenon(timeseries.getPhenomenonId());
         convertedTimeseries.setUom(phenomenon.getUnitOfMeasure());
         return convertedTimeseries;
@@ -48,7 +49,6 @@ public class TimeseriesConverter extends OutputConverter<SosTimeseries, Timeseri
     @Override
     public TimeseriesMetadataOutput convertCondensed(SosTimeseries timeseries) {
         TimeseriesMetadataOutput convertedTimeseries = new TimeseriesMetadataOutput();
-        convertedTimeseries.setParameters(getCondensedParameters(timeseries));
         convertedTimeseries.setStation(getCondensedStation(timeseries));
         convertedTimeseries.setId(timeseries.getTimeseriesId());
         return convertedTimeseries;
