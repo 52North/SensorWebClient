@@ -50,7 +50,6 @@ public class InternalServiceException extends RuntimeException implements WebExc
 		super(message);
 	}
 
-
 	@Override
     public void addHint(String details) {
         if (details == null) {

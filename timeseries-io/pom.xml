@@ -17,8 +17,12 @@
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-opengis</artifactId>
 		</dependency>
-		<!-- ### 52n DEPENDENCIES ### <dependency> <groupId>org.n52.sensorweb</groupId> 
-			<artifactId>sensorwebclient-sos-shared</artifactId> </dependency> -->
+		<!-- ### 52n DEPENDENCIES ###  -->
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>xml-pdf-format</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 		<!-- ### EXTERNAL DEPENDENCIES ### -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -35,10 +39,6 @@
 		<dependency>
 			<groupId>jfree</groupId>
 			<artifactId>jfreechart</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.vividsolutions</groupId>
