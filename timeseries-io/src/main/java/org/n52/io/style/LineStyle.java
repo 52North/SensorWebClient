@@ -3,18 +3,18 @@ package org.n52.io.style;
 import org.n52.io.v1.data.StyleProperties;
 
 public class LineStyle extends Style {
-    
+
     private static final String WIDTH = "width";
     
-    private static final int DEFAULT_LINE_WIDTH = 2;
+    private static final String LINE_TYPE = "lineType";
+
+    private static final String DEFAULT_LINE_TYPE = "solid";
 
     private static final int DEFAULT_DASH_GAP_WIDTH = 2;
 
+    private static final int DEFAULT_LINE_WIDTH = 2;
+
     private static final int DEFAULT_DOT_WIDTH = 2;
-    
-    private static final String LINE_TYPE = "lineType";
-    
-    private static final String DEFAULT_LINE_TYPE = "solid";
     
     public int getDotWidth() {
         if (hasProperty(WIDTH)) {
