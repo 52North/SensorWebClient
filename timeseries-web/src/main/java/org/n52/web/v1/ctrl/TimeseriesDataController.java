@@ -9,6 +9,7 @@ import static org.n52.web.v1.ctrl.RestfulUrls.COLLECTION_TIMESERIES;
 import static org.n52.web.v1.ctrl.RestfulUrls.DEFAULT_PATH;
 import static org.n52.web.v1.ctrl.Stopwatch.startStopwatch;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.io.IOException;
 
@@ -29,11 +30,15 @@ import org.n52.web.v1.srv.TimeseriesDataService;
 import org.n52.web.v1.srv.TimeseriesMetadataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -47,6 +52,21 @@ public class TimeseriesDataController extends BaseController {
     private TimeseriesMetadataService timeseriesMetadataService;
 
     private TimeseriesDataService timeseriesDataService;
+    
+    @RequestMapping(value = "/data", produces = {"application/json"}, method = POST)
+    public ModelAndView getTimeseriesCollectionData(HttpServletResponse response,
+                                                    @RequestBody UndesignedParameterSet parameters) throws Exception {
+        
+        for (String timeseriesId : parameters.getTimeseries()) {
+            checkIfUnknownTimeseries(timeseriesId);
+        }
+        
+        Stopwatch stopwatch = startStopwatch();
+        TimeseriesDataCollection timeseriesData = timeseriesDataService.getTimeseriesData(parameters);
+        LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());
+        
+        return new ModelAndView().addObject(timeseriesData);
+    }
 
     @RequestMapping(value = "/{timeseriesId}/data", produces = {"application/json"}, method = GET)
     public ModelAndView getTimeseriesData(HttpServletResponse response,
@@ -67,10 +87,30 @@ public class TimeseriesDataController extends BaseController {
         return new ModelAndView().addObject(timeseriesData.getAllTimeseries());
     }
 
+    @RequestMapping(value = "/{timeseriesId}/data", produces = {"application/pdf"}, method = POST)
+    public void getTimeseriesCollectionReport(HttpServletResponse response,
+                                              @RequestBody DesignedParameterSet parameters) throws Exception {
+
+        /*
+         * If anything goes wrong or is invalid, no appropriate exception view can be resolved because we are
+         * writing on the output stream directly.
+         * 
+         * TODO check how BaseController is able to resolve json view when exceptions occur
+         */
+
+    }
+
     @RequestMapping(value = "/{timeseriesId}/data", produces = {"application/pdf"}, method = GET)
     public void getTimeseriesReport(HttpServletResponse response,
                                     @PathVariable String timeseriesId,
                                     @RequestParam(required = false) MultiValueMap<String, String> query) throws Exception {
+
+        /*
+         * If anything goes wrong or is invalid, no appropriate exception view can be resolved because we are
+         * writing on the output stream directly.
+         * 
+         * TODO check how BaseController is able to resolve json view when exceptions occur
+         */
 
         checkIfUnknownTimeseries(timeseriesId);
 
@@ -105,10 +145,17 @@ public class TimeseriesDataController extends BaseController {
         }
     }
 
-    private void checkIfUnknownTimeseries(String timeseriesId) {
-        if ( !serviceParameterService.isKnownTimeseries(timeseriesId)) {
-            throw new ResourceNotFoundException("The timeseries with id '" + timeseriesId + "' was not found.");
-        }
+    @RequestMapping(value = "/{timeseriesId}/data", produces = {"image/png"}, method = POST)
+    public void getTimeseriesCollectionChart(HttpServletResponse response,
+                                             @RequestBody DesignedParameterSet parameters) throws Exception {
+
+        /*
+         * If anything goes wrong or is invalid, no appropriate exception view can be resolved because we are
+         * writing on the output stream directly.
+         * 
+         * TODO check how BaseController is able to resolve json view when exceptions occur
+         */
+
     }
 
     @RequestMapping(value = "/{timeseriesId}/data", produces = {"image/png"}, method = GET)
@@ -147,6 +194,12 @@ public class TimeseriesDataController extends BaseController {
         catch (TimeseriesIOException e) {
             LOGGER.error("Could not write chart image to stream.");
             throw e; // handled by BaseController
+        }
+    }
+
+    private void checkIfUnknownTimeseries(String timeseriesId) {
+        if ( !serviceParameterService.isKnownTimeseries(timeseriesId)) {
+            throw new ResourceNotFoundException("The timeseries with id '" + timeseriesId + "' was not found.");
         }
     }
 

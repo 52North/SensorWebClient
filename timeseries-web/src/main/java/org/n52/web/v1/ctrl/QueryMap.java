@@ -118,7 +118,7 @@ public class QueryMap {
     /**
      * Determines the within filter
      */
-    private static final String WITHIN = "within";
+    private static final String NEAR = "near";
 
     /**
      * Determines the bbox filter
@@ -278,10 +278,10 @@ public class QueryMap {
     }
 
     public BoundingBox getSpatialFilter() {
-        if ( !query.containsKey(WITHIN)) {
+        if ( !query.containsKey(NEAR)) {
             return null;
         }
-        String value = query.getFirst(WITHIN);
+        String value = query.getFirst(NEAR);
         ObjectMapper mapper = new ObjectMapper();
         Vicinity vicinity = mapper.convertValue(value, Vicinity.class);
 
