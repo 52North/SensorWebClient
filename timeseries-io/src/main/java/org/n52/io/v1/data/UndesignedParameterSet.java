@@ -26,4 +26,11 @@ public class UndesignedParameterSet extends ParameterSet {
         return parameters;
     }
 
+    public static UndesignedParameterSet createFromDesignedParameters(DesignedParameterSet designedSet) {
+        UndesignedParameterSet parameters = new UndesignedParameterSet();
+        parameters.setTimeseries(designedSet.getTimeseries());
+        parameters.setLanguage(designedSet.getLanguage());
+        parameters.setTimespan(designedSet.getTimespan());
+        return parameters;
+    }
 }
