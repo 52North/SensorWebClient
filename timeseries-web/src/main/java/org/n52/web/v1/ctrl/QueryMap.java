@@ -28,6 +28,20 @@ public class QueryMap {
      */
     private static final String EXPANDED = "expanded";
 
+    private static final String WIDTH = "width";
+    
+    /**
+     * The default width of the chart image to render.
+     */
+    private static final int DEFAULT_WIDTH = 800;
+
+    private static final String HEIGHT = "height";
+    
+    /**
+     * The default height of the chart image to render.
+     */
+    private static final int DEFAULT_HEIGHT = 500;
+    
     /**
      * The default expansion of collection items.
      * 
@@ -48,16 +62,16 @@ public class QueryMap {
     private static final int DEFAULT_OFFSET = 0;
 
     /**
-     * Determines the size of the page to be returned.
+     * Determines the limit of the page to be returned.
      */
-    private static final String SIZE = "size";
+    private static final String LIMIT = "limit";
 
     /**
-     * The default page size.
+     * The default page size limit.
      * 
-     * @see #SIZE
+     * @see #LIMIT
      */
-    private static final int DEFAULT_SIZE = 100;
+    private static final int DEFAULT_LIMIT = 100;
 
     /**
      * Determines the language the output shall have.
@@ -147,16 +161,30 @@ public class QueryMap {
     }
 
     /**
-     * @return the value of {@value #SIZE} parameter. If not present, the default {@value #DEFAULT_SIZE} is
+     * @return the value of {@value #LIMIT} parameter. If not present, the default {@value #DEFAULT_LIMIT} is
      *         returned.
      * @throws BadRequestException
      *         if parameter could not be parsed.
      */
-    public int getSize() {
-        if ( !query.containsKey(SIZE)) {
-            return DEFAULT_SIZE;
+    public int getLimit() {
+        if ( !query.containsKey(LIMIT)) {
+            return DEFAULT_LIMIT;
         }
-        return parseFirstIntegerOfParameter(SIZE);
+        return parseFirstIntegerOfParameter(LIMIT);
+    }
+    
+    public int getWidth() {
+        if (! query.containsKey(WIDTH)) {
+            return DEFAULT_WIDTH;
+        }
+        return parseFirstIntegerOfParameter(WIDTH);
+    }
+    
+    public int getHeight() {
+        if (! query.containsKey(HEIGHT)) {
+            return DEFAULT_HEIGHT;
+        }
+        return parseFirstIntegerOfParameter(HEIGHT);
     }
 
     /**

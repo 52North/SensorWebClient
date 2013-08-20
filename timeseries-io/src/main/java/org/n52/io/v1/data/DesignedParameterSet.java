@@ -113,9 +113,10 @@ public class DesignedParameterSet extends ParameterSet {
         this.styleOptions.put(timeseriesId, styleOptions);
     }
     
-    public static RenderingContext createContextForSingleTimeseries(TimeseriesMetadataOutput metadata, StyleProperties style) {
+    public static RenderingContext createContextForSingleTimeseries(TimeseriesMetadataOutput metadata, StyleProperties style, String timespan) {
         DesignedParameterSet parameters = new DesignedParameterSet();
         parameters.addTimeseriesWithStyleOptions(metadata.getId(), style);
+        parameters.setTimespan(timespan);
         return RenderingContext.createWith(parameters, metadata);
     }
 

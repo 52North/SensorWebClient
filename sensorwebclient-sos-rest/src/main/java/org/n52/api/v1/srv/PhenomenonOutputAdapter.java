@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.n52.api.v1.io.PhenomenonConverter;
 import org.n52.io.v1.data.PhenomenonOutput;
+import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.n52.web.v1.ctrl.QueryMap;
@@ -40,9 +41,11 @@ public class PhenomenonOutputAdapter implements ParameterService<PhenomenonOutpu
 	public PhenomenonOutput getParameter(String phenomenonId) {
 		for (SOSMetadata metadata : getSOSMetadatas()) {
 			TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
-			if(lookup.containsPhenomenon(phenomenonId)) {
-			    PhenomenonConverter converter = new PhenomenonConverter(metadata);
-				return converter.convertExpanded(lookup.getPhenomenon(phenomenonId));
+			for (Phenomenon phenomenon : lookup.getPhenomenons()) {
+				if(phenomenon.getGlobalId().equals(phenomenonId)) {
+					PhenomenonConverter converter = new PhenomenonConverter(metadata);
+					return converter.convertExpanded(phenomenon);
+				}
 			}
 		}
 		return null;

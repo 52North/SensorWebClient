@@ -20,7 +20,7 @@ public class FeatureConverter extends OutputConverter<Feature, FeatureOutput> {
     @Override
     public FeatureOutput convertCondensed(Feature feature) {
         FeatureOutput convertedFeature = new FeatureOutput();
-        convertedFeature.setId(feature.getFeatureId());
+        convertedFeature.setId(feature.getGlobalId());
         convertedFeature.setLabel(feature.getLabel());
         return convertedFeature;
     }

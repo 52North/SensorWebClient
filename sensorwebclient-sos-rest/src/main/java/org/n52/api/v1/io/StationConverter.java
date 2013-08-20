@@ -31,11 +31,8 @@ public class StationConverter extends OutputConverter<Station, StationOutput> {
     public StationOutput convertCondensed(Station station) {
         StationOutput convertedStation = new StationOutput();
         convertedStation.setGeometry(getCoordinates(station));
+        convertedStation.addProperty("id", station.getGlobalId());
         convertedStation.addProperty("label", station.getLabel());
-        
-        // TODO make station identifiable
-//        stationOutput.addProperty("label", station.getStationId());
-        
         return convertedStation;
     }
     

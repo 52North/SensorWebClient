@@ -20,7 +20,7 @@ public class PhenomenonConverter extends OutputConverter<Phenomenon, PhenomenonO
     @Override
     public PhenomenonOutput convertCondensed(Phenomenon phenomenon) {
         PhenomenonOutput convertedPhenomenon = new PhenomenonOutput();
-        convertedPhenomenon.setId(phenomenon.getPhenomenonId());
+        convertedPhenomenon.setId(phenomenon.getGlobalId());
         convertedPhenomenon.setLabel(phenomenon.getLabel());
         return convertedPhenomenon;
     }

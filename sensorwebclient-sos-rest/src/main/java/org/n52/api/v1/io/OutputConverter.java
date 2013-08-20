@@ -27,7 +27,7 @@ public abstract class OutputConverter<T,E> {
 
     protected ServiceOutput convertCondensedService() {
         ServiceOutput convertedService = new ServiceOutput();
-        convertedService.setId(metadata.getConfiguredItemName());
+        convertedService.setId(metadata.getGlobalId());
         convertedService.setServiceUrl(metadata.getServiceUrl());
         return convertedService;
     }

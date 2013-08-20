@@ -25,6 +25,9 @@ package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
 
+import org.n52.shared.IdGenerator;
+import org.n52.shared.MD5HashIdGenerator;
+
 public class Phenomenon extends TimeseriesParameter implements Serializable {
 
     private static final long serialVersionUID = 207874913321466876L;
@@ -35,12 +38,12 @@ public class Phenomenon extends TimeseriesParameter implements Serializable {
         // for serialization
     }
 
-    public Phenomenon(String phenomenonId) {
-        super(phenomenonId);
+    public Phenomenon(String parameterId, String serviceUrl) {
+        super(parameterId, new String[]{parameterId, serviceUrl});
     }
     
     public String getPhenomenonId() {
-        return getId();
+        return getParameterId();
     }
 
     public String getUnitOfMeasure() {
@@ -55,6 +58,7 @@ public class Phenomenon extends TimeseriesParameter implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder(getClass().getName());
         sb.append(" [").append("phenomenonId: '").append(getPhenomenonId());
+        sb.append("', ").append("internalId: '").append(getGlobalId());
         sb.append("', ").append("label: '").append(getLabel());
         return sb.append("']").toString();
     }
@@ -65,6 +69,7 @@ public class Phenomenon extends TimeseriesParameter implements Serializable {
         int result = 1;
         result = prime * result + ( (getLabel() == null) ? 0 : getLabel().hashCode());
         result = prime * result + ( (getPhenomenonId() == null) ? 0 : getPhenomenonId().hashCode());
+        result = prime * result + ( (getGlobalId() == null) ? 0 : getGlobalId().hashCode());
         result = prime * result + ( (unitOfMeasure == null) ? 0 : unitOfMeasure.hashCode());
         return result;
     }
@@ -92,5 +97,11 @@ public class Phenomenon extends TimeseriesParameter implements Serializable {
             return false;
         return true;
     }
+
+	@Override
+	protected String generateGlobalId(String id, String[] parametersToGenerateId) {
+		IdGenerator idGenerator = new MD5HashIdGenerator("phe_");
+        return idGenerator.generate(parametersToGenerateId);
+	}
 
 }

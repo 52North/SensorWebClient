@@ -20,7 +20,7 @@ public class OfferingConverter extends OutputConverter<Offering, OfferingOutput>
     @Override
     public OfferingOutput convertCondensed(Offering offering) {
         OfferingOutput convertedOffering = new OfferingOutput();
-        convertedOffering.setId(offering.getOfferingId());
+        convertedOffering.setId(offering.getGlobalId());
         convertedOffering.setLabel(offering.getLabel());
         return convertedOffering;
     }
