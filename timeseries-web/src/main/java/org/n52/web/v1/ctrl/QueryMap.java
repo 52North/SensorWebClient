@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.n52.io.crs.BoundingBox;
+import org.n52.io.v1.data.DesignedParameterSet;
 import org.n52.io.v1.data.StyleProperties;
 import org.n52.io.v1.data.Vicinity;
 import org.n52.web.BadRequestException;
@@ -17,6 +18,9 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ *
+ */
 public class QueryMap {
 
     /**
@@ -28,20 +32,6 @@ public class QueryMap {
      */
     private static final String EXPANDED = "expanded";
 
-    private static final String WIDTH = "width";
-    
-    /**
-     * The default width of the chart image to render.
-     */
-    private static final int DEFAULT_WIDTH = 800;
-
-    private static final String HEIGHT = "height";
-    
-    /**
-     * The default height of the chart image to render.
-     */
-    private static final int DEFAULT_HEIGHT = 500;
-    
     /**
      * The default expansion of collection items.
      * 
@@ -86,6 +76,46 @@ public class QueryMap {
     private static final String DEFAULT_LANGUAGE = "en";
 
     /**
+     * Determines the timespan parameter
+     */
+    private static final String TIMESPAN = "timespan";
+
+    /**
+     * The width in px of the image to be rendered.
+     */
+    private static final String WIDTH = "width";
+
+    /**
+     * The default width of the chart image to render.
+     */
+    private static final int DEFAULT_WIDTH = 800;
+
+    /**
+     * The height in px of the image to be rendered.
+     */
+    private static final String HEIGHT = "height";
+
+    /**
+     * The default height of the chart image to render.
+     */
+    private static final int DEFAULT_HEIGHT = 500;
+
+    /**
+     * If a chart shall be rendered with a background grid.
+     */
+    private static final String GRID = "grid";
+
+    /**
+     * Defaults to a background grid in a rendered chart.
+     */
+    private static final boolean DEFAULT_GRID = true;
+
+    /**
+     * Determines the style parameter
+     */
+    private static final String STYLE = "style";
+
+    /**
      * Determines the service filter
      */
     private static final String SERVICE = "service";
@@ -125,16 +155,6 @@ public class QueryMap {
      */
     private static final String BBOX = "bbox";
 
-    /**
-     * Determines the style parameter
-     */
-    private static final String STYLE = "style";
-    
-    /**
-     * Determines the timespan parameter
-     */
-    private static final String TIMESPAN = "timespan";
-
     private MultiValueMap<String, String> query;
 
     /**
@@ -172,19 +192,26 @@ public class QueryMap {
         }
         return parseFirstIntegerOfParameter(LIMIT);
     }
-    
+
     public int getWidth() {
-        if (! query.containsKey(WIDTH)) {
+        if ( !query.containsKey(WIDTH)) {
             return DEFAULT_WIDTH;
         }
         return parseFirstIntegerOfParameter(WIDTH);
     }
-    
+
     public int getHeight() {
-        if (! query.containsKey(HEIGHT)) {
+        if ( !query.containsKey(HEIGHT)) {
             return DEFAULT_HEIGHT;
         }
         return parseFirstIntegerOfParameter(HEIGHT);
+    }
+
+    public boolean isGrid() {
+        if ( !query.containsKey(GRID)) {
+            return DEFAULT_GRID;
+        }
+        return parseFirstBooleanOfParameter(GRID);
     }
 
     /**
@@ -234,17 +261,18 @@ public class QueryMap {
         }
         return validateTimespan(query.getFirst(TIMESPAN));
     }
-    
+
     private String createDefaultTimespan() {
         DateTime now = new DateTime();
         DateTime lastWeek = now.minusWeeks(1);
         return new Interval(lastWeek, now).toString();
     }
-    
+
     private String validateTimespan(String timespan) {
         try {
             return Interval.parse(timespan).toString();
-        } catch (IllegalArgumentException e) {
+        }
+        catch (IllegalArgumentException e) {
             String message = "Could not parse timespan parameter: " + timespan;
             BadRequestException badRequest = new BadRequestException(message, e);
             badRequest.addHint("Valid timespans have to be in ISO8601 period format.");
@@ -330,7 +358,30 @@ public class QueryMap {
         }
     }
 
+    /**
+     * @param queryParameters
+     *        the parameters sent via GET payload.
+     * @return a query map for convenient parameter access plus validation.
+     */
     public static QueryMap createFromQuery(MultiValueMap<String, String> queryParameters) {
+        return new QueryMap(queryParameters);
+    }
+
+    /**
+     * @param parameters
+     *        the parameters sent via POST payload.
+     * @return a query map for convenient parameter access plus validation.
+     */
+    public static QueryMap createFromQuery(DesignedParameterSet parameters) {
+        LinkedMultiValueMap<String, String> queryParameters = new LinkedMultiValueMap<String, String>();
+        queryParameters.add(LANGUAGE, parameters.getLanguage());
+        queryParameters.add(TIMESPAN, parameters.getTimespan());
+        queryParameters.add(WIDTH, parameters.getWidth() + "");
+        queryParameters.add(HEIGHT, parameters.getHeight() + "");
+        queryParameters.add(GRID, Boolean.toString(parameters.isGrid()));
+
+        // TODO add further parameters
+
         return new QueryMap(queryParameters);
     }
 }
