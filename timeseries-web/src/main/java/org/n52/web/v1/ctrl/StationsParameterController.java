@@ -19,34 +19,36 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping(value = DEFAULT_PATH + "/" + RestfulUrls.COLLECTION_STATIONS, produces = {"application/json"})
 public class StationsParameterController extends ParameterController {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(StationsParameterController.class);
 
     private ParameterService<StationOutput> stationParameterService;
 
-    public ModelAndView getCollection(@RequestParam(required=false) MultiValueMap<String, String> query) {
+    public ModelAndView getCollection(@RequestParam(required = false) MultiValueMap<String, String> query) {
         QueryMap map = QueryMap.createFromQuery(query);
-        
+
         if (map.shallExpand()) {
             Stopwatch stopwatch = startStopwatch();
             Object[] result = stationParameterService.getExpandedParameters(map);
             LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());
 
             // TODO add paging
-            
+
             return new ModelAndView().addObject(result);
-        } else {
+        }
+        else {
             Stopwatch stopwatch = startStopwatch();
             Object[] result = stationParameterService.getCondensedParameters(map);
             LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());
 
             // TODO add paging
-            
+
             return new ModelAndView().addObject(result);
         }
     }
 
-    public ModelAndView getItem(@PathVariable("item") String procedureId, @RequestParam(required=false) MultiValueMap<String, String> query) {
+    public ModelAndView getItem(@PathVariable("item") String procedureId,
+                                @RequestParam(required = false) MultiValueMap<String, String> query) {
         QueryMap map = QueryMap.createFromQuery(query);
 
         // TODO check parameters and throw BAD_REQUEST if invalid
