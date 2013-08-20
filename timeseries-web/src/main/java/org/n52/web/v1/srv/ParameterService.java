@@ -8,7 +8,9 @@ public interface ParameterService<T> {
 	T[] getExpandedParameters(QueryMap query);
 
     T[] getCondensedParameters(QueryMap query);
-    
-	T getParameter(String item);
 
+    T[] getParameters(String[] items);
+
+	T getParameter(String item);
+	
 }

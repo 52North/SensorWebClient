@@ -37,8 +37,20 @@ public class FeatureOutputAdapter implements ParameterService<FeatureOutput> {
         return allFeatures.toArray(new FeatureOutput[0]);
     }
 
-    
 	@Override
+    public FeatureOutput[] getParameters(String[] featureIds) {
+	    List<FeatureOutput> selectedFeatures = new ArrayList<FeatureOutput>();
+	    for (String featureId : featureIds) {
+            FeatureOutput feature = getParameter(featureId);
+            if (feature != null) {
+                selectedFeatures.add(feature);
+            }
+        }
+        return selectedFeatures.toArray(new FeatureOutput[0]);
+    }
+
+
+    @Override
 	public FeatureOutput getParameter(String featureId) {
 		for (SOSMetadata metadata : getSOSMetadatas()) {
 			TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();

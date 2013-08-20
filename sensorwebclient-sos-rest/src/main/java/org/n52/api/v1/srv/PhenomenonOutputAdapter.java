@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.n52.api.v1.io.PhenomenonConverter;
+import org.n52.io.v1.data.OfferingOutput;
 import org.n52.io.v1.data.PhenomenonOutput;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
@@ -36,6 +37,18 @@ public class PhenomenonOutputAdapter implements ParameterService<PhenomenonOutpu
         return allPhenomenons.toArray(new PhenomenonOutput[0]);
     }
 
+	@Override
+    public PhenomenonOutput[] getParameters(String[] phenomenonIds) {
+        List<PhenomenonOutput> selectedPhenomenons = new ArrayList<PhenomenonOutput>();
+        for (String phenomenonId : phenomenonIds) {
+            PhenomenonOutput phenomenon = getParameter(phenomenonId);
+            if (phenomenon != null) {
+                selectedPhenomenons.add(phenomenon);
+            }
+        }
+        return selectedPhenomenons.toArray(new PhenomenonOutput[0]);
+    }
+	
 	@Override
 	public PhenomenonOutput getParameter(String phenomenonId) {
 		for (SOSMetadata metadata : getSOSMetadatas()) {

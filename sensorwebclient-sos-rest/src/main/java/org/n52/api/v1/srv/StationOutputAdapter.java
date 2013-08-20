@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.n52.api.v1.io.StationConverter;
+import org.n52.io.v1.data.ServiceOutput;
 import org.n52.io.v1.data.StationOutput;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
@@ -34,6 +35,18 @@ public class StationOutputAdapter implements ParameterService<StationOutput> {
             allStations.addAll(converter.convertCondensed(stationsAsArray));
         }
         return allStations.toArray(new StationOutput[0]);
+    }
+
+    @Override
+    public StationOutput[] getParameters(String[] stationIds) {
+        List<StationOutput> selectedStations = new ArrayList<StationOutput>();
+        for (String stationId : stationIds) {
+            StationOutput station = getParameter(stationId);
+            if (station != null) {
+                selectedStations.add(station);
+            }
+        }
+        return selectedStations.toArray(new StationOutput[0]);
     }
 
     @Override

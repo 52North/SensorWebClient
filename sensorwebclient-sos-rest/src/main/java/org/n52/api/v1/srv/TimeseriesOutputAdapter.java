@@ -59,6 +59,19 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Timeserie
     }
 
     @Override
+    public TimeseriesMetadataOutput[] getParameters(String[] timeseriesIds) {
+        List<TimeseriesMetadataOutput> selectedTimeseries = new ArrayList<TimeseriesMetadataOutput>();
+        for (String timeseriesId : timeseriesIds) {
+            TimeseriesMetadataOutput timeseries = getParameter(timeseriesId);
+            if (timeseries != null) {
+                selectedTimeseries.add(timeseries);
+            }
+        }
+        return selectedTimeseries.toArray(new TimeseriesMetadataOutput[0]);
+    }
+
+
+    @Override
     public TimeseriesMetadataOutput getParameter(String timeseriesId) {
         for (SOSMetadata metadata : getSOSMetadatas()) {
             Station station = metadata.getStationByTimeSeriesId(timeseriesId);

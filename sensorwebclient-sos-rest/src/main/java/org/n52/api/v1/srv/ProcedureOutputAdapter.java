@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.n52.api.v1.io.ProcedureConverter;
+import org.n52.io.v1.data.PhenomenonOutput;
 import org.n52.io.v1.data.ProcedureOutput;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
@@ -37,6 +38,18 @@ public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput>
     }
 
 	@Override
+    public ProcedureOutput[] getParameters(String[] procedureIds) {
+	    List<ProcedureOutput> selectedProcedures = new ArrayList<ProcedureOutput>();
+        for (String procedureId : procedureIds) {
+            ProcedureOutput procedure = getParameter(procedureId);
+            if (procedure != null) {
+                selectedProcedures.add(procedure);
+            }
+        }
+        return selectedProcedures.toArray(new ProcedureOutput[0]);
+    }
+
+    @Override
 	public ProcedureOutput getParameter(String procedureId) {
 		for (SOSMetadata metadata : getSOSMetadatas()) {
 			TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
