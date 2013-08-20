@@ -26,6 +26,9 @@ package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
 
+import org.n52.shared.IdGenerator;
+import org.n52.shared.MD5HashIdGenerator;
+
 public class Offering extends TimeseriesParameter implements Serializable {
 
     private static final long serialVersionUID = -544290033391799572L;
@@ -36,18 +39,19 @@ public class Offering extends TimeseriesParameter implements Serializable {
         // for serialization
     }
 
-    public Offering(String parameterId) {
-        super(parameterId);
+    public Offering(String parameterId, String serviceUrl) {
+        super(parameterId, new String[]{parameterId, serviceUrl});
     }
     
     public String getOfferingId() {
-        return getId();
+        return getParameterId();
     }
     
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(getClass().getName());
         sb.append(" [").append("offeringId: '").append(getOfferingId());
+        sb.append("', ").append("internalId: '").append(getGlobalId());
         sb.append("', ").append("label: '").append(getLabel());
         return sb.append("']").toString();
     }
@@ -58,6 +62,7 @@ public class Offering extends TimeseriesParameter implements Serializable {
         int result = 1;
         result = prime * result + ( (getLabel() == null) ? 0 : getLabel().hashCode());
         result = prime * result + ( (getOfferingId() == null) ? 0 : getOfferingId().hashCode());
+        result = prime * result + ( (getGlobalId() == null) ? 0 : getGlobalId().hashCode());
         return result;
     }
     
@@ -71,12 +76,18 @@ public class Offering extends TimeseriesParameter implements Serializable {
             return false;
         Offering other = (Offering) obj;
         if (getOfferingId() == null) {
-            if (other.getId() != null)
+            if (other.getOfferingId() != null)
                 return false;
         }
         else if ( !getOfferingId().equals(other.getOfferingId()))
             return false;
         return true;
     }
+
+	@Override
+	protected String generateGlobalId(String id, String[] parametersToGenerateId) {
+		IdGenerator idGenerator = new MD5HashIdGenerator("off_");
+        return idGenerator.generate(parametersToGenerateId);
+	}
 
 }

@@ -1,5 +1,8 @@
 package org.n52.shared.serializable.pojos.sos;
 
+import org.n52.shared.IdGenerator;
+import org.n52.shared.MD5HashIdGenerator;
+
 public class SosService extends TimeseriesParameter {
 
     private static final long serialVersionUID = -3749074157142942875L;
@@ -11,12 +14,12 @@ public class SosService extends TimeseriesParameter {
     }
     
     public SosService(String serviceUrl, String version) {
-        super(serviceUrl);
+        super(serviceUrl, new String[]{serviceUrl, version});
         this.version = version;
     }
     
     public String getServiceUrl() {
-        return getId();
+        return getParameterId();
     }
 
     public String getVersion() {
@@ -55,13 +58,17 @@ public class SosService extends TimeseriesParameter {
             return false;
         SosService other = (SosService) obj;
         if (getServiceUrl() == null) {
-            if (other.getId() != null)
+            if (other.getServiceUrl() != null)
                 return false;
         }
         else if ( !getServiceUrl().equals(other.getServiceUrl()))
             return false;
         return true;
     }
-    
-    
+
+	@Override
+	protected String generateGlobalId(String id, String[] parametersToGenerateId) {
+		IdGenerator idGenerator = new MD5HashIdGenerator("srv_");
+        return idGenerator.generate(parametersToGenerateId);
+	}
 }

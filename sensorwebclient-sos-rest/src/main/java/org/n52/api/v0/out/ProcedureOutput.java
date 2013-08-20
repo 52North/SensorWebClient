@@ -71,7 +71,7 @@ public class ProcedureOutput {
      */
     public static ProcedureOutput createSimpleProcedureOutput(Procedure procedure) {
         ProcedureOutput procedureOutput = new ProcedureOutput();
-        procedureOutput.setId(procedure.getProcedureId());
+        procedureOutput.setId(procedure.getGlobalId());
         procedureOutput.setLabel(procedure.getLabel());
         return procedureOutput;
     }

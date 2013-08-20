@@ -114,7 +114,7 @@ public abstract class MetadataHandler {
 		serviceDescriptor = ConnectorUtils.getServiceDescriptor(metadata.getServiceUrl(), adapter);
 	}
 	
-	protected Collection<SosTimeseries> createObservingTimeseries() throws OXFException {
+	protected Collection<SosTimeseries> createObservingTimeseries(String sosUrl) throws OXFException {
 		// association: Offering - FOIs
 		Map<String, String[]> offeringFoiMap = new HashMap<String, String[]>();
 
@@ -157,7 +157,7 @@ public abstract class MetadataHandler {
 
 		// add fois
 		for (String featureId : featureIds) {
-			lookup.addFeature(new Feature(featureId));
+			lookup.addFeature(new Feature(featureId, sosUrl));
 		}
 
 		Collection<SosTimeseries> allObservedTimeseries = new ArrayList<SosTimeseries>();
@@ -176,21 +176,21 @@ public abstract class MetadataHandler {
 						 * operations.
 						 */
 						SosTimeseries timeseries = new SosTimeseries();
-						timeseries.setPhenomenon(new Phenomenon(phenomenon));
-						timeseries.setProcedure(new Procedure(procedure));
-						timeseries.setOffering(new Offering(offeringId));
+						timeseries.setPhenomenon(new Phenomenon(phenomenon, sosUrl));
+						timeseries.setProcedure(new Procedure(procedure, sosUrl));
+						timeseries.setOffering(new Offering(offeringId, sosUrl));
 						timeseries.setSosService(new SosService(sosMetadata.getServiceUrl(), sosMetadata.getVersion()));
 						allObservedTimeseries.add(timeseries);
 					}
 					// add procedures
-					lookup.addProcedure(new Procedure(procedure));
+					lookup.addProcedure(new Procedure(procedure, sosUrl));
 					for (String phenomenonId : offeringPhenMap.get(offeringId)) {
-						lookup.addPhenomenon(new Phenomenon(phenomenonId));
+						lookup.addPhenomenon(new Phenomenon(phenomenonId, sosUrl));
 					}
 				}
 			}
 			// add offering
-			lookup.addOffering(new Offering(offeringId));
+			lookup.addOffering(new Offering(offeringId, sosUrl));
 		}
 		return allObservedTimeseries;
 	}

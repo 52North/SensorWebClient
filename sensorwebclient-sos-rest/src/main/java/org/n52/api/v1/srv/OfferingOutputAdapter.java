@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.n52.api.v1.io.OfferingConverter;
 import org.n52.io.v1.data.OfferingOutput;
+import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.n52.web.v1.ctrl.QueryMap;
@@ -40,9 +41,11 @@ public class OfferingOutputAdapter implements ParameterService<OfferingOutput> {
 	public OfferingOutput getParameter(String offeringId) {
 		for (SOSMetadata metadata : getSOSMetadatas()) {
 			TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
-			if(lookup.containsOffering(offeringId)) {
-			    OfferingConverter converter = new OfferingConverter(metadata);
-				return converter.convertExpanded(lookup.getOffering(offeringId));
+			for (Offering offering : lookup.getOfferings()) {
+				if(offering.getGlobalId().equals(offeringId)) {
+				    OfferingConverter converter = new OfferingConverter(metadata);
+					return converter.convertExpanded(offering);
+				}
 			}
 		}
 		return null;

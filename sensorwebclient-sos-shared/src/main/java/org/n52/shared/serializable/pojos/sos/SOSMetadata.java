@@ -31,6 +31,8 @@ import java.util.HashMap;
 
 import org.n52.io.crs.BoundingBox;
 import org.n52.shared.Constants;
+import org.n52.shared.IdGenerator;
+import org.n52.shared.MD5HashIdGenerator;
 
 /**
  * A shared metadata representation for an SOS instance. An {@link SOSMetadata} is used from both (!) Client
@@ -392,7 +394,10 @@ public class SOSMetadata implements Serializable {
             return false;
         return true;
     }
-    
-    
 
+    public String getGlobalId() {
+    	String[] parameters = new String[]{serviceUrl,version};
+    	IdGenerator idGenerator = new MD5HashIdGenerator("srv_");
+        return idGenerator.generate(parameters);
+	}
 }

@@ -25,6 +25,9 @@ package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
 
+import org.n52.shared.IdGenerator;
+import org.n52.shared.MD5HashIdGenerator;
+
 public class Feature extends TimeseriesParameter implements Serializable {
 
 	private static final long serialVersionUID = 693946840349140532L;
@@ -33,18 +36,19 @@ public class Feature extends TimeseriesParameter implements Serializable {
 		// for serialization
 	}
 
-	public Feature(String parameterId) {
-	    super(parameterId);
+	public Feature(String parameterId, String serviceUrl) {
+	    super(parameterId, new String[]{parameterId, serviceUrl});
 	}
 	
 	public String getFeatureId() {
-	    return getId();
+	    return getParameterId();
 	}
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(getClass().getName());
         sb.append(" [").append("featureId: '").append(getFeatureId());
+        sb.append("',").append("internalId: '").append(getGlobalId());
         sb.append("', ").append("label: '").append(getLabel());
         return sb.append("']").toString();
     }
@@ -55,6 +59,7 @@ public class Feature extends TimeseriesParameter implements Serializable {
         int result = 1;
         result = prime * result + ( (getLabel() == null) ? 0 : getLabel().hashCode());
         result = prime * result + ( (getFeatureId() == null) ? 0 : getFeatureId().hashCode());
+        result = prime * result + ( (getGlobalId() == null) ? 0 : getGlobalId().hashCode());
         return result;
     }
     
@@ -68,12 +73,18 @@ public class Feature extends TimeseriesParameter implements Serializable {
             return false;
         Feature other = (Feature) obj;
         if (getFeatureId() == null) {
-            if (other.getId() != null)
+            if (other.getFeatureId() != null)
                 return false;
         }
         else if ( !getFeatureId().equals(other.getFeatureId()))
             return false;
         return true;
     }
-    
+
+	@Override
+	protected String generateGlobalId(String id, String[] parametersToGenerateId) {
+		IdGenerator idGenerator = new MD5HashIdGenerator("foi_");
+        return idGenerator.generate(parametersToGenerateId);
+	}
+
 }

@@ -39,10 +39,12 @@ public class StationOutputAdapter implements ParameterService<StationOutput> {
     @Override
     public StationOutput getParameter(String stationId) {
         for (SOSMetadata metadata : getSOSMetadatas()) {
-            if (metadata.getStation(stationId) != null) {
-                StationConverter converter = new StationConverter(metadata);
-                return converter.convertCondensed(metadata.getStation(stationId));
-            }
+        	for (Station station : metadata.getStations()) {
+				if (station.getGlobalId().equals(stationId)) {
+					StationConverter converter = new StationConverter(metadata);
+	                return converter.convertCondensed(station);	
+				}
+			}
         }
         return null;
     }

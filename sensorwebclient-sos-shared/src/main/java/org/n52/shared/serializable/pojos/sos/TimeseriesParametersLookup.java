@@ -34,7 +34,7 @@ public class TimeseriesParametersLookup implements Serializable {
      *        the offering to set.
      */
     public void addOffering(Offering offering) {
-        offerings.put(offering.getId(), offering);
+        offerings.put(offering.getOfferingId(), offering);
     }
 
     /**
@@ -82,7 +82,7 @@ public class TimeseriesParametersLookup implements Serializable {
      *        the feature to set.
      */
     public void addFeature(Feature feature) {
-        this.features.put(feature.getId(), feature);
+        this.features.put(feature.getFeatureId(), feature);
     }
 
     /**
@@ -130,7 +130,7 @@ public class TimeseriesParametersLookup implements Serializable {
      *        the phenomenon to set.
      */
     public void addPhenomenon(Phenomenon phenomenon) {
-        this.phenomenons.put(phenomenon.getId(), phenomenon);
+        this.phenomenons.put(phenomenon.getPhenomenonId(), phenomenon);
     }
 
     /**
@@ -178,7 +178,7 @@ public class TimeseriesParametersLookup implements Serializable {
      *        the procedure to set.
      */
     public void addProcedure(Procedure procedure) {
-        procedures.put(procedure.getId(), procedure);
+        procedures.put(procedure.getProcedureId(), procedure);
     }
 
     /**

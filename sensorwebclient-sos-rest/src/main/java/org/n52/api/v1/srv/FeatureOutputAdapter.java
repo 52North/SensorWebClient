@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.n52.api.v1.io.FeatureConverter;
 import org.n52.io.v1.data.FeatureOutput;
+import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.n52.web.v1.ctrl.QueryMap;
@@ -42,9 +43,11 @@ public class FeatureOutputAdapter implements ParameterService<FeatureOutput> {
 	public FeatureOutput getParameter(String featureId) {
 		for (SOSMetadata metadata : getSOSMetadatas()) {
 			TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
-			if(lookup.containsFeature(featureId)) {
-			    FeatureConverter converter = new FeatureConverter(metadata);
-				return converter.convertExpanded(lookup.getFeature(featureId));
+			for (Feature feature : lookup.getFeatures()) {
+				if (feature.getGlobalId().equals(featureId)) {
+					FeatureConverter converter = new FeatureConverter(metadata);
+					return converter.convertExpanded(feature);
+				}
 			}
 		}
 		return null;

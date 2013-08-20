@@ -87,7 +87,7 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 		SOSMetadata metadata = initMetadata(sosUrl, sosVersion);
 		TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
 		
-        Collection<SosTimeseries> observingTimeseries = createObservingTimeseries();
+        Collection<SosTimeseries> observingTimeseries = createObservingTimeseries(sosUrl);
         
         // TODO send DescribeSensor for every procedure to get the UOM, when the EEA-SOS deliver the uom
 
@@ -125,7 +125,7 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 	                        double lat = Double.parseDouble(point.getLat());
 		                    double lng = Double.parseDouble(point.getLon());
 		                    EastingNorthing coords = new EastingNorthing(lat, lng, point.getSrs());
-	                        station = new Station(id);
+	                        station = new Station(id, sosUrl);
 	                        station.setLocation(coords);
 	                        metadata.addStation(station);
 						}
@@ -136,12 +136,12 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 						} else {
 							label = id;
 						}
-						Feature feature = new Feature(id);
+						Feature feature = new Feature(id, sosUrl);
 						feature.setLabel(label);
                         lookup.addFeature(feature);
                         
                         SosTimeseries tmp = timeseries.clone();
-                        tmp.setFeature(new Feature(id));
+                        tmp.setFeature(new Feature(id, sosUrl));
                         station.addTimeseries(tmp);
 					}
 				}

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.n52.api.v1.io.ProcedureConverter;
 import org.n52.io.v1.data.ProcedureOutput;
+import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.n52.web.v1.ctrl.QueryMap;
@@ -40,9 +41,11 @@ public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput>
 	public ProcedureOutput getParameter(String procedureId) {
 		for (SOSMetadata metadata : getSOSMetadatas()) {
 			TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
-			if (lookup.containsProcedure(procedureId)) {
-			    ProcedureConverter converter = new ProcedureConverter(metadata);
-				return converter.convertExpanded(lookup.getProcedure(procedureId));
+			for (Procedure procedure : lookup.getProcedures()) {
+				if (procedure.getGlobalId().equals(procedureId)) {
+					ProcedureConverter converter = new ProcedureConverter(metadata);
+					return converter.convertExpanded(procedure);
+				}
 			}
 		}
 		return null;
