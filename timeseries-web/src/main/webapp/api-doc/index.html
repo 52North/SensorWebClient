@@ -779,7 +779,7 @@ Content-Type: application/json;charset=UTF-8
 
 					<div> <!-- Examples -->
 						<h3>Examples</h3>
-            <div>
+            <div> <!-- Simple Collection -->
               <h4>Simple Collection</h4>
               <pre>GET /api/v1/timeseries HTTP/1.1
 Host: sensorweb.demo.52north.org
@@ -825,7 +825,8 @@ Content-Type: application/json;charset=UTF-8
                 As <a href="#common-query-parameters">noted above</a> <code>expanded=false</code> is the default. Setting the parameter to <code>false</code> explicitly will have the same effect. 
               </div>
 						</div>
-            <div>
+            
+            <div> <!-- Expanded Collection -->
               <h4>Expanded Collection</h4>
               <pre>GET /api/v1/timeseries/?expanded=true HTTP/1.1
 Host: sensorweb.demo.52north.org
@@ -904,7 +905,8 @@ Content-Type: application/json;charset=UTF-8
   }
 ]</pre>
 						</div>
-						<div>
+						
+            <div> <!-- Simple Item -->
               <h4>Simple Item</h4>
               <pre>GET /api/v1/timeseries/ts_35559ca6b2248629e6dcdc65ceead0ed HTTP/1.1
 Host: sensorweb.demo.52north.org
@@ -940,7 +942,8 @@ Content-Type: application/json;charset=UTF-8
                 As <a href="#common-query-parameters">noted above</a> <code>expanded=false</code> is the default. Setting the parameter to <code>false</code> explicitly will have the same effect. 
               </div>
 						</div>
-            <div>
+            
+            <div> <!-- Expanded Item -->
               <h4>Expanded Item</h4>
               <pre>GET /api/v1/timeseries/ts_35559ca6b2248629e6dcdc65ceead0ed/?expanded=true HTTP/1.1
 Host: sensorweb.demo.52north.org
@@ -1005,7 +1008,7 @@ Content-Type: application/json;charset=UTF-8
 }</pre>
 						</div>
             
-            <div>
+            <div> <!-- Raw Data of a single timeseries -->
               <h4>Raw Data of a single timeseries</h4>
               <div class="n52-callout n52-callout-todo">a query parameter which asks for formatting the output to be directly consumable by JS chart APIs?</div>
 						
@@ -1034,7 +1037,7 @@ Content-Type: application/json;charset=UTF-8
               </div>
 						</div>
 
-            <div>
+            <div> <!-- Raw Data of multiple timeseries -->
               <h4>Raw Data of multiple timeseries</h4>
               <pre>POST /api/v1/timeseries/getData HTTP/1.1
 Host: sensorweb.demo.52north.org
@@ -1088,7 +1091,73 @@ Content-Type: application/json;charset=UTF-8
   }
 }</pre>
               </div>
-						</div>
+						
+            <div> <!-- Image Data of multiple timeseries -->
+              <h4>Image Data of multiple timeseries</h4>
+              <pre>POST /api/v1/timeseries/getData HTTP/1.1
+Host: sensorweb.demo.52north.org
+Content-Type: applicattion/json
+Accept: application/json
+
+{
+    "timespan": "PT10H/2013-08-16TZ",
+    "width": 300,
+    "height": 200,
+    "language": "de",
+    "grid": false,
+    "styleOptions": {
+        "ts_d7f63d679a98a78e0cb8e96c1fd8ea02": {
+            "type": "line",
+            "properties": {
+                "color": "#DDDDDD",
+                "lineType": "dashed",
+                "width": 2
+            }
+        },
+        "ts_c8ed5ddbb89c19b2e385de23eecbde98": {
+            "type": "line",
+            "properties": {
+                "color": "#2f2f2f",
+                "lineType": "solid",
+                "width": 2
+            }
+        }
+    }
+}</pre>
+<pre>HTTP/1.1 200 OK
+Content-Type: image/png
+
+~~ binary data omitted ~~
+</pre>
+            <div class="n52-callout n52-callout-info"><p>If you are interested in the PNG output you can either parse it from your favorite programming language. For a quick review you can use Curl from command line (adapt parameters as needed): </p>
+            <pre>
+curl -X POST -H "content-type:application/json" -H "accept:image/png" http://localhost:8080/sensorwebclient-webapp/api/v1/timeseries/getData -d '{
+    "timespan": "PT10H/2013-08-16TZ",
+    "width": 300,
+    "height": 200,
+    "language": "de",
+    "grid": false,
+    "styleOptions": {
+        "ts_d7f63d679a98a78e0cb8e96c1fd8ea02": {
+            "type": "line",
+            "properties": {
+                "color": "#DDDDDD",
+                "lineType": "dashed",
+                "width": 2
+            }
+        },
+        "ts_c8ed5ddbb89c19b2e385de23eecbde98": {
+            "type": "line",
+            "properties": {
+                "color": "#2f2f2f",
+                "lineType": "solid",
+                "width": 2
+            }
+        }
+    }
+}' > img.png
+</pre>
+            </div>
 					</div>
 				
         </div>

@@ -1,3 +1,26 @@
+/**
+ * ﻿Copyright (C) 2012
+ * by 52 North Initiative for Geospatial Open Source Software GmbH
+ *
+ * Contact: Andreas Wytzisk
+ * 52 North Initiative for Geospatial Open Source Software GmbH
+ * Martin-Luther-King-Weg 24
+ * 48155 Muenster, Germany
+ * info@52north.org
+ *
+ * This program is free software; you can redistribute and/or modify it under
+ * the terms of the GNU General Public License version 2 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed WITHOUT ANY WARRANTY; even without the implied
+ * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program (see gnu-gpl v2.txt). If not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
+ * visit the Free Software Foundation web page, http://www.fsf.org.
+ */
 
 package org.n52.web.v1.ctrl;
 
@@ -12,7 +35,6 @@ import static org.n52.web.v1.ctrl.Stopwatch.startStopwatch;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import java.awt.image.renderable.RenderContext;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
@@ -79,13 +101,25 @@ public class TimeseriesDataController extends BaseController {
         return new ModelAndView().addObject(timeseriesData.getAllTimeseries());
     }
 
-    @RequestMapping(value = "/{timeseriesId}/getData", produces = {"application/pdf"}, method = POST)
+    @RequestMapping(value = "/getData", produces = {"application/pdf"}, method = POST)
     public void getTimeseriesCollectionReport(HttpServletResponse response,
                                               @RequestBody DesignedParameterSet requestParameters) throws Exception {
 
         checkIfUnknownTimeseries(requestParameters.getTimeseries());
+
+        QueryMap map = createFromQuery(requestParameters);
         UndesignedParameterSet parameters = createFromDesignedParameters(requestParameters);
-        TimeseriesDataCollection timeseriesData = getTimeseriesData(parameters);
+
+        String[] timeseriesIds = parameters.getTimeseries();
+        TimeseriesMetadataOutput[] timeseriesMetadatas = timeseriesMetadataService.getParameters(timeseriesIds);
+        RenderingContext context = RenderingContext.createContextWith(requestParameters, timeseriesMetadatas);
+        
+        IOHandler renderer = IOFactory.create()
+                .forMimeType(APPLICATION_PDF)
+                .inLanguage(map.getLanguage())
+                .createIOHandler(context);
+
+        handleBinaryResponse(response, parameters, renderer);
 
     }
 
@@ -119,9 +153,9 @@ public class TimeseriesDataController extends BaseController {
     public void getTimeseriesCollectionChart(HttpServletResponse response,
                                              @RequestBody DesignedParameterSet requestParameters) throws Exception {
 
-        QueryMap map = createFromQuery(requestParameters);
-
         checkIfUnknownTimeseries(requestParameters.getTimeseries());
+        
+        QueryMap map = createFromQuery(requestParameters);
         UndesignedParameterSet parameters = createFromDesignedParameters(requestParameters);
 
         String[] timeseriesIds = parameters.getTimeseries();
@@ -141,7 +175,7 @@ public class TimeseriesDataController extends BaseController {
                                    @RequestParam(required = false) MultiValueMap<String, String> query) throws Exception {
 
         checkIfUnknownTimeseries(timeseriesId);
-
+        
         QueryMap map = createFromQuery(query);
         TimeseriesMetadataOutput metadata = timeseriesMetadataService.getParameter(timeseriesId);
         RenderingContext context = createContextForSingleTimeseries(metadata, map.getStyle());
