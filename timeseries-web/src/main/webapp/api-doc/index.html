@@ -14,25 +14,33 @@
     <!-- Content nav
     ================================================== -->
     <div class="col-lg-2">
-      <div class="bs-sidebar pull-right">
+      <div class="bs-sidebar pull-right hidden-print">
         <ul class="nav bs-sidenav" data-spy="affix" data-offset-top="100">
-          <li><a href="#general">
-            <i class="icon-chevron-right"></i> General</a>
+          <li>
+            <a href="#general">General</a>
+            <!-- TODO make collapsable
+            <ul class="nav">
+              <li><a href="#general-content-types">Content-Types</a></li>
+              <li><a href="#general-common-query-parameters">Common Query Parameters</a></li>
+              <li><a href="#general-paging">Paging</a></li>
+              <li><a href="#general-search">Search</a></li>
+              <li><a href="#general-common-status-codes">Common Status Codes</a></li>
+            </ul>-->
           </li>
           <li>
-            <a href="#resources"><i class="icon-chevron-right"></i> Resources</a>
+            <a href="#resources">Resources</a>
           </li>
           <li>
-            <a href="#stations"><i class="icon-chevron-right"></i> Stations</a>
+            <a href="#stations">Stations</a>
           </li>
           <li>
-            <a href="#timeseries"><i class="icon-chevron-right"></i> Timeseries</a>
+            <a href="#timeseries">Timeseries</a>
           </li>
           <li>
-            <a href="#styles"><i class="icon-chevron-right"></i> Styles</a>
+            <a href="#styles">Styles</a>
           </li>
           <li>
-            <a href="#parameters"><i class="icon-chevron-right"></i> Parameters</a>
+            <a href="#parameters">Parameters</a>
           </li>
         </ul>
       </div>
@@ -189,38 +197,30 @@
 				
 					<div id="paging"> <!-- paging -->
 						<h3>Paging</h3>
-						<p>Resource collections are paged by default to restrict large data access (<span class="text-info">configurable by the API provider .. use <code>size=MAX</code> to get the maximum of a page</span>). The query parameters <code>offset</code> and <code>size</code> can be used to define exactly that part of the collection to be returned by the server.</p>
+						<p>Resource collections are paged by default to restrict large data access (<span class="text-info">configurable by the API provider .. use <code>limit=MAX</code> to get the maximum of a page</span>). The query parameters <code>offset</code> and <code>limit</code> can be used to define exactly that part of the collection to be returned by the server.</p>
 						<p>Considering the <a href="http://tools.ietf.org/html/rfc5988">Web Linking (RFC5988)</a> approach the exact location of a page within a collection can be retrieved from response header information.</p> 
 						
 						<h4>Paging Example</h4>
 						<div class="n52-request-example">
-							<pre>GET /api/v1/stations?offset=4&size=2 HTTP/1.1
+							<pre>GET /api/v1/stations?offset=4&limit=2 HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
             <pre>HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Link: &lt;/api/v1/stations?offset=4&size=2>; rel="self"
-Link: &lt;/api/v1/stations?offset=0&size=2>; rel="first"; title="first page"
-Link: &lt;/api/v1/stations?offset=2349&size=2>; rel="last"; title="last page"
-Link: &lt;/api/v1/stations?offset=2&size=2>; rel="prev"; title="previous page"
-Link: &lt;/api/v1/stations?offset=6&size=2>; rel="next"; title="next page"
+Link: &lt;/api/v1/stations?offset=4&limit=2>; rel="self"
+Link: &lt;/api/v1/stations?offset=0&limit=2>; rel="first"; title="first page"
+Link: &lt;/api/v1/stations?offset=2349&limit=2>; rel="last"; title="last page"
+Link: &lt;/api/v1/stations?offset=2&limit=2>; rel="prev"; title="previous page"
+Link: &lt;/api/v1/stations?offset=6&limit=2>; rel="next"; title="next page"
 
 Content omitted for brevity.
 </pre>
 						</div>
 					</div>
 					
-					<div id="fuzzy-search"> <!-- fuzzy search -->
-						<h3>Fuzzy Search</h3>
-						<p>The query parameter <code>q</code> allows simple search over all available <a href="#parameters">timeseries parameters</a>:
-            <ul>
-              <li><a href="#parameter-categories">Category</a></li>
-              <li><a href="#parameter-services">Service</a></li>
-              <li><a href="#parameter-offerings">Offering</a></li>
-              <li><a href="#parameter-features">Feature</a></li>
-              <li><a href="#parameter-phenomena">Phenomenon</a></li>
-              <li><a href="#parameter-procedures">Procedure</a></li>
-            </ul></p>
+					<div id="search"> <!-- fuzzy search -->
+						<h3>Search</h3>
+						<p>The query parameter <code>q</code> allows simple search over resources. Both global and scoped searches are possible:</p>
             
             <table class="table">
               <thead>
@@ -232,9 +232,15 @@ Content omitted for brevity.
               <tbody>
                 <tr>
                   <td><code>GET</code></td>
-                  <td><code>/api/v1/?q=my%20search</code></td>
+                  <td><code>/api/v1/search?q=my%20search</code></td>
                   <td><code>application/json</code></td>
-                  <td>Lists all resource collections available.</td>
+                  <td>Searches globally over available resources.</td>
+                </tr>
+                <tr>
+                  <td><code>GET</code></td>
+                  <td><code>/api/v1/{collection}?q=my%20search</code></td>
+                  <td><code>application/json</code></td>
+                  <td>Search with scope on the given <code>collection</code>.</td>
                 </tr>
               </tbody>
             </table>
@@ -308,8 +314,8 @@ Content omitted for brevity.
             </table>
           </div>
 					
-					<div> <!-- Response Example -->
-            <h3>Response Example</h3>
+					<div> <!-- Example -->
+            <h3>Example</h3>
             <div>
               <pre>GET /api/v1/ HTTP/1.1
 Host: sensorweb.demo.52north.org
@@ -481,8 +487,8 @@ Content-Type: application/json;charset=UTF-8
             <div class="n52-callout n52-callout-info">Note that the options have to be <b>URL-encoded</b> appropriately!</div>
           </div>
 					
-					<div> <!-- Response Examples -->
-            <h3>Response Examples</h3>
+					<div> <!-- Examples -->
+            <h3>Examples</h3>
             <div>
               <h4>Simple Collection</h4>
               <pre>GET /api/v1/stations/ HTTP/1.1
@@ -630,7 +636,8 @@ Content-Type: application/json;charset=UTF-8
 							</tbody>
 						</table>
 					</div>
-					<div> <!-- DATA URLs -->
+					
+          <div> <!-- DATA URLs -->
 						<h3>Request Data</h3>
 						<p>Timeseries data is actually not modelled as a resource itself. Data requests can be  triggered by appending the <code>getData</code> verb.</p>
 						<table class="table">
@@ -689,7 +696,7 @@ Content-Type: application/json;charset=UTF-8
 					
 					<div> <!-- Query Parameters -->
 						<h3>Query Parameters</h3>
-						<p>Timeseries can be queried with the following filter parameters. </p>
+						<p>Timeseries data can be queried with the following filter parameters. </p>
             
 						<table class="table" style="table-layout:fixed">
 							<thead>
@@ -770,8 +777,8 @@ Content-Type: application/json;charset=UTF-8
 						<div class="n52-callout n52-callout-info">Note that the options have to be <b>URL-encoded</b> appropriately!</div>
 					</div>
 
-					<div> <!-- Response Examples -->
-						<h3>Response Examples</h3>
+					<div> <!-- Examples -->
+						<h3>Examples</h3>
             <div>
               <h4>Simple Collection</h4>
               <pre>GET /api/v1/timeseries HTTP/1.1
@@ -998,10 +1005,11 @@ Content-Type: application/json;charset=UTF-8
 }</pre>
 						</div>
             
-						<h4>Data</h4>
-						<div class="n52-callout n52-callout-todo">a query parameter which asks for formatting the output to be directly consumable by JS chart APIs?</div>
-						<div>
-              <pre>GET /api/v1/timeseries/ts_35559ca6b2248629e6dcdc65ceead0ed/data HTTP/1.1
+            <div>
+              <h4>Raw Data of a single timeseries</h4>
+              <div class="n52-callout n52-callout-todo">a query parameter which asks for formatting the output to be directly consumable by JS chart APIs?</div>
+						
+              <pre>GET /api/v1/timeseries/ts_35559ca6b2248629e6dcdc65ceead0ed/getData HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
                 <pre>HTTP/1.1 200 OK
@@ -1023,6 +1031,62 @@ Content-Type: application/json;charset=UTF-8
 ]</pre>
               <div class="n52-callout n52-callout-info">
                 Timeseries data can be very big! Naive clients can bother data providers when trying to request huge datasets by accident. Therefore data requests are limited to a maximum value. Have a look <a href="#paging">at the paging documentation</a> how to get more data.
+              </div>
+						</div>
+
+            <div>
+              <h4>Raw Data of multiple timeseries</h4>
+              <pre>POST /api/v1/timeseries/getData HTTP/1.1
+Host: sensorweb.demo.52north.org
+Content-Type: applicattion/json
+Accept: application/json
+
+{
+  "timespan": "PT6h/2013-08-16TZ",
+  "timeseries": [
+    "ts_c8ed5ddbb89c19b2e385de23eecbde98",
+    "ts_ad3edeff973ab62e39f76c14f95d1e82"
+  ]
+}
+</pre>
+                <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+{
+  "allTimeseries": {
+    "ts_ad3edeff973ab62e39f76c14f95d1e82": {
+      "values": []
+    },
+    "ts_c8ed5ddbb89c19b2e385de23eecbde98": {
+      "values": [
+        {
+          "timestamp": 1376610900000,
+          "value": 479
+        },
+        {
+          "timestamp": 1376610960000,
+          "value": 478.8
+        },
+        {
+          "timestamp": 1376611020000,
+          "value": 478
+        },
+        {
+          "timestamp": 1376611080000,
+          "value": 477
+        },
+        {
+          "timestamp": 1376611140000,
+          "value": 476.8
+        },
+        {
+          "timestamp": 1376611200000,
+          "value": 476
+        }
+      ]
+    }
+  }
+}</pre>
               </div>
 						</div>
 					</div>
@@ -1126,8 +1190,8 @@ Content-Type: application/json;charset=UTF-8
             
           </div>
           
-          <div> <!-- Response Examples -->
-            <h3>Response Examples</h3>
+          <div> <!-- Examples -->
+            <h3>Examples</h3>
             <div>
               <h4>Collection</h4>
               <pre>GET /api/v1/services/ HTTP/1.1
@@ -1225,8 +1289,8 @@ Content-Type: application/json;charset=UTF-8
               <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">common query parameters</a> can be used.</div>
           </div>
           
-          <div> <!-- Response Examples -->
-              <h3>Response Examples</h3>
+          <div> <!-- Examples -->
+              <h3>Examples</h3>
               <div>
                 <h4>Collection</h4>
                 <pre>GET /api/v1/categories HTTP/1.1
@@ -1327,8 +1391,8 @@ Content-Type: application/json;charset=UTF-8
               <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">common query parameters</a> can be used.</div>
           </div>
           
-          <div> <!-- Response Examples -->
-              <h3>Response Examples</h3>
+          <div> <!-- Examples -->
+              <h3>Examples</h3>
               <div>
                 <h4>Collection</h4>
                 <pre>GET /api/v1/offerings HTTP/1.1
@@ -1426,8 +1490,8 @@ Content-Type: application/json;charset=UTF-8
               <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">common query parameters</a> can be used.</div>
           </div>
           
-          <div> <!-- Response Examples -->
-            <h3>Response Examples</h3>
+          <div> <!-- Examples -->
+            <h3>Examples</h3>
             <div>
               <h4>Collection</h4>
               <pre>GET /api/v1/features HTTP/1.1
@@ -1528,8 +1592,8 @@ Content-Type: application/json;charset=UTF-8
             <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">common query parameters</a> can be used.</div>
           </div>
           
-          <div> <!-- Response Examples -->
-            <h3>Response Examples</h3>
+          <div> <!-- Examples -->
+            <h3>Examples</h3>
             <div>
               <h4>Collection</h4>
               <pre>GET /api/v1/procedures HTTP/1.1
@@ -1630,8 +1694,8 @@ Content-Type: application/json;charset=UTF-8
             <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">common query parameters</a> can be used.</div>
           </div>
           
-          <div> <!-- Response Examples -->
-            <h3>Response Examples</h3>
+          <div> <!-- Examples -->
+            <h3>Examples</h3>
             <div>
               <h4>Collection</h4>
               <pre>GET /api/v1/phenomena HTTP/1.1
@@ -1733,7 +1797,6 @@ Content-Type: application/json;charset=UTF-8
 	</div>
 	
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script src="js/bootstrap-3.0.0-rc1/bootstrap.min.js"></script>
     <script src="js/bootstrap-3.0.0-rc1/bootstrap.min.js"></script>
   </body>
 </html>
