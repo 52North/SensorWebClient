@@ -5,6 +5,14 @@ import org.springframework.http.HttpStatus;
 
 public class ExceptionResponse {
     
+    // TODO add userMessage
+    
+    // TODO add developerMessage
+    
+    // TODO add url for details
+
+    // TODO make stack tracing configurable
+    
     private Throwable exception;
 
     private HttpStatus statusCode;
