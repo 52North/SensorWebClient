@@ -27,8 +27,6 @@ package org.n52.io.v1.data;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.n52.io.img.RenderingContext;
-
 /**
  * Represents a parameter object to request data from multiple timeseries.
  */
@@ -111,13 +109,6 @@ public class DesignedParameterSet extends ParameterSet {
 
     public void addTimeseriesWithStyleOptions(String timeseriesId, StyleProperties styleOptions) {
         this.styleOptions.put(timeseriesId, styleOptions);
-    }
-    
-    public static RenderingContext createContextForSingleTimeseries(TimeseriesMetadataOutput metadata, StyleProperties style, String timespan) {
-        DesignedParameterSet parameters = new DesignedParameterSet();
-        parameters.addTimeseriesWithStyleOptions(metadata.getId(), style);
-        parameters.setTimespan(timespan);
-        return RenderingContext.createWith(parameters, metadata);
     }
 
 }

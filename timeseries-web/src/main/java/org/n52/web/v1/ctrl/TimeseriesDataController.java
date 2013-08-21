@@ -132,7 +132,7 @@ public class TimeseriesDataController extends BaseController {
 
         QueryMap map = createFromQuery(query);
         TimeseriesMetadataOutput metadata = timeseriesMetadataService.getParameter(timeseriesId);
-        RenderingContext context = createContextForSingleTimeseries(metadata, map.getStyle(), map.getTimespan());
+        RenderingContext context = RenderingContext.createContextForSingleTimeseries(metadata, map.getStyle(), map.getTimespan());
         UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, map.getTimespan());
         IOHandler renderer = IOFactory.create()
                 .forMimeType(APPLICATION_PDF)

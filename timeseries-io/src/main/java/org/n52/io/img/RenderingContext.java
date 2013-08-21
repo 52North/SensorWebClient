@@ -74,14 +74,14 @@ public class RenderingContext {
         }
         return new RenderingContext(timeseriesStyles, timeseriesMetadatas);
     }
-
-    public static RenderingContext createContextForSingleTimeseries(TimeseriesMetadataOutput metadata,
-                                                                    StyleProperties style) {
+    
+    public static RenderingContext createContextForSingleTimeseries(TimeseriesMetadataOutput metadata, StyleProperties style, String timespan) {
         DesignedParameterSet parameters = new DesignedParameterSet();
         parameters.addTimeseriesWithStyleOptions(metadata.getId(), style);
-        return RenderingContext.createContextWith(parameters, metadata);
+        parameters.setTimespan(timespan);
+        return createContextWith(parameters, metadata);
     }
-
+    
     public void setDimensions(int width, int height) {
         chartStyleDefinitions.setWidth(width);
         chartStyleDefinitions.setHeight(height);

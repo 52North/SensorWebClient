@@ -37,6 +37,18 @@ public class StationOutputAdapter implements ParameterService<StationOutput> {
     }
 
     @Override
+    public StationOutput[] getParameters(String[] stationIds) {
+        List<StationOutput> selectedStations = new ArrayList<StationOutput>();
+        for (String stationId : stationIds) {
+            StationOutput station = getParameter(stationId);
+            if (station != null) {
+                selectedStations.add(station);
+            }
+        }
+        return selectedStations.toArray(new StationOutput[0]);
+    }
+    
+    @Override
     public StationOutput getParameter(String stationId) {
         for (SOSMetadata metadata : getSOSMetadatas()) {
         	for (Station station : metadata.getStations()) {

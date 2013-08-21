@@ -43,7 +43,18 @@ public class ServiceOutputAdapter implements ServiceParameterService {
         }
         return allServices.toArray(new ServiceOutput[0]);
     }
-
+	
+	public ServiceOutput[] getParameters(String[] serviceIds) {
+        List<ServiceOutput> selectedServices = new ArrayList<ServiceOutput>();
+        for (String serviceId : serviceIds) {
+            ServiceOutput serivce = getParameter(serviceId);
+            if (serivce != null) {
+                selectedServices.add(serivce);
+            }
+        }
+        return selectedServices.toArray(new ServiceOutput[0]);
+    }
+	
 	@Override
 	public ServiceOutput getParameter(String serviceId) {
 		for (SOSMetadata metadata : getSOSMetadatas()) {
