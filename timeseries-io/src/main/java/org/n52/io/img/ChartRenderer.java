@@ -257,11 +257,11 @@ public abstract class ChartRenderer implements IOHandler {
     }
 
     protected boolean isLineStyle(StyleProperties properties) {
-        return isLineStyleDefault(properties) || LINE_CHART_TYPE.equals(properties.getType());
+        return isLineStyleDefault(properties) || LINE_CHART_TYPE.equals(properties.getChartType());
     }
 
     protected boolean isBarStyle(StyleProperties properties) {
-        return !isLineStyleDefault(properties) || BAR_CHART_TYPE.equals(properties.getType());
+        return !isLineStyleDefault(properties) || BAR_CHART_TYPE.equals(properties.getChartType());
     }
 
     private boolean isLineStyleDefault(StyleProperties properties) {

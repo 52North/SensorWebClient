@@ -34,11 +34,6 @@ public abstract class ParameterSet {
      */
     private String timespan;
     
-    /**
-     * A 2-character language code to determine the requested locale.
-     */
-    private String language;
-    
     protected ParameterSet() {
         timespan = createDefaultTimespan();
     }
@@ -60,14 +55,6 @@ public abstract class ParameterSet {
         else {
             this.timespan = validateTimespan(timespan);
         }
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
     }
 
     private String validateTimespan(String timespan) {

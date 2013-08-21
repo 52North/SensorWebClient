@@ -54,7 +54,7 @@ public class StationOutputAdapter implements ParameterService<StationOutput> {
         	for (Station station : metadata.getStations()) {
 				if (station.getGlobalId().equals(stationId)) {
 					StationConverter converter = new StationConverter(metadata);
-	                return converter.convertCondensed(station);	
+	                return converter.convertExpanded(station);	
 				}
 			}
         }
