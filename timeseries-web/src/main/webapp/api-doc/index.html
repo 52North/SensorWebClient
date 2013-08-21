@@ -14,25 +14,33 @@
     <!-- Content nav
     ================================================== -->
     <div class="col-lg-2">
-      <div class="bs-sidebar pull-right">
+      <div class="bs-sidebar pull-right hidden-print">
         <ul class="nav bs-sidenav" data-spy="affix" data-offset-top="100">
-          <li><a href="#general">
-            <i class="icon-chevron-right"></i> General</a>
+          <li>
+            <a href="#general">General</a>
+            <!-- TODO make collapsable
+            <ul class="nav">
+              <li><a href="#general-content-types">Content-Types</a></li>
+              <li><a href="#general-common-query-parameters">Common Query Parameters</a></li>
+              <li><a href="#general-paging">Paging</a></li>
+              <li><a href="#general-search">Search</a></li>
+              <li><a href="#general-common-status-codes">Common Status Codes</a></li>
+            </ul>-->
           </li>
           <li>
-            <a href="#resources"><i class="icon-chevron-right"></i> Resources</a>
+            <a href="#resources">Resources</a>
           </li>
           <li>
-            <a href="#stations"><i class="icon-chevron-right"></i> Stations</a>
+            <a href="#stations">Stations</a>
           </li>
           <li>
-            <a href="#timeseries"><i class="icon-chevron-right"></i> Timeseries</a>
+            <a href="#timeseries">Timeseries</a>
           </li>
           <li>
-            <a href="#styles"><i class="icon-chevron-right"></i> Styles</a>
+            <a href="#styles">Styles</a>
           </li>
           <li>
-            <a href="#parameters"><i class="icon-chevron-right"></i> Parameters</a>
+            <a href="#parameters">Parameters</a>
           </li>
         </ul>
       </div>
@@ -67,7 +75,6 @@
             <li>Prerendered/Cached images</li>
             <li>Generalizing timeseries</li>
             <li>Multiple language support</li>
-            <li>PDF report/export</li>
             <li>error code review</li>
             <li>CRUD API for eventing</li>
           </ul>
@@ -174,7 +181,7 @@
                   <td>
                     <pre>locale=de</pre>
                   </td>
-                  <td><p>Specifies the language the response data shall have. English shall be the fallback. The REST-API should consider the following order to detect a locale:
+                  <td><p>Specifies the language as 2-character wide locale. English shall be the fallback. The REST-API should consider the following order to detect a locale:
                   <ul>
                     <li>User-agent (e.g. header information)</li>
                     <li><code>locale</code> parameter</li>
@@ -190,38 +197,30 @@
 				
 					<div id="paging"> <!-- paging -->
 						<h3>Paging</h3>
-						<p>Resource collections are paged by default to restrict large data access (<span class="text-info">configurable by the API provider .. use <code>size=MAX</code> to get the maximum of a page</span>). The query parameters <code>offset</code> and <code>size</code> can be used to define exactly that part of the collection to be returned by the server.</p>
+						<p>Resource collections are paged by default to restrict large data access (<span class="text-info">configurable by the API provider .. use <code>limit=MAX</code> to get the maximum of a page</span>). The query parameters <code>offset</code> and <code>limit</code> can be used to define exactly that part of the collection to be returned by the server.</p>
 						<p>Considering the <a href="http://tools.ietf.org/html/rfc5988">Web Linking (RFC5988)</a> approach the exact location of a page within a collection can be retrieved from response header information.</p> 
 						
 						<h4>Paging Example</h4>
 						<div class="n52-request-example">
-							<pre>GET /api/v1/stations?offset=4&size=2 HTTP/1.1
+							<pre>GET /api/v1/stations?offset=4&limit=2 HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
             <pre>HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Link: &lt;/api/v1/stations?offset=4&size=2>; rel="self"
-Link: &lt;/api/v1/stations?offset=0&size=2>; rel="first"; title="first page"
-Link: &lt;/api/v1/stations?offset=2349&size=2>; rel="last"; title="last page"
-Link: &lt;/api/v1/stations?offset=2&size=2>; rel="prev"; title="previous page"
-Link: &lt;/api/v1/stations?offset=6&size=2>; rel="next"; title="next page"
+Link: &lt;/api/v1/stations?offset=4&limit=2>; rel="self"
+Link: &lt;/api/v1/stations?offset=0&limit=2>; rel="first"; title="first page"
+Link: &lt;/api/v1/stations?offset=2349&limit=2>; rel="last"; title="last page"
+Link: &lt;/api/v1/stations?offset=2&limit=2>; rel="prev"; title="previous page"
+Link: &lt;/api/v1/stations?offset=6&limit=2>; rel="next"; title="next page"
 
 Content omitted for brevity.
 </pre>
 						</div>
 					</div>
 					
-					<div id="fuzzy-search"> <!-- fuzzy search -->
-						<h3>Fuzzy Search</h3>
-						<p>The query parameter <code>q</code> allows simple search over all available <a href="#parameters">timeseries parameters</a>:
-            <ul>
-              <li><a href="#parameter-categories">Category</a></li>
-              <li><a href="#parameter-services">Service</a></li>
-              <li><a href="#parameter-offerings">Offering</a></li>
-              <li><a href="#parameter-features">Feature</a></li>
-              <li><a href="#parameter-phenomena">Phenomenon</a></li>
-              <li><a href="#parameter-procedures">Procedure</a></li>
-            </ul></p>
+					<div id="search"> <!-- fuzzy search -->
+						<h3>Search</h3>
+						<p>The query parameter <code>q</code> allows simple search over resources. Both global and scoped searches are possible:</p>
             
             <table class="table">
               <thead>
@@ -233,9 +232,15 @@ Content omitted for brevity.
               <tbody>
                 <tr>
                   <td><code>GET</code></td>
-                  <td><code>/api/v1/?q=my%20search</code></td>
+                  <td><code>/api/v1/search?q=my%20search</code></td>
                   <td><code>application/json</code></td>
-                  <td>Lists all resource collections available.</td>
+                  <td>Searches globally over available resources.</td>
+                </tr>
+                <tr>
+                  <td><code>GET</code></td>
+                  <td><code>/api/v1/{collection}?q=my%20search</code></td>
+                  <td><code>application/json</code></td>
+                  <td>Search with scope on the given <code>collection</code>.</td>
                 </tr>
               </tbody>
             </table>
@@ -309,8 +314,8 @@ Content omitted for brevity.
             </table>
           </div>
 					
-					<div> <!-- Response Example -->
-            <h3>Response Example</h3>
+					<div> <!-- Example -->
+            <h3>Example</h3>
             <div>
               <pre>GET /api/v1/ HTTP/1.1
 Host: sensorweb.demo.52north.org
@@ -482,8 +487,8 @@ Content-Type: application/json;charset=UTF-8
             <div class="n52-callout n52-callout-info">Note that the options have to be <b>URL-encoded</b> appropriately!</div>
           </div>
 					
-					<div> <!-- Response Examples -->
-            <h3>Response Examples</h3>
+					<div> <!-- Examples -->
+            <h3>Examples</h3>
             <div>
               <h4>Simple Collection</h4>
               <pre>GET /api/v1/stations/ HTTP/1.1
@@ -605,7 +610,7 @@ Content-Type: application/json;charset=UTF-8
 					</p>
 				</div>
 				<div>
-					<div> <!-- URLs -->
+          <div> <!-- URLs -->
 						<h3>URLs</h3>
 						<p>API calls are triggered by using the following URLs.</p>
 						<table class="table">
@@ -628,35 +633,45 @@ Content-Type: application/json;charset=UTF-8
                   <td><code>application/json</code></td>
 									<td><p>Lists the metadata of timeseries with id <code>{id}</code>.</p></td>
                 </tr>
+							</tbody>
+						</table>
+					</div>
+					
+          <div> <!-- DATA URLs -->
+						<h3>Request Data</h3>
+						<p>Timeseries data is actually not modelled as a resource itself. Data requests can be  triggered by appending the <code>getData</code> verb.</p>
+						<table class="table">
+							<thead>
+								<th>Method</th>
+								<th>Path</th>
+                <th style="width: 21%">Content-Type</th>
+								<th>Description</th>
+							</thead>
+							<tbody>
 								<tr>
 									<td><code>GET</code></td>
-									<td><code>/api/v1/timeseries/{id}/data</code></td>
+									<td><code>/api/v1/timeseries/{id}/getData</code></td>
                   <td><code>application/json</code></td>
 									<td><p>Lists the raw data of timeseries with id <code>{id}</code>.</p></td>
 								</tr>
 								<tr>
 									<td><code>GET</code></td>
-									<td><code>/api/v1/timeseries/{id}/data/{interval}</code></td>
+									<td><code>/api/v1/timeseries/{id}/getData</code></td>
                   <td><code>image/png</code></td>
-									<td><p>Returns an image containing a pre-rendered graph for timeseries with id <code>{id}</code>. Supported <code>interval</code> values are the following:
-                    <ul>
-                      <li><code>lastDay</code></li>
-                      <li><code>lastWeek</code></li>
-                      <li><code>lastMonth</code></li>
-                    </ul>
+									<td><p>Returns an image containing a pre-rendered graph for timeseries with id <code>{id}</code>. The pre-rendered interval can be defined by the <code>interval</code> parameter (<code>lastWeek</code> is the default).
                   </p>
                   </td>
 								</tr>
 								<tr>
 									<td><code>POST</code></td>
-									<td><code>/api/v1/timeseries</code></td>
+									<td><code>/api/v1/timeseries/getData</code></td>
                   <td><code>application/json</code></td>
 									<td>Request the metadata for multiple timeseries. The requested timeseries ids have to be contained in the POST request.
                   <div class="n52-callout n52-callout-todo">document request POST structure.</div></td>
 								</tr>
 								<tr>
 									<td><code>POST</code></td>
-									<td><code>/api/v1/timeseries</code></td>
+									<td><code>/api/v1/timeseries/getData</code></td>
                   <td>
                     <code>application/pdf</code><br/>
                     <code>application/vnd.ms-excel</code><br/>
@@ -667,7 +682,7 @@ Content-Type: application/json;charset=UTF-8
 								</tr>
 								<tr>
 									<td><code>POST</code></td>
-									<td><code>/api/v1/timeseries/{id}/data</code></td>
+									<td><code>/api/v1/timeseries/{id}/getData</code></td>
                   <td><code>image/png</code></td>
 									<td><p>Renders the data of timeseries with id <code>{id}</code>. You can control the rendered output (color, line width, etc) by passing style options.</p>
 									
@@ -681,7 +696,7 @@ Content-Type: application/json;charset=UTF-8
 					
 					<div> <!-- Query Parameters -->
 						<h3>Query Parameters</h3>
-						<p>Timeseries can be queried with the following filter parameters. </p>
+						<p>Timeseries data can be queried with the following filter parameters. </p>
             
 						<table class="table" style="table-layout:fixed">
 							<thead>
@@ -701,6 +716,23 @@ Content-Type: application/json;charset=UTF-8
                     An <a href="http://en.wikipedia.org/wiki/ISO_8601#Time_intervals">ISO8601 formatted period</a>. Only backslash formatted values are supported.
                   </td>
                 </tr>
+                <tr>
+                  <td>
+                    <code>interval</code>
+                  </td>
+                  <td>
+                    <pre>interval=lastMonth</pre>
+                  </td>
+                  <td>
+                   <p>Supported <code>interval</code> values are the following:
+                    <ul>
+                      <li><code>lastDay</code></li>
+                      <li><code>lastWeek</code></li>
+                      <li><code>lastMonth</code></li>
+                    </ul>
+                    </p>
+                  </td>
+                </tr>
 								<tr>
 									<td>
 										<code>style</code>
@@ -711,7 +743,7 @@ Content-Type: application/json;charset=UTF-8
   "properties": {
     "color": "#2f2f2f",
     "lineType": "solid",
-    "lineWidth": 2
+    "width": 2
   }
 }</pre>
 									</td>
@@ -745,9 +777,9 @@ Content-Type: application/json;charset=UTF-8
 						<div class="n52-callout n52-callout-info">Note that the options have to be <b>URL-encoded</b> appropriately!</div>
 					</div>
 
-					<div> <!-- Response Examples -->
-						<h3>Response Examples</h3>
-            <div>
+					<div> <!-- Examples -->
+						<h3>Examples</h3>
+            <div> <!-- Simple Collection -->
               <h4>Simple Collection</h4>
               <pre>GET /api/v1/timeseries HTTP/1.1
 Host: sensorweb.demo.52north.org
@@ -756,17 +788,45 @@ Accept: application/json</pre>
 Content-Type: application/json;charset=UTF-8
 
 [
-  "./ts_aca9c4d1438091af1f0d362f1d04e40d",
-  "./ts_875e2cd936b7ab7ebca9e9bb311a44c2",
-  "./ts_c6dcc7a8fd96f0a34380ea14439904c2",
-  "./ts_47a07ae5ad3e7787402a8f0cb5a862ea",
-  "./ts_e56832a2df30973a5531a85f73acb28a"
+  {
+    "id": "ts_3f1dfdc820f5e5247cc902f04c76c781",
+    "station": {
+      "properties": {
+        "label": "1479"
+      },
+      "geometry": {
+        "coordinates": [
+          30.34848961700004,
+          62.23512502400007
+        ],
+        "type": "Point"
+      },
+      "type": "Feature"
+    }
+  },
+  {
+    "id": "ts_eeb8e39dd0e8b4284e04d8a485a36cea",
+    "station": {
+      "properties": {
+        "label": "1479"
+      },
+      "geometry": {
+        "coordinates": [
+          30.34848961700004,
+          62.23512502400007
+        ],
+        "type": "Point"
+      },
+      "type": "Feature"
+    }
+  }
 ]</pre>
               <div class="n52-callout n52-callout-info">
                 As <a href="#common-query-parameters">noted above</a> <code>expanded=false</code> is the default. Setting the parameter to <code>false</code> explicitly will have the same effect. 
               </div>
 						</div>
-            <div>
+            
+            <div> <!-- Expanded Collection -->
               <h4>Expanded Collection</h4>
               <pre>GET /api/v1/timeseries/?expanded=true HTTP/1.1
 Host: sensorweb.demo.52north.org
@@ -776,30 +836,77 @@ Content-Type: application/json;charset=UTF-8
 
 [
   {
-    "id": "ts_35559ca6b2248629e6dcdc65ceead0ed",
+    "id": "ts_3f1dfdc820f5e5247cc902f04c76c781",
+    "station": {
+      "properties": {
+        "label": "1479"
+      },
+      "geometry": {
+        "coordinates": [
+          30.34848961700004,
+          62.23512502400007
+        ],
+        "type": "Point"
+      },
+      "type": "Feature"
+    },
     "parameters": {
-      "service": "../services/srv_823sd",
-      "offering": "../offerings/off_sadf23",
-      "procedure": "../procedures/pro_dfg232",
-      "phenomenon": "../phenomena/phe_sdf231",
-      "feature": "../features/foi_dg234",
-      "category": "../categories/cat_asda09fj"
+      "offering": {
+        "id": "Patchiness -Offering",
+        "label": "Patchiness -Offering"
+      },
+      "feature": {
+        "id": "1479",
+        "label": "1479"
+      },
+      "procedure": {
+        "id": "2",
+        "label": "2"
+      },
+      "phenomenon": {
+        "id": "Snow_patchiness",
+        "label": "Snow_patchiness"
+      }
     }
   },
   {
-    "id": "ts_e56832a2df30973a5531a85f73acb28a",
+    "id": "ts_eeb8e39dd0e8b4284e04d8a485a36cea",
+    "station": {
+      "properties": {
+        "label": "1479"
+      },
+      "geometry": {
+        "coordinates": [
+          30.34848961700004,
+          62.23512502400007
+        ],
+        "type": "Point"
+      },
+      "type": "Feature"
+    },
     "parameters": {
-      "service": "../services/srv_8we3we",
-      "offering": "../offerings/off_sadwe23",
-      "procedure": "../procedures/pro_dffg32",
-      "phenomenon": "../phenomena/phe_asddf231",
-      "feature": "../features/foi_dg2adf34",
-      "category": "../categories/cat_asdlkfj"
+      "offering": {
+        "id": "Snow Depth -Offering",
+        "label": "Snow Depth -Offering"
+      },
+      "feature": {
+        "id": "1479",
+        "label": "1479"
+      },
+      "procedure": {
+        "id": "1",
+        "label": "1"
+      },
+      "phenomenon": {
+        "id": "Snow_depth",
+        "label": "Snow_depth"
+      }
     }
   }
 ]</pre>
 						</div>
-						<div>
+						
+            <div> <!-- Simple Item -->
               <h4>Simple Item</h4>
               <pre>GET /api/v1/timeseries/ts_35559ca6b2248629e6dcdc65ceead0ed HTTP/1.1
 Host: sensorweb.demo.52north.org
@@ -835,7 +942,8 @@ Content-Type: application/json;charset=UTF-8
                 As <a href="#common-query-parameters">noted above</a> <code>expanded=false</code> is the default. Setting the parameter to <code>false</code> explicitly will have the same effect. 
               </div>
 						</div>
-            <div>
+            
+            <div> <!-- Expanded Item -->
               <h4>Expanded Item</h4>
               <pre>GET /api/v1/timeseries/ts_35559ca6b2248629e6dcdc65ceead0ed/?expanded=true HTTP/1.1
 Host: sensorweb.demo.52north.org
@@ -900,10 +1008,11 @@ Content-Type: application/json;charset=UTF-8
 }</pre>
 						</div>
             
-						<h4>Data</h4>
-						<div class="n52-callout n52-callout-todo">a query parameter which asks for formatting the output to be directly consumable by JS chart APIs?</div>
-						<div>
-              <pre>GET /api/v1/timeseries/ts_35559ca6b2248629e6dcdc65ceead0ed/data HTTP/1.1
+            <div> <!-- Raw Data of a single timeseries -->
+              <h4>Raw Data of a single timeseries</h4>
+              <div class="n52-callout n52-callout-todo">a query parameter which asks for formatting the output to be directly consumable by JS chart APIs?</div>
+						
+              <pre>GET /api/v1/timeseries/ts_35559ca6b2248629e6dcdc65ceead0ed/getData HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
                 <pre>HTTP/1.1 200 OK
@@ -927,6 +1036,128 @@ Content-Type: application/json;charset=UTF-8
                 Timeseries data can be very big! Naive clients can bother data providers when trying to request huge datasets by accident. Therefore data requests are limited to a maximum value. Have a look <a href="#paging">at the paging documentation</a> how to get more data.
               </div>
 						</div>
+
+            <div> <!-- Raw Data of multiple timeseries -->
+              <h4>Raw Data of multiple timeseries</h4>
+              <pre>POST /api/v1/timeseries/getData HTTP/1.1
+Host: sensorweb.demo.52north.org
+Content-Type: applicattion/json
+Accept: application/json
+
+{
+  "timespan": "PT6h/2013-08-16TZ",
+  "timeseries": [
+    "ts_c8ed5ddbb89c19b2e385de23eecbde98",
+    "ts_ad3edeff973ab62e39f76c14f95d1e82"
+  ]
+}
+</pre>
+                <pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+{
+  "allTimeseries": {
+    "ts_ad3edeff973ab62e39f76c14f95d1e82": {
+      "values": []
+    },
+    "ts_c8ed5ddbb89c19b2e385de23eecbde98": {
+      "values": [
+        {
+          "timestamp": 1376610900000,
+          "value": 479
+        },
+        {
+          "timestamp": 1376610960000,
+          "value": 478.8
+        },
+        {
+          "timestamp": 1376611020000,
+          "value": 478
+        },
+        {
+          "timestamp": 1376611080000,
+          "value": 477
+        },
+        {
+          "timestamp": 1376611140000,
+          "value": 476.8
+        },
+        {
+          "timestamp": 1376611200000,
+          "value": 476
+        }
+      ]
+    }
+  }
+}</pre>
+              </div>
+						
+            <div> <!-- Image Data of multiple timeseries -->
+              <h4>Image Data of multiple timeseries</h4>
+              <pre>POST /api/v1/timeseries/getData HTTP/1.1
+Host: sensorweb.demo.52north.org
+Content-Type: applicattion/json
+Accept: application/json
+
+{
+    "timespan": "PT10H/2013-08-16TZ",
+    "width": 300,
+    "height": 200,
+    "language": "de",
+    "grid": false,
+    "styleOptions": {
+        "ts_d7f63d679a98a78e0cb8e96c1fd8ea02": {
+            "type": "line",
+            "properties": {
+                "color": "#DDDDDD",
+                "lineType": "dashed",
+                "width": 2
+            }
+        },
+        "ts_c8ed5ddbb89c19b2e385de23eecbde98": {
+            "type": "line",
+            "properties": {
+                "color": "#2f2f2f",
+                "lineType": "solid",
+                "width": 2
+            }
+        }
+    }
+}</pre>
+<pre>HTTP/1.1 200 OK
+Content-Type: image/png
+
+~~ binary data omitted ~~
+</pre>
+            <div class="n52-callout n52-callout-info"><p>If you are interested in the PNG output you can either parse it from your favorite programming language. For a quick review you can use Curl from command line (adapt parameters as needed): </p>
+            <pre>
+curl -X POST -H "content-type:application/json" -H "accept:image/png" http://localhost:8080/sensorwebclient-webapp/api/v1/timeseries/getData -d '{
+    "timespan": "PT10H/2013-08-16TZ",
+    "width": 300,
+    "height": 200,
+    "language": "de",
+    "grid": false,
+    "styleOptions": {
+        "ts_d7f63d679a98a78e0cb8e96c1fd8ea02": {
+            "type": "line",
+            "properties": {
+                "color": "#DDDDDD",
+                "lineType": "dashed",
+                "width": 2
+            }
+        },
+        "ts_c8ed5ddbb89c19b2e385de23eecbde98": {
+            "type": "line",
+            "properties": {
+                "color": "#2f2f2f",
+                "lineType": "solid",
+                "width": 2
+            }
+        }
+    }
+}' > img.png
+</pre>
+            </div>
 					</div>
 				
         </div>
@@ -1028,8 +1259,8 @@ Content-Type: application/json;charset=UTF-8
             
           </div>
           
-          <div> <!-- Response Examples -->
-            <h3>Response Examples</h3>
+          <div> <!-- Examples -->
+            <h3>Examples</h3>
             <div>
               <h4>Collection</h4>
               <pre>GET /api/v1/services/ HTTP/1.1
@@ -1127,8 +1358,8 @@ Content-Type: application/json;charset=UTF-8
               <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">common query parameters</a> can be used.</div>
           </div>
           
-          <div> <!-- Response Examples -->
-              <h3>Response Examples</h3>
+          <div> <!-- Examples -->
+              <h3>Examples</h3>
               <div>
                 <h4>Collection</h4>
                 <pre>GET /api/v1/categories HTTP/1.1
@@ -1229,8 +1460,8 @@ Content-Type: application/json;charset=UTF-8
               <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">common query parameters</a> can be used.</div>
           </div>
           
-          <div> <!-- Response Examples -->
-              <h3>Response Examples</h3>
+          <div> <!-- Examples -->
+              <h3>Examples</h3>
               <div>
                 <h4>Collection</h4>
                 <pre>GET /api/v1/offerings HTTP/1.1
@@ -1328,8 +1559,8 @@ Content-Type: application/json;charset=UTF-8
               <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">common query parameters</a> can be used.</div>
           </div>
           
-          <div> <!-- Response Examples -->
-            <h3>Response Examples</h3>
+          <div> <!-- Examples -->
+            <h3>Examples</h3>
             <div>
               <h4>Collection</h4>
               <pre>GET /api/v1/features HTTP/1.1
@@ -1430,8 +1661,8 @@ Content-Type: application/json;charset=UTF-8
             <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">common query parameters</a> can be used.</div>
           </div>
           
-          <div> <!-- Response Examples -->
-            <h3>Response Examples</h3>
+          <div> <!-- Examples -->
+            <h3>Examples</h3>
             <div>
               <h4>Collection</h4>
               <pre>GET /api/v1/procedures HTTP/1.1
@@ -1532,8 +1763,8 @@ Content-Type: application/json;charset=UTF-8
             <div class="n52-callout n52-callout-info">For this resource <a href="#common-query-parameters">common query parameters</a> can be used.</div>
           </div>
           
-          <div> <!-- Response Examples -->
-            <h3>Response Examples</h3>
+          <div> <!-- Examples -->
+            <h3>Examples</h3>
             <div>
               <h4>Collection</h4>
               <pre>GET /api/v1/phenomena HTTP/1.1
@@ -1635,7 +1866,6 @@ Content-Type: application/json;charset=UTF-8
 	</div>
 	
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script src="js/bootstrap-3.0.0-rc1/bootstrap.min.js"></script>
     <script src="js/bootstrap-3.0.0-rc1/bootstrap.min.js"></script>
   </body>
 </html>
