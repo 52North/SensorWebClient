@@ -18,10 +18,14 @@
 			<artifactId>timeseries-io</artifactId>
 		</dependency>
 		<!-- ### EXTERNAL DEPENDENCIES ### -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.module</groupId>
+			<artifactId>jackson-module-jsonSchema</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
@@ -48,13 +52,13 @@
 						<configuration>
 							<outputDirectory>${project.basedir}/target/classes/</outputDirectory>
 							<resources>
-                                <resource>
-                                    <directory>src/main/webapp</directory>
-                                    <includes>
-                                        <include>**</include>
-                                    </includes>
-                                    <filtering>true</filtering>
-                                </resource>
+								<resource>
+									<directory>src/main/webapp</directory>
+									<includes>
+										<include>**</include>
+									</includes>
+									<filtering>true</filtering>
+								</resource>
 							</resources>
 						</configuration>
 					</execution>
