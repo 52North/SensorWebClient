@@ -27,6 +27,8 @@ package org.n52.io.v1.data;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Represents a parameter object to request data from multiple timeseries.
  */
@@ -48,8 +50,14 @@ public class DesignedParameterSet extends ParameterSet {
     private boolean grid = true;
 
     /**
+     * A 2-character language code to determine the requested locale.
+     */
+    private String language;
+    
+    /**
      * Style options for each timeseriesId of interest.
      */
+    @JsonProperty(required = true)
     private Map<String, StyleProperties> styleOptions;
 
     /**
@@ -97,6 +105,14 @@ public class DesignedParameterSet extends ParameterSet {
      */
     public boolean isGrid() {
         return this.grid;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
     public void setStyleOptions(Map<String, StyleProperties> renderingOptions) {
