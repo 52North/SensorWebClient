@@ -46,11 +46,11 @@ public class StyleProperties {
     /**
      * @return the chart type, e.g. <code>line</code>, or <code>bar</code>.
      */
-    public String getType() {
+    public String getChartType() {
         return chartType;
     }
 
-    public void setType(String type) {
+    public void setChartType(String type) {
         this.chartType = type;
     }
     
