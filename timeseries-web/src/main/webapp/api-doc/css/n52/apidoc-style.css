@@ -51,6 +51,7 @@
   text-shadow: 0 1px 0 #fff;
   background-color: #f7f5fa;
   border-radius: 5px;
+  width:200px;
 }
 
 /* All levels of nav */
@@ -74,11 +75,6 @@
   border-right: 1px solid #563d7c;
 }
 
-/* Nav: second level (shown on .active) */
-.bs-sidebar .nav .nav {
-  display: none; /* Hide by default, but at >768px, show it */
-  margin-bottom: 8px;
-}
 .bs-sidebar .nav .nav > li > a {
   padding-top:    3px;
   padding-bottom: 3px;
@@ -116,6 +112,7 @@
     width: 263px;
   }
 }
+
 
 
 
