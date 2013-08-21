@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.n52.shared.IdGenerator;
+import org.n52.shared.MD5HashIdGenerator;
 import org.n52.shared.serializable.pojos.ReferenceValue;
 
 public class Procedure extends TimeseriesParameter implements Serializable {
@@ -40,12 +42,12 @@ public class Procedure extends TimeseriesParameter implements Serializable {
         // for serialization
     }
     
-    public Procedure(String parameterId) {
-        super(parameterId);
+    public Procedure(String parameterId, String serviceUrl) {
+        super(parameterId, new String[]{parameterId, serviceUrl});
     }
     
     public String getProcedureId() {
-        return getId();
+        return getParameterId();
     }
 
     public Map<String, ReferenceValue> getReferenceValues() {
@@ -72,6 +74,7 @@ public class Procedure extends TimeseriesParameter implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder(getClass().getName());
         sb.append(" [").append("procedureId: '").append(getProcedureId());
+        sb.append("', ").append("internalId: '").append(getGlobalId());
         sb.append("', ").append("label: '").append(getLabel());
         return sb.append("']").toString();
     }
@@ -82,6 +85,7 @@ public class Procedure extends TimeseriesParameter implements Serializable {
         int result = 1;
         result = prime * result + ( (getLabel() == null) ? 0 : getLabel().hashCode());
         result = prime * result + ( (getProcedureId() == null) ? 0 : getProcedureId().hashCode());
+        result = prime * result + ( (getGlobalId() == null) ? 0 : getGlobalId().hashCode());
         return result;
     }
 
@@ -95,12 +99,18 @@ public class Procedure extends TimeseriesParameter implements Serializable {
             return false;
         Procedure other = (Procedure) obj;
         if (getProcedureId() == null) {
-            if (other.getId() != null)
+            if (other.getProcedureId() != null)
                 return false;
         }
         else if ( !getProcedureId().equals(other.getProcedureId()))
             return false;
         return true;
     }
+
+	@Override
+	protected String generateGlobalId(String id, String[] parametersToGenerateId) {
+		IdGenerator idGenerator = new MD5HashIdGenerator("pro_");
+        return idGenerator.generate(parametersToGenerateId);
+	}
 
 }

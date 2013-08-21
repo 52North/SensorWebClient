@@ -31,25 +31,30 @@ public abstract class TimeseriesParameter implements Serializable {
     
     protected String parameterId;
     
+    protected String globalId;
+    
     protected String label;
     
     TimeseriesParameter() {
         // for serialization
     }
     
-    TimeseriesParameter(String parameterId) {
+    TimeseriesParameter(String parameterId, String[] parametersToGenerateId) {
         if (parameterId == null || parameterId.isEmpty()) {
             throw new IllegalArgumentException("parameterId must not be null.");
         }
         this.label = parseLabel(parameterId);
         this.parameterId = parameterId;
+        this.globalId = generateGlobalId(parameterId, parametersToGenerateId); 
     }
+    
+    protected abstract String generateGlobalId(String id, String[] parametersToGenerateId);
 
-    public void setId(String id) {
-        this.parameterId = id;
-    }
+    public String getGlobalId() {
+		return globalId;
+	}
 
-    protected String getId() {
+    protected String getParameterId() {
         return parameterId;
     }
 

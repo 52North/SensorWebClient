@@ -1,6 +1,5 @@
 package org.n52.api.v1.srv;
 
-import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadataForItemName;
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
 
 import java.util.ArrayList;
@@ -37,19 +36,32 @@ public class ServiceOutputAdapter implements ServiceParameterService {
 	@Override
     public ServiceOutput[] getCondensedParameters(QueryMap map) {
         List<ServiceOutput> allServices = new ArrayList<ServiceOutput>();
+        
         for (SOSMetadata metadata : getSOSMetadatas()) {
             ServiceConverter converter = new ServiceConverter(metadata);
             allServices.add(converter.convertCondensed(metadata));
         }
         return allServices.toArray(new ServiceOutput[0]);
     }
-
+	
+	public ServiceOutput[] getParameters(String[] serviceIds) {
+        List<ServiceOutput> selectedServices = new ArrayList<ServiceOutput>();
+        for (String serviceId : serviceIds) {
+            ServiceOutput serivce = getParameter(serviceId);
+            if (serivce != null) {
+                selectedServices.add(serivce);
+            }
+        }
+        return selectedServices.toArray(new ServiceOutput[0]);
+    }
+	
 	@Override
-	public ServiceOutput getParameter(String item) {
-		SOSMetadata metadata = getSOSMetadataForItemName(item);
-		if (metadata != null){
-		    ServiceConverter converter = new ServiceConverter(metadata);
-			return converter.convertExpanded(metadata);
+	public ServiceOutput getParameter(String serviceId) {
+		for (SOSMetadata metadata : getSOSMetadatas()) {
+			if (metadata.getGlobalId().equals(serviceId)) {
+				ServiceConverter converter = new ServiceConverter(metadata);
+				return converter.convertExpanded(metadata);
+			}
 		}
 		return null;
 	}

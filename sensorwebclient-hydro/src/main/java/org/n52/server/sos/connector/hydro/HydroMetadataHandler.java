@@ -112,7 +112,7 @@ public class HydroMetadataHandler extends MetadataHandler {
 	private void collectTimeseries(SOSMetadata metadata) throws OXFException, InterruptedException,
 			ExecutionException, TimeoutException, XmlException, IOException {
 
-		Collection<SosTimeseries> observingTimeseries = createObservingTimeseries();
+		Collection<SosTimeseries> observingTimeseries = createObservingTimeseries(metadata.getServiceUrl());
 		
 		Map<SosTimeseries, FutureTask<OperationResult>> getDataAvailabilityTasks = new HashMap<SosTimeseries, FutureTask<OperationResult>>();
 		Map<String, FutureTask<OperationResult>> getFoiAccessTasks = new HashMap<String, FutureTask<OperationResult>>();
@@ -125,7 +125,7 @@ public class HydroMetadataHandler extends MetadataHandler {
 		}
 		
 		// create list of timeseries of GDA requests
-		Collection<SosTimeseries> timeseries = executeGDATasks(getDataAvailabilityTasks, metadata.getVersion());
+		Collection<SosTimeseries> timeseries = executeGDATasks(getDataAvailabilityTasks, metadata);
 		
 		// iterate over tasks of getFOI and add them to metadata
         executeFoiTasks(getFoiAccessTasks, metadata);
@@ -146,7 +146,7 @@ public class HydroMetadataHandler extends MetadataHandler {
 	}
 
     private Collection<SosTimeseries> executeGDATasks(
-			Map<SosTimeseries, FutureTask<OperationResult>> getDataAvailabilityTasks, String version)
+			Map<SosTimeseries, FutureTask<OperationResult>> getDataAvailabilityTasks, SOSMetadata metadata)
 			throws InterruptedException, ExecutionException, TimeoutException, XmlException, IOException {
 		int counter = getDataAvailabilityTasks.size();
 		LOGGER.debug("Sending " + counter + " GetDataAvailability requests");
@@ -160,7 +160,7 @@ public class HydroMetadataHandler extends MetadataHandler {
 				LOGGER.error("Get no result for GetDataAvailability with parameter constellation: " + timeserie + "!");
 			}
 			XmlObject result_xb = XmlObject.Factory.parse(result.getIncomingResultAsStream());
-			timeseries.addAll(getAvailableTimeseries(result_xb, timeserie, version));
+			timeseries.addAll(getAvailableTimeseries(result_xb, timeserie, metadata));
 		}
 		return timeseries;
 	}
@@ -220,7 +220,7 @@ public class HydroMetadataHandler extends MetadataHandler {
 //							break;
 //						}
 						// add feature
-						Feature feature = new Feature(id);
+						Feature feature = new Feature(id, metadata.getServiceUrl());
 						feature.setLabel(label);
 	                    lookup.addFeature(feature);
 	                    
@@ -230,7 +230,7 @@ public class HydroMetadataHandler extends MetadataHandler {
 	                        double lat = Double.parseDouble(point.getLat());
 		                    double lng = Double.parseDouble(point.getLon());
 		                    EastingNorthing coords = new EastingNorthing(lng, lat, point.getSrs());
-	                        station = new Station(id);
+	                        station = new Station(id, metadata.getServiceUrl());
 	                        station.setLocation(coords);
 	                        metadata.addStation(station);
 	                    }
@@ -242,7 +242,7 @@ public class HydroMetadataHandler extends MetadataHandler {
 		}
 	}
 	
-	private Collection<SosTimeseries> getAvailableTimeseries(XmlObject result_xb, SosTimeseries timeserie, String version) throws XmlException, IOException {
+	private Collection<SosTimeseries> getAvailableTimeseries(XmlObject result_xb, SosTimeseries timeserie, SOSMetadata metadata) throws XmlException, IOException {
 		ArrayList<SosTimeseries> timeseries = new ArrayList<SosTimeseries>();
 		String queryExpression = "declare namespace sos='http://www.opengis.net/sos/2.0'; $this/sos:GetDataAvailabilityResponse/sos:dataAvailabilityMember";
 		XmlObject[] response = result_xb.selectPath(queryExpression);
@@ -251,14 +251,14 @@ public class HydroMetadataHandler extends MetadataHandler {
 			String feature = getAttributeOfChildren(xmlObject, "featureOfInterest", "href");
 			String phenomenon = getAttributeOfChildren(xmlObject, "observedProperty", "href");
 			String procedure = getAttributeOfChildren(xmlObject, "procedure", "href");
-			addedtimeserie.setFeature(new Feature(feature));
-			addedtimeserie.setPhenomenon(new Phenomenon(phenomenon));
-			addedtimeserie.setProcedure(new Procedure(procedure));
+			addedtimeserie.setFeature(new Feature(feature, metadata.getServiceUrl()));
+			addedtimeserie.setPhenomenon(new Phenomenon(phenomenon, metadata.getServiceUrl()));
+			addedtimeserie.setProcedure(new Procedure(procedure, metadata.getServiceUrl()));
 			// create the category for every parameter constellation out of phenomenon and procedure
 			String category = getLastPartOf(phenomenon) + " (" + getLastPartOf(procedure) + ")";
 			addedtimeserie.setCategory(category);
-			addedtimeserie.setOffering(new Offering(timeserie.getOfferingId()));
-			addedtimeserie.setSosService(new SosService(timeserie.getServiceUrl(), version));
+			addedtimeserie.setOffering(new Offering(timeserie.getOfferingId(), metadata.getServiceUrl()));
+			addedtimeserie.setSosService(new SosService(timeserie.getServiceUrl(), metadata.getVersion()));
 			timeseries.add(addedtimeserie);
 		}
 		return timeseries;

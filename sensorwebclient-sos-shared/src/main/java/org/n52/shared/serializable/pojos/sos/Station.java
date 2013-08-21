@@ -31,6 +31,8 @@ import java.util.ArrayList;
 
 import org.n52.io.crs.EastingNorthing;
 import org.n52.io.geojson.GeojsonPoint;
+import org.n52.shared.IdGenerator;
+import org.n52.shared.MD5HashIdGenerator;
 
 /**
  * A {@link Station} represents a location where timeseries data is observed.
@@ -45,14 +47,15 @@ public class Station implements Serializable {
 
     private String label;
     
-    // TODO make station identifiable
-
+    private String serviceUrl;
+    
     Station() {
         // for serialization
     }
 
-    public Station(String label) {
+    public Station(String label, String url) {
         this.label = label;
+        this.serviceUrl = url;
         observingTimeseries = new ArrayList<SosTimeseries>();
     }
 
@@ -134,7 +137,7 @@ public class Station implements Serializable {
 
     // @Override // fails during gwt compile
     public Station clone() {
-        Station station = new Station(label);
+        Station station = new Station(label, serviceUrl);
         station.setLocation(location);
         station.setObservingTimeseries(new ArrayList<SosTimeseries>(observingTimeseries));
         return station;
@@ -143,5 +146,11 @@ public class Station implements Serializable {
     private void setObservingTimeseries(ArrayList<SosTimeseries> observingTimeseries) {
         this.observingTimeseries = observingTimeseries;
     }
+
+	public String getGlobalId() {
+		String[] parameters = new String[]{serviceUrl, location.toString()};
+    	IdGenerator idGenerator = new MD5HashIdGenerator("sta_");
+        return idGenerator.generate(parameters);
+	}
 
 }

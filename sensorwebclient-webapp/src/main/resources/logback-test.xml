@@ -12,8 +12,6 @@
 	</appender>
 
 	<logger name="org.n52" level="DEBUG" />
-	<logger name="org.n52.oxf" level="DEBUG" />
-	<logger name="org.n52.server" level="DEBUG" />
 
 	<logger name="org.geotools" level="WARN" />
 	<logger name="org.apache" level="WARN" />

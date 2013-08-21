@@ -75,7 +75,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
 
         SOSMetadata sosMetadata = initMetadata(sosUrl, sosVersion);
 
-        Collection<SosTimeseries> observingTimeseries = createObservingTimeseries();
+        Collection<SosTimeseries> observingTimeseries = createObservingTimeseries(sosUrl);
 
         normalizeDefaultCategories(observingTimeseries);
 
@@ -177,7 +177,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
                     for (String featureId : fois) {
                         Station station = metadata.getStation(featureId);
                         if (station == null) {
-                            station = new Station(featureId);
+                            station = new Station(featureId, sosUrl);
                             station.setLocation(eastingNorthing);
                             metadata.addStation(station);
                         }
@@ -191,7 +191,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
 
                             station.setLocation(eastingNorthing);
                             for (SosTimeseries timseries : paramConstellations) {
-                                timseries.setFeature(new Feature(featureId));
+                                timseries.setFeature(new Feature(featureId, sosUrl));
                                 station.addTimeseries(timseries);
                             }
                         }

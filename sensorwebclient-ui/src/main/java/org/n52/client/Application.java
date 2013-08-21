@@ -173,11 +173,11 @@ public final class Application implements EntryPoint {
                     final String feature = features[i];
                     
                     SosTimeseries sosTimeseries = new SosTimeseries();
-                    sosTimeseries.setFeature(new Feature(feature));
-                    sosTimeseries.setOffering(new Offering(offering));
-                    sosTimeseries.setPhenomenon(new Phenomenon(phenomenon));
+                    sosTimeseries.setFeature(new Feature(feature, service));
+                    sosTimeseries.setOffering(new Offering(offering, service));
+                    sosTimeseries.setPhenomenon(new Phenomenon(phenomenon,service));
                     sosTimeseries.setSosService(new SosService(service, version));
-                    sosTimeseries.setProcedure(new Procedure(procedure));
+                    sosTimeseries.setProcedure(new Procedure(procedure, service));
                     GWT.log("Timeseries to load: " + sosTimeseries);
                     
                     TimeseriesRenderingOptions tsOptions = null;
