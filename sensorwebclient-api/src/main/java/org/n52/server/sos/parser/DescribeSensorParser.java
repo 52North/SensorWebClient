@@ -481,9 +481,12 @@ public class DescribeSensorParser {
             return new ReferenceValue(fieldName, new Double(stringValue));
         }
         // special case: value + " " + uom(e.g. "637.0 cm")
-        String tmp = stringValue.substring(0, stringValue.indexOf(" "));
-        if (tmp.matches("([0-9\\,\\.\\+\\-]+)")) {
-            return new ReferenceValue(fieldName, new Double(tmp));
+        // ISB AG, AHU: Check if " " is actually present within the string!
+        if (stringValue.contains(" ")) {
+	        String tmp = stringValue.substring(0, stringValue.indexOf(" "));
+	        if (tmp.matches("([0-9\\,\\.\\+\\-]+)")) {
+	            return new ReferenceValue(fieldName, new Double(tmp));
+	        }
         }
         return null;
     }
