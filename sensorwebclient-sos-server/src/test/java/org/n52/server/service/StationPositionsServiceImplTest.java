@@ -41,7 +41,7 @@ public class StationPositionsServiceImplTest {
         service = new QueryServiceImpl();
         stations = new ArrayList<Station>();
         for (int i = 0; i < COUNT_STATIONS; i++) {
-            stations.add(new Station("test"));
+            stations.add(new Station("test", "url"));
         }
     }
 

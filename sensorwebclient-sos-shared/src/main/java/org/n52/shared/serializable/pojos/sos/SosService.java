@@ -1,4 +1,30 @@
+/**
+ * ﻿Copyright (C) 2012
+ * by 52 North Initiative for Geospatial Open Source Software GmbH
+ *
+ * Contact: Andreas Wytzisk
+ * 52 North Initiative for Geospatial Open Source Software GmbH
+ * Martin-Luther-King-Weg 24
+ * 48155 Muenster, Germany
+ * info@52north.org
+ *
+ * This program is free software; you can redistribute and/or modify it under
+ * the terms of the GNU General Public License version 2 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed WITHOUT ANY WARRANTY; even without the implied
+ * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program (see gnu-gpl v2.txt). If not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
+ * visit the Free Software Foundation web page, http://www.fsf.org.
+ */
 package org.n52.shared.serializable.pojos.sos;
+
+import org.n52.shared.IdGenerator;
+import org.n52.shared.MD5HashIdGenerator;
 
 public class SosService extends TimeseriesParameter {
 
@@ -11,12 +37,12 @@ public class SosService extends TimeseriesParameter {
     }
     
     public SosService(String serviceUrl, String version) {
-        super(serviceUrl);
+        super(serviceUrl, new String[]{serviceUrl, version});
         this.version = version;
     }
     
     public String getServiceUrl() {
-        return getId();
+        return getParameterId();
     }
 
     public String getVersion() {
@@ -55,13 +81,17 @@ public class SosService extends TimeseriesParameter {
             return false;
         SosService other = (SosService) obj;
         if (getServiceUrl() == null) {
-            if (other.getId() != null)
+            if (other.getServiceUrl() != null)
                 return false;
         }
         else if ( !getServiceUrl().equals(other.getServiceUrl()))
             return false;
         return true;
     }
-    
-    
+
+	@Override
+	protected String generateGlobalId(String id, String[] parametersToGenerateId) {
+		IdGenerator idGenerator = new MD5HashIdGenerator("srv_");
+        return idGenerator.generate(parametersToGenerateId);
+	}
 }

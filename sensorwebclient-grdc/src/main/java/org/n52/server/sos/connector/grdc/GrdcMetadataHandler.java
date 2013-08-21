@@ -105,20 +105,20 @@ public class GrdcMetadataHandler extends MetadataHandler {
 			String[] procArray = observationOffering.getProcedures();
 
 			// add offering
-			Offering offering = new Offering(offeringID);
+			Offering offering = new Offering(offeringID, sosUrl);
 			offering.setLabel(observationOffering.getTitle());
             lookup.addOffering(offering);
 			
 			// add phenomenons
 			for (String phenomenonId : phenArray) {
-				Phenomenon phenomenon = new Phenomenon(phenomenonId);
+				Phenomenon phenomenon = new Phenomenon(phenomenonId, sosUrl);
 				phenomenon.setLabel(phenomenonId.substring(phenomenonId.lastIndexOf(":") + 1));
 				lookup.addPhenomenon(phenomenon);
 			}
 			
 			// add procedures
 			for (String procedure : procArray) {
-			    lookup.addProcedure(new Procedure(procedure));
+			    lookup.addProcedure(new Procedure(procedure, sosUrl));
 			}
 
 			ArrayList<String> fois = new ArrayList<String>();
@@ -197,7 +197,7 @@ public class GrdcMetadataHandler extends MetadataHandler {
 								label = featureId;
 							}
 							// add feature
-							Feature feature = new Feature(featureId);
+							Feature feature = new Feature(featureId, sosUrl);
 							feature.setLabel(label);
 							lookup.addFeature(feature);
 							// add position and foiID to a new station
