@@ -23,15 +23,19 @@
  */
 package org.n52.api.v1.srv;
 
+import static org.n52.api.v1.srv.QueryParameterAdapter.createQueryParameters;
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.n52.api.v1.io.TimeseriesConverter;
 import org.n52.io.v1.data.TimeseriesDataCollection;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.UndesignedParameterSet;
+import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
@@ -48,37 +52,34 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Timeserie
 		return dataService.getTimeSeriesFromParameterSet(parameters);
 	}
 
-
     @Override
     public TimeseriesMetadataOutput[] getExpandedParameters(QueryMap map) {
+        QueryParameters query = createQueryParameters(map);
         List<TimeseriesMetadataOutput> allProcedures = new ArrayList<TimeseriesMetadataOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             TimeseriesConverter converter = new TimeseriesConverter(metadata);
-            for (Station station : metadata.getStations()) {
-                SosTimeseries[] timeseriesAsArray = getTimeseriesAsArray(station);
-                allProcedures.addAll(converter.convertExpanded(timeseriesAsArray));
-            }
+            allProcedures.addAll(converter.convertExpanded(filter(metadata, query)));
         }
         return allProcedures.toArray(new TimeseriesMetadataOutput[0]);
     }
-
-
+    
     @Override
     public TimeseriesMetadataOutput[] getCondensedParameters(QueryMap map) {
+        QueryParameters query = createQueryParameters(map);
         List<TimeseriesMetadataOutput> allProcedures = new ArrayList<TimeseriesMetadataOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             TimeseriesConverter converter = new TimeseriesConverter(metadata);
-            for (Station station : metadata.getStations()) {
-                SosTimeseries[] timeseriesAsArray = getTimeseriesAsArray(station);
-                allProcedures.addAll(converter.convertCondensed(timeseriesAsArray));
-            }
+            allProcedures.addAll(converter.convertCondensed(filter(metadata, query)));
         }
         return allProcedures.toArray(new TimeseriesMetadataOutput[0]);
     }
 
-    private SosTimeseries[] getTimeseriesAsArray(Station station) {
-        ArrayList<SosTimeseries> timeseries = station.getObservedTimeseries();
-        return timeseries.toArray(new SosTimeseries[0]);
+    private SosTimeseries[] filter(SOSMetadata metadata, QueryParameters query) {
+        Set<SosTimeseries> allTimeseries = new HashSet<SosTimeseries>();
+        for (SosTimeseries timeseries : metadata.getTimeseriesRelatedWith(query)) {
+            allTimeseries.add(timeseries);
+        }
+        return allTimeseries.toArray(new SosTimeseries[0]);
     }
 
     @Override

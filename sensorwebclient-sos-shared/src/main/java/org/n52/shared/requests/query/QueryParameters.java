@@ -31,6 +31,8 @@ import org.n52.io.crs.BoundingBox;
 public class QueryParameters implements Serializable {
     
     private static final long serialVersionUID = 4433261855040379401L;
+    
+    private String service;
 
     private String station;
 
@@ -53,13 +55,22 @@ public class QueryParameters implements Serializable {
 	}
 	
 	public boolean hasParameterFilter() {
-	    return station != null || featureOfInterest != null 
+	    return service != null || station != null || featureOfInterest != null 
 	            || procedure != null || offering != null  
 	            || phenomenon != null;
 	}
 	
 	public boolean hasSpatialFilter() {
 	    return spatialFilter != null;
+	}
+	
+	public String getService() {
+	    return service;
+	}
+	
+	public QueryParameters setService(String service) {
+	    this.service = service;
+	    return this;
 	}
 
 	public String getOffering() {
@@ -137,6 +148,7 @@ public class QueryParameters implements Serializable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("QueryParameters [");
+        sb.append("service: ").append(service).append(", ");
         sb.append("station: ").append(station).append(", ");
         sb.append("offering: ").append(offering).append(", ");
         sb.append("procedure: ").append(procedure).append(", ");
