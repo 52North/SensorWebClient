@@ -32,9 +32,15 @@ import java.util.Date;
 import java.util.Map;
 
 import org.jfree.data.general.DatasetGroup;
+import org.jfree.data.time.Day;
+import org.jfree.data.time.Hour;
+import org.jfree.data.time.Month;
+import org.jfree.data.time.RegularTimePeriod;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
+import org.jfree.data.time.Week;
+import org.n52.io.style.BarStyle;
 import org.n52.io.style.LineStyle;
 import org.n52.io.v1.data.FeatureOutput;
 import org.n52.io.v1.data.StyleProperties;
@@ -60,10 +66,9 @@ public class MultipleChartsRenderer extends ChartRenderer {
              */
             
             TimeseriesMetadataOutput timeseriesMetadata = timeseriesMetadatas[rendererIndex];
-            String timeseriesLabel = createTimeseriesLabel(timeseriesMetadata);
             TimeseriesData timeseriesData = allTimeseries.get(timeseriesMetadata.getId());
-            putDataAtIndex(rendererIndex, timeseriesData, timeseriesLabel);
-            putRendererAtIndex(rendererIndex, timeseriesMetadata.getId());
+            TimeseriesData sortedTimeseriesData = sortTimeseriesData(timeseriesData);
+            putRendererAtIndex(rendererIndex, sortedTimeseriesData, timeseriesMetadata);
             configureRangeAxis(timeseriesMetadata, rendererIndex);
         }
     }
@@ -76,14 +81,17 @@ public class MultipleChartsRenderer extends ChartRenderer {
         return timeseriesLabel.toString();
     }
 
-    private void putRendererAtIndex(int rendererIndex, String timeseriesId) {
+    private void putRendererAtIndex(int rendererIndex, TimeseriesData timeseriesData, TimeseriesMetadataOutput timeMetadata) {
 
         /*
          * As each timeseries may define its custom styling and different chart types we have to loop over all
          * styles and process chart rendering iteratively
          */
-
+    	String timeseriesId = timeMetadata.getId();
+    	String timeseriesLabel = createTimeseriesLabel(timeMetadata);
         StyleProperties properties = getTimeseriesStyleFor(timeseriesId);
+        TimeSeriesCollection timeseriesCollection = createTimeseriesCollection(timeseriesLabel, timeseriesData, timeseriesId);
+        getXYPlot().setDataset(rendererIndex, timeseriesCollection);
         if (isLineStyle(properties)) {
             // do line chart rendering
             LineStyle lineStyle = createLineStyle(properties);
@@ -92,33 +100,57 @@ public class MultipleChartsRenderer extends ChartRenderer {
             lineRenderer.setColorForSeriesAt(rendererIndex);
         }
         else if (isBarStyle(properties)) {
-            
-            // TODO do bar chart rendering
-
+        	BarStyle barStyle = BarStyle.createFrom(properties);
+            BarRenderer barRenderer = BarRenderer.createBarRenderer(barStyle);
+        	getXYPlot().setRenderer(rendererIndex, barRenderer.getXYRenderer());
+        	barRenderer.setColorForSeriesAt(rendererIndex);
         }
     }
 
-    private void putDataAtIndex(int rendererIndex, TimeseriesData timeseriesData, String dataId) {
-        TimeseriesData sortedData = sortTimeseriesData(timeseriesData);
-        getXYPlot().setDataset(rendererIndex, createTimeseriesCollection(dataId, sortedData));
-    }
-
-    private TimeSeriesCollection createTimeseriesCollection(String dataId, TimeseriesData sortedData) {
+    private TimeSeriesCollection createTimeseriesCollection(String dataId, TimeseriesData sortedData, String timeseriesID) {
         TimeSeriesCollection timeseriesCollection = new TimeSeriesCollection();
-        timeseriesCollection.addSeries(createTimeseriesToRender(dataId, sortedData));
+        timeseriesCollection.addSeries(createPerDayTimeseriesToRender(dataId, sortedData, timeseriesID));
         timeseriesCollection.setGroup(new DatasetGroup(dataId));
         return timeseriesCollection;
     }
 
-    private TimeSeries createTimeseriesToRender(String dataId, TimeseriesData timeseriesData) {
+    private TimeSeries createPerDayTimeseriesToRender(String dataId, TimeseriesData timeseriesData, String timeseriesID) {
         TimeSeries timeseries = new TimeSeries(dataId);
-        for (TimeseriesValue value : timeseriesData.getValues()) {
-            timeseries.add(new Second(new Date(value.getTimestamp())), value.getValue());
+        double intervalSum = 0.0;
+        if (timeseriesData.getValues().length > 0) {
+        	RegularTimePeriod timeinterval = createTimePeriod(new Date(timeseriesData.getValues()[0].getTimestamp()), timeseriesID); // TODO empty array
+            for (TimeseriesValue value : timeseriesData.getValues()) {
+            	Date timestamp = new Date(value.getTimestamp());
+            	if (timeinterval.getEnd().getTime() > timestamp.getTime()) {
+            		intervalSum = intervalSum + value.getValue();
+            	} else {
+            		timeseries.add(timeinterval, intervalSum);
+            		timeinterval = createTimePeriod(new Date(value.getTimestamp()), timeseriesID);
+            		intervalSum = value.getValue();
+            	}
+            }
         }
         return timeseries;
     }
 
-    private TimeseriesData sortTimeseriesData(TimeseriesData timeseriesData) {
+	private RegularTimePeriod createTimePeriod(Date date, String timeseriesId) {
+		StyleProperties styleProperties = getTimeseriesStyleFor(timeseriesId);
+		if (styleProperties.getProperties().containsKey("interval")) {
+			String interval = styleProperties.getProperties().get("interval");
+			if (interval.equals("byHour")) {
+				return new Hour(date);
+			} else if (interval.equals("byDay")) {
+				return new Day(date);
+			} else if (interval.equals("byWeek")) {
+				return new Week(date);
+			} else if (interval.equals("byMonth")) {
+				return new Month(date);
+			}
+		}
+		return new Second(date);
+	}
+
+	private TimeseriesData sortTimeseriesData(TimeseriesData timeseriesData) {
         Arrays.sort(timeseriesData.getValues());
         return timeseriesData;
     }
