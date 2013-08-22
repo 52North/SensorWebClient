@@ -25,10 +25,12 @@ package org.n52.api.v1.io;
 
 import java.util.Map;
 
+import org.n52.io.v1.data.CategoryOutput;
 import org.n52.io.v1.data.FeatureOutput;
 import org.n52.io.v1.data.OfferingOutput;
 import org.n52.io.v1.data.PhenomenonOutput;
 import org.n52.io.v1.data.ProcedureOutput;
+import org.n52.io.v1.data.ServiceOutput;
 import org.n52.io.v1.data.StationOutput;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.TimeseriesOutput;
@@ -83,7 +85,21 @@ public class TimeseriesConverter extends OutputConverter<SosTimeseries, Timeseri
         timeseriesOutput.setOffering(getCondensedOffering(timeseries));
         timeseriesOutput.setProcedure(getCondensedProcedure(timeseries));
         timeseriesOutput.setPhenomenon(getCondensedPhenomenon(timeseries));
+        timeseriesOutput.setCategory(getCondensedCategory(timeseries));
+        timeseriesOutput.setService(getCondensedService(timeseries));
         return timeseriesOutput;
+    }
+
+    private ServiceOutput getCondensedService(SosTimeseries timeseries) {
+        ServiceConverter converter = new ServiceConverter(getMetadata());
+        return converter.convertCondensed(getMetadata());
+    }
+
+    private CategoryOutput getCondensedCategory(SosTimeseries timeseries) {
+        
+        // TODO do we want a category to be an identifiable object or is a string just fine?
+        
+        return null;
     }
 
     private OfferingOutput getCondensedOffering(SosTimeseries timeseries) {

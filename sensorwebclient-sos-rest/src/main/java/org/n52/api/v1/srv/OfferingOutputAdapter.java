@@ -23,16 +23,20 @@
  */
 package org.n52.api.v1.srv;
 
+import static org.n52.api.v1.srv.QueryParameterAdapter.createQueryParameters;
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.n52.api.v1.io.OfferingConverter;
-import org.n52.io.v1.data.FeatureOutput;
 import org.n52.io.v1.data.OfferingOutput;
+import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.n52.web.v1.ctrl.QueryMap;
 import org.n52.web.v1.srv.ParameterService;
@@ -41,24 +45,32 @@ public class OfferingOutputAdapter implements ParameterService<OfferingOutput> {
 
 	@Override
 	public OfferingOutput[] getExpandedParameters(QueryMap map) {
+        QueryParameters query = createQueryParameters(map);
 		List<OfferingOutput> allOfferings = new ArrayList<OfferingOutput>();
 		for (SOSMetadata metadata : getSOSMetadatas()) {
 		    OfferingConverter converter = new OfferingConverter(metadata);
-			TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
-			allOfferings.addAll(converter.convertExpanded(lookup.getOfferingsAsArray()));
-		}
+		    allOfferings.addAll(converter.convertExpanded(filter(metadata, query)));
+        }
 		return allOfferings.toArray(new OfferingOutput[0]);
 	}
-	
+
 	@Override
     public OfferingOutput[] getCondensedParameters(QueryMap map) {
+        QueryParameters query = createQueryParameters(map);
         List<OfferingOutput> allOfferings = new ArrayList<OfferingOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             OfferingConverter converter = new OfferingConverter(metadata);
-            TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
-            allOfferings.addAll(converter.convertCondensed(lookup.getOfferingsAsArray()));
+            allOfferings.addAll(converter.convertCondensed(filter(metadata, query)));
         }
         return allOfferings.toArray(new OfferingOutput[0]);
+    }
+
+    private Offering[] filter(SOSMetadata metadata, QueryParameters query) {
+        Set<Offering> allOfferings = new HashSet<Offering>();
+        for (SosTimeseries timeseries : metadata.getTimeseriesRelatedWith(query)) {
+          allOfferings.add(timeseries.getOffering());
+        }
+        return allOfferings.toArray(new Offering[0]);
     }
 
 	@Override

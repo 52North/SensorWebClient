@@ -23,15 +23,20 @@
  */
 package org.n52.api.v1.srv;
 
+import static org.n52.api.v1.srv.QueryParameterAdapter.createQueryParameters;
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.n52.api.v1.io.FeatureConverter;
 import org.n52.io.v1.data.FeatureOutput;
+import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.n52.web.v1.ctrl.QueryMap;
 import org.n52.web.v1.srv.ParameterService;
@@ -40,25 +45,32 @@ public class FeatureOutputAdapter implements ParameterService<FeatureOutput> {
 
 	@Override
 	public FeatureOutput[] getExpandedParameters(QueryMap map) {
-		List<FeatureOutput> allFeatures = new ArrayList<FeatureOutput>();
+	    QueryParameters query = createQueryParameters(map);
+        List<FeatureOutput> allFeatures = new ArrayList<FeatureOutput>();
 		for (SOSMetadata metadata : getSOSMetadatas()) {
-		    FeatureConverter converter = new FeatureConverter(metadata);
-			TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
-			allFeatures.addAll(converter.convertExpanded(lookup.getFeaturesAsArray()));
+	        FeatureConverter converter = new FeatureConverter(metadata);
+		    allFeatures.addAll(converter.convertExpanded(filter(metadata, query)));
 		}
 		return allFeatures.toArray(new FeatureOutput[0]);
 	}
 
-
     @Override
     public FeatureOutput[] getCondensedParameters(QueryMap map) {
+        QueryParameters query = createQueryParameters(map);
         List<FeatureOutput> allFeatures = new ArrayList<FeatureOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             FeatureConverter converter = new FeatureConverter(metadata);
-            TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
-            allFeatures.addAll(converter.convertCondensed(lookup.getFeaturesAsArray()));
+            allFeatures.addAll(converter.convertCondensed(filter(metadata, query)));
         }
         return allFeatures.toArray(new FeatureOutput[0]);
+    }
+
+    private Feature[] filter(SOSMetadata metadata, QueryParameters query) {
+        Set<Feature> allFeatures = new HashSet<Feature>();
+        for (SosTimeseries timeseries : metadata.getTimeseriesRelatedWith(query)) {
+          allFeatures.add(timeseries.getFeature());
+        }
+        return allFeatures.toArray(new Feature[0]);
     }
 
 	@Override

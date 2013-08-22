@@ -23,16 +23,20 @@
  */
 package org.n52.api.v1.srv;
 
+import static org.n52.api.v1.srv.QueryParameterAdapter.createQueryParameters;
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.n52.api.v1.io.ProcedureConverter;
-import org.n52.io.v1.data.PhenomenonOutput;
 import org.n52.io.v1.data.ProcedureOutput;
+import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.n52.web.v1.ctrl.QueryMap;
 import org.n52.web.v1.srv.ParameterService;
@@ -41,24 +45,32 @@ public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput>
 
 	@Override
 	public ProcedureOutput[] getExpandedParameters(QueryMap map) {
+        QueryParameters query = createQueryParameters(map);
 		List<ProcedureOutput> allProcedures = new ArrayList<ProcedureOutput>();
 		for (SOSMetadata metadata : getSOSMetadatas()) {
 		    ProcedureConverter converter = new ProcedureConverter(metadata);
-			TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
-			allProcedures.addAll(converter.convertExpanded(lookup.getProceduresAsArray()));
+			allProcedures.addAll(converter.convertExpanded(filter(metadata, query)));
 		}
 		return allProcedures.toArray(new ProcedureOutput[0]);
 	}
 	
 	@Override
     public ProcedureOutput[] getCondensedParameters(QueryMap map) {
+        QueryParameters query = createQueryParameters(map);
         List<ProcedureOutput> allProcedures = new ArrayList<ProcedureOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             ProcedureConverter converter = new ProcedureConverter(metadata);
-            TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
-            allProcedures.addAll(converter.convertCondensed(lookup.getProceduresAsArray()));
+            allProcedures.addAll(converter.convertCondensed(filter(metadata, query)));
         }
         return allProcedures.toArray(new ProcedureOutput[0]);
+    }
+
+    private Procedure[] filter(SOSMetadata metadata, QueryParameters query) {
+        Set<Procedure> allProcedures = new HashSet<Procedure>();
+        for (SosTimeseries timeseries : metadata.getTimeseriesRelatedWith(query)) {
+          allProcedures.add(timeseries.getProcedure());
+        }
+        return allProcedures.toArray(new Procedure[0]);
     }
 
 	@Override

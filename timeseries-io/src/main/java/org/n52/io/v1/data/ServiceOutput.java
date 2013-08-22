@@ -54,5 +54,54 @@ public class ServiceOutput extends OutputValue {
 	public void setType(String type) {
 		this.type = type;
 	}
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ( (serviceUrl == null) ? 0 : serviceUrl.hashCode());
+        result = prime * result + ( (type == null) ? 0 : type.hashCode());
+        result = prime * result + ( (version == null) ? 0 : version.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if ( !super.equals(obj)) {
+            return false;
+        }
+        if ( ! (obj instanceof ServiceOutput)) {
+            return false;
+        }
+        ServiceOutput other = (ServiceOutput) obj;
+        if (serviceUrl == null) {
+            if (other.serviceUrl != null) {
+                return false;
+            }
+        }
+        else if ( !serviceUrl.equals(other.serviceUrl)) {
+            return false;
+        }
+        if (type == null) {
+            if (other.type != null) {
+                return false;
+            }
+        }
+        else if ( !type.equals(other.type)) {
+            return false;
+        }
+        if (version == null) {
+            if (other.version != null) {
+                return false;
+            }
+        }
+        else if ( !version.equals(other.version)) {
+            return false;
+        }
+        return true;
+    }
 	
 }

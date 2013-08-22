@@ -25,6 +25,8 @@ package org.n52.io.v1.data;
 
 public class TimeseriesOutput {
     
+    private ServiceOutput service;
+    
     private OfferingOutput offering;
     
     private FeatureOutput feature;
@@ -34,6 +36,14 @@ public class TimeseriesOutput {
     private PhenomenonOutput phenomenon;
     
     private CategoryOutput category;
+
+    public ServiceOutput getService() {
+        return service;
+    }
+
+    public void setService(ServiceOutput service) {
+        this.service = service;
+    }
 
     public OfferingOutput getOffering() {
         return offering;

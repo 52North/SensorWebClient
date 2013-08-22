@@ -24,15 +24,19 @@
 
 package org.n52.shared.serializable.pojos.sos;
 
+import static java.util.Collections.unmodifiableCollection;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import org.n52.io.crs.BoundingBox;
 import org.n52.shared.Constants;
 import org.n52.shared.IdGenerator;
 import org.n52.shared.MD5HashIdGenerator;
+import org.n52.shared.requests.query.QueryParameters;
 
 /**
  * A shared metadata representation for an SOS instance. An {@link SOSMetadata} is used from both (!) Client
@@ -285,7 +289,19 @@ public class SOSMetadata implements Serializable {
     }
 
     public Collection<Station> getStations() {
-        return new ArrayList<Station>(this.stations.values());
+        return unmodifiableCollection(this.stations.values());
+    }
+    
+    public SosTimeseries[] getTimeseriesRelatedWith(QueryParameters parameters) {
+        List<SosTimeseries> matchingTimeseries = new ArrayList<SosTimeseries>();
+        for (Station station : stations.values()) {
+            for (SosTimeseries timeseries : station.getObservedTimeseries()) {
+                if (timeseries.matchParameters(parameters)) {
+                    matchingTimeseries.add(timeseries);
+                }
+            }
+        }
+        return matchingTimeseries.toArray(new SosTimeseries[0]);
     }
     
     public Station getStationByTimeSeriesId(String timeseriesId) {

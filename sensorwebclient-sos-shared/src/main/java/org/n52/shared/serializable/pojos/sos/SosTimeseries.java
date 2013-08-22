@@ -28,26 +28,27 @@ import java.io.Serializable;
 
 import org.n52.shared.IdGenerator;
 import org.n52.shared.MD5HashIdGenerator;
+import org.n52.shared.requests.query.QueryParameters;
 
 /**
  * An SOS timeseries representation identified by <code>serviceUrl</code>, <code>procedure</code>,
  * <code>phenomenon</code>, <code>feature</code>, and <code>offering</code>.<br/>
  * <br/>
- * Timeseries can be categorized by a custom label (by default {@link #phenomenonId}). It can be used to filter
- * a set of timeseries which belongs to a predefined category.
+ * Timeseries can be categorized by a custom label (by default {@link #phenomenonId}). It can be used to
+ * filter a set of timeseries which belongs to a predefined category.
  */
 public class SosTimeseries implements Serializable {
 
     private static final long serialVersionUID = 4336908002034438766L;
 
     private SosService sosService;
-    
+
     private Procedure procedure;
 
     private Phenomenon phenomenon;
 
     private Feature feature;
-    
+
     private Offering offering;
 
     private String category;
@@ -137,7 +138,7 @@ public class SosTimeseries implements Serializable {
      * @return a label to categorize stations on which filtering can take place.
      */
     public String getCategory() {
-        return category == null ?  getPhenomenonId() : category;
+        return category == null ? getPhenomenonId() : category;
     }
 
     /**
@@ -159,9 +160,31 @@ public class SosTimeseries implements Serializable {
     public String getOfferingId() {
         return offering == null ? null : offering.getOfferingId();
     }
-    
-    public String getPhenomenonId () {
+
+    public String getPhenomenonId() {
         return phenomenon == null ? null : phenomenon.getPhenomenonId();
+    }
+
+    /**
+     * Match against a filter criteria. The filter criteria is built as an <code>AND</code> criteria to match
+     * against all parameters. If a parameter is <code>null</code> is will be ignored (to match).
+     * 
+     * @param offeringFilter
+     *        filter to match the offering. If <code>null</code> the filter matches by default.
+     * @param phenomenonFilter
+     *        filter to match the phenomenon. If <code>null</code> the filter matches by default.
+     * @param procedureFilter
+     *        filter to match the procedure. If <code>null</code> the filter matches by default.
+     * @param featureFilter
+     *        filter to match the feature. If <code>null</code> the filter matches by default.
+     * @return <code>true</code> if constellation matches to all given filters.
+     */
+    public boolean matchParameters(QueryParameters filter) {
+        return matchesOffering(filter.getOffering()) 
+                && matchesService(filter.getService())
+                && matchesPhenomenon(filter.getPhenomenon())
+                && matchesProcedure(filter.getProcedure())
+                && matchesFeature(filter.getFeature());
     }
 
     /**
@@ -192,7 +215,7 @@ public class SosTimeseries implements Serializable {
      *         <code>true</code> if filter matches or is <code>null</code> .
      */
     public boolean matchesFeature(String filter) {
-        return (filter == null) ? true : filter.equals(getFeatureId());
+        return (filter == null) ? true : filter.equals(feature.getGlobalId());
     }
 
     /**
@@ -204,7 +227,19 @@ public class SosTimeseries implements Serializable {
      *         <code>true</code> if filter matches or is <code>null</code> .
      */
     public boolean matchesProcedure(String filter) {
-        return (filter == null) ? true : filter.equals(getProcedureId());
+        return (filter == null) ? true : filter.equals(procedure.getGlobalId());
+    }
+    
+    /**
+     * Checks if given filter and currently set {@link #sosService} do match.
+     * 
+     * @param filter
+     *        the service to match. If paramter is <code>null</code> the filter does not apply.
+     * @return <code>false</code> if filter does not match the {@link #sosService} of this instance. Returns
+     *         <code>true</code> if filter matches or is <code>null</code> .
+     */
+    public boolean matchesService(String filter) {
+        return (filter == null) ? true : filter.equals(sosService.getGlobalId());
     }
 
     /**
@@ -216,7 +251,7 @@ public class SosTimeseries implements Serializable {
      *         <code>true</code> if filter matches or is <code>null</code> .
      */
     public boolean matchesPhenomenon(String filter) {
-        return (filter == null) ? true : filter.equals(getPhenomenonId());
+        return (filter == null) ? true : filter.equals(phenomenon.getGlobalId());
     }
 
     /**
@@ -228,9 +263,8 @@ public class SosTimeseries implements Serializable {
      *         <code>true</code> if filter matches or is <code>null</code> .
      */
     public boolean matchesOffering(String filter) {
-        return (filter == null) ? true : filter.equals(getOfferingId());
+        return (filter == null) ? true : filter.equals(offering.getGlobalId());
     }
-
 
     @Override
     public int hashCode() {

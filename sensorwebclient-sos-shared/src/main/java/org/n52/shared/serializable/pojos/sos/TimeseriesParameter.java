@@ -25,15 +25,18 @@ package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
 
+import org.n52.shared.IdGenerator;
+import org.n52.shared.MD5HashIdGenerator;
+
 public abstract class TimeseriesParameter implements Serializable {
 
     private static final long serialVersionUID = -6244226109934637660L;
     
-    protected String parameterId;
+    private String parameterId;
     
-    protected String globalId;
+    private String globalId;
     
-    protected String label;
+    private String label;
     
     TimeseriesParameter() {
         // for serialization
@@ -48,7 +51,12 @@ public abstract class TimeseriesParameter implements Serializable {
         this.globalId = generateGlobalId(parameterId, parametersToGenerateId); 
     }
     
-    protected abstract String generateGlobalId(String id, String[] parametersToGenerateId);
+    protected abstract String getGlobalIdPrefix();
+    
+    private String generateGlobalId(String id, String[] parametersToGenerateId) {
+        IdGenerator idGenerator = new MD5HashIdGenerator(getGlobalIdPrefix());
+        return idGenerator.generate(parametersToGenerateId);
+    }
 
     public String getGlobalId() {
 		return globalId;
