@@ -24,6 +24,7 @@
 
 package org.n52.web.v1.ctrl;
 
+import static org.n52.web.v1.ctrl.QueryMap.createFromQuery;
 import static org.n52.web.v1.ctrl.RestfulUrls.COLLECTION_SERVICES;
 import static org.n52.web.v1.ctrl.RestfulUrls.DEFAULT_PATH;
 import static org.n52.web.v1.ctrl.Stopwatch.startStopwatch;
@@ -46,7 +47,7 @@ public class ServicesParameterController extends ParameterController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServicesParameterController.class);
 
     public ModelAndView getCollection(@RequestParam(required=false) MultiValueMap<String, String> query) {
-        QueryMap map = QueryMap.createFromQuery(query);
+        QueryMap map = createFromQuery(query);
         
         if (map.shallExpand()) {
             Stopwatch stopwatch = startStopwatch();

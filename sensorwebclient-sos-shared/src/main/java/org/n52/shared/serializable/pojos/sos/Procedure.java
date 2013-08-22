@@ -28,8 +28,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.shared.IdGenerator;
-import org.n52.shared.MD5HashIdGenerator;
 import org.n52.shared.serializable.pojos.ReferenceValue;
 
 public class Procedure extends TimeseriesParameter implements Serializable {
@@ -46,6 +44,11 @@ public class Procedure extends TimeseriesParameter implements Serializable {
         super(parameterId, new String[]{parameterId, serviceUrl});
     }
     
+    @Override
+    protected String getGlobalIdPrefix() {
+        return "pro_";
+    }
+
     public String getProcedureId() {
         return getParameterId();
     }
@@ -106,11 +109,5 @@ public class Procedure extends TimeseriesParameter implements Serializable {
             return false;
         return true;
     }
-
-	@Override
-	protected String generateGlobalId(String id, String[] parametersToGenerateId) {
-		IdGenerator idGenerator = new MD5HashIdGenerator("pro_");
-        return idGenerator.generate(parametersToGenerateId);
-	}
 
 }

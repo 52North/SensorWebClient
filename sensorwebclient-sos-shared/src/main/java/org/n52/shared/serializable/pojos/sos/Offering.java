@@ -26,9 +26,6 @@ package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
 
-import org.n52.shared.IdGenerator;
-import org.n52.shared.MD5HashIdGenerator;
-
 public class Offering extends TimeseriesParameter implements Serializable {
 
     private static final long serialVersionUID = -544290033391799572L;
@@ -43,6 +40,11 @@ public class Offering extends TimeseriesParameter implements Serializable {
         super(parameterId, new String[]{parameterId, serviceUrl});
     }
     
+    @Override
+    protected String getGlobalIdPrefix() {
+        return "off_";
+    }
+
     public String getOfferingId() {
         return getParameterId();
     }
@@ -83,11 +85,5 @@ public class Offering extends TimeseriesParameter implements Serializable {
             return false;
         return true;
     }
-
-	@Override
-	protected String generateGlobalId(String id, String[] parametersToGenerateId) {
-		IdGenerator idGenerator = new MD5HashIdGenerator("off_");
-        return idGenerator.generate(parametersToGenerateId);
-	}
 
 }

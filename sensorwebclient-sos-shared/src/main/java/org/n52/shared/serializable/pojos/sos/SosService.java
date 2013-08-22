@@ -23,8 +23,6 @@
  */
 package org.n52.shared.serializable.pojos.sos;
 
-import org.n52.shared.IdGenerator;
-import org.n52.shared.MD5HashIdGenerator;
 
 public class SosService extends TimeseriesParameter {
 
@@ -53,6 +51,11 @@ public class SosService extends TimeseriesParameter {
         this.version = version;
     }
     
+
+    @Override
+    protected String getGlobalIdPrefix() {
+        return "srv_";
+    }
 
     @Override
     public String toString() {
@@ -89,9 +92,4 @@ public class SosService extends TimeseriesParameter {
         return true;
     }
 
-	@Override
-	protected String generateGlobalId(String id, String[] parametersToGenerateId) {
-		IdGenerator idGenerator = new MD5HashIdGenerator("srv_");
-        return idGenerator.generate(parametersToGenerateId);
-	}
 }
