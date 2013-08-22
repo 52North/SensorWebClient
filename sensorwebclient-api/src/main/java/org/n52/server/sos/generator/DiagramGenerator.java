@@ -25,7 +25,6 @@
 package org.n52.server.sos.generator;
 
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
-import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -165,7 +164,10 @@ public class DiagramGenerator extends Generator {
      */
     private DesignDescriptionList buildUpDesignDescriptionList(DesignOptions options) {
 
-        String domainAxisLabel = i18n.diagramAxisLabelTime();
+    	// ZDM#812 Englische Bezeichnungen sind anzupassen
+    	// TODO i18n nutzen
+        //String domainAxisLabel = i18n.diagramAxisLabelTime();
+        String domainAxisLabel = "Zeit";
 
         DesignDescriptionList ddList = new DesignDescriptionList(domainAxisLabel);
         String observedPropertyWithGrid = options.getProperties().get(0).getPhenomenon();
