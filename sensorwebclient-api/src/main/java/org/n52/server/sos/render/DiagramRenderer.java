@@ -118,12 +118,11 @@ public class DiagramRenderer {
      */
     private DesignDescriptionList buildUpDesignDescriptionList(DesignOptions options) {
 
-        String domainAxisLabel;
-        if (options.getLanguage() != null && options.getLanguage().equals("de")) {
-            domainAxisLabel = "Zeit";
-        } else { // default => "en"
-            domainAxisLabel = "Time";
-        }
+    	// ZDM#812 Englische Bezeichnungen sind anzupassen
+    	// TODO i18n nutzen
+        //String domainAxisLabel = i18n.diagramAxisLabelTime();
+        String domainAxisLabel = "Zeit";
+
         if (this.isOverview) {
             domainAxisLabel = null;
         }
