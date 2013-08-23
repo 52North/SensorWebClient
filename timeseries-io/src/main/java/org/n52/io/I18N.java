@@ -59,8 +59,25 @@ public class I18N {
     }
 
     public static I18N getMessageLocalizer(String language) {
-        Locale locale = new Locale(language);
+        Locale locale = createLocate(language);
         return new I18N(getBundle(MESSAGES, locale), locale);
+    }
+
+    private static Locale createLocate(String language) {
+        if (language == null) {
+            return new Locale("en");
+        }
+        String[] localeParts = language.split("_");
+        if (localeParts.length == 0 || localeParts.length > 3) {
+            throw new IllegalArgumentException("Unparsable language parameter: " + language);
+        }
+        if (localeParts.length == 1) {
+            return new Locale(localeParts[0]);
+        } else if (localeParts.length == 2){
+            return new Locale(localeParts[0], localeParts[1]);
+        } else {
+            return new Locale(localeParts[0], localeParts[1], localeParts[2]);
+        } 
     }
 
 }
