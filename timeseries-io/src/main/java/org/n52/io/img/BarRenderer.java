@@ -23,14 +23,23 @@
  */
 package org.n52.io.img;
 
+import java.awt.Color;
+
+import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.n52.io.style.BarStyle;
 
 class BarRenderer implements Renderer {
     
     static final String BAR_CHART_TYPE = "bar";
+    
+    private XYBarRenderer renderer;
+    
+    private BarStyle style;
 
-    BarRenderer() {
-        // TODO Auto-generated constructor stub
+    private BarRenderer(BarStyle style) {
+    	this.style = style;
+    	this.renderer = new XYBarRenderer(style.getBarMargin());
     }
 
     @Override
@@ -40,15 +49,18 @@ class BarRenderer implements Renderer {
 
     @Override
     public XYItemRenderer getXYRenderer() {
-        // TODO Auto-generated method stub
-        return null;
+        return renderer;
         
     }
 
     @Override
     public void setColorForSeriesAt(int index) {
-        // TODO Auto-generated method stub
-        
+    	this.renderer.setSeriesPaint(index, Color.decode(style.getColor()));
     }
+
+	public static BarRenderer createBarRenderer(BarStyle barStyle) {
+		return new BarRenderer(barStyle);
+	}
+	
 }
 

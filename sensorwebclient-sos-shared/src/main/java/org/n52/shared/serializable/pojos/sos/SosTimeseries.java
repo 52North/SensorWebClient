@@ -215,7 +215,7 @@ public class SosTimeseries implements Serializable {
      *         <code>true</code> if filter matches or is <code>null</code> .
      */
     public boolean matchesFeature(String filter) {
-        return (filter == null) ? true : filter.equals(feature.getGlobalId());
+        return (filter == null) ? true : filter.equals(feature.getFeatureId());
     }
 
     /**
@@ -227,7 +227,7 @@ public class SosTimeseries implements Serializable {
      *         <code>true</code> if filter matches or is <code>null</code> .
      */
     public boolean matchesProcedure(String filter) {
-        return (filter == null) ? true : filter.equals(procedure.getGlobalId());
+        return (filter == null) ? true : filter.equals(procedure.getProcedureId());
     }
     
     /**
@@ -239,7 +239,7 @@ public class SosTimeseries implements Serializable {
      *         <code>true</code> if filter matches or is <code>null</code> .
      */
     public boolean matchesService(String filter) {
-        return (filter == null) ? true : filter.equals(sosService.getGlobalId());
+        return (filter == null) ? true : filter.equals(sosService.getServiceUrl());
     }
 
     /**
@@ -251,7 +251,7 @@ public class SosTimeseries implements Serializable {
      *         <code>true</code> if filter matches or is <code>null</code> .
      */
     public boolean matchesPhenomenon(String filter) {
-        return (filter == null) ? true : filter.equals(phenomenon.getGlobalId());
+        return (filter == null) ? true : filter.equals(phenomenon.getPhenomenonId());
     }
 
     /**
@@ -263,7 +263,7 @@ public class SosTimeseries implements Serializable {
      *         <code>true</code> if filter matches or is <code>null</code> .
      */
     public boolean matchesOffering(String filter) {
-        return (filter == null) ? true : filter.equals(offering.getGlobalId());
+        return (filter == null) ? true : filter.equals(offering.getOfferingId());
     }
 
     @Override
