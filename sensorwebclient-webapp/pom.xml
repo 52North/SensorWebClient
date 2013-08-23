@@ -192,7 +192,7 @@
 						<artifactItem>
 							<groupId>${project.groupId}</groupId>
 							<artifactId>timeseries-web</artifactId>
-							<includes>*.xml</includes>
+							<includes>*.xml,*.json</includes>
 							<!-- tmp files will be copied into WEB-INF/classes -->
 							<outputDirectory>src/main/tmp</outputDirectory>
 							<overWrite>true</overWrite>
