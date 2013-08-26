@@ -865,6 +865,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
 		datePickerForm.setTitle(i18n.datePickerTitle());
 		datePickerForm.setStyleName("n52_sensorweb_client_PickDateForm");
 		datePickerForm.setNumCols(2);
+		datePickerForm.setFields(datePickerStart, datePickerEnd, datePickerSubmitButton);
 		datePickerForm.setHeight("*");
 		datePickerForm.addSubmitValuesHandler(new SubmitValuesHandler() {
 
