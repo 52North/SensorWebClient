@@ -113,6 +113,7 @@
         <property name="serviceParameterService" ref="serviceParameterService" />
         <property name="timeseriesMetadataService" ref="timeseriesMetadataService" />
         <property name="timeseriesDataService" ref="timeseriesDataService" />
+        <property name="preRenderingTask" ref="preRenderingTask"/>
     </bean>
 
     <bean id="offeringParameterService" class="org.n52.api.v1.srv.OfferingOutputAdapter" />
@@ -137,6 +138,12 @@
                 </property>
             </bean>
         </property>
+    </bean>
+    
+    <bean id="preRenderingTask" class="org.n52.web.task.PreRenderingTask" destroy-method="closeGracefully">
+    	<property name="outputPath" value="img/preRenderedImages"/>
+    	<property name="timeseriesMetadataService" ref="timeseriesMetadataService"/>
+    	<property name="timeseriesDataService" ref="timeseriesDataService"/>
     </bean>
 
 </beans>

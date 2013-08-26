@@ -1192,8 +1192,21 @@ http://localhost:8080/sensorwebclient-webapp/api/v1/timeseries/getData > img.png
 					<div id="styles-bar-chart">
 						<h4>Bar Charts</h4>
 						<div class="n52-callout n52-callout-todo">add bar chart styling when it is clear what is possible to render in jfreechart.</div>
-            
-            <table class="table">
+									<pre>
+{
+    "chartType": "bar",
+    "properties": {
+        "interval": "byDay",
+        "width": 0.8,
+        "color": "#0000ff"
+    }
+}
+            						</pre>
+									<img alt="barChart" src="img/barChart.png"/>
+							</tr>						
+						</table>
+            			
+            			<table class="table">
 							<thead>
 								<th>Property</th>
 							</thead>
@@ -1202,9 +1215,13 @@ http://localhost:8080/sensorwebclient-webapp/api/v1/timeseries/getData > img.png
 									<td><code>interval</code></td>
 									<td>The time period a bar shall represent. Possible values are <code>byDay</code>, <code>byWeek</code>, <code>byMonth</code>.</td>
 								</tr>
-                <tr>
+                				<tr>
 									<td><code>color</code></td>
 									<td>A 6-digit hex color value, e.g. <code>#5f5f5f</code>.</td>
+								</tr>
+								<tr>
+									<td><code>width</code></td>
+									<td>Value between 0 and 1, which defines the bar width in percent.</td>
 								</tr>
 							</tbody>
 						</table>
