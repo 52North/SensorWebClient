@@ -91,6 +91,11 @@
                 <td>Init first draft</td>
                 <td>2013-08-06</td>
               </tr>
+              <tr>
+                <td>Henning Bredel</td>
+                <td>Review draft</td>
+                <td>2013-08-22</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -98,9 +103,7 @@
         <div class="n52-callout n52-callout-todo">
           <ul>
             <li>Create and link JSONSchemas for responses</li>
-            <li>Prerendered/Cached images</li>
             <li>Generalizing timeseries</li>
-            <li>Multiple language support</li>
             <li>error code review</li>
             <li>CRUD API for eventing</li>
           </ul>
@@ -205,7 +208,8 @@
                   <td>
                     <pre>locale=de</pre>
                   </td>
-                  <td><p>Specifies the language as 2-character wide locale. English shall be the fallback. The REST-API should consider the following order to detect a locale:
+                  <td><p>Specifies the language as <a href="http://en.wikipedia.org/wiki/ISO_639">ISO639</a> code. Subdivisions are respected by an <code>_</code>, e.g. <code>en_US</code> for American english.</p>
+                  <p>The REST-API should consider the following order to detect a locale:
                   <ul>
                     <li>User-agent (e.g. header information)</li>
                     <li><code>locale</code> parameter</li>
@@ -216,12 +220,13 @@
               </tbody>
             </table>
             
-						<div class="n52-callout n52-callout-info">Note that the options have to be <b>URL-encoded</b> appropriately!</div>
+						<div class="n52-callout n52-callout-info">Note that for <code>GET</code> requests the options have to be <b>URL-encoded</b> appropriately!</div>
           </div>
 				
 					<div id="general-paging"> <!-- paging -->
 						<h3>Paging</h3>
-						<p>Resource collections are paged by default to restrict large data access (<span class="text-info">configurable by the API provider .. use <code>limit=MAX</code> to get the maximum of a page</span>). The query parameters <code>offset</code> and <code>limit</code> can be used to define exactly that part of the collection to be returned by the server.</p>
+						<p>Resource collections can optionally been paged by the <code>offset</code> and <code>limit</code> parameters.</p>
+            
 						<p>Considering the <a href="http://tools.ietf.org/html/rfc5988">Web Linking (RFC5988)</a> approach the exact location of a page within a collection can be retrieved from response header information.</p> 
 						
 						<h4>Paging Example</h4>
@@ -258,13 +263,9 @@ Content omitted for brevity.
                   <td><code>GET</code></td>
                   <td><code>/api/v1/search?q=my%20search</code></td>
                   <td><code>application/json</code></td>
-                  <td>Searches globally over available resources.</td>
-                </tr>
-                <tr>
-                  <td><code>GET</code></td>
-                  <td><code>/api/v1/{collection}?q=my%20search</code></td>
-                  <td><code>application/json</code></td>
-                  <td>Search with scope on the given <code>collection</code>.</td>
+                  <td>Searches globally over available resources.
+                  <div class="n52-callout n52-callout-todo">specify reponse format</div>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -498,7 +499,7 @@ Content-Type: application/json;charset=UTF-8
             
             <div class="n52-callout n52-callout-info">For this resource <a href="#general-common-query-parameters">further common query parameters</a> can be used.</div>
             
-            <div class="n52-callout n52-callout-info">Note that the options have to be <b>URL-encoded</b> appropriately!</div>
+            <div class="n52-callout n52-callout-info">Note that for <code>GET</code> requests the options have to be <b>URL-encoded</b> appropriately!</div>
           </div>
 					
 					<div id="stations-examples"> <!-- Examples -->
@@ -643,6 +644,19 @@ Content-Type: application/json;charset=UTF-8
                   <td><code>application/json</code></td>
 									<td><p>Lists the metadata of timeseries with id <code>{id}</code>.</p></td>
                 </tr>
+                <tr>
+									<td><code>GET</code></td>
+									<td><code>/api/v1/timeseries/{id}/{interval}</code></td>
+                  <td><code>image/png</code></td>
+									<td><p>Returns an image containing a pre-rendered graph for timeseries with id <code>{id}</code>. The pre-rendered <code>{interval}</code> value can be 
+                  <ul>
+                    <li><code>lastDay</code></li>
+                    <li><code>lastWeek</code> (the default)</li>
+                    <li><code>lastMonth</code></li>
+                    </ul>
+                  </p>
+                  </td>
+								</tr>
 							</tbody>
 						</table>
 					</div>
@@ -663,14 +677,6 @@ Content-Type: application/json;charset=UTF-8
 									<td><code>/api/v1/timeseries/{id}/getData</code></td>
                   <td><code>application/json</code></td>
 									<td><p>Lists the raw data of timeseries with id <code>{id}</code>.</p></td>
-								</tr>
-								<tr>
-									<td><code>GET</code></td>
-									<td><code>/api/v1/timeseries/{id}/getData</code></td>
-                  <td><code>image/png</code></td>
-									<td><p>Returns an image containing a pre-rendered graph for timeseries with id <code>{id}</code>. The pre-rendered interval can be defined by the <code>interval</code> parameter (<code>lastWeek</code> is the default).
-                  </p>
-                  </td>
 								</tr>
 								<tr>
 									<td><code>POST</code></td>
@@ -722,23 +728,6 @@ Content-Type: application/json;charset=UTF-8
                     An <a href="http://en.wikipedia.org/wiki/ISO_8601#Time_intervals">ISO8601 formatted period</a>. Only backslash formatted values are supported.
                   </td>
                 </tr>
-                <tr>
-                  <td>
-                    <code>interval</code>
-                  </td>
-                  <td>
-                    <pre>interval=lastMonth</pre>
-                  </td>
-                  <td>
-                   <p>Supported <code>interval</code> values are the following:
-                    <ul>
-                      <li><code>lastDay</code></li>
-                      <li><code>lastWeek</code></li>
-                      <li><code>lastMonth</code></li>
-                    </ul>
-                    </p>
-                  </td>
-                </tr>
 								<tr>
 									<td>
 										<code>style</code>
@@ -774,13 +763,25 @@ Content-Type: application/json;charset=UTF-8
                       </ul>
                     </div>
                   </td>
+                </tr><tr>
+									<td>
+										<code>format</code>
+									</td>
+                  <td>
+                    <pre>format=highchart</pre>
+                  </td>
+                  <td>
+                    
+                    <div class="n52-callout n52-callout-todo">
+                    </div>
+                  </td>
                 </tr>
 							</tbody>
 						</table>
             
             <div class="n52-callout n52-callout-info">For this resource <a href="#general-common-query-parameters">further common query parameters</a> can be used.</div>
             
-						<div class="n52-callout n52-callout-info">Note that the options have to be <b>URL-encoded</b> appropriately!</div>
+						<div class="n52-callout n52-callout-info">Note that for <code>GET</code> requests the options have to be <b>URL-encoded</b> appropriately!</div>
 					</div>
 
 					<div id="timeseries-examples"> <!-- Examples -->
@@ -808,7 +809,15 @@ Content-Type: application/json;charset=UTF-8
         "type": "Point"
       },
       "type": "Feature"
-    }
+    },
+    "firstValue": {
+      "timestamp": 1375599900000,
+      "value": 23.4
+    },
+    "lastValue": {
+      "timestamp": 1375599900000,
+      "value": 43.4
+    },
   },
   {
     "id": "ts_eeb8e39dd0e8b4284e04d8a485a36cea",
@@ -824,7 +833,15 @@ Content-Type: application/json;charset=UTF-8
         "type": "Point"
       },
       "type": "Feature"
-    }
+    }, 
+    "firstValue": {
+      "timestamp": 1375599900000,
+      "value": 23.4
+    },
+    "lastValue": {
+      "timestamp": 1375599900000,
+      "value": 43.4
+    },
   }
 ]</pre>
               <div class="n52-callout n52-callout-info">
@@ -926,14 +943,6 @@ Content-Type: application/json;charset=UTF-8
   "station": {
     "id": "../stations/sta_adsf09",
     "label": "Bramsche"
-  },
-  "firstValue": {
-    "timestamp": 1375599900000,
-    "value": 23.4
-  },
-  "lastValue": {
-    "timestamp": 1375599900000,
-    "value": 43.4
   },
   "parameters": {
     "service": "../services/srv_823sd",

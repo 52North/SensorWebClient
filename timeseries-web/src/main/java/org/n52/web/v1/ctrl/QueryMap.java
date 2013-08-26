@@ -142,6 +142,16 @@ public class QueryMap {
     private static final boolean DEFAULT_BASE_64 = false;
 
     /**
+     * Determines the generalize flag.
+     */
+    private static final String GENERALIZE = "generalize";
+    
+    /**
+     * The default (no generalization) behaviour.
+     */
+    private static final boolean DEFAULT_GENERALIZE = false;
+    
+    /**
      * Determines the style parameter
      */
     private static final String STYLE = "style";
@@ -185,7 +195,7 @@ public class QueryMap {
      * Determines the bbox filter
      */
     private static final String BBOX = "bbox";
-
+    
     private MultiValueMap<String, String> query;
 
     /**
@@ -197,7 +207,7 @@ public class QueryMap {
         }
         query = queryParameters;
     }
-
+    
     /**
      * @return the value of {@value #OFFSET} parameter. If not present, the default {@value #DEFAULT_OFFSET}
      *         is returned.
@@ -250,6 +260,13 @@ public class QueryMap {
             return DEFAULT_GRID;
         }
         return parseFirstBooleanOfParameter(GRID);
+    }
+
+    public boolean isGeneralize() {
+        if ( !query.containsKey(GENERALIZE)) {
+            return DEFAULT_GENERALIZE;
+        }
+        return parseFirstBooleanOfParameter(GENERALIZE);
     }
 
     /**
@@ -422,4 +439,5 @@ public class QueryMap {
 
         return new QueryMap(queryParameters);
     }
+    
 }

@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TimerTask;
 
@@ -39,10 +40,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class PreRenderingTask extends TimerTask implements ServletConfigAware {
-	
-	private String realPath;
-	
-	private final static Logger LOGGER = LoggerFactory.getLogger(PreRenderingTask.class);
+    
+    private final static Logger LOGGER = LoggerFactory.getLogger(PreRenderingTask.class);
+
+    private TimeseriesMetadataService timeseriesMetadataService;
+    
+    private TimeseriesDataService timeseriesDataService;
+    
+	private String webappFolder;
 	
 	private String outputPath;
 	
@@ -55,48 +60,32 @@ public class PreRenderingTask extends TimerTask implements ServletConfigAware {
 	
 	private boolean showGrid = true;
 	
-	private TimeseriesMetadataService timeseriesMetadataService;
-	
-	private TimeseriesDataService timeseriesDataService;
-	
 	@Override
+    public void setServletConfig(ServletConfig servletConfig) {
+        webappFolder = servletConfig.getServletContext().getRealPath("/");
+    }
+
+    @Override
 	public void run() {
 		LOGGER.info("Start prerendering task");
-		createOutputDirectory();
-		InputStream preRenderingConfigurations = getClass().getResourceAsStream("/preRenderingImages.json");
-		InputStream phenomenonToStyleMapping = getClass().getResourceAsStream("/phenomenonToStyle.json");
 		try {
-			ObjectMapper om = new ObjectMapper();
-			PreRenderingConfiguration[] configurations = om.readValue(preRenderingConfigurations, PreRenderingConfiguration[].class);
-			Map<String, StyleProperties> phenStyleMap = om.readValue(phenomenonToStyleMapping, new TypeReference<Map<String, StyleProperties>>() {}); 
+            PreRenderingConfiguration[] configurations = getPrerenderingConfiguration();
+			Map<String, StyleProperties> phenStyleMap = getPhenomenonToStyleMapping();
 			for (PreRenderingConfiguration config : configurations) {
 				String timeseriesId = config.getTimeseriesId();
+				
 				for (String interval : config.getInterval()) {
 					
-					// create timespan
-			        String timespan = null;
-			        DateTime now = new DateTime();
-			        if (interval.equals("lastDay")) {
-			        	timespan = new Interval(now.minusDays(1), now).toString();
-			        } else if (interval.equals("lastWeek")) {
-			        	timespan = new Interval(now.minusWeeks(1), now).toString();
-			        } else if (interval.equals("lastMonth")) {
-						timespan = new Interval(now.minusMonths(1), now).toString();
-					} else {
-						throw new ResourceNotFoundException("Unknown interval definition '" + interval + "' for timeseriesId " + timeseriesId);
-					}
-			        
+			        String timespan = createTimespanFromInterval(timeseriesId, interval);
 			        TimeseriesMetadataOutput metadata = timeseriesMetadataService.getParameter(timeseriesId);
 			        String phenomenon = metadata.getParameters().getPhenomenon().getLabel();
-			        StyleProperties style;
+			        
+			        StyleProperties style = null;
 			        if (phenStyleMap.containsKey(phenomenon)) {
 			        	style = phenStyleMap.get(phenomenon);
 			        } else {
 			        	style = config.getStyle();
 			        }
-			        if (style == null) {
-						LOGGER.error("No style propertie defined for timeseries " + timeseriesId + " with phenomenon " + phenomenon); 
-					}
 			        
 			        RenderingContext context = createContextForSingleTimeseries(metadata, style, timespan);
 			        context.setDimensions(width, height);
@@ -105,18 +94,20 @@ public class PreRenderingTask extends TimerTask implements ServletConfigAware {
 			                .inLanguage(language)
 			                .showGrid(showGrid)
 			                .createIOHandler(context);
+			        
+                    FileOutputStream fos = createFile(timeseriesId, interval);
 			        try {
-			        	File file = new File(createFileName(timeseriesId, interval));
-			        	file.createNewFile();
-						FileOutputStream fos = new FileOutputStream(file);
 						renderer.generateOutput(getTimeseriesData(parameters));
 						renderer.encodeAndWriteTo(fos);
-						fos.flush();
-						fos.close();
-					} catch (IOException e) {
-						LOGGER.error("Error while creating image file", e);
 					} catch (TimeseriesIOException e) {
-						LOGGER.error("Image creation occures error", e);
+						LOGGER.error("Image creation occures error.", e);
+					} finally {
+					    try {
+                            fos.flush();
+                            fos.close();
+                        } catch (IOException e) {
+                            LOGGER.error("File stream already flushed/closed.", e);
+                        }
 					}
 				}
 			}
@@ -124,25 +115,86 @@ public class PreRenderingTask extends TimerTask implements ServletConfigAware {
 			LOGGER.error("Error while reading prerendering configuration file", e);
 		}
 	}
-	
-	private void createOutputDirectory() {
-		File dir = new File(realPath + File.separator + this.outputPath);
-		if (!dir.exists()) {
-			dir.mkdir();
-		}
-	}
 
-	private String createFileName(String timeseriesId, String interval) {
-		return realPath + File.separator + outputPath + File.separator + timeseriesId + "_" + interval + ".png";
-	}
+    private FileOutputStream createFile(String timeseriesId, String interval) throws IOException {
+        File file = createFileName(timeseriesId, interval);
+        file.createNewFile();
+        return new FileOutputStream(file);
+    }
+
+    private PreRenderingConfiguration[] getPrerenderingConfiguration() {
+        InputStream preRenderingConfigurations = getClass().getResourceAsStream("/preRenderingImages.json");
+        try {
+            ObjectMapper om = new ObjectMapper();
+            return om.readValue(preRenderingConfigurations, PreRenderingConfiguration[].class);
+        } catch (IOException e) {
+            LOGGER.error("Could not load timeseries styles. Using empty config.");
+            return new PreRenderingConfiguration[0];
+        } finally {
+            if (preRenderingConfigurations != null) {
+                try {
+                    preRenderingConfigurations.close();
+                }
+                catch (IOException e) {
+                    LOGGER.debug("Stream already closed.");
+                }
+            }
+        }
+    }
+    
+    private Map<String, StyleProperties> getPhenomenonToStyleMapping() {
+        InputStream phenomenonToStyleMapping = getClass().getResourceAsStream("/phenomenonToStyle.json");
+        try {
+            ObjectMapper om = new ObjectMapper();
+            return om.readValue(phenomenonToStyleMapping, new TypeReference<Map<String, StyleProperties>>() {});
+        } catch (IOException e) {
+            LOGGER.error("Could not load phenomenon styles. Using empty config.");
+            return new HashMap<String, StyleProperties>();
+        } finally {
+            if (phenomenonToStyleMapping != null) {
+                try {
+                    phenomenonToStyleMapping.close();
+                }
+                catch (IOException e) {
+                    LOGGER.debug("Stream already closed.");
+                }
+            }
+        }
+    }
+
+    private String createTimespanFromInterval(String timeseriesId, String interval) {
+        DateTime now = new DateTime();
+        if (interval.equals("lastDay")) {
+        	return new Interval(now.minusDays(1), now).toString();
+        } else if (interval.equals("lastWeek")) {
+        	return new Interval(now.minusWeeks(1), now).toString();
+        } else if (interval.equals("lastMonth")) {
+        	return new Interval(now.minusMonths(1), now).toString();
+        } else {
+        	throw new ResourceNotFoundException("Unknown interval definition '" + interval + "' for timeseriesId " + timeseriesId);
+        }
+    }
 	
-	private BufferedImage loadImage(String timeseriesId, String interval)
-			throws IOException {
-		File file = new File(createFileName(timeseriesId, interval));
-		FileInputStream fis = new FileInputStream(file);
+	private BufferedImage loadImage(String timeseriesId, String interval) throws IOException {
+		FileInputStream fis = new FileInputStream(createFileName(timeseriesId, interval));
 		return ImageIO.read(fis);
 	}
 
+    private File createFileName(String timeseriesId, String interval) {
+        String outputDirectory = getOutputFolder();
+        String filename = timeseriesId + "_" + interval + ".png";
+        return new File(outputDirectory + filename);
+    }
+
+    private String getOutputFolder() {
+        String outputDirectory = webappFolder + File.separator + outputPath + File.separator;
+        File dir = new File(outputDirectory);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        return outputDirectory;
+    }
+    
 	private TimeseriesDataCollection getTimeseriesData(UndesignedParameterSet parameters) {
         Stopwatch stopwatch = startStopwatch();
         TimeseriesDataCollection timeseriesData = timeseriesDataService.getTimeseriesData(parameters);
@@ -150,13 +202,14 @@ public class PreRenderingTask extends TimerTask implements ServletConfigAware {
         return timeseriesData;
     }
 	
-	public void closeGracefully() {
+	// destroy method
+	public void shutdownTask() {
 		LOGGER.info("Shut down prerendering task");
 		this.cancel();
 	}
 
 	public boolean hasPrerenderedImage(String timeseriesId, String interval) {
-		File name = new File(createFileName(timeseriesId, interval));
+		File name = createFileName(timeseriesId, interval);
 		return name.exists();
 	}
 
@@ -168,11 +221,6 @@ public class PreRenderingTask extends TimerTask implements ServletConfigAware {
 		} catch (IOException e) {
 			LOGGER.error("Error while loading pre rendered image", e);
 		}
-	}
-
-	@Override
-	public void setServletConfig(ServletConfig servletConfig) {
-		realPath = servletConfig.getServletContext().getRealPath("/");
 	}
 
 	public String getOutputPath() {

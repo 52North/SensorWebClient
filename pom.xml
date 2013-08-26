@@ -210,12 +210,6 @@
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
-				<groupId>javax.servlet</groupId>
-				<artifactId>jstl</artifactId>
-				<version>1.2</version>
-			</dependency>
-
-			<dependency>
 				<groupId>org.geotools</groupId>
 				<artifactId>gt-api</artifactId>
 				<version>${geotools.version}</version>
@@ -347,6 +341,14 @@
 				<groupId>org.eesgmbh</groupId>
 				<artifactId>gimv</artifactId>
 				<version>0.4.2</version>
+			</dependency>
+
+
+			<!-- ############ TIMESERIES REST API DEPENDENCIES ########## -->
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-math</artifactId>
+				<version>2.1</version>
 			</dependency>
 
 			<dependency>
