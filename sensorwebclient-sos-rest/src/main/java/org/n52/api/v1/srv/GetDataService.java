@@ -39,7 +39,7 @@ import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
-import org.n52.web.InternalServiceException;
+import org.n52.web.InternalServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +64,7 @@ public class GetDataService extends DataService {
         return performTimeseriesDataRequest(timeseriesCollection, createDesignOptions(parameterSet, tsProperties));
     }
 
-    private TimeseriesDataCollection performTimeseriesDataRequest(TimeseriesDataCollection timeSeriesResults, DesignOptions options) throws InternalServiceException {
+    private TimeseriesDataCollection performTimeseriesDataRequest(TimeseriesDataCollection timeSeriesResults, DesignOptions options) throws InternalServerException {
         try {
             TimeSeriesDataRequest tsRequest = new TimeSeriesDataRequest(options);
             TimeSeriesDataResponse timeSeriesData = timeSeriesDataService.getTimeSeriesData(tsRequest);
@@ -78,7 +78,7 @@ public class GetDataService extends DataService {
         }
         catch (Exception e) {
             LOGGER.error("Could not get timeseries data for options: " + options, e);
-            throw new InternalServiceException("Could not get timeseries data for options: " + options, e);
+            throw new InternalServerException("Could not get timeseries data for options: " + options, e);
         }
         return timeSeriesResults;
     }

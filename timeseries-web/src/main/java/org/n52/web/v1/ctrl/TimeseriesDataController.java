@@ -56,6 +56,7 @@ import org.n52.io.v1.data.TimeseriesDataCollection;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.web.BaseController;
+import org.n52.web.InternalServerException;
 import org.n52.web.ResourceNotFoundException;
 import org.n52.web.task.PreRenderingTask;
 import org.n52.web.v1.srv.ServiceParameterService;
@@ -259,14 +260,10 @@ public class TimeseriesDataController extends BaseController {
      *        the timeseries parameter to request raw data.
      * @param renderer
      *        an output renderer.
-     * @throws IOException
-     *         if low level data processing fails for some reason.
-     * @throws TimeseriesIOException
-     *         if writing binary to response stream fails.
+     * @throws InternalServerException
+     *         if data processing fails for some reason.
      */
-    private void handleBinaryResponse(HttpServletResponse response,
-                                      UndesignedParameterSet parameters,
-                                      IOHandler renderer) throws IOException, TimeseriesIOException {
+    private void handleBinaryResponse(HttpServletResponse response, UndesignedParameterSet parameters, IOHandler renderer) {
         try {
             renderer.generateOutput(getTimeseriesData(parameters));
         	if (parameters.isBase64()) {
@@ -279,13 +276,11 @@ public class TimeseriesDataController extends BaseController {
 	            renderer.encodeAndWriteTo(response.getOutputStream());
 			}
         }
-        catch (IOException e) {
-            LOGGER.error("Error handling output stream.");
-            throw e; // handled by BaseController
+        catch (IOException e) { // handled by BaseController
+            throw new InternalServerException("Error handling output stream.", e);
         }
-        catch (TimeseriesIOException e) {
-            LOGGER.error("Could not write binary to stream.");
-            throw e; // handled by BaseController
+        catch (TimeseriesIOException e) { // handled by BaseController
+            throw new InternalServerException("Could not write binary to stream.", e);
         }
     }
 
