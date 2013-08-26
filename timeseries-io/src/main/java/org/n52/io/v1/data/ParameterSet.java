@@ -34,7 +34,7 @@ public abstract class ParameterSet {
      */
     private String timespan;
     
-    private Boolean generalize;
+    private boolean generalize;
     
     protected ParameterSet() {
         timespan = createDefaultTimespan();
@@ -46,11 +46,11 @@ public abstract class ParameterSet {
         return new Interval(lastWeek, now).toString();
     }
     
-    public Boolean isGeneralize() {
+    public boolean isGeneralize() {
         return generalize;
     }
     
-    public void setGeneralize(Boolean generalize) {
+    public void setGeneralize(boolean generalize) {
         this.generalize = generalize;
     }
 

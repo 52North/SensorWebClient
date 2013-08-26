@@ -47,7 +47,6 @@ import org.joda.time.Interval;
 import org.n52.io.IOFactory;
 import org.n52.io.IOHandler;
 import org.n52.io.TimeseriesIOException;
-import org.n52.io.generalize.DouglasPeuckerGeneralizer;
 import org.n52.io.generalize.Generalizer;
 import org.n52.io.img.RenderingContext;
 import org.n52.io.v1.data.DesignedParameterSet;
@@ -57,7 +56,6 @@ import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.web.BaseController;
 import org.n52.web.ResourceNotFoundException;
 import org.n52.web.task.PreRenderingTask;
-import org.n52.web.v1.srv.GeneralizingTimeseriesDataService;
 import org.n52.web.v1.srv.ServiceParameterService;
 import org.n52.web.v1.srv.TimeseriesDataService;
 import org.n52.web.v1.srv.TimeseriesMetadataService;
@@ -108,6 +106,8 @@ public class TimeseriesDataController extends BaseController {
 
         QueryMap map = createFromQuery(query);
         UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, map.getTimespan());
+        parameters.setGeneralize(map.isGeneralize());
+        
         TimeseriesDataCollection timeseriesData = getTimeseriesData(parameters);
 
         // TODO add paging
@@ -123,6 +123,7 @@ public class TimeseriesDataController extends BaseController {
 
         QueryMap map = createFromQuery(requestParameters);
         UndesignedParameterSet parameters = createFromDesignedParameters(requestParameters);
+        parameters.setGeneralize(map.isGeneralize());
 
         String[] timeseriesIds = parameters.getTimeseries();
         TimeseriesMetadataOutput[] timeseriesMetadatas = timeseriesMetadataService.getParameters(timeseriesIds);
@@ -148,21 +149,13 @@ public class TimeseriesDataController extends BaseController {
         TimeseriesMetadataOutput metadata = timeseriesMetadataService.getParameter(timeseriesId);
         RenderingContext context = RenderingContext.createContextForSingleTimeseries(metadata, map.getStyle(), map.getTimespan());
         UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, map.getTimespan());
+        parameters.setGeneralize(map.isGeneralize());
         IOHandler renderer = IOFactory.create()
                 .forMimeType(APPLICATION_PDF)
                 .inLanguage(map.getLanguage())
                 .createIOHandler(context);
 
         handleBinaryResponse(response, parameters, renderer);
-    }
-
-    private TimeseriesDataCollection getTimeseriesData(UndesignedParameterSet parameters) {
-        Stopwatch stopwatch = startStopwatch();
-        TimeseriesDataCollection timeseriesData = parameters.isGeneralize() 
-                ? composeDataService(timeseriesDataService).getTimeseriesData(parameters)
-                : timeseriesDataService.getTimeseriesData(parameters);
-        LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());
-        return timeseriesData;
     }
 
     @RequestMapping(value = "/getData", produces = {"image/png"}, method = POST)
@@ -173,6 +166,7 @@ public class TimeseriesDataController extends BaseController {
         
         QueryMap map = createFromQuery(requestParameters);
         UndesignedParameterSet parameters = createFromDesignedParameters(requestParameters);
+        parameters.setGeneralize(map.isGeneralize());
 
         String[] timeseriesIds = parameters.getTimeseries();
         TimeseriesMetadataOutput[] timeseriesMetadatas = timeseriesMetadataService.getParameters(timeseriesIds);
@@ -198,6 +192,7 @@ public class TimeseriesDataController extends BaseController {
         context.setDimensions(map.getWidth(), map.getHeight());
 
         UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, map.getTimespan());
+        parameters.setGeneralize(map.isGeneralize());
         IOHandler renderer = IOFactory.create()
                 .inLanguage(map.getLanguage())
                 .showGrid(map.isGrid())
@@ -242,6 +237,14 @@ public class TimeseriesDataController extends BaseController {
 		}
     }
 
+    private void checkIfUnknownTimeseries(String... timeseriesIds) {
+        for (String timeseriesId : timeseriesIds) {
+            if ( !serviceParameterService.isKnownTimeseries(timeseriesId)) {
+                throw new ResourceNotFoundException("The timeseries with id '" + timeseriesId + "' was not found.");
+            }
+        }
+    }
+
     /**
      * @param response
      *        the response to write binary on.
@@ -271,12 +274,13 @@ public class TimeseriesDataController extends BaseController {
         }
     }
 
-    private void checkIfUnknownTimeseries(String... timeseriesIds) {
-        for (String timeseriesId : timeseriesIds) {
-            if ( !serviceParameterService.isKnownTimeseries(timeseriesId)) {
-                throw new ResourceNotFoundException("The timeseries with id '" + timeseriesId + "' was not found.");
-            }
-        }
+    private TimeseriesDataCollection getTimeseriesData(UndesignedParameterSet parameters) {
+        Stopwatch stopwatch = startStopwatch();
+        TimeseriesDataCollection timeseriesData = parameters.isGeneralize() 
+                ? composeDataService(timeseriesDataService).getTimeseriesData(parameters)
+                : timeseriesDataService.getTimeseriesData(parameters);
+        LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());
+        return timeseriesData;
     }
 
     public ServiceParameterService getServiceParameterService() {

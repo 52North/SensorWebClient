@@ -140,10 +140,10 @@
         </property>
     </bean>
     
-    <bean id="preRenderingTask" class="org.n52.web.task.PreRenderingTask" destroy-method="closeGracefully">
-    	<property name="outputPath" value="img/preRenderedImages"/>
+    <bean id="preRenderingTask" class="org.n52.web.task.PreRenderingTask" destroy-method="shutdownTask">
     	<property name="timeseriesMetadataService" ref="timeseriesMetadataService"/>
     	<property name="timeseriesDataService" ref="timeseriesDataService"/>
+    	<property name="outputPath" value="generated/prerendered" />
     	<property name="width" value="800"/>
     	<property name="height" value="500"/>
     	<property name="language" value="de"/>
