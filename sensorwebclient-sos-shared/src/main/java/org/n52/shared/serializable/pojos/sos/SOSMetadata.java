@@ -289,7 +289,7 @@ public class SOSMetadata implements Serializable {
     }
 
     public Collection<Station> getStations() {
-        return unmodifiableCollection(this.stations.values());
+        return this.stations.values();
     }
     
     public SosTimeseries[] getTimeseriesRelatedWith(QueryParameters parameters) {
