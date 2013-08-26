@@ -144,6 +144,10 @@
     	<property name="outputPath" value="img/preRenderedImages"/>
     	<property name="timeseriesMetadataService" ref="timeseriesMetadataService"/>
     	<property name="timeseriesDataService" ref="timeseriesDataService"/>
+    	<property name="width" value="800"/>
+    	<property name="height" value="500"/>
+    	<property name="language" value="de"/>
+    	<property name="showGrid" value="true"/>
     </bean>
 
 </beans>
