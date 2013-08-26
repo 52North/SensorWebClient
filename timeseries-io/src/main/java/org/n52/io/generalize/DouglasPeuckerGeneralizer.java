@@ -116,6 +116,7 @@ public class DouglasPeuckerGeneralizer implements Generalizer {
 
         TimeseriesData generalizedTimeseries = new TimeseriesData();
         TimeseriesValue[] generalizedValues = recursiveGeneralize(timeseries);
+        generalizedTimeseries.addValues(generalizedValues);
 
         // add first element if new list is empty
         if (generalizedValues.length == 0 && originalValues.length > 0) {
@@ -123,7 +124,7 @@ public class DouglasPeuckerGeneralizer implements Generalizer {
         }
 
         // add the last one if not already contained!
-        if (originalValues.length > 0) {
+        if (generalizedValues.length > 0 && originalValues.length > 0) {
             TimeseriesValue lastOriginialValue = originalValues[originalValues.length - 1];
             TimeseriesValue lastGeneralizedValue = generalizedValues[generalizedValues.length - 1];
             if (lastGeneralizedValue.getTimestamp() != lastOriginialValue.getTimestamp()) {
@@ -154,21 +155,20 @@ public class DouglasPeuckerGeneralizer implements Generalizer {
             }
         }
 
-        TimeseriesData generalizedData = new TimeseriesData();
-
         if (maxDist < toleranceValue) {
-            timeseries.getValues();
+            return timeseries.getValues();
         } else {
             // split and handle both parts separately
+            TimeseriesData generalizedData = new TimeseriesData();
             TimeseriesData firstPartToBeGeneralized = new TimeseriesData();
             TimeseriesData restPartToBeGeneralized = new TimeseriesData();
             firstPartToBeGeneralized.addValues(Arrays.copyOfRange(values, 0, index));
             restPartToBeGeneralized.addValues(Arrays.copyOfRange(values, index + 1, values.length));
             generalizedData.addValues(recursiveGeneralize(firstPartToBeGeneralized));
             generalizedData.addValues(recursiveGeneralize(restPartToBeGeneralized));
+            return generalizedData.getValues();
         }
 
-        return generalizedData.getValues();
     }
 
     private double calculateDistance(Line2D.Double line, TimeseriesValue timeseriesValue) {
