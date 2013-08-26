@@ -36,9 +36,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.io.IOException;
+import java.util.Timer;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.n52.io.IOFactory;
 import org.n52.io.IOHandler;
 import org.n52.io.TimeseriesIOException;
@@ -49,6 +52,7 @@ import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.web.BaseController;
 import org.n52.web.ResourceNotFoundException;
+import org.n52.web.task.PreRenderingTask;
 import org.n52.web.v1.srv.ServiceParameterService;
 import org.n52.web.v1.srv.TimeseriesDataService;
 import org.n52.web.v1.srv.TimeseriesMetadataService;
@@ -73,7 +77,9 @@ public class TimeseriesDataController extends BaseController {
     private TimeseriesMetadataService timeseriesMetadataService;
 
     private TimeseriesDataService timeseriesDataService;
-
+    
+    private PreRenderingTask preRenderingTask;
+    
     @RequestMapping(value = "/getData", produces = {"application/json"}, method = POST)
     public ModelAndView getTimeseriesCollectionData(HttpServletResponse response,
                                                     @RequestBody UndesignedParameterSet parameters) throws Exception {
@@ -188,6 +194,43 @@ public class TimeseriesDataController extends BaseController {
                 .createIOHandler(context);
         handleBinaryResponse(response, parameters, renderer);
     }
+    
+    @RequestMapping(value = "/{timeseriesId}/{interval}", produces = {"image/png"}, method = GET)
+    public void getTimeseriesChartByInterval(HttpServletResponse response,
+                                   @PathVariable String timeseriesId,
+                                   @PathVariable String interval,
+                                   @RequestParam(required = false) MultiValueMap<String, String> query) throws Exception {
+    	// use a configurable pre rendering of some images, so the prerendering task delivers the images
+    	if (preRenderingTask.hasPrerenderedImage(timeseriesId, interval)) {
+			preRenderingTask.writeToOS(timeseriesId, interval, response.getOutputStream());
+		} else {
+			checkIfUnknownTimeseries(timeseriesId);
+	        QueryMap map = createFromQuery(query);
+	        
+	        String timespan = null;
+	        DateTime now = new DateTime();
+	        if (interval.equals("lastDay")) {
+	        	timespan = new Interval(now.minusDays(1), now).toString();
+	        } else if (interval.equals("lastWeek")) {
+	        	timespan = new Interval(now.minusWeeks(1), now).toString();
+	        } else if (interval.equals("lastMonth")) {
+				timespan = new Interval(now.minusMonths(1), now).toString();
+			} else {
+				throw new ResourceNotFoundException("Unknown resouce: " + timeseriesId + "/" + interval);
+			}
+	        
+	        TimeseriesMetadataOutput metadata = timeseriesMetadataService.getParameter(timeseriesId);
+	        RenderingContext context = createContextForSingleTimeseries(metadata, map.getStyle(), timespan);
+	        context.setDimensions(map.getWidth(), map.getHeight());
+
+	        UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, map.getTimespan());
+	        IOHandler renderer = IOFactory.create()
+	                .inLanguage(map.getLanguage())
+	                .showGrid(map.isGrid())
+	                .createIOHandler(context);
+	        handleBinaryResponse(response, parameters, renderer);
+		}
+    }
 
     /**
      * @param response
@@ -249,5 +292,21 @@ public class TimeseriesDataController extends BaseController {
     public void setTimeseriesDataService(TimeseriesDataService timeseriesDataService) {
         this.timeseriesDataService = timeseriesDataService;
     }
+
+	public PreRenderingTask getPreRenderingTask() {
+		return preRenderingTask;
+	}
+
+	public void setPreRenderingTask(PreRenderingTask prerenderingTask) {
+		this.preRenderingTask = prerenderingTask;
+		startRenderingTask();
+	}
+
+	private void startRenderingTask() {
+		Timer timer = new Timer();
+    	if (preRenderingTask != null) {
+    		timer.schedule(preRenderingTask, 10000);
+		}
+	}
 
 }
