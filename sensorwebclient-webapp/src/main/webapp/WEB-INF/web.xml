@@ -222,11 +222,6 @@
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
 
-	<error-page>
-		<exception-type>java.lang.Exception</exception-type>
-	</error-page>
-
-
 	<!-- SES specific Servlets. Comment them out if SES is not needed in the 
 		client. -->
 
