@@ -25,6 +25,7 @@
 package org.n52.web.v1.ctrl;
 
 import static org.n52.io.MimeType.APPLICATION_PDF;
+import static org.n52.io.generalize.DouglasPeuckerGeneralizer.createNonConfigGeneralizer;
 import static org.n52.io.img.RenderingContext.createContextForSingleTimeseries;
 import static org.n52.io.v1.data.UndesignedParameterSet.createForSingleTimeseries;
 import static org.n52.io.v1.data.UndesignedParameterSet.createFromDesignedParameters;
@@ -32,6 +33,7 @@ import static org.n52.web.v1.ctrl.QueryMap.createFromQuery;
 import static org.n52.web.v1.ctrl.RestfulUrls.COLLECTION_TIMESERIES;
 import static org.n52.web.v1.ctrl.RestfulUrls.DEFAULT_PATH;
 import static org.n52.web.v1.ctrl.Stopwatch.startStopwatch;
+import static org.n52.web.v1.srv.GeneralizingTimeseriesDataService.composeDataService;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -45,6 +47,8 @@ import org.joda.time.Interval;
 import org.n52.io.IOFactory;
 import org.n52.io.IOHandler;
 import org.n52.io.TimeseriesIOException;
+import org.n52.io.generalize.DouglasPeuckerGeneralizer;
+import org.n52.io.generalize.Generalizer;
 import org.n52.io.img.RenderingContext;
 import org.n52.io.v1.data.DesignedParameterSet;
 import org.n52.io.v1.data.TimeseriesDataCollection;
@@ -53,6 +57,7 @@ import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.web.BaseController;
 import org.n52.web.ResourceNotFoundException;
 import org.n52.web.task.PreRenderingTask;
+import org.n52.web.v1.srv.GeneralizingTimeseriesDataService;
 import org.n52.web.v1.srv.ServiceParameterService;
 import org.n52.web.v1.srv.TimeseriesDataService;
 import org.n52.web.v1.srv.TimeseriesMetadataService;
@@ -87,8 +92,11 @@ public class TimeseriesDataController extends BaseController {
         checkIfUnknownTimeseries(parameters.getTimeseries());
 
         TimeseriesDataCollection timeseriesData = getTimeseriesData(parameters);
-
-        return new ModelAndView().addObject(timeseriesData);
+        if (parameters.isGeneralize()) {
+            Generalizer generalizer = createNonConfigGeneralizer(timeseriesData);
+            timeseriesData = generalizer.generalize();
+        }
+        return new ModelAndView().addObject(timeseriesData.getAllTimeseries());
     }
 
     @RequestMapping(value = "/{timeseriesId}/getData", produces = {"application/json"}, method = GET)
@@ -150,7 +158,9 @@ public class TimeseriesDataController extends BaseController {
 
     private TimeseriesDataCollection getTimeseriesData(UndesignedParameterSet parameters) {
         Stopwatch stopwatch = startStopwatch();
-        TimeseriesDataCollection timeseriesData = timeseriesDataService.getTimeseriesData(parameters);
+        TimeseriesDataCollection timeseriesData = parameters.isGeneralize() 
+                ? composeDataService(timeseriesDataService).getTimeseriesData(parameters)
+                : timeseriesDataService.getTimeseriesData(parameters);
         LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());
         return timeseriesData;
     }

@@ -34,6 +34,8 @@ public abstract class ParameterSet {
      */
     private String timespan;
     
+    private Boolean generalize;
+    
     protected ParameterSet() {
         timespan = createDefaultTimespan();
     }
@@ -42,6 +44,14 @@ public abstract class ParameterSet {
         DateTime now = new DateTime();
         DateTime lastWeek = now.minusWeeks(1);
         return new Interval(lastWeek, now).toString();
+    }
+    
+    public Boolean isGeneralize() {
+        return generalize;
+    }
+    
+    public void setGeneralize(Boolean generalize) {
+        this.generalize = generalize;
     }
 
     public String getTimespan() {

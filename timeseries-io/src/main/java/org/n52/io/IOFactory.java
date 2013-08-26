@@ -39,8 +39,10 @@ public class IOFactory {
     private boolean tooltips = false;
 
     private boolean drawLegend = false;
-
+    
     private boolean showGrid = true;
+    
+    private boolean generalize = false;
 
     private MimeType mimeType = IMAGE_PNG;
 
@@ -87,6 +89,16 @@ public class IOFactory {
         return this;
     }
 
+    /**
+     * @param generalize
+     *        <code>true</code> if renderer shall generalize data (default is <code>false</code>).
+     * @return this instance for parameter chaining.
+     */
+    public IOFactory generalize(boolean generalize) {
+        this.generalize = generalize;
+        return this;
+    }
+    
     /**
      * @param drawLegend
      *        <code>true</code> if a legend shall be drawn (default is <code>false</code>).
@@ -143,6 +155,7 @@ public class IOFactory {
         MultipleChartsRenderer chartRenderer = new MultipleChartsRenderer(context, language);
         chartRenderer.setShowTooltips(tooltips);
         chartRenderer.setDrawLegend(drawLegend);
+        chartRenderer.setGeneralize(generalize);
         chartRenderer.setMimeType(mimeType);
         chartRenderer.setShowGrid(showGrid);
         return chartRenderer;
