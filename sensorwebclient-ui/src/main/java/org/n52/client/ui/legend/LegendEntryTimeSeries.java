@@ -105,7 +105,7 @@ import com.smartgwt.client.widgets.layout.VLayout;
 public class LegendEntryTimeSeries extends Layout implements LegendElement {
 	
 	//@TODO: In properties-Datei auslagern!
-	public final static String STATION_DESCRIPTION_URL="http://zdm-ahu/appl/bs/Main.php?do=details&TPL2CALL=station&THEMA_ID=ALL&WAGIS_OBJID=";
+	public final static String STATION_DESCRIPTION_URL="/appl/bs/Main.php?do=details&TPL2CALL=station&THEMA_ID=ALL&WAGIS_OBJID=";
 
 	private static final String LINE_STYLE_LINE_DOTS = "5";
 

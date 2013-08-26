@@ -286,6 +286,23 @@ public class StationSelector extends Window {
     private Canvas createInformationFieldForSelectedStation() {
         VLayout layout = new VLayout();
         timeseriesInfoHTMLPane = new HTMLPane();
+		Station station = controller.getSelectedStation();
+		
+		if (station!=null) {
+	        String stationName = station.getId();
+			String stationId = stationName;
+			if (stationName.contains("/")) {
+				String[] nameSplitted = stationName.split("/");
+				stationId = nameSplitted[nameSplitted.length-1];
+			}
+			
+			String stationUrl = LegendEntryTimeSeries.STATION_DESCRIPTION_URL+stationId;
+			timeseriesInfoHTMLPane.setContentsURL(stationUrl);
+			timeseriesInfoHTMLPane.setContentsType(ContentsType.PAGE);
+			//timeseriesInfoHTMLPane.setContents(stationUrl);
+			timeseriesInfoHTMLPane.show();
+		}
+        
         phenomenonBox = new SelectItem(i18n.phenomenonLabel());
         phenomenonBox.addChangedHandler(new ChangedHandler() {
 			@Override
@@ -364,18 +381,22 @@ public class StationSelector extends Window {
 
 	public void updateProcedureDetailsURL(String url) {
 		final Station station = controller.getSelectedStation();
-		//final TimeSeries ts = controller.getSelectedTimeseries();
+		//final SosTimeseries ts = controller.getSelectedTimeseries();
+		//String proc = "I:"+controller.getSelectedFeatureId();
 		
 		String stationName = station.getId();
 		String stationId = stationName;
-		if (stationName.contains(":")) {
-			String[] nameSplitted = stationName.split(":");
+		if (stationName.contains("/")) {
+			String[] nameSplitted = stationName.split("/");
 			stationId = nameSplitted[nameSplitted.length-1];
 		}
 		
+				
 		String stationUrl = LegendEntryTimeSeries.STATION_DESCRIPTION_URL+stationId;
+		//proc = proc+"<hr/>"+stationUrl;
 		timeseriesInfoHTMLPane.setContentsURL(stationUrl);
 		timeseriesInfoHTMLPane.setContentsType(ContentsType.PAGE);
+		//timeseriesInfoHTMLPane.setContents(proc);
 		timeseriesInfoHTMLPane.show();
 		
 		applyCancel.finishLoading();
