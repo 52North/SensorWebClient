@@ -1,8 +1,10 @@
-target
+target/
 .classpath
 .project
 .externalToolBuilders
 .settings
-META-INF
+META-INF/
 bin/
 /sensorwebclient-ui/.gwt/.gwt-log
+gwt-unitCache/
+war/

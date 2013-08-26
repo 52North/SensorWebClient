@@ -398,5 +398,7 @@ public interface I18N extends Constants {
 	String logout();
 
     String logoutSuccessful();
+    
+    String diagramAxisLabelTime();
 	
 }

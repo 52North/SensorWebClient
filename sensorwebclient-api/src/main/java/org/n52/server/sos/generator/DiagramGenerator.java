@@ -164,12 +164,10 @@ public class DiagramGenerator extends Generator {
      */
     private DesignDescriptionList buildUpDesignDescriptionList(DesignOptions options) {
 
-        String domainAxisLabel;
-        if (options.getLanguage() != null && options.getLanguage().equals("de")) {
-            domainAxisLabel = "Zeit";
-        } else { // default => "en"
-            domainAxisLabel = "Time";
-        }
+    	// ZDM#812 Englische Bezeichnungen sind anzupassen
+    	// TODO i18n nutzen
+        //String domainAxisLabel = i18n.diagramAxisLabelTime();
+        String domainAxisLabel = "Zeit";
 
         DesignDescriptionList ddList = new DesignDescriptionList(domainAxisLabel);
         String observedPropertyWithGrid = options.getProperties().get(0).getPhenomenon();
