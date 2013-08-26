@@ -104,7 +104,7 @@ public abstract class ChartRenderer implements IOHandler {
         try {
             JPEGImageWriteParam p = new JPEGImageWriteParam(null);
             p.setCompressionMode(JPEGImageWriteParam.MODE_DEFAULT);
-            write(drawChartToImage(), mimeType.getFormatName(), stream);
+        	write(drawChartToImage(), mimeType.getFormatName(), stream);
         }
         catch (IOException e) {
             throw new TimeseriesIOException("Could not write image to output stream.", e);

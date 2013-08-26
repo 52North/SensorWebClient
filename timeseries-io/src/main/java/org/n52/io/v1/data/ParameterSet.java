@@ -34,6 +34,8 @@ public abstract class ParameterSet {
      */
     private String timespan;
     
+    private boolean base64;
+    
     protected ParameterSet() {
         timespan = createDefaultTimespan();
     }
@@ -57,7 +59,15 @@ public abstract class ParameterSet {
         }
     }
 
-    private String validateTimespan(String timespan) {
+    public boolean isBase64() {
+		return base64;
+	}
+
+	public void setBase64(boolean base64) {
+		this.base64 = base64;
+	}
+
+	private String validateTimespan(String timespan) {
         return Interval.parse(timespan).toString();
     }
 

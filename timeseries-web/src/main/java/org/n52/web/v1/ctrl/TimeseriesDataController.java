@@ -35,11 +35,13 @@ import static org.n52.web.v1.ctrl.Stopwatch.startStopwatch;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Timer;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.n52.io.IOFactory;
@@ -140,6 +142,8 @@ public class TimeseriesDataController extends BaseController {
         TimeseriesMetadataOutput metadata = timeseriesMetadataService.getParameter(timeseriesId);
         RenderingContext context = RenderingContext.createContextForSingleTimeseries(metadata, map.getStyle(), map.getTimespan());
         UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, map.getTimespan());
+        
+
         IOHandler renderer = IOFactory.create()
                 .forMimeType(APPLICATION_PDF)
                 .inLanguage(map.getLanguage())
@@ -188,6 +192,9 @@ public class TimeseriesDataController extends BaseController {
         context.setDimensions(map.getWidth(), map.getHeight());
 
         UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, map.getTimespan());
+        
+
+        parameters.setBase64(map.isBase64());
         IOHandler renderer = IOFactory.create()
                 .inLanguage(map.getLanguage())
                 .showGrid(map.isGrid())
@@ -224,6 +231,8 @@ public class TimeseriesDataController extends BaseController {
 	        context.setDimensions(map.getWidth(), map.getHeight());
 
 	        UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, map.getTimespan());
+	        
+	        parameters.setBase64(map.isBase64());
 	        IOHandler renderer = IOFactory.create()
 	                .inLanguage(map.getLanguage())
 	                .showGrid(map.isGrid())
@@ -249,7 +258,15 @@ public class TimeseriesDataController extends BaseController {
                                       IOHandler renderer) throws IOException, TimeseriesIOException {
         try {
             renderer.generateOutput(getTimeseriesData(parameters));
-            renderer.encodeAndWriteTo(response.getOutputStream());
+        	if (parameters.isBase64()) {
+            	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	            renderer.encodeAndWriteTo(baos);
+                byte[] imageData = baos.toByteArray();
+                byte[] encode = Base64.encodeBase64(imageData);
+                response.getOutputStream().write(encode);
+			} else {
+	            renderer.encodeAndWriteTo(response.getOutputStream());
+			}
         }
         catch (IOException e) {
             LOGGER.error("Error handling output stream.");
