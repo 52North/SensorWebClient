@@ -34,6 +34,7 @@ import static javax.imageio.ImageIO.write;
 import static org.jfree.chart.ChartFactory.createTimeSeriesChart;
 import static org.n52.io.I18N.getDefaultLocalizer;
 import static org.n52.io.I18N.getMessageLocalizer;
+import static org.n52.io.generalize.DouglasPeuckerGeneralizer.createNonConfigGeneralizer;
 import static org.n52.io.img.BarRenderer.BAR_CHART_TYPE;
 import static org.n52.io.img.ChartRenderer.LabelConstants.COLOR;
 import static org.n52.io.img.ChartRenderer.LabelConstants.FONT_DOMAIN;
@@ -62,6 +63,7 @@ import org.n52.io.I18N;
 import org.n52.io.IOHandler;
 import org.n52.io.MimeType;
 import org.n52.io.TimeseriesIOException;
+import org.n52.io.generalize.GeneralizerException;
 import org.n52.io.v1.data.DesignedParameterSet;
 import org.n52.io.v1.data.PhenomenonOutput;
 import org.n52.io.v1.data.StyleProperties;
@@ -77,19 +79,21 @@ public abstract class ChartRenderer implements IOHandler {
 
     protected I18N i18n = getDefaultLocalizer();
 
-    private JFreeChart chart;
-
-    private XYPlot xyPlot;
-
     private RenderingContext context;
+
+    private boolean showTooltips;
 
     private MimeType mimeType;
 
     private boolean drawLegend;
+    
+    private boolean generalize;
 
     private boolean showGrid;
+    
+    private JFreeChart chart;
 
-    private boolean showTooltips;
+    private XYPlot xyPlot;
 
     public ChartRenderer(RenderingContext context, String language) {
         if (language != null) {
@@ -130,7 +134,7 @@ public abstract class ChartRenderer implements IOHandler {
         chart.draw(chartGraphics, new Rectangle2D.Float(0, 0, width, height));
         return chartImage;
     }
-
+    
     public XYPlot getXYPlot() {
         if (xyPlot == null) {
             this.xyPlot = createChart(context);
@@ -156,6 +160,14 @@ public abstract class ChartRenderer implements IOHandler {
 
     public void setDrawLegend(boolean drawLegend) {
         this.drawLegend = drawLegend;
+    }
+    
+    public boolean isGeneralize() {
+        return generalize;
+    }
+    
+    public void setGeneralize(boolean generalize) {
+        this.generalize = generalize;
     }
 
     public boolean isShowGrid() {

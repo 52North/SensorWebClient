@@ -34,6 +34,12 @@ public class TimeseriesData {
 
     private List<TimeseriesValue> values = new ArrayList<TimeseriesValue>();
 
+    public void addValues(TimeseriesValue... values) {
+        if (values != null) {
+            this.values.addAll(Arrays.asList(values));
+        }
+    }
+
     /**
      * @param values
      *        the timestamp &lt;-&gt; value map.
@@ -59,7 +65,7 @@ public class TimeseriesData {
     void setValues(TimeseriesValue[] values) {
         this.values = Arrays.asList(values);
     }
-
+    
     private void addNewValue(Long timestamp, Double value) {
         values.add(new TimeseriesValue(timestamp, value));
     }

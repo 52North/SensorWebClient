@@ -61,10 +61,6 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>jstl</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>${logback.version}</version>
@@ -192,7 +188,7 @@
 						<artifactItem>
 							<groupId>${project.groupId}</groupId>
 							<artifactId>timeseries-web</artifactId>
-							<includes>*.xml</includes>
+							<includes>*.xml,*.json</includes>
 							<!-- tmp files will be copied into WEB-INF/classes -->
 							<outputDirectory>src/main/tmp</outputDirectory>
 							<overWrite>true</overWrite>
