@@ -161,7 +161,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
 
     protected HLayout controlButtons;
 
-	private HLayout buttonLayout;
+	private VLayout buttonLayout;
 	
 	private InteractionWindow diagramInteractionMenu;
 
@@ -714,7 +714,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
 		});
 		DiagramTab.layout.addChild(expandDiagramInteractionMenuButton);
 
-        buttonLayout = new HLayout();
+        buttonLayout = new VLayout();
         buttonLayout.setStyleName("n52_sensorweb_client_diagramInteractionMenu");
         
         HLayout buttonLayout1 = new HLayout();
@@ -847,48 +847,46 @@ public abstract class DataControlsTimeSeries extends DataControls {
 
 	
 	private Canvas createDatePickerForm() {
-		
-		
-		
+
 		DateTimeItem datePickerStart = new DateTimeItem(DATE_PICKER_START_NAME);
 		datePickerStart.setDisplayFormat(DateDisplayFormat.TOEUROPEANSHORTDATETIME);
-		datePickerStart.setWidth(150);
+		datePickerStart.setWidth(120);
 		datePickerStart.setTitle(i18n.datePickerStart());
 
 		DateTimeItem datePickerEnd = new DateTimeItem(DATE_PICKER_END_NAME);
 		datePickerEnd.setDisplayFormat(DateDisplayFormat.TOEUROPEANSHORTDATETIME);
-		datePickerEnd.setWidth(150);
+		datePickerEnd.setWidth(120);
 		datePickerEnd.setTitle(i18n.datePickerEnd());
-		
-		SubmitItem datePickerSubmit = new SubmitItem();
-		datePickerSubmit.setTitle(i18n.datePickerSubmit());
-		
+
+		SubmitItem datePickerSubmitButton = new SubmitItem();
+		datePickerSubmitButton.setTitle(i18n.datePickerSubmit());
+
 		DynamicForm datePickerForm = new DynamicForm();
+		datePickerForm.setTitle(i18n.datePickerTitle());
 		datePickerForm.setStyleName("n52_sensorweb_client_PickDateForm");
 		datePickerForm.setNumCols(2);
-		datePickerForm.setFields(datePickerStart, datePickerEnd, datePickerSubmit);
 		datePickerForm.setHeight("*");
 		datePickerForm.addSubmitValuesHandler(new SubmitValuesHandler() {
-			
+
 			@Override
 			public void onSubmitValues(SubmitValuesEvent event) {
 
 				long start = 0;
 				long end = 0;
-				try{
+				try {
 					DateTimeItem dateTimeStart = (DateTimeItem) event.getForm().getField(DATE_PICKER_START_NAME);
 					DateTimeItem dateTimeEnd = (DateTimeItem) event.getForm().getField(DATE_PICKER_END_NAME);
-					
+
 					start = ((Date) dateTimeStart.getValue()).getTime();
 					end = ((Date) dateTimeEnd.getValue()).getTime();
-					
-					EventBus.getMainEventBus().fireEvent(new DatesChangedEvent(start,end));				
-				}catch(ClassCastException e){
+
+					EventBus.getMainEventBus().fireEvent( new DatesChangedEvent(start, end) );
+				} catch (ClassCastException e) {
 				}
 			}
 		});
-        return datePickerForm;
-		
+		return datePickerForm;
+
 	}
 
 	
@@ -1370,7 +1368,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
         return this.refresh;
     }
 
-	public HLayout getButtonLayout() {
+	public Layout getButtonLayout() {
 		return buttonLayout;
 	}
 	
