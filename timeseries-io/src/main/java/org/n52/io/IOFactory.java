@@ -39,7 +39,7 @@ public class IOFactory {
     private boolean tooltips = false;
 
     private boolean drawLegend = false;
-
+    
     private boolean showGrid = true;
 
     private MimeType mimeType = IMAGE_PNG;
@@ -86,7 +86,7 @@ public class IOFactory {
         this.showGrid = showGrid;
         return this;
     }
-
+    
     /**
      * @param drawLegend
      *        <code>true</code> if a legend shall be drawn (default is <code>false</code>).
