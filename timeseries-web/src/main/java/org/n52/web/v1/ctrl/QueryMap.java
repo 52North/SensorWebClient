@@ -130,6 +130,17 @@ public class QueryMap {
      */
     private static final boolean DEFAULT_GRID = true;
 
+
+    /**
+     * If a rendered chart shall be written as base64 encoded string.
+     */
+    private static final String BASE_64 = "base64";
+
+    /**
+     * Defaults to binary output.
+     */
+    private static final boolean DEFAULT_BASE_64 = false;
+
     /**
      * Determines the generalize flag.
      */
@@ -235,6 +246,13 @@ public class QueryMap {
             return DEFAULT_HEIGHT;
         }
         return parseFirstIntegerOfParameter(HEIGHT);
+    }
+    
+    public boolean isBase64() {
+        if ( !query.containsKey(BASE_64)) {
+            return DEFAULT_BASE_64;
+        }
+        return parseFirstBooleanOfParameter(BASE_64);
     }
 
     public boolean isGrid() {

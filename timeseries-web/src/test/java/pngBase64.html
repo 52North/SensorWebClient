@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
+</script>
+<script>
+$(document).ready(function(){
+	$.get("api/v1/timeseries/ts_5b7a83b346444f2669ebdd51e6211e2/lastWeek", function(data) {
+		debugger;
+		var test = document.getElementsByClassName("test")[0];
+		test.innerHTML = "<img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==\" alt=\"Red dot\" />";
+	}).fail(function() {
+		alert("error"); 
+	});
+});
+</script>
+</head>
+
+<body>
+<div class="test">
+		loading ...
+	</div>
+</body>
+</html>
