@@ -398,5 +398,8 @@ public interface I18N extends Constants {
     String logoutSuccessful();
     
     String diagramAxisLabelTime();
-	
+    
+    String datePickerStart();
+    String datePickerEnd();
+    String datePickerSubmit();
 }
