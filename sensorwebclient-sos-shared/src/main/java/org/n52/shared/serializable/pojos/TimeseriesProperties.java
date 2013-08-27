@@ -77,12 +77,9 @@ public class TimeseriesProperties implements Serializable {
 
 	private boolean isHasData = false;
 
-	private ScaleType scaleType = ScaleType.AUTO;
+	private Scale scale = new Scale();
 	
-	public enum ScaleType{
-		ZERO, AUTO, MANUAL
-	}
-	
+
 	public boolean hasData() {
 		return this.isHasData;
 	}
@@ -122,13 +119,13 @@ public class TimeseriesProperties implements Serializable {
 	}
 
 	public TimeseriesProperties(SosTimeseries timeseries, Station station,
-			int width, int height, String uom, ScaleType scaleType) {
+			int width, int height, String uom, Scale scale) {
 	    this.timeseries = timeseries;
         this.station = station;
         this.width = width;
         this.height = height;
 		this.station = station;
-		this.setScaleType(scaleType);
+		this.setScale(scale);
         this.uom = uom;
 	}
 
@@ -137,7 +134,7 @@ public class TimeseriesProperties implements Serializable {
 	public TimeseriesProperties copy() {
 		TimeseriesProperties result = new TimeseriesProperties(this.timeseries, this.station, 
 		                                                       this.width, this.height, this.uom, 
-		                                                       this.scaleType);
+		                                                       this.scale);
 		result.setAxisData(this.axis); // XXX this is not a deep copy! => CBR
 		TimeseriesRenderingOptions options = new TimeseriesRenderingOptions();
 		options.setColor(renderingOptions.getColor());
@@ -148,7 +145,7 @@ public class TimeseriesProperties implements Serializable {
 		result.setLineStyle(this.lineStyle);
 		result.setMetadataUrl(this.metadataUrl);
 		result.setOpacity(this.opacity);
-		result.setScaleType(this.scaleType);
+		result.setScale(this.scale);
 		result.setShowYAxis(this.isYAxisVisible);
 		result.setStationName(this.stationName);
 		result.setUnitOfMeasure(this.uom);
@@ -209,12 +206,12 @@ public class TimeseriesProperties implements Serializable {
 		return this.metadataUrl;
 	}
 
-	public void setScaleType( ScaleType scaleType ){
-		this.scaleType = scaleType;
+	public void setScale( Scale scale ){
+		this.scale = scale;
 	}
 	
-	public ScaleType getScaleType(){
-		return this.scaleType;
+	public Scale getScale(){
+		return this.scale;
 	}
 	
 	/**
@@ -222,7 +219,7 @@ public class TimeseriesProperties implements Serializable {
 	 * @deprecated
 	 */
 	public boolean isAutoScale() {
-		return this.scaleType == ScaleType.AUTO;
+		return this.scale.isAuto();
 	}
 
 	/**
@@ -233,7 +230,7 @@ public class TimeseriesProperties implements Serializable {
 	 * @deprecated
 	 */
 	public void setAutoScale(boolean autoScale) {
-		this.scaleType = autoScale ? ScaleType.AUTO : ScaleType.ZERO;
+		this.scale.setType(autoScale ? Scale.Type.AUTO : Scale.Type.ZERO );
 	}
 
 	/**
@@ -244,7 +241,7 @@ public class TimeseriesProperties implements Serializable {
 	 * @deprecated
 	 */
 	public void setScaledToZero(boolean zeroScaled) {
-		this.scaleType = zeroScaled ? ScaleType.ZERO : ScaleType.AUTO;
+		this.scale.setType( zeroScaled ? Scale.Type.ZERO : Scale.Type.AUTO);
 	}
 
 	/**
@@ -252,7 +249,7 @@ public class TimeseriesProperties implements Serializable {
 	 * @deprecated
 	 */
 	public boolean isZeroScaled() {
-		return this.scaleType == ScaleType.ZERO;
+		return this.scale.isZero();
 	}
 
 	public void setMetadataUrl(String metadataUrl) {

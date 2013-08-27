@@ -25,7 +25,7 @@ package org.n52.client.sos.event;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.handler.UpdateScaleEventHandler;
-import org.n52.shared.serializable.pojos.TimeseriesProperties.ScaleType;
+import org.n52.shared.serializable.pojos.Scale;
 
 /**
  * @author <a href="mailto:f.bache@52north.de">Felix Bache</a>
@@ -37,8 +37,8 @@ public class UpdateScaleEvent extends FilteredDispatchGwtEvent<UpdateScaleEventH
     
     private String phenomenonID;
 
-    private ScaleType scaleType;
-
+    private Scale scale = new Scale();
+    
     /**
      * Use ScaleType instead of scaleToNull and autoScale
      * @param phenomenID
@@ -48,20 +48,20 @@ public class UpdateScaleEvent extends FilteredDispatchGwtEvent<UpdateScaleEventH
      */
     public UpdateScaleEvent(String phenomenID, boolean scaleToNull, boolean autoScale) {
         this.phenomenonID = phenomenID;
-        this.scaleType = autoScale 
-        		? ScaleType.AUTO 
+        this.scale.setType(autoScale 
+        		? Scale.Type.AUTO 
         		: scaleToNull 
-        			? ScaleType.ZERO 
-        			: ScaleType.MANUAL;
+        			? Scale.Type.ZERO 
+        			: Scale.Type.MANUAL);
     }
 
     /**
      * @param phenomenID
      * @param scaleType
      */
-    public UpdateScaleEvent(String phenomenID, ScaleType scaleType) {
+    public UpdateScaleEvent(String phenomenID, Scale scale) {
         this.phenomenonID = phenomenID;
-        this.scaleType = scaleType;
+        this.scale = scale;
     }
 
     /* (non-Javadoc)
@@ -87,28 +87,28 @@ public class UpdateScaleEvent extends FilteredDispatchGwtEvent<UpdateScaleEventH
         return this.phenomenonID;
     }
 
-    public ScaleType getScaleType(){
-    	return scaleType;
+    public Scale getScale(){
+    	return scale;
     }
     
     /**
      * @return the scaleToNull
      */
     public boolean isScaleToNull() {
-        return this.scaleType==ScaleType.ZERO;
+        return this.scale.isZero();
     }
 
     /**
      * @return the autoScale
      */
     public boolean isAutoScale() {
-        return this.scaleType==ScaleType.AUTO;
+        return this.scale.isAuto();
     }
 
     /**
      * @return manual scale
      */
     public boolean isManualScale(){
-    	return scaleType==ScaleType.MANUAL;
+    	return scale.isManual();
     }
 }

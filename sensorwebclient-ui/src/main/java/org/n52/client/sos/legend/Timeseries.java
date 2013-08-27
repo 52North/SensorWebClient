@@ -35,6 +35,7 @@ import org.n52.client.ui.legend.LegendElement;
 import org.n52.client.ui.legend.LegendEntryTimeSeries;
 import org.n52.client.ui.map.Coordinate;
 import org.n52.shared.serializable.pojos.Axis;
+import org.n52.shared.serializable.pojos.Scale;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -356,12 +357,12 @@ public class Timeseries implements LegendData {
 		return this.properties.getOpacity();
 	}
 
-	public void setScaleType(TimeseriesProperties.ScaleType scaleType){
-		this.properties.setScaleType(scaleType);
+	public void setScale(Scale scale){
+		this.properties.setScale(scale);
 	}
 	
-	public TimeseriesProperties.ScaleType getScaleType(){
-		return this.properties.getScaleType();
+	public Scale getScale(){
+		return this.properties.getScale();
 	}
 	
 	/**

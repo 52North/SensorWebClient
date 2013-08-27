@@ -69,6 +69,7 @@ import org.n52.client.ui.View;
 import org.n52.client.ui.btn.ImageButton;
 import org.n52.client.ui.btn.SmallButton;
 import org.n52.client.util.ClientUtils;
+import org.n52.shared.serializable.pojos.Scale;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
@@ -613,7 +614,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.seriesType.setValue(getTimeSeries().getGraphStyle());
 		this.lineStyles.setValue(getTimeSeries().getLineStyle());
 		this.lineWidth.setValue(getTimeSeries().getLineWidth());
-		switch(getTimeSeries().getScaleType()){
+		switch(getTimeSeries().getScale().getType() ){
 		case MANUAL:
 			this.scale.setDefaultValue(i18n.manualScale());
 			break;
@@ -794,11 +795,12 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.styleChanger = new Window();
 		this.styleChanger.setShowModalMask(true);
 		this.styleChanger.setWidth(250);
-		this.styleChanger.setHeight(280);
+		this.styleChanger.setHeight(380);
 		this.styleChanger.setIsModal(true);
 		this.styleChanger.centerInPage();
 		this.styleChanger.setCanDragResize(true);
 		this.styleChanger.setShowCloseButton(true);
+		this.styleChanger.setShowMinimizeButton(false);
 		
 		this.setCanDrag(true);
 		// opacity-slider
@@ -862,26 +864,47 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.lineWidth.setWidth(85);
 		this.lineWidth.setValueMap("1","2","3","4","5","6","7","8","9","10");
 
+		String uom = "";
+		double scaleValueMin = 0;
+		double scaleValueMax = 0;
+		// TODO hier wird noch eine Exception geworfen. Irgendwie muss man aber an die Maßeinheit herankommen...
+		try{
+			TimeseriesProperties prop = this.getTimeSeries().getProperties(); 
+			uom = prop.getUnitOfMeasure();
+			scaleValueMin = prop.getAxisLowerBound();
+			scaleValueMax = prop.getAxisUpperBound();
+		}catch(Exception e){
+			// TimeseriesProperties konnten nicht geladen werden.
+		}
+		
 		this.scale = new RadioGroupItem();
 		this.scale.setTitle(i18n.scale());
 		this.scale.setValueMap( i18n.zeroScale(), i18n.autoScale(), i18n.manualScale() );
-		
-		String uom;
-		try{
-			uom = this.getTimeSeries().getProperties().getUnitOfMeasure();
-		}catch(Exception e){
-			uom = "";
-		}
+		this.scale.addChangedHandler(new ChangedHandler() {
+			public void onChanged(ChangedEvent event) {
+				if(LegendEntryTimeSeries.this.scale.getValue() == i18n.manualScale()){
+					LegendEntryTimeSeries.this.scaleManualMin.show();
+					LegendEntryTimeSeries.this.scaleManualMax.show();
+				} else {
+					LegendEntryTimeSeries.this.scaleManualMin.hide();
+					LegendEntryTimeSeries.this.scaleManualMax.hide();
+				}
+			}
+		});
 		
 		this.scaleManualMin = new FloatItem();
 		this.scaleManualMin.setTitle(i18n.manualScaleMinLabel());
 		this.scaleManualMin.setHint(uom);
 		this.scaleManualMin.setWidth(50);
+		this.scaleManualMin.setValue(scaleValueMin);
+		this.scaleManualMin.hide();
 		
 		this.scaleManualMax = new FloatItem();
 		this.scaleManualMax.setTitle(i18n.manualScaleMaxLabel());
 		this.scaleManualMax.setHint(uom);
 		this.scaleManualMax.setWidth(50);
+		this.scaleManualMax.setValue(scaleValueMax);
+		this.scaleManualMax.hide();
 
 		this.cpForm = new DynamicForm();
 		this.cpForm.setNumCols(1);
@@ -915,32 +938,27 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 				timeseries.setLineWidth(Integer
 						.valueOf(LegendEntryTimeSeries.this.lineWidth
 								.getValueAsString()));
-				boolean scaleToNullCheck = false;
-				boolean autoScaleCheck = false;
-				if (LegendEntryTimeSeries.this.scale.getValueAsString().equals(
-						i18n.zeroScale())) {
-					scaleToNullCheck = true;
+				
+				String scaleTypeStr = LegendEntryTimeSeries.this.scale.getValueAsString();
+				Scale scale = new Scale();
+				
+				if (scaleTypeStr.equals(i18n.zeroScale())) {
+					scale.setZero();
+				} else if (scaleTypeStr.equals(i18n.manualScale() )) {
+					scale.setManual();
+					scale.setManualScaleMin(LegendEntryTimeSeries.this.scaleManualMin.getValueAsFloat());
+					scale.setManualScaleMax(LegendEntryTimeSeries.this.scaleManualMax.getValueAsFloat());
 				} else {
-					autoScaleCheck = true;
+					scale.setAuto();
 				}
+				EventBus.getMainEventBus().fireEvent(new UpdateScaleEvent(LegendEntryTimeSeries.this.getTimeSeries().getPhenomenonId(), scale));
 				EventBus.getMainEventBus().fireEvent(
-						new UpdateScaleEvent(LegendEntryTimeSeries.this
-								.getTimeSeries().getPhenomenonId(), scaleToNullCheck,
-								autoScaleCheck));
-				EventBus.getMainEventBus()
-						.fireEvent(
-								new ChangeTimeSeriesStyleEvent(
-										LegendEntryTimeSeries.this
-												.getTimeSeries().getId(),
-										LegendEntryTimeSeries.this.colors
-												.getValue().toString(),
-										new Double(
-												LegendEntryTimeSeries.this.slider
-														.getValue().toString()),
-										scaleToNullCheck,
-										LegendEntryTimeSeries.this.lineStyles
-												.getValue().toString(),
-										autoScaleCheck));
+						new ChangeTimeSeriesStyleEvent(
+								LegendEntryTimeSeries.this.getTimeSeries().getId(),
+								LegendEntryTimeSeries.this.colors.getValue().toString(),
+								new Double(LegendEntryTimeSeries.this.slider.getValue().toString()),
+								scale,
+								LegendEntryTimeSeries.this.lineStyles.getValue().toString()));
 				EventBus.getMainEventBus().fireEvent(
 						new StoreTimeSeriesPropsEvent(getTimeSeries().getId(),
 								getTimeSeries().getProperties()));
@@ -1319,8 +1337,8 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 
 		public void onUpdateScale(UpdateScaleEvent evt) {
 			if (LegendEntryTimeSeries.this.getTimeSeries().getPhenomenonId().equals(evt.getPhenomenonID())) {
-				LegendEntryTimeSeries.this.getTimeSeries().setScaleType(evt.getScaleType());
-				switch(evt.getScaleType()){
+				LegendEntryTimeSeries.this.getTimeSeries().setScale(evt.getScale());
+				switch(evt.getScale().getType()){
 				case MANUAL:
 					LegendEntryTimeSeries.this.scale.setValue(i18n.manualScale());
 					break;
