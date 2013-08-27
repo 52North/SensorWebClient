@@ -727,8 +727,6 @@ public class SOSRequestManager extends RequestManager {
         this.fileDataService.getPDFzip(req, new FileCallback(SOSRequestManager.this));
     }
     
-    
-
     public void requestExportXLSzip(Collection<Timeseries> timeseries) {
         addRequest();
         TimeSeriesDataRequest req = createTimeSeriesDataRequest(timeseries);
@@ -740,6 +738,12 @@ public class SOSRequestManager extends RequestManager {
         TimeSeriesDataRequest req = createTimeSeriesDataRequest(timeseries);
         this.fileDataService.getCSVzip(req, new FileCallback(SOSRequestManager.this));
     }
+    
+    /*public void requestExportCSVzipAllInOne(Collection<Timeseries> timeseries) {
+    	addRequest();
+    	TimeSeriesDataRequest req = createTimeSeriesDataRequest(timeseries);
+    	this.fileDataService.getXLSzip(req, new FileCallback(SOSRequestManager.this));
+    }*/
 
     public void requestExportPDFallInOne(Collection<Timeseries> timeseries) {
         try {

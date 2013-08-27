@@ -44,6 +44,7 @@ import org.n52.client.sos.legend.Timeseries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.Window;
 import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;
@@ -54,8 +55,6 @@ import com.smartgwt.client.util.SC;
  */
 public class LegendController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(LegendController.class);
-	
 	private Legend legend;
 
 	public LegendController(Legend legend) {
@@ -116,18 +115,24 @@ public class LegendController {
 		HashMap<String, Timeseries> dataItems = dataStore.getDataItems();
 		if (!dataItems.isEmpty()) {
 			legend.startExportLoadingSpinner();
-			if( exportType == ExportType.DATADOWNLOAD_ZIP){
+			if (exportType == ExportType.DATADOWNLOAD_ZIP){
 				// TODO Generate Export ZIP with appl/data/direct_download/directDownload_XXXX.zip
-				LOGGER.debug("--------EXPORT TYPE DATADOWNLOAD_ZIP -----------------------");
+				System.out.println("--------EXPORT TYPE DATADOWNLOAD_ZIP -----------------------");
 				for( String key: dataItems.keySet()){
-					LOGGER.debug("Key: " + key );
+					System.out.println("Key: " + key );
 				}
-				LOGGER.debug("------------------------------------------------------------");
-			} else {
-				LOGGER.debug("--------EXPORT TYPE OTHER ----------------------------------");
-            Collection<Timeseries> values = dataItems.values();
+				System.out.println("------------------------------------------------------------");
+				Collection<Timeseries> values = dataItems.values();
 				ExportEvent event = new ExportEvent(values, exportType);
 				EventBus.getMainEventBus().fireEvent(event);
+			} 
+			else {
+				System.out.println("--------EXPORT TYPE OTHER ----------------------------------");
+				Collection<Timeseries> values = dataItems.values();
+				ExportEvent event = new ExportEvent(values, exportType);
+				EventBus.getMainEventBus().fireEvent(event);
+				
+				GWT.log("--------EXPORT TYPE OTHER ----------------------------------");
 			}
         }
 	}
