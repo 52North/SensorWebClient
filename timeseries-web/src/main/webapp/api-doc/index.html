@@ -440,58 +440,39 @@ Content-Type: application/json;charset=UTF-8
               </thead>
               <tbody>
                 <tr>
-                  <td><code>within</code> <br/><em>[without CRS]</em></td>
+                  <td><code>crs</code> <br/></td>
+                  <td><pre>crs=EPSG:25832</pre></td>
+                  <td><p>The client indicates that input geometries shall be interpreted as being referenced by the given CRS (in this case to 'EPSG:25832' (ETRS89 / UTM zone 32N)).</p>
+                  <p>Per default geometries are referenced by the WGS84 CRS (precisely: CRS84, lon/lat order). If <code>crs</code> value differs from default, all output geometries are transformed to match the asked CRS.</p>
+                  <p>Please note that some CRS switch coordinate axes. Double check axes ordering before interpreting coordinates!</p>
+                  <div class="n52-callout n52-callout-info">Future versions of the API may provide kind of a <code>strictXY</code> parameter or similar to give clients more control on this.</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>within</code></td>
                   <td><pre>within={
   'll': { 
     "type": "Point", 
-    "coordinates": [&lt;lgt>,&lt;lat>]
+    "coordinates": [&lt;x>,&lt;y>]
   },
   'ur': { 
     "type": "Point",
-    "coordinates": [&lt;lgt>,&lt;lat>]
+    "coordinates": [&lt;x>,&lt;y>]
   } 
 }</pre></td>
-                  <td><p>Stations within a given bounding box.</p>
-                  
-                  <p>If you want a different CRS than the default (WGS84) you can add your own to the <a href="http://geojson.org/geojson-spec.html">GeoJSON geometry</a>, e.g. <code>'crs':{'type':'name','properties'{'name':'EPSG:25832'}}</code>.</p>
-                  
-                  <p>See the following example where to set the CRS attribute.</p>
+                  <td><p>Stations within a given bounding box (in WGS84 by default). Refer to the <code>crs</code> parameter if a non-default CRS shall be used.</p>
                   </td>
                 </tr>
                 <tr>
-                  <td><code>near</code> <br/> <em>[without CRS]</em></td>
+                  <td><code>near</code></td>
                   <td><pre>near={
   "center": { 
     "type": "Point", 
-    "coordinates": [&lt;lgt>,&lt;lat>]
+    "coordinates": [&lt;x>,&lt;y>]
   }, 
   "radius":"500" 
 }</pre></td>
-                  <td><p>Stations around a given point. The radius unit is in kilometers (km).</p>
-                  
-                  <p>If you want a different CRS than the default (WGS84) you can add your own to the <a href="http://geojson.org/geojson-spec.html">GeoJSON geometry</a>, e.g. <code>'crs':{'type':'name','properties'{'name':'EPSG:25832'}}</code>.</p>
-                  
-                  <p>See the following example where to set the CRS attribute.</p>
-                  </td>
-                </tr>
-                <tr>
-                  <td><code>near</code> <br/><em>[with CRS]</em></td>
-                  <td><pre>near={
-  "center": { 
-    "type": "Point", 
-    "coordinates": [&lt;lgt>,&lt;lat>],
-    "crs": {
-      "type": "name",
-      "properties": {
-        "name": "EPSG:25832"
-      }
-    }
-  }, 
-  "radius":"500" 
-}</pre></td>
-                  <td><p>Stations around a given point. The radius unit is in kilometers (km). The point's coordinates relate to CRS 'EPSG:25832' (ETRS89 / UTM zone 32N).</p>
-                  
-                  <p>You may be interested in the official <a href="http://www.epsg-registry.org">EPSG database</a> or <a href="http://spatialreference.org/">other links</a> where you can <a href="http://spatialreference.org/ref/epsg/25832/ogcwkt/">resolve spatial reference systems</a> by code</a>.</p>
+                  <td><p>Stations around a given point (in WGS84 by default). The radius unit is in kilometers (km). Refer to the <code>crs</code> parameter if a non-default CRS shall be used.</p>
                   </td>
                 </tr>
               </tbody>
@@ -514,12 +495,32 @@ Content-Type: application/json;charset=UTF-8
 
 [
   {
-    "id": "sta_lasdfo",
-    "label": "Bramsche"
+    "properties": {
+      "id": "sta_5791c95b6d7f4bc70002be938b199cb1",
+      "label": "Bramsche"
+    },
+    "geometry": {
+      "coordinates": [
+        "7.978186816994513",
+        "52.3961713226858"
+      ],
+      "type": "Point"
+    },
+    "type": "Feature"
   },
   {
-    "id": "sta_384f22",
-    "label": "Deggendorf"
+    "properties": {
+      "id": "sta_316a8a47dd628e37c93a9fced3292afd",
+      "label": "Deggendorf",
+    },
+    "geometry": {
+      "coordinates": [
+        "8.978186816994513",
+        "51.3961713226858"
+      ],
+      "type": "Point"
+    },
+    "type": "Feature"
   }
 ]</pre>
               <div class="n52-callout n52-callout-info">
@@ -537,13 +538,41 @@ Content-Type: application/json;charset=UTF-8
 [
   {
     "properties": {
-      "id": "sta_lasdfo",
-      "label": "Bramsche"
+      "id": "sta_3b1495e8b789501dbe3296ac3d849c09",
+      "timeseries": [
+        {
+          "service": {
+            "id": "srv_1a5bde0a6d702f193f7be463402ec12f",
+            "serviceUrl": "http://pegelonline.wsv.de/webservices/gis/gdi-sos"
+          },
+          "offering": {
+            "id": "off_c599e9b089385d08aa00b7c9c4c6f3ef",
+            "label": "WASSERSTAND_ROHDATEN"
+          },
+          "feature": {
+            "id": "foi_25e09ee3155ab0fbf3e4684ad2edffbf",
+            "label": "List_Auf_Sylt_9570070"
+          },
+          "procedure": {
+            "id": "pro_e878d48e49ebc2a156e2810470bae9a2",
+            "label": "Wasserstand-List_Auf_Sylt_9570070"
+          },
+          "phenomenon": {
+            "id": "phe_f60bcfb1f6ac3d37210b5d757a1bf48e",
+            "label": "Wasserstand"
+          }
+        }
+      ],
+      "service": {
+        "id": "srv_1a5bde0a6d702f193f7be463402ec12f",
+        "serviceUrl": "http://pegelonline.wsv.de/webservices/gis/gdi-sos"
+      },
+      "label": "List_Auf_Sylt_9570070"
     },
     "geometry": {
       "coordinates": [
-        "7.978186816994513",
-        "52.3961713226858"
+        8.440430928792344,
+        55.016536566762
       ],
       "type": "Point"
     },
@@ -551,13 +580,63 @@ Content-Type: application/json;charset=UTF-8
   },
   {
     "properties": {
-      "id": "sta_384f22",
-      "label": "Deggendorf",
+      "id": "sta_316a8a47dd628e37c93a9fced3292afd",
+      "timeseries": [
+        {
+          "service": {
+            "id": "srv_1a5bde0a6d702f193f7be463402ec12f",
+            "serviceUrl": "http://pegelonline.wsv.de/webservices/gis/gdi-sos"
+          },
+          "offering": {
+            "id": "off_c599e9b089385d08aa00b7c9c4c6f3ef",
+            "label": "WASSERSTAND_ROHDATEN"
+          },
+          "feature": {
+            "id": "foi_cbd82e6d033d328a27744abf4bf70f4b",
+            "label": "Deggendorf_10081004"
+          },
+          "procedure": {
+            "id": "pro_d79573760f6fda13e3ec2ea435078187",
+            "label": "Wasserstand-Deggendorf_10081004"
+          },
+          "phenomenon": {
+            "id": "phe_f60bcfb1f6ac3d37210b5d757a1bf48e",
+            "label": "Wasserstand"
+          }
+        },
+        {
+          "service": {
+            "id": "srv_1a5bde0a6d702f193f7be463402ec12f",
+            "serviceUrl": "http://pegelonline.wsv.de/webservices/gis/gdi-sos"
+          },
+          "offering": {
+            "id": "off_1679b79442254630787758c0b188944f",
+            "label": "WASSERTEMPERATUR"
+          },
+          "feature": {
+            "id": "foi_cbd82e6d033d328a27744abf4bf70f4b",
+            "label": "Deggendorf_10081004"
+          },
+          "procedure": {
+            "id": "pro_785310b12f480e0693b86798dcbbc339",
+            "label": "Wassertemperatur-Deggendorf_10081004"
+          },
+          "phenomenon": {
+            "id": "phe_7bd06bee08fa94fca98e37abb166c8b1",
+            "label": "Wassertemperatur"
+          }
+        }
+      ],
+      "service": {
+        "id": "srv_1a5bde0a6d702f193f7be463402ec12f",
+        "serviceUrl": "http://pegelonline.wsv.de/webservices/gis/gdi-sos"
+      },
+      "label": "Deggendorf_10081004"
     },
     "geometry": {
       "coordinates": [
-        "8.978186816994513",
-        "51.3961713226858"
+          12.962332950717089,
+          48.82494511292501
       ],
       "type": "Point"
     },
@@ -570,7 +649,7 @@ Content-Type: application/json;charset=UTF-8
             </div>
             <div>
               <h4>Item</h4>
-              <pre>GET /api/v1/stations/sta_lasdfo/ HTTP/1.1
+              <pre>GET /api/v1/stations/sta_3b1495e8b789501dbe3296ac3d849c09/ HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
               <pre>HTTP/1.1 200 OK
@@ -578,36 +657,49 @@ Content-Type: application/json;charset=UTF-8
 
 {
   "properties": {
-    "id": "sta_lasdfo",
-    "label": "Bramsche",
-    "service": {
-      "id": "../services/srv_823sd",
-      "label": "PEGELONLINE"
-    }
+    "id": "sta_3b1495e8b789501dbe3296ac3d849c09",
     "timeseries": [
-      "../timeseries/ts_35559ca6b2248629e6dcdc65ceead0ed",
-      "../timeseries/ts_aca9c4d1438091af1f0d362f1d04e40d",
-      "../timeseries/ts_875e2cd936b7ab7ebca9e9bb311a44c2",
-      "../timeseries/ts_c6dcc7a8fd96f0a34380ea14439904c2",
-      "../timeseries/ts_47a07ae5ad3e7787402a8f0cb5a862ea",
-      "../timeseries/ts_e56832a2df30973a5531a85f73acb28a"
-    ]
+      {
+        "service": {
+          "id": "srv_1a5bde0a6d702f193f7be463402ec12f",
+          "serviceUrl": "http://pegelonline.wsv.de/webservices/gis/gdi-sos"
+        },
+        "offering": {
+          "id": "off_c599e9b089385d08aa00b7c9c4c6f3ef",
+          "label": "WASSERSTAND_ROHDATEN"
+        },
+        "feature": {
+          "id": "foi_25e09ee3155ab0fbf3e4684ad2edffbf",
+          "label": "List_Auf_Sylt_9570070"
+        },
+        "procedure": {
+          "id": "pro_e878d48e49ebc2a156e2810470bae9a2",
+          "label": "Wasserstand-List_Auf_Sylt_9570070"
+        },
+        "phenomenon": {
+          "id": "phe_f60bcfb1f6ac3d37210b5d757a1bf48e",
+          "label": "Wasserstand"
+        }
+      }
+    ],
+    "service": {
+      "id": "srv_1a5bde0a6d702f193f7be463402ec12f",
+      "serviceUrl": "http://pegelonline.wsv.de/webservices/gis/gdi-sos"
+    },
+    "label": "List_Auf_Sylt_9570070"
   },
   "geometry": {
     "coordinates": [
-      "7.978186816994513",
-      "52.3961713226858"
+      8.440430928792344,
+      55.016536566762
     ],
     "type": "Point"
   },
   "type": "Feature"
 }</pre>
-              <div class="n52-callout n52-callout-todo">
-                Do we want the timeseries collection to be expandable as well?
-              </div>
             </div>
-          </div>
 					
+          </div>
         </div>
 			</section>
 				
@@ -648,13 +740,14 @@ Content-Type: application/json;charset=UTF-8
 									<td><code>GET</code></td>
 									<td><code>/api/v1/timeseries/{id}/{interval}</code></td>
                   <td><code>image/png</code></td>
-									<td><p>Returns an image containing a pre-rendered graph for timeseries with id <code>{id}</code>. The pre-rendered <code>{interval}</code> value can be 
+									<td><p>Returns an image of timeseries with id <code>{id}</code> for the given <code>{interval}</code>. Allowed interval values are
                   <ul>
                     <li><code>lastDay</code></li>
-                    <li><code>lastWeek</code> (the default)</li>
+                    <li><code>lastWeek</code></li>
                     <li><code>lastMonth</code></li>
                     </ul>
                   </p>
+                  <p>Timeseries can be pre-rendered by a regular task. If a pre-rendering exist for a given timeseries is a configuration issue.</p>
                   </td>
 								</tr>
 							</tbody>
@@ -771,9 +864,11 @@ Content-Type: application/json;charset=UTF-8
                     <pre>format=highchart</pre>
                   </td>
                   <td>
-                    
-                    <div class="n52-callout n52-callout-todo">
-                    </div>
+                    <p>Controls the output format of raw timeseries data. This avoids converting between different data formats on client side which uses a 3rd party chart rendering API. Currently, supported formats:
+                    <ul>
+                      <li><code>highcharts</code> (the default)</li>
+                    </ul></p>
+                    <div class="n52-callout n52-callout-todo">Add more formats!</div>
                   </td>
                 </tr>
 							</tbody>
@@ -1048,7 +1143,8 @@ Content-Type: application/json;charset=UTF-8
   }
 ]</pre>
               <div class="n52-callout n52-callout-info">
-                Timeseries data can be very big! Naive clients can bother data providers when trying to request huge datasets by accident. Therefore data requests are limited to a maximum value. Have a look <a href="#general-paging">at the paging documentation</a> how to get more data.
+                <p>Timeseries data can be very big! Naive clients can bother data providers when trying to request huge datasets by accident. Therefore data requests may be limited to a maximum timespan (per configuration).</p>
+                <p>However, most probably consuming huge datasets may also not be of client's interest. Have a look <a href="#general-paging">at the paging documentation</a> how to get data in smaller chunks.</p>
               </div>
 						</div>
 
