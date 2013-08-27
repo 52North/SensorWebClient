@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.imageio.ImageIO;
@@ -39,7 +40,7 @@ import org.springframework.web.context.ServletConfigAware;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class PreRenderingTask extends TimerTask implements ServletConfigAware {
+public class PreRenderingTask implements ServletConfigAware {
     
     private final static Logger LOGGER = LoggerFactory.getLogger(PreRenderingTask.class);
 
@@ -50,10 +51,16 @@ public class PreRenderingTask extends TimerTask implements ServletConfigAware {
     private PreRenderingConfiguration[] configurations;
 
     private Map<String, StyleProperties> phenomenaStyles;
+
+    private RenderTask taskToRun;
     
 	private String webappFolder;
 	
 	private String outputPath;
+	
+	private int periodInMinutes;
+	
+	private boolean enabled;
 	
 	// image dimensions with default values
 	private int width = 800;
@@ -65,8 +72,9 @@ public class PreRenderingTask extends TimerTask implements ServletConfigAware {
 	private boolean showGrid = true;
 
 	public PreRenderingTask() {
-        configurations = getPrerenderingConfiguration();
-        phenomenaStyles = getPhenomenonToStyleMapping();
+	    this.taskToRun = new RenderTask();
+        this.configurations = getPrerenderingConfiguration();
+        this.phenomenaStyles = getPhenomenonToStyleMapping();
     }
 
     private PreRenderingConfiguration[] getPrerenderingConfiguration() {
@@ -116,62 +124,27 @@ public class PreRenderingTask extends TimerTask implements ServletConfigAware {
     
     // destroy method
     public void shutdownTask() {
-        LOGGER.info("Shut down prerendering task");
-        this.cancel();
+        this.enabled = false;
+        this.taskToRun.cancel();
+        LOGGER.info("Render task successfully shutted down.");
+    }
+    
+    public void startTask() {
+        if (taskToRun != null) {
+            this.enabled = true;
+            Timer timer = new Timer();
+            timer.schedule(taskToRun, 10000, getPeriodInMilliseconds());
+        }
+    }
+
+    private int getPeriodInMilliseconds() {
+        return 1000 * 60 * periodInMinutes;
     }
 
     @Override
     public void setServletConfig(ServletConfig servletConfig) {
         webappFolder = servletConfig.getServletContext().getRealPath("/");
     }
-
-    @Override
-	public void run() {
-		LOGGER.info("Start prerendering task");
-		try {
-			for (PreRenderingConfiguration config : configurations) {
-			    
-				String timeseriesId = config.getTimeseriesId();
-				for (String interval : config.getInterval()) {
-				    
-			        String timespan = createTimespanFromInterval(timeseriesId, interval);
-			        TimeseriesMetadataOutput metadata = timeseriesMetadataService.getParameter(timeseriesId);
-			        String phenomenon = metadata.getParameters().getPhenomenon().getLabel();
-			        StyleProperties style = null;
-			        if (phenomenaStyles.containsKey(phenomenon)) {
-			        	style = phenomenaStyles.get(phenomenon);
-			        } else {
-			        	style = config.getStyle();
-			        }
-			        
-			        RenderingContext context = createContextForSingleTimeseries(metadata, style, timespan);
-			        context.setDimensions(width, height);
-			        UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, timespan);
-			        IOHandler renderer = IOFactory.create()
-			                .inLanguage(language)
-			                .showGrid(showGrid)
-			                .createIOHandler(context);
-			        
-                    FileOutputStream fos = createFile(timeseriesId, interval);
-			        try {
-						renderer.generateOutput(getTimeseriesData(parameters));
-						renderer.encodeAndWriteTo(fos);
-					} catch (TimeseriesIOException e) {
-						LOGGER.error("Image creation occures error.", e);
-					} finally {
-					    try {
-                            fos.flush();
-                            fos.close();
-                        } catch (IOException e) {
-                            LOGGER.error("File stream already flushed/closed.", e);
-                        }
-					}
-				}
-			}
-		} catch (IOException e) {
-			LOGGER.error("Error while reading prerendering configuration file", e);
-		}
-	}
 
     private FileOutputStream createFile(String timeseriesId, String interval) throws IOException {
         File file = createFileName(timeseriesId, interval);
@@ -288,6 +261,77 @@ public class PreRenderingTask extends TimerTask implements ServletConfigAware {
 
 	public void setShowGrid(boolean showGrid) {
 		this.showGrid = showGrid;
+	}
+
+	public int getPeriodInMinutes() {
+		return periodInMinutes;
+	}
+
+	public void setPeriodInMinutes(int period) {
+		this.periodInMinutes = period;
+	}
+	
+	public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        if (enabled) {
+            startTask();
+        }
+    }
+
+    private final class RenderTask extends TimerTask {
+
+	    @Override
+	    public void run() {
+	        LOGGER.info("Start prerendering task");
+	        try {
+	            for (PreRenderingConfiguration config : configurations) {
+	                
+	                String timeseriesId = config.getTimeseriesId();
+	                for (String interval : config.getInterval()) {
+	                    
+	                    String timespan = createTimespanFromInterval(timeseriesId, interval);
+	                    TimeseriesMetadataOutput metadata = timeseriesMetadataService.getParameter(timeseriesId);
+	                    String phenomenon = metadata.getParameters().getPhenomenon().getLabel();
+	                    StyleProperties style = null;
+	                    if (phenomenaStyles.containsKey(phenomenon)) {
+	                        style = phenomenaStyles.get(phenomenon);
+	                    } else {
+	                        style = config.getStyle();
+	                    }
+	                    
+	                    RenderingContext context = createContextForSingleTimeseries(metadata, style, timespan);
+	                    context.setDimensions(width, height);
+	                    UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, timespan);
+	                    IOHandler renderer = IOFactory.create()
+	                            .inLanguage(language)
+	                            .showGrid(showGrid)
+	                            .createIOHandler(context);
+	                    
+	                    FileOutputStream fos = createFile(timeseriesId, interval);
+	                    try {
+	                        renderer.generateOutput(getTimeseriesData(parameters));
+	                        renderer.encodeAndWriteTo(fos);
+	                    } catch (TimeseriesIOException e) {
+	                        LOGGER.error("Image creation occures error.", e);
+	                    } finally {
+	                        try {
+	                            fos.flush();
+	                            fos.close();
+	                        } catch (IOException e) {
+	                            LOGGER.error("File stream already flushed/closed.", e);
+	                        }
+	                    }
+	                }
+	            }
+	        } catch (IOException e) {
+	            LOGGER.error("Error while reading prerendering configuration file", e);
+	        }
+	    }
+
 	}
 
 }

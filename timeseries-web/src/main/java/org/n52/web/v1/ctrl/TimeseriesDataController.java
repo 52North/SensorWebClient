@@ -39,7 +39,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Timer;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -310,14 +309,6 @@ public class TimeseriesDataController extends BaseController {
 
 	public void setPreRenderingTask(PreRenderingTask prerenderingTask) {
 		this.preRenderingTask = prerenderingTask;
-		startRenderingTask();
-	}
-
-	private void startRenderingTask() {
-		Timer timer = new Timer();
-    	if (preRenderingTask != null) {
-    		timer.schedule(preRenderingTask, 10000);
-		}
 	}
 
 }

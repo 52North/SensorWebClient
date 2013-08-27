@@ -75,10 +75,10 @@
 
 	<bean id="queryServiceImpl" class="org.n52.server.service.QueryServiceImpl" />
 
-	<!-- ###################### api/v1 ###################### -->
 
-
-	<bean class="org.n52.web.v1.ctrl.ResourcesController" />
+	<bean class="org.n52.web.v1.ctrl.ResourcesController">
+		<property name="metadataService" ref="metadataService" />
+	</bean>
 
 	<bean class="org.n52.web.v1.ctrl.OfferingsParameterController">
 		<property name="offeringParameterService" ref="offeringParameterService" />
@@ -113,10 +113,9 @@
 		<property name="serviceParameterService" ref="serviceParameterService" />
 		<property name="timeseriesMetadataService" ref="timeseriesMetadataService" />
 		<property name="timeseriesDataService" ref="timeseriesDataService" />
-		<!-- <property name="preRenderingTask" ref="preRenderingTask" /> -->
+		<property name="preRenderingTask" ref="preRenderingTask" />
 	</bean>
-	
-<!-- 
+
 	<bean id="preRenderingTask" class="org.n52.web.task.PreRenderingTask"
 		destroy-method="shutdownTask" factory-method="createTask">
 		<property name="timeseriesMetadataService" ref="timeseriesMetadataService" />
@@ -126,9 +125,10 @@
 		<property name="height" value="500" />
 		<property name="language" value="de" />
 		<property name="showGrid" value="true" />
+		<property name="periodInMinutes" value="1440" />
+		<property name="enabled" value="false" />
 	</bean>
- -->
- 
+
 	<bean id="offeringParameterService" class="org.n52.api.v1.srv.OfferingOutputAdapter" />
 
 	<bean id="serviceParameterService" class="org.n52.api.v1.srv.ServiceOutputAdapter" />
@@ -140,6 +140,8 @@
 	<bean id="stationParameterService" class="org.n52.api.v1.srv.StationOutputAdapter" />
 
 	<bean id="phenomenonParameterService" class="org.n52.api.v1.srv.PhenomenonOutputAdapter" />
+
+	<bean id="metadataService" class="org.n52.api.v1.srv.MetadataAdapter" />
 
 	<bean id="timeseriesMetadataService" class="org.n52.api.v1.srv.TimeseriesOutputAdapter">
 		<property name="dataService">
