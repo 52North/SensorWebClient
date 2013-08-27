@@ -23,8 +23,9 @@
  */
 package org.n52.api.v1.io;
 
-import java.util.Map;
+import java.util.Set;
 
+import org.n52.api.v1.srv.GetDataService;
 import org.n52.io.v1.data.CategoryOutput;
 import org.n52.io.v1.data.FeatureOutput;
 import org.n52.io.v1.data.OfferingOutput;
@@ -34,7 +35,6 @@ import org.n52.io.v1.data.ServiceOutput;
 import org.n52.io.v1.data.StationOutput;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.TimeseriesOutput;
-import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -43,38 +43,30 @@ import org.n52.shared.serializable.pojos.sos.Station;
 
 public class TimeseriesConverter extends OutputConverter<SosTimeseries, TimeseriesMetadataOutput> {
 
-    public TimeseriesConverter(SOSMetadata metadata) {
+    private GetDataService dataService;
+
+    public TimeseriesConverter(SOSMetadata metadata, GetDataService dataService) {
         super(metadata);
+        this.dataService = dataService;
     }
 
     @Override
     public TimeseriesMetadataOutput convertExpanded(SosTimeseries timeseries) {
         TimeseriesMetadataOutput convertedTimeseries = convertCondensed(timeseries);
         Procedure procedure = getLookup().getProcedure(timeseries.getProcedureId());
-        Map<String, ReferenceValue> refValues = procedure.getReferenceValues();
-        for (String refValueId : refValues.keySet()) {
-            ReferenceValue refValue = refValues.get(refValueId);
-            
-            // TODO create single TimeseriesValue for each ReferencePoint
-            
-        }
-        // TODO first and last value
-//        convertedTimeseries.setFirstValue(firstValue);
-//        convertedTimeseries.setLastValue(lastValue);
-        
-        // TODO Auto-generated method stub
-
+        convertedTimeseries.setFirstValue(dataService.getFirstValue(timeseries));
         convertedTimeseries.setParameters(getCondensedParameters(timeseries));
-        Phenomenon phenomenon = getLookup().getPhenomenon(timeseries.getPhenomenonId());
-        convertedTimeseries.setUom(phenomenon.getUnitOfMeasure());
+        convertedTimeseries.setRefValues(getReferenceValues(procedure));
         return convertedTimeseries;
-        
     }
 
     @Override
     public TimeseriesMetadataOutput convertCondensed(SosTimeseries timeseries) {
         TimeseriesMetadataOutput convertedTimeseries = new TimeseriesMetadataOutput();
+        convertedTimeseries.setLastValue(dataService.getLastValue(timeseries));
         convertedTimeseries.setStation(getCondensedStation(timeseries));
+        Phenomenon phenomenon = getLookup().getPhenomenon(timeseries.getPhenomenonId());
+        convertedTimeseries.setUom(phenomenon.getUnitOfMeasure());
         convertedTimeseries.setId(timeseries.getTimeseriesId());
         return convertedTimeseries;
     }
@@ -93,6 +85,13 @@ public class TimeseriesConverter extends OutputConverter<SosTimeseries, Timeseri
     private ServiceOutput getCondensedService(SosTimeseries timeseries) {
         ServiceConverter converter = new ServiceConverter(getMetadata());
         return converter.convertCondensed(getMetadata());
+    }
+
+    private String[] getReferenceValues(Procedure procedure) {
+        Set<String> referenceValues = procedure.getReferenceValues().keySet();
+        return !referenceValues.isEmpty()
+                ? referenceValues.toArray(new String[0])
+                : null; // will not be listed in output
     }
 
     private CategoryOutput getCondensedCategory(SosTimeseries timeseries) {

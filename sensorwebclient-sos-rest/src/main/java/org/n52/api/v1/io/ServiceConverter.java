@@ -25,6 +25,7 @@ package org.n52.api.v1.io;
 
 import org.n52.io.v1.data.ServiceOutput;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
 public class ServiceConverter extends OutputConverter<SOSMetadata, ServiceOutput> {
 
@@ -40,6 +41,12 @@ public class ServiceConverter extends OutputConverter<SOSMetadata, ServiceOutput
         convertedService.setVersion(metadata.getVersion());
         convertedService.setLabel(metadata.getTitle());
         convertedService.setType("SOS");
+        TimeseriesParametersLookup parametersLookup = metadata.getTimeseriesParametersLookup();
+        convertedService.setAmountFeatures(parametersLookup.getFeatures().size());
+        convertedService.setAmountOfferings(parametersLookup.getOfferings().size());
+        convertedService.setAmountPhenomena(parametersLookup.getPhenomenons().size());
+        convertedService.setAmountProcedures(parametersLookup.getProcedures().size());
+        convertedService.setAmountStations(metadata.getStations().size());
         return convertedService;
     }
 

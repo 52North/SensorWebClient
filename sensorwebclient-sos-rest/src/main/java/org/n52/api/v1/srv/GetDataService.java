@@ -25,6 +25,8 @@
 package org.n52.api.v1.srv;
 
 import static org.n52.io.v1.data.TimeseriesData.newTimeseriesData;
+import static org.n52.shared.serializable.pojos.DesignOptions.createOptionsForGetFirstValue;
+import static org.n52.shared.serializable.pojos.DesignOptions.createOptionsForGetLastValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,13 +35,14 @@ import java.util.Map;
 import org.n52.client.service.TimeSeriesDataService;
 import org.n52.io.v1.data.TimeseriesData;
 import org.n52.io.v1.data.TimeseriesDataCollection;
+import org.n52.io.v1.data.TimeseriesValue;
 import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.shared.requests.TimeSeriesDataRequest;
 import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
-import org.n52.web.InternalServiceException;
+import org.n52.web.InternalServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +67,7 @@ public class GetDataService extends DataService {
         return performTimeseriesDataRequest(timeseriesCollection, createDesignOptions(parameterSet, tsProperties));
     }
 
-    private TimeseriesDataCollection performTimeseriesDataRequest(TimeseriesDataCollection timeSeriesResults, DesignOptions options) throws InternalServiceException {
+    private TimeseriesDataCollection performTimeseriesDataRequest(TimeseriesDataCollection timeSeriesResults, DesignOptions options) throws InternalServerException {
         try {
             TimeSeriesDataRequest tsRequest = new TimeSeriesDataRequest(options);
             TimeSeriesDataResponse timeSeriesData = timeSeriesDataService.getTimeSeriesData(tsRequest);
@@ -77,10 +80,37 @@ public class GetDataService extends DataService {
             }
         }
         catch (Exception e) {
-            LOGGER.error("Could not get timeseries data for options: " + options, e);
-            throw new InternalServiceException("Could not get timeseries data for options: " + options, e);
+            throw new InternalServerException("Could not get timeseries data for options: " + options, e);
         }
         return timeSeriesResults;
+    }
+    
+    public TimeseriesValue getFirstValue(SosTimeseries timeseries) {
+        TimeseriesProperties properties = createTimeseriesProperties(timeseries.getTimeseriesId());
+        DesignOptions designOptions = createOptionsForGetFirstValue(properties);
+        return performFirstOrLastValueRequest(properties, designOptions);
+    }
+    
+    public TimeseriesValue getLastValue(SosTimeseries timeseries) {
+        TimeseriesProperties properties = createTimeseriesProperties(timeseries.getTimeseriesId());
+        DesignOptions designOptions = createOptionsForGetLastValue(properties);
+        return performFirstOrLastValueRequest(properties, designOptions);
+    }
+
+    private TimeseriesValue performFirstOrLastValueRequest(TimeseriesProperties properties, DesignOptions designOptions) {
+       try {
+           TimeseriesDataCollection dataCollection = prepareTimeseriesResults(properties);
+           dataCollection = performTimeseriesDataRequest(dataCollection, designOptions);
+           TimeseriesValue[] data = dataCollection.getTimeseries(properties.getTimeseriesId()).getValues();
+           if (data.length == 0) {
+               LOGGER.error("Server did not return the first/last value for timeseries '{}'.", properties.getTimeseriesId());
+               return null;
+           } 
+           return data[0];
+       } catch (Exception e) {
+           LOGGER.debug("Could not retrieve first or last value request. Probably not supported.");
+           return null;
+       }
     }
 
     public TimeSeriesDataService getTimeSeriesDataService() {

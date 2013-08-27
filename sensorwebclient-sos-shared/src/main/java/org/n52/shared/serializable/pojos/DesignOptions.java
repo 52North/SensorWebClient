@@ -57,6 +57,22 @@ public class DesignOptions implements Serializable {
 	private DesignOptions() {
         // do nothin
     }
+    
+    public static DesignOptions createOptionsForGetFirstValue(TimeseriesProperties properties) {
+        DesignOptions options = new DesignOptions();
+        options.timeExtensionTerm = SOS_PARAM_FIRST;
+        options.properties = new ArrayList<TimeseriesProperties>();
+        options.properties.add(properties);
+        return options;
+    }
+    
+    public static DesignOptions createOptionsForGetLastValue(TimeseriesProperties properties) {
+        DesignOptions options = new DesignOptions();
+        options.timeExtensionTerm = SOS_PARAM_LAST;
+        options.properties = new ArrayList<TimeseriesProperties>();
+        options.properties.add(properties);
+        return options;
+    }
 
     public DesignOptions(ArrayList<TimeseriesProperties> props, long begin, long end, String timeParam, boolean grid) {
         this(props, begin, end, grid);

@@ -58,7 +58,7 @@ public class Procedure extends TimeseriesParameter implements Serializable {
     }
     
     public void addRefValue(ReferenceValue v) {
-        this.refvalues.put(v.getID(), v);
+        this.refvalues.put(v.getId(), v);
     }
     
     public ReferenceValue getRefValue(String s) {

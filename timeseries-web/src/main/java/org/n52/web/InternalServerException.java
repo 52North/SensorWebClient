@@ -31,22 +31,22 @@ import java.util.List;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = INTERNAL_SERVER_ERROR)
-public class InternalServiceException extends RuntimeException implements WebException {
+public class InternalServerException extends RuntimeException implements WebException {
 
     private static final long serialVersionUID = -299285770822168789L;
 
     private List<String> details;
     
     @Deprecated
-	public InternalServiceException() {
+	public InternalServerException() {
     	super();
 	}
 
-	public InternalServiceException(String message, Throwable cause) {
+	public InternalServerException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
-	public InternalServiceException(String message) {
+	public InternalServerException(String message) {
 		super(message);
 	}
 

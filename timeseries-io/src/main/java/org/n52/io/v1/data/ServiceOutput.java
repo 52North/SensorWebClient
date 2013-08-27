@@ -30,7 +30,17 @@ public class ServiceOutput extends OutputValue {
 	private String version;
 	
 	private String type;
-
+	
+	private int amountOfferings;
+	
+	private int amountFeatures;
+	
+	private int amountProcedures;
+	
+	private int amountPhenomena;
+	
+	private int amountStations;
+	
 	public String getServiceUrl() {
 		return serviceUrl;
 	}
@@ -55,7 +65,47 @@ public class ServiceOutput extends OutputValue {
 		this.type = type;
 	}
 
-    @Override
+    public int getAmountOfferings() {
+		return amountOfferings;
+	}
+
+	public void setAmountOfferings(int amountOfferings) {
+		this.amountOfferings = amountOfferings;
+	}
+
+	public int getAmountFeatures() {
+		return amountFeatures;
+	}
+
+	public void setAmountFeatures(int amountFeatures) {
+		this.amountFeatures = amountFeatures;
+	}
+
+	public int getAmountProcedures() {
+		return amountProcedures;
+	}
+
+	public void setAmountProcedures(int amountProcedures) {
+		this.amountProcedures = amountProcedures;
+	}
+
+	public int getAmountPhenomena() {
+		return amountPhenomena;
+	}
+
+	public void setAmountPhenomena(int amountPhenomena) {
+		this.amountPhenomena = amountPhenomena;
+	}
+
+	public int getAmountStations() {
+		return amountStations;
+	}
+
+	public void setAmountStations(int amountStations) {
+		this.amountStations = amountStations;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();

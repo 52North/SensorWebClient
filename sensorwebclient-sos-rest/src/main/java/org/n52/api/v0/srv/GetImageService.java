@@ -38,7 +38,7 @@ import org.n52.client.service.EESDataService;
 import org.n52.server.io.EESGenerator;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
-import org.n52.web.InternalServiceException;
+import org.n52.web.InternalServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +68,7 @@ public class GetImageService extends DataService {
         }
         catch (Exception e) {
             LOGGER.error("Could not render time series chart.", e);
-            throw new InternalServiceException();
+            throw new InternalServerException();
         }
     }
 
@@ -91,7 +91,7 @@ public class GetImageService extends DataService {
         }
         catch (Exception e) {
             LOGGER.error("Could not render timeseries chart.", e);
-            throw new InternalServiceException();
+            throw new InternalServerException();
         }
     }
 

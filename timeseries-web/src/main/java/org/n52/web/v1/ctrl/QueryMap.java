@@ -33,7 +33,7 @@ import org.n52.io.v1.data.DesignedParameterSet;
 import org.n52.io.v1.data.StyleProperties;
 import org.n52.io.v1.data.Vicinity;
 import org.n52.web.BadRequestException;
-import org.n52.web.InternalServiceException;
+import org.n52.web.InternalServerException;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -303,7 +303,7 @@ public class QueryMap {
             throw new BadRequestException("Could not parse style properties: " + style, e);
         }
         catch (IOException e) {
-            throw new InternalServiceException("An error occured during request handling.", e);
+            throw new InternalServerException("An error occured during request handling.", e);
         }
     }
 
