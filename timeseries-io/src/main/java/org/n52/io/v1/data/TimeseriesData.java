@@ -30,10 +30,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class TimeseriesData {
 
     private List<TimeseriesValue> values = new ArrayList<TimeseriesValue>();
-
+    
+    private TimeseriesMetadata metadata;
+    
     public void addValues(TimeseriesValue... values) {
         if (values != null) {
             this.values.addAll(Arrays.asList(values));
@@ -54,6 +58,10 @@ public class TimeseriesData {
         return timeseries;
     }
 
+    private void addNewValue(Long timestamp, Double value) {
+        values.add(new TimeseriesValue(timestamp, value));
+    }
+    
     /**
      * @return a sorted list of timeseries values.
      */
@@ -66,8 +74,13 @@ public class TimeseriesData {
         this.values = Arrays.asList(values);
     }
     
-    private void addNewValue(Long timestamp, Double value) {
-        values.add(new TimeseriesValue(timestamp, value));
+    @JsonProperty("_metadata")
+    public TimeseriesMetadata getMetadata() {
+        return metadata;
     }
-
+    
+    public void setMetadata(TimeseriesMetadata metadata) {
+        this.metadata = metadata;
+    }
+    
 }
