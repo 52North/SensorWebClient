@@ -72,7 +72,7 @@ public class TimeSeriesMetadataTable extends VLayout {
         if (refValues != null && refValues.size() > 0) {
             for (String refValueStr : refValues) {
                 ReferenceValue refValue = properties.getRefValue(refValueStr);
-                addRow(refValue.getID(), refValue.getValue().toString());
+                addRow(refValue.getId(), refValue.getValue().toString());
             }
         }
     }
