@@ -26,11 +26,11 @@
               <li><a href="#general-common-status-codes">Common Status Codes</a></li>
             </ul>
           </li>
-          <li> <!-- Resources -->
-            <a data-toggle="collapse" data-parent="#contents" data-target="#resources-subitems"  href="#resources">Resources</a>
-            <ul id="resources-subitems" class="nav collapse">
-              <li><a href="#resources-urls">URLs</a></li>
-              <li><a href="#resources-examples">Examples</a></li>
+          <li> <!-- Resource Collections -->
+            <a data-toggle="collapse" data-parent="#contents" data-target="#resource-collections-subitems"  href="#resource-collections">Collections</a>
+            <ul id="resource-collections-subitems" class="nav collapse">
+              <li><a href="#resource-collections-urls">URLs</a></li>
+              <li><a href="#resource-collections-examples">Examples</a></li>
             </ul>
           </li>
           <li> <!-- Stations -->
@@ -127,7 +127,7 @@
           
           <div id="general-common-query-parameters"> <!-- Common Query Parameters -->
             <h3>Common Query Parameters</h3>
-            <p>Except the <a href="#resources"><code>Resources</code> collection</a> all other collections can be queried/filtered by using the following query parameters. Each parameter is optional and can only be contain one value. Multiple paramters are combined to an <code>AND</code> query. A resource may specify further query parameters to control/filter output. Special query parameters are described in each section.</p>
+            <p>Except the <a href="#resource-collections"><code>Resources</code> collection</a> all other collections can be queried/filtered by using the following query parameters. Each parameter is optional and can only be contain one value. Multiple paramters are combined to an <code>AND</code> query. A resource may specify further query parameters to control/filter output. Special query parameters are described in each section.</p>
             <table class="table">
               <thead>
                 <th>Parameter</th>
@@ -302,17 +302,17 @@ Content omitted for brevity.
         </div>
 			</section>
 			
-			<!-- Resources
+			<!-- Resource Collections
 			================================================== -->
-			<section id="resources">
+			<section id="resource-collections">
 				<div class="page-header">
-					<h2>Resources</h2>
+					<h2>Collections</h2>
 					<p class="pull-right up-link">
 						<a href="#"><i class="icon-chevron-up"></i> top</a>
 					</p>
 				</div>
 				<div>
-					<div id="resources-urls"> <!-- URLs -->
+					<div id="resource-collections-urls"> <!-- URLs -->
             <h3>URLs</h3>
             <p>API calls are triggered by using the following URLs.</p>
             <table class="table">
@@ -333,13 +333,14 @@ Content omitted for brevity.
             </table>
           </div>
 					
-					<div id="resources-examples"> <!-- Example -->
-            <h3>Example</h3>
+					<div id="resource-collections-examples"> <!-- Examples -->
+            <h3>Examples</h3>
             <div>
+              <h4>Simple View</h4>
               <pre>GET /api/v1/ HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
-              <pre>HTTP/1.1 200 OK
+              <pre id="resource-collections-examples-simple" class="collapse">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 [
@@ -384,6 +385,68 @@ Content-Type: application/json;charset=UTF-8
     "description": "A collection of timeseries each representing a sequence of data values measured over time."
   }
 ]</pre>
+              <button data-toggle="collapse" data-parent="#resource-collections-examples" data-target="#resource-collections-examples-simple" class="btn btn-primary">Show/Hide Response</button>
+            </div>
+            
+            <div>
+              <h4>Expanded View</h4>
+              <pre>GET /api/v1/?expanded=true HTTP/1.1
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+              <pre id="resource-collections-examples-expanded" class="collapse">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+[
+  {
+    "id": "services",
+    "label": "Service Provider",
+    "description": "A service provider offers timeseries data.",
+    "size": 7
+  },
+  {
+    "id": "stations",
+    "label": "Station",
+    "description": "A station is the place where measurement takes place.",
+    "size": 1393
+  },
+  {
+    "id": "timeseries",
+    "label": "Timeseries",
+    "description": "Represents a sequence of data values measured over time.",
+    "size": 5434
+  },
+  {
+    "id": "categories",
+    "label": "Category",
+    "description": "A category group available timeseries.",
+    "size": 0
+  },
+  {
+    "id": "offerings",
+    "label": "Offering",
+    "description": "An organizing unit to filter resources.",
+    "size": 72
+  },
+  {
+    "id": "features",
+    "label": "Feature",
+    "description": "An organizing unit to filter resources.",
+    "size": 1393
+  },
+  {
+    "id": "procedures",
+    "label": "Procedure",
+    "description": "An organizing unit to filter resources.",
+    "size": 1770
+  },
+  {
+    "id": "phenomena",
+    "label": "Phenomenon",
+    "description": "An organizing unit to filter resources.",
+    "size": 62
+  }
+]</pre>
+              <button data-toggle="collapse" data-parent="#resource-collections-examples" data-target="#resource-collections-examples-expanded" class="btn btn-primary">Show/Hide Response</button>
             </div>
           </div>
 					
@@ -489,7 +552,7 @@ Content-Type: application/json;charset=UTF-8
               <pre>GET /api/v1/stations/ HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
-              <pre>HTTP/1.1 200 OK
+              <pre id="stations-examples-simple" class="collapse">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 [
@@ -522,6 +585,7 @@ Content-Type: application/json;charset=UTF-8
     "type": "Feature"
   }
 ]</pre>
+              <button data-toggle="collapse" data-parent="#stations-examples" data-target="#stations-examples-simple" class="btn btn-primary">Show/Hide Response</button>
               <div class="n52-callout n52-callout-info">
                 As <a href="#general-common-query-parameters">noted above</a> <code>expanded=false</code> is the default. Setting the parameter to <code>false</code> explicitly will have the same effect. 
               </div>
@@ -531,7 +595,7 @@ Content-Type: application/json;charset=UTF-8
               <pre>GET /api/v1/stations/?expanded=true HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
-              <pre>HTTP/1.1 200 OK
+              <pre id="stations-examples-expanded" class="collapse">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 [
@@ -642,6 +706,7 @@ Content-Type: application/json;charset=UTF-8
     "type": "Feature"
   }
 ]</pre>
+              <button data-toggle="collapse" data-parent="#stations-examples" data-target="#stations-examples-expanded" class="btn btn-primary">Show/Hide Response</button>
               <div class="n52-callout n52-callout-info">
                 Please refer to the <a href="http://geojson.org">GeoJSON specification</a> if you need more detailed information about the geometry types used.
               </div>
@@ -651,7 +716,7 @@ Content-Type: application/json;charset=UTF-8
               <pre>GET /api/v1/stations/sta_3b1495e8b789501dbe3296ac3d849c09/ HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
-              <pre>HTTP/1.1 200 OK
+              <pre id="stations-examples-item" class="collapse">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 {
@@ -696,6 +761,7 @@ Content-Type: application/json;charset=UTF-8
   },
   "type": "Feature"
 }</pre>
+              <button data-toggle="collapse" data-parent="#stations-examples" data-target="#stations-examples-item" class="btn btn-primary">Show/Hide Response</button>
             </div>
 					
           </div>
@@ -880,7 +946,7 @@ Content-Type: application/json;charset=UTF-8
               <pre>GET /api/v1/timeseries HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
-              <pre>HTTP/1.1 200 OK
+              <pre id="timeseries-examples-simple" class="collapse">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 [
@@ -927,6 +993,7 @@ Content-Type: application/json;charset=UTF-8
     },
   }
 ]</pre>
+              <button data-toggle="collapse" data-parent="#timeseries-simple" data-target="#timeseries-examples-simple" class="btn btn-primary">Show/Hide Response</button>
               <div class="n52-callout n52-callout-info">
                 As <a href="#general-common-query-parameters">noted above</a> <code>expanded=false</code> is the default. Setting the parameter to <code>false</code> explicitly will have the same effect. 
               </div>
@@ -937,7 +1004,7 @@ Content-Type: application/json;charset=UTF-8
               <pre>GET /api/v1/timeseries/?expanded=true HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
-              <pre>HTTP/1.1 200 OK
+              <pre id="timeseries-examples-expanded" class="collapse">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 [
@@ -1028,14 +1095,15 @@ Content-Type: application/json;charset=UTF-8
     }
   }
 ]</pre>
-						</div>
+              <button data-toggle="collapse" data-parent="#timeseries-examples" data-target="#timeseries-examples-expanded" class="btn btn-primary">Show/Hide Response</button>
+            </div>
 						
             <div> <!-- Simple Item -->
               <h4>Simple Item</h4>
               <pre>GET /api/v1/timeseries/ts_35559ca6b2248629e6dcdc65ceead0ed HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
-              <pre>HTTP/1.1 200 OK
+              <pre id="timeseries-examples-item" class="collapse">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 {
@@ -1095,9 +1163,7 @@ Content-Type: application/json;charset=UTF-8
     }
   }
 }</pre>
-              <div class="n52-callout n52-callout-info">
-                As <a href="#general-common-query-parameters">noted above</a> <code>expanded=false</code> is the default. Setting the parameter to <code>false</code> explicitly will have the same effect. 
-              </div>
+              <button data-toggle="collapse" data-parent="#timeseries-examples" data-target="#timeseries-examples-item" class="btn btn-primary">Show/Hide Response</button>
 						</div>
             
             <div> <!-- Raw Data of a single timeseries -->
@@ -1106,7 +1172,7 @@ Content-Type: application/json;charset=UTF-8
               <pre>GET /api/v1/timeseries/ts_35559ca6b2248629e6dcdc65ceead0ed/getData HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
-                <pre>HTTP/1.1 200 OK
+                <pre id="timeseries-examples-single-raw" class="collapse">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 {
@@ -1157,6 +1223,7 @@ Content-Type: application/json;charset=UTF-8
     ]
   }
 }</pre>
+              <button data-toggle="collapse" data-parent="#timeseries-examples" data-target="#timeseries-examples-single-raw" class="btn btn-primary">Show/Hide Response</button>
               <div class="n52-callout n52-callout-info">
                 <p>Timeseries data can be very big! Naive clients can bother data providers when trying to request huge datasets by accident. Therefore data requests may be limited to a maximum timespan (per configuration).</p>
                 <p>However, most probably consuming huge datasets may also not be of client's interest. Have a look <a href="#general-paging">at the paging documentation</a> how to get data in smaller chunks.</p>
@@ -1178,7 +1245,7 @@ Accept: application/json
   ]
 }
 </pre>
-                <pre>HTTP/1.1 200 OK
+                <pre id="timeseries-examples-multiple-raw" class="collapse">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 {
@@ -1216,6 +1283,7 @@ Content-Type: application/json;charset=UTF-8
     }
   }
 }</pre>
+                <button data-toggle="collapse" data-parent="#timeseries-examples" data-target="#timeseries-examples-multiple-raw" class="btn btn-primary">Show/Hide Response</button>
               </div>
 						
             <div id="timeseries-example-post-image"> <!-- Image Data of multiple timeseries -->

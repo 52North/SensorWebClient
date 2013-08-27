@@ -31,15 +31,7 @@ public class ServiceOutput extends OutputValue {
 	
 	private String type;
 	
-	private int amountOfferings;
-	
-	private int amountFeatures;
-	
-	private int amountProcedures;
-	
-	private int amountPhenomena;
-	
-	private int amountStations;
+	private ParameterCount quantities;
 	
 	public String getServiceUrl() {
 		return serviceUrl;
@@ -64,48 +56,16 @@ public class ServiceOutput extends OutputValue {
 	public void setType(String type) {
 		this.type = type;
 	}
+	
+	public ParameterCount getQuantities() {
+        return quantities;
+    }
 
-    public int getAmountOfferings() {
-		return amountOfferings;
-	}
+    public void setQuantities(ParameterCount countedParameters) {
+        this.quantities = countedParameters;
+    }
 
-	public void setAmountOfferings(int amountOfferings) {
-		this.amountOfferings = amountOfferings;
-	}
-
-	public int getAmountFeatures() {
-		return amountFeatures;
-	}
-
-	public void setAmountFeatures(int amountFeatures) {
-		this.amountFeatures = amountFeatures;
-	}
-
-	public int getAmountProcedures() {
-		return amountProcedures;
-	}
-
-	public void setAmountProcedures(int amountProcedures) {
-		this.amountProcedures = amountProcedures;
-	}
-
-	public int getAmountPhenomena() {
-		return amountPhenomena;
-	}
-
-	public void setAmountPhenomena(int amountPhenomena) {
-		this.amountPhenomena = amountPhenomena;
-	}
-
-	public int getAmountStations() {
-		return amountStations;
-	}
-
-	public void setAmountStations(int amountStations) {
-		this.amountStations = amountStations;
-	}
-
-	@Override
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
@@ -152,6 +112,71 @@ public class ServiceOutput extends OutputValue {
             return false;
         }
         return true;
+    }
+    
+    public class ParameterCount {
+
+        private int amountOfferings;
+        
+        private int amountFeatures;
+        
+        private int amountProcedures;
+        
+        private int amountPhenomena;
+        
+        private int amountStations;
+
+        private int amountTimeseries;
+        
+
+        public int getOfferings() {
+            return amountOfferings;
+        }
+
+        public void setOfferingsSize(int size) {
+            this.amountOfferings = size;
+        }
+
+        public int getFeatures() {
+            return amountFeatures;
+        }
+
+        public void setFeaturesSize(int size) {
+            this.amountFeatures = size;
+        }
+
+        public int getProcedures() {
+            return amountProcedures;
+        }
+
+        public void setProceduresSize(int size) {
+            this.amountProcedures = size;
+        }
+
+        public int getPhenomena() {
+            return amountPhenomena;
+        }
+
+        public void setPhenomenaSize(int size) {
+            this.amountPhenomena = size;
+        }
+
+        public int getStations() {
+            return amountStations;
+        }
+
+        public void setStationsSize(int size) {
+            this.amountStations = size;
+        }
+
+        public void setTimeseriesSize(int countTimeseries) {
+            this.amountTimeseries = countTimeseries;
+        }
+        
+        public int getTimeseries() {
+            return this.amountTimeseries;
+        }
+
     }
 	
 }
