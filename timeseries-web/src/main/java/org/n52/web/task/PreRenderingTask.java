@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.imageio.ImageIO;
@@ -50,6 +51,8 @@ public class PreRenderingTask extends TimerTask implements ServletConfigAware {
 	private String webappFolder;
 	
 	private String outputPath;
+	
+	private int period;
 	
 	// image dimensions with default values
 	private int width = 800;
@@ -223,6 +226,13 @@ public class PreRenderingTask extends TimerTask implements ServletConfigAware {
 		}
 	}
 
+	public void startTask() {
+		Timer timer = new Timer();
+		if (this != null) {
+			timer.schedule(this, 10000, (1000 * 60 * period));
+		}
+	}
+
 	public String getOutputPath() {
 		return outputPath;
 	}
@@ -278,6 +288,14 @@ public class PreRenderingTask extends TimerTask implements ServletConfigAware {
 
 	public void setShowGrid(boolean showGrid) {
 		this.showGrid = showGrid;
+	}
+
+	public int getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(int period) {
+		this.period = period;
 	}
 
 }

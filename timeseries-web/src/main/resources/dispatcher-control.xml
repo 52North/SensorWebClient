@@ -152,6 +152,8 @@
     	<property name="height" value="500"/>
     	<property name="language" value="de"/>
     	<property name="showGrid" value="true"/>
+    	<!-- in minutes -->
+    	<property name="period" value="1440"/>
     </bean>
 
 </beans>
