@@ -866,7 +866,8 @@ Content-Type: application/json;charset=UTF-8
                   <td>
                     <p>Controls the output format of raw timeseries data. This avoids converting between different data formats on client side which uses a 3rd party chart rendering API. Currently, supported formats:
                     <ul>
-                      <li><code>highcharts</code> (the default)</li>
+                      <li><code>highcharts</code>: <a href="http://www.highcharts.com/">Highcharts</a> series data format.</li>
+                      <li><code>tvp</code>: Tuple value pairs (the default)</li>
                     </ul></p>
                     <div class="n52-callout n52-callout-todo">Add more formats!</div>
                   </td>
@@ -892,6 +893,7 @@ Content-Type: application/json;charset=UTF-8
 [
   {
     "id": "ts_3f1dfdc820f5e5247cc902f04c76c781",
+    "uom": "cm",
     "station": {
       "properties": {
         "label": "1479"
@@ -905,10 +907,6 @@ Content-Type: application/json;charset=UTF-8
       },
       "type": "Feature"
     },
-    "firstValue": {
-      "timestamp": 1375599900000,
-      "value": 23.4
-    },
     "lastValue": {
       "timestamp": 1375599900000,
       "value": 43.4
@@ -916,6 +914,7 @@ Content-Type: application/json;charset=UTF-8
   },
   {
     "id": "ts_eeb8e39dd0e8b4284e04d8a485a36cea",
+    "uom": "cm",
     "station": {
       "properties": {
         "label": "1479"
@@ -955,6 +954,7 @@ Content-Type: application/json;charset=UTF-8
 [
   {
     "id": "ts_3f1dfdc820f5e5247cc902f04c76c781",
+    "uom": "cm",
     "station": {
       "properties": {
         "label": "1479"
@@ -967,6 +967,24 @@ Content-Type: application/json;charset=UTF-8
         "type": "Point"
       },
       "type": "Feature"
+    },
+    "referenceValues": [ 
+      {
+        "label": "Mittleres Niedrigwasser",
+        "lastValue": 34.0
+      },
+      {
+        "label": "Mittelwasser",
+        "lastValue": 36.0
+      }
+    ],
+    "firstValue": {
+      "timestamp": 1375599900000,
+      "value": 23.4
+    },
+    "lastValue": {
+      "timestamp": 1375599900000,
+      "value": 43.4
     },
     "parameters": {
       "offering": {
@@ -989,6 +1007,7 @@ Content-Type: application/json;charset=UTF-8
   },
   {
     "id": "ts_eeb8e39dd0e8b4284e04d8a485a36cea",
+    "uom": "cm",
     "station": {
       "properties": {
         "label": "1479"
@@ -1001,6 +1020,17 @@ Content-Type: application/json;charset=UTF-8
         "type": "Point"
       },
       "type": "Feature"
+    },
+    "referenceValues": [
+      "Mittleres Niedrigwasser"
+    ],
+    "firstValue": {
+      "timestamp": 1375599900000,
+      "value": 23.4
+    },
+    "lastValue": {
+      "timestamp": 1375599900000,
+      "value": 43.4
     },
     "parameters": {
       "offering": {
@@ -1035,70 +1065,22 @@ Content-Type: application/json;charset=UTF-8
 {
   "id": "ts_35559ca6b2248629e6dcdc65ceead0ed",
   "uom": "cm",
-  "station": {
-    "id": "../stations/sta_adsf09",
-    "label": "Bramsche"
-  },
-  "parameters": {
-    "service": "../services/srv_823sd",
-    "offering": "../offerings/off_sadf23",
-    "procedure": "../procedures/pro_dfg232",
-    "phenomenon": "../phenomena/phe_sdf231",
-    "feature": "../features/foi_dg234"
-    "category": "../categories/cat_asda09fj"
-  }
-}</pre>
-              <div class="n52-callout n52-callout-info">
-                As <a href="#general-common-query-parameters">noted above</a> <code>expanded=false</code> is the default. Setting the parameter to <code>false</code> explicitly will have the same effect. 
-              </div>
-						</div>
-            
-            <div> <!-- Expanded Item -->
-              <h4>Expanded Item</h4>
-              <pre>GET /api/v1/timeseries/ts_35559ca6b2248629e6dcdc65ceead0ed/?expanded=true HTTP/1.1
-Host: sensorweb.demo.52north.org
-Accept: application/json</pre>
-              <pre>HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-
-{
-  "id": "ts_35559ca6b2248629e6dcdc65ceead0ed",
-  "uom": "cm",
-  "refValues": [
-    "ref_23049": {
-      "reference": "Mittleres Niedrigwasser",
-      "values": [
-        {
-          "from": 1375570800000,
-          "to": 1375590860000,
-          "value": 24.0,
-        },
-        {
-          "from": 1375599960000,
-          "to": 1375600860000,
-          "value": 26.5
-        }
-      ]
-    },
-      "ref_45030": {
-        "reference": "Mittelwasser",
-        "values": [
-        {
-          "from": 1375570800000,
-          "to": 1375590860000,
-          "value": 34.5,
-        },
-        {
-          "from": 1375599960000,
-          "to": 1375600860000,
-          "value": 34.5
-        }
-      ]
-    }
+  "referenceValues": [
+    "Mittleres Niedrigwasser",
+    "Mittelwasser"
   ],
   "station": {
-    "id": "../stations/sta_adsf09",
-    "label": "Bramsche"
+    "properties": {
+      "label": "1479"
+    },
+    "geometry": {
+      "coordinates": [
+        30.34848961700004,
+        62.23512502400007
+      ],
+      "type": "Point"
+    },
+    "type": "Feature"
   },
   "firstValue": {
     "timestamp": 1375599900000,
@@ -1109,39 +1091,90 @@ Content-Type: application/json;charset=UTF-8
     "value": 43.4
   },
   "parameters": {
-    "service": "../services/srv_823sd",
-    "offering": "../offerings/off_sadf23",
-    "procedure": "../procedures/pro_dfg232",
-    "phenomenon": "../phenomena/phe_sdf231",
-    "feature": "../features/foi_dg234"
+    "service": {
+      "id": "srv_1a5bde0a6d702f193f7be463402ec12f",
+      "serviceUrl": "http://pegelonline.wsv.de/webservices/gis/gdi-sos"
+    },
+    "offering": {
+      "id": "off_36a01a7359cb2667bcf5d21e7f8d9c98",
+      "label": "LUFTTEMPERATUR_ROHDATEN"
+    },
+    "feature": {
+      "id": "foi_7060e496c7e8d74d136db5de66a0eac9",
+      "label": "Bramsche_31010020"
+    },
+    "procedure": {
+      "id": "pro_da9466214132711d4e3696d0b0922ee5",
+      "label": "Lufttemperatur-Bramsche_31010020"
+    },
+    "phenomenon": {
+      "id": "phe_2a71ebb813ed5c1ad408f7370019d0cc",
+      "label": "Lufttemperatur"
+    }
   }
 }</pre>
+              <div class="n52-callout n52-callout-info">
+                As <a href="#general-common-query-parameters">noted above</a> <code>expanded=false</code> is the default. Setting the parameter to <code>false</code> explicitly will have the same effect. 
+              </div>
 						</div>
             
             <div> <!-- Raw Data of a single timeseries -->
               <h4>Raw Data of a single timeseries</h4>
-              <div class="n52-callout n52-callout-todo">a query parameter which asks for formatting the output to be directly consumable by JS chart APIs?</div>
-						
+              
               <pre>GET /api/v1/timeseries/ts_35559ca6b2248629e6dcdc65ceead0ed/getData HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
                 <pre>HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
-[
-  {
-    "timestamp": 1375570800000,
-    "value": "230.81"
+{
+  "values": {
+    [
+      {
+        "timestamp": 1375570800000,
+        "value": 230.81
+      },
+      {
+        "timestamp": 1375570860000,
+        "value": 235.12
+      },
+      {
+        "timestamp": 1375570920000,
+        "value": 235.97
+      }
+    ]
   },
-  {
-    "timestamp": 1375570860000,
-    "value": "235.12"
-  },
-  {
-    "timestamp": 1375570920000,
-    "value": "235.97"
+  "_metadata": {
+    "referenceValues": [
+      {
+        "Mittleres Niedrigwasser": {
+          "values": [
+            {
+              "timestamp": 1375570800000,
+              "value": 24
+            },
+            {
+              "timestamp": 1375590860000,
+              "value": 26.5
+            }
+          ]
+        },
+        "Mittelwasser": {
+          "values": [
+            {
+              "timestamp": 1375570800000,
+              "value": 34.5
+            },
+            {
+              "timestamp": 1375590860000,
+              "value": 34.5
+            }
+          ]
+        }
+      }
+    ]
   }
-]</pre>
+}</pre>
               <div class="n52-callout n52-callout-info">
                 <p>Timeseries data can be very big! Naive clients can bother data providers when trying to request huge datasets by accident. Therefore data requests may be limited to a maximum timespan (per configuration).</p>
                 <p>However, most probably consuming huge datasets may also not be of client's interest. Have a look <a href="#general-paging">at the paging documentation</a> how to get data in smaller chunks.</p>
