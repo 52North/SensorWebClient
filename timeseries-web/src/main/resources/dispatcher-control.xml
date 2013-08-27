@@ -118,6 +118,7 @@
 		<property name="timeseriesMetadataService" ref="timeseriesMetadataService" />
 		<property name="timeseriesDataService" ref="timeseriesDataService" />
 		<property name="preRenderingTask" ref="preRenderingTask" />
+		<property name="requestIntervalRestriction" value="P1Y" />
 	</bean>
 
 	<bean id="preRenderingTask" class="org.n52.web.task.PreRenderingTask"
