@@ -113,7 +113,7 @@ public class TimeseriesDataController extends BaseController {
 
         // TODO add paging
 
-        return new ModelAndView().addObject(timeseriesData.getAllTimeseries());
+        return new ModelAndView().addObject(timeseriesData.getTimeseries(timeseriesId).getValues());
     }
 
     @RequestMapping(value = "/getData", produces = {"application/pdf"}, method = POST)
