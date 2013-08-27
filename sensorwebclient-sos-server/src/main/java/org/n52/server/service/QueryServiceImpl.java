@@ -95,7 +95,7 @@ public class QueryServiceImpl implements QueryService {
             }
             String serviceUrl = query.getServiceUrl();
             SOSMetadata metadata = ConfigurationContext.getSOSMetadata(serviceUrl);
-            ArrayList<Station> stations = (ArrayList<Station>) metadata.getStations();
+            ArrayList<Station> stations = metadata.getStations();
 
             QueryParameters parameters = query.getQueryParameters();
             LOGGER.debug("Request -> getStations(sosUrl: {}, filter: {})", serviceUrl, parameters);

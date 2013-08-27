@@ -24,11 +24,8 @@
 
 package org.n52.shared.serializable.pojos.sos;
 
-import static java.util.Collections.unmodifiableCollection;
-
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -288,8 +285,8 @@ public class SOSMetadata implements Serializable {
         stations.put(station.getLabel(), station);
     }
 
-    public Collection<Station> getStations() {
-        return this.stations.values();
+    public ArrayList<Station> getStations() {
+        return new ArrayList<Station>(stations.values());
     }
     
     public SosTimeseries[] getTimeseriesRelatedWith(QueryParameters parameters) {
