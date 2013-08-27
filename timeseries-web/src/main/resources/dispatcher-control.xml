@@ -93,6 +93,10 @@
     <bean class="org.n52.web.v1.ctrl.FeaturesParameterController">
         <property name="featureParameterService" ref="featureParameterService" />
     </bean>
+    
+    <bean class="org.n52.web.v1.ctrl.CategoriesParameterController">
+        <property name="categoryParameterService" ref="categoryParameterService" />
+    </bean>
 
     <bean class="org.n52.web.v1.ctrl.ProceduresParameterController">
         <property name="procedureParameterService" ref="procedureParameterService" />
@@ -123,6 +127,8 @@
     <bean id="serviceParameterService" class="org.n52.api.v1.srv.ServiceOutputAdapter" />
 
     <bean id="featureParameterService" class="org.n52.api.v1.srv.FeatureOutputAdapter" />
+    
+    <bean id="categoryParameterService" class="org.n52.api.v1.srv.CategoryOutputAdapter" />
 
     <bean id="procedureParameterService" class="org.n52.api.v1.srv.ProcedureOutputAdapter" />
 

@@ -31,15 +31,15 @@ public class ServiceOutput extends OutputValue {
 	
 	private String type;
 	
-	private int amountOfferings;
+	private Integer amountOfferings;
 	
-	private int amountFeatures;
+	private Integer amountFeatures;
 	
-	private int amountProcedures;
+	private Integer amountProcedures;
 	
-	private int amountPhenomena;
+	private Integer amountPhenomena;
 	
-	private int amountStations;
+	private Integer amountStations;
 	
 	public String getServiceUrl() {
 		return serviceUrl;
@@ -65,43 +65,43 @@ public class ServiceOutput extends OutputValue {
 		this.type = type;
 	}
 
-    public int getAmountOfferings() {
+    public Integer getAmountOfferings() {
 		return amountOfferings;
 	}
 
-	public void setAmountOfferings(int amountOfferings) {
+	public void setAmountOfferings(Integer amountOfferings) {
 		this.amountOfferings = amountOfferings;
 	}
 
-	public int getAmountFeatures() {
+	public Integer getAmountFeatures() {
 		return amountFeatures;
 	}
 
-	public void setAmountFeatures(int amountFeatures) {
+	public void setAmountFeatures(Integer amountFeatures) {
 		this.amountFeatures = amountFeatures;
 	}
 
-	public int getAmountProcedures() {
+	public Integer getAmountProcedures() {
 		return amountProcedures;
 	}
 
-	public void setAmountProcedures(int amountProcedures) {
+	public void setAmountProcedures(Integer amountProcedures) {
 		this.amountProcedures = amountProcedures;
 	}
 
-	public int getAmountPhenomena() {
+	public Integer getAmountPhenomena() {
 		return amountPhenomena;
 	}
 
-	public void setAmountPhenomena(int amountPhenomena) {
+	public void setAmountPhenomena(Integer amountPhenomena) {
 		this.amountPhenomena = amountPhenomena;
 	}
 
-	public int getAmountStations() {
+	public Integer getAmountStations() {
 		return amountStations;
 	}
 
-	public void setAmountStations(int amountStations) {
+	public void setAmountStations(Integer amountStations) {
 		this.amountStations = amountStations;
 	}
 
