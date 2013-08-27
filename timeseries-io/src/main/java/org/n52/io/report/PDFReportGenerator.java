@@ -48,9 +48,9 @@ import org.apache.fop.apps.FopFactory;
 import org.joda.time.DateTime;
 import org.n52.io.IOHandler;
 import org.n52.io.TimeseriesIOException;
+import org.n52.io.format.TvpDataCollection;
 import org.n52.io.img.ChartRenderer;
 import org.n52.io.v1.data.TimeseriesData;
-import org.n52.io.v1.data.TimeseriesDataCollection;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.TimeseriesOutput;
 import org.n52.io.v1.data.TimeseriesValue;
@@ -91,12 +91,12 @@ public class PDFReportGenerator extends ReportGenerator implements IOHandler {
     }
 
     @Override
-    public void generateOutput(TimeseriesDataCollection data) throws TimeseriesIOException {
+    public void generateOutput(TvpDataCollection data) throws TimeseriesIOException {
         generateTimeseriesChart(data);
         generateTimeseriesMetadata();
     }
 
-    private void generateTimeseriesChart(TimeseriesDataCollection data) throws TimeseriesIOException {
+    private void generateTimeseriesChart(TvpDataCollection data) throws TimeseriesIOException {
         try {
             renderer.generateOutput(data);
             File tmpFile = createTempFile("52n_swc_", "_chart.png");
@@ -190,7 +190,7 @@ public class PDFReportGenerator extends ReportGenerator implements IOHandler {
 
     private void addDataTable(TimeSeries timeseries,
                               TimeseriesMetadataOutput metadata,
-                              TimeseriesDataCollection dataCollection) {
+                              TvpDataCollection dataCollection) {
         TableType dataTable = timeseries.addNewTable();
 
         // TODO add language context

@@ -1,8 +1,8 @@
 package org.n52.io.generalize;
 
-import org.n52.io.v1.data.TimeseriesDataCollection;
+import org.n52.io.format.TvpDataCollection;
 
 public interface Generalizer {
 
-    public TimeseriesDataCollection generalize() throws GeneralizerException;
+    public TvpDataCollection generalize() throws GeneralizerException;
 }

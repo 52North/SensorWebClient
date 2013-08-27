@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.api.v1.io.TimeseriesConverter;
-import org.n52.io.v1.data.TimeseriesDataCollection;
+import org.n52.io.format.TvpDataCollection;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.shared.requests.query.QueryParameters;
@@ -48,7 +48,7 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Timeserie
     private GetDataService dataService;
 
 	@Override
-	public TimeseriesDataCollection getTimeseriesData(UndesignedParameterSet parameters) {
+	public TvpDataCollection getTimeseriesData(UndesignedParameterSet parameters) {
 		return dataService.getTimeSeriesFromParameterSet(parameters);
 	}
 
@@ -102,7 +102,15 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Timeserie
             if (station != null) {
                 TimeseriesConverter converter = new TimeseriesConverter(metadata, dataService);
                 SosTimeseries timeseries = station.getTimeseriesById(timeseriesId);
-                return converter.convertExpanded(timeseries);
+                TimeseriesMetadataOutput convertExpanded = converter.convertExpanded(timeseries);
+                /*
+                 * We have to ensure that first and last values are only set when an item
+                 * is being requested! Calling first/last value for a whole timeseries
+                 * collection would trigger thousands of requests otherwise
+                 */
+                convertExpanded.setFirstValue(dataService.getFirstValue(timeseries));
+                convertExpanded.setLastValue(dataService.getLastValue(timeseries));
+                return convertExpanded;
             }
         }
         return null;
