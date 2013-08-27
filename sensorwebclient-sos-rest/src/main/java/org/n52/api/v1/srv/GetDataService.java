@@ -33,8 +33,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.n52.client.service.TimeSeriesDataService;
+import org.n52.io.format.TvpDataCollection;
 import org.n52.io.v1.data.TimeseriesData;
-import org.n52.io.v1.data.TimeseriesDataCollection;
 import org.n52.io.v1.data.TimeseriesValue;
 import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.shared.requests.TimeSeriesDataRequest;
@@ -61,13 +61,13 @@ public class GetDataService extends DataService {
      * @param parameterSet containing request parameters.
      * @return a time series result instance, identified by {@link SosTimeseries#getTimeseriesId()}
      */
-    public TimeseriesDataCollection getTimeSeriesFromParameterSet(UndesignedParameterSet parameterSet) {
+    public TvpDataCollection getTimeSeriesFromParameterSet(UndesignedParameterSet parameterSet) {
         ArrayList<TimeseriesProperties> tsProperties = new ArrayList<TimeseriesProperties>();
-        TimeseriesDataCollection timeseriesCollection = prepareTimeseriesResults(parameterSet, tsProperties);
+        TvpDataCollection timeseriesCollection = prepareTimeseriesResults(parameterSet, tsProperties);
         return performTimeseriesDataRequest(timeseriesCollection, createDesignOptions(parameterSet, tsProperties));
     }
 
-    private TimeseriesDataCollection performTimeseriesDataRequest(TimeseriesDataCollection timeSeriesResults, DesignOptions options) throws InternalServerException {
+    private TvpDataCollection performTimeseriesDataRequest(TvpDataCollection timeSeriesResults, DesignOptions options) throws InternalServerException {
         try {
             TimeSeriesDataRequest tsRequest = new TimeSeriesDataRequest(options);
             TimeSeriesDataResponse timeSeriesData = timeSeriesDataService.getTimeSeriesData(tsRequest);
@@ -99,7 +99,7 @@ public class GetDataService extends DataService {
 
     private TimeseriesValue performFirstOrLastValueRequest(TimeseriesProperties properties, DesignOptions designOptions) {
        try {
-           TimeseriesDataCollection dataCollection = prepareTimeseriesResults(properties);
+           TvpDataCollection dataCollection = prepareTimeseriesResults(properties);
            dataCollection = performTimeseriesDataRequest(dataCollection, designOptions);
            TimeseriesValue[] data = dataCollection.getTimeseries(properties.getTimeseriesId()).getValues();
            if (data.length == 0) {

@@ -32,9 +32,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.io.MimeType;
-import org.n52.io.img.ChartRenderer;
-import org.n52.io.img.RenderingContext;
-import org.n52.io.v1.data.TimeseriesDataCollection;
+import org.n52.io.format.TvpDataCollection;
 
 
 public class ChartRendererTest {
@@ -89,7 +87,7 @@ public class ChartRendererTest {
         }
 
         @Override
-        public void generateOutput(TimeseriesDataCollection data) {
+        public void generateOutput(TvpDataCollection data) {
             throw new UnsupportedOperationException();
         }
 

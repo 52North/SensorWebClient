@@ -27,7 +27,7 @@ package org.n52.io;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.n52.io.v1.data.TimeseriesDataCollection;
+import org.n52.io.format.TvpDataCollection;
 
 public interface IOHandler {
 
@@ -37,7 +37,7 @@ public interface IOHandler {
      * @throws TimeseriesIOException
      *         if ouput generation fails.
      */
-    public void generateOutput(TimeseriesDataCollection data) throws TimeseriesIOException;
+    public void generateOutput(TvpDataCollection data) throws TimeseriesIOException;
 
     /**
      * Encodes and writes previously generated output to the given stream. After handling the stream gets

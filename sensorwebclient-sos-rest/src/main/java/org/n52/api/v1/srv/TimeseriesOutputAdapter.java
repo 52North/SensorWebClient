@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.api.v1.io.TimeseriesConverter;
-import org.n52.io.v1.data.TimeseriesDataCollection;
+import org.n52.io.format.TvpDataCollection;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.shared.requests.query.QueryParameters;
@@ -48,7 +48,7 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Timeserie
     private GetDataService dataService;
 
 	@Override
-	public TimeseriesDataCollection getTimeseriesData(UndesignedParameterSet parameters) {
+	public TvpDataCollection getTimeseriesData(UndesignedParameterSet parameters) {
 		return dataService.getTimeSeriesFromParameterSet(parameters);
 	}
 

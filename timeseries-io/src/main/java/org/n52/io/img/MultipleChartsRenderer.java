@@ -40,12 +40,12 @@ import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.time.Week;
+import org.n52.io.format.TvpDataCollection;
 import org.n52.io.style.BarStyle;
 import org.n52.io.style.LineStyle;
 import org.n52.io.v1.data.FeatureOutput;
 import org.n52.io.v1.data.StyleProperties;
 import org.n52.io.v1.data.TimeseriesData;
-import org.n52.io.v1.data.TimeseriesDataCollection;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.TimeseriesValue;
 
@@ -56,7 +56,7 @@ public class MultipleChartsRenderer extends ChartRenderer {
     }
 
     @Override
-    public void generateOutput(TimeseriesDataCollection data) {
+    public void generateOutput(TvpDataCollection data) {
         Map<String, TimeseriesData> allTimeseries = data.getAllTimeseries();
         TimeseriesMetadataOutput[] timeseriesMetadatas = getTimeseriesMetadataOutputs();
         for (int rendererIndex = 0; rendererIndex < timeseriesMetadatas.length; rendererIndex++) {

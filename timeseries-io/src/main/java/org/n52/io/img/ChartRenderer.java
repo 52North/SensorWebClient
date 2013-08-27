@@ -34,7 +34,6 @@ import static javax.imageio.ImageIO.write;
 import static org.jfree.chart.ChartFactory.createTimeSeriesChart;
 import static org.n52.io.I18N.getDefaultLocalizer;
 import static org.n52.io.I18N.getMessageLocalizer;
-import static org.n52.io.generalize.DouglasPeuckerGeneralizer.createNonConfigGeneralizer;
 import static org.n52.io.img.BarRenderer.BAR_CHART_TYPE;
 import static org.n52.io.img.ChartRenderer.LabelConstants.COLOR;
 import static org.n52.io.img.ChartRenderer.LabelConstants.FONT_DOMAIN;
@@ -63,11 +62,10 @@ import org.n52.io.I18N;
 import org.n52.io.IOHandler;
 import org.n52.io.MimeType;
 import org.n52.io.TimeseriesIOException;
-import org.n52.io.generalize.GeneralizerException;
+import org.n52.io.format.TvpDataCollection;
 import org.n52.io.v1.data.DesignedParameterSet;
 import org.n52.io.v1.data.PhenomenonOutput;
 import org.n52.io.v1.data.StyleProperties;
-import org.n52.io.v1.data.TimeseriesDataCollection;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.TimeseriesOutput;
 import org.slf4j.Logger;
@@ -102,7 +100,7 @@ public abstract class ChartRenderer implements IOHandler {
         this.context = context;
     }
 
-    public abstract void generateOutput(TimeseriesDataCollection data) throws TimeseriesIOException;
+    public abstract void generateOutput(TvpDataCollection data) throws TimeseriesIOException;
 
     public void encodeAndWriteTo(OutputStream stream) throws TimeseriesIOException {
         try {
