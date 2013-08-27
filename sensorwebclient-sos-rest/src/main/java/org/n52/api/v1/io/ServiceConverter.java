@@ -23,8 +23,12 @@
  */
 package org.n52.api.v1.io;
 
+import java.util.Collection;
+
 import org.n52.io.v1.data.ServiceOutput;
+import org.n52.io.v1.data.ServiceOutput.ParameterCount;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
 public class ServiceConverter extends OutputConverter<SOSMetadata, ServiceOutput> {
@@ -41,13 +45,29 @@ public class ServiceConverter extends OutputConverter<SOSMetadata, ServiceOutput
         convertedService.setVersion(metadata.getVersion());
         convertedService.setLabel(metadata.getTitle());
         convertedService.setType("SOS");
-        TimeseriesParametersLookup parametersLookup = metadata.getTimeseriesParametersLookup();
-        convertedService.setAmountFeatures(parametersLookup.getFeatures().size());
-        convertedService.setAmountOfferings(parametersLookup.getOfferings().size());
-        convertedService.setAmountPhenomena(parametersLookup.getPhenomenons().size());
-        convertedService.setAmountProcedures(parametersLookup.getProcedures().size());
-        convertedService.setAmountStations(metadata.getStations().size());
+        
+        convertedService.setQuantities(countParameters(metadata, convertedService));
         return convertedService;
+    }
+
+    private ParameterCount countParameters(SOSMetadata metadata, ServiceOutput convertedService) {
+        ParameterCount parameterCount = convertedService.new ParameterCount();
+        parameterCount.setFeaturesSize(getLookup().getFeatures().size());
+        parameterCount.setOfferingsSize(getLookup().getOfferings().size());
+        parameterCount.setPhenomenaSize(getLookup().getPhenomenons().size());
+        parameterCount.setProceduresSize(getLookup().getProcedures().size());
+        Collection<Station> stations = metadata.getStations();
+        parameterCount.setStationsSize(stations.size());
+        parameterCount.setTimeseriesSize(countTimeseries(stations));
+        return parameterCount;
+    }
+
+    private int countTimeseries(Collection<Station> stations) {
+        int size = 0;
+        for (Station station : stations) {
+            size += station.getObservedTimeseries().size();
+        }
+        return size;
     }
 
     @Override
