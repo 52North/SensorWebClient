@@ -24,9 +24,9 @@ import org.joda.time.Interval;
 import org.n52.io.IOFactory;
 import org.n52.io.IOHandler;
 import org.n52.io.TimeseriesIOException;
+import org.n52.io.format.TvpDataCollection;
 import org.n52.io.img.RenderingContext;
 import org.n52.io.v1.data.StyleProperties;
-import org.n52.io.v1.data.TimeseriesDataCollection;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.web.ResourceNotFoundException;
@@ -185,9 +185,9 @@ public class PreRenderingTask implements ServletConfigAware {
         return outputDirectory;
     }
     
-	private TimeseriesDataCollection getTimeseriesData(UndesignedParameterSet parameters) {
+	private TvpDataCollection getTimeseriesData(UndesignedParameterSet parameters) {
         Stopwatch stopwatch = startStopwatch();
-        TimeseriesDataCollection timeseriesData = timeseriesDataService.getTimeseriesData(parameters);
+        TvpDataCollection timeseriesData = timeseriesDataService.getTimeseriesData(parameters);
         LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());
         return timeseriesData;
     }

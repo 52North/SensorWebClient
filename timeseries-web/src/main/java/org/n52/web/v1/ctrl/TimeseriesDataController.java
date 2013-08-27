@@ -46,10 +46,10 @@ import org.apache.commons.codec.binary.Base64;
 import org.n52.io.IOFactory;
 import org.n52.io.IOHandler;
 import org.n52.io.TimeseriesIOException;
+import org.n52.io.format.TvpDataCollection;
 import org.n52.io.generalize.Generalizer;
 import org.n52.io.img.RenderingContext;
 import org.n52.io.v1.data.DesignedParameterSet;
-import org.n52.io.v1.data.TimeseriesDataCollection;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.web.BaseController;
@@ -89,11 +89,14 @@ public class TimeseriesDataController extends BaseController {
 
         checkIfUnknownTimeseries(parameters.getTimeseries());
 
-        TimeseriesDataCollection timeseriesData = getTimeseriesData(parameters);
+        TvpDataCollection timeseriesData = getTimeseriesData(parameters);
         if (parameters.isGeneralize()) {
             Generalizer generalizer = createNonConfigGeneralizer(timeseriesData);
             timeseriesData = generalizer.generalize();
         }
+        
+        // TODO add series formatter here
+
         return new ModelAndView().addObject(timeseriesData.getAllTimeseries());
     }
 
@@ -108,9 +111,11 @@ public class TimeseriesDataController extends BaseController {
         UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, map.getTimespan());
         parameters.setGeneralize(map.isGeneralize());
         
-        TimeseriesDataCollection timeseriesData = getTimeseriesData(parameters);
+        TvpDataCollection timeseriesData = getTimeseriesData(parameters);
 
         // TODO add paging
+        
+        // TODO add series formatter here
 
         return new ModelAndView().addObject(timeseriesData.getTimeseries(timeseriesId).getValues());
     }
@@ -270,9 +275,9 @@ public class TimeseriesDataController extends BaseController {
         }
     }
 
-    private TimeseriesDataCollection getTimeseriesData(UndesignedParameterSet parameters) {
+    private TvpDataCollection getTimeseriesData(UndesignedParameterSet parameters) {
         Stopwatch stopwatch = startStopwatch();
-        TimeseriesDataCollection timeseriesData = parameters.isGeneralize() 
+        TvpDataCollection timeseriesData = parameters.isGeneralize() 
                 ? composeDataService(timeseriesDataService).getTimeseriesData(parameters)
                 : timeseriesDataService.getTimeseriesData(parameters);
         LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());

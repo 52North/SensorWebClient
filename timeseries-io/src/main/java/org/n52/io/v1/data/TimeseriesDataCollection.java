@@ -26,34 +26,34 @@ package org.n52.io.v1.data;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TimeseriesDataCollection {
+public class TimeseriesDataCollection<T> {
     
     /**
      * Associates timeseries to a (custom client) id.
      */
-    private Map<String, TimeseriesData> allTimeseries = new HashMap<String, TimeseriesData>();
+    private Map<String, T> allTimeseries = new HashMap<String, T>();
     
     public TimeseriesDataCollection() {
         // for serialization
     }
     
-    public void addAll(TimeseriesDataCollection timseriesCollection) {
+    public void addAll(TimeseriesDataCollection<T> timseriesCollection) {
         allTimeseries.putAll(timseriesCollection.getAllTimeseries());
     }
     
-    public void addNewTimeseries(String reference, TimeseriesData timeseries) {
+    public void addNewTimeseries(String reference, T timeseries) {
         this.allTimeseries.put(reference, timeseries);
     }
     
-    public TimeseriesData getTimeseries(String timeseriesId) {
+    public T getTimeseries(String timeseriesId) {
         return allTimeseries.get(timeseriesId);
     }
     
-    public Map<String, TimeseriesData> getAllTimeseries() {
+    public Map<String, T> getAllTimeseries() {
         return allTimeseries;
     }
     
-    public void setAllTimeseries(HashMap<String, TimeseriesData> timeseries) {
+    public void setAllTimeseries(HashMap<String, T> timeseries) {
         this.allTimeseries = timeseries;
     }
 
