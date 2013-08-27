@@ -102,7 +102,15 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Timeserie
             if (station != null) {
                 TimeseriesConverter converter = new TimeseriesConverter(metadata, dataService);
                 SosTimeseries timeseries = station.getTimeseriesById(timeseriesId);
-                return converter.convertExpanded(timeseries);
+                TimeseriesMetadataOutput convertExpanded = converter.convertExpanded(timeseries);
+                /*
+                 * We have to ensure that first and last values are only set when an item
+                 * is being requested! Calling first/last value for a whole timeseries
+                 * collection would trigger thousands of requests otherwise
+                 */
+                convertExpanded.setFirstValue(dataService.getFirstValue(timeseries));
+                convertExpanded.setLastValue(dataService.getLastValue(timeseries));
+                return convertExpanded;
             }
         }
         return null;

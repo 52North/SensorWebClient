@@ -94,6 +94,9 @@ public class TimeseriesDataController extends BaseController {
             Generalizer generalizer = createNonConfigGeneralizer(timeseriesData);
             timeseriesData = generalizer.generalize();
         }
+        
+        // TODO add series formatter here
+
         return new ModelAndView().addObject(timeseriesData.getAllTimeseries());
     }
 
@@ -111,6 +114,8 @@ public class TimeseriesDataController extends BaseController {
         TvpDataCollection timeseriesData = getTimeseriesData(parameters);
 
         // TODO add paging
+        
+        // TODO add series formatter here
 
         return new ModelAndView().addObject(timeseriesData.getTimeseries(timeseriesId).getValues());
     }
