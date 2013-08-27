@@ -23,8 +23,13 @@
  */
 package org.n52.api.v1.io;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.n52.io.v1.data.ServiceOutput;
+import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
 public class ServiceConverter extends OutputConverter<SOSMetadata, ServiceOutput> {
@@ -47,6 +52,12 @@ public class ServiceConverter extends OutputConverter<SOSMetadata, ServiceOutput
         convertedService.setAmountPhenomena(parametersLookup.getPhenomenons().size());
         convertedService.setAmountProcedures(parametersLookup.getProcedures().size());
         convertedService.setAmountStations(metadata.getStations().size());
+        Set<String> categorieSet = new HashSet<String>();
+		SosTimeseries[] timeseries = metadata.getTimeseriesRelatedWith(QueryParameters.createEmptyFilterQuery());
+		for (SosTimeseries timeserie : timeseries) {
+			categorieSet.add(timeserie.getCategory());
+		}
+        convertedService.setAmountCategories(categorieSet.size());
         return convertedService;
     }
 

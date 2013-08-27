@@ -41,6 +41,8 @@ public class ServiceOutput extends OutputValue {
 	
 	private Integer amountStations;
 	
+	private Integer amountCategories;
+	
 	public String getServiceUrl() {
 		return serviceUrl;
 	}
@@ -103,6 +105,14 @@ public class ServiceOutput extends OutputValue {
 
 	public void setAmountStations(Integer amountStations) {
 		this.amountStations = amountStations;
+	}
+
+	public Integer getAmountCategories() {
+		return amountCategories;
+	}
+
+	public void setAmountCategories(Integer amountCategories) {
+		this.amountCategories = amountCategories;
 	}
 
 	@Override
