@@ -26,21 +26,48 @@ package org.n52.shared.serializable.pojos;
 import java.io.Serializable;
 import java.util.Random;
 
+import org.n52.io.v1.data.TimeseriesData;
+import org.n52.io.v1.data.TimeseriesValue;
+
 public class ReferenceValue implements Serializable {
 
     private static final long serialVersionUID = 3448456992466823855L;
     
+    private TimeseriesData values;
+    
+    private String timeseriesId;
+
+    private String label;
+    
+    
     private Double value;
     private String color;
     private boolean show = false;
-    private String ID;
     
     private ReferenceValue() {
         // for serialization
     }
     
-    public ReferenceValue(String ID, Double value) {
-        this.ID = ID;
+    public void addValues(TimeseriesValue... values) {
+        this.values.addValues(values);
+    }
+    
+    
+    public TimeseriesValue[] getValues() {
+        return values.getValues();
+    }
+    
+    public TimeseriesValue getLastValue() {
+        TimeseriesValue[] allValues = getValues();
+        return allValues[allValues.length - 1];
+    }
+    
+    /**
+     * @deprecated this constructor creates a reference value which is valid forever.
+     */
+    @Deprecated
+    public ReferenceValue(String label, Double value) {
+        this.label = label;
         this.value = value;
         Random rand = new Random();
         int r = rand.nextInt(256);
@@ -63,20 +90,28 @@ public class ReferenceValue implements Serializable {
 
     }
 
-    public String getID() {
-        return this.ID;
+    public String getId() {
+        return this.label;
     }
 
 
-    public void setID(String iD) {
-        this.ID = iD;
+    public void setId(String id) {
+        this.label = id;
     }
 
-
+    /**
+     * @deprecated use {@link #getLastValue()} of {@link #getValues()}
+     */
+    @Deprecated
     public Double getValue() {
         return this.value;
     }
 
+    
+    /**
+     * @deprecated use {@link #addValues(TimeseriesValue...)}
+     */
+    @Deprecated
     public void setValue(Double value) {
         this.value = value;
     }

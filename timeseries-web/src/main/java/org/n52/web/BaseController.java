@@ -24,6 +24,7 @@
 
 package org.n52.web;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static org.n52.io.MimeType.APPLICATION_JSON;
 import static org.n52.io.MimeType.APPLICATION_PDF;
 import static org.n52.io.MimeType.IMAGE_PNG;
@@ -74,14 +75,14 @@ public abstract class BaseController {
         writeExceptionResponse((WebException) e, response, NOT_FOUND);
     }
 
-    @ExceptionHandler(value = InternalServiceException.class)
+    @ExceptionHandler(value = InternalServerException.class)
     public void handle500(Exception e, HttpServletRequest request, HttpServletResponse response) {
         writeExceptionResponse((WebException) e, response, INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(value = {RuntimeException.class, Exception.class})
     public void handleException(Exception e, HttpServletRequest request, HttpServletResponse response) {
-        WebException wrappedException = new InternalServiceException("Unexpected Exception occured.", e);
+        WebException wrappedException = new InternalServerException("Unexpected Exception occured.", e);
         writeExceptionResponse(wrappedException, response, INTERNAL_SERVER_ERROR);
     }
 
@@ -92,14 +93,19 @@ public abstract class BaseController {
 
         response.setStatus(status.value());
         response.setContentType(APPLICATION_JSON.getMimeType());
-        ObjectWriter writer = new ObjectMapper().writerWithType(ExceptionResponse.class);
-        ExceptionResponse exceptionResponse = createExceptionResponse(e, INTERNAL_SERVER_ERROR);
+        ObjectMapper objectMapper = createObjectMapper();
+        ObjectWriter writer = objectMapper.writerWithType(ExceptionResponse.class);
+        ExceptionResponse exceptionResponse = createExceptionResponse(e, status);
         try {
             writer.writeValue(response.getOutputStream(), exceptionResponse);
         }
         catch (IOException ioe) {
             LOGGER.error("Could not process error message.", e);
         }
+    }
+
+    protected ObjectMapper createObjectMapper() {
+        return new ObjectMapper().setSerializationInclusion(NON_NULL);
     }
 
 }

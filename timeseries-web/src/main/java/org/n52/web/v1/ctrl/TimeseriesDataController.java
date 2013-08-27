@@ -43,8 +43,6 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
 import org.n52.io.IOFactory;
 import org.n52.io.IOHandler;
 import org.n52.io.TimeseriesIOException;
@@ -55,6 +53,7 @@ import org.n52.io.v1.data.TimeseriesDataCollection;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.web.BaseController;
+import org.n52.web.InternalServerException;
 import org.n52.web.ResourceNotFoundException;
 import org.n52.web.task.PreRenderingTask;
 import org.n52.web.v1.srv.ServiceParameterService;
@@ -113,7 +112,7 @@ public class TimeseriesDataController extends BaseController {
 
         // TODO add paging
 
-        return new ModelAndView().addObject(timeseriesData.getAllTimeseries());
+        return new ModelAndView().addObject(timeseriesData.getTimeseries(timeseriesId).getValues());
     }
 
     @RequestMapping(value = "/getData", produces = {"application/pdf"}, method = POST)
@@ -216,18 +215,7 @@ public class TimeseriesDataController extends BaseController {
 			checkIfUnknownTimeseries(timeseriesId);
 	        QueryMap map = createFromQuery(query);
 	        
-	        String timespan = null;
-	        DateTime now = new DateTime();
-	        if (interval.equals("lastDay")) {
-	        	timespan = new Interval(now.minusDays(1), now).toString();
-	        } else if (interval.equals("lastWeek")) {
-	        	timespan = new Interval(now.minusWeeks(1), now).toString();
-	        } else if (interval.equals("lastMonth")) {
-				timespan = new Interval(now.minusMonths(1), now).toString();
-			} else {
-				throw new ResourceNotFoundException("Unknown resouce: " + timeseriesId + "/" + interval);
-			}
-	        
+	        String timespan = preRenderingTask.createTimespanFromInterval(timeseriesId, interval);
 	        TimeseriesMetadataOutput metadata = timeseriesMetadataService.getParameter(timeseriesId);
 	        RenderingContext context = createContextForSingleTimeseries(metadata, map.getStyle(), timespan);
 	        context.setDimensions(map.getWidth(), map.getHeight());
@@ -258,14 +246,10 @@ public class TimeseriesDataController extends BaseController {
      *        the timeseries parameter to request raw data.
      * @param renderer
      *        an output renderer.
-     * @throws IOException
-     *         if low level data processing fails for some reason.
-     * @throws TimeseriesIOException
-     *         if writing binary to response stream fails.
+     * @throws InternalServerException
+     *         if data processing fails for some reason.
      */
-    private void handleBinaryResponse(HttpServletResponse response,
-                                      UndesignedParameterSet parameters,
-                                      IOHandler renderer) throws IOException, TimeseriesIOException {
+    private void handleBinaryResponse(HttpServletResponse response, UndesignedParameterSet parameters, IOHandler renderer) {
         try {
             renderer.generateOutput(getTimeseriesData(parameters));
         	if (parameters.isBase64()) {
@@ -278,13 +262,11 @@ public class TimeseriesDataController extends BaseController {
 	            renderer.encodeAndWriteTo(response.getOutputStream());
 			}
         }
-        catch (IOException e) {
-            LOGGER.error("Error handling output stream.");
-            throw e; // handled by BaseController
+        catch (IOException e) { // handled by BaseController
+            throw new InternalServerException("Error handling output stream.", e);
         }
-        catch (TimeseriesIOException e) {
-            LOGGER.error("Could not write binary to stream.");
-            throw e; // handled by BaseController
+        catch (TimeseriesIOException e) { // handled by BaseController
+            throw new InternalServerException("Could not write binary to stream.", e);
         }
     }
 
@@ -327,7 +309,6 @@ public class TimeseriesDataController extends BaseController {
 
 	public void setPreRenderingTask(PreRenderingTask prerenderingTask) {
 		this.preRenderingTask = prerenderingTask;
-		preRenderingTask.startTask();
 	}
 
 }

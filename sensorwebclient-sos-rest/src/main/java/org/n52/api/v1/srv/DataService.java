@@ -34,6 +34,7 @@ import java.util.Map;
 
 import org.joda.time.Interval;
 import org.n52.client.service.SensorMetadataService;
+import org.n52.client.service.TimeSeriesDataService;
 import org.n52.io.v1.data.TimeseriesData;
 import org.n52.io.v1.data.TimeseriesDataCollection;
 import org.n52.io.v1.data.UndesignedParameterSet;
@@ -43,7 +44,7 @@ import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.n52.web.InternalServiceException;
+import org.n52.web.InternalServerException;
 import org.n52.web.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,7 @@ public abstract class DataService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DataService.class);
 
     private SensorMetadataService sensorMetadataService;
-    
+
     /**
      * @param timeseriesId
      *        the timeseries id to find the SOS metadata for.
@@ -85,7 +86,16 @@ public abstract class DataService {
         return metadata;
     }
 
-    protected TimeseriesDataCollection prepareTimeseriesResults(UndesignedParameterSet parameterSet, List<TimeseriesProperties> props) {
+    /**
+     * @param parameterSet
+     *        a set of timeseries parameters.
+     * @param props
+     *        an empty list to add prepared {@link TimeseriesProperties} to.
+     * @return a prepared {@link TimeseriesDataCollection} to be filled with data coming from a
+     *         {@link TimeSeriesDataService}.
+     */
+    protected TimeseriesDataCollection prepareTimeseriesResults(UndesignedParameterSet parameterSet,
+                                                                List<TimeseriesProperties> props) {
         TimeseriesDataCollection timeseriesCollection = new TimeseriesDataCollection();
         for (String timeseriesId : parameterSet.getTimeseries()) {
             try {
@@ -96,13 +106,28 @@ public abstract class DataService {
             }
             catch (Exception e) {
                 LOGGER.error("Could not process time series request.", e);
-                throw new InternalServiceException("Could not process time series request.", e);
+                throw new InternalServerException("Could not process time series request.", e);
             }
         }
         return timeseriesCollection;
     }
 
-    private TimeseriesProperties createTimeseriesProperties(String timeseriesId) throws Exception {
+    protected TimeseriesDataCollection prepareTimeseriesResults(TimeseriesProperties props) {
+        TimeseriesDataCollection timeseriesCollection = new TimeseriesDataCollection();
+        try {
+            String timeseriesId = props.getTimeseriesId();
+            TimeseriesProperties propertiesInstance = createTimeseriesProperties(timeseriesId);
+            TimeseriesData timeseriesData = createTimeseriesData(propertiesInstance);
+            timeseriesCollection.addNewTimeseries(timeseriesId, timeseriesData);
+        }
+        catch (Exception e) {
+            LOGGER.error("Could not process time series request.", e);
+            throw new InternalServerException("Could not process time series request.", e);
+        }
+        return timeseriesCollection;
+    }
+
+    protected TimeseriesProperties createTimeseriesProperties(String timeseriesId) {
         SOSMetadata metadata = getMetadataForTimeseriesId(timeseriesId);
         Station station = metadata.getStationByTimeSeriesId(timeseriesId);
         SosTimeseries timeseries = station.getTimeseriesById(timeseriesId);
@@ -125,7 +150,7 @@ public abstract class DataService {
      *         if decoration fails.
      */
     protected TimeseriesProperties decorateProperties(final TimeseriesProperties timeSeriesProperties,
-    		UndesignedParameterSet parameterSet) throws Exception {
+                                                      UndesignedParameterSet parameterSet) throws Exception {
         // default is to decorate nothing
         return timeSeriesProperties;
     }
@@ -135,7 +160,8 @@ public abstract class DataService {
         return TimeseriesData.newTimeseriesData(dummyMap);
     }
 
-    protected DesignOptions createDesignOptions(UndesignedParameterSet parameterSet, ArrayList<TimeseriesProperties> props) {
+    protected DesignOptions createDesignOptions(UndesignedParameterSet parameterSet,
+                                                ArrayList<TimeseriesProperties> props) {
         return createDesignOptions(parameterSet, props, true);
     }
 

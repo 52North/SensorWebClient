@@ -24,7 +24,6 @@
 
 package org.n52.io.v1.data;
 
-import java.util.Map;
 
 
 
@@ -36,7 +35,9 @@ public class TimeseriesMetadataOutput {
     
     private StationOutput station;
     
-    private Map<String, TimeseriesValue> refValues;
+//    private Map<String, TimeseriesValue> refValues;
+    
+    private String[] referenceValues;
 
     private TimeseriesValue firstValue;
 
@@ -68,12 +69,12 @@ public class TimeseriesMetadataOutput {
         this.station = station;
     }
 
-    public Map<String, TimeseriesValue> getRefValues() {
-        return refValues;
+    public String[] getRefValues() {
+        return referenceValues;
     }
 
-    public void setRefValues(Map<String, TimeseriesValue> refValues) {
-        this.refValues = refValues;
+    public void setRefValues(String[] referenceValues) {
+        this.referenceValues = referenceValues;
     }
 
     public TimeseriesValue getFirstValue() {
