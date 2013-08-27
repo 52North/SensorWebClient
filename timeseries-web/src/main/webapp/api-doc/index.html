@@ -915,7 +915,8 @@ Content-Type: application/json;charset=UTF-8
                   <td>
                     Indicates that timeseries data shall be generalized. Default is <code>false</code>. For generalization <a href="http://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm">the Douglas-Peucker algorithm</a> is used.
                   </td>
-                </tr><tr>
+                </tr>
+                <tr>
 									<td>
 										<code>format</code>
 									</td>
@@ -929,6 +930,19 @@ Content-Type: application/json;charset=UTF-8
                       <li><code>highcharts</code>: <a href="http://www.highcharts.com/">Highcharts</a> series data format.</li>
                     </ul></p>
                     <div class="n52-callout n52-callout-todo">Add more formats!</div>
+                  </td>
+                </tr>
+                <tr>
+									<td>
+										<code>base64</code>
+									</td>
+                  <td>
+                    <pre>base64=true</pre>
+                  </td>
+                  <td><p>Indicates binary images shall be encoded to a base64 string on server side. This makes it easily possible to display images from JavaScript (you would need a byte parsing library otherwise).</p>
+                  <p>Here is an example how to embed encoded base64 string:
+                    <pre>&lt;img src='data:image/png;base64," + encodedString + "' /></pre>
+                  </p>
                   </td>
                 </tr>
 							</tbody>
