@@ -78,7 +78,9 @@
     <!-- ###################### api/v1 ###################### -->
     
     
-    <bean class="org.n52.web.v1.ctrl.ResourcesController" />
+    <bean class="org.n52.web.v1.ctrl.ResourcesController">
+    	<property name="metadataService" ref="metadataService" />
+    </bean>
 
     <bean class="org.n52.web.v1.ctrl.OfferingsParameterController">
         <property name="offeringParameterService" ref="offeringParameterService" />
@@ -129,6 +131,8 @@
     <bean id="phenomenonParameterService" class="org.n52.api.v1.srv.PhenomenonOutputAdapter" />
 
     <bean id="timeseriesMetadataService" class="org.n52.api.v1.srv.TimeseriesOutputAdapter" />
+    
+    <bean id="metadataService" class="org.n52.api.v1.srv.MetadataAdapter" />
 
     <bean id="timeseriesDataService" class="org.n52.api.v1.srv.TimeseriesOutputAdapter">
         <property name="dataService">
