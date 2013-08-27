@@ -260,7 +260,10 @@ public interface I18N extends Constants {
     String jumpTodayExt();
 
     String autoScale();
-
+    String manualScale();
+    String manualScaleMinLabel();
+    String manualScaleMaxLabel();
+    
     String getFeaturesForArea();
 
     String getFeaturesForAreaExt();

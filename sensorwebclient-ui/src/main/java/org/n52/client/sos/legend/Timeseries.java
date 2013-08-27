@@ -34,10 +34,7 @@ import org.n52.client.ui.legend.LegendData;
 import org.n52.client.ui.legend.LegendElement;
 import org.n52.client.ui.legend.LegendEntryTimeSeries;
 import org.n52.client.ui.map.Coordinate;
-import org.n52.client.ui.map.OpenLayersMapWrapper;
-import org.n52.client.util.ClientUtils;
 import org.n52.shared.serializable.pojos.Axis;
-import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -359,10 +356,26 @@ public class Timeseries implements LegendData {
 		return this.properties.getOpacity();
 	}
 
+	public void setScaleType(TimeseriesProperties.ScaleType scaleType){
+		this.properties.setScaleType(scaleType);
+	}
+	
+	public TimeseriesProperties.ScaleType getScaleType(){
+		return this.properties.getScaleType();
+	}
+	
+	/**
+	 * 
+	 * @param zeroScaled
+	 * @deprecated
+	 */
 	public void setScaleToZero(boolean zeroScaled) {
 		this.properties.setScaledToZero(zeroScaled);
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public boolean isScaledToZero() {
 		return this.properties.isZeroScaled();
 	}
@@ -371,10 +384,16 @@ public class Timeseries implements LegendData {
 		this.properties.getAxis().popAxis();
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public boolean isAutoScale() {
 		return this.properties.isAutoScale();
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public void setAutoScale(boolean b) {
 		this.properties.setAutoScale(b);
 	}

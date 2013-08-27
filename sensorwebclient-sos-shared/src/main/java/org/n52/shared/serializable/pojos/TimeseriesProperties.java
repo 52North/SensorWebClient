@@ -58,6 +58,9 @@ public class TimeseriesProperties implements Serializable {
 
 	private String lineStyle = "1";
 	
+	/**
+	 * Units of measurement
+	 */
 	private String uom;
 
 	private String stationName;
@@ -70,14 +73,16 @@ public class TimeseriesProperties implements Serializable {
 
 	private double opacity = 100d;
 
-	private boolean isScaledToZero = false;
-
 	private boolean isYAxisVisible = true;
-
-	private boolean isAutoScale = true;
 
 	private boolean isHasData = false;
 
+	private ScaleType scaleType = ScaleType.AUTO;
+	
+	public enum ScaleType{
+		ZERO, AUTO, MANUAL
+	}
+	
 	public boolean hasData() {
 		return this.isHasData;
 	}
@@ -95,6 +100,16 @@ public class TimeseriesProperties implements Serializable {
 	    this(timeseries, station, width, height, "", true);
 	}
 
+	/**
+	 * Use scaleType instead of isAutoScale
+	 * @param timeseries
+	 * @param station
+	 * @param width
+	 * @param height
+	 * @param uom
+	 * @param isAutoScale
+	 * @deprecated
+	 */
 	public TimeseriesProperties(SosTimeseries timeseries, Station station,
 			int width, int height, String uom, boolean isAutoScale) {
 	    this.timeseries = timeseries;
@@ -102,14 +117,27 @@ public class TimeseriesProperties implements Serializable {
         this.width = width;
         this.height = height;
 		this.station = station;
-		this.isAutoScale = isAutoScale;
+		this.setAutoScale(isAutoScale);
         this.uom = uom;
 	}
 
+	public TimeseriesProperties(SosTimeseries timeseries, Station station,
+			int width, int height, String uom, ScaleType scaleType) {
+	    this.timeseries = timeseries;
+        this.station = station;
+        this.width = width;
+        this.height = height;
+		this.station = station;
+		this.setScaleType(scaleType);
+        this.uom = uom;
+	}
+
+	
+	
 	public TimeseriesProperties copy() {
 		TimeseriesProperties result = new TimeseriesProperties(this.timeseries, this.station, 
 		                                                       this.width, this.height, this.uom, 
-		                                                       this.isAutoScale);
+		                                                       this.scaleType);
 		result.setAxisData(this.axis); // XXX this is not a deep copy! => CBR
 		TimeseriesRenderingOptions options = new TimeseriesRenderingOptions();
 		options.setColor(renderingOptions.getColor());
@@ -120,7 +148,7 @@ public class TimeseriesProperties implements Serializable {
 		result.setLineStyle(this.lineStyle);
 		result.setMetadataUrl(this.metadataUrl);
 		result.setOpacity(this.opacity);
-		result.setScaledToZero(this.isScaledToZero);
+		result.setScaleType(this.scaleType);
 		result.setShowYAxis(this.isYAxisVisible);
 		result.setStationName(this.stationName);
 		result.setUnitOfMeasure(this.uom);
@@ -181,12 +209,50 @@ public class TimeseriesProperties implements Serializable {
 		return this.metadataUrl;
 	}
 
+	public void setScaleType( ScaleType scaleType ){
+		this.scaleType = scaleType;
+	}
+	
+	public ScaleType getScaleType(){
+		return this.scaleType;
+	}
+	
+	/**
+	 * Use getScaleType()
+	 * @deprecated
+	 */
 	public boolean isAutoScale() {
-		return this.isAutoScale;
+		return this.scaleType == ScaleType.AUTO;
 	}
 
+	/**
+	 * If true sets scaleType to AUTO else to ZERO
+	 * (for backwards compatibility when only ZERO and AUTO existed)
+	 * Use setScaleType(ScaleType) 
+	 * @param zeroScaled
+	 * @deprecated
+	 */
 	public void setAutoScale(boolean autoScale) {
-		this.isAutoScale = autoScale;
+		this.scaleType = autoScale ? ScaleType.AUTO : ScaleType.ZERO;
+	}
+
+	/**
+	 * If true sets scaleType to ZERO else to AUTO
+	 * (for backwards compatibility when only ZERO and AUTO existed)
+	 * Use setScaleType(ScaleType) 
+	 * @param zeroScaled
+	 * @deprecated
+	 */
+	public void setScaledToZero(boolean zeroScaled) {
+		this.scaleType = zeroScaled ? ScaleType.ZERO : ScaleType.AUTO;
+	}
+
+	/**
+	 * Use getScaleType()
+	 * @deprecated
+	 */
+	public boolean isZeroScaled() {
+		return this.scaleType == ScaleType.ZERO;
 	}
 
 	public void setMetadataUrl(String metadataUrl) {
@@ -424,14 +490,6 @@ public class TimeseriesProperties implements Serializable {
 
 	public double getOpacity() {
 		return this.opacity;
-	}
-
-	public void setScaledToZero(boolean zeroScaled) {
-		this.isScaledToZero = zeroScaled;
-	}
-
-	public boolean isZeroScaled() {
-		return this.isScaledToZero;
 	}
 
 	public void addRefValue(ReferenceValue v) {

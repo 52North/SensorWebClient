@@ -38,13 +38,11 @@ import java.util.Set;
 
 import org.eesgmbh.gimv.client.event.LoadImageDataEvent;
 import org.n52.client.bus.EventBus;
-import org.n52.client.ctrl.DataManager;
 import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ctrl.TimeManager;
 import org.n52.client.ses.ui.LoginWindow;
 import org.n52.client.ses.ui.subscribe.EventSubscriptionWindow;
 import org.n52.client.sos.ctrl.SOSController;
-import org.n52.client.sos.ctrl.SosDataManager;
 import org.n52.client.sos.data.TimeseriesDataStore;
 import org.n52.client.sos.event.ChangeTimeSeriesStyleEvent;
 import org.n52.client.sos.event.DatesChangedEvent;
@@ -93,6 +91,7 @@ import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.CheckboxItem;
 import com.smartgwt.client.widgets.form.fields.ColorPickerItem;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
+import com.smartgwt.client.widgets.form.fields.FloatItem;
 import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
 import com.smartgwt.client.widgets.form.fields.SliderItem;
 import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
@@ -157,6 +156,10 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 	protected ComboBoxItem lineWidth;
 
 	protected RadioGroupItem scale;
+	
+	protected FloatItem scaleManualMin; 
+
+	protected FloatItem scaleManualMax; 
 
 	private DynamicForm cpForm;
 
@@ -610,10 +613,17 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.seriesType.setValue(getTimeSeries().getGraphStyle());
 		this.lineStyles.setValue(getTimeSeries().getLineStyle());
 		this.lineWidth.setValue(getTimeSeries().getLineWidth());
-		if (getTimeSeries().isAutoScale()) {
-			this.scale.setDefaultValue(i18n.autoScale());
-		} else {
+		switch(getTimeSeries().getScaleType()){
+		case MANUAL:
+			this.scale.setDefaultValue(i18n.manualScale());
+			break;
+		case ZERO:
 			this.scale.setDefaultValue(i18n.zeroScale());
+			break;
+		case AUTO:
+		default:
+			this.scale.setDefaultValue(i18n.autoScale());
+			break;
 		}
 		this.slider.setValue(getTimeSeries().getOpacity());
 		this.colors.setValue(getTimeSeries().getColor());
@@ -854,8 +864,24 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 
 		this.scale = new RadioGroupItem();
 		this.scale.setTitle(i18n.scale());
-		this.scale.setValueMap(i18n.zeroScale(),
-				i18n.autoScale());
+		this.scale.setValueMap( i18n.zeroScale(), i18n.autoScale(), i18n.manualScale() );
+		
+		String uom;
+		try{
+			uom = this.getTimeSeries().getProperties().getUnitOfMeasure();
+		}catch(Exception e){
+			uom = "";
+		}
+		
+		this.scaleManualMin = new FloatItem();
+		this.scaleManualMin.setTitle(i18n.manualScaleMinLabel());
+		this.scaleManualMin.setHint(uom);
+		this.scaleManualMin.setWidth(50);
+		
+		this.scaleManualMax = new FloatItem();
+		this.scaleManualMax.setTitle(i18n.manualScaleMaxLabel());
+		this.scaleManualMax.setHint(uom);
+		this.scaleManualMax.setWidth(50);
 
 		this.cpForm = new DynamicForm();
 		this.cpForm.setNumCols(1);
@@ -867,7 +893,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.colors.setTitle(i18n.color());
 		this.colors.setWidth(85);
 		this.cpForm.setShowComplexFields(false);
-		this.cpForm.setFields(this.scale, this.seriesType, this.lineStyles, 
+		this.cpForm.setFields(this.scale, this.scaleManualMin, this.scaleManualMax, this.seriesType, this.lineStyles, 
 				this.lineWidth, this.colors, this.slider);
 		this.cpForm.setSaveOnEnter(true);
 
@@ -1292,19 +1318,19 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		}
 
 		public void onUpdateScale(UpdateScaleEvent evt) {
-			if (LegendEntryTimeSeries.this.getTimeSeries().getPhenomenonId()
-					.equals(evt.getPhenomenonID())) {
-				if (evt.isAutoScale()) {
-					LegendEntryTimeSeries.this.getTimeSeries().setAutoScale(
-							evt.isAutoScale());
-					LegendEntryTimeSeries.this.scale.setValue(i18n
-							.autoScale());
-				}
-				if (evt.isScaleToNull()) {
-					LegendEntryTimeSeries.this.getTimeSeries().setScaleToZero(
-							evt.isScaleToNull());
-					LegendEntryTimeSeries.this.scale.setValue(i18n
-							.zeroScale());
+			if (LegendEntryTimeSeries.this.getTimeSeries().getPhenomenonId().equals(evt.getPhenomenonID())) {
+				LegendEntryTimeSeries.this.getTimeSeries().setScaleType(evt.getScaleType());
+				switch(evt.getScaleType()){
+				case MANUAL:
+					LegendEntryTimeSeries.this.scale.setValue(i18n.manualScale());
+					break;
+				case ZERO:
+					LegendEntryTimeSeries.this.scale.setValue(i18n.zeroScale());
+					break;
+				case AUTO:
+				default:
+					LegendEntryTimeSeries.this.scale.setValue(i18n.autoScale());
+					break;
 				}
 			}
 		}
@@ -1313,7 +1339,6 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		public void onSwitch(SwitchAutoscaleEvent evt) {
 			LegendEntryTimeSeries.this.getTimeSeries().setAutoScale(evt.getSwitch());
 			LegendEntryTimeSeries.this.scale.setValue(i18n.autoScale());
-			LegendEntryTimeSeries.this.getTimeSeries().setScaleToZero(false);
 		}
 	}
 

@@ -25,6 +25,7 @@ package org.n52.client.sos.event;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.handler.UpdateScaleEventHandler;
+import org.n52.shared.serializable.pojos.TimeseriesProperties.ScaleType;
 
 /**
  * @author <a href="mailto:f.bache@52north.de">Felix Bache</a>
@@ -36,19 +37,31 @@ public class UpdateScaleEvent extends FilteredDispatchGwtEvent<UpdateScaleEventH
     
     private String phenomenonID;
 
-    private boolean scaleToNull;
-
-    private boolean autoScale;
+    private ScaleType scaleType;
 
     /**
+     * Use ScaleType instead of scaleToNull and autoScale
      * @param phenomenID
      * @param scaleToNull
      * @param autoScale
+     * @deprecated
      */
     public UpdateScaleEvent(String phenomenID, boolean scaleToNull, boolean autoScale) {
         this.phenomenonID = phenomenID;
-        this.scaleToNull = scaleToNull;
-        this.autoScale = autoScale;
+        this.scaleType = autoScale 
+        		? ScaleType.AUTO 
+        		: scaleToNull 
+        			? ScaleType.ZERO 
+        			: ScaleType.MANUAL;
+    }
+
+    /**
+     * @param phenomenID
+     * @param scaleType
+     */
+    public UpdateScaleEvent(String phenomenID, ScaleType scaleType) {
+        this.phenomenonID = phenomenID;
+        this.scaleType = scaleType;
     }
 
     /* (non-Javadoc)
@@ -74,18 +87,28 @@ public class UpdateScaleEvent extends FilteredDispatchGwtEvent<UpdateScaleEventH
         return this.phenomenonID;
     }
 
+    public ScaleType getScaleType(){
+    	return scaleType;
+    }
+    
     /**
      * @return the scaleToNull
      */
     public boolean isScaleToNull() {
-        return this.scaleToNull;
+        return this.scaleType==ScaleType.ZERO;
     }
 
     /**
      * @return the autoScale
      */
     public boolean isAutoScale() {
-        return this.autoScale;
+        return this.scaleType==ScaleType.AUTO;
     }
 
+    /**
+     * @return manual scale
+     */
+    public boolean isManualScale(){
+    	return scaleType==ScaleType.MANUAL;
+    }
 }
