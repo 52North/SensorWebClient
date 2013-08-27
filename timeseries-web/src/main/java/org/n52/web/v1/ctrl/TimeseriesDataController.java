@@ -44,8 +44,6 @@ import java.util.Timer;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
 import org.n52.io.IOFactory;
 import org.n52.io.IOHandler;
 import org.n52.io.TimeseriesIOException;
@@ -218,18 +216,7 @@ public class TimeseriesDataController extends BaseController {
 			checkIfUnknownTimeseries(timeseriesId);
 	        QueryMap map = createFromQuery(query);
 	        
-	        String timespan = null;
-	        DateTime now = new DateTime();
-	        if (interval.equals("lastDay")) {
-	        	timespan = new Interval(now.minusDays(1), now).toString();
-	        } else if (interval.equals("lastWeek")) {
-	        	timespan = new Interval(now.minusWeeks(1), now).toString();
-	        } else if (interval.equals("lastMonth")) {
-				timespan = new Interval(now.minusMonths(1), now).toString();
-			} else {
-				throw new ResourceNotFoundException("Unknown resouce: " + timeseriesId + "/" + interval);
-			}
-	        
+	        String timespan = preRenderingTask.createTimespanFromInterval(timeseriesId, interval);
 	        TimeseriesMetadataOutput metadata = timeseriesMetadataService.getParameter(timeseriesId);
 	        RenderingContext context = createContextForSingleTimeseries(metadata, map.getStyle(), timespan);
 	        context.setDimensions(map.getWidth(), map.getHeight());
