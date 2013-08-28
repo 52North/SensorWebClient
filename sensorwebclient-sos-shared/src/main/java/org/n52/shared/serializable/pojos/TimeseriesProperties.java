@@ -145,7 +145,6 @@ public class TimeseriesProperties implements Serializable {
 		result.setLineStyle(this.lineStyle);
 		result.setMetadataUrl(this.metadataUrl);
 		result.setOpacity(this.opacity);
-		result.setScale(this.scale);
 		result.setShowYAxis(this.isYAxisVisible);
 		result.setStationName(this.stationName);
 		result.setUnitOfMeasure(this.uom);
@@ -207,7 +206,7 @@ public class TimeseriesProperties implements Serializable {
 	}
 
 	public void setScale( Scale scale ){
-		this.scale = scale;
+		this.scale = Scale.copy(scale);
 	}
 	
 	public void setScale( Scale.Type type ){
@@ -230,7 +229,7 @@ public class TimeseriesProperties implements Serializable {
 	 * @deprecated
 	 */
 	public void setAutoScale(boolean autoScale) {
-		this.scale.setType(autoScale ? Scale.Type.AUTO : Scale.Type.ZERO );
+		this.scale.setAuto(autoScale);
 	}
 
 	/**
@@ -241,7 +240,7 @@ public class TimeseriesProperties implements Serializable {
 	 * @deprecated
 	 */
 	public void setScaledToZero(boolean zeroScaled) {
-		this.scale.setType( zeroScaled ? Scale.Type.ZERO : Scale.Type.AUTO);
+		this.scale.setZero(zeroScaled);
 	}
 
 	public boolean isZeroScaled() {

@@ -61,7 +61,7 @@ public class UpdateScaleEvent extends FilteredDispatchGwtEvent<UpdateScaleEventH
      */
     public UpdateScaleEvent(String phenomenID, Scale scale) {
         this.phenomenonID = phenomenID;
-        this.scale = scale;
+        this.scale = Scale.copy(scale);
     }
 
     /* (non-Javadoc)

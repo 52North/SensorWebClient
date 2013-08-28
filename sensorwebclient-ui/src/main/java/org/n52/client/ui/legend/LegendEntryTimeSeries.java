@@ -882,7 +882,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.scale.setValueMap( i18n.zeroScale(), i18n.autoScale(), i18n.manualScale() );
 		this.scale.addChangedHandler(new ChangedHandler() {
 			public void onChanged(ChangedEvent event) {
-				if(LegendEntryTimeSeries.this.scale.getValue() == i18n.manualScale()){
+				if( i18n.manualScale().equals( LegendEntryTimeSeries.this.scale.getValue() ) ){
 					LegendEntryTimeSeries.this.scaleManualMin.show();
 					LegendEntryTimeSeries.this.scaleManualMax.show();
 				} else {

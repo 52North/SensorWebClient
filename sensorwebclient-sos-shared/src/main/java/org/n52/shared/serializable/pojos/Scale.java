@@ -17,17 +17,23 @@ public class Scale implements Serializable {
 	}
 	
 	public Scale(){
-		this.setType(Type.AUTO);
-		this.manualScaleMin = 0;
-		this.manualScaleMax = 0;
+		this(Type.AUTO, 0d, 0d);
 	}
 
 	public Scale(Type type){
-		this.setType(type);
+		this(type, 0d, 0d);
 	}
 	
-	public void setType(Type scaleType){
-		this.type = scaleType;
+	public Scale(Type type, double min, double max){
+		this.setType(type);
+		this.setManualScaleMin(min);
+		this.setManualScaleMax(max);
+	}
+	
+	public void setType(Type type){
+		this.type = type != null 
+			? type 
+			: Type.AUTO;
 	}
 	
 	public Type getType(){
@@ -59,8 +65,30 @@ public class Scale implements Serializable {
 		this.type = Type.AUTO;
 	}
 	
+	/**
+	 * If true sets type to AUTO else to ZERO
+	 * (for backwards compatibility when only ZERO and AUTO existed)
+	 * Use setType(ScaleType) 
+	 * @param autoScaled
+	 * @deprecated
+	 */
+	public void setAuto(boolean autoScaled){
+		this.setType(autoScaled ? Scale.Type.AUTO : Scale.Type.ZERO );
+	}
+	
 	public void setZero(){
 		this.type = Type.ZERO;
+	}
+	
+	/**
+	 * If true sets type to ZERO else to AUTO
+	 * (for backwards compatibility when only ZERO and AUTO existed)
+	 * Use setType(ScaleType) 
+	 * @param zeroScaled
+	 * @deprecated
+	 */
+	public void setZero(boolean zeroScaled){
+		this.setType( zeroScaled ? Scale.Type.ZERO : Scale.Type.AUTO);
 	}
 	
 	public void setManual(){
@@ -77,5 +105,17 @@ public class Scale implements Serializable {
 	
 	public boolean isManual(){
 		return this.type == Type.MANUAL;
+	}
+	
+	public static Scale copy(Scale scale){
+		if(scale != null){
+			return new Scale(scale.getType(), scale.getManualScaleMin(), scale.getManualScaleMax());
+		} else {
+			return new Scale();
+		}
+	}
+	
+	public Scale getCopy(){
+		return new Scale(this.getType(), this.getManualScaleMin(), this.getManualScaleMax());
 	}
 }

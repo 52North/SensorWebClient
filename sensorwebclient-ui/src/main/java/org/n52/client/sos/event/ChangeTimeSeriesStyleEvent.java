@@ -48,7 +48,7 @@ public class ChangeTimeSeriesStyleEvent extends
     /** The opac perc. */
     private double opacPerc;
 
-    private Scale scale;
+    private Scale scale = new Scale();
     
     /** The style. */
     private String style;
@@ -100,7 +100,7 @@ public class ChangeTimeSeriesStyleEvent extends
         this.ID = ID;
         this.hexColor = hexColor;
         this.opacPerc = opacPerc;
-        this.scale= scale;
+        this.scale= Scale.copy(scale);
         this.style = style;
 
     }
