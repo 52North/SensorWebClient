@@ -25,6 +25,7 @@
 package org.n52.web.v1.ctrl;
 
 import static org.n52.io.MimeType.APPLICATION_PDF;
+import static org.n52.io.format.FormatterFactory.createFormatterFactory;
 import static org.n52.io.generalize.DouglasPeuckerGeneralizer.createNonConfigGeneralizer;
 import static org.n52.io.img.RenderingContext.createContextForSingleTimeseries;
 import static org.n52.io.v1.data.UndesignedParameterSet.createForSingleTimeseries;
@@ -46,10 +47,12 @@ import org.apache.commons.codec.binary.Base64;
 import org.n52.io.IOFactory;
 import org.n52.io.IOHandler;
 import org.n52.io.TimeseriesIOException;
+import org.n52.io.format.TimeseriesDataFormatter;
 import org.n52.io.format.TvpDataCollection;
 import org.n52.io.generalize.Generalizer;
 import org.n52.io.img.RenderingContext;
 import org.n52.io.v1.data.DesignedParameterSet;
+import org.n52.io.v1.data.TimeseriesDataCollection;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.web.BaseController;
@@ -80,11 +83,11 @@ public class TimeseriesDataController extends BaseController {
     private TimeseriesMetadataService timeseriesMetadataService;
 
     private TimeseriesDataService timeseriesDataService;
-    
+
     private PreRenderingTask preRenderingTask;
-    
+
     @RequestMapping(value = "/getData", produces = {"application/json"}, method = POST)
-    public ModelAndView getTimeseriesCollectionData(HttpServletResponse response,
+    public ModelAndView getTimeseriesCollectionData(HttpServletResponse response, 
                                                     @RequestBody UndesignedParameterSet parameters) throws Exception {
 
         checkIfUnknownTimeseries(parameters.getTimeseries());
@@ -94,15 +97,14 @@ public class TimeseriesDataController extends BaseController {
             Generalizer generalizer = createNonConfigGeneralizer(timeseriesData);
             timeseriesData = generalizer.generalize();
         }
-        
-        // TODO add series formatter here
 
-        return new ModelAndView().addObject(timeseriesData.getAllTimeseries());
+        TimeseriesDataCollection< ? > formattedDataCollection = format(timeseriesData, parameters.getFormat());
+        return new ModelAndView().addObject(formattedDataCollection.getAllTimeseries());
     }
 
     @RequestMapping(value = "/{timeseriesId}/getData", produces = {"application/json"}, method = GET)
-    public ModelAndView getTimeseriesData(HttpServletResponse response,
-                                          @PathVariable String timeseriesId,
+    public ModelAndView getTimeseriesData(HttpServletResponse response, 
+                                          @PathVariable String timeseriesId, 
                                           @RequestParam(required = false) MultiValueMap<String, String> query) {
 
         checkIfUnknownTimeseries(timeseriesId);
@@ -110,18 +112,22 @@ public class TimeseriesDataController extends BaseController {
         QueryMap map = createFromQuery(query);
         UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, map.getTimespan());
         parameters.setGeneralize(map.isGeneralize());
-        
-        TvpDataCollection timeseriesData = getTimeseriesData(parameters);
 
         // TODO add paging
-        
-        // TODO add series formatter here
 
-        return new ModelAndView().addObject(timeseriesData.getTimeseries(timeseriesId).getValues());
+        TvpDataCollection timeseriesData = getTimeseriesData(parameters);
+        TimeseriesDataCollection< ? > formattedDataCollection = format(timeseriesData, map.getFormat());
+        Object formattedTimeseries = formattedDataCollection.getAllTimeseries().get(timeseriesId);
+        return new ModelAndView().addObject(formattedTimeseries);
+    }
+
+    private TimeseriesDataCollection< ? > format(TvpDataCollection timeseriesData, String format) {
+        TimeseriesDataFormatter< ? > formatter = createFormatterFactory(format).create();
+        return formatter.format(timeseriesData);
     }
 
     @RequestMapping(value = "/getData", produces = {"application/pdf"}, method = POST)
-    public void getTimeseriesCollectionReport(HttpServletResponse response,
+    public void getTimeseriesCollectionReport(HttpServletResponse response, 
                                               @RequestBody DesignedParameterSet requestParameters) throws Exception {
 
         checkIfUnknownTimeseries(requestParameters.getTimeseries());
@@ -133,43 +139,37 @@ public class TimeseriesDataController extends BaseController {
         String[] timeseriesIds = parameters.getTimeseries();
         TimeseriesMetadataOutput[] timeseriesMetadatas = timeseriesMetadataService.getParameters(timeseriesIds);
         RenderingContext context = RenderingContext.createContextWith(requestParameters, timeseriesMetadatas);
-        
-        IOHandler renderer = IOFactory.create()
-                .forMimeType(APPLICATION_PDF)
-                .inLanguage(map.getLanguage())
-                .createIOHandler(context);
+
+        IOHandler renderer = IOFactory.create().forMimeType(APPLICATION_PDF).withLocale(map.getLocale()).createIOHandler(context);
 
         handleBinaryResponse(response, parameters, renderer);
 
     }
 
     @RequestMapping(value = "/{timeseriesId}/getData", produces = {"application/pdf"}, method = GET)
-    public void getTimeseriesReport(HttpServletResponse response,
-                                    @PathVariable String timeseriesId,
+    public void getTimeseriesReport(HttpServletResponse response, 
+                                    @PathVariable String timeseriesId, 
                                     @RequestParam(required = false) MultiValueMap<String, String> query) throws Exception {
 
         checkIfUnknownTimeseries(timeseriesId);
 
         QueryMap map = createFromQuery(query);
         TimeseriesMetadataOutput metadata = timeseriesMetadataService.getParameter(timeseriesId);
-        RenderingContext context = RenderingContext.createContextForSingleTimeseries(metadata, map.getStyle(), map.getTimespan());
+        RenderingContext context = createContextForSingleTimeseries(metadata, map.getStyle(), map.getTimespan());
         UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, map.getTimespan());
         parameters.setGeneralize(map.isGeneralize());
 
-        IOHandler renderer = IOFactory.create()
-                .forMimeType(APPLICATION_PDF)
-                .inLanguage(map.getLanguage())
-                .createIOHandler(context);
+        IOHandler renderer = IOFactory.create().forMimeType(APPLICATION_PDF).withLocale(map.getLocale()).createIOHandler(context);
 
         handleBinaryResponse(response, parameters, renderer);
     }
 
     @RequestMapping(value = "/getData", produces = {"image/png"}, method = POST)
-    public void getTimeseriesCollectionChart(HttpServletResponse response,
+    public void getTimeseriesCollectionChart(HttpServletResponse response, 
                                              @RequestBody DesignedParameterSet requestParameters) throws Exception {
 
         checkIfUnknownTimeseries(requestParameters.getTimeseries());
-        
+
         QueryMap map = createFromQuery(requestParameters);
         UndesignedParameterSet parameters = createFromDesignedParameters(requestParameters);
         parameters.setGeneralize(map.isGeneralize());
@@ -177,21 +177,18 @@ public class TimeseriesDataController extends BaseController {
         String[] timeseriesIds = parameters.getTimeseries();
         TimeseriesMetadataOutput[] timeseriesMetadatas = timeseriesMetadataService.getParameters(timeseriesIds);
         RenderingContext context = RenderingContext.createContextWith(requestParameters, timeseriesMetadatas);
-        IOHandler renderer = IOFactory.create()
-                .inLanguage(map.getLanguage())
-                .showGrid(map.isGrid())
-                .createIOHandler(context);
+        IOHandler renderer = IOFactory.create().withLocale(map.getLocale()).showGrid(map.isGrid()).createIOHandler(context);
 
         handleBinaryResponse(response, parameters, renderer);
     }
 
     @RequestMapping(value = "/{timeseriesId}/getData", produces = {"image/png"}, method = GET)
-    public void getTimeseriesChart(HttpServletResponse response,
-                                   @PathVariable String timeseriesId,
+    public void getTimeseriesChart(HttpServletResponse response, 
+                                   @PathVariable String timeseriesId, 
                                    @RequestParam(required = false) MultiValueMap<String, String> query) throws Exception {
 
         checkIfUnknownTimeseries(timeseriesId);
-        
+
         QueryMap map = createFromQuery(query);
         TimeseriesMetadataOutput metadata = timeseriesMetadataService.getParameter(timeseriesId);
         RenderingContext context = createContextForSingleTimeseries(metadata, map.getStyle(), map.getTimespan());
@@ -201,39 +198,34 @@ public class TimeseriesDataController extends BaseController {
         parameters.setGeneralize(map.isGeneralize());
 
         parameters.setBase64(map.isBase64());
-        IOHandler renderer = IOFactory.create()
-                .inLanguage(map.getLanguage())
-                .showGrid(map.isGrid())
-                .createIOHandler(context);
+        IOHandler renderer = IOFactory.create().withLocale(map.getLocale()).showGrid(map.isGrid()).createIOHandler(context);
         handleBinaryResponse(response, parameters, renderer);
     }
-    
-    @RequestMapping(value = "/{timeseriesId}/{interval}", produces = {"image/png"}, method = GET)
-    public void getTimeseriesChartByInterval(HttpServletResponse response,
-                                   @PathVariable String timeseriesId,
-                                   @PathVariable String interval,
-                                   @RequestParam(required = false) MultiValueMap<String, String> query) throws Exception {
-    	// use a configurable pre rendering of some images, so the prerendering task delivers the images
-    	if (preRenderingTask.hasPrerenderedImage(timeseriesId, interval)) {
-			preRenderingTask.writeToOS(timeseriesId, interval, response.getOutputStream());
-		} else {
-			checkIfUnknownTimeseries(timeseriesId);
-	        QueryMap map = createFromQuery(query);
-	        
-	        String timespan = preRenderingTask.createTimespanFromInterval(timeseriesId, interval);
-	        TimeseriesMetadataOutput metadata = timeseriesMetadataService.getParameter(timeseriesId);
-	        RenderingContext context = createContextForSingleTimeseries(metadata, map.getStyle(), timespan);
-	        context.setDimensions(map.getWidth(), map.getHeight());
 
-	        UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, map.getTimespan());
-	        
-	        parameters.setBase64(map.isBase64());
-	        IOHandler renderer = IOFactory.create()
-	                .inLanguage(map.getLanguage())
-	                .showGrid(map.isGrid())
-	                .createIOHandler(context);
-	        handleBinaryResponse(response, parameters, renderer);
-		}
+    @RequestMapping(value = "/{timeseriesId}/{interval}", produces = {"image/png"}, method = GET)
+    public void getTimeseriesChartByInterval(HttpServletResponse response, 
+                                             @PathVariable String timeseriesId, 
+                                             @PathVariable String interval, 
+                                             @RequestParam(required = false) MultiValueMap<String, String> query) throws Exception {
+        // use a configurable pre rendering of some images, so the prerendering task delivers the images
+        if (preRenderingTask.hasPrerenderedImage(timeseriesId, interval)) {
+            preRenderingTask.writeToOS(timeseriesId, interval, response.getOutputStream());
+        }
+        else {
+            checkIfUnknownTimeseries(timeseriesId);
+            QueryMap map = createFromQuery(query);
+
+            String timespan = preRenderingTask.createTimespanFromInterval(timeseriesId, interval);
+            TimeseriesMetadataOutput metadata = timeseriesMetadataService.getParameter(timeseriesId);
+            RenderingContext context = createContextForSingleTimeseries(metadata, map.getStyle(), timespan);
+            context.setDimensions(map.getWidth(), map.getHeight());
+
+            UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, map.getTimespan());
+
+            parameters.setBase64(map.isBase64());
+            IOHandler renderer = IOFactory.create().withLocale(map.getLocale()).showGrid(map.isGrid()).createIOHandler(context);
+            handleBinaryResponse(response, parameters, renderer);
+        }
     }
 
     private void checkIfUnknownTimeseries(String... timeseriesIds) {
@@ -254,18 +246,21 @@ public class TimeseriesDataController extends BaseController {
      * @throws InternalServerException
      *         if data processing fails for some reason.
      */
-    private void handleBinaryResponse(HttpServletResponse response, UndesignedParameterSet parameters, IOHandler renderer) {
+    private void handleBinaryResponse(HttpServletResponse response,
+                                      UndesignedParameterSet parameters,
+                                      IOHandler renderer) {
         try {
             renderer.generateOutput(getTimeseriesData(parameters));
-        	if (parameters.isBase64()) {
-            	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	            renderer.encodeAndWriteTo(baos);
+            if (parameters.isBase64()) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                renderer.encodeAndWriteTo(baos);
                 byte[] imageData = baos.toByteArray();
                 byte[] encode = Base64.encodeBase64(imageData);
                 response.getOutputStream().write(encode);
-			} else {
-	            renderer.encodeAndWriteTo(response.getOutputStream());
-			}
+            }
+            else {
+                renderer.encodeAndWriteTo(response.getOutputStream());
+            }
         }
         catch (IOException e) { // handled by BaseController
             throw new InternalServerException("Error handling output stream.", e);
@@ -277,9 +272,8 @@ public class TimeseriesDataController extends BaseController {
 
     private TvpDataCollection getTimeseriesData(UndesignedParameterSet parameters) {
         Stopwatch stopwatch = startStopwatch();
-        TvpDataCollection timeseriesData = parameters.isGeneralize() 
-                ? composeDataService(timeseriesDataService).getTimeseriesData(parameters)
-                : timeseriesDataService.getTimeseriesData(parameters);
+        TvpDataCollection timeseriesData = parameters.isGeneralize() ? composeDataService(timeseriesDataService).getTimeseriesData(parameters)
+                                                                    : timeseriesDataService.getTimeseriesData(parameters);
         LOGGER.debug("Processing request took {} seconds.", stopwatch.stopInSeconds());
         return timeseriesData;
     }
@@ -308,12 +302,12 @@ public class TimeseriesDataController extends BaseController {
         this.timeseriesDataService = timeseriesDataService;
     }
 
-	public PreRenderingTask getPreRenderingTask() {
-		return preRenderingTask;
-	}
+    public PreRenderingTask getPreRenderingTask() {
+        return preRenderingTask;
+    }
 
-	public void setPreRenderingTask(PreRenderingTask prerenderingTask) {
-		this.preRenderingTask = prerenderingTask;
-	}
+    public void setPreRenderingTask(PreRenderingTask prerenderingTask) {
+        this.preRenderingTask = prerenderingTask;
+    }
 
 }

@@ -93,9 +93,9 @@ public abstract class ChartRenderer implements IOHandler {
 
     private XYPlot xyPlot;
 
-    public ChartRenderer(RenderingContext context, String language) {
-        if (language != null) {
-            i18n = getMessageLocalizer(language);
+    public ChartRenderer(RenderingContext context, String locale) {
+        if (locale != null) {
+            i18n = getMessageLocalizer(locale);
         }
         this.context = context;
     }

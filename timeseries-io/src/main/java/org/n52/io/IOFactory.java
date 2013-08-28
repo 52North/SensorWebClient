@@ -34,7 +34,7 @@ import org.n52.io.report.ReportGenerator;
 
 public class IOFactory {
 
-    private String language = "en";
+    private String locale = "en";
 
     private boolean tooltips = false;
 
@@ -58,12 +58,12 @@ public class IOFactory {
     }
 
     /**
-     * @param language
-     *        the language (default is <code>en</code>).
+     * @param locale
+     *        the locale (default is <code>en</code>).
      * @return this instance for parameter chaining.
      */
-    public IOFactory inLanguage(String language) {
-        this.language = language;
+    public IOFactory withLocale(String locale) {
+        this.locale = locale;
         return this;
     }
 
@@ -111,7 +111,7 @@ public class IOFactory {
 
         if (mimeType == APPLICATION_PDF) {
             MultipleChartsRenderer imgRenderer = createMultiChartRenderer(context);
-            ReportGenerator reportGenerator = new PDFReportGenerator(imgRenderer, language);
+            ReportGenerator reportGenerator = new PDFReportGenerator(imgRenderer, locale);
 
             // TODO
 
@@ -140,7 +140,7 @@ public class IOFactory {
     }
 
     private MultipleChartsRenderer createMultiChartRenderer(RenderingContext context) {
-        MultipleChartsRenderer chartRenderer = new MultipleChartsRenderer(context, language);
+        MultipleChartsRenderer chartRenderer = new MultipleChartsRenderer(context, locale);
         chartRenderer.setShowTooltips(tooltips);
         chartRenderer.setDrawLegend(drawLegend);
         chartRenderer.setMimeType(mimeType);

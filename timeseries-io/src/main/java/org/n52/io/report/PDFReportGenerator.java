@@ -76,8 +76,8 @@ public class PDFReportGenerator extends ReportGenerator implements IOHandler {
 
     private ChartRenderer renderer;
 
-    public PDFReportGenerator(ChartRenderer renderer, String language) {
-        super(renderer.getRenderingContext(), language);
+    public PDFReportGenerator(ChartRenderer renderer, String locale) {
+        super(renderer.getRenderingContext(), locale);
         this.document = DocumentStructureDocument.Factory.newInstance();
         this.document.addNewDocumentStructure();
         this.renderer = configureRenderer(renderer);

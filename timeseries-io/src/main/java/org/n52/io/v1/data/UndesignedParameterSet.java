@@ -25,21 +25,36 @@ package org.n52.io.v1.data;
 
 
 
-
 public class UndesignedParameterSet extends ParameterSet {
 
+    // XXX refactor ParameterSet, DesignedParameterSet, UndesingedParameterSet and QueryMap
+    
     /**
      * The timeseriesIds of interest.
      */
     private String[] timeseriesIds;
+    
+    /**
+     * Which output format the raw data shall have.
+     */
+    private String format;
 
     @Override
     public String[] getTimeseries() {
         return timeseriesIds;
     }
 
-    public void setTimeseries(String[] timeseries) {
+    void setTimeseries(String[] timeseries) {
         this.timeseriesIds = timeseries;
+    }
+    
+    public String getFormat() {
+        return format;
+    }
+    
+    
+    public void setFormat(String format) {
+        this.format = format;
     }
     
     public static UndesignedParameterSet createForSingleTimeseries(String timeseriesId, String timespan) {
