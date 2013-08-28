@@ -57,7 +57,7 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Timeserie
         QueryParameters query = createQueryParameters(map);
         List<TimeseriesMetadataOutput> allProcedures = new ArrayList<TimeseriesMetadataOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
-            TimeseriesConverter converter = new TimeseriesConverter(metadata, dataService);
+            TimeseriesConverter converter = new TimeseriesConverter(metadata);
             allProcedures.addAll(converter.convertExpanded(filter(metadata, query)));
         }
         return allProcedures.toArray(new TimeseriesMetadataOutput[0]);
@@ -68,7 +68,7 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Timeserie
         QueryParameters query = createQueryParameters(map);
         List<TimeseriesMetadataOutput> allProcedures = new ArrayList<TimeseriesMetadataOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
-            TimeseriesConverter converter = new TimeseriesConverter(metadata, dataService);
+            TimeseriesConverter converter = new TimeseriesConverter(metadata);
             allProcedures.addAll(converter.convertCondensed(filter(metadata, query)));
         }
         return allProcedures.toArray(new TimeseriesMetadataOutput[0]);
@@ -100,7 +100,7 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Timeserie
         for (SOSMetadata metadata : getSOSMetadatas()) {
             Station station = metadata.getStationByTimeSeriesId(timeseriesId);
             if (station != null) {
-                TimeseriesConverter converter = new TimeseriesConverter(metadata, dataService);
+                TimeseriesConverter converter = new TimeseriesConverter(metadata);
                 SosTimeseries timeseries = station.getTimeseriesById(timeseriesId);
                 TimeseriesMetadataOutput convertExpanded = converter.convertExpanded(timeseries);
                 /*

@@ -99,6 +99,7 @@ public class TimeseriesDataController extends BaseController {
 
         checkIfUnknownTimeseries(parameters.getTimeseries());
 
+        checkAgainstTimespanRestriction(parameters.getTimespan());
         TvpDataCollection timeseriesData = getTimeseriesData(parameters);
         if (parameters.isGeneralize()) {
             Generalizer generalizer = createNonConfigGeneralizer(timeseriesData);

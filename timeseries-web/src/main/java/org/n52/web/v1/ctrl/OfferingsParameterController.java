@@ -41,7 +41,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping(value = DEFAULT_PATH + "/" + COLLECTION_OFFERINGS, produces = {"application/json"})
-public class OfferingsParameterController extends ParameterController implements RestfulUrls {
+public class OfferingsParameterController extends ParameterController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OfferingsParameterController.class);
     
