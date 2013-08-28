@@ -22,8 +22,8 @@ public class Scale implements Serializable {
 		this.manualScaleMax = 0;
 	}
 
-	public Scale(Type scaleType){
-		this.setType(scaleType);
+	public Scale(Type type){
+		this.setType(type);
 	}
 	
 	public void setType(Type scaleType){

@@ -210,14 +210,14 @@ public class TimeseriesProperties implements Serializable {
 		this.scale = scale;
 	}
 	
+	public void setScale( Scale.Type type ){
+		this.scale = new Scale(type);
+	}
+	
 	public Scale getScale(){
 		return this.scale;
 	}
 	
-	/**
-	 * Use getScaleType()
-	 * @deprecated
-	 */
 	public boolean isAutoScale() {
 		return this.scale.isAuto();
 	}
@@ -244,12 +244,12 @@ public class TimeseriesProperties implements Serializable {
 		this.scale.setType( zeroScaled ? Scale.Type.ZERO : Scale.Type.AUTO);
 	}
 
-	/**
-	 * Use getScaleType()
-	 * @deprecated
-	 */
 	public boolean isZeroScaled() {
 		return this.scale.isZero();
+	}
+
+	public boolean isManualScaled() {
+		return this.scale.isManual();
 	}
 
 	public void setMetadataUrl(String metadataUrl) {

@@ -929,15 +929,10 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 			public void onClick(ClickEvent event) {
 				LegendEntryTimeSeries.this.styleChanger.hide();
 
-				Timeseries timeseries = TimeseriesDataStore.getTimeSeriesDataStore()
-						.getDataItem(LegendEntryTimeSeries.this.timeseriesID);
-				timeseries.setLineStyle(LegendEntryTimeSeries.this.lineStyles
-						.getValue().toString());
-				timeseries.setSeriesType(LegendEntryTimeSeries.this.seriesType
-						.getValue().toString());
-				timeseries.setLineWidth(Integer
-						.valueOf(LegendEntryTimeSeries.this.lineWidth
-								.getValueAsString()));
+				Timeseries timeseries = TimeseriesDataStore.getTimeSeriesDataStore().getDataItem(LegendEntryTimeSeries.this.timeseriesID);
+				timeseries.setLineStyle(LegendEntryTimeSeries.this.lineStyles.getValue().toString());
+				timeseries.setSeriesType(LegendEntryTimeSeries.this.seriesType.getValue().toString());
+				timeseries.setLineWidth(Integer.valueOf(LegendEntryTimeSeries.this.lineWidth.getValueAsString()));
 				
 				String scaleTypeStr = LegendEntryTimeSeries.this.scale.getValueAsString();
 				Scale scale = new Scale();
@@ -945,9 +940,15 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 				if (scaleTypeStr.equals(i18n.zeroScale())) {
 					scale.setZero();
 				} else if (scaleTypeStr.equals(i18n.manualScale() )) {
-					scale.setManual();
-					scale.setManualScaleMin(LegendEntryTimeSeries.this.scaleManualMin.getValueAsFloat());
-					scale.setManualScaleMax(LegendEntryTimeSeries.this.scaleManualMax.getValueAsFloat());
+					com.google.gwt.user.client.Window.alert("DEBUG Clickhandler");
+					try{
+						scale.setManual();
+						scale.setManualScaleMin(LegendEntryTimeSeries.this.scaleManualMin.getValueAsFloat());
+						scale.setManualScaleMax(LegendEntryTimeSeries.this.scaleManualMax.getValueAsFloat());
+					}catch(Exception e){
+						//DEBUG
+                		com.google.gwt.user.client.Window.alert("Fehler in LegendEntry Clickhandler:\n" + e.getMessage());
+					}
 				} else {
 					scale.setAuto();
 				}
@@ -1341,6 +1342,8 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 				switch(evt.getScale().getType()){
 				case MANUAL:
 					LegendEntryTimeSeries.this.scale.setValue(i18n.manualScale());
+					LegendEntryTimeSeries.this.scaleManualMin.setValue(evt.getScale().getManualScaleMin());
+					LegendEntryTimeSeries.this.scaleManualMax.setValue(evt.getScale().getManualScaleMax());
 					break;
 				case ZERO:
 					LegendEntryTimeSeries.this.scale.setValue(i18n.zeroScale());
