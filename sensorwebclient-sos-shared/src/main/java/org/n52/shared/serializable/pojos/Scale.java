@@ -29,6 +29,10 @@ public class Scale implements Serializable {
 		this.setManualScaleMin(min);
 		this.setManualScaleMax(max);
 	}
+
+	public Scale(double min, double max){
+		this(Type.MANUAL, min, max);
+	}
 	
 	public void setType(Type type){
 		this.type = type != null 
