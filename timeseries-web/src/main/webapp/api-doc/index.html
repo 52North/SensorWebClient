@@ -57,6 +57,13 @@
               <li><a href="#styles-bar-chart">Bar Chart</a></li>
             </ul>
           </li>
+          <li> <!-- Formats -->
+            <a data-toggle="collapse" data-parent="#contents" data-target="#formats-subitems"  href="#formats">Data Formats</a>
+            <ul id="formats-subitems" class="nav collapse">
+              <li><a href="#formats-default">Default Format</a></li>
+              <li><a href="#formats-highchart">Highchart Format</a></li>
+            </ul>
+          </li>
           <li> <!-- Parameters -->
             <a data-toggle="collapse" data-parent="#contents" data-target="#parameters-subitems"  href="#parameters">Parameters</a>
             <ul id="parameters-subitems" class="nav collapse">
@@ -921,15 +928,15 @@ Content-Type: application/json;charset=UTF-8
 										<code>format</code>
 									</td>
                   <td>
-                    <pre>format=highchart</pre>
+                    <pre>format=highcharts</pre>
                   </td>
                   <td>
                     <p>Controls the output format of raw timeseries data. This avoids converting between different data formats on client side which uses a 3rd party chart rendering API. Currently, supported formats:
                     <ul>
                       <li><code>tvp</code>: Time value pairs (the default)</li>
                       <li><code>highcharts</code>: <a href="http://www.highcharts.com/">Highcharts</a> series data format.</li>
-                    </ul></p>
-                    <div class="n52-callout n52-callout-info">Serving arbitrary formats is limited. Most probably you have to combine timeseries metadata and the actual data differently within the used API. Please refer to the actual data output so that it can be used as intended by the 3rd party API.</div>
+                    </ul>
+                    Refer to the <a href="#formats">Format section</a> for detailed information how the formats will look like.</p>
                   </td>
                 </tr>
                 <tr>
@@ -1450,6 +1457,135 @@ http://localhost:8080/sensorwebclient-webapp/api/v1/timeseries/getData > img.png
 				</div>
 			</section>
 			
+      
+      <!-- Formats
+			================================================== -->
+			<section id="formats">
+				<div class="page-header">
+					<h1>Data Formats</h1>
+					<p class="pull-right up-link">
+						<a href="#"><i class="icon-chevron-up"></i> top</a>
+					</p>
+				</div>
+				<div>
+					<p>Raw data can be requested in a specific format. This can be useful if you work with a specific chart API and want to avoid to convert data outout from one format to another. Possible formats are:
+						<ul>
+							<li><code>tvp</code> (the default)</li>
+							<li><code>highchart</code></li>
+						</ul>
+					</p>
+          <div class="n52-callout n52-callout-info">Serving arbitrary formats is limited. Most probably you have to combine timeseries metadata and the actual data differently within the used API. Please refer to the actual data output so that it can be used as intended by the 3rd party API.</div>
+      
+          <div>
+						<h2 id="formats-default">Default Format</h2>
+            The format returns timeseries data a time-value tuple.
+            <div class="n52-callout n52-callout-todo">add _metadata element</div>
+            <div>
+              <h3>Example (Single Timeseries)</h3>
+                <pre>{
+  "values": [
+    {
+      "timestamp": 1376524800000,
+      "value": 433.0
+    },
+    {
+      "timestamp": 1376524860000,
+      "value": 432.4
+    },
+    {
+      "timestamp": 1376524920000,
+      "value": 432.0
+    },
+    {
+      "timestamp": 1376524980000,
+      "value": 431.1
+    }
+  ]
+}</pre>
+              </div>
+              <h3>Example (Multiple Timeseries)</h3>
+                <pre>{
+  "ts_ad3edeff973ab62e39f76c14f95d1e82": {
+    "values": []
+  },
+  "ts_c8ed5ddbb89c19b2e385de23eecbde98": {
+    "values": [
+      {
+        "timestamp": 1376589600000,
+        "value": 546
+      },
+      {
+        "timestamp": 1376589660000,
+        "value": 546.6
+      },
+      {
+        "timestamp": 1376589720000,
+        "value": 547
+      }
+    ]
+  }
+}</pre>
+          </div>
+      
+					<div>
+						<h2 id="formats-highchart">Highchart Format</h2>
+            The format returns timeseries data in <a href="http://api.highcharts.com/highcharts#series">Highcharts series format</a>. To add metadata or a readable series name you will have to replace the timeseriesId with a readable label taken from the <a href="#timeseries">Timeseries metadata</a>.
+            <div>
+              <h3>Example (Single Timeseries)</h3>
+                <pre>{
+  "name": "ts_c8ed5ddbb89c19b2e385de23eecbde98",
+  "data": [
+    [
+      1376524800000,
+      433.3
+    ],
+    [
+      1376524860000,
+      432.4
+    ],
+    [
+      1376524920000,
+      432.1
+    ]
+  ]
+}</pre>
+              </div>
+              <h3>Example (Multiple Timeseries)</h3>
+                <pre>[
+  {
+    "name": "ts_ad3edeff973ab62e39f76c14f95d1e82",
+    "data": []
+  },
+  {
+    "name": "ts_c8ed5ddbb89c19b2e385de23eecbde98",
+    "data": [
+      [
+        1376589600000,
+        546
+      ],
+      [
+        1376589660000,
+        546.6
+      ],
+      [
+        1376589720000,
+        547
+      ],
+      [
+        1376589780000,
+        548
+      ]
+    ]
+  }
+]</pre>
+          </div>
+        </div>
+			</section>
+      
+      
+      
+      
+      
 			<!-- Parameters
 			================================================== -->
 			<section id="parameters">

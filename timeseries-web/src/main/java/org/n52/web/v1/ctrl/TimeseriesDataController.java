@@ -44,6 +44,10 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
+import org.joda.time.Interval;
+import org.joda.time.Period;
 import org.n52.io.IOFactory;
 import org.n52.io.IOHandler;
 import org.n52.io.TimeseriesIOException;
@@ -55,6 +59,7 @@ import org.n52.io.v1.data.DesignedParameterSet;
 import org.n52.io.v1.data.TimeseriesDataCollection;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.UndesignedParameterSet;
+import org.n52.web.BadRequestException;
 import org.n52.web.BaseController;
 import org.n52.web.InternalServerException;
 import org.n52.web.ResourceNotFoundException;
@@ -86,6 +91,8 @@ public class TimeseriesDataController extends BaseController {
 
     private PreRenderingTask preRenderingTask;
 
+    private String requestIntervalRestriction;
+    
     @RequestMapping(value = "/getData", produces = {"application/json"}, method = POST)
     public ModelAndView getTimeseriesCollectionData(HttpServletResponse response, 
                                                     @RequestBody UndesignedParameterSet parameters) throws Exception {
@@ -99,7 +106,7 @@ public class TimeseriesDataController extends BaseController {
         }
 
         TimeseriesDataCollection< ? > formattedDataCollection = format(timeseriesData, parameters.getFormat());
-        return new ModelAndView().addObject(formattedDataCollection.getAllTimeseries());
+        return new ModelAndView().addObject(formattedDataCollection.getTimeseriesOutput());
     }
 
     @RequestMapping(value = "/{timeseriesId}/getData", produces = {"application/json"}, method = GET)
@@ -111,6 +118,8 @@ public class TimeseriesDataController extends BaseController {
 
         QueryMap map = createFromQuery(query);
         UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, map.getTimespan());
+        checkAgainstTimespanRestriction(map.getTimespan());
+        
         parameters.setGeneralize(map.isGeneralize());
 
         // TODO add paging
@@ -134,6 +143,7 @@ public class TimeseriesDataController extends BaseController {
 
         QueryMap map = createFromQuery(requestParameters);
         UndesignedParameterSet parameters = createFromDesignedParameters(requestParameters);
+        checkAgainstTimespanRestriction(parameters.getTimespan());
         parameters.setGeneralize(map.isGeneralize());
 
         String[] timeseriesIds = parameters.getTimeseries();
@@ -157,6 +167,7 @@ public class TimeseriesDataController extends BaseController {
         TimeseriesMetadataOutput metadata = timeseriesMetadataService.getParameter(timeseriesId);
         RenderingContext context = createContextForSingleTimeseries(metadata, map.getStyle(), map.getTimespan());
         UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, map.getTimespan());
+        checkAgainstTimespanRestriction(parameters.getTimespan());
         parameters.setGeneralize(map.isGeneralize());
 
         IOHandler renderer = IOFactory.create().forMimeType(APPLICATION_PDF).withLocale(map.getLocale()).createIOHandler(context);
@@ -172,6 +183,7 @@ public class TimeseriesDataController extends BaseController {
 
         QueryMap map = createFromQuery(requestParameters);
         UndesignedParameterSet parameters = createFromDesignedParameters(requestParameters);
+        checkAgainstTimespanRestriction(parameters.getTimespan());
         parameters.setGeneralize(map.isGeneralize());
 
         String[] timeseriesIds = parameters.getTimeseries();
@@ -195,6 +207,7 @@ public class TimeseriesDataController extends BaseController {
         context.setDimensions(map.getWidth(), map.getHeight());
 
         UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, map.getTimespan());
+        checkAgainstTimespanRestriction(parameters.getTimespan());
         parameters.setGeneralize(map.isGeneralize());
 
         parameters.setBase64(map.isBase64());
@@ -219,16 +232,27 @@ public class TimeseriesDataController extends BaseController {
             TimeseriesMetadataOutput metadata = timeseriesMetadataService.getParameter(timeseriesId);
             RenderingContext context = createContextForSingleTimeseries(metadata, map.getStyle(), timespan);
             context.setDimensions(map.getWidth(), map.getHeight());
-
-            UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, map.getTimespan());
-
-            parameters.setBase64(map.isBase64());
-            IOHandler renderer = IOFactory.create().withLocale(map.getLocale()).showGrid(map.isGrid()).createIOHandler(context);
-            handleBinaryResponse(response, parameters, renderer);
-        }
+            
+	        UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, map.getTimespan());
+            checkAgainstTimespanRestriction(parameters.getTimespan());
+	        
+	        parameters.setBase64(map.isBase64());
+	        IOHandler renderer = IOFactory.create()
+	                .withLocale(map.getLocale())
+	                .showGrid(map.isGrid())
+	                .createIOHandler(context);
+	        handleBinaryResponse(response, parameters, renderer);
+		}
     }
 
-    private void checkIfUnknownTimeseries(String... timeseriesIds) {
+    private void checkAgainstTimespanRestriction(String timespan) {
+    	Duration duration = Period.parse(requestIntervalRestriction).toDurationFrom(new DateTime());
+    	if (duration.getMillis() < Interval.parse(timespan).toDurationMillis()) {
+    		throw new BadRequestException("Requested timespan is to long, please use a period shorter than '" + requestIntervalRestriction + "'");
+		}
+    }
+
+	private void checkIfUnknownTimeseries(String... timeseriesIds) {
         for (String timeseriesId : timeseriesIds) {
             if ( !serviceParameterService.isKnownTimeseries(timeseriesId)) {
                 throw new ResourceNotFoundException("The timeseries with id '" + timeseriesId + "' was not found.");
@@ -309,5 +333,15 @@ public class TimeseriesDataController extends BaseController {
     public void setPreRenderingTask(PreRenderingTask prerenderingTask) {
         this.preRenderingTask = prerenderingTask;
     }
+
+	public String getRequestIntervalRestriction() {
+		return requestIntervalRestriction;
+	}
+
+	public void setRequestIntervalRestriction(String requestIntervalRestriction) {
+		// validate requestIntervalRestriction, if it's no period an exception occured
+		Period.parse(requestIntervalRestriction);
+		this.requestIntervalRestriction = requestIntervalRestriction;
+	}
 
 }

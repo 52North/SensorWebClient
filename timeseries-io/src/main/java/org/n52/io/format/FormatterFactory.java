@@ -9,7 +9,7 @@ public class FormatterFactory {
     }
     
     public TimeseriesDataFormatter<?> create() {
-        if ("highchart".equals(format)) {
+        if ("highcharts".equals(format)) {
             return new HighchartFormatter();
         } else {
             return new TvpFormatter();

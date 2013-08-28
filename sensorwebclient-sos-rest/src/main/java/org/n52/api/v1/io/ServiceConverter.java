@@ -24,12 +24,14 @@
 package org.n52.api.v1.io;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.n52.io.v1.data.ServiceOutput;
 import org.n52.io.v1.data.ServiceOutput.ParameterCount;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
-import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
 public class ServiceConverter extends OutputConverter<SOSMetadata, ServiceOutput> {
 
@@ -59,6 +61,7 @@ public class ServiceConverter extends OutputConverter<SOSMetadata, ServiceOutput
         Collection<Station> stations = metadata.getStations();
         parameterCount.setStationsSize(stations.size());
         parameterCount.setTimeseriesSize(countTimeseries(stations));
+        parameterCount.setCategoriesSize(countCategories(stations));
         return parameterCount;
     }
 
@@ -68,6 +71,16 @@ public class ServiceConverter extends OutputConverter<SOSMetadata, ServiceOutput
             size += station.getObservedTimeseries().size();
         }
         return size;
+    }
+
+    private Integer countCategories(Collection<Station> stations) {
+        Set<String> categories = new HashSet<String>();
+        for (Station station : stations) {
+            for (SosTimeseries timeseries : station.getObservedTimeseries()) {
+                categories.add(timeseries.getCategory());
+            }
+        }
+        return categories.size();
     }
 
     @Override

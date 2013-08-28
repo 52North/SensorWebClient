@@ -15,7 +15,10 @@ public class HighchartFormatter implements TimeseriesDataFormatter<HighchartData
         for (String timeseriesId : toFormat.getAllTimeseries().keySet()) {
             TimeseriesData seriesToFormat = toFormat.getTimeseries(timeseriesId);
             List<Number[]> formattedSeries = formatSeries(seriesToFormat);
-            dataCollection.addNewTimeseries(timeseriesId, formattedSeries);
+            HighchartSeries series = new HighchartSeries();
+            series.setName(timeseriesId);
+            series.setData(formattedSeries);
+            dataCollection.addNewTimeseries(timeseriesId, series);
         }
         return dataCollection;
     }
