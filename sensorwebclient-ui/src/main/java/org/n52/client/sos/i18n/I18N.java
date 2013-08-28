@@ -376,6 +376,8 @@ public interface I18N extends Constants {
 	String toCSV();
 
 	String toPDF();
+	
+	String toZIP();
 
 	String lineWidth();
 

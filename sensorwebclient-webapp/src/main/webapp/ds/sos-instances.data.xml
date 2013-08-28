@@ -4,8 +4,8 @@
 <!-- Some of these properties are not implemented yet! -->
 <instances>
 	<instance>
-		<itemName>ZDM ISB Test (zdm.local)</itemName>
-		<url>http://zdm.local:8080/SOS/sos</url>
+		<itemName>ZDM ISB Test</itemName>
+		<url>http://isb-lx54.ag.isb.de:8080/SOS/sos</url>
 		<version>2.0.0</version>
 		<waterML>false</waterML>
 		<metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>

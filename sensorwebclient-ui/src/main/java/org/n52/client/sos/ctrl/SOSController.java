@@ -187,6 +187,9 @@ public class SOSController extends ServiceController {
             case PDF_ALL_IN_ONE:
             	getRequestManager().requestExportPDFallInOne(evt.getTimeseries());
                 break;
+            /*case DATADOWNLOAD_ZIP:
+            	getRequestManager().requestExportCSVzipAllInOne(evt.getTimeseries());
+            	break;*/
             default:
                 break;
             }
