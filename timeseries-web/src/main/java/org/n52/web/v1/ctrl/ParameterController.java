@@ -32,7 +32,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-public abstract class ParameterController extends BaseController implements RestfulUrls {
+public abstract class ParameterController extends BaseController {
 
     protected ServiceParameterService serviceParameterService;
 

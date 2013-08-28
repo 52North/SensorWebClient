@@ -345,4 +345,8 @@ public class SosTimeseries implements Serializable {
         return timeseries;
     }
 
+	public String getLabel() {
+		return getPhenomenon().getLabel() + "@" + getFeature().getLabel();
+	}
+
 }

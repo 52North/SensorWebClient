@@ -25,7 +25,6 @@ package org.n52.api.v1.io;
 
 import java.util.Set;
 
-import org.n52.api.v1.srv.GetDataService;
 import org.n52.io.v1.data.CategoryOutput;
 import org.n52.io.v1.data.FeatureOutput;
 import org.n52.io.v1.data.OfferingOutput;
@@ -43,11 +42,11 @@ import org.n52.shared.serializable.pojos.sos.Station;
 
 public class TimeseriesConverter extends OutputConverter<SosTimeseries, TimeseriesMetadataOutput> {
 
-    private GetDataService dataService;
+//    private GetDataService dataService;
 
-    public TimeseriesConverter(SOSMetadata metadata, GetDataService dataService) {
+    public TimeseriesConverter(SOSMetadata metadata) {
         super(metadata);
-        this.dataService = dataService;
+//        this.dataService = dataService;
     }
 
     @Override
@@ -62,6 +61,7 @@ public class TimeseriesConverter extends OutputConverter<SosTimeseries, Timeseri
     @Override
     public TimeseriesMetadataOutput convertCondensed(SosTimeseries timeseries) {
         TimeseriesMetadataOutput convertedTimeseries = new TimeseriesMetadataOutput();
+        convertedTimeseries.setLabel(timeseries.getLabel());
         convertedTimeseries.setStation(getCondensedStation(timeseries));
         Phenomenon phenomenon = getLookup().getPhenomenon(timeseries.getPhenomenonId());
         convertedTimeseries.setUom(phenomenon.getUnitOfMeasure());

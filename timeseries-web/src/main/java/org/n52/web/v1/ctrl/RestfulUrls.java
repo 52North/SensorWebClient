@@ -76,5 +76,10 @@ public interface RestfulUrls {
      * Subpath identifying a collection of timeseries metadata available.
      */
     static final String COLLECTION_TIMESERIES = "timeseries";
+    
+    /**
+     * Subpath identifying the search.
+     */
+    static final String SEARCH = "search";
 
 }

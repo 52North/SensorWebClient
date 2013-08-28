@@ -31,6 +31,8 @@ package org.n52.io.v1.data;
 public class TimeseriesMetadataOutput {
 
     private String id;
+    
+    private String label;
 
     private String uom;
     
@@ -54,7 +56,15 @@ public class TimeseriesMetadataOutput {
         this.id = id;
     }
 
-    public String getUom() {
+    public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getUom() {
         return uom;
     }
 
