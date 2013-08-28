@@ -68,13 +68,17 @@ public class ExceptionResponse {
         return statusCode.getReasonPhrase();
     }
 
-    public String getMessage() {
+    public String getUserMessage() {
         return exception.getMessage();
     }
     
-    public String causedBy() {
+    public String getDeveloperMessage() {
         Throwable causedBy = exception.getCause();
-        return causedBy == null ? null : causedBy.getMessage();
+        return causedBy != null ? formatMessageOutput(causedBy) : null;
+    }
+
+    private String formatMessageOutput(Throwable causedBy) {
+        return causedBy.getMessage().replace("\"", "'");
     }
 
     public String[] getHints() {

@@ -42,13 +42,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class QueryMap {
+    
+    // XXX refactor ParameterSet, DesignedParameterSet, UndesingedParameterSet and QueryMap
 
     /**
-     * How detailed the output shall be. Possible values are:
-     * <ul>
-     * <li><code>true</code></li>
-     * <li><code>false</code></li>
-     * </ul>
+     * How detailed the output shall be.
      */
     private static final String EXPANDED = "expanded";
 
@@ -84,16 +82,16 @@ public class QueryMap {
     private static final int DEFAULT_LIMIT = 100;
 
     /**
-     * Determines the language the output shall have.
+     * Determines the locale the output shall have.
      */
-    private static final String LANGUAGE = "locale";
+    private static final String LOCALE = "locale";
 
     /**
-     * The default language.
+     * The default locale.
      * 
-     * @see #LANGUAGE
+     * @see #LOCALE
      */
-    private static final String DEFAULT_LANGUAGE = "en";
+    private static final String DEFAULT_LOCALE = "en";
 
     /**
      * Determines the timespan parameter
@@ -130,7 +128,6 @@ public class QueryMap {
      */
     private static final boolean DEFAULT_GRID = true;
 
-
     /**
      * If a rendered chart shall be written as base64 encoded string.
      */
@@ -145,12 +142,22 @@ public class QueryMap {
      * Determines the generalize flag.
      */
     private static final String GENERALIZE = "generalize";
-    
+
     /**
      * The default (no generalization) behaviour.
      */
     private static final boolean DEFAULT_GENERALIZE = false;
-    
+
+    /**
+     * Determines how raw data shall be formatted.
+     */
+    private static final String FORMAT = "format";
+
+    /**
+     * The default format for raw data output.
+     */
+    private static final String DEFAULT_FORMAT = "tvp";
+
     /**
      * Determines the style parameter
      */
@@ -195,7 +202,7 @@ public class QueryMap {
      * Determines the bbox filter
      */
     private static final String BBOX = "bbox";
-    
+
     private MultiValueMap<String, String> query;
 
     /**
@@ -207,7 +214,7 @@ public class QueryMap {
         }
         query = queryParameters;
     }
-    
+
     /**
      * @return the value of {@value #OFFSET} parameter. If not present, the default {@value #DEFAULT_OFFSET}
      *         is returned.
@@ -247,7 +254,7 @@ public class QueryMap {
         }
         return parseFirstIntegerOfParameter(HEIGHT);
     }
-    
+
     public boolean isBase64() {
         if ( !query.containsKey(BASE_64)) {
             return DEFAULT_BASE_64;
@@ -270,14 +277,14 @@ public class QueryMap {
     }
 
     /**
-     * @return the value of {@value #LANGUAGE} parameter. If not present, the default
-     *         {@value #DEFAULT_LANGUAGE} is returned.
+     * @return the value of {@value #LOCALE} parameter. If not present, the default {@value #DEFAULT_LOCALE}
+     *         is returned.
      */
-    public String getLanguage() {
-        if ( !query.containsKey(LANGUAGE)) {
-            return DEFAULT_LANGUAGE;
+    public String getLocale() {
+        if ( !query.containsKey(LOCALE)) {
+            return DEFAULT_LOCALE;
         }
-        return query.getFirst(LANGUAGE);
+        return query.getFirst(LOCALE);
     }
 
     /**
@@ -292,9 +299,8 @@ public class QueryMap {
 
     private StyleProperties parseStyleProperties(String style) {
         try {
-            return style == null ?
-                                StyleProperties.createDefaults() :
-                                new ObjectMapper().readValue(style, StyleProperties.class);
+            return style == null ? StyleProperties.createDefaults()
+                                : new ObjectMapper().readValue(style, StyleProperties.class);
         }
         catch (JsonMappingException e) {
             throw new BadRequestException("Could not read style properties: " + style, e);
@@ -305,6 +311,13 @@ public class QueryMap {
         catch (IOException e) {
             throw new InternalServerException("An error occured during request handling.", e);
         }
+    }
+
+    public String getFormat() {
+        if (!query.containsKey(FORMAT)) {
+            return DEFAULT_FORMAT;
+        }
+        return query.getFirst(FORMAT);
     }
 
     /**
@@ -429,7 +442,7 @@ public class QueryMap {
      */
     public static QueryMap createFromQuery(DesignedParameterSet parameters) {
         LinkedMultiValueMap<String, String> queryParameters = new LinkedMultiValueMap<String, String>();
-        queryParameters.add(LANGUAGE, parameters.getLanguage());
+        queryParameters.add(LOCALE, parameters.getLanguage());
         queryParameters.add(TIMESPAN, parameters.getTimespan());
         queryParameters.add(WIDTH, parameters.getWidth() + "");
         queryParameters.add(HEIGHT, parameters.getHeight() + "");
@@ -439,5 +452,5 @@ public class QueryMap {
 
         return new QueryMap(queryParameters);
     }
-    
+
 }

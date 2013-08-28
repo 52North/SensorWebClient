@@ -34,6 +34,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class DesignedParameterSet extends ParameterSet {
     
+    // XXX refactor ParameterSet, DesignedParameterSet, UndesingedParameterSet and QueryMap
+    
     /**
      * The width of the chart image to render.
      */
@@ -50,7 +52,7 @@ public class DesignedParameterSet extends ParameterSet {
     private boolean grid = true;
 
     /**
-     * A 2-character language code to determine the requested locale.
+     * A language code to determine the requested locale.
      */
     private String language;
     

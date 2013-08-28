@@ -42,6 +42,7 @@ import org.n52.web.v1.ctrl.ResourcesController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -65,7 +66,7 @@ public abstract class BaseController {
         return IMAGE_PNG.getMimeType().equals(request.getHeader("Accept"));
     }
 
-    @ExceptionHandler(value = BadRequestException.class)
+    @ExceptionHandler(value = { BadRequestException.class })
     public void handle400(Exception e, HttpServletRequest request, HttpServletResponse response) {
         writeExceptionResponse((WebException) e, response, BAD_REQUEST);
     }
@@ -80,10 +81,16 @@ public abstract class BaseController {
         writeExceptionResponse((WebException) e, response, INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(value = {RuntimeException.class, Exception.class})
+    @ExceptionHandler(value = {RuntimeException.class, Exception.class, Throwable.class})
     public void handleException(Exception e, HttpServletRequest request, HttpServletResponse response) {
-        WebException wrappedException = new InternalServerException("Unexpected Exception occured.", e);
-        writeExceptionResponse(wrappedException, response, INTERNAL_SERVER_ERROR);
+        if (e instanceof HttpMessageNotReadableException) {
+            WebException wrappedException = new BadRequestException("The request could not been read.", e);
+            wrappedException.addHint("Check the message which has been sent to the server. Probably it is not valid.");
+            writeExceptionResponse(wrappedException, response, BAD_REQUEST);
+        } else {
+            WebException wrappedException = new InternalServerException("Unexpected Exception occured.", e);
+            writeExceptionResponse(wrappedException, response, INTERNAL_SERVER_ERROR);
+        }
     }
 
     private void writeExceptionResponse(WebException e, HttpServletResponse response, HttpStatus status) {

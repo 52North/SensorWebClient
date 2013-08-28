@@ -65,7 +65,7 @@ public class ServiceOutput extends OutputValue {
         this.quantities = countedParameters;
     }
 
-    @Override
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
@@ -128,6 +128,7 @@ public class ServiceOutput extends OutputValue {
 
         private int amountTimeseries;
         
+        private int amountCategories;
 
         public int getOfferings() {
             return amountOfferings;
@@ -177,6 +178,13 @@ public class ServiceOutput extends OutputValue {
             return this.amountTimeseries;
         }
 
+        public int getCategories() {
+            return amountCategories;
+        }
+
+        public void setCategoriesSize(Integer amountCategories) {
+            this.amountCategories = amountCategories;
+        }
     }
 	
 }

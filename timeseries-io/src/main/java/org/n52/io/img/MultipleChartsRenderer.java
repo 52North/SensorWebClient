@@ -51,8 +51,8 @@ import org.n52.io.v1.data.TimeseriesValue;
 
 public class MultipleChartsRenderer extends ChartRenderer {
 
-    public MultipleChartsRenderer(RenderingContext context, String language) {
-        super(context, language);
+    public MultipleChartsRenderer(RenderingContext context, String locale) {
+        super(context, locale);
     }
 
     @Override
