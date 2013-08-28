@@ -307,7 +307,7 @@ public class PreRenderingTask implements ServletConfigAware {
 	                    context.setDimensions(width, height);
 	                    UndesignedParameterSet parameters = createForSingleTimeseries(timeseriesId, timespan);
 	                    IOHandler renderer = IOFactory.create()
-	                            .inLanguage(language)
+	                            .withLocale(language)
 	                            .showGrid(showGrid)
 	                            .createIOHandler(context);
 	                    

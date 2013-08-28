@@ -87,6 +87,10 @@
 	<bean class="org.n52.web.v1.ctrl.ServicesParameterController">
 		<property name="serviceParameterService" ref="serviceParameterService" />
 	</bean>
+    
+    <bean class="org.n52.web.v1.ctrl.CategoriesParameterController">
+        <property name="categoryParameterService" ref="categoryParameterService" />
+    </bean>
 
 	<bean class="org.n52.web.v1.ctrl.FeaturesParameterController">
 		<property name="featureParameterService" ref="featureParameterService" />
@@ -114,6 +118,7 @@
 		<property name="timeseriesMetadataService" ref="timeseriesMetadataService" />
 		<property name="timeseriesDataService" ref="timeseriesDataService" />
 		<property name="preRenderingTask" ref="preRenderingTask" />
+		<property name="requestIntervalRestriction" value="P1Y" />
 	</bean>
 
 	<bean id="preRenderingTask" class="org.n52.web.task.PreRenderingTask"
@@ -130,6 +135,8 @@
 	</bean>
 
 	<bean id="offeringParameterService" class="org.n52.api.v1.srv.OfferingOutputAdapter" />
+    
+    <bean id="categoryParameterService" class="org.n52.api.v1.srv.CategoryOutputAdapter" />
 
 	<bean id="serviceParameterService" class="org.n52.api.v1.srv.ServiceOutputAdapter" />
 
