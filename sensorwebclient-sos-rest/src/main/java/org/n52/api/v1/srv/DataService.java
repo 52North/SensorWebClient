@@ -35,8 +35,8 @@ import java.util.Map;
 import org.joda.time.Interval;
 import org.n52.client.service.SensorMetadataService;
 import org.n52.client.service.TimeSeriesDataService;
+import org.n52.io.format.TvpDataCollection;
 import org.n52.io.v1.data.TimeseriesData;
-import org.n52.io.v1.data.TimeseriesDataCollection;
 import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
@@ -91,12 +91,12 @@ public abstract class DataService {
      *        a set of timeseries parameters.
      * @param props
      *        an empty list to add prepared {@link TimeseriesProperties} to.
-     * @return a prepared {@link TimeseriesDataCollection} to be filled with data coming from a
+     * @return a prepared {@link TvpDataCollection} to be filled with data coming from a
      *         {@link TimeSeriesDataService}.
      */
-    protected TimeseriesDataCollection prepareTimeseriesResults(UndesignedParameterSet parameterSet,
-                                                                List<TimeseriesProperties> props) {
-        TimeseriesDataCollection timeseriesCollection = new TimeseriesDataCollection();
+    protected TvpDataCollection prepareTimeseriesResults(UndesignedParameterSet parameterSet,
+                                                         List<TimeseriesProperties> props) {
+        TvpDataCollection timeseriesCollection = new TvpDataCollection();
         for (String timeseriesId : parameterSet.getTimeseries()) {
             try {
                 TimeseriesProperties propertiesInstance = createTimeseriesProperties(timeseriesId);
@@ -112,8 +112,8 @@ public abstract class DataService {
         return timeseriesCollection;
     }
 
-    protected TimeseriesDataCollection prepareTimeseriesResults(TimeseriesProperties props) {
-        TimeseriesDataCollection timeseriesCollection = new TimeseriesDataCollection();
+    protected TvpDataCollection prepareTimeseriesResults(TimeseriesProperties props) {
+        TvpDataCollection timeseriesCollection = new TvpDataCollection();
         try {
             String timeseriesId = props.getTimeseriesId();
             TimeseriesProperties propertiesInstance = createTimeseriesProperties(timeseriesId);

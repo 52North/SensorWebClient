@@ -27,6 +27,7 @@ package org.n52.io.v1.data;
 
 
 
+
 public class TimeseriesMetadataOutput {
 
     private String id;

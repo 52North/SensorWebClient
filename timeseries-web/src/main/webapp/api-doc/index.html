@@ -26,11 +26,11 @@
               <li><a href="#general-common-status-codes">Common Status Codes</a></li>
             </ul>
           </li>
-          <li> <!-- Resources -->
-            <a data-toggle="collapse" data-parent="#contents" data-target="#resources-subitems"  href="#resources">Resources</a>
-            <ul id="resources-subitems" class="nav collapse">
-              <li><a href="#resources-urls">URLs</a></li>
-              <li><a href="#resources-examples">Examples</a></li>
+          <li> <!-- Resource Collections -->
+            <a data-toggle="collapse" data-parent="#contents" data-target="#resource-collections-subitems"  href="#resource-collections">Collections</a>
+            <ul id="resource-collections-subitems" class="nav collapse">
+              <li><a href="#resource-collections-urls">URLs</a></li>
+              <li><a href="#resource-collections-examples">Examples</a></li>
             </ul>
           </li>
           <li> <!-- Stations -->
@@ -103,7 +103,6 @@
         <div class="n52-callout n52-callout-todo">
           <ul>
             <li>Create and link JSONSchemas for responses</li>
-            <li>Generalizing timeseries</li>
             <li>error code review</li>
             <li>CRUD API for eventing</li>
           </ul>
@@ -128,7 +127,7 @@
           
           <div id="general-common-query-parameters"> <!-- Common Query Parameters -->
             <h3>Common Query Parameters</h3>
-            <p>Except the <a href="#resources"><code>Resources</code> collection</a> all other collections can be queried/filtered by using the following query parameters. Each parameter is optional and can only be contain one value. Multiple paramters are combined to an <code>AND</code> query. A resource may specify further query parameters to control/filter output. Special query parameters are described in each section.</p>
+            <p>Except the <a href="#resource-collections"><code>Resources</code> collection</a> all other collections can be queried/filtered by using the following query parameters. Each parameter is optional and can only be contain one value. Multiple paramters are combined to an <code>AND</code> query. A resource may specify further query parameters to control/filter output. Special query parameters are described in each section.</p>
             <table class="table">
               <thead>
                 <th>Parameter</th>
@@ -303,17 +302,17 @@ Content omitted for brevity.
         </div>
 			</section>
 			
-			<!-- Resources
+			<!-- Resource Collections
 			================================================== -->
-			<section id="resources">
+			<section id="resource-collections">
 				<div class="page-header">
-					<h2>Resources</h2>
+					<h2>Collections</h2>
 					<p class="pull-right up-link">
 						<a href="#"><i class="icon-chevron-up"></i> top</a>
 					</p>
 				</div>
 				<div>
-					<div id="resources-urls"> <!-- URLs -->
+					<div id="resource-collections-urls"> <!-- URLs -->
             <h3>URLs</h3>
             <p>API calls are triggered by using the following URLs.</p>
             <table class="table">
@@ -334,13 +333,14 @@ Content omitted for brevity.
             </table>
           </div>
 					
-					<div id="resources-examples"> <!-- Example -->
-            <h3>Example</h3>
+					<div id="resource-collections-examples"> <!-- Examples -->
+            <h3>Examples</h3>
             <div>
+              <h4>Simple View</h4>
               <pre>GET /api/v1/ HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
-              <pre>HTTP/1.1 200 OK
+              <pre id="resource-collections-examples-simple" class="collapse">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 [
@@ -385,6 +385,68 @@ Content-Type: application/json;charset=UTF-8
     "description": "A collection of timeseries each representing a sequence of data values measured over time."
   }
 ]</pre>
+              <button data-toggle="collapse" data-parent="#resource-collections-examples" data-target="#resource-collections-examples-simple" class="btn btn-primary">Show/Hide Response</button>
+            </div>
+            
+            <div>
+              <h4>Expanded View</h4>
+              <pre>GET /api/v1/?expanded=true HTTP/1.1
+Host: sensorweb.demo.52north.org
+Accept: application/json</pre>
+              <pre id="resource-collections-examples-expanded" class="collapse">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+
+[
+  {
+    "id": "services",
+    "label": "Service Provider",
+    "description": "A service provider offers timeseries data.",
+    "size": 7
+  },
+  {
+    "id": "stations",
+    "label": "Station",
+    "description": "A station is the place where measurement takes place.",
+    "size": 1393
+  },
+  {
+    "id": "timeseries",
+    "label": "Timeseries",
+    "description": "Represents a sequence of data values measured over time.",
+    "size": 5434
+  },
+  {
+    "id": "categories",
+    "label": "Category",
+    "description": "A category group available timeseries.",
+    "size": 0
+  },
+  {
+    "id": "offerings",
+    "label": "Offering",
+    "description": "An organizing unit to filter resources.",
+    "size": 72
+  },
+  {
+    "id": "features",
+    "label": "Feature",
+    "description": "An organizing unit to filter resources.",
+    "size": 1393
+  },
+  {
+    "id": "procedures",
+    "label": "Procedure",
+    "description": "An organizing unit to filter resources.",
+    "size": 1770
+  },
+  {
+    "id": "phenomena",
+    "label": "Phenomenon",
+    "description": "An organizing unit to filter resources.",
+    "size": 62
+  }
+]</pre>
+              <button data-toggle="collapse" data-parent="#resource-collections-examples" data-target="#resource-collections-examples-expanded" class="btn btn-primary">Show/Hide Response</button>
             </div>
           </div>
 					
@@ -490,7 +552,7 @@ Content-Type: application/json;charset=UTF-8
               <pre>GET /api/v1/stations/ HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
-              <pre>HTTP/1.1 200 OK
+              <pre id="stations-examples-simple" class="collapse">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 [
@@ -523,6 +585,7 @@ Content-Type: application/json;charset=UTF-8
     "type": "Feature"
   }
 ]</pre>
+              <button data-toggle="collapse" data-parent="#stations-examples" data-target="#stations-examples-simple" class="btn btn-primary">Show/Hide Response</button>
               <div class="n52-callout n52-callout-info">
                 As <a href="#general-common-query-parameters">noted above</a> <code>expanded=false</code> is the default. Setting the parameter to <code>false</code> explicitly will have the same effect. 
               </div>
@@ -532,7 +595,7 @@ Content-Type: application/json;charset=UTF-8
               <pre>GET /api/v1/stations/?expanded=true HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
-              <pre>HTTP/1.1 200 OK
+              <pre id="stations-examples-expanded" class="collapse">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 [
@@ -643,6 +706,7 @@ Content-Type: application/json;charset=UTF-8
     "type": "Feature"
   }
 ]</pre>
+              <button data-toggle="collapse" data-parent="#stations-examples" data-target="#stations-examples-expanded" class="btn btn-primary">Show/Hide Response</button>
               <div class="n52-callout n52-callout-info">
                 Please refer to the <a href="http://geojson.org">GeoJSON specification</a> if you need more detailed information about the geometry types used.
               </div>
@@ -652,7 +716,7 @@ Content-Type: application/json;charset=UTF-8
               <pre>GET /api/v1/stations/sta_3b1495e8b789501dbe3296ac3d849c09/ HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
-              <pre>HTTP/1.1 200 OK
+              <pre id="stations-examples-item" class="collapse">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 {
@@ -697,6 +761,7 @@ Content-Type: application/json;charset=UTF-8
   },
   "type": "Feature"
 }</pre>
+              <button data-toggle="collapse" data-parent="#stations-examples" data-target="#stations-examples-item" class="btn btn-primary">Show/Hide Response</button>
             </div>
 					
           </div>
@@ -848,15 +913,10 @@ Content-Type: application/json;charset=UTF-8
                     <pre>generalize=true</pre>
                   </td>
                   <td>
-                    Indicates that timeseries data shall be generalized. Default is <code>false</code>.
-                    <div class="n52-callout n52-callout-todo">Discuss: this actually contradicts with the <a href="#general-paging">max size of a page</a> strategy ... but: 
-                      <ul>
-                        <li>what about exporting timeseries? automatically generalize, generate with all data? do we want the service throwing an error? </li>
-                        <li>It does not makes any sense that the REST-API decides in general if the data set which has been requested is too large (under which criteria) .. </li>
-                      </ul>
-                    </div>
+                    Indicates that timeseries data shall be generalized. Default is <code>false</code>. For generalization <a href="http://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm">the Douglas-Peucker algorithm</a> is used.
                   </td>
-                </tr><tr>
+                </tr>
+                <tr>
 									<td>
 										<code>format</code>
 									</td>
@@ -866,10 +926,23 @@ Content-Type: application/json;charset=UTF-8
                   <td>
                     <p>Controls the output format of raw timeseries data. This avoids converting between different data formats on client side which uses a 3rd party chart rendering API. Currently, supported formats:
                     <ul>
+                      <li><code>tvp</code>: Time value pairs (the default)</li>
                       <li><code>highcharts</code>: <a href="http://www.highcharts.com/">Highcharts</a> series data format.</li>
-                      <li><code>tvp</code>: Tuple value pairs (the default)</li>
                     </ul></p>
                     <div class="n52-callout n52-callout-todo">Add more formats!</div>
+                  </td>
+                </tr>
+                <tr>
+									<td>
+										<code>base64</code>
+									</td>
+                  <td>
+                    <pre>base64=true</pre>
+                  </td>
+                  <td><p>Indicates binary images shall be encoded to a base64 string on server side. This makes it easily possible to display images from JavaScript (you would need a byte parsing library otherwise).</p>
+                  <p>Here is an example how to embed encoded base64 string:
+                    <pre>&lt;img src='data:image/png;base64," + encodedString + "' /></pre>
+                  </p>
                   </td>
                 </tr>
 							</tbody>
@@ -887,7 +960,7 @@ Content-Type: application/json;charset=UTF-8
               <pre>GET /api/v1/timeseries HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
-              <pre>HTTP/1.1 200 OK
+              <pre id="timeseries-examples-simple" class="collapse">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 [
@@ -906,11 +979,7 @@ Content-Type: application/json;charset=UTF-8
         "type": "Point"
       },
       "type": "Feature"
-    },
-    "lastValue": {
-      "timestamp": 1375599900000,
-      "value": 43.4
-    },
+    }
   },
   {
     "id": "ts_eeb8e39dd0e8b4284e04d8a485a36cea",
@@ -938,6 +1007,7 @@ Content-Type: application/json;charset=UTF-8
     },
   }
 ]</pre>
+              <button data-toggle="collapse" data-parent="#timeseries-simple" data-target="#timeseries-examples-simple" class="btn btn-primary">Show/Hide Response</button>
               <div class="n52-callout n52-callout-info">
                 As <a href="#general-common-query-parameters">noted above</a> <code>expanded=false</code> is the default. Setting the parameter to <code>false</code> explicitly will have the same effect. 
               </div>
@@ -948,7 +1018,7 @@ Content-Type: application/json;charset=UTF-8
               <pre>GET /api/v1/timeseries/?expanded=true HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
-              <pre>HTTP/1.1 200 OK
+              <pre id="timeseries-examples-expanded" class="collapse">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 [
@@ -978,14 +1048,6 @@ Content-Type: application/json;charset=UTF-8
         "lastValue": 36.0
       }
     ],
-    "firstValue": {
-      "timestamp": 1375599900000,
-      "value": 23.4
-    },
-    "lastValue": {
-      "timestamp": 1375599900000,
-      "value": 43.4
-    },
     "parameters": {
       "offering": {
         "id": "Patchiness -Offering",
@@ -1021,17 +1083,12 @@ Content-Type: application/json;charset=UTF-8
       },
       "type": "Feature"
     },
-    "referenceValues": [
-      "Mittleres Niedrigwasser"
+    "referenceValues": [ 
+      {
+        "label": "Mittleres Niedrigwasser",
+        "lastValue": 30.0
+      }
     ],
-    "firstValue": {
-      "timestamp": 1375599900000,
-      "value": 23.4
-    },
-    "lastValue": {
-      "timestamp": 1375599900000,
-      "value": 43.4
-    },
     "parameters": {
       "offering": {
         "id": "Snow Depth -Offering",
@@ -1052,22 +1109,29 @@ Content-Type: application/json;charset=UTF-8
     }
   }
 ]</pre>
-						</div>
+              <button data-toggle="collapse" data-parent="#timeseries-examples" data-target="#timeseries-examples-expanded" class="btn btn-primary">Show/Hide Response</button>
+            </div>
 						
             <div> <!-- Simple Item -->
               <h4>Simple Item</h4>
               <pre>GET /api/v1/timeseries/ts_35559ca6b2248629e6dcdc65ceead0ed HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
-              <pre>HTTP/1.1 200 OK
+              <pre id="timeseries-examples-item" class="collapse">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 {
   "id": "ts_35559ca6b2248629e6dcdc65ceead0ed",
   "uom": "cm",
-  "referenceValues": [
-    "Mittleres Niedrigwasser",
-    "Mittelwasser"
+  "referenceValues": [ 
+    {
+      "label": "Mittleres Niedrigwasser",
+      "lastValue": 34.0
+    },
+    {
+      "label": "Mittelwasser",
+      "lastValue": 36.0
+    }
   ],
   "station": {
     "properties": {
@@ -1113,9 +1177,7 @@ Content-Type: application/json;charset=UTF-8
     }
   }
 }</pre>
-              <div class="n52-callout n52-callout-info">
-                As <a href="#general-common-query-parameters">noted above</a> <code>expanded=false</code> is the default. Setting the parameter to <code>false</code> explicitly will have the same effect. 
-              </div>
+              <button data-toggle="collapse" data-parent="#timeseries-examples" data-target="#timeseries-examples-item" class="btn btn-primary">Show/Hide Response</button>
 						</div>
             
             <div> <!-- Raw Data of a single timeseries -->
@@ -1124,7 +1186,7 @@ Content-Type: application/json;charset=UTF-8
               <pre>GET /api/v1/timeseries/ts_35559ca6b2248629e6dcdc65ceead0ed/getData HTTP/1.1
 Host: sensorweb.demo.52north.org
 Accept: application/json</pre>
-                <pre>HTTP/1.1 200 OK
+                <pre id="timeseries-examples-single-raw" class="collapse">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 {
@@ -1175,6 +1237,7 @@ Content-Type: application/json;charset=UTF-8
     ]
   }
 }</pre>
+              <button data-toggle="collapse" data-parent="#timeseries-examples" data-target="#timeseries-examples-single-raw" class="btn btn-primary">Show/Hide Response</button>
               <div class="n52-callout n52-callout-info">
                 <p>Timeseries data can be very big! Naive clients can bother data providers when trying to request huge datasets by accident. Therefore data requests may be limited to a maximum timespan (per configuration).</p>
                 <p>However, most probably consuming huge datasets may also not be of client's interest. Have a look <a href="#general-paging">at the paging documentation</a> how to get data in smaller chunks.</p>
@@ -1196,7 +1259,7 @@ Accept: application/json
   ]
 }
 </pre>
-                <pre>HTTP/1.1 200 OK
+                <pre id="timeseries-examples-multiple-raw" class="collapse">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 {
@@ -1234,6 +1297,7 @@ Content-Type: application/json;charset=UTF-8
     }
   }
 }</pre>
+                <button data-toggle="collapse" data-parent="#timeseries-examples" data-target="#timeseries-examples-multiple-raw" class="btn btn-primary">Show/Hide Response</button>
               </div>
 						
             <div id="timeseries-example-post-image"> <!-- Image Data of multiple timeseries -->
@@ -1289,23 +1353,21 @@ http://localhost:8080/sensorwebclient-webapp/api/v1/timeseries/getData > img.png
 			================================================== -->
 			<section id="styles">
 				<div class="page-header">
-					<h1>Styles</h1>
+					<h1>Diagram Styles</h1>
 					<p class="pull-right up-link">
 						<a href="#"><i class="icon-chevron-up"></i> top</a>
 					</p>
 				</div>
 				<div>
-					<h3>Diagram Types</h3>
 					<p>The following diagram types are available and can be set via <code>style</code> options:
 						<ul>
 							<li>line charts</li>
 							<li>bar charts</li>
 						</ul>
-						<div class="n52-callout n52-callout-todo">add images which show up an example?</div>
 					</p>
           <p>Styles can be used whereever a chart is rendered. It does not matter if you request an image or a report (which embeds the timeseries chart).</p>
 					<div>
-						<h4 id="styles-line-chart">Line Charts</h4>
+						<h3 id="styles-line-chart">Line Charts</h3>
 						<p>The following style properties can be set.</p>
 						<table class="table">
 							<thead>
@@ -1326,25 +1388,29 @@ http://localhost:8080/sensorwebclient-webapp/api/v1/timeseries/getData > img.png
 								</tr>
 							</tbody>
 						</table>
+            
+            <div class="row">
+              <h4>Example</h4>
+              <div class="col-lg-5">
+                <img alt="lineChart" src="img/lineChart.png" title="Example for a line chart style."/>
+              </div>
+              <div class="col-lg-7 pull-right">
+                <pre>{
+  "chartType": "line",
+  "properties": {
+    "type": "dashed",
+    "width": 4,
+    "color": "#0000ff"
+  }
+}</pre>
+              </div>
+            </div>
 					</div>
+          
 					<div id="styles-bar-chart">
-						<h4>Bar Charts</h4>
-						<div class="n52-callout n52-callout-todo">add bar chart styling when it is clear what is possible to render in jfreechart.</div>
-									<pre>
-{
-    "chartType": "bar",
-    "properties": {
-        "interval": "byDay",
-        "width": 0.8,
-        "color": "#0000ff"
-    }
-}
-            						</pre>
-									<img alt="barChart" src="img/barChart.png"/>
-							</tr>						
-						</table>
-            			
-            			<table class="table">
+						<h3>Bar Charts</h3>
+							
+            <table class="table">
 							<thead>
 								<th>Property</th>
 							</thead>
@@ -1353,16 +1419,33 @@ http://localhost:8080/sensorwebclient-webapp/api/v1/timeseries/getData > img.png
 									<td><code>interval</code></td>
 									<td>The time period a bar shall represent. Possible values are <code>byDay</code>, <code>byWeek</code>, <code>byMonth</code>.</td>
 								</tr>
-                				<tr>
+								<tr>
+									<td><code>width</code></td>
+									<td>Value between 0 and 1, which defines the bar width in percent (<code>width=1</code> means maximum width, i.e. bar next to bar).</td>
+								</tr>
+                <tr>
 									<td><code>color</code></td>
 									<td>A 6-digit hex color value, e.g. <code>#5f5f5f</code>.</td>
 								</tr>
-								<tr>
-									<td><code>width</code></td>
-									<td>Value between 0 and 1, which defines the bar width in percent.</td>
-								</tr>
 							</tbody>
 						</table>
+            
+            <div class="row">
+              <h4>Example</h4>
+              <div class="col-lg-5">
+                <img alt="barChart" src="img/barChart.png" title="Example for a bar chart style."/>
+              </div>
+              <div class="col-lg-7 pull-right">
+                <pre>{
+  "chartType": "bar",
+  "properties": {
+    "interval": "byDay",
+    "width": 0.8,
+    "color": "#0000ff"
+  }
+}</pre>
+              </div>
+            </div>
 					</div>
 				</div>
 			</section>

@@ -27,25 +27,17 @@ $("select")
   <option>ts_5c305e686027a27b5c09b0e4d7397bdd</option>
   <option>ts_5b7a83b346444f2669ebdd51e6211e2</option>
 </select>
-<div></div>
  
 <script>
 $( "select" )
   .change(function () {
-	debugger;
 	
 	var ts = $( "select option:selected" )[0].text;
-	$.get("api/v1/timeseries/" + ts + "/getData.png?timespan=PT12H/2013-08-06&base64=true", function(data) {
-		debugger;
+	$.get("../../api/v1/timeseries/" + ts + "/getData.png?timespan=PT12H/2013-08-06&base64=true", function(data) {
 		var test = document.getElementsByClassName("test")[0];
-		test.innerHTML = "<img src=\"data:image/png;base64," + data + "\" />";
+		test.innerHTML = "<img src='data:image/png;base64," + data + "' />";
 	});
     
-	/*var str = "";
-    $( "select option:selected" ).each(function() {
-      str += $( this ).text() + " ";
-    });
-    $( "div" ).text( str );*/
   });
 </script>
 </body>

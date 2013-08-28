@@ -54,7 +54,6 @@ public class TimeseriesConverter extends OutputConverter<SosTimeseries, Timeseri
     public TimeseriesMetadataOutput convertExpanded(SosTimeseries timeseries) {
         TimeseriesMetadataOutput convertedTimeseries = convertCondensed(timeseries);
         Procedure procedure = getLookup().getProcedure(timeseries.getProcedureId());
-        convertedTimeseries.setFirstValue(dataService.getFirstValue(timeseries));
         convertedTimeseries.setParameters(getCondensedParameters(timeseries));
         convertedTimeseries.setRefValues(getReferenceValues(procedure));
         return convertedTimeseries;
@@ -63,7 +62,6 @@ public class TimeseriesConverter extends OutputConverter<SosTimeseries, Timeseri
     @Override
     public TimeseriesMetadataOutput convertCondensed(SosTimeseries timeseries) {
         TimeseriesMetadataOutput convertedTimeseries = new TimeseriesMetadataOutput();
-        convertedTimeseries.setLastValue(dataService.getLastValue(timeseries));
         convertedTimeseries.setStation(getCondensedStation(timeseries));
         Phenomenon phenomenon = getLookup().getPhenomenon(timeseries.getPhenomenonId());
         convertedTimeseries.setUom(phenomenon.getUnitOfMeasure());

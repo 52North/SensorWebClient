@@ -9,8 +9,8 @@ import java.awt.geom.Point2D;
 import java.util.Arrays;
 import java.util.Properties;
 
+import org.n52.io.format.TvpDataCollection;
 import org.n52.io.v1.data.TimeseriesData;
-import org.n52.io.v1.data.TimeseriesDataCollection;
 import org.n52.io.v1.data.TimeseriesValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,13 +57,13 @@ public class DouglasPeuckerGeneralizer implements Generalizer {
      */
     protected double toleranceValue = 0.1; // fallback default
 
-    private TimeseriesDataCollection dataToGeneralize;
+    private TvpDataCollection dataToGeneralize;
 
-    public static Generalizer createNonConfigGeneralizer(TimeseriesDataCollection data) {
+    public static Generalizer createNonConfigGeneralizer(TvpDataCollection data) {
         return new DouglasPeuckerGeneralizer(data, new Properties());
     }
 
-    public static Generalizer createGeneralizer(TimeseriesDataCollection data, Properties configuration) {
+    public static Generalizer createGeneralizer(TvpDataCollection data, Properties configuration) {
         return new DouglasPeuckerGeneralizer(data, configuration);
     }
 
@@ -75,7 +75,7 @@ public class DouglasPeuckerGeneralizer implements Generalizer {
      * @param configuration
      *        Configuration properties. If <code>null</code> a fallback configuration will be used.
      */
-    private DouglasPeuckerGeneralizer(TimeseriesDataCollection data, Properties configuration) {
+    private DouglasPeuckerGeneralizer(TvpDataCollection data, Properties configuration) {
         this.dataToGeneralize = data;
         configure(configuration);
     }
@@ -95,8 +95,8 @@ public class DouglasPeuckerGeneralizer implements Generalizer {
     }
 
     @Override
-    public TimeseriesDataCollection generalize() throws GeneralizerException {
-        TimeseriesDataCollection generalizedDataCollection = new TimeseriesDataCollection();
+    public TvpDataCollection generalize() throws GeneralizerException {
+        TvpDataCollection generalizedDataCollection = new TvpDataCollection();
         for (String timeseriesId : dataToGeneralize.getAllTimeseries().keySet()) {
             TimeseriesData timeseries = dataToGeneralize.getTimeseries(timeseriesId);
             generalizedDataCollection.addNewTimeseries(timeseriesId, generalize(timeseries));
