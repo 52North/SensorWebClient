@@ -28,6 +28,8 @@ import org.joda.time.Interval;
 
 public abstract class ParameterSet {
 
+    // XXX refactor ParameterSet, DesignedParameterSet, UndesingedParameterSet and QueryMap
+    
     /**
      * The timespan of interest (as <a href="http://en.wikipedia.org/wiki/ISO_8601#Time_intervals">ISO8601
      * interval</a> excluding the Period only version).

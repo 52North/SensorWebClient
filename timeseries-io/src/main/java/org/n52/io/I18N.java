@@ -58,8 +58,8 @@ public class I18N {
         return getMessageLocalizer("en");
     }
 
-    public static I18N getMessageLocalizer(String language) {
-        Locale locale = createLocate(language);
+    public static I18N getMessageLocalizer(String languageCode) {
+        Locale locale = createLocate(languageCode);
         return new I18N(getBundle(MESSAGES, locale), locale);
     }
 

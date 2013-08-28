@@ -32,17 +32,6 @@ public class ServiceOutput extends OutputValue {
 	private String type;
 	
 	private ParameterCount quantities;
-	private Integer amountOfferings;
-	
-	private Integer amountFeatures;
-	
-	private Integer amountProcedures;
-	
-	private Integer amountPhenomena;
-	
-	private Integer amountStations;
-	
-	private Integer amountCategories;
 	
 	public String getServiceUrl() {
 		return serviceUrl;
@@ -72,56 +61,9 @@ public class ServiceOutput extends OutputValue {
         return quantities;
     }
 
-    public Integer getAmountOfferings() {
-		return amountOfferings;
-	}
     public void setQuantities(ParameterCount countedParameters) {
         this.quantities = countedParameters;
     }
-
-	public void setAmountOfferings(Integer amountOfferings) {
-		this.amountOfferings = amountOfferings;
-	}
-
-	public Integer getAmountFeatures() {
-		return amountFeatures;
-	}
-
-	public void setAmountFeatures(Integer amountFeatures) {
-		this.amountFeatures = amountFeatures;
-	}
-
-	public Integer getAmountProcedures() {
-		return amountProcedures;
-	}
-
-	public void setAmountProcedures(Integer amountProcedures) {
-		this.amountProcedures = amountProcedures;
-	}
-
-	public Integer getAmountPhenomena() {
-		return amountPhenomena;
-	}
-
-	public void setAmountPhenomena(Integer amountPhenomena) {
-		this.amountPhenomena = amountPhenomena;
-	}
-
-	public Integer getAmountStations() {
-		return amountStations;
-	}
-
-	public void setAmountStations(Integer amountStations) {
-		this.amountStations = amountStations;
-	}
-
-	public Integer getAmountCategories() {
-		return amountCategories;
-	}
-
-	public void setAmountCategories(Integer amountCategories) {
-		this.amountCategories = amountCategories;
-	}
 
 	@Override
     public int hashCode() {
@@ -186,6 +128,7 @@ public class ServiceOutput extends OutputValue {
 
         private int amountTimeseries;
         
+        private int amountCategories;
 
         public int getOfferings() {
             return amountOfferings;
@@ -235,6 +178,13 @@ public class ServiceOutput extends OutputValue {
             return this.amountTimeseries;
         }
 
+        public int getCategories() {
+            return amountCategories;
+        }
+
+        public void setCategoriesSize(Integer amountCategories) {
+            this.amountCategories = amountCategories;
+        }
     }
 	
 }

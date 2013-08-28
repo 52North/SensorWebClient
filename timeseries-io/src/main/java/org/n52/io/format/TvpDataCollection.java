@@ -9,4 +9,9 @@ import org.n52.io.v1.data.TimeseriesDataCollection;
  * <code>TimeseriesDataCollection&lt;TimeseriesData></code>.
  */
 public final class TvpDataCollection extends TimeseriesDataCollection<TimeseriesData> {
+
+    @Override
+    public Object getTimeseriesOutput() {
+        return getAllTimeseries();
+    }
 }
