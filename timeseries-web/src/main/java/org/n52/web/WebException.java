@@ -31,5 +31,5 @@ public interface WebException {
     public String[] getHints();
     
     public Throwable getThrowable();
-
+    
 }
