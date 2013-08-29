@@ -44,6 +44,7 @@ import org.n52.client.sos.event.data.NewTimeSeriesEvent;
 import org.n52.client.ui.ApplyCancelButtonLayout;
 import org.n52.client.ui.InteractionWindow;
 import org.n52.client.ui.LoadingSpinner;
+import org.n52.client.ui.legend.LegendEntryTimeSeries;
 import org.n52.client.ui.map.InfoMarker;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
@@ -51,6 +52,7 @@ import org.n52.shared.serializable.pojos.sos.Station;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.AnimationEffect;
+import com.smartgwt.client.types.ContentsType;
 import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.HTMLPane;
@@ -284,6 +286,23 @@ public class StationSelector extends Window {
     private Canvas createInformationFieldForSelectedStation() {
         VLayout layout = new VLayout();
         timeseriesInfoHTMLPane = new HTMLPane();
+		Station station = controller.getSelectedStation();
+		
+		if (station!=null) {
+	        String stationName = station.getId();
+			String stationId = stationName;
+			if (stationName.contains("/")) {
+				String[] nameSplitted = stationName.split("/");
+				stationId = nameSplitted[nameSplitted.length-1];
+			}
+			
+			String stationUrl = LegendEntryTimeSeries.STATION_DESCRIPTION_URL+stationId;
+			timeseriesInfoHTMLPane.setContentsURL(stationUrl);
+			timeseriesInfoHTMLPane.setContentsType(ContentsType.PAGE);
+			//timeseriesInfoHTMLPane.setContents(stationUrl);
+			timeseriesInfoHTMLPane.show();
+		}
+        
         phenomenonBox = new SelectItem(i18n.phenomenonLabel());
         phenomenonBox.addChangedHandler(new ChangedHandler() {
 			@Override
@@ -361,8 +380,25 @@ public class StationSelector extends Window {
 	}
 
 	public void updateProcedureDetailsURL(String url) {
-		timeseriesInfoHTMLPane.setContentsURL(url);
+		final Station station = controller.getSelectedStation();
+		//final SosTimeseries ts = controller.getSelectedTimeseries();
+		//String proc = "I:"+controller.getSelectedFeatureId();
+		
+		String stationName = station.getId();
+		String stationId = stationName;
+		if (stationName.contains("/")) {
+			String[] nameSplitted = stationName.split("/");
+			stationId = nameSplitted[nameSplitted.length-1];
+		}
+		
+				
+		String stationUrl = LegendEntryTimeSeries.STATION_DESCRIPTION_URL+stationId;
+		//proc = proc+"<hr/>"+stationUrl;
+		timeseriesInfoHTMLPane.setContentsURL(stationUrl);
+		timeseriesInfoHTMLPane.setContentsType(ContentsType.PAGE);
+		//timeseriesInfoHTMLPane.setContents(proc);
 		timeseriesInfoHTMLPane.show();
+		
 		applyCancel.finishLoading();
 	}
 	

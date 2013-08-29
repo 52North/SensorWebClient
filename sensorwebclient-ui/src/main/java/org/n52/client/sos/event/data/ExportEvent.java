@@ -40,7 +40,8 @@ public class ExportEvent extends FilteredDispatchGwtEvent<ExportEventHandler> {
         PD_ZIP,
         XLS_ZIP,
         CSV_ZIP,
-        PDF_ALL_IN_ONE;
+        PDF_ALL_IN_ONE,
+        DATADOWNLOAD_ZIP;
     }
 
     private Collection<Timeseries> timeseries;

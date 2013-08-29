@@ -27,12 +27,16 @@ package org.n52.client.ui.legend;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.n52.client.ses.ui.LoginWindow;
 import org.n52.client.ses.ui.profile.ProfileWindow;
+import org.n52.client.sos.data.TimeseriesDataStore;
 import org.n52.client.sos.event.data.ExportEvent.ExportType;
+import org.n52.client.sos.legend.Timeseries;
 import org.n52.client.sos.ui.StationSelector;
 import org.n52.client.ui.DataPanel;
 import org.n52.client.ui.DataPanelTab;
@@ -43,6 +47,7 @@ import org.n52.client.util.ClientUtils;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Button;
@@ -57,6 +62,11 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
 
 public class Legend extends VLayout {
+	
+	//@TODO: In properties-Datei auslagern!
+	public final static String DOWNLOAD_ZIP_URL="/appl/bs/Main.php?do=getZips&messreihen=";
+	
+	//private static final Logger LOGGER = LoggerFactory.getLogger(Legend.class);
 
     private ArrayList<LegendElement> legendEntries = new ArrayList<LegendElement>();
 
@@ -372,6 +382,46 @@ public class Legend extends VLayout {
         return toPDF;
     }
 
+    private Label createZIPLabel() {
+        Label toZIP = new Label(i18n.toZIP());
+        toZIP.setWrap(false);
+        toZIP.setAutoFit(true);
+        toZIP.setPadding(3);
+        toZIP.setWidth100();
+        toZIP.setStyleName("n52_sensorweb_client_exportEntry");
+        toZIP.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+            	/*LOGGER.debug("------------------------------------------------------------");
+            	LOGGER.debug("ClickHandler ZIP geklickt");
+            	LOGGER.debug("------------------------------------------------------------");*/
+            	//System.out.println("ClickHandler ZIP geklickt");
+                //controller.exportTo(ExportType.DATADOWNLOAD_ZIP);
+            	
+            	TimeseriesDataStore dataStore = TimeseriesDataStore.getTimeSeriesDataStore();
+        		HashMap<String, Timeseries> dataItems = dataStore.getDataItems();
+        		Collection<Timeseries> values = dataItems.values();
+            	
+        		String infos="";
+        		for (Timeseries ts: values) {
+        			String paramName=ts.getPhenomenonId();
+        			String stationName=ts.getProcedureId();
+        			if (stationName.indexOf("/")!=stationName.lastIndexOf("/")) {
+        				stationName = stationName.substring(stationName.lastIndexOf("/")+1);
+        			}
+        			String queryString=paramName+":"+stationName+",";
+        			infos+=queryString;
+        		}
+        		
+        		String url=DOWNLOAD_ZIP_URL+infos;
+            	Window.open(url, "_blank", "");
+            	
+                exportMenu.hide();
+            }
+        });
+        return toZIP;
+    }
+
     private Label createExportLabelButton() {
         Label export = new Label(i18n.export());
         export.setStyleName("n52_sensorweb_client_legendbuttonDisabled");
@@ -400,6 +450,7 @@ public class Legend extends VLayout {
         exportMenu.setZIndex(1000000);
         exportMenu.addMember(createPDFLabel());
         exportMenu.addMember(createCSVLabel());
+        exportMenu.addMember(createZIPLabel());
         exportMenu.setVisible(false);
     }
 

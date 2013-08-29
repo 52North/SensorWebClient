@@ -103,6 +103,9 @@ import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public class LegendEntryTimeSeries extends Layout implements LegendElement {
+	
+	//@TODO: In properties-Datei auslagern!
+	public final static String STATION_DESCRIPTION_URL="/appl/bs/Main.php?do=details&TPL2CALL=station&THEMA_ID=ALL&WAGIS_OBJID=";
 
 	private static final String LINE_STYLE_LINE_DOTS = "5";
 
@@ -533,10 +536,19 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		informationWindow.setWidth(450);
 		informationWindow.setHeight(500);
 		informationWindow.setShowMinimizeButton(false);
+		informationWindow.setCanDragResize(true);
 		informationWindow.centerInPage();
 		HTMLPane htmlPane = new HTMLPane();
-		htmlPane.setContentsURL(LegendEntryTimeSeries.this
-				.getTimeSeries().getMetadataUrl()); 
+		
+		String stationName = LegendEntryTimeSeries.this.getTimeSeries().getStationName();
+		String stationId = stationName;
+		if (stationName.contains(":")) {
+			String[] nameSplitted = stationName.split(":");
+			stationId = nameSplitted[nameSplitted.length-1];
+		}
+		
+		String stationUrl = STATION_DESCRIPTION_URL+stationId;
+		htmlPane.setContentsURL(stationUrl);
 		htmlPane.setContentsType(ContentsType.PAGE);
 		informationWindow.addItem(htmlPane);
 	}
@@ -632,10 +644,12 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
         this.phenonmenonLabel.setContents(phenomenonHtmlContent.toString());
 		setFirstValueInterval();
 		setLastValueInterval();
+		
+		String stationText = getStationName(this.getTimeSeries());
 
 		this.stationLabel.setContents("<span>"
 				+ i18n.foiLabel() + ":</span> "
-				+ getStationName(this.getTimeSeries()));
+				+ stationText);
 
 		Set<String> values = this.getTimeSeries().getProperties()
 				.getReferenceValues();
@@ -717,6 +731,13 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		}
 		// replace '_' with ' '
 		station = station.replace("_", " ");
+		
+		if (station.contains(":")) {
+			station = station.substring(0,station.lastIndexOf(":"));
+		}
+		
+		station = station.substring(0,1).toUpperCase()+station.substring(1);
+		
 		return station;
 	}
 

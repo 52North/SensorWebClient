@@ -376,6 +376,8 @@ public interface I18N extends Constants {
 	String toCSV();
 
 	String toPDF();
+	
+	String toZIP();
 
 	String lineWidth();
 
@@ -396,5 +398,11 @@ public interface I18N extends Constants {
 	String logout();
 
     String logoutSuccessful();
-	
+    
+    String diagramAxisLabelTime();
+    
+    String datePickerTitle();
+    String datePickerStart();
+    String datePickerEnd();
+    String datePickerSubmit();
 }

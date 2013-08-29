@@ -475,18 +475,22 @@ public class DescribeSensorParser {
                 || "FeatureOfInterestID".equals(definition));
     }
 
-    private ReferenceValue parseReferenceValue(Text text, String fieldName) {
-        String stringValue = text.getValue();
-        if (stringValue.matches("([0-9\\,\\.\\+\\-]+)")) {
-            return new ReferenceValue(fieldName, new Double(stringValue));
-        }
-        // special case: value + " " + uom(e.g. "637.0 cm")
-        String tmp = stringValue.substring(0, stringValue.indexOf(" "));
-        if (tmp.matches("([0-9\\,\\.\\+\\-]+)")) {
-            return new ReferenceValue(fieldName, new Double(tmp));
-        }
-        return null;
-    }
+	private ReferenceValue parseReferenceValue(Text text, String fieldName) {
+		String stringValue = text.getValue();
+		if (stringValue.matches("([0-9\\,\\.\\+\\-]+)")) {
+			return new ReferenceValue(fieldName, new Double(stringValue));
+		}
+		// special case: value + " " + uom(e.g. "637.0 cm")
+		stringValue = stringValue.trim();
+		int spacePos = stringValue.indexOf(" ");
+		if (spacePos > -1) {
+			String tmp = stringValue.substring(0, spacePos);
+			if (tmp.matches("([0-9\\,\\.\\+\\-]+)")) {
+				return new ReferenceValue(fieldName, new Double(tmp));
+			}
+		}
+		return null;
+	}
 
     /**
      * @param sml
