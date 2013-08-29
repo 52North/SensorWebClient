@@ -26,8 +26,8 @@ package org.n52.io.v1.data;
 
 import static java.lang.Double.parseDouble;
 import static java.lang.Math.toRadians;
+import static org.n52.io.crs.CRSUtils.EPSG_4326;
 import static org.n52.io.crs.CRSUtils.createEpsgForcedXYAxisOrder;
-import static org.n52.io.crs.WGS84Util.EPSG_4326;
 import static org.n52.io.crs.WGS84Util.getLatitudeDelta;
 import static org.n52.io.crs.WGS84Util.getLongitudeDelta;
 import static org.n52.io.crs.WGS84Util.normalizeLatitude;
@@ -49,13 +49,12 @@ import com.vividsolutions.jts.geom.Point;
  */
 public class Vicinity {
 
-    private static final int WGS84_EPSG_ID = 4326;
+    /**
+     * The coordinate reference system. Defaults to {@link CRSUtils#EPSG_4326}.
+     */
+    private String crs = EPSG_4326;
 
-    private CRSUtils inputReference = createEpsgForcedXYAxisOrder();
-
-    private GeometryFactory geometryFactory = inputReference.createGeometryFactory(WGS84_EPSG_ID);
-
-    private Point center;
+    private Double[] coords;
 
     private double radius;
 
@@ -72,54 +71,82 @@ public class Vicinity {
     public Vicinity(Double[] center, String radius) {
         try {
             this.radius = parseDouble(radius);
-            this.center = createCenter(createWithCoordinates(center));
+            this.coords = center;
         }
         catch (NumberFormatException e) {
             throw new IllegalArgumentException("Could not parse radius.");
         }
-        catch (FactoryException e) {
-            throw new IllegalArgumentException("Could not parse center.");
-        }
     }
 
     /**
-     * @return a bounding rectangle.
+     * @return calculates bounding box within WGS84 and strict XY axes order context.
      */
     public BoundingBox calculateBounds() {
+        return calculateBounds(createEpsgForcedXYAxisOrder());
+    }
+
+    /**
+     * Calculates bounding box with the given CRS context.
+     * 
+     * @param crsUtils
+     *        the reference context.
+     * @return a bounding rectangle.
+     */
+    public BoundingBox calculateBounds(CRSUtils crsUtils) {
+
+        Point center = createCenter(createWithCoordinates(this.coords), crsUtils);
+
         double latInRad = toRadians(center.getY());
         double llEasting = normalizeLongitude(center.getX() - getLongitudeDelta(latInRad, radius));
         double llNorthing = normalizeLatitude(center.getY() - getLatitudeDelta(radius));
         double urEasting = normalizeLongitude(center.getX() + getLongitudeDelta(latInRad, radius));
         double urNorthing = normalizeLatitude(center.getY() + getLatitudeDelta(radius));
-        GeojsonPoint ll = createWithCoordinates(new Double[]{llEasting, llNorthing});
-        GeojsonPoint ur = createWithCoordinates(new Double[]{urEasting, urNorthing});
-//        EastingNorthing ll = new EastingNorthing(llEasting, llNorthing, "4326");
-//        EastingNorthing ur = new EastingNorthing(urEasting, urNorthing, "4326");
+        GeojsonPoint ll = createWithCoordinates(new Double[] {llEasting, llNorthing});
+        GeojsonPoint ur = createWithCoordinates(new Double[] {urEasting, urNorthing});
         return new BoundingBox(ll, ur);
     }
 
     /**
      * @param center
      *        the center point as GeoJSON point.
-     * @return the lon-lat ordered WGS84 center point.
-     * @throws FactoryException
+     * @param crsUtils
+     *        the reference context.
+     * @return the center point.
+     * @throws IllegalStateException
      *         if creating coordinates fails.
      */
-    private Point createCenter(GeojsonPoint center) throws FactoryException {
-        Double easting = center.getCoordinates()[0];
-        Double northing = center.getCoordinates()[1];
-        Coordinate coordinate = inputReference.createCoordinate(EPSG_4326, easting, northing);
-        return geometryFactory.createPoint(coordinate);
+    private Point createCenter(GeojsonPoint center, CRSUtils crsUtils) {
+        try {
+            Double easting = center.getCoordinates()[0];
+            Double northing = center.getCoordinates()[1];
+            Coordinate coordinate = crsUtils.createCoordinate(EPSG_4326, easting, northing);
+            return createGeometryFactory(crsUtils).createPoint(coordinate);
+        }
+        catch (FactoryException e) {
+            throw new IllegalStateException("Could not parse center.");
+        }
+    }
+
+    private GeometryFactory createGeometryFactory(CRSUtils crsUtils) {
+        return crsUtils.createGeometryFactory(crs);
+    }
+
+    /**
+     * @param crs
+     *        sets the coordinate reference system, e.g. 'EPSG:25832'
+     */
+    public void setCrs(String crs) {
+        if (crs != null) {
+            this.crs = crs;
+        }
     }
 
     /**
      * @param coordinates
-     * @throws FactoryException
-     * @throws IllegalArgumentException
-     *         if coordinates are <code>null</code> or do not contain a two dimensional point.
+     *        the center coordinates.
      */
-    public void setCenter(Double[] coordinates) throws FactoryException {
-        center = createCenter(createWithCoordinates(coordinates));
+    public void setCenter(Double[] coordinates) {
+        coords = coordinates;
     }
 
     /**
@@ -136,7 +163,7 @@ public class Vicinity {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName()).append(" [ ");
-        sb.append("Center: ").append(center).append(", ");
+        sb.append("Center: ").append(coords).append(", ");
         sb.append("Radius: ").append(radius).append(" km");
         return sb.append(" ]").toString();
     }

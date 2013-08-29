@@ -123,8 +123,8 @@
 
 	<bean id="preRenderingTask" class="org.n52.web.task.PreRenderingTask"
 		destroy-method="shutdownTask" factory-method="createTask">
-		<property name="timeseriesMetadataService" ref="timeseriesMetadataService" />
-		<property name="timeseriesDataService" ref="timeseriesDataService" />
+		<property name="timeseriesMetadataService" ref="timeseriesService" />
+		<property name="timeseriesDataService" ref="timeseriesService" />
 		<property name="outputPath" value="generated/prerendered" />
 		<property name="width" value="800" />
 		<property name="height" value="500" />
@@ -150,17 +150,7 @@
 
 	<bean id="metadataService" class="org.n52.api.v1.srv.MetadataAdapter" />
 
-	<bean id="timeseriesMetadataService" class="org.n52.api.v1.srv.TimeseriesOutputAdapter">
-		<property name="dataService">
-			<bean class="org.n52.api.v1.srv.GetDataService">
-				<property name="timeSeriesDataService">
-					<bean class="org.n52.server.service.TimeSeriesDataServiceImpl" />
-				</property>
-			</bean>
-		</property>
-	</bean>
-
-	<bean id="timeseriesDataService" class="org.n52.api.v1.srv.TimeseriesOutputAdapter">
+	<bean id="timeseriesService" class="org.n52.api.v1.srv.TimeseriesOutputAdapter">
 		<property name="dataService">
 			<bean class="org.n52.api.v1.srv.GetDataService">
 				<property name="timeSeriesDataService">

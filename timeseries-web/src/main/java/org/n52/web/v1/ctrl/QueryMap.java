@@ -24,6 +24,8 @@
 
 package org.n52.web.v1.ctrl;
 
+import static org.n52.io.crs.CRSUtils.EPSG_4326;
+
 import java.io.IOException;
 
 import org.joda.time.DateTime;
@@ -42,7 +44,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class QueryMap {
-    
+
     // XXX refactor ParameterSet, DesignedParameterSet, UndesingedParameterSet and QueryMap
 
     /**
@@ -194,6 +196,16 @@ public class QueryMap {
     private static final String CATEGORY = "category";
 
     /**
+     * Determines the reference system to be used for input/output coordinates.
+     */
+    private static final String CRS = "crs";
+
+    /**
+     * The default reference system: CRS84 == EPSG:4326 but lon/lat order
+     */
+    private static final String DEFAULT_CRS = EPSG_4326;
+
+    /**
      * Determines the within filter
      */
     private static final String NEAR = "near";
@@ -314,7 +326,7 @@ public class QueryMap {
     }
 
     public String getFormat() {
-        if (!query.containsKey(FORMAT)) {
+        if ( !query.containsKey(FORMAT)) {
             return DEFAULT_FORMAT;
         }
         return query.getFirst(FORMAT);
@@ -380,10 +392,27 @@ public class QueryMap {
         String value = query.getFirst(NEAR);
         ObjectMapper mapper = new ObjectMapper();
         Vicinity vicinity = mapper.convertValue(value, Vicinity.class);
+        vicinity.setCrs(getCrs());
+
+        /* 
+         * TODO if 'strictXY=true' set axes ordering to be strict XY
+         * ... the default respects EPSG strict axes ordering
+         */
 
         // TODO if bbox is present, merge bounds!
-
+        
         return vicinity.calculateBounds();
+    }
+
+    /**
+     * @return the requested reference context, or the default ({@value #DEFAULT_CRS} which will be
+     *         interpreted as lon/lat ordered axes).
+     */
+    public String getCrs() {
+        if ( !query.containsKey(CRS)) {
+            return DEFAULT_CRS;
+        }
+        return query.getFirst(CRS);
     }
 
     /**

@@ -24,6 +24,8 @@
 
 package org.n52.io.crs;
 
+import static org.n52.io.crs.CRSUtils.EPSG_4326;
+
 import java.io.Serializable;
 
 import org.n52.io.geojson.GeojsonPoint;
@@ -48,9 +50,9 @@ public class BoundingBox implements Serializable {
      * @param ur the upper right corner
      */
     public BoundingBox(GeojsonPoint ll, GeojsonPoint ur) {
-        this.srs = ll.getCrs().getName();
-        this.ll = new EastingNorthing(ll.getCrs(), ll.getCoordinates());
-        this.ur = new EastingNorthing(ur.getCrs(), ur.getCoordinates());
+        this.srs = ll.getCrs() == null ? EPSG_4326 : ll.getCrs().getName();
+        this.ll = new EastingNorthing(ll.getCoordinates(), ll.getCrs());
+        this.ur = new EastingNorthing(ur.getCoordinates(), ur.getCrs());
     }
 
     /**

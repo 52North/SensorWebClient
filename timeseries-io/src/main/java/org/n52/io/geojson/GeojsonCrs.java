@@ -80,13 +80,9 @@ public class GeojsonCrs extends GeojsonObject {
         return properties.get("type");
     }
     
-    public static GeojsonCrs createCrs84Named() {
-        return createNamedCRS("urn:ogc:def:crs:OGC:1.3:CRS84");
-    }
-    
     public static GeojsonCrs createNamedCRS(String name) {
         if (name == null) {
-            return createCrs84Named();
+            throw new NullPointerException("Argument 'name' must not be null.");
         }
         GeojsonCrs namedCrs = new GeojsonCrs();
         namedCrs.addProperty("name", name);

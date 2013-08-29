@@ -50,8 +50,6 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 
 public class CRSUtils {
     
-    public static final String CRS84 = "urn:ogc:def:crs:OGC:1.3:CRS84";
-    
     public static final String EPSG_4326 = "EPSG:4326";
     
     protected CRSAuthorityFactory crsFactory;
@@ -160,8 +158,6 @@ public class CRSUtils {
     public Point transform(Point point, String refFrame, String destFrame) throws FactoryException, TransformException {
         CoordinateReferenceSystem srs = crsFactory.createCoordinateReferenceSystem(refFrame);
         CoordinateReferenceSystem dest = crsFactory.createCoordinateReferenceSystem(destFrame);
-        // CoordinateReferenceSystem srs = CRS.decode(refFrame);
-        // CoordinateReferenceSystem dest = CRS.decode(destFrame);
         return transform(point, srs, dest);
     }
 
