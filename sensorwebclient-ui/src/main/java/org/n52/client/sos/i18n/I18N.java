@@ -405,4 +405,8 @@ public interface I18N extends Constants {
     String datePickerStart();
     String datePickerEnd();
     String datePickerSubmit();
+    
+    String headerGotoPortals();
+    String headerYouAreHere();
+    String headerLabelSosClient();
 }

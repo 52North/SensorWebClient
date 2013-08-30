@@ -24,20 +24,27 @@
 package org.n52.client.ui;
 
 
+import static com.google.gwt.http.client.URL.encodeQueryString;
 import static com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat.ISO_8601;
+import static org.n52.client.sos.data.TimeseriesDataStore.getTimeSeriesDataStore;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
 import java.util.Date;
 
+import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.TimeManager;
-import org.n52.client.sos.ctrl.DataManagerSosImpl;
-import org.n52.client.sos.data.DataStoreTimeSeriesImpl;
-import org.n52.client.sos.legend.TimeSeries;
+import org.n52.client.sos.ctrl.SosDataManager;
+import org.n52.client.sos.event.data.UpdateSOSMetadataEvent;
+import org.n52.client.sos.legend.Timeseries;
+import org.n52.client.util.LabelFactory;
+import org.n52.client.util.PortalInfo;
+import org.n52.client.util.PortalInfos;
 import org.n52.ext.ExternalToolsException;
 import org.n52.ext.link.AccessLinkFactory;
 import org.n52.ext.link.sos.TimeRange;
 import org.n52.ext.link.sos.TimeSeriesParameters;
 import org.n52.ext.link.sos.TimeSeriesPermalinkBuilder;
+import org.n52.shared.serializable.pojos.TimeseriesRenderingOptions;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 
 import com.google.gwt.core.client.GWT;
@@ -45,6 +52,8 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Cursor;
+import com.smartgwt.client.types.VerticalAlignment;
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.HTMLPane;
 import com.smartgwt.client.widgets.Img;
 import com.smartgwt.client.widgets.Label;
@@ -57,8 +66,6 @@ import com.smartgwt.client.widgets.layout.VLayout;
 public class Header extends HLayout {
 
     private String elemID;
-
-    private String url;
     
     public static com.google.gwt.user.client.ui.Label requestCounter;
 
@@ -67,168 +74,240 @@ public class Header extends HLayout {
         generateHeader();
     }
 
-    
     private void generateHeader(){
-        setStyleName("header");
 
-        setAutoHeight();
-        
-        Layout headerLayout = new HLayout();
-        headerLayout.addMember(getHomeLabel());
-        headerLayout.addMember(getHeaderMainLayout());
-
-        addMember(headerLayout);
+    	Layout headerMain = new HLayout();
+    	Layout headerLogo = new VLayout();
+    	Layout headerContent = new VLayout();
+    	Layout headerContentTop = new HLayout();
+    	Layout headerContentBottom = new HLayout();
+    	Layout headerPortalLinks = getPortalLayout();
+    	Layout headerMetaLinks = getMetaLinkLayout();
+    	Layout headerBreadcrumb = getBreadcrumbLayout();
+    	Layout headerIcons = getIconLayout();
+    	
+    	headerMain.addMember(headerLogo);
+    	headerMain.addMember(headerContent);
+//    	headerMain.setHeight(62);
+    	headerMain.addStyleName("main");
+    	
+    	headerContent.addMember(headerContentTop);
+    	headerContent.addMember(headerContentBottom);
+    	headerContentTop.addStyleName("content");
+    	
+    	headerContentTop.addMember(headerPortalLinks);
+    	headerContentTop.addMember(headerMetaLinks);
+    	headerContentTop.addStyleName("contentTop");
+//    	headerContentTop.setHeight("50%");
+    	
+    	headerContentBottom.addMember(headerBreadcrumb);
+    	headerContentBottom.addMember(headerIcons);
+    	headerContentBottom.addStyleName("contentBottom");
+//    	headerContentBottom.setHeight("50%");
+    	
+    	headerLogo.addMember(getHeaderLogo());
+//    	headerLogo.setWidth(95);
+//    	headerLogo.setHeight(62);
+    	headerLogo.addStyleName("logo");
+    	
+//    	headerPortalLinks.setWidth("75%");
+    	headerPortalLinks.addStyleName("portalLinks");
+    	
+//    	headerMetaLinks.setWidth("25%");
+    	headerMetaLinks.addStyleName("metaLinks");
+    	
+//    	headerBreadcrumb.setWidth("50%");
+    	headerBreadcrumb.addStyleName("breadcrumb");
+    	
+//    	headerIcons.setWidth("50%");
+    	headerIcons.addStyleName("icons");
+    	headerIcons.setAlign(VerticalAlignment.CENTER);
+    	headerIcons.setAlign(Alignment.RIGHT);
+    	
+        this.setHeight(62);
+        this.addStyleName("header");
+        this.addMember(headerMain);
     }
     
-    private Layout getHeaderMainLayout() {
-    	Layout headerMainLayout = new VLayout();
-    	headerMainLayout.addMember(getUpperLinkLine());
-    	headerMainLayout.addMember(getLowerLinkLine());
-    	headerMainLayout.setWidth100();
-    	return headerMainLayout;
+    private Img getHeaderLogo(){
+    	Img image = new Img("../img/taue.jpg", 95, 62);
+    	return image;
     }
     
-    private Layout getUpperLinkLine() {
-    	
-    	Layout upperLinkLine = new HLayout();
-    	
-    	upperLinkLine.setBackgroundColor("#CCCCCC");
-    	upperLinkLine.setHeight(31);
-    	upperLinkLine.setWidth100();
-    	upperLinkLine.addMember(getDirectLinks());
-    	upperLinkLine.addMember(getMiscLinks());
-    	
-    	return upperLinkLine;
+    private Canvas getHeaderIconHome(){
+    	String name = "iconHome";
+    	String title = PortalInfos.getCurrent().getTitle();
+    	String url = PortalInfos.getCurrent().getBaseUrl();
+    	int width = 20;
+    	int height = 18;
+    	return getHeaderIconTemplate(name, url, title, width, height);
     }
     
-    private Layout getDirectLinks() {
-    	Layout directLinks = new HLayout();
-    	directLinks.setAlign(Alignment.LEFT);
-    	directLinks.setWidth("70%");
-    	
-    	Label directLinksLabel = new Label("Direkt zu den Portalen:");
-    	
-    	directLinksLabel.setWrap(false);
-    	directLinksLabel.setStyleName("bold");
-    	//directTopicLabel.
-    	directLinks.addMember(directLinksLabel);
-    	directLinks.addMember(getSeparatorSpace());
-    	directLinks.addMember(createLink("Nordseeküste","http://www.portalnsk.de/"));
-    	directLinks.addMember(getSeparator());
-    	directLinks.addMember(createLink("Tideems","http://www.portaltideems.de/"));
-    	directLinks.addMember(getSeparator());
-    	directLinks.addMember(createLink("Nord-Ostsee-Kanal","http://www.portalnok.de/"));
-    	directLinks.addMember(getSeparator());
-    	directLinks.addMember(createLink("Ostseeküste","http://www.portalosk.de/"));
-    	directLinks.addMember(getSeparator());
-    	directLinks.addMember(createLink("Küstendaten","http://www.kuestendaten.de/"));
-    	
-    	return directLinks;    	
+    private Canvas getHeaderIconSitemap(){
+    	String name = "iconSitemap";
+    	String title = "zur Inhaltsübersicht (Sitemap)";
+    	String url = PortalInfos.getCurrent().getBaseUrl() + "Sitemap.html";
+    	int width = 20;
+    	int height = 18;
+    	return getHeaderIconTemplate(name, url, title, width, height);
     }
     
-    private Layout getMiscLinks() {
-    	Layout miscLinks = new HLayout();
-    	miscLinks.setAlign(Alignment.RIGHT);
-
-    	miscLinks.addMember(getPermalinkLink());
-    	miscLinks.addMember(getSeparator());
-    	miscLinks.addMember(createLink("Impressum","/Impressum.html"));
-    	miscLinks.addMember(getSeparator());
-    	miscLinks.addMember(createLink("Open Source Software","/OSS.html"));
-    	miscLinks.addMember(getSeparator());
-    	miscLinks.addMember(getHelpLink());
-    	
-    	return miscLinks;    	
+    private Canvas getHeaderIconSearch(){
+    	String name = "iconSearch";
+    	String title = "Suche in allen Portalseiten";
+    	String url = PortalInfos.getCurrent().getBaseUrl() + "cgi-bin/search";
+    	int width = 20;
+    	int height = 18;
+    	return getHeaderIconTemplate(name, url, title, width, height);
     }
     
-    private Label createLink(String title, final String linkUrl) {
-    	return createLink(title,linkUrl,"header_link",null);
+    private Canvas getHeaderIconMail(){
+    	String name = "iconMail";
+    	String title = "E-Mail an den Webmaster";
+    	String url = "mailto:zdm.wsd-n@wsv.bund.de";
+    	int width = 20;
+    	int height = 18;
+    	return getHeaderIconTemplate(name, url, title, width, height);
     }
     
-    private Label createLink(String title, final String linkUrl, String styleName) {
-    	return createLink(title,linkUrl,styleName,null);
+    private Canvas getHeaderIconFeedback(){
+    	String name = "iconFeedback";
+    	String title = "Fragen, Hinweise, Anmerkungen oder Kritiken zu dieser Seite (Feedback)";
+    	String url = PortalInfos.getCurrent().getBaseUrl() + "Feedback.html?seite=SOS-Client";
+    	int width = 20;
+    	int height = 18;
+    	return getHeaderIconTemplate(name, url, title, width, height);
     }
     
-    private Label createLink(String title, final String linkUrl, String styleName, String prompt) {
-    	Label linkLabel = new Label(title);
-
-    	linkLabel.setStyleName(styleName);
-    	linkLabel.setAutoWidth();
-    	linkLabel.setWrap(false);
-    	linkLabel.addClickHandler(new ClickHandler() {
-			
+    private static Label getHeaderIconTemplate(String name, final String url, String title, int width, int height){
+    	Label label = LabelFactory.getBaseLabel();
+    	label.setWidth(width);
+    	label.setHeight(height);
+    	label.setPadding(0);
+    	label.setMargin(0);
+    	label.addStyleName("icon");
+    	label.addStyleName(name);
+        label.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				String url = linkUrl;
                 Window.open(url, "_blank", "");
 			}
-		});
-    	if (prompt!=null) {
-    		linkLabel.setPrompt(prompt);
+        });
+
+    	return label;
+    }
+
+    
+    private Layout getPortalLayout(){
+    	Layout portalLinks = new HLayout();
+    	
+    	Label text = LabelFactory.getFormattedLabel(i18n.headerGotoPortals());
+    	text.addStyleName("bold");
+    	portalLinks.addMember(text);
+    	
+    	PortalInfo currentPortal = PortalInfos.getCurrent();
+    	boolean first = true;
+    	for( PortalInfo portal : PortalInfos.getAll() ){
+    		if( portal != currentPortal ){
+	    		if(!first){
+	    			portalLinks.addMember(getSeparator());
+	    		}
+	    		portalLinks.addMember(portal.getLinkLabel(LabelFactory.getFormattedLinkLabel()));
+				first = false;
+    		}
     	}
-		return linkLabel;
+    	
+    	return portalLinks;
     }
 
-    private Layout getLowerLinkLine() {
+    private Layout getMetaLinkLayout(){
+    	Layout metaLinks = new HLayout();
+    	metaLinks.setAlign(Alignment.RIGHT);
     	
-    	Layout lowerLinkLine = new HLayout();
-    	lowerLinkLine.setStyleName("header breadcrumb");
-    	lowerLinkLine.setWidth100();
-    	lowerLinkLine.setHeight(31);
-    	lowerLinkLine.setBackgroundColor("#666666");
- 	
+        metaLinks.addMember(getPermalinkLink());
+        metaLinks.addMember(getSeparator());
+//        metaLinks.addMember(getAddBookmarkLink());
+//        metaLinks.addMember(getSeparator());
+        metaLinks.addMember(getImprintLink());
+        metaLinks.addMember(getSeparator());
+//        metaLinks.addMember(getCopyrightLink());
+//        metaLinks.addMember(getSeparator());
+        metaLinks.addMember(getHelpLink());
+        
+//        if (ClientUtils.isSesEnabled()) {
+//        	metaLinks.addMember(createLoginInfo());
+//        }
 
-    	
-    	lowerLinkLine.addMember(getBreadcrumbs());
-    	lowerLinkLine.addMember(getIconLinks());
-    	    	
-    	return lowerLinkLine;
+        return metaLinks;
     }
     
-    private Layout getBreadcrumbs() {
-    	Layout breadcrumbsLayout = new HLayout();
-    	breadcrumbsLayout.setWidth("70%");    	
-    	breadcrumbsLayout.setAlign(Alignment.LEFT);   
-    	breadcrumbsLayout.setStyleName("breadcrumb");
+    private Layout getBreadcrumbLayout(){
+    	Layout breadcrumb = new HLayout();
     	
-    	Label breadcrumbLabel = new Label("Sie sind hier:");
-    	breadcrumbLabel.setAlign(Alignment.LEFT);
-    	breadcrumbLabel.setStyleName("breadcrumb bold");
-    	breadcrumbsLayout.addMember(breadcrumbLabel);
-    	breadcrumbsLayout.addMember(getSeparatorSpace());
-    	breadcrumbsLayout.addMember(createLink("Portal Tideelbe","http://www.portal-tideelbe.de/","breadcrumb_link"));
-    	breadcrumbsLayout.addMember(getSeparatorSpace());
-    	Label hereLabel = new Label (" > SOS-Client");
-    	hereLabel.setStyleName("breadcrumb");    	
-    	breadcrumbsLayout.addMember(hereLabel);
-    	return breadcrumbsLayout;
+    	Canvas youAreHere = LabelFactory.getFormattedLabel(i18n.headerYouAreHere());
+    	youAreHere.addStyleName("bold");
+    	Canvas portal = PortalInfos.getCurrent().getLinkLabel(LabelFactory.getFormattedLinkLabel());
+    	Canvas sos = LabelFactory.getFormattedLabel(i18n.headerLabelSosClient());
+    	
+    	breadcrumb.addMembers(youAreHere, portal, getBreadcrumbSeparator(), sos);
+    	return breadcrumb;
     }
     
-    private Layout getIconLinks() {
-    	Layout iconLinksLayout = new HLayout();
-    	iconLinksLayout.setAlign(Alignment.RIGHT);   
-    	
-    	iconLinksLayout.addMember(createLink(" ","http://www.portal-tideelbe.de/","pics10","Zur Startseite des Portals Tideelbe"));
-    	iconLinksLayout.addMember(createLink(" ","/Sitemap.html","pics20","zur Inhaltsübersicht (Sitemap)"));
-    	iconLinksLayout.addMember(createLink(" ","/cgi-bin/search","pics30","Suche in allen Portalseiten"));
-    	iconLinksLayout.addMember(createLink(" ","mailto:zdm.wsd-n@wsv.bund.de","pics40","Email an den Webmaster"));
-    	iconLinksLayout.addMember(createLink(" ","/Feedback.html?oid=&ds=portaltideelbe&seite=SOS-Client&untertitel=SOS-Client&source_url=","pics60","Fragen, Hinweise, Anmerkungen oder Kritiken zu dieser Seite (Feedback)"));
-    	iconLinksLayout.addMember(createLink(" ","javascript:window.print();","pics50","Inhalt dieser Seite drucken"));
-    	
-    	return iconLinksLayout;
+    private Layout getIconLayout(){
+    	Layout icons = new HLayout();
+    	icons.addMembers(getHeaderIconHome(), getHeaderIconSitemap(), getHeaderIconSearch(), getHeaderIconMail(), getHeaderIconFeedback());
+    	icons.setAlign(Alignment.RIGHT);
+    	return icons;
     }
+
+    private Label getSeparator() {
+		Label pipe = LabelFactory.getFormattedLabel("|");
+		pipe.addStyleName("separator");
+		return pipe;
+	}
+
+    private Label getBreadcrumbSeparator() {
+		Label pipe = LabelFactory.getFormattedLabel("&gt;");
+		pipe.addStyleName("separator");
+		return pipe;
+	}
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
     
+    
+	private Label getMetadatareset() {
+        Label label = LabelFactory.getFormattedLinkLabel("reset Metadata");
+        label.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+            	Toaster.getToasterInstance().addMessage("Update protected services");
+            	EventBus.getMainEventBus().fireEvent(new UpdateSOSMetadataEvent());
+            }
+        });
+        return label;
+	}
+
 	private Layout getHomeLabel() {
 		Layout layout = new VLayout();
-		Img homeLabel = new Img("../img/taue.jpg", 95, 62);
+		layout.addStyleName("n52_sensorweb_client_logoBlock");
+		Img homeLabel = new Img("../img/client-logo.png", 289, 55);
+		homeLabel.addStyleName("n52_sensorweb_client_logo");
 		homeLabel.setCursor(Cursor.POINTER);
+        homeLabel.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				String url = "http://52north.org/communities/sensorweb/";
+                Window.open(url, "_blank", "");
+			}
+        });
         layout.addMember(homeLabel);
 		return layout;
 	}
 
     private Label getVersionInfo() {
         String version = "foobar";
-        Label versionLabel = getHeaderLinkLabel("Version: " +  version);
+        Label versionLabel = LabelFactory.getFormattedLinkLabel("Version: " +  version);
         versionLabel.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -244,7 +323,7 @@ public class Header extends HLayout {
         DateTimeFormat dateFormatter = DateTimeFormat.getFormat("yyyy");
 		String year = dateFormatter.format(new Date());
 
-        Label copyright = getHeaderLinkLabel("&copy; 52&#176;North, GmbH " + year);
+        Label copyright = LabelFactory.getFormattedLinkLabel("&copy; 52&#176;North, GmbH " + year);
         copyright.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -255,37 +334,9 @@ public class Header extends HLayout {
 		});
 		return copyright;
 	}
-	
-	private Label getImpressumLink() {
-
-        Label imp = getHeaderLinkLabel("Impressum");
-        imp.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				String url = "/Impressum.html";
-                Window.open(url, "_blank", "");
-			}
-		});
-		return imp;
-	}
-	
-	private Label getOpenSourceLink() {
-
-        Label osLink = getHeaderLinkLabel("Open Source Software");
-        osLink.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				String url = "/OpenSourceSoftware.html";
-                Window.open(url, "_blank", "");
-			}
-		});
-		return osLink;
-	}
 
 	private Label getAddBookmarkLink() {
-		Label addToFavorites = getHeaderLinkLabel(i18n.addToBookmarks());
+		Label addToFavorites = LabelFactory.getFormattedLinkLabel(i18n.addToBookmarks());
         addToFavorites.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent evt) {
                 addToFavorites();
@@ -295,29 +346,32 @@ public class Header extends HLayout {
 	}
 
 	private Label getPermalinkLink() {
-		Label restart = getHeaderLinkLabel(i18n.permalink());
+		Label restart = LabelFactory.getFormattedLinkLabel(i18n.permalink());
         restart.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent evt) {
-            	String localeParameter = Window.Location.getParameter("locale");
-                String href = Window.Location.getHref();
-				String permaLink = getPermaLink(href);
-				if (isEnglishLocale(localeParameter)) {
-                    url = href.substring(0, href.indexOf("?"));
-                    url += "?locale=en" + permaLink;
+                String currentUrl = Window.Location.getHref();
+                String permalink = createPermaLink(currentUrl);
+                Window.Location.assign(addDesignOptions(permalink));
+            }
+
+            private String addDesignOptions(String permalink) {
+                Timeseries[] ts = getTimeSeriesDataStore().getTimeSeriesSorted();
+                if (ts == null || ts.length == 0) {
+                    return permalink;
                 }
-                else if (isGermanLocale(localeParameter)) {
-                    url = href.substring(0, href.indexOf("?"));
-                    url += "?locale=de" + permaLink;
+                StringBuilder options = new StringBuilder();
+                for (Timeseries timeSeries : ts) {
+                    TimeseriesRenderingOptions renderingOptions = new TimeseriesRenderingOptions();
+                    renderingOptions.setColor(timeSeries.getColor());
+                    renderingOptions.setLineWidth(timeSeries.getLineWidth());
+                    options.append(renderingOptions.asJson()).append(",");
                 }
-                else {
-                	url = permaLink;
-//                	if (GWT.isProdMode()) {
-//                        url = href + "?" + permaLink.substring(1);
-//					} else {
-//						url = permaLink;
-//					}
-                }
-                Window.Location.assign(url);
+                // delete last commas
+                options.deleteCharAt(options.length() - 1);
+                StringBuilder sb = new StringBuilder(permalink);
+                String urlEncodedValue = encodeQueryString(options.toString());
+                sb.append("&").append("options=").append(urlEncodedValue);
+                return sb.toString();
             }
         });
 		return restart;
@@ -326,6 +380,10 @@ public class Header extends HLayout {
 	private LoginHeaderLayout createLoginInfo() {
 		return new LoginHeaderLayout();
 	}
+	
+    private boolean hasLocaleParameter(String value) {
+        return value != null && !value.isEmpty();
+    }
 	
 	private boolean isEnglishLocale(String value) {
 		return value != null && value.equals("en");
@@ -336,7 +394,7 @@ public class Header extends HLayout {
 	}
 
 	private Label getHelpLink() {
-		Label help = getHeaderLinkLabel(i18n.help());
+		Label help = LabelFactory.getFormattedLinkLabel(i18n.help());
         help.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
             public void onClick(com.smartgwt.client.widgets.events.ClickEvent event) {
                 String helpUrl = GWT.getHostPageBaseURL() + i18n.helpPath();
@@ -347,7 +405,7 @@ public class Header extends HLayout {
 	}
 
 	private Label getImprintLink() {
-		Label imprint = getHeaderLinkLabel(i18n.Impressum());
+		Label imprint = LabelFactory.getFormattedLinkLabel(i18n.Impressum());
         imprint.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 com.smartgwt.client.widgets.Window w = new com.smartgwt.client.widgets.Window();
@@ -360,7 +418,7 @@ public class Header extends HLayout {
                 VLayout layout = new VLayout();
                 HTMLPane pane = new HTMLPane();
                 pane.setContentsURL(i18n.imprintPath());
-                layout.setStyleName("n52_sensorweb_client_imprint_content");
+                layout.addStyleName("n52_sensorweb_client_imprint_content");
                 layout.addMember(pane);
                 w.addItem(layout);
                 w.show();
@@ -369,33 +427,14 @@ public class Header extends HLayout {
 		return imprint;
 	}
 
-    private Label getHeaderLinkLabel(String labelText) {
-    	Label label = new Label(labelText);
-        label.setStyleName("header_link");
-        label.setAutoWidth();
-        label.setWrap(false);
-		return label;
-	}
-
-    
-    private Label getSeparator(){
-        Label pipe = new Label("|");
-        pipe.setStyleName("n52_sensorweb_client_pipe");
-        pipe.setAutoWidth();
-        return pipe;
-    }
-    
-    private Label getSeparatorSpace(){
-        Label pipe = new Label(" ");
-        pipe.setStyleName("n52_sensorweb_client_pipe");
-        pipe.setWidth(6);
-        return pipe;
-    }
-    
-    String getPermaLink(String baseUrl) {
-        TimeSeries[] ts = DataStoreTimeSeriesImpl.getInst().getTimeSeriesSorted();
+    private String createPermaLink(String baseUrl) {
+        Timeseries[] ts = getTimeSeriesDataStore().getTimeSeriesSorted();
+        if (ts == null || ts.length == 0) {
+            return baseUrl;
+        }
+        
         TimeSeriesPermalinkBuilder builder = new TimeSeriesPermalinkBuilder();
-        for (TimeSeries timeSeries : ts) {
+        for (Timeseries timeSeries : ts) {
             TimeSeriesParameters parameters = createTimeSeriesParameters(timeSeries);
             parameters.setTimeRange(createTimeRange());
             builder.addParameters(parameters);
@@ -416,13 +455,13 @@ public class Header extends HLayout {
         return TimeRange.createTimeRange(format.format(start), format.format(end));
     }
 
-    private TimeSeriesParameters createTimeSeriesParameters(TimeSeries timeSeries) {
+    private TimeSeriesParameters createTimeSeriesParameters(Timeseries timeSeries) {
         String sos = timeSeries.getSosUrl();
         String offering = timeSeries.getOfferingId();
         String procedure = timeSeries.getProcedureId();
         String phenomenon = timeSeries.getPhenomenonId();
         String feature = timeSeries.getFeatureId();
-        SOSMetadata metadata = DataManagerSosImpl.getInst().getServiceMetadata(sos);
+        SOSMetadata metadata = SosDataManager.getDataManager().getServiceMetadata(sos);
         String sosVersion = metadata.getSosVersion();
         return new TimeSeriesParameters(sos, sosVersion, offering, procedure, phenomenon, feature);
     }
@@ -432,3 +471,4 @@ public class Header extends HLayout {
             $wnd.addBookmark();
     }-*/;
 }
+
