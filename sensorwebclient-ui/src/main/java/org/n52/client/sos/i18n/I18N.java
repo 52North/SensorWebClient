@@ -409,4 +409,9 @@ public interface I18N extends Constants {
     String headerGotoPortals();
     String headerYouAreHere();
     String headerLabelSosClient();
+    
+    String headerIconSitemapTitle();
+    String headerIconSearchTitle();
+    String headerIconMailTitle();
+    String headerIconFeedbackTitle();
 }

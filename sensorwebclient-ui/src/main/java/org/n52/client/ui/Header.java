@@ -145,7 +145,7 @@ public class Header extends HLayout {
     
     private Canvas getHeaderIconSitemap(){
     	String name = "iconSitemap";
-    	String title = "zur Inhaltsübersicht (Sitemap)";
+    	String title = i18n.headerIconSitemapTitle();
     	String url = PortalInfos.getCurrent().getBaseUrl() + "Sitemap.html";
     	int width = 20;
     	int height = 18;
@@ -154,7 +154,7 @@ public class Header extends HLayout {
     
     private Canvas getHeaderIconSearch(){
     	String name = "iconSearch";
-    	String title = "Suche in allen Portalseiten";
+    	String title = i18n.headerIconSearchTitle();
     	String url = PortalInfos.getCurrent().getBaseUrl() + "cgi-bin/search";
     	int width = 20;
     	int height = 18;
@@ -163,7 +163,7 @@ public class Header extends HLayout {
     
     private Canvas getHeaderIconMail(){
     	String name = "iconMail";
-    	String title = "E-Mail an den Webmaster";
+    	String title = i18n.headerIconMailTitle();
     	String url = "mailto:zdm.wsd-n@wsv.bund.de";
     	int width = 20;
     	int height = 18;
@@ -172,7 +172,7 @@ public class Header extends HLayout {
     
     private Canvas getHeaderIconFeedback(){
     	String name = "iconFeedback";
-    	String title = "Fragen, Hinweise, Anmerkungen oder Kritiken zu dieser Seite (Feedback)";
+    	String title = i18n.headerIconFeedbackTitle();
     	String url = PortalInfos.getCurrent().getBaseUrl() + "Feedback.html?seite=SOS-Client";
     	int width = 20;
     	int height = 18;
