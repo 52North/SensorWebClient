@@ -28,13 +28,11 @@ import static com.smartgwt.client.types.Overflow.HIDDEN;
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 import static org.n52.client.sos.ui.SelectionMenuModel.createListGrid;
-import static org.n52.client.ui.Toaster.getToasterInstance;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -53,6 +51,7 @@ import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 
+import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.AnimationEffect;
 import com.smartgwt.client.types.ContentsType;
@@ -70,12 +69,13 @@ import com.smartgwt.client.widgets.events.CloseClickHandler;
 import com.smartgwt.client.widgets.events.ResizedEvent;
 import com.smartgwt.client.widgets.events.ResizedHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.fields.FormItem;
-import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
 import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
+import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -361,19 +361,6 @@ public class StationSelector extends Window {
 
 		treeGrid.setData(tree);
 		
-		// Changehandler für ehemalige RadioGroup
-//		dynamicForm.addChangedHandler(new ChangedHandler() {
-//			@Override
-//			public void onChanged(ChangedEvent event) {
-//				Object value = event.getValue();
-//				if (value != null) {
-//					hideInfoWindow();
-//					controller.setStationFilter(value.toString());
-//					controller.updateContentUponStationFilter();
-//				}
-//			}
-//		});
-		
 		for( Canvas child : dynamicForm.getChildren() ){
 			dynamicForm.removeChild(child);
 		}
@@ -450,15 +437,28 @@ public class StationSelector extends Window {
 
 		Vector<TreeNode> parentNodes = new Vector<TreeNode>();
 		for(String parentName : categoryTree.keySet()){
-			TreeNode parent = new TreeNode(parentName);
+			TreeNode parent = new TreeNode();
+			parent.setName(parentName);
+			parent.setTitle(decodeSpecialCharacters(parentName));
+			
 			HashMap<String, SosTimeseries> children = categoryTree.get(parentName);
 			Vector<TreeNode> childNodes = new Vector<TreeNode>();
+			
 			for( SosTimeseries category : children.values()){
-				childNodes.add(new TreeNode(category.getCategory()));
+				TreeNode newTreeNode = new TreeNode();
+				newTreeNode.setName(category.getCategory());
+				newTreeNode.setTitle(decodeSpecialCharacters(category.getCategory()));
+				if( "DEFAULT".equals(parentName)){
+					parentNodes.add(newTreeNode);
+				} else {
+					childNodes.add(newTreeNode);
+				}
 			}
+			
 			parent.setChildren(childNodes.toArray(new TreeNode[childNodes.size()]));
 			parentNodes.add(parent);
 		}
+		
 		
 		Tree tree = new Tree();
 		tree.setNameProperty("name");
@@ -466,6 +466,7 @@ public class StationSelector extends Window {
 		tree.setData(parentNodes.toArray(new TreeNode[parentNodes.size()]));
 		
 		TreeGrid treeGrid = getNewTreeGrid();
+		treeGrid.sort();
 		treeGrid.setData(tree);
 
 		String serviceUrl = currentMetadata.getId();
@@ -485,16 +486,7 @@ public class StationSelector extends Window {
 	}
 
 	public void setSelectedFilter(String serviceURL, String filter) {
-//		DynamicForm selector = stationFilterGroups.get(serviceURL);
-//		if (selector == null) {
-//			// debug message .. should not happen anyway
-//			getToasterInstance().addErrorMessage("Missing expansion component for " + serviceURL);
-//		} else {
-//			for( Canvas child : selector.getChildren() ){
-//				selector.removeChild(child);
-//			}
-//			selector.addChild(new Label("setSelectedFilter"));
-//		}
+		// not needed any more
 	}
 	
 	protected SortedMap<String, String> getAlphabeticallySortedMap() {
@@ -547,9 +539,46 @@ public class StationSelector extends Window {
 		treeGrid.setShowHeader(false);
 		treeGrid.setShowAllRecords(true);
 
+		treeGrid.addSelectionChangedHandler(new SelectionChangedHandler() {
+			@Override
+			public void onSelectionChanged(SelectionEvent event) {
+				Object value = event.getRecord();
+				if (value != null) {
+					if( value instanceof Record){
+						hideInfoWindow();
+						Record castedValue = (Record) value;
+						if( !castedValue.getAttributeAsBoolean("isFolder")){
+							controller.setStationFilter( castedValue.getAttribute("name"));
+							controller.updateContentUponStationFilter();
+						}
+					}
+				}
+			}
+		});
+
 		TreeGridField field = new TreeGridField("name");
 		treeGrid.setFields(field);
 		
 		return treeGrid;
 	}
+	
+	private static void d(String str){
+		Toaster.getToasterInstance().addMessage(str);
+	}
+	
+    private String decodeSpecialCharacters( String str){
+        String retStr = str;
+        retStr = retStr.replaceAll("_", " ");
+        retStr = retStr.replaceAll("kuerzest", "kürzest");
+        retStr = retStr.replaceAll("laengst", "längst");
+        retStr = retStr.replaceAll("Leitfaehigkeit", "Leitfähigkeit");
+        retStr = retStr.replaceAll("Saettigung", "Sättigung");
+        retStr = retStr.replaceAll("Stroemung", "Strömung");
+        retStr = retStr.replaceAll("hoechst", "höchst");
+        retStr = retStr.replaceAll("Trueb", "Trüb");
+//        retStr = retStr.replaceAll("", "");
+
+        return retStr;
+    }
+
 }

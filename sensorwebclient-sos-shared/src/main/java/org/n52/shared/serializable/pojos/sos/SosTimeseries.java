@@ -58,6 +58,9 @@ public class SosTimeseries implements Serializable {
 
     private Type type = Type.DEFAULT;
     
+    private static final String PHENOMENON_SUFFIX_GROUND = " - Sohle";
+    private static final String PHENOMENON_SUFFIX_SURFACE = " - Oberfläche";
+    
     public SosTimeseries() {
         // for serialization
     }
@@ -314,6 +317,9 @@ public class SosTimeseries implements Serializable {
     }
     
     public Type getType(){
+    	if(this.type==null){
+    		this.type = Type.DEFAULT;
+    	}
     	return this.type;
     }
     
@@ -325,7 +331,20 @@ public class SosTimeseries implements Serializable {
 		HashMap<String, ArrayList<String>> phenomenonCategories = PhenomenonCategories.getLists();
 		for(String parentName : phenomenonCategories.keySet()) {
 			if( phenomenonCategories.get(parentName).contains(this.getCategory()) ){
-				return parentName;
+				String suffix;
+				switch(getType()){
+				case GROUND:
+					suffix = PHENOMENON_SUFFIX_GROUND;
+					break;
+				case SURFACE:
+					suffix = PHENOMENON_SUFFIX_SURFACE;
+					break;
+				case DEFAULT:
+				default:
+					suffix = "";
+					break;
+				}
+				return parentName + suffix;
 			}
 		}
 		return "DEFAULT";
