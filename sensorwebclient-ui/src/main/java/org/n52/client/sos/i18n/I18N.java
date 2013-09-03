@@ -109,6 +109,8 @@ public interface I18N extends Constants {
 
     String help();
     
+    String oss();
+    
     String admin();
 
     String map();

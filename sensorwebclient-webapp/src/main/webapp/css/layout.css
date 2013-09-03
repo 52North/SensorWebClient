@@ -559,7 +559,7 @@ div .n52_sensorweb_client_options_button img {
 .header .contentBottom .text		{ color: white; font-size: 10px; }
 .header .contentBottom .link:hover	{ color: #78ACEB; }
 
-.header .icons .icon				{ cursor: pointer; background-repeat: no-repeat; }
+.header .icons .icon				{ cursor: pointer; background-repeat: no-repeat; background-position: center center; padding:3px;}
 .header .icons .icon:hover			{ }
 
 .header .icons .iconHome			{ background-image: url("../img/icons/button_home.gif"); }

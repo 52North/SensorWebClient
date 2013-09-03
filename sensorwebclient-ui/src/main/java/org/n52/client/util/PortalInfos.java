@@ -42,14 +42,6 @@ public class PortalInfos implements Serializable {
 			Vector<String> urlVariants;
 			ArrayList<PortalInfo> initPortalInfos = new ArrayList<PortalInfo>();
 
-			// DEBUG
-			// TODO Entfernen!
-			urlVariants = new Vector<String>();
-			urlVariants.add("localhost");
-			urlVariants.add("isb-lx54");
-			urlVariants.add("mzedlx0188");
-			initPortalInfos.add(new PortalInfo("Demo-System", "http://localhost/", urlVariants));
-
 			urlVariants = new Vector<String>();
 			urlVariants.add("küstendaten.de");
 			urlVariants.add("kuestendaten.de");
@@ -65,6 +57,14 @@ public class PortalInfos implements Serializable {
 			urlVariants.add("portal-tideems.de");
 			initPortalInfos.add(new PortalInfo("Tideems", "http://www.portaltideems.de/", urlVariants));
 
+			// DEBUG
+			// TODO Entfernen!
+			urlVariants = new Vector<String>();
+			urlVariants.add("localhost");
+			urlVariants.add("isb-lx54");
+			urlVariants.add("mzedlx0188");
+			initPortalInfos.add(new PortalInfo("Demo-System", "http://localhost/", urlVariants));
+			
 			urlVariants = new Vector<String>();
 			urlVariants.add("portaltideelbe.de");
 			urlVariants.add("portal-tideelbe.de");

@@ -86,7 +86,7 @@ public class Header extends HLayout {
     	Layout headerBreadcrumb = getBreadcrumbLayout();
     	Layout headerIcons = getIconLayout();
     	
-    	headerMain.addMember(headerLogo);
+    	headerMain.addMember(getHeaderLogo());//headerLogo);
     	headerMain.addMember(headerContent);
 //    	headerMain.setHeight(62);
     	headerMain.addStyleName("main");
@@ -101,6 +101,7 @@ public class Header extends HLayout {
 //    	headerContentTop.setHeight("50%");
     	
     	headerContentBottom.addMember(headerBreadcrumb);
+    	headerContentBottom.setAlign(VerticalAlignment.CENTER);
     	headerContentBottom.addMember(headerIcons);
     	headerContentBottom.addStyleName("contentBottom");
 //    	headerContentBottom.setHeight("50%");
@@ -121,8 +122,6 @@ public class Header extends HLayout {
     	
 //    	headerIcons.setWidth("50%");
     	headerIcons.addStyleName("icons");
-    	headerIcons.setAlign(VerticalAlignment.CENTER);
-    	headerIcons.setAlign(Alignment.RIGHT);
     	
         this.setHeight(62);
         this.addStyleName("header");
@@ -182,11 +181,13 @@ public class Header extends HLayout {
     private static Label getHeaderIconTemplate(String name, final String url, String title, int width, int height){
     	Label label = LabelFactory.getBaseLabel();
     	label.setWidth(width);
-    	label.setHeight(height);
+    	//label.setHeight(height);
     	label.setPadding(0);
     	label.setMargin(0);
     	label.addStyleName("icon");
     	label.addStyleName(name);
+    	label.setValign(VerticalAlignment.CENTER);
+    	label.setHeight100();
         label.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -196,7 +197,6 @@ public class Header extends HLayout {
 
     	return label;
     }
-
     
     private Layout getPortalLayout(){
     	Layout portalLinks = new HLayout();
@@ -229,6 +229,8 @@ public class Header extends HLayout {
 //        metaLinks.addMember(getAddBookmarkLink());
 //        metaLinks.addMember(getSeparator());
         metaLinks.addMember(getImprintLink());
+        metaLinks.addMember(getSeparator());
+        metaLinks.addMember(getOpenSourceLink());
         metaLinks.addMember(getSeparator());
 //        metaLinks.addMember(getCopyrightLink());
 //        metaLinks.addMember(getSeparator());
@@ -402,6 +404,17 @@ public class Header extends HLayout {
             }
         });
 		return help;
+	}
+	
+	private Label getOpenSourceLink() {
+		Label openSource = LabelFactory.getFormattedLinkLabel(i18n.oss());
+		openSource.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
+            public void onClick(com.smartgwt.client.widgets.events.ClickEvent event) {
+                String openSourceUrl = "http://52north.org/communities/sensorweb/clients/SensorWebClient/index.html";
+                Window.open(openSourceUrl, "", "");
+            }
+        });
+		return openSource;
 	}
 
 	private Label getImprintLink() {
