@@ -75,6 +75,9 @@ public class FeatureOutputAdapter implements ParameterService<FeatureOutput> {
 
 	@Override
     public FeatureOutput[] getParameters(String[] featureIds) {
+
+        // TODO consider query
+	    
 	    List<FeatureOutput> selectedFeatures = new ArrayList<FeatureOutput>();
 	    for (String featureId : featureIds) {
             FeatureOutput feature = getParameter(featureId);

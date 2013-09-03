@@ -41,6 +41,9 @@ public class CategoryOutputAdapter implements ParameterService<CategoryOutput> {
 	}
 	
 	private String[] filter(SOSMetadata metadata, QueryParameters query) {
+	    
+	    // TODO consider query
+	    
         Set<String> allCategories = new HashSet<String>();
         for (SosTimeseries timeseries : metadata.getTimeseriesRelatedWith(query)) {
         	allCategories.add(timeseries.getCategory());

@@ -75,6 +75,9 @@ public class OfferingOutputAdapter implements ParameterService<OfferingOutput> {
 
 	@Override
     public OfferingOutput[] getParameters(String[] offeringIds) {
+
+        // TODO consider query
+	    
 	    List<OfferingOutput> selectedOfferings = new ArrayList<OfferingOutput>();
         for (String offeringId : offeringIds) {
             OfferingOutput offering = getParameter(offeringId);
