@@ -328,6 +328,6 @@ public class SosTimeseries implements Serializable {
 				return parentName;
 			}
 		}
-		return null;
+		return "DEFAULT";
 	}
 }

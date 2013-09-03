@@ -30,6 +30,7 @@ import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 import static org.n52.client.sos.ui.SelectionMenuModel.createListGrid;
 import static org.n52.client.ui.Toaster.getToasterInstance;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,12 +39,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.Vector;
 
 import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.n52.client.sos.event.data.NewTimeSeriesEvent;
 import org.n52.client.ui.ApplyCancelButtonLayout;
 import org.n52.client.ui.InteractionWindow;
 import org.n52.client.ui.LoadingSpinner;
+import org.n52.client.ui.Toaster;
 import org.n52.client.ui.legend.LegendEntryTimeSeries;
 import org.n52.client.ui.map.InfoMarker;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -54,6 +57,7 @@ import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.AnimationEffect;
 import com.smartgwt.client.types.ContentsType;
 import com.smartgwt.client.types.SelectionStyle;
+import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.HTMLPane;
 import com.smartgwt.client.widgets.Img;
@@ -75,6 +79,10 @@ import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.tree.Tree;
+import com.smartgwt.client.widgets.tree.TreeGrid;
+import com.smartgwt.client.widgets.tree.TreeGridField;
+import com.smartgwt.client.widgets.tree.TreeNode;
 
 public class StationSelector extends Window {
 	
@@ -90,7 +98,7 @@ public class StationSelector extends Window {
     
 	private Layout guiContent;
 
-	private Map<String, RadioGroupItem> stationFilterGroups;
+	private Map<String, DynamicForm> stationFilterGroups;
 	
 	private Label phenomenonInfoLabel;
 	
@@ -119,7 +127,7 @@ public class StationSelector extends Window {
     }
 
     private StationSelector(StationSelectorController controller) {
-    	stationFilterGroups = new HashMap<String, RadioGroupItem>();
+    	stationFilterGroups = new HashMap<String, DynamicForm>();
     	controller.setStationPicker(this);
         initializeWindow();
         initializeContent();
@@ -340,27 +348,40 @@ public class StationSelector extends Window {
     	return controller.createMap();
     }
     
-    FormItem createFilterCategorySelectionGroup(String serviceUrl) {
+	DynamicForm createFilterCategorySelectionGroup(String serviceUrl) {
 		if (stationFilterGroups.containsKey(serviceUrl)) {
-			RadioGroupItem selector = stationFilterGroups.get(serviceUrl);
+			DynamicForm selector = stationFilterGroups.get(serviceUrl);
 			return selector;
 		}
-		RadioGroupItem radioGroup = new RadioGroupItem("sosDataSource");
-		radioGroup.setShowTitle(false);
-		radioGroup.addChangedHandler(new ChangedHandler() {
-			@Override
-			public void onChanged(ChangedEvent event) {
-				Object value = event.getValue();
-				if (value != null) {
-					hideInfoWindow();
-					controller.setStationFilter(value.toString());
-					controller.updateContentUponStationFilter();
-				}
-			}
-		});
+		DynamicForm dynamicForm = new DynamicForm();//("sosDataSource");
+		TreeGrid treeGrid = getNewTreeGrid();
+		
+		Tree tree = new Tree();
+		tree.setID(serviceUrl);
 
-		stationFilterGroups.put(serviceUrl, radioGroup);
-		return radioGroup;
+		treeGrid.setData(tree);
+		
+		// Changehandler für ehemalige RadioGroup
+//		dynamicForm.addChangedHandler(new ChangedHandler() {
+//			@Override
+//			public void onChanged(ChangedEvent event) {
+//				Object value = event.getValue();
+//				if (value != null) {
+//					hideInfoWindow();
+//					controller.setStationFilter(value.toString());
+//					controller.updateContentUponStationFilter();
+//				}
+//			}
+//		});
+		
+		for( Canvas child : dynamicForm.getChildren() ){
+			dynamicForm.removeChild(child);
+		}
+		dynamicForm.addChild(treeGrid);
+		
+
+		stationFilterGroups.put(serviceUrl, dynamicForm);
+		return dynamicForm;
 	}
 
 	private void loadTimeSeries() {
@@ -408,17 +429,51 @@ public class StationSelector extends Window {
 	
 	public void updateStationFilters(final SOSMetadata currentMetadata) {
 		hideInfoWindow();
-		Map<String, String> sortedCategories = getAlphabeticallySortedMap();
+
+		HashMap<String, HashMap<String, SosTimeseries>> categoryTree = new HashMap<String, HashMap<String, SosTimeseries>>();
+		
 		for (Station station : currentMetadata.getStations()) {
-			Set<String> categories = getStationCategories(station);
-			for (String category : categories) {
-				sortedCategories.put(category, category);
+			ArrayList<SosTimeseries> categories = station.getObservedTimeseries();
+			for (SosTimeseries category : categories) {
+				HashMap<String, SosTimeseries> parentMap;
+				if(categoryTree.containsKey(category.getParentName())){
+					parentMap = categoryTree.get(category.getParentName());
+				} else {
+					parentMap = new HashMap<String, SosTimeseries>();
+					categoryTree.put(category.getParentName(), parentMap);
+				}
+				if( !parentMap.containsKey(category.getCategory())){
+					parentMap.put(category.getCategory(), category);
+				}
 			}
 		}
+
+		Vector<TreeNode> parentNodes = new Vector<TreeNode>();
+		for(String parentName : categoryTree.keySet()){
+			TreeNode parent = new TreeNode(parentName);
+			HashMap<String, SosTimeseries> children = categoryTree.get(parentName);
+			Vector<TreeNode> childNodes = new Vector<TreeNode>();
+			for( SosTimeseries category : children.values()){
+				childNodes.add(new TreeNode(category.getCategory()));
+			}
+			parent.setChildren(childNodes.toArray(new TreeNode[childNodes.size()]));
+			parentNodes.add(parent);
+		}
+		
+		Tree tree = new Tree();
+		tree.setNameProperty("name");
+		tree.setModelType(TreeModelType.CHILDREN);
+		tree.setData(parentNodes.toArray(new TreeNode[parentNodes.size()]));
+		
+		TreeGrid treeGrid = getNewTreeGrid();
+		treeGrid.setData(tree);
+
 		String serviceUrl = currentMetadata.getId();
-		RadioGroupItem selector = stationFilterGroups.get(serviceUrl);
-		LinkedHashMap<String, String> categories = new LinkedHashMap<String, String>(sortedCategories);
-		selector.setValueMap(categories);
+		DynamicForm selector = stationFilterGroups.get(serviceUrl);
+		for( Canvas child : selector.getChildren() ){
+			selector.removeChild(child);
+		}
+		selector.addChild(treeGrid);
 	}
 	
 	private Set<String> getStationCategories(Station station) {
@@ -430,13 +485,16 @@ public class StationSelector extends Window {
 	}
 
 	public void setSelectedFilter(String serviceURL, String filter) {
-		RadioGroupItem selector = stationFilterGroups.get(serviceURL);
-		if (selector == null) {
-			// debug message .. should not happen anyway
-			getToasterInstance().addErrorMessage("Missing expansion component for " + serviceURL);
-		} else {
-			selector.setValue(filter);
-		}
+//		DynamicForm selector = stationFilterGroups.get(serviceURL);
+//		if (selector == null) {
+//			// debug message .. should not happen anyway
+//			getToasterInstance().addErrorMessage("Missing expansion component for " + serviceURL);
+//		} else {
+//			for( Canvas child : selector.getChildren() ){
+//				selector.removeChild(child);
+//			}
+//			selector.addChild(new Label("setSelectedFilter"));
+//		}
 	}
 	
 	protected SortedMap<String, String> getAlphabeticallySortedMap() {
@@ -482,5 +540,16 @@ public class StationSelector extends Window {
 			phenomenonBox.setValue(selectedPhenomenon);
 			stationInfoLabel.hide();
 		}
+	}
+	
+	private TreeGrid getNewTreeGrid(){
+		TreeGrid treeGrid = new TreeGrid();
+		treeGrid.setShowHeader(false);
+		treeGrid.setShowAllRecords(true);
+
+		TreeGridField field = new TreeGridField("name");
+		treeGrid.setFields(field);
+		
+		return treeGrid;
 	}
 }
