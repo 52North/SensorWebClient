@@ -303,7 +303,7 @@ public class HydroMetadataHandler extends MetadataHandler {
 					int srsID = referenceHelper.getSrsIdFromEPSG(srs);
 					PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING);
 					GeometryFactory geometryFactory = new GeometryFactory(pm, srsID);
-					Coordinate coord = referenceHelper.createCoordinate(srs, lon, lat, alt);
+					Coordinate coord = referenceHelper.createCoordinate(lon, lat, alt, srs);
 					Point createdPoint = geometryFactory.createPoint(coord);
 					createdPoint = referenceHelper.transform(createdPoint, srs, wgs84);
 					point2D = new ParsedPoint(createdPoint.getY() + "", createdPoint.getX() + "", wgs84); 

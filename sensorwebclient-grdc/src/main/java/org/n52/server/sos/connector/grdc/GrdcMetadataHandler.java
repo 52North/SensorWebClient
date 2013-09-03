@@ -244,7 +244,7 @@ public class GrdcMetadataHandler extends MetadataHandler {
                 int srsId = referenceHelper.getSrsIdFromEPSG(srs);
                 PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING);
                 GeometryFactory geometryFactory = new GeometryFactory(pm, srsId);
-                Coordinate coordinate = referenceHelper.createCoordinate(srs, lon, lat, h);
+                Coordinate coordinate = referenceHelper.createCoordinate(lon, lat, h, srs);
                 Point point = geometryFactory.createPoint(coordinate);
                 point = referenceHelper.transformToWgs84(point, srs);
                 srs = wgs84;

@@ -23,6 +23,7 @@
  */
 package org.n52.server.parser.utils;
 
+@Deprecated
 public class ParsedPoint {
 	
 	private String lat;

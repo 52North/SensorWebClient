@@ -117,7 +117,7 @@ public class Vicinity {
     private Point createCenter(GeojsonPoint center) throws FactoryException {
         Double easting = center.getCoordinates()[0];
         Double northing = center.getCoordinates()[1];
-        Coordinate coordinate = inputReference.createCoordinate(EPSG_4326, easting, northing);
+        Coordinate coordinate = inputReference.createCoordinate(easting, northing, EPSG_4326);
         return geometryFactory.createPoint(coordinate);
     }
 

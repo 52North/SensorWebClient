@@ -194,7 +194,7 @@ public class DescribeSensorParser {
             if ( !srs.equals(wgs84)) {
                 try {
                     GeometryFactory geometryFactory = referenceHelper.createGeometryFactory(srs);
-                    Coordinate coordinate = referenceHelper.createCoordinate(srs, lng, lat, h);
+                    Coordinate coordinate = referenceHelper.createCoordinate(lng, lat, h, srs);
                     Point point = geometryFactory.createPoint(coordinate);
                     point = referenceHelper.transform(point, srs, wgs84);
                     srs = wgs84;

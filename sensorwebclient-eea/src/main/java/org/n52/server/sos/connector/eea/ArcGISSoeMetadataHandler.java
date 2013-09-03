@@ -179,7 +179,7 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 
 	                Double x = Double.parseDouble(lonLat[0]);
 	                Double y = Double.parseDouble(lonLat[1]);
-					Coordinate coord = referenceHelper.createCoordinate(srs, x, y, null);
+					Coordinate coord = referenceHelper.createCoordinate(x, y, srs);
 					
 					Point createdPoint = geometryFactory.createPoint(coord);
 					createdPoint = referenceHelper.transformToWgs84(createdPoint, srs);
