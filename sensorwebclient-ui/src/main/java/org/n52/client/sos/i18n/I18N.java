@@ -109,6 +109,8 @@ public interface I18N extends Constants {
 
     String help();
     
+    String oss();
+    
     String admin();
 
     String map();
@@ -405,4 +407,13 @@ public interface I18N extends Constants {
     String datePickerStart();
     String datePickerEnd();
     String datePickerSubmit();
+    
+    String headerGotoPortals();
+    String headerYouAreHere();
+    String headerLabelSosClient();
+    
+    String headerIconSitemapTitle();
+    String headerIconSearchTitle();
+    String headerIconMailTitle();
+    String headerIconFeedbackTitle();
 }

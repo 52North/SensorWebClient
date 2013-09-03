@@ -1,7 +1,7 @@
 .n52_sensorweb_client_imagebutton {
-  margin: 3px;
-  width: 22px;
-  height: 22px;
+	margin: 3px;
+	width: 22px;
+	height: 22px;
 }
 /*
 kuler.adobe.com, base color #55B0BD, monochromatic
@@ -14,202 +14,224 @@ hover: #3E818A
 links: #3F8589
 */
 body {
-  background: white;
-  text-align: center;
-  height: 100%;
-  overflow: hidden;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  margin: 0px;
+	background: white;
+	text-align: center;
+	height: 100%;
+	overflow: hidden;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	margin: 0px;
 }
+
 #spacer {
-  height: 45%;
-  overflow: hidden;
+	height: 45%;
+	overflow: hidden;
 }
+
 #loadingWrapper {
-  overflow: hidden;
-  margin: 0px auto;
-  width: 170px;
-  background: white;
-  text-align: left;
+	overflow: hidden;
+	margin: 0px auto;
+	width: 170px;
+	background: white;
+	text-align: left;
 }
+
 #loadingMsg {
-  font-size: 7pt;
-  font-weight: normal;
-  font-family: tahoma, arial, sans-serif;
+	font-size: 7pt;
+	font-weight: normal;
+	font-family: tahoma, arial, sans-serif;
 }
+
 #operator {
-  font-size: 8pt;
-  font-weight: bold;
-  font-family: tahoma, arial, sans-serif;
+	font-size: 8pt;
+	font-weight: bold;
+	font-family: tahoma, arial, sans-serif;
 }
+
 .n52_sensorweb_client_main {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
 }
 /*****************************
 * buttonstyling 
 */
-.n52_sensorweb_client_jumpToTodayButton,
-.n52_sensorweb_client_gridButton,
-.n52_sensorweb_client_scaleButton,
-.n52_sensorweb_client_interactionbutton,
-.n52_sensorweb_client_legendbutton,
-.n52_sensorweb_client_legendbuttonDisabled,
+.n52_sensorweb_client_jumpToTodayButton,.n52_sensorweb_client_gridButton,.n52_sensorweb_client_scaleButton,.n52_sensorweb_client_interactionbutton,.n52_sensorweb_client_legendbutton,.n52_sensorweb_client_legendbuttonDisabled,.n52_sensorweb_client_legendbuttonPrimary
+	{
+	background-color: #a3d3d6;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #1c393d;
+	border-radius: 4px;
+	height: 29px;
+	color: #2E3B3B;
+}
+
 .n52_sensorweb_client_legendbuttonPrimary {
-  background-color: #a3d3d6;
-  border-width: 1px;
-  border-style: solid;
-  border-color: #1c393d;
-  border-radius: 4px;
-  height: 29px;
-  color: #2E3B3B;
+	background-color: #ffa500;
 }
-.n52_sensorweb_client_legendbuttonPrimary {
-  background-color: #ffa500;
+
+.n52_sensorweb_client_jumpToTodayButton,.n52_sensorweb_client_gridButton,.n52_sensorweb_client_scaleButton,.n52_sensorweb_client_legendbutton,.n52_sensorweb_client_legendbuttonPrimary,.n52_sensorweb_client_legendbuttonDisabled
+	{
+	cursor: pointer;
+	font-size: 11px;
+	font-weight: bold;
+	line-height: 27px;
+	text-align: center;
 }
-.n52_sensorweb_client_jumpToTodayButton,
-.n52_sensorweb_client_gridButton,
-.n52_sensorweb_client_scaleButton,
-.n52_sensorweb_client_legendbutton,
-.n52_sensorweb_client_legendbuttonPrimary,
+
 .n52_sensorweb_client_legendbuttonDisabled {
-  cursor: pointer;
-  font-size: 11px;
-  font-weight: bold;
-  line-height: 27px;
-  text-align: center;
+	filter: alpha(opacity =  30);
+	opacity: 0.3;
+	cursor: default;
 }
-.n52_sensorweb_client_legendbuttonDisabled {
-  filter: alpha(opacity = 30);
-  opacity: 0.3;
-  cursor: default;
+
+.n52_sensorweb_client_scaleButtonSelected,.n52_sensorweb_client_jumpToTodayButton:HOVER,.n52_sensorweb_client_gridButton:HOVER,.n52_sensorweb_client_scaleButton:HOVER,.n52_sensorweb_client_legendbutton:HOVER,.n52_sensorweb_client_legendbuttonPrimary:HOVER,.n52_sensorweb_client_interactionbutton:HOVER
+	{
+	background-color: #3f8566;
+	border: 1px solid #1c393d;
 }
-.n52_sensorweb_client_scaleButtonSelected,
-.n52_sensorweb_client_jumpToTodayButton:HOVER,
-.n52_sensorweb_client_gridButton:HOVER,
-.n52_sensorweb_client_scaleButton:HOVER,
-.n52_sensorweb_client_legendbutton:HOVER,
-.n52_sensorweb_client_legendbuttonPrimary:HOVER,
-.n52_sensorweb_client_interactionbutton:HOVER {
-  background-color: #3f8566;
-  border: 1px solid #1c393d;
-}
+
 .n52_sensorweb_client_legendbuttonText {
-  cursor: pointer;
+	cursor: pointer;
 }
+
 .n52_sensorweb_client_arrowDown {
-  background: url("../img/icons/expander.png");
-  background-repeat: no-repeat;
-  padding-left: 5px;
+	background: url("../img/icons/expander.png");
+	background-repeat: no-repeat;
+	padding-left: 5px;
 }
+
 .n52_sensorweb_client_smallicon {
-  padding: 1px;
-  filter: alpha(opacity = 100);
-  opacity: 1;
-  border: 1px solid #1c393d;
-  border-radius: 4px 4px 4px 4px;
+	padding: 1px;
+	filter: alpha(opacity =  100);
+	opacity: 1;
+	border: 1px solid #1c393d;
+	border-radius: 4px 4px 4px 4px;
 }
+
 .n52_sensorweb_client_smallicon:HOVER {
-  filter: alpha(opacity = 100);
-  opacity: 1;
-  border: 1px solid #3f8566;
-  background-color: #3f8566;
-  cursor: pointer;
+	filter: alpha(opacity =  100);
+	opacity: 1;
+	border: 1px solid #3f8566;
+	background-color: #3f8566;
+	cursor: pointer;
 }
+
 .n52_sensorweb_client_noOpacitiy {
-  opacity: 1;
-  filter: alpha(opacity = 100);
+	opacity: 1;
+	filter: alpha(opacity =  100);
 }
+
 .n52_sensorweb_client_legendlink {
-  cursor: pointer;
-  color: #3f8589;
-  font-size: 11px;
+	cursor: pointer;
+	color: #3f8589;
+	font-size: 11px;
 }
+
 .n52_sensorweb_client_legendlink:HOVER {
-  color: #2e3b3d;
-  opacity: 1;
-  filter: alpha(opacity = 100);
-  cursor: pointer;
+	color: #2e3b3d;
+	opacity: 1;
+	filter: alpha(opacity =  100);
+	cursor: pointer;
 }
+
 .n52_sensorweb_client_interactionmenu {
-  background-color: #FFFFFF;
-  border: 3px solid;
-  border-color: #96c2c8;
-  border-radius: 2px;
+	background-color: #FFFFFF;
+	border: 3px solid;
+	border-color: #96c2c8;
+	border-radius: 2px;
 }
+
 .n52_sensorweb_client_interactionmenuHeader {
-  background-color: #96c2c8;
-  font-size: 12px;
-  font-weight: bold;
+	background-color: #96c2c8;
+	font-size: 12px;
+	font-weight: bold;
 }
+
 .n52_sensorweb_client_exportEntry {
-  font-size: 10px;
-  padding-top: 2px;
+	font-size: 10px;
+	padding-top: 2px;
 }
+
 .n52_sensorweb_client_exportEntry:HOVER {
-  cursor: pointer;
-  background-color: #3f8566;
+	cursor: pointer;
+	background-color: #3f8566;
 }
 /* Styling for the sensor info table */
 table.sensorInfo {
-  font-size: 10px;
+	font-size: 10px;
 }
+
 tr.sensorInfo:nth-child(2n) {
-  background-color: #96c2c8;
+	background-color: #96c2c8;
 }
+
 tr.sensorInfo:hover {
-  background-color: #3f8566;
+	background-color: #3f8566;
 }
+
 .n52_sensorweb_client_form_content {
-  margin: 20px;
+	margin: 20px;
 }
+
 .n52_sensorweb_client_admin_login headerItem {
-  text-color: red;
+	text-color: red;
 }
+
 .n52_sensorweb_client_create_abo_applycancel {
-  height: 20px;
+	height: 20px;
 }
+
 .n52_sensorweb_client_create_abo_form_content {
-  float: left;
-  margin: 1em;
-  width: 50%;
+	float: left;
+	margin: 1em;
+	width: 50%;
 }
+
 .n52_sensorweb_client_create_abo_info {
-  margin-bottom: 1em;
+	margin-bottom: 1em;
 }
+
 .n52_sensorweb_client_create_abo_eventname {
-  white-space: nowrap;
-  margin-bottom: 1em;
-  width: 100%;
+	white-space: nowrap;
+	margin-bottom: 1em;
+	width: 100%;
 }
+
 .n52_sensorweb_client_abo_name_textbox {
-  height: auto;
-  overflow: hidden;
+	height: auto;
+	overflow: hidden;
 }
+
 .n52_sensorweb_client_create_abo_selection {
-  margin-bottom: 1em;
+	margin-bottom: 1em;
 }
+
 .n52_sensorweb_client_edit_create_abo_edit {
-  height: 100px;
+	height: 100px;
 }
+
 .n52_sensorweb_client_create_abo_template_overundershootcondition {
-  margin-bottom: 1em;
+	margin-bottom: 1em;
 }
+
 .n52_sensorweb_client_create_abo_template_sensorlosscondition {
-  margin-bottom: 1em;
+	margin-bottom: 1em;
 }
+
 .n52_sensorweb_client_create_abo_metadata {
-  margin-bottom: 1em;
-  width: 100%;
+	margin-bottom: 1em;
+	width: 100%;
 }
+
 table.n52_sensorweb_client_create_abo_metadata_table {
-  margin: 1em 0em 1em 0em;
-  height: 100px;
-  width: 100%;
+	margin: 1em 0em 1em 0em;
+	height: 100px;
+	width: 100%;
 }
+
 table.n52_sensorweb_client_create_abo_metadata_table tr:nth-child(2n) {
-  background-color: #96c2c8;
+	background-color: #96c2c8;
 }
 /*
 table.n52_sensorweb_client_create_abo_metadata_table tr:hover {
@@ -217,276 +239,340 @@ table.n52_sensorweb_client_create_abo_metadata_table tr:hover {
 }
 */
 .n52_sensorweb_client_create_abo_context_help {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  margin-right: 1em;
-  line-height: 1.2;
-  float: right;
-  width: 50%;
-  border-left: #ffb;
-  text-align: left;
-  font-size: 9pt;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	margin-right: 1em;
+	line-height: 1.2;
+	float: right;
+	width: 50%;
+	border-left: #ffb;
+	text-align: left;
+	font-size: 9pt;
 }
+
 .n52_sensorweb_client_create_abo_applycancel {
-  margin-bottom: 1em;
-  align: right;
+	margin-bottom: 1em;
+	align: right;
 }
+
 .n52_sensorweb_client_headerContainer {
-  width: 100%;
-  height: 100%;
+	width: 100%;
+	height: 100%;
 }
+
 .n52_sensorweb_client_logoBlock {
-  margin-top: 5px;
-  margin-bottom: 2px;
+	margin-top: 5px;
+	margin-bottom: 2px;
 }
+
 .n52_sensorweb_client_logo {
-  margin-left: 15px;
-  cursor: pointer;
+	margin-left: 15px;
+	cursor: pointer;
 }
+
 .n52_sensorweb_client_linkBlock {
-  left: 750px;
-  margin-top: 15px;
-  margin-right: 15px;
+	left: 750px;
+	margin-top: 15px;
+	margin-right: 15px;
 }
+
 .n52_sensorweb_client_loginBlock {
-  left: 750px;
-  margin-top: 5px;
-  margin-right: 15px;
+	left: 750px;
+	margin-top: 5px;
+	margin-right: 15px;
 }
-.n52_sensorweb_client_headerlink {
-  color: #2E3B3B;
-  font-size: 12px;
-  text-decoration: none;
-  cursor: pointer;
-}
-.n52_sensorweb_client_headerlink:hover {
-  color: #408989;
-  cursor: pointer;
-  text-decoration: underline;
-}
-.n52_sensorweb_client_pipe {
-  color: #2e3b3d;
-  font-size: 10px;
-  text-decoration: none;
-  padding-left: 3px;
-  padding-right: 3px;
-  cursor: default;
-}
+
 div .n52_sensorweb_client_imprint_content {
-  background-color: white;
-  width: 450;
-  height: 460;
-  padding: 1em 1em 1em 1em;
-  text-align: left;
+	background-color: white;
+	width: 450;
+	height: 460;
+	padding: 1em 1em 1em 1em;
+	text-align: left;
 }
+
 .n52_sensorweb_client_headerLoggedInAs {
-  font-size: 12px;
-  padding-left: 3px;
-  padding-right: 3px;
+	font-size: 12px;
+	padding-left: 3px;
+	padding-right: 3px;
 }
+
 .float-left {
-  float: left;
+	float: left;
 }
+
 .float-right {
-  float: right;
+	float: right;
 }
+
 .clear-float {
-  clear: both;
+	clear: both;
 }
-#editor > * > address {
-  border-left: 0.5em solid;
-  padding-left: 0.5em;
-  border-color: #f6f6f6;
+
+#editor>*>address {
+	border-left: 0.5em solid;
+	padding-left: 0.5em;
+	border-color: #f6f6f6;
 }
+
 .n52_sensorweb_client_legend {
-  background-color: #FFFFFF;
+	background-color: #FFFFFF;
 }
+
 .n52_sensorweb_client_legendEntryLayout {
-  margin-bottom: 5px;
-  margin-left: 2px;
-  margin-right: 2px;
-  border-radius: 2px;
-  overflow: scroll;
+	margin-bottom: 5px;
+	margin-left: 2px;
+	margin-right: 2px;
+	border-radius: 2px;
+	overflow: scroll;
 }
+
 .n52_sensorweb_client_legendEntryHeader {
-  background-color: #ffffff;
-  cursor: pointer;
-  border: 2px solid #A5D6D6;
+	background-color: #ffffff;
+	cursor: pointer;
+	border: 2px solid #A5D6D6;
 }
+
 .n52_sensorweb_client_legendEntryTitle {
-  margin: 7px 0px 0px 7px;
-  padding-left: 10px;
-  overflow: hide;
-  font-size: 8pt;
-  font-weight: bold;
+	margin: 7px 0px 0px 7px;
+	padding-left: 10px;
+	overflow: hide;
+	font-size: 8pt;
+	font-weight: bold;
 }
+
 .n52_sensorweb_client_legendEntryHeaderSelected {
-  background-color: #A5D6D6;
-  cursor: pointer;
-  border: 2px solid #A5D6D6;
+	background-color: #A5D6D6;
+	cursor: pointer;
+	border: 2px solid #A5D6D6;
 }
+
 .n52_sensorweb_client_legendEntryHeaderText {
-  font-size: 8pt;
-  color: #2E3B3B;
-  font-weight: bold;
+	font-size: 8pt;
+	color: #2E3B3B;
+	font-weight: bold;
 }
+
 .n52_sensorweb_client_legendEntryHeaderTextSelected {
-  font-size: 8pt;
-  color: #2e3b3d;
-  font-weight: bold;
+	font-size: 8pt;
+	color: #2e3b3d;
+	font-weight: bold;
 }
+
 .n52_sensorweb_client_legendEntryHeaderSelectedNoData {
-  background-color: #A5D6D6;
-  cursor: pointer;
+	background-color: #A5D6D6;
+	cursor: pointer;
 }
+
 .n52_sensorweb_client_legendEntryHeaderNoData {
-  background-color: #ffffff;
-  cursor: pointer;
+	background-color: #ffffff;
+	cursor: pointer;
 }
+
 .n52_sensorweb_client_legendEntryHeader option:hover {
-  cursor: pointer;
+	cursor: pointer;
 }
+
 .n52_sensorweb_client_legendEntryFooter {
-  width: inherit;
-  background-color: #ffffff;
-  padding-left: 5px;
-  padding-bottom: 5px;
-  padding-right: 5px;
-  border-left: 2px solid #A5D6D6;
-  border-right: 2px solid #A5D6D6;
-  border-bottom: 2px solid #A5D6D6;
+	width: inherit;
+	background-color: #ffffff;
+	padding-left: 5px;
+	padding-bottom: 5px;
+	padding-right: 5px;
+	border-left: 2px solid #A5D6D6;
+	border-right: 2px solid #A5D6D6;
+	border-bottom: 2px solid #A5D6D6;
 }
+
 .n52_sensorweb_client_legendEntryFooterNoData {
-  width: inherit;
-  background-color: #ffffff;
-  padding-left: 5px;
-  padding-bottom: 5px;
-  padding-right: 5px;
+	width: inherit;
+	background-color: #ffffff;
+	padding-left: 5px;
+	padding-bottom: 5px;
+	padding-right: 5px;
 }
+
 .n52_sensorweb_client_legendEntryFooterSelected {
-  width: inherit;
-  background-color: #ffffff;
-  padding-left: 5px;
-  padding-bottom: 5px;
-  padding-right: 5px;
+	width: inherit;
+	background-color: #ffffff;
+	padding-left: 5px;
+	padding-bottom: 5px;
+	padding-right: 5px;
 }
+
 .n52_sensorweb_client_legendEntryFooterSelectedNoData {
-  width: inherit;
-  background-color: #ffffff;
-  padding-left: 5px;
-  padding-bottom: 5px;
-  padding-right: 5px;
+	width: inherit;
+	background-color: #ffffff;
+	padding-left: 5px;
+	padding-bottom: 5px;
+	padding-right: 5px;
 }
+
 .n52_sensorweb_client_legendEntryFooterCollapse {
-  visibility: collapse;
+	visibility: collapse;
 }
+
 .n52_sensorweb_client_legendEntryTitleColorIndicator {
-  width: 16px;
-  height: 6px;
-  margin: 0px 10px 0px 4px;
+	width: 16px;
+	height: 6px;
+	margin: 0px 10px 0px 4px;
 }
+
 .n52_sensorweb_client_legendEntryTitleColorIndicatorSmall {
-  margin: 7px 0px 0px 7px;
-  text-align: center;
+	margin: 7px 0px 0px 7px;
+	text-align: center;
 }
+
 .n52_sensorweb_client_legendInfoRow {
-  padding-top: 3px;
-  font-size: 11px;
+	padding-top: 3px;
+	font-size: 11px;
 }
+
 .n52_sensorweb_client_legendHider {
-  /*background-color: #A5D6D6;*/
-
-  cursor: pointer;
+	/*background-color: #A5D6D6;*/
+	cursor: pointer;
 }
+
 .n52_sensorweb_client_legendHider:Hover {
-  /*background-color: @text-color-font;*/
-
+	/*background-color: @text-color-font;*/
+	
 }
+
 .n52_sensorweb_client_splitbar {
-  /*background-color: #A5D6D6;
+	/*background-color: #A5D6D6;
     color: @text-color-font;*/
-
+	
 }
+
 .n52_sensorweb_client_refValLayout {
-  padding-top: 3px;
-  margin-top: 5px;
+	padding-top: 3px;
+	margin-top: 5px;
 }
-div .n52_sensorweb_client_options_button img {
-  width: 36px;
-  height: 36px;
-}
-.n52_sensorweb_client_diagramInteractionMenu {
-  margin: 5px;
-  font-size: 11px;
-  font-weight: bold;
-  color: #2E3B3B;
-}
-.n52_sensorweb_client_jumpToTimeIntervalForm {
-  font-size: 11px;
-  font-weight: bold;
-}
-.n52_sensorweb_client_scaleButtonLayout,
-.n52_sensorweb_client_gridButtonLayout {
-  margin-left: 5px;
-  margin-right: 5px;
-}
-.n52_sensorweb_client_scaleButton,
-.n52_sensorweb_client_gridButton {
-  padding-right: 10px;
-  padding-left: 10px;
-}
-.n52_sensorweb_client_tooltip {
-  font-size: 12px;
-  font-family: sans-serif;
-}
-.n52_sensorweb_client_stationselectormap {
-  width: 950px;
-  height: 550px;
-}
-.n52_sensorweb_client_loadingSpinner {
-  padding-top: 20px;
-  visibility: hidden;
-}
-.n52_sensorweb_client_marker {
-  cursor: pointer;
-}
-.n52_sensorweb_client_toasterMsg {
-  font-size: 8pt;
-  color: black;
-}
-.n52_sensorweb_client_toasterErrorMsg {
-  font-size: 8pt;
-  color: red;
-}
-.n52_sensorweb_client_dataControls {
-  background-color: white;
-  border-right: 1px solid #C0C3C7;
-}
-.n52_sensorweb_client_mainLayout {
-  background-color: #F2F2F2;
-  border: 1px solid #0C374C;
-  margin: 0px;
-  padding: 0px;
-}
-.n52_sensorweb_client_stationPicker {
-  background-color: #EFEFEF;
-}
-.n52_sensorweb_client_controlLabel {
-  /*padding-top: 3px;*/
 
-  font-size: 8pt;
-  color: #25408F;
+div .n52_sensorweb_client_options_button img {
+	width: 36px;
+	height: 36px;
 }
+
+.n52_sensorweb_client_diagramInteractionMenu {
+	margin: 5px;
+	font-size: 11px;
+	font-weight: bold;
+	color: #2E3B3B;
+}
+
+.n52_sensorweb_client_jumpToTimeIntervalForm {
+	font-size: 11px;
+	font-weight: bold;
+}
+
+.n52_sensorweb_client_scaleButtonLayout,.n52_sensorweb_client_gridButtonLayout
+	{
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.n52_sensorweb_client_scaleButton,.n52_sensorweb_client_gridButton {
+	padding-right: 10px;
+	padding-left: 10px;
+}
+
+.n52_sensorweb_client_tooltip {
+	font-size: 12px;
+	font-family: sans-serif;
+}
+
+.n52_sensorweb_client_stationselectormap {
+	width: 950px;
+	height: 550px;
+}
+
+.n52_sensorweb_client_loadingSpinner {
+	padding-top: 20px;
+	visibility: hidden;
+}
+
+.n52_sensorweb_client_marker {
+	cursor: pointer;
+}
+
+.n52_sensorweb_client_toasterMsg {
+	font-size: 8pt;
+	color: black;
+}
+
+.n52_sensorweb_client_toasterErrorMsg {
+	font-size: 8pt;
+	color: red;
+}
+
+.n52_sensorweb_client_dataControls {
+	background-color: white;
+	border-right: 1px solid #C0C3C7;
+}
+
+.n52_sensorweb_client_mainLayout {
+	background-color: #F2F2F2;
+	border: 1px solid #0C374C;
+	margin: 0px;
+	padding: 0px;
+}
+
+.n52_sensorweb_client_stationPicker {
+	background-color: #EFEFEF;
+}
+
+.n52_sensorweb_client_controlLabel {
+	/*padding-top: 3px;*/
+	font-size: 8pt;
+	color: #25408F;
+}
+
 .n52_sensorweb_client_legendAddBox {
-  border: 1px solid black;
-  margin-bottom: 5px;
+	border: 1px solid black;
+	margin-bottom: 5px;
 }
+
 .n52_sensorweb_client_legendAddBoxLabel {
-  font-size: 11pt;
+	font-size: 11pt;
 }
+
 .n52_sensorweb_client_topButtons {
-  padding: 0px 0px 0px 8px;
+	padding: 0px 0px 0px 8px;
 }
+
 .n52_sensorweb_client_modalWindow {
-  width: 950px;
-  height: 550px;
+	width: 950px;
+	height: 550px;
 }
+
+.header								{}
+
+.header .text						{ font-size: 11px; text-decoration: none; }
+.header .text.bold					{ font-weight: bold; }
+.header .link						{ cursor: pointer; text-decoration: underline; }
+.header .link:hover					{ cursor: pointer; }
+.header .separator					{ font-size: 11px; text-decoration: none; padding: 0 3px; cursor: default; }
+
+.header .contentTop					{ background-color: #ccc; padding: 2px 5px; }
+.header .contentTop .text			{ color: black; }
+.header .contentTop .link:hover		{ color: #FFA100; }
+.header .contentBottom				{ background-color: #666; padding: 2px 5px; }
+.header .contentBottom .text		{ color: white; font-size: 10px; }
+.header .contentBottom .link:hover	{ color: #78ACEB; }
+
+.header .icons .icon				{ cursor: pointer; background-repeat: no-repeat; background-position: center center; padding:3px;}
+.header .icons .icon:hover			{ }
+
+.header .icons .iconHome			{ background-image: url("../img/icons/button_home.gif"); }
+.header .icons .iconHome:hover		{ background-image: url("../img/icons/button_home_hl.gif"); }
+
+.header .icons .iconSitemap			{ background-image: url("../img/icons/button_sitemap.gif"); }
+.header .icons .iconSitemap:hover	{ background-image: url("../img/icons/button_sitemap_hl.gif"); }
+
+.header .icons .iconSearch			{ background-image: url("../img/icons/button_search.gif"); }
+.header .icons .iconSearch:hover	{ background-image: url("../img/icons/button_search_hl.gif"); }
+
+.header .icons .iconMail			{ background-image: url("../img/icons/button_contact.gif"); }
+.header .icons .iconMail:hover		{ background-image: url("../img/icons/button_contact_hl.gif"); }
+
+.header .icons .iconFeedback		{ background-image: url("../img/icons/button_feedback.gif"); }
+.header .icons .iconFeedback:hover	{ background-image: url("../img/icons/button_feedback_hl.gif"); }
