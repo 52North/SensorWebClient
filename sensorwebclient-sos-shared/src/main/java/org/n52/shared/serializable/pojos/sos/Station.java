@@ -42,6 +42,15 @@ public class Station implements Serializable {
 
     private ArrayList<SosTimeseries> observingTimeseries;
 
+    private Type type = Type.DEFAULT;
+    
+    public enum Type {
+    	DEFAULT, SURFACE, GROUND
+    }
+    
+    private static final String STATION_NAME_SUFFIX_GROUND = "_sohle";
+    private static final String STATION_NAME_SUFFIX_SURFACE = "_oberflaeche";
+
     Station() {
         // for serialization
     }
@@ -53,6 +62,12 @@ public class Station implements Serializable {
 
     public String getId() {
         return id;
+    }
+    
+    public String getIdWithoutType(){
+    	return getId()
+    			.replaceAll(STATION_NAME_SUFFIX_SURFACE + "$", "")
+    			.replaceAll(STATION_NAME_SUFFIX_GROUND + "$", "");
     }
 
     public void setLocation(EastingNorthing location) {
@@ -132,4 +147,31 @@ public class Station implements Serializable {
         this.observingTimeseries = observingTimeseries;
     }
 
+	public Type getType() {
+		return this.type;
+	}
+	
+	public void setType( Type type ){
+		this.type = type;
+		markTimeseries();
+	}
+	
+	public Type getTypeById() {
+		if (this.getId().endsWith(STATION_NAME_SUFFIX_GROUND)) {
+			return Type.GROUND;
+		} else if (this.getId().endsWith(STATION_NAME_SUFFIX_SURFACE)) {
+			return Type.SURFACE;
+		} else {
+			return Type.DEFAULT;
+		}
+	}
+	
+	/**
+	 * Marks all SosTimeseries with the current type.
+	 */
+	private void markTimeseries(){
+		for(SosTimeseries st : this.observingTimeseries ){
+			st.setType(this.getType());
+		}
+	}
 }

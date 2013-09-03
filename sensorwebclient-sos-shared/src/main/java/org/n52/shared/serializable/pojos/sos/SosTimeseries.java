@@ -28,6 +28,10 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.n52.shared.serializable.pojos.sos.Station.Type;
 
 /**
  * An SOS timeseries representation identified by <code>serviceUrl</code>, <code>procedure</code>,
@@ -52,6 +56,8 @@ public class SosTimeseries implements Serializable {
 
     private String category;
 
+    private Type type = Type.DEFAULT;
+    
     public SosTimeseries() {
         // for serialization
     }
@@ -306,5 +312,22 @@ public class SosTimeseries implements Serializable {
     public boolean matchesOffering(String filter) {
         return (filter == null) ? true : filter.equals(offering);
     }
+    
+    public Type getType(){
+    	return this.type;
+    }
+    
+    public void setType( Type type ){
+    	this.type = type;
+    }
 
+	public String getParentName() {
+		HashMap<String, ArrayList<String>> phenomenonCategories = PhenomenonCategories.getLists();
+		for(String parentName : phenomenonCategories.keySet()) {
+			if( phenomenonCategories.get(parentName).contains(this.getCategory()) ){
+				return parentName;
+			}
+		}
+		return null;
+	}
 }

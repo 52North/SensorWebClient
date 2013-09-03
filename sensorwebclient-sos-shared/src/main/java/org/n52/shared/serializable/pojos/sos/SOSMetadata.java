@@ -31,6 +31,7 @@ import java.util.HashMap;
 
 import org.n52.shared.Constants;
 import org.n52.shared.serializable.pojos.BoundingBox;
+import org.n52.shared.serializable.pojos.sos.Station.Type;
 
 /**
  * A shared metadata representation for an SOS instance. An {@link SOSMetadata} is used from both (!) Client
@@ -283,8 +284,34 @@ public class SOSMetadata implements Serializable {
     }
 
     public void addStation(Station station) {
+    	updateStations(station);
         stations.put(station.getId(), station);
     }
+    
+	/**
+	 * Scan all stations for double stations
+	 * 
+	 * Some Stations are split into 2 (ground and surface) stations.
+	 * They are separated by a suffix (Station.STATION_NAME_SUFFIX_GROUND) in the id.
+	 * All other stations are implicitly surface stations, but only with ground station
+	 * associated the suffix Surface should be shown.
+	 * Therefore here these stations are scanned and a flag is set.
+	 */
+	private void updateStations(Station newStation) {
+		for (Station station : getStations()) {
+			if (station.getIdWithoutType().equals(newStation.getIdWithoutType())) {
+				if (station.getTypeById() == Type.GROUND) {
+					station.setType(Type.GROUND);
+					newStation.setType(Type.SURFACE);
+					break;
+				} else if (newStation.getTypeById() == Type.GROUND) {
+					newStation.setType(Type.GROUND);
+					station.setType(Type.SURFACE);
+					break;
+				}
+			}
+		}
+	}
 
     public Collection<Station> getStations() {
         return new ArrayList<Station>(this.stations.values());
