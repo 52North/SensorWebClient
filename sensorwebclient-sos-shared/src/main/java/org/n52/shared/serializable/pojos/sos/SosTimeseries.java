@@ -28,6 +28,10 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.n52.shared.serializable.pojos.sos.Station.Type;
 
 /**
  * An SOS timeseries representation identified by <code>serviceUrl</code>, <code>procedure</code>,
@@ -52,6 +56,13 @@ public class SosTimeseries implements Serializable {
 
     private String category;
 
+    private Type type = Type.DEFAULT;
+    
+    private static final String PHENOMENON_SUFFIX_GROUND = " - Sohle";
+    private static final String PHENOMENON_SUFFIX_SURFACE = " - Oberfläche";
+    
+    public static final String PARENT_NAME_DEFAULT = "DEFAULT";
+    
     public SosTimeseries() {
         // for serialization
     }
@@ -151,6 +162,10 @@ public class SosTimeseries implements Serializable {
      */
     public String getCategory() {
         return category == null ? phenomenon : category;
+    }
+
+    public String getCategoryDecoded() {
+        return Station.decodeSpecialCharacters(getCategory());
     }
 
     /**
@@ -306,5 +321,38 @@ public class SosTimeseries implements Serializable {
     public boolean matchesOffering(String filter) {
         return (filter == null) ? true : filter.equals(offering);
     }
+    
+    public Type getType(){
+    	if(this.type==null){
+    		this.type = Type.DEFAULT;
+    	}
+    	return this.type;
+    }
+    
+    public void setType( Type type ){
+    	this.type = type;
+    }
 
+	public String getParentName() {
+		HashMap<String, ArrayList<String>> phenomenonCategories = PhenomenonCategories.getLists();
+		for(String parentName : phenomenonCategories.keySet()) {
+			if( phenomenonCategories.get(parentName).contains(this.getCategory()) ){
+				String suffix;
+				switch(getType()){
+				case GROUND:
+					suffix = PHENOMENON_SUFFIX_GROUND;
+					break;
+				case SURFACE:
+					suffix = PHENOMENON_SUFFIX_SURFACE;
+					break;
+				case DEFAULT:
+				default:
+					suffix = "";
+					break;
+				}
+				return parentName + suffix;
+			}
+		}
+		return PARENT_NAME_DEFAULT;
+	}
 }

@@ -71,7 +71,7 @@ class SelectionMenuModel {
                 }
                 DynamicForm form = new DynamicForm();
                 expansionComponents.put(serviceURL, form);
-                form.setItems(parent.createFilterCategorySelectionGroup(serviceURL));
+                form.addChild(parent.createFilterCategorySelectionGroup(serviceURL));
                 form.setWidth100();
                 return form;
             }

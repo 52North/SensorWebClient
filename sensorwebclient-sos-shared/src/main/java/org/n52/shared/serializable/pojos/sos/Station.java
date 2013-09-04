@@ -42,6 +42,15 @@ public class Station implements Serializable {
 
     private ArrayList<SosTimeseries> observingTimeseries;
 
+    private Type type = Type.DEFAULT;
+    
+    public enum Type {
+    	DEFAULT, SURFACE, GROUND
+    }
+    
+    private static final String STATION_NAME_SUFFIX_GROUND = "_sohle";
+    private static final String STATION_NAME_SUFFIX_SURFACE = "_oberflaeche";
+
     Station() {
         // for serialization
     }
@@ -53,6 +62,12 @@ public class Station implements Serializable {
 
     public String getId() {
         return id;
+    }
+    
+    public String getIdWithoutType(){
+    	return getId()
+    			.replaceAll(STATION_NAME_SUFFIX_SURFACE + "$", "")
+    			.replaceAll(STATION_NAME_SUFFIX_GROUND + "$", "");
     }
 
     public void setLocation(EastingNorthing location) {
@@ -99,9 +114,19 @@ public class Station implements Serializable {
     }
 
     public boolean hasStationCategory(String filterCategory) {
+    	String[] filterSplitted = filterCategory.split("\\|",2);
+    	String category = filterSplitted[0];
+		try{
+	    	Type type = Type.valueOf(filterSplitted[1]);
+			if( getType() != type){
+				return false;
+			}
+		}catch(Exception e){
+			// no type given. checking without. no problem.
+		}
         for (SosTimeseries timeseries : observingTimeseries) {
-            if (timeseries.getCategory().equals(filterCategory)) {
-                return true;
+            if (timeseries.getCategory().equals(category)) {
+            	return true;
             }
         }
         return false;
@@ -132,4 +157,51 @@ public class Station implements Serializable {
         this.observingTimeseries = observingTimeseries;
     }
 
+	public Type getType() {
+		return this.type;
+	}
+	
+	public void setType( Type type ){
+		this.type = type;
+		markTimeseries();
+	}
+	
+	/**
+	 * Returns the type based on the id of itself.
+	 * Checks for suffixes in the id.
+	 * @return
+	 */
+	public Type getTypeById() {
+		if (this.getId().endsWith(STATION_NAME_SUFFIX_GROUND)) {
+			return Type.GROUND;
+		} else if (this.getId().endsWith(STATION_NAME_SUFFIX_SURFACE)) {
+			return Type.SURFACE;
+		} else {
+			return Type.DEFAULT;
+		}
+	}
+	
+	/**
+	 * Marks all SosTimeseries with the current type.
+	 */
+	private void markTimeseries(){
+		for(SosTimeseries st : this.observingTimeseries ){
+			st.setType(this.getType());
+		}
+	}
+
+	public static String decodeSpecialCharacters( String str){
+        String retStr = str;
+        retStr = retStr.replaceAll("_", " ");
+        retStr = retStr.replaceAll("kuerzest", "kürzest");
+        retStr = retStr.replaceAll("laengst", "längst");
+        retStr = retStr.replaceAll("Leitfaehigkeit", "Leitfähigkeit");
+        retStr = retStr.replaceAll("Saettigung", "Sättigung");
+        retStr = retStr.replaceAll("Stroemung", "Strömung");
+        retStr = retStr.replaceAll("hoechst", "höchst");
+        retStr = retStr.replaceAll("Trueb", "Trüb");
+//        retStr = retStr.replaceAll("", "");
+
+        return retStr;
+    }
 }
