@@ -102,6 +102,10 @@ public class PhenomenonCategories implements Serializable {
 		categories.put("Stroemung", list);
 
 		list = new  ArrayList<String>();
+		list.add("Temperatur_(Tagesmaxima)");
+		list.add("Temperatur_(Tagesmittelwert)");
+		list.add("Temperatur_(Tagesminima)");
+		list.add("Temperatur");
 		list.add("Wassertemperatur_(Tagesmaxima)");
 		list.add("Wassertemperatur_(Tagesmittelwert)");
 		list.add("Wassertemperatur_(Tagesminima)");

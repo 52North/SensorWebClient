@@ -55,6 +55,7 @@ import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.AnimationEffect;
 import com.smartgwt.client.types.ContentsType;
+import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.widgets.Canvas;
@@ -73,7 +74,6 @@ import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
 import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.HLayout;
@@ -418,7 +418,6 @@ public class StationSelector extends Window {
 		hideInfoWindow();
 
 		HashMap<String, HashMap<String, SosTimeseries>> categoryTree = new HashMap<String, HashMap<String, SosTimeseries>>();
-		
 		for (Station station : currentMetadata.getStations()) {
 			ArrayList<SosTimeseries> categories = station.getObservedTimeseries();
 			for (SosTimeseries category : categories) {
@@ -439,7 +438,7 @@ public class StationSelector extends Window {
 		for(String parentName : categoryTree.keySet()){
 			TreeNode parent = new TreeNode();
 			parent.setName(parentName);
-			parent.setTitle(decodeSpecialCharacters(parentName));
+			parent.setTitle(Station.decodeSpecialCharacters(parentName));
 			
 			HashMap<String, SosTimeseries> children = categoryTree.get(parentName);
 			Vector<TreeNode> childNodes = new Vector<TreeNode>();
@@ -447,16 +446,19 @@ public class StationSelector extends Window {
 			for( SosTimeseries category : children.values()){
 				TreeNode newTreeNode = new TreeNode();
 				newTreeNode.setName(category.getCategory());
-				newTreeNode.setTitle(decodeSpecialCharacters(category.getCategory()));
-				if( "DEFAULT".equals(parentName)){
+				newTreeNode.setTitle(category.getCategoryDecoded());
+				newTreeNode.setAttribute("type", category.getType().toString());
+				if( SosTimeseries.PARENT_NAME_DEFAULT.equals(parentName)){
 					parentNodes.add(newTreeNode);
 				} else {
 					childNodes.add(newTreeNode);
 				}
 			}
 			
-			parent.setChildren(childNodes.toArray(new TreeNode[childNodes.size()]));
-			parentNodes.add(parent);
+			if( !SosTimeseries.PARENT_NAME_DEFAULT.equals(parentName)){
+				parent.setChildren(childNodes.toArray(new TreeNode[childNodes.size()]));
+				parentNodes.add(parent);
+			}
 		}
 		
 		
@@ -466,8 +468,9 @@ public class StationSelector extends Window {
 		tree.setData(parentNodes.toArray(new TreeNode[parentNodes.size()]));
 		
 		TreeGrid treeGrid = getNewTreeGrid();
-		treeGrid.sort();
 		treeGrid.setData(tree);
+		treeGrid.sort();
+		treeGrid.setHeight(230);
 
 		String serviceUrl = currentMetadata.getId();
 		DynamicForm selector = stationFilterGroups.get(serviceUrl);
@@ -548,7 +551,7 @@ public class StationSelector extends Window {
 						hideInfoWindow();
 						Record castedValue = (Record) value;
 						if( !castedValue.getAttributeAsBoolean("isFolder")){
-							controller.setStationFilter( castedValue.getAttribute("name"));
+							controller.setStationFilter( castedValue.getAttribute("name") + "|" + castedValue.getAttribute("type"));
 							controller.updateContentUponStationFilter();
 						}
 					}
@@ -565,20 +568,4 @@ public class StationSelector extends Window {
 	private static void d(String str){
 		Toaster.getToasterInstance().addMessage(str);
 	}
-	
-    private String decodeSpecialCharacters( String str){
-        String retStr = str;
-        retStr = retStr.replaceAll("_", " ");
-        retStr = retStr.replaceAll("kuerzest", "kürzest");
-        retStr = retStr.replaceAll("laengst", "längst");
-        retStr = retStr.replaceAll("Leitfaehigkeit", "Leitfähigkeit");
-        retStr = retStr.replaceAll("Saettigung", "Sättigung");
-        retStr = retStr.replaceAll("Stroemung", "Strömung");
-        retStr = retStr.replaceAll("hoechst", "höchst");
-        retStr = retStr.replaceAll("Trueb", "Trüb");
-//        retStr = retStr.replaceAll("", "");
-
-        return retStr;
-    }
-
 }

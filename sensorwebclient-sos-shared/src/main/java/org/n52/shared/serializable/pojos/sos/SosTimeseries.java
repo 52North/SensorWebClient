@@ -61,6 +61,8 @@ public class SosTimeseries implements Serializable {
     private static final String PHENOMENON_SUFFIX_GROUND = " - Sohle";
     private static final String PHENOMENON_SUFFIX_SURFACE = " - Oberfläche";
     
+    public static final String PARENT_NAME_DEFAULT = "DEFAULT";
+    
     public SosTimeseries() {
         // for serialization
     }
@@ -160,6 +162,10 @@ public class SosTimeseries implements Serializable {
      */
     public String getCategory() {
         return category == null ? phenomenon : category;
+    }
+
+    public String getCategoryDecoded() {
+        return Station.decodeSpecialCharacters(getCategory());
     }
 
     /**
@@ -347,6 +353,6 @@ public class SosTimeseries implements Serializable {
 				return parentName + suffix;
 			}
 		}
-		return "DEFAULT";
+		return PARENT_NAME_DEFAULT;
 	}
 }
