@@ -88,6 +88,9 @@ public class UpdateScaleEvent extends FilteredDispatchGwtEvent<UpdateScaleEventH
     }
 
     public Scale getScale(){
+    	if(scale == null){
+    		scale = new Scale();
+    	}
     	return scale;
     }
     

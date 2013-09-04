@@ -41,7 +41,9 @@ public class Scale implements Serializable {
 	}
 	
 	public Type getType(){
-		return this.type;
+		return this.type != null
+			? this.type
+			: Type.AUTO;
 	}
 	
 	public void setManualScaleMin(double min){

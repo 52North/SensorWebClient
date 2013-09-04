@@ -214,6 +214,9 @@ public class TimeseriesProperties implements Serializable {
 	}
 	
 	public Scale getScale(){
+		if(this.scale == null){
+			this.scale = new Scale();
+		}
 		return this.scale;
 	}
 	
