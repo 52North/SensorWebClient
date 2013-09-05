@@ -24,12 +24,17 @@
 package org.n52.client.sos.ui;
 
 import org.n52.client.sos.ctrl.SosDataManager;
+import org.n52.io.crs.BoundingBox;
 import org.n52.shared.serializable.pojos.sos.SOSMetadataBuilder;
 
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.PrecisionModel;
 
 final class SOSSelectionChangedHandler implements SelectionChangedHandler {
 
@@ -68,16 +73,25 @@ final class SOSSelectionChangedHandler implements SelectionChangedHandler {
                    .setAutoZoom(Boolean.parseBoolean(getValueFor(record, "autoZoom")))
                    .setRequestChunk(Integer.parseInt(getValueFor(record, "requestChunk")))
                    //.addDefaultZoom(Integer.parseInt(getValueFor(record, "defaultZoom")))
-                   .addLowerLeftEasting(Double.parseDouble(getValueFor(record, "llEasting")))
-                   .addLowerLeftNorthing(Double.parseDouble(getValueFor(record, "llNorthing")))
-                   .addUpperRightEasting(Double.parseDouble(getValueFor(record, "urEasting")))
-                   .addUpperRightNorthing(Double.parseDouble(getValueFor(record, "urNorthing")));
+                   .withExtent(createBoundingBox(record));
 		} catch (Exception e) {
 			GWT.log("Could not parse SERVICES configuration for: " + builder.getServiceURL(), e);
 		}
 	}
 	
-	private String getValueFor(Record record, String parameter) {
+	private BoundingBox createBoundingBox(Record record) {
+        Double llEasting = Double.parseDouble(getValueFor(record, "llEasting"));
+        Double llNorthing = Double.parseDouble(getValueFor(record, "llNorthing"));
+        Double urEasting = Double.parseDouble(getValueFor(record, "urEasting"));
+        Double urNorthing = Double.parseDouble(getValueFor(record, "urNorthing"));
+        
+        GeometryFactory factory = new GeometryFactory(new PrecisionModel(), 4326);
+        Point ll = factory.createPoint(new Coordinate(llEasting, llNorthing));
+        Point ur = factory.createPoint(new Coordinate(urEasting, urNorthing));
+        return new BoundingBox(ll, ur, "EPSG:4326");
+    }
+
+    private String getValueFor(Record record, String parameter) {
 	    String value = record.getAttribute(parameter);
         return value == null || value.isEmpty() ? null: value;
 	}

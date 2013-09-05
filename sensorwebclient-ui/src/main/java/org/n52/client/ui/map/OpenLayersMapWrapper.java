@@ -26,10 +26,8 @@ package org.n52.client.ui.map;
 
 import static org.n52.client.ctrl.PropertiesManager.getPropertiesManager;
 import static org.n52.shared.Constants.DISPLAY_PROJECTION;
-import static org.n52.shared.Constants.EPSG_4326;
 import static org.n52.shared.Constants.GOOGLE_PROJECTION;
 
-import org.gwtopenmaps.openlayers.client.Bounds;
 import org.gwtopenmaps.openlayers.client.LonLat;
 import org.gwtopenmaps.openlayers.client.Map;
 import org.gwtopenmaps.openlayers.client.MapOptions;
@@ -44,11 +42,7 @@ import org.gwtopenmaps.openlayers.client.layer.WMSOptions;
 import org.gwtopenmaps.openlayers.client.layer.WMSParams;
 import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ui.Toaster;
-import org.n52.io.crs.BoundingBox;
-import org.n52.io.crs.EastingNorthing;
 import org.n52.shared.Constants;
-
-import com.google.gwt.core.client.GWT;
 
 public abstract class OpenLayersMapWrapper {
     
@@ -161,40 +155,6 @@ public abstract class OpenLayersMapWrapper {
         layerOptions.setProjection(spatialReference);
         osm.addOptions(layerOptions);
         return osm;
-    }
-
-    public BoundingBox getCurrentExtent() {
-        Bounds bbox = map.getExtent();
-        LonLat ll = new LonLat(bbox.getLowerLeftX(), bbox.getLowerLeftY());
-        LonLat ur = new LonLat(bbox.getUpperRightX(), bbox.getUpperRightY());
-        
-        if (!GWT.isProdMode()) {
-            StringBuilder sb = new StringBuilder("Transforming: \n");
-            sb.append("ll: ").append(getAsString(ll)).append(", ");
-            sb.append("ur: ").append(getAsString(ur));
-            GWT.log(sb.append("...").toString());
-        }
-
-        ll.transform(getMapProjection(), EPSG_4326);
-        ur.transform(getMapProjection(), EPSG_4326);
-        
-        if (!GWT.isProdMode()) {
-            StringBuilder sb = new StringBuilder("... transformed to: \n");
-            sb.append("ll: ").append(getAsString(ll)).append(", ");
-            sb.append("ur: ").append(getAsString(ur));
-            GWT.log(sb.toString());
-        }
-        
-        EastingNorthing ll2 = new EastingNorthing(ll.lon(), ll.lat(), EPSG_4326);
-        EastingNorthing ur2 = new EastingNorthing(ur.lon(), ur.lat(), EPSG_4326);
-        return new BoundingBox(ll2, ur2);
-    }
-
-    private String getAsString(LonLat lonlat) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("(").append(lonlat.lon());
-        sb.append(",").append(lonlat.lat()).append(")");
-        return sb.toString();
     }
 
     public MapOptions getDefaultMapOptions() {

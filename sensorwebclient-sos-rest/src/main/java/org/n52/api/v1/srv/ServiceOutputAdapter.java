@@ -56,7 +56,12 @@ public class ServiceOutputAdapter implements ServiceParameterService {
     }
 
 	public ServiceOutput[] getParameters(String[] serviceIds) {
-        List<ServiceOutput> selectedServices = new ArrayList<ServiceOutput>();
+        return getParameters(serviceIds, QueryMap.createDefaults());
+    }
+	
+	@Override
+    public ServiceOutput[] getParameters(String[] serviceIds, QueryMap query) {
+	    List<ServiceOutput> selectedServices = new ArrayList<ServiceOutput>();
         for (String serviceId : serviceIds) {
             ServiceOutput serivce = getParameter(serviceId);
             if (serivce != null) {
@@ -65,16 +70,23 @@ public class ServiceOutputAdapter implements ServiceParameterService {
         }
         return selectedServices.toArray(new ServiceOutput[0]);
     }
-	
-	@Override
+
+    @Override
 	public ServiceOutput getParameter(String serviceId) {
-		for (SOSMetadata metadata : getSOSMetadatas()) {
-			if (metadata.getGlobalId().equals(serviceId)) {
-				ServiceConverter converter = new ServiceConverter(metadata);
-				return converter.convertExpanded(metadata);
-			}
-		}
-		return null;
+		return getParameter(serviceId, QueryMap.createDefaults());
 	}
+
+    @Override
+    public ServiceOutput getParameter(String serviceId, QueryMap query) {
+        for (SOSMetadata metadata : getSOSMetadatas()) {
+            if (metadata.getGlobalId().equals(serviceId)) {
+                ServiceConverter converter = new ServiceConverter(metadata);
+                return converter.convertExpanded(metadata);
+            }
+        }
+        return null;
+    }
+    
+    
 
 }

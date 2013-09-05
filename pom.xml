@@ -16,9 +16,6 @@
 	<inceptionYear>2012</inceptionYear>
 
 	<modules>
-
-		<module>timeseries-io</module>
-		<module>timeseries-web</module>
 		<module>sensorwebclient-api</module>
 		<module>sensorwebclient-ext</module>
 		<module>sensorwebclient-ses-rpc</module>
@@ -35,16 +32,15 @@
 
 	<dependencyManagement>
 		<dependencies>
-
 			<dependency>
 				<groupId>org.n52.sensorweb</groupId>
 				<artifactId>timeseries-io</artifactId>
-				<version>${project.version}</version>
+				<version>${timeseries.api.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.n52.sensorweb</groupId>
 				<artifactId>timeseries-web</artifactId>
-				<version>${project.version}</version>
+				<version>${timeseries.api.version}</version>
 			</dependency>
 
 			<dependency>
@@ -190,6 +186,11 @@
 				<groupId>joda-time</groupId>
 				<artifactId>joda-time</artifactId>
 				<version>2.1</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf</groupId>
+				<artifactId>jts4gwt</artifactId>
+				<version>1.10.2</version>
 			</dependency>
 			<dependency>
 				<groupId>com.vividsolutions</groupId>
@@ -476,7 +477,7 @@
 						<draftCompile>${gwt.compile.draft}</draftCompile>
 						<compileReport>${gwt.compile.report}</compileReport>
 						<optimizationLevel>${gwt.compile.optimization.level}</optimizationLevel>
-						<extraJvmArgs>-XX:MaxPermSize=512m -Xmx512m</extraJvmArgs>
+						<extraJvmArgs>-XX:MaxPermSize=724m -Xmx724m</extraJvmArgs>
 					</configuration>
 					<executions>
 						<execution>
@@ -679,23 +680,6 @@
 		</profile>
 
 		<profile>
-			<id>connector-grdc</id>
-			<modules>
-				<module>sensorwebclient-grdc</module>
-			</modules>
-			<dependencyManagement>
-				<dependencies>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-grdc</artifactId>
-						<version>${project.version}</version>
-						<scope>runtime</scope>
-					</dependency>
-				</dependencies>
-			</dependencyManagement>
-		</profile>
-
-		<profile>
 			<id>connector-hydro</id>
 			<modules>
 				<module>sensorwebclient-hydro</module>
@@ -826,6 +810,7 @@
 		<smartgwt.version>3.1</smartgwt.version>
 		<geotools.version>8.2</geotools.version>
 		<oxf.version>2.0.0-alpha.3</oxf.version>
+        <timeseries.api.version>1.0.0-SNAPSHOT</timeseries.api.version>
 		<hibernate.version>3.5.0-Final</hibernate.version>
 		<n52.xml.commons.version>1.1.5</n52.xml.commons.version>
 		<org.springframework.version>3.2.0.RELEASE</org.springframework.version>
@@ -869,6 +854,11 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
+     <repository>
+        <id>jts4gwt-repo</id>
+        <name>jts4gwt repository</name>
+        <url>http://jts4gwt.sf.net/maven/repository</url>
+    </repository>
 		<repository>
 			<id>smartgwt</id>
 			<url>http://www.smartclient.com/maven2</url>

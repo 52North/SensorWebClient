@@ -28,7 +28,7 @@ public class CategoryConverter extends OutputConverter<String, CategoryOutput> {
 		return convertedCategory;
 	}
 
-	private String generateId(String category) {
+	public String generateId(String category) {
 		IdGenerator idGenerator = new MD5HashIdGenerator("cat_");
 		return idGenerator.generate(new String[]{category, getMetadata().getServiceUrl()});
 	}

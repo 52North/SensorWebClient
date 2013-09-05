@@ -23,6 +23,7 @@
  */
 package org.n52.server.ses.eml;
 
+import static org.n52.oxf.xmlbeans.tools.XmlUtil.getXmlAnyNodeFrom;
 import static org.n52.oxf.xmlbeans.tools.XmlUtil.qualifySubstitutionGroup;
 import static org.n52.shared.util.MathSymbolUtil.EQUAL_TO_INT;
 import static org.n52.shared.util.MathSymbolUtil.GREATER_THAN_INT;
@@ -32,17 +33,16 @@ import static org.n52.shared.util.MathSymbolUtil.LESS_THAN_OR_EQUAL_TO_INT;
 import static org.n52.shared.util.MathSymbolUtil.NOT_EQUAL_TO_INT;
 import static org.n52.shared.util.MathSymbolUtil.getSymbolIndexForFilter;
 
-import java.io.ByteArrayInputStream;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.IOException;
 
 import net.opengis.eml.x001.ComplexPatternDocument.ComplexPattern;
 import net.opengis.eml.x001.EMLDocument;
 import net.opengis.eml.x001.EMLDocument.EML.ComplexPatterns;
 import net.opengis.eml.x001.EMLDocument.EML.SimplePatterns;
+import net.opengis.eml.x001.GuardType;
 import net.opengis.eml.x001.SimplePatternType;
 import net.opengis.fes.x20.BinaryComparisonOpType;
+import net.opengis.fes.x20.ComparisonOpsType;
 import net.opengis.fes.x20.FilterType;
 import net.opengis.fes.x20.LiteralDocument;
 import net.opengis.fes.x20.LiteralType;
@@ -56,6 +56,7 @@ import net.opengis.fes.x20.ValueReferenceDocument;
 import net.opengis.swe.x101.QuantityDocument;
 import net.opengis.swe.x101.QuantityDocument.Quantity;
 
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.client.view.gui.elements.layouts.SimpleRuleType;
 import org.n52.server.ses.SesConfig;
@@ -64,9 +65,7 @@ import org.n52.shared.serializable.pojos.Rule;
 import org.n52.shared.serializable.pojos.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * Overshoot and Undershoot Rule
@@ -74,6 +73,22 @@ import org.w3c.dom.NodeList;
 public class BasicRule_4_Builder extends BasicRuleBuilder {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(BasicRule_4_Builder.class);
+
+    @SuppressWarnings("unused") // static pattern
+    private final int INDEX_SIMPLE_PATTERN_INTIAL_COUNT = 0;
+
+    private final int INDEX_EXIT_CONDITION_PATTERN = 1;
+
+    private final int INDEX_ENTRY_CONDITION_PATTERN = 2;
+
+    private final int INDEX_COMPLEX_PATTERN_INTIAL_ENTRY = 0;
+
+    private final int INDEX_ENTRY_NOTIFICATION_PATTERN = 1;
+
+    private final int INDEX_EXIT_NOTIFICATION_PATTERN = 2;
+
+    private final int INDEX_COMPLEX_PATTERN_INTIAL_EXIT = 3;
+
 
     private final String overshoot = "_overshoot";
 
@@ -91,12 +106,13 @@ public class BasicRule_4_Builder extends BasicRuleBuilder {
 
     private final String undershootNotification = "_undershoot_notification_stream";
 
+    private final String INPUT_STREAM_NAME = "input/doubleValue";
+    
+    private final String INITIAL_STREAM_NAME = "initial_count_stream/doubleValue";
+    
     private final String enter = "_enter";
 
     private final String exit = "_exit";
-
-    // TAG NAMES
-    private final String fesFilter = "fes:Filter";
 
     // Pattern names
     private String overshootPatternId;
@@ -164,26 +180,37 @@ public class BasicRule_4_Builder extends BasicRuleBuilder {
             ComplexPatterns complexPatterns = emlTemplateDoc.getEML().getComplexPatterns();
 
             // set patternID of simplePatterns
-            SimplePatternType ruleUndershoot = simplePatterns.getSimplePatternArray(0);
+            RuleFilter entryFilter = createEntryFilter(rule);
+            SimplePatternType ruleUndershoot = simplePatterns.getSimplePatternArray(INDEX_ENTRY_CONDITION_PATTERN);
             processSimplePattern(ruleUndershoot, overshootPatternId, overshootEventName);
             processPropertyRestrictions(ruleUndershoot, rule.getTimeseriesMetadata());
-            processFilterGuard(ruleUndershoot, createEntryFilter(rule));
-            
-            SimplePatternType ruleOvershoot = simplePatterns.getSimplePatternArray(1);
+            processFilterGuard(ruleUndershoot.getGuard(), entryFilter, INPUT_STREAM_NAME);
+
+            RuleFilter exitFilter = createExitFilter(rule);
+            SimplePatternType ruleOvershoot = simplePatterns.getSimplePatternArray(INDEX_EXIT_CONDITION_PATTERN);
             processSimplePattern(ruleOvershoot, undershootPatternId, undershootEventName);
             processPropertyRestrictions(ruleOvershoot, rule.getTimeseriesMetadata());
-            processFilterGuard(ruleOvershoot, createExitFilter(rule));
+            processFilterGuard(ruleOvershoot.getGuard(), exitFilter, INPUT_STREAM_NAME);
             
             // set patternID of complexPatterns
-            ComplexPattern entryClause = complexPatterns.getComplexPatternArray(0);
+            ComplexPattern entryClause = complexPatterns.getComplexPatternArray(INDEX_ENTRY_NOTIFICATION_PATTERN);
             processComplexPattern(entryClause, entryNotificationPatternId, entryEventName, output_enter);
             entryClause.getFirstPattern().setPatternReference(undershootPatternId);
             entryClause.getSecondPattern().setPatternReference(overshootPatternId);
-            
-            ComplexPattern exitClause = complexPatterns.getComplexPatternArray(1);
+
+            ComplexPattern exitClause = complexPatterns.getComplexPatternArray(INDEX_EXIT_NOTIFICATION_PATTERN);
             processComplexPattern(exitClause, exitNotificationPatternId, exitEventName, output_exit);
             exitClause.getFirstPattern().setPatternReference(overshootPatternId);
             exitClause.getSecondPattern().setPatternReference(undershootPatternId);
+            
+            /*
+             * A rule shall also match directly for new created subscriptions, 
+             * i.e. when the first and initial value matches the rule applies.
+             */
+            ComplexPattern initialEntryClause = complexPatterns.getComplexPatternArray(INDEX_COMPLEX_PATTERN_INTIAL_ENTRY);
+            ComplexPattern initialExitClause = complexPatterns.getComplexPatternArray(INDEX_COMPLEX_PATTERN_INTIAL_EXIT);
+            processFilterGuard(initialExitClause.getGuard(), exitFilter, INITIAL_STREAM_NAME);
+            processFilterGuard(initialEntryClause.getGuard(), entryFilter, INITIAL_STREAM_NAME);
             
             eml = emlTemplateDoc.xmlText();
             finalEml = eml;
@@ -209,54 +236,54 @@ public class BasicRule_4_Builder extends BasicRuleBuilder {
         return new RuleFilter(rule.getExitOperatorIndex(), rule.getExitValue(), rule.getExitUnit());
     }
 
-    private void processFilterGuard(SimplePatternType pattern, RuleFilter ruleFilter) {
-        FilterType filter = pattern.getGuard().getFilter();
-        processComparisonFilter(filter, ruleFilter);
+    private void processFilterGuard(GuardType guardType, RuleFilter ruleFilter, String stream) {
+        FilterType filter = guardType.getFilter();
+        processComparisonFilter(filter, ruleFilter, stream);
     }
 
-    void processComparisonFilter(FilterType filter, RuleFilter ruleFilter) {
+    void processComparisonFilter(FilterType filter, RuleFilter ruleFilter, String stream) {
         if (ruleFilter.getOperator() == LESS_THAN_INT) {
             PropertyIsLessThanDocument lessThanDoc = PropertyIsLessThanDocument.Factory.newInstance();
             BinaryComparisonOpType binaryOperator = lessThanDoc.addNewPropertyIsLessThan();
-            processDoubleValueExpression(binaryOperator, ruleFilter);
+            processStreamReferenceExpression(binaryOperator, ruleFilter, stream);
             filter.setComparisonOps(binaryOperator);
             qualifySubstitutionGroup(filter.getComparisonOps(), lessThanDoc.schemaType().getDocumentElementName());
         } else if (ruleFilter.getOperator() == GREATER_THAN_INT) {
             PropertyIsGreaterThanDocument greaterThanDoc = PropertyIsGreaterThanDocument.Factory.newInstance();
             BinaryComparisonOpType binaryOperator = greaterThanDoc.addNewPropertyIsGreaterThan();
-            processDoubleValueExpression(binaryOperator, ruleFilter);
+            processStreamReferenceExpression(binaryOperator, ruleFilter, stream);
             filter.setComparisonOps(binaryOperator); 
             qualifySubstitutionGroup(filter.getComparisonOps(), greaterThanDoc.schemaType().getDocumentElementName());
         } else if (ruleFilter.getOperator() == EQUAL_TO_INT) {
             PropertyIsEqualToDocument equalToDoc = PropertyIsEqualToDocument.Factory.newInstance();
             BinaryComparisonOpType binaryOperator = equalToDoc.addNewPropertyIsEqualTo();
-            processDoubleValueExpression(binaryOperator, ruleFilter);
+            processStreamReferenceExpression(binaryOperator, ruleFilter, stream);
             filter.setComparisonOps(binaryOperator);
             qualifySubstitutionGroup(filter.getComparisonOps(), equalToDoc.schemaType().getDocumentElementName());
         } else if (ruleFilter.getOperator() == GREATER_THAN_OR_EQUAL_TO_INT) {
             PropertyIsGreaterThanOrEqualToDocument greaterOrEqualToDoc = PropertyIsGreaterThanOrEqualToDocument.Factory.newInstance();
             BinaryComparisonOpType binaryOperator = greaterOrEqualToDoc.addNewPropertyIsGreaterThanOrEqualTo();
-            processDoubleValueExpression(binaryOperator, ruleFilter);
+            processStreamReferenceExpression(binaryOperator, ruleFilter, stream);
             filter.setComparisonOps(binaryOperator);
             qualifySubstitutionGroup(filter.getComparisonOps(), greaterOrEqualToDoc.schemaType().getDocumentElementName());
         } else if (ruleFilter.getOperator() == LESS_THAN_OR_EQUAL_TO_INT) {
             PropertyIsLessThanOrEqualToDocument lessThanOrEqualToDoc = PropertyIsLessThanOrEqualToDocument.Factory.newInstance();
             BinaryComparisonOpType binaryOperator = lessThanOrEqualToDoc.addNewPropertyIsLessThanOrEqualTo();
-            processDoubleValueExpression(binaryOperator, ruleFilter);
+            processStreamReferenceExpression(binaryOperator, ruleFilter, stream);
             filter.setComparisonOps(binaryOperator);
             qualifySubstitutionGroup(filter.getComparisonOps(), lessThanOrEqualToDoc.schemaType().getDocumentElementName());
         } else if (ruleFilter.getOperator() == NOT_EQUAL_TO_INT) {
             PropertyIsNotEqualToDocument notEqualToDoc = PropertyIsNotEqualToDocument.Factory.newInstance();
             BinaryComparisonOpType binaryOperator = notEqualToDoc.addNewPropertyIsNotEqualTo();
-            processDoubleValueExpression(binaryOperator, ruleFilter);
+            processStreamReferenceExpression(binaryOperator, ruleFilter, stream);
             filter.setComparisonOps(binaryOperator);
             qualifySubstitutionGroup(filter.getComparisonOps(), notEqualToDoc.schemaType().getDocumentElementName());
         } 
     }
 
-    private void processDoubleValueExpression(BinaryComparisonOpType binaryComparison, RuleFilter ruleFilter) {
+    private void processStreamReferenceExpression(BinaryComparisonOpType binaryComparison, RuleFilter ruleFilter, String stream) {
         ValueReferenceDocument valueReference = ValueReferenceDocument.Factory.newInstance();
-        valueReference.setValueReference("input/doubleValue");
+        valueReference.setValueReference(stream);
         binaryComparison.set(valueReference);
 
         LiteralType literalType = LiteralDocument.Factory.newInstance().addNewLiteral();
@@ -293,47 +320,81 @@ public class BasicRule_4_Builder extends BasicRuleBuilder {
         rule.setTimeseriesMetadata(basicRule.getTimeseriesMetadata());
 
         try {
-            String eml = basicRule.getEml();
-            DocumentBuilderFactory docFac = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docBuilder = docFac.newDocumentBuilder();
-            Document doc = docBuilder.parse(new ByteArrayInputStream(eml.getBytes()));
-
-            NodeList filterList = doc.getElementsByTagName(fesFilter);
-            Node entryOperatorNode = filterList.item(0);
-            String entryFilter = entryOperatorNode.getChildNodes().item(1).getNodeName();
-            rule.setEntryOperatorIndex(getSymbolIndexForFilter(entryFilter));
-
-            Node exitOperatorNode = filterList.item(1);
-            String exitFilter = exitOperatorNode.getChildNodes().item(1).getNodeName();
-            rule.setExitOperatorIndex(getSymbolIndexForFilter(exitFilter));
-            
-            rule.setEnterEqualsExitCondition(rule.determineEqualEntryExitCondition());
-            
-            NodeList literalList = doc.getElementsByTagName(Constants.fesLiteral);
-            Node literalNode = literalList.item(0);
-            
-            // rValue: Value
-            rule.setEntryValue(literalNode.getFirstChild().getNodeValue()); 
-
-            // rUnit: Value unit. Default value is meter
-            rule.setEntryUnit("m");
-
-            literalNode = literalList.item(1);
-            
-            // cValue: exit condition value
-            rule.setExitValue(literalNode.getFirstChild().getNodeValue());
-            
-            // cUnit: exit condition value unit. Default value is meter
-            rule.setExitUnit("m");
-            
-            // set rule Type
+            EMLDocument emlDocument = EMLDocument.Factory.parse(eml);
+            SimplePatterns simplePatterns = emlDocument.getEML().getSimplePatterns();
+            setEntryConditions(rule, simplePatterns.getSimplePatternArray(INDEX_ENTRY_CONDITION_PATTERN));
+            setExitConditions(rule, simplePatterns.getSimplePatternArray(INDEX_EXIT_CONDITION_PATTERN));
             rule.setRuleType(SimpleRuleType.OVER_UNDERSHOOT);
 
         } catch (Exception e) {
             LOGGER.error("Error parsing EML rule", e);
         }
-
         return rule;
+    }
+
+    private void setEntryConditions(Rule rule, SimplePatternType entryCondition) {
+        ComparisonOpsType comparisonOps = getComparisonType(entryCondition);
+        String filterType = comparisonOps.getDomNode().getLocalName();
+        int binaryOperatorIndex = getSymbolIndexForFilter(filterType);
+        Quantity entryFilterValues = parseFilterQuantity(comparisonOps, binaryOperatorIndex);
+        
+        rule.setEntryValue("" + entryFilterValues.getValue());
+        rule.setEntryUnit(entryFilterValues.getUom().getCode());
+        rule.setEntryOperatorIndex(binaryOperatorIndex);
+    }
+
+    private void setExitConditions(Rule rule, SimplePatternType exitCondition) {
+        ComparisonOpsType comparisonOps = getComparisonType(exitCondition);
+        String filterType = comparisonOps.getDomNode().getLocalName();
+        int binaryOperatorIndex = getSymbolIndexForFilter(filterType);
+        Quantity exitFilterValues = parseFilterQuantity(comparisonOps, binaryOperatorIndex);
+        
+        rule.setExitValue("" + exitFilterValues.getValue());
+        rule.setExitUnit(exitFilterValues.getUom().getCode());
+        rule.setExitOperatorIndex(binaryOperatorIndex);
+    }
+
+    private ComparisonOpsType getComparisonType(SimplePatternType entryCondition) {
+        FilterType entryFilter = entryCondition.getGuard().getFilter();
+        return entryFilter.getComparisonOps();
+    }
+
+    private Quantity parseFilterQuantity(ComparisonOpsType comparisonOps, int binaryOperatorIndex) {
+        try {
+            if (binaryOperatorIndex == LESS_THAN_INT) {
+                PropertyIsLessThanDocument lessThan = PropertyIsLessThanDocument.Factory.parse(comparisonOps.newInputStream());
+                return getQuantityFrom(lessThan.getPropertyIsLessThan());
+            } else if (binaryOperatorIndex == GREATER_THAN_INT) {
+                PropertyIsGreaterThanDocument binaryOperator = PropertyIsGreaterThanDocument.Factory.parse(comparisonOps.getDomNode());
+                return getQuantityFrom(binaryOperator.getPropertyIsGreaterThan());
+            } else if (binaryOperatorIndex == EQUAL_TO_INT) {
+                PropertyIsEqualToDocument binaryOperator = PropertyIsEqualToDocument.Factory.parse(comparisonOps.getDomNode());
+                return getQuantityFrom(binaryOperator.getPropertyIsEqualTo());
+            } else if (binaryOperatorIndex == GREATER_THAN_OR_EQUAL_TO_INT) {
+                PropertyIsGreaterThanOrEqualToDocument binaryOperator = PropertyIsGreaterThanOrEqualToDocument.Factory.parse(comparisonOps.getDomNode());
+                return getQuantityFrom(binaryOperator.getPropertyIsGreaterThanOrEqualTo());
+            } else if (binaryOperatorIndex == LESS_THAN_OR_EQUAL_TO_INT) {
+                PropertyIsLessThanOrEqualToDocument binaryOperator = PropertyIsLessThanOrEqualToDocument.Factory.parse(comparisonOps.getDomNode());
+                return getQuantityFrom(binaryOperator.getPropertyIsLessThanOrEqualTo());
+            } else if (binaryOperatorIndex == NOT_EQUAL_TO_INT) {
+                PropertyIsNotEqualToDocument binaryOperator = PropertyIsNotEqualToDocument.Factory.parse(comparisonOps.getDomNode());
+                return getQuantityFrom(binaryOperator.getPropertyIsNotEqualTo());
+            } else {
+                throw new IllegalStateException("Unknown ComparisonType in EML: " + comparisonOps.schemaType());
+            }
+        }
+        catch (IOException e) {
+            throw new IllegalStateException("Could not get Quantity from EML filter!", e);
+        }
+        catch (XmlException e) {
+            throw new IllegalStateException("Could not get Quantity from EML filter!", e);
+        }
+    }
+
+    private Quantity getQuantityFrom(BinaryComparisonOpType comparisonType) throws XmlException {
+        Node literalNode = getXmlAnyNodeFrom(comparisonType, "Literal").getDomNode();
+        LiteralDocument literal = LiteralDocument.Factory.parse(literalNode);
+        return ((QuantityDocument) getXmlAnyNodeFrom(literal.getLiteral(), "Quantity")).getQuantity();
     }
 
     private class RuleFilter {

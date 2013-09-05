@@ -60,6 +60,7 @@ import net.opengis.swe.x101.AnyScalarPropertyType;
 import net.opengis.swe.x101.DataComponentPropertyType;
 import net.opengis.swe.x101.DataRecordType;
 import net.opengis.swe.x101.PositionType;
+import net.opengis.swe.x101.QuantityDocument.Quantity;
 import net.opengis.swe.x101.SimpleDataRecordType;
 import net.opengis.swe.x101.TextDocument.Text;
 import net.opengis.swe.x101.VectorPropertyType;
@@ -72,6 +73,7 @@ import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.n52.io.crs.CRSUtils;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.util.IOHelper;
 import org.n52.oxf.util.JavaHelper;
@@ -79,15 +81,13 @@ import org.n52.oxf.xml.NcNameResolver;
 import org.n52.oxf.xmlbeans.parser.XMLBeansParser;
 import org.n52.oxf.xmlbeans.parser.XMLHandlingException;
 import org.n52.server.mgmt.ConfigurationContext;
-import org.n52.server.parser.utils.ParsedPoint;
-import org.n52.io.crs.CRSUtils;
 import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.operation.TransformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 public class DescribeSensorParser {
@@ -95,29 +95,36 @@ public class DescribeSensorParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(DescribeSensorParser.class);
 
     private SensorMLDocument smlDoc = null;
-    
+
     private CRSUtils referenceHelper = CRSUtils.createEpsgStrictAxisOrder();
 
     /**
-     * Creates a SensorML Parser considering individual service settings contained by the 
-     * {@link SOSMetadata}, e.g. if coordinate axes ordering shall be considered strict or 
-     * classic XY ordering shall be used.
+     * Creates a SensorML Parser considering individual service settings contained by the {@link SOSMetadata},
+     * e.g. if coordinate axes ordering shall be considered strict or classic XY ordering shall be used.
      * 
-     * @param inputStream the SensorML data stream to parse.
-     * @param metadata the individual settings of the SOS.
-     * @throws XmlException if parsing data stream failed.
-     * @throws IOException if data stream could not be read.
-     * @throws XMLHandlingException if SensorML is not valid.
+     * @param inputStream
+     *        the SensorML data stream to parse.
+     * @param metadata
+     *        the individual settings of the SOS.
+     * @throws XmlException
+     *         if parsing data stream failed.
+     * @throws IOException
+     *         if data stream could not be read.
+     * @throws XMLHandlingException
+     *         if SensorML is not valid.
+     * @throws FactoryException
+     *         if creating default spatial reference failed.
      */
     public DescribeSensorParser(InputStream inputStream, SOSMetadata metadata) throws XmlException,
             IOException,
-            XMLHandlingException {
+            XMLHandlingException,
+            FactoryException {
         setDataStreamToParse(inputStream);
         if (metadata.isForceXYAxisOrder()) {
             referenceHelper = CRSUtils.createEpsgForcedXYAxisOrder();
         }
     }
-    
+
     public String buildUpSensorMetadataStationName() {
         String stationName = "";
         AbstractProcessType abstractProcessType = smlDoc.getSensorML().getMemberArray(0).getProcess();
@@ -151,83 +158,64 @@ public class DescribeSensorParser {
         }
     }
 
-    public ParsedPoint buildUpSensorMetadataPosition() {
-
-        ParsedPoint parsedPoint = new ParsedPoint();
-
-        Double lat = null;
-        Double lng = null;
-        Double h = null;
-        String srs = "";
-
+    public Point buildUpSensorMetadataPosition() throws FactoryException, TransformException {
         SensorML sensorML = smlDoc.getSensorML();
-        for (Member member : sensorML.getMemberArray()) {
-
-        	AbstractComponentType sysDoc = (AbstractComponentType) member.getProcess();
+        Member[] members = sensorML.getMemberArray();
+        if (members != null && members.length > 0) {
+            AbstractComponentType sysDoc = (AbstractComponentType) members[0].getProcess();
             PositionType position = sysDoc.getPosition().getPosition();
-            String srsUrn = position.getReferenceFrame();
-            VectorPropertyType location = position.getLocation();
-            net.opengis.swe.x101.VectorType.Coordinate[] coords = location.getVector().getCoordinateArray();
+            return createPoint(position);
+        }
+        return null;
+    }
 
-            for (int j = 0; j < coords.length; j++) {
-                String name = coords[j].getName();
-                double value = coords[j].getQuantity().getValue();
-                if (name.equalsIgnoreCase("latitude") || name.equalsIgnoreCase("lat")) {
-                    lat = new Double(value);
-                }
-                else if (name.equalsIgnoreCase("longitude") || name.equalsIgnoreCase("lng")) {
-                    lng = new Double(value);
-                }
-                else if (name.equalsIgnoreCase("northing") || name.equalsIgnoreCase("y")) {
-                    lat = new Double(value);
-                }
-                else if (name.equalsIgnoreCase("easting") || name.equalsIgnoreCase("x")) {
-                    lng = new Double(value);
-                }
-                else if (name.equalsIgnoreCase("altitude") || name.equalsIgnoreCase("z")) {
-                    h = new Double(value);
+    protected Point createPoint(PositionType position) throws FactoryException, TransformException {
+        double x = 0d;
+        double y = 0d; 
+        double z = Double.NaN;
+
+        String outerReferenceFrame = position.getReferenceFrame();
+        String srs = referenceHelper.extractSRSCode(outerReferenceFrame);
+        
+        
+        VectorPropertyType location = position.getLocation();
+        net.opengis.swe.x101.VectorType.Coordinate[] coords = location.getVector().getCoordinateArray();
+        for (int j = 0; j < coords.length; j++) {
+            String name = coords[j].getName();
+            Quantity quantity = coords[j].getQuantity();
+            if (name.equalsIgnoreCase("latitude") || name.equalsIgnoreCase("lat") || name.equalsIgnoreCase("northing")) {
+                if (referenceHelper.isLatLonAxesOrder(srs)) {
+                    x = quantity.getValue();
+                } else {
+                    y = quantity.getValue();
                 }
             }
-
-            srs = referenceHelper.extractSRSCode(srsUrn);
-            String wgs84 = "EPSG:4326";
-            if ( !srs.equals(wgs84)) {
-                try {
-                    GeometryFactory geometryFactory = referenceHelper.createGeometryFactory(srs);
-                    Coordinate coordinate = referenceHelper.createCoordinate(srs, lng, lat, h);
-                    Point point = geometryFactory.createPoint(coordinate);
-                    point = referenceHelper.transform(point, srs, wgs84);
-                    srs = wgs84;
-                    lat = point.getX();
-                    lng = point.getY();
-                    LOGGER.trace(lng + "," + lat + " (" + srs + ")");
-                }
-                catch (Exception e) {
-                    LOGGER.debug("Could not transform! Keeping old SRS: " + srs, e);
+            else if (name.equalsIgnoreCase("longitude") || name.equalsIgnoreCase("lng") || name.equalsIgnoreCase("lon") || name.equalsIgnoreCase("lgt") ||name.equalsIgnoreCase("easting")) {
+                if (referenceHelper.isLatLonAxesOrder(srs)) {
+                    y = quantity.getValue();
+                } else {
+                    x = quantity.getValue();
                 }
             }
+            else if (name.equalsIgnoreCase("altitude") || name.equalsIgnoreCase("alt") || name.equalsIgnoreCase("z") || name.equalsIgnoreCase("height")) {
+                z = quantity.getValue();
+            }
         }
-
-        if (lat != null && lng != null) {
-            parsedPoint.setLat(lat + "");
-            parsedPoint.setLon(lng + "");
-            parsedPoint.setSrs(srs);
-        }
-
-        return parsedPoint;
+        Point point = referenceHelper.createPoint(x, y, z, srs);
+        return referenceHelper.transformOuterToInner(point, srs);
     }
 
     private String getUomByProcessModelTypeImpl(String phenomenonID, ProcessModelTypeImpl processModel) {
         String uom = "";
         if (processModel.getOutputs() != null) {
-			OutputList outputList = processModel.getOutputs().getOutputList();
-			IoComponentPropertyType[] outputArray = outputList.getOutputArray();
-			for (IoComponentPropertyType output : outputArray) {
-				if (output.getQuantity().getDefinition().equals(phenomenonID)) {
-					uom = output.getQuantity().getUom().getCode();
-				}
-			}
-		}
+            OutputList outputList = processModel.getOutputs().getOutputList();
+            IoComponentPropertyType[] outputArray = outputList.getOutputArray();
+            for (IoComponentPropertyType output : outputArray) {
+                if (output.getQuantity().getDefinition().equals(phenomenonID)) {
+                    uom = output.getQuantity().getUom().getCode();
+                }
+            }
+        }
         return uom;
     }
 
@@ -463,19 +451,20 @@ public class DescribeSensorParser {
     }
 
     /**
-     * Checks for  'definition's known to declare not reference values. All definitions
+     * Checks for 'definition's known to declare not reference values. All definitions
      * 
      * @param definition
      * @return
      */
     private boolean isReferenceValue(String definition) {
-        return definition != null && !("urn:x-ogc:def:property:unit".equals(definition)
-                || "urn:x-ogc:def:property:equidistance".equals(definition)
-                || "FeatureOfInterest identifier".equals(definition)
-                || "FeatureOfInterestID".equals(definition));
+        return definition != null
+                && ! ("urn:x-ogc:def:property:unit".equals(definition)
+                        || "urn:x-ogc:def:property:equidistance".equals(definition)
+                        || "FeatureOfInterest identifier".equals(definition) || "FeatureOfInterestID".equals(definition));
     }
 
     private ReferenceValue parseReferenceValue(Text text, String fieldName) {
+
         String stringValue = text.getValue();
         if (stringValue.matches("([0-9\\,\\.\\+\\-]+)")) {
             return new ReferenceValue(fieldName, new Double(stringValue));
@@ -539,7 +528,8 @@ public class DescribeSensorParser {
         }
         else {
             Member member = sml.getMemberArray(0);
-            AbstractComponentType absComponent = member.isSetProcess() ? (AbstractComponentType) member.getProcess() : null;
+            AbstractComponentType absComponent = member.isSetProcess() ? (AbstractComponentType) member.getProcess()
+                                                                      : null;
             if (absComponent == null) {
                 LOGGER.warn("SensorML does not contain a process substitution.");
                 return new Characteristics[0];
@@ -561,7 +551,8 @@ public class DescribeSensorParser {
         }
         else {
             Member member = sml.getMemberArray(0);
-            AbstractComponentType absComponent = member.isSetProcess() ? (AbstractComponentType) member.getProcess() : null;
+            AbstractComponentType absComponent = member.isSetProcess() ? (AbstractComponentType) member.getProcess()
+                                                                      : null;
             if (absComponent == null) {
                 LOGGER.warn("SensorML does not contain a process substitution.");
                 return new Classification[0];
@@ -621,7 +612,7 @@ public class DescribeSensorParser {
                 phenomenons.add(output.getObservableProperty().getDefinition());
             }
             else if (output.getAbstractDataArray1() != null) {
-            	phenomenons.add(output.getAbstractDataArray1().getDefinition());
+                phenomenons.add(output.getAbstractDataArray1().getDefinition());
             }
             else if (output.isSetQuantity()) {
                 phenomenons.add(output.getQuantity().getDefinition());
@@ -633,7 +624,7 @@ public class DescribeSensorParser {
         return phenomenons;
     }
 
-    private void setDataStreamToParse(InputStream incomingResultAsStream) throws XmlException,
+    protected void setDataStreamToParse(InputStream incomingResultAsStream) throws XmlException,
             IOException,
             XMLHandlingException {
         XmlObject xmlObject = XmlObject.Factory.parse(incomingResultAsStream);
@@ -660,13 +651,14 @@ public class DescribeSensorParser {
                     }
                     XmlObject object = XmlObject.Factory.parse(dataDescription.xmlText());
                     if (object instanceof SystemDocumentImpl) {
-                    	smlDoc = SensorMLDocument.Factory.newInstance();
-                    	Member member = smlDoc.addNewSensorML().addNewMember();
-                    	member.set(XMLBeansParser.parse(object.newInputStream()));
-                    } else {
-                    	smlDoc = SensorMLDocument.Factory.parse(dataDescription.newInputStream());
+                        smlDoc = SensorMLDocument.Factory.newInstance();
+                        Member member = smlDoc.addNewSensorML().addNewMember();
+                        member.set(XMLBeansParser.parse(object.newInputStream()));
                     }
-                    
+                    else {
+                        smlDoc = SensorMLDocument.Factory.parse(dataDescription.newInputStream());
+                    }
+
                     break;
                 }
             }

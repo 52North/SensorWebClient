@@ -29,10 +29,11 @@ import static org.n52.io.geojson.GeojsonPoint.createWithCoordinates;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import org.n52.io.crs.EastingNorthing;
 import org.n52.io.geojson.GeojsonPoint;
 import org.n52.shared.IdGenerator;
 import org.n52.shared.MD5HashIdGenerator;
+
+import com.vividsolutions.jts.geom.Point;
 
 /**
  * A {@link Station} represents a location where timeseries data is observed.
@@ -43,39 +44,52 @@ public class Station implements Serializable {
 
     private ArrayList<SosTimeseries> observingTimeseries;
 
-    private EastingNorthing location;
+    private Point location;
+
+    private String serviceUrl;
 
     private String label;
-    
-    private String serviceUrl;
-    
+
     Station() {
-        // for serialization
+        // keep serializable
     }
 
     public Station(String label, String url) {
-        this.label = label;
+        this.observingTimeseries = new ArrayList<SosTimeseries>();
         this.serviceUrl = url;
-        observingTimeseries = new ArrayList<SosTimeseries>();
+        this.label = label;
     }
 
     public String getLabel() {
         return label;
     }
 
-    public void setLocation(EastingNorthing location) {
+    /**
+     * @param location
+     *        a spatially referenced location in lon/lat.
+     */
+    public void setLocation(Point location) {
         this.location = location;
     }
 
-    public EastingNorthing getLocation() {
+    /**
+     * @return the spatially referenced location in lon/lat.
+     */
+    public Point getLocation() {
         return location;
     }
-    
+
+    /**
+     * Creates a GeoJSON representation of the station's location. The coordiantes' axes ordering is left as
+     * is. Per default this should be the lon/lat oriented CRS:84 reference system.
+     * 
+     * @return the location as GeoJSON.
+     */
+    // TODO still need this converting method?
     public GeojsonPoint asGeoJSON() {
-        Double[] coordinates = new Double[] {location.getEasting(), location.getNorthing()};
-        GeojsonPoint point = createWithCoordinates(coordinates);
-        point.setCrs(location.getCrs());
-        return point;
+        Double[] coordinates = new Double[] {location.getX(), location.getY()};
+        GeojsonPoint geojson = createWithCoordinates(coordinates);
+        return geojson;
     }
 
     public void addTimeseries(SosTimeseries timeseries) {
@@ -89,11 +103,11 @@ public class Station implements Serializable {
     public boolean contains(SosTimeseries timeseries) {
         return observingTimeseries.contains(timeseries);
     }
-    
+
     public boolean contains(String timeseriesId) {
         return getTimeseriesById(timeseriesId) != null;
     }
-    
+
     public SosTimeseries getTimeseriesById(String timeseriesId) {
         for (SosTimeseries timeseries : observingTimeseries) {
             if (timeseries.getTimeseriesId().equals(timeseriesId)) {
@@ -102,7 +116,7 @@ public class Station implements Serializable {
         }
         return null;
     }
-    
+
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
@@ -135,22 +149,22 @@ public class Station implements Serializable {
         return observingTimeseries.size() > 0 ? true : false;
     }
 
-    // @Override // fails during gwt compile
+    // @Override // gwt fails to compile
     public Station clone() {
         Station station = new Station(label, serviceUrl);
         station.setLocation(location);
         station.setObservingTimeseries(new ArrayList<SosTimeseries>(observingTimeseries));
         return station;
     }
-    
+
     private void setObservingTimeseries(ArrayList<SosTimeseries> observingTimeseries) {
         this.observingTimeseries = observingTimeseries;
     }
 
-	public String getGlobalId() {
-		String[] parameters = new String[]{serviceUrl, location.toString()};
-    	IdGenerator idGenerator = new MD5HashIdGenerator("sta_");
+    public String getGlobalId() {
+        String[] parameters = new String[] {serviceUrl, location.toString()};
+        IdGenerator idGenerator = new MD5HashIdGenerator("sta_");
         return idGenerator.generate(parameters);
-	}
+    }
 
 }

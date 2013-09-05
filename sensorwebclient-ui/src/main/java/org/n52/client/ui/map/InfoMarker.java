@@ -23,6 +23,8 @@
  */
 package org.n52.client.ui.map;
 
+import static org.n52.client.ui.map.Coordinate.createProjectedCoordinate;
+
 import org.gwtopenmaps.openlayers.client.Icon;
 import org.gwtopenmaps.openlayers.client.Marker;
 import org.gwtopenmaps.openlayers.client.Size;
@@ -38,17 +40,17 @@ public class InfoMarker extends Marker {
     
     private static final String MARKER_IMG_HOVER = "img/icons/marker_hover.png";
 
+    private MapController controller;
+    
     private Station station;
-
-	private MapController controller;
-	
-	private boolean selected;
 
     private String id;
 
+    private boolean selected;
+
     public static InfoMarker createInfoMarker(Station station, MapController controller) {
 		String mapProjection = controller.getMapProjection();
-		final Coordinate coords = new Coordinate(station.getLocation(), mapProjection);
+		final Coordinate coords = createProjectedCoordinate(station.getLocation(), mapProjection);
     	return new InfoMarker(coords, station, controller);
     }
     

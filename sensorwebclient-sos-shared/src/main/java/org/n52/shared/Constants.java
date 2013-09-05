@@ -48,8 +48,7 @@
  *********************************************************************************/
 package org.n52.shared;
 
-import org.n52.io.crs.BoundingBox;
-import org.n52.io.crs.EastingNorthing;
+
 
 
 public abstract class Constants {
@@ -74,13 +73,7 @@ public abstract class Constants {
     
     public static final String GOOGLE_PROJECTION = "EPSG:900913";
 
-    public static final String DISPLAY_PROJECTION = Constants.EPSG_4326;
-    
-    /**
-     * A fall back extent if no other extent was configured (data source instance, or global).
-     */
-    public static final BoundingBox FALLBACK_EXTENT = new BoundingBox(new EastingNorthing(-180d, -90d, DISPLAY_PROJECTION), 
-                                                                      new EastingNorthing(180d, 90d, DISPLAY_PROJECTION));
+    public static final String DISPLAY_PROJECTION = EPSG_4326;
     
     public static final String SES_OP_SEPARATOR = "-X-";
 }
