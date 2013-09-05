@@ -38,33 +38,25 @@ public class PortalInfos implements Serializable {
 
 	public static ArrayList<PortalInfo> getAll() {
 		if (PortalInfos.portalInfos == null) {
-			// init
 			Vector<String> urlVariants;
 			ArrayList<PortalInfo> initPortalInfos = new ArrayList<PortalInfo>();
 
 			urlVariants = new Vector<String>();
 			urlVariants.add("küstendaten.de");
 			urlVariants.add("kuestendaten.de");
+			urlVariants.add("xn--kstendaten-9db.de");
 			initPortalInfos.add(new PortalInfo("Küstendaten", "http://www.kuestendaten.de/", urlVariants));
 
 			urlVariants = new Vector<String>();
 			urlVariants.add("portalnsk.de");
-			urlVariants.add("portal-nsk.de");
 			initPortalInfos.add(new PortalInfo("Nordseeküste", "http://www.portalnsk.de/", urlVariants));
 
 			urlVariants = new Vector<String>();
 			urlVariants.add("portaltideems.de");
 			urlVariants.add("portal-tideems.de");
+			urlVariants.add("emsverbesserung.de");
 			initPortalInfos.add(new PortalInfo("Tideems", "http://www.portaltideems.de/", urlVariants));
 
-			// DEBUG
-			// TODO Entfernen!
-			urlVariants = new Vector<String>();
-			urlVariants.add("localhost");
-			urlVariants.add("isb-lx54");
-			urlVariants.add("mzedlx0188");
-			initPortalInfos.add(new PortalInfo("Demo-System", "http://localhost/", urlVariants));
-			
 			urlVariants = new Vector<String>();
 			urlVariants.add("portaltideelbe.de");
 			urlVariants.add("portal-tideelbe.de");
@@ -72,12 +64,10 @@ public class PortalInfos implements Serializable {
 
 			urlVariants = new Vector<String>();
 			urlVariants.add("portalnok.de");
-			urlVariants.add("portal-nok.de");
 			initPortalInfos.add(new PortalInfo("Nord-Ostsee-Kanal", "http://www.portalnok.de/", urlVariants));
 
 			urlVariants = new Vector<String>();
 			urlVariants.add("portalosk.de");
-			urlVariants.add("portal-osk.de");
 			initPortalInfos.add(new PortalInfo("Ostseeküste", "http://www.portalosk.de/", urlVariants));
 
 			PortalInfos.portalInfos = initPortalInfos;
