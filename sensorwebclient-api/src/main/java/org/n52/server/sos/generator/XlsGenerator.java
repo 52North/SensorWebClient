@@ -49,6 +49,7 @@ import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
+import org.n52.shared.serializable.pojos.sos.ObservationParameter.EncodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -150,7 +151,7 @@ public class XlsGenerator extends Generator {
 
 						
 						// FOI
-						sheet.addCell(new Label(0, counter + 1, lookup.getFeature(feature).getLabel()));
+						sheet.addCell(new Label(0, counter + 1, lookup.getFeature(feature).getLabel(EncodeType.HTML)));
 
 						// ObservedProperty
 						sheet.addCell(new Label(1, counter + 1, lookup.getPhenomenon(phenomenon).getLabel()

@@ -33,6 +33,10 @@ public abstract class ObservationParameter implements Serializable {
     
     protected String label;
     
+    public enum EncodeType {
+    	PLAIN, HTML//, URLENC
+    }
+    
     ObservationParameter() {
         // for serialization
     }
@@ -58,8 +62,34 @@ public abstract class ObservationParameter implements Serializable {
     }
 
     public String getLabel() {
-        return label;
+        return getLabel(EncodeType.PLAIN);
     }
+    
+    public String getLabel(EncodeType encodeType){
+    	switch(encodeType){
+		case HTML:
+			return encodeAsHTML(this.label);
+		case PLAIN:
+		default:
+			return this.label;
+    	}
+    }
+    
+    public static String encodeAsHTML( String str){
+        String retStr = str;
+        retStr = retStr.replaceAll("_", " ");
+        retStr = retStr.replaceAll("kuerzest", "kürzest");
+        retStr = retStr.replaceAll("laengst", "längst");
+        retStr = retStr.replaceAll("Leitfaehigkeit", "Leitfähigkeit");
+        retStr = retStr.replaceAll("Saettigung", "Sättigung");
+        retStr = retStr.replaceAll("Stroemung", "Strömung");
+        retStr = retStr.replaceAll("hoechst", "höchst");
+        retStr = retStr.replaceAll("Trueb", "Trüb");
+//        retStr = retStr.replaceAll("", "");
+
+        return retStr;
+    }
+    
 
     protected String parseLabel(String parameterId) {
         if (parameterId.startsWith("urn")) {
