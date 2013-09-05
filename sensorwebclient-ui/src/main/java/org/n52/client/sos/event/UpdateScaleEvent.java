@@ -25,6 +25,7 @@ package org.n52.client.sos.event;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.handler.UpdateScaleEventHandler;
+import org.n52.shared.serializable.pojos.Scale;
 
 /**
  * @author <a href="mailto:f.bache@52north.de">Felix Bache</a>
@@ -36,19 +37,31 @@ public class UpdateScaleEvent extends FilteredDispatchGwtEvent<UpdateScaleEventH
     
     private String phenomenonID;
 
-    private boolean scaleToNull;
-
-    private boolean autoScale;
-
+    private Scale scale = new Scale();
+    
     /**
+     * Use ScaleType instead of scaleToNull and autoScale
      * @param phenomenID
      * @param scaleToNull
      * @param autoScale
+     * @deprecated
      */
     public UpdateScaleEvent(String phenomenID, boolean scaleToNull, boolean autoScale) {
         this.phenomenonID = phenomenID;
-        this.scaleToNull = scaleToNull;
-        this.autoScale = autoScale;
+        this.scale.setType(autoScale 
+        		? Scale.Type.AUTO 
+        		: scaleToNull 
+        			? Scale.Type.ZERO 
+        			: Scale.Type.MANUAL);
+    }
+
+    /**
+     * @param phenomenID
+     * @param scaleType
+     */
+    public UpdateScaleEvent(String phenomenID, Scale scale) {
+        this.phenomenonID = phenomenID;
+        this.scale = Scale.copy(scale);
     }
 
     /* (non-Javadoc)
@@ -74,18 +87,31 @@ public class UpdateScaleEvent extends FilteredDispatchGwtEvent<UpdateScaleEventH
         return this.phenomenonID;
     }
 
+    public Scale getScale(){
+    	if(scale == null){
+    		scale = new Scale();
+    	}
+    	return scale;
+    }
+    
     /**
      * @return the scaleToNull
      */
     public boolean isScaleToNull() {
-        return this.scaleToNull;
+        return this.scale.isZero();
     }
 
     /**
      * @return the autoScale
      */
     public boolean isAutoScale() {
-        return this.autoScale;
+        return this.scale.isAuto();
     }
 
+    /**
+     * @return manual scale
+     */
+    public boolean isManualScale(){
+    	return scale.isManual();
+    }
 }

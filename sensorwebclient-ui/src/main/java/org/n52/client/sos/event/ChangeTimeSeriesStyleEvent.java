@@ -25,6 +25,7 @@ package org.n52.client.sos.event;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.handler.ChangeTimeSeriesStyleEventHandler;
+import org.n52.shared.serializable.pojos.Scale;
 
 /**
  * The Class ChangeTimeSeriesStyleEvent.
@@ -47,14 +48,10 @@ public class ChangeTimeSeriesStyleEvent extends
     /** The opac perc. */
     private double opacPerc;
 
-    /** The is zero scaled. */
-    private boolean isZeroScaled;
-
+    private Scale scale = new Scale();
+    
     /** The style. */
     private String style;
-
-    /** The generalize. */
-    private boolean autoScale;
 
     /**
      * Instantiates a new change time series style event.
@@ -70,15 +67,41 @@ public class ChangeTimeSeriesStyleEvent extends
      * @param style
      *            the style
      * @param autoScale
+     * @deprecated
      */
     public ChangeTimeSeriesStyleEvent(String ID, String hexColor, double opacPerc,
             boolean isZeroScaled, String style, boolean autoScale) {
         this.ID = ID;
         this.hexColor = hexColor;
         this.opacPerc = opacPerc;
-        this.isZeroScaled = isZeroScaled;
+        this.scale.setType( autoScale
+        	? Scale.Type.AUTO
+        	: isZeroScaled
+        		? Scale.Type.ZERO
+        		: Scale.Type.MANUAL);
         this.style = style;
-        this.autoScale = autoScale;
+
+    }
+
+    /**
+     * Instantiates a new change time series style event.
+     * 
+     * @param ID
+     *            the iD
+     * @param hexColor
+     *            the hex color
+     * @param opacPerc
+     *            the opac perc
+     * @param scaleType
+     * @param style
+     *            the style
+     */
+    public ChangeTimeSeriesStyleEvent(String ID, String hexColor, double opacPerc, Scale scale, String style) {
+        this.ID = ID;
+        this.hexColor = hexColor;
+        this.opacPerc = opacPerc;
+        this.scale= Scale.copy(scale);
+        this.style = style;
 
     }
 
@@ -117,9 +140,10 @@ public class ChangeTimeSeriesStyleEvent extends
      * Gets the auto scale.
      * 
      * @return the auto scale
+     * @deprecated
      */
     public boolean getAutoScale() {
-        return this.autoScale;
+        return this.scale.isAuto();
     }
 
     /**
@@ -153,9 +177,15 @@ public class ChangeTimeSeriesStyleEvent extends
      * Checks if is zero scaled.
      * 
      * @return the isZeroScaled
+     * @deprecated
      */
     public boolean isZeroScaled() {
-        return this.isZeroScaled;
+        return this.scale.isZero();
     }
+
+    public Scale getScale() {
+        return this.scale;
+    }
+
 
 }

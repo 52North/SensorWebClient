@@ -66,7 +66,6 @@ import org.n52.oxf.feature.sos.ObservationSeriesCollection;
 import org.n52.oxf.util.JavaHelper;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.server.sos.generator.MetadataInURLGenerator;
-import org.n52.server.sos.parser.TimeseriesFactory;
 import org.n52.shared.serializable.pojos.Axis;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
@@ -239,6 +238,8 @@ public class DiagramRenderer {
             if (this.isOverview) {
 				axe.setAutoRange(true);
 				axe.setAutoRangeIncludesZero(false);
+            } else if(prop.isManualScaled()){
+            	axe.setRange(prop.getScale().getManualScaleMin(), prop.getScale().getManualScaleMax());
 			} else if (prop.getAxisUpperBound() == prop.getAxisLowerBound() || prop.isAutoScale()) {
 				if (prop.isZeroScaled()) {
 					axe.setAutoRangeIncludesZero(true);

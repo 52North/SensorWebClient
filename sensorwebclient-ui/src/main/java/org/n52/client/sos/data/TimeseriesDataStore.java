@@ -37,7 +37,6 @@ import org.eesgmbh.gimv.client.event.LoadImageDataEvent;
 import org.eesgmbh.gimv.client.event.SetDomainBoundsEvent;
 import org.eesgmbh.gimv.client.event.SetDomainBoundsEventHandler;
 import org.n52.client.bus.EventBus;
-import org.n52.client.ctrl.ExceptionHandler;
 import org.n52.client.model.ADataStore;
 import org.n52.client.sos.DataparsingException;
 import org.n52.client.sos.event.ChangeTimeSeriesStyleEvent;
@@ -75,6 +74,7 @@ import org.n52.client.ui.legend.LegendDataComparator;
 import org.n52.client.ui.legend.LegendElement;
 import org.n52.client.ui.legend.LegendEntryTimeSeries;
 import org.n52.shared.serializable.pojos.Axis;
+import org.n52.shared.serializable.pojos.Scale;
 
 public class TimeseriesDataStore extends ADataStore<Timeseries> {
 
@@ -192,8 +192,7 @@ public class TimeseriesDataStore extends ADataStore<Timeseries> {
             Timeseries ts = getDataItem(evt.getID());
             ts.setColor(evt.getHexColor());
             ts.setOpacity(evt.getOpacityPercentage());
-            ts.setScaleToZero(evt.isZeroScaled());
-            ts.setAutoScale(evt.getAutoScale());
+            ts.setScale(evt.getScale());
             EventBus.getMainEventBus().fireEvent(new LoadImageDataEvent());
         }
 
@@ -214,7 +213,7 @@ public class TimeseriesDataStore extends ADataStore<Timeseries> {
             for (int i = 0; i < series.length; i++) {
                 series[i].popAxis();
                 series[i].getProperties().setSetAxis(false);
-                series[i].getProperties().setAutoScale(false);
+                series[i].getProperties().setScale(Scale.Type.ZERO);
             }
         }
 
@@ -254,7 +253,7 @@ public class TimeseriesDataStore extends ADataStore<Timeseries> {
             EventBus.getMainEventBus().fireEvent(new DatesChangedEvent(begin, end, true));
 
             for (Timeseries ts : TimeseriesDataStore.getTimeSeriesDataStore().getTimeSeriesSorted()) {
-                if (ts.getProperties().isAutoScale() != true) {
+                if (ts.getProperties().isZeroScaled()) {
                     Axis a = ts.getProperties().getAxis();
                     double topDiff = a.getMinY() - top;
                     double bottomDiff = a.getMaxY() - bottom;
@@ -270,7 +269,12 @@ public class TimeseriesDataStore extends ADataStore<Timeseries> {
                     a.setMaxY(a.getMaxY());
                     a.setMinY(a.getMinY());
                     ts.getProperties().setSetAxis(false);
-                } 
+                } else if (ts.getProperties().isManualScaled()){
+                    Axis a = ts.getProperties().getAxis();
+                    a.setLowerBound(ts.getProperties().getScale().getManualScaleMin());
+                    a.setUpperBound(ts.getProperties().getScale().getManualScaleMax());
+                    ts.getProperties().setSetAxis(false);
+                }
 
             }
             if (TimeseriesDataStore.getTimeSeriesDataStore().getTimeSeriesSorted().length > 0) {
