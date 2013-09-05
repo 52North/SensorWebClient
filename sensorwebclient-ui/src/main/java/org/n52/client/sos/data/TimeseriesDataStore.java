@@ -37,7 +37,6 @@ import org.eesgmbh.gimv.client.event.LoadImageDataEvent;
 import org.eesgmbh.gimv.client.event.SetDomainBoundsEvent;
 import org.eesgmbh.gimv.client.event.SetDomainBoundsEventHandler;
 import org.n52.client.bus.EventBus;
-import org.n52.client.ctrl.ExceptionHandler;
 import org.n52.client.model.ADataStore;
 import org.n52.client.sos.DataparsingException;
 import org.n52.client.sos.event.ChangeTimeSeriesStyleEvent;
@@ -76,8 +75,6 @@ import org.n52.client.ui.legend.LegendElement;
 import org.n52.client.ui.legend.LegendEntryTimeSeries;
 import org.n52.shared.serializable.pojos.Axis;
 import org.n52.shared.serializable.pojos.Scale;
-
-import com.google.gwt.user.client.Window;
 
 public class TimeseriesDataStore extends ADataStore<Timeseries> {
 
@@ -273,16 +270,10 @@ public class TimeseriesDataStore extends ADataStore<Timeseries> {
                     a.setMinY(a.getMinY());
                     ts.getProperties().setSetAxis(false);
                 } else if (ts.getProperties().isManualScaled()){
-                	Window.alert("DEBUG onSetDomainBounds");
-                	try{
-	                    Axis a = ts.getProperties().getAxis();
-	                    a.setLowerBound(ts.getProperties().getScale().getManualScaleMin());
-	                    a.setUpperBound(ts.getProperties().getScale().getManualScaleMax());
-	                    ts.getProperties().setSetAxis(false);
-                	}catch(Exception e){
-                		//DEBUG
-                		Window.alert("Fehler in DataStoreTimeSeriesEventBroker.onSetDomainBounds:\n" + e.getMessage());
-                	}
+                    Axis a = ts.getProperties().getAxis();
+                    a.setLowerBound(ts.getProperties().getScale().getManualScaleMin());
+                    a.setUpperBound(ts.getProperties().getScale().getManualScaleMax());
+                    ts.getProperties().setSetAxis(false);
                 }
 
             }

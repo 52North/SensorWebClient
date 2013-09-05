@@ -866,9 +866,6 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.lineWidth.setWidth(85);
 		this.lineWidth.setValueMap("1","2","3","4","5","6","7","8","9","10");
 
-		String uom = "";
-		double scaleValueMin = 0;
-		double scaleValueMax = 0;
 		
 		this.scale = new RadioGroupItem();
 		this.scale.setTitle(i18n.scale());
@@ -891,12 +888,10 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.scaleManualMin = new FloatItem();
 		this.scaleManualMin.setTitle(i18n.manualScaleMinLabel());
 		this.scaleManualMin.setWidth(50);
-		this.scaleManualMin.setValue(scaleValueMin);
 
 		this.scaleManualMax = new FloatItem();
 		this.scaleManualMax.setTitle(i18n.manualScaleMaxLabel());
 		this.scaleManualMax.setWidth(50);
-		this.scaleManualMax.setValue(scaleValueMax);
 
 		this.cpForm = new DynamicForm();
 		this.cpForm.setNumCols(1);
@@ -988,8 +983,6 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 					LegendEntryTimeSeries.this.scaleManualMin.setHint(uom);
 					LegendEntryTimeSeries.this.scaleManualMax.setHint(uom);
 					if( i18n.manualScale().equals( LegendEntryTimeSeries.this.scale.getValue() ) ){
-						LegendEntryTimeSeries.this.scaleManualMin.setValue(prop.getAxisLowerBound());
-						LegendEntryTimeSeries.this.scaleManualMax.setValue(prop.getAxisUpperBound());
 						LegendEntryTimeSeries.this.scaleManualMin.show();
 						LegendEntryTimeSeries.this.scaleManualMax.show();
 					} else {
@@ -1351,8 +1344,6 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 				switch(evt.getScale().getType()){
 				case MANUAL:
 					LegendEntryTimeSeries.this.scale.setValue(i18n.manualScale());
-					LegendEntryTimeSeries.this.scaleManualMin.setValue(evt.getScale().getManualScaleMin());
-					LegendEntryTimeSeries.this.scaleManualMax.setValue(evt.getScale().getManualScaleMax());
 					break;
 				case ZERO:
 					LegendEntryTimeSeries.this.scale.setValue(i18n.zeroScale());
