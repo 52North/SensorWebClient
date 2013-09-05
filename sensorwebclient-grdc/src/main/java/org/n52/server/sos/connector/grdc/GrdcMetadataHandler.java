@@ -40,6 +40,7 @@ import net.opengis.gml.FeatureCollectionDocument2;
 import net.opengis.gml.FeaturePropertyType;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.io.crs.CRSUtils;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
@@ -56,8 +57,6 @@ import org.n52.server.da.oxf.OperationAccessor;
 import org.n52.server.da.oxf.SOSAdapter_OXFExtension;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.server.parser.ConnectorUtils;
-import org.n52.server.parser.utils.ParsedPoint;
-import org.n52.io.crs.CRSUtils;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
@@ -67,10 +66,7 @@ import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.PrecisionModel;
 
 import de.bafg.grdc.sampling.x10.GrdcSamplingPointDocument;
 import de.bafg.grdc.sampling.x10.GrdcSamplingPointType;
@@ -226,7 +222,7 @@ public class GrdcMetadataHandler extends MetadataHandler {
 		return metadata;
 	}
 
-	private ParsedPoint getPositionOfGRDCSamplingPoint(GrdcSamplingPointType grdcSamplingPoint, CRSUtils referenceHelper) {
+	private Point getPositionOfGRDCSamplingPoint(GrdcSamplingPointType grdcSamplingPoint, CRSUtils referenceHelper) {
 		DirectPositionType pos = grdcSamplingPoint.getPosition().getPoint().getPos();
 		String[] coords = pos.getStringValue().split(" ");
 		
@@ -241,23 +237,24 @@ public class GrdcMetadataHandler extends MetadataHandler {
         String wgs84 = "EPSG:4326";
         if (!srs.equals(wgs84)) {
             try {
-                int srsId = referenceHelper.getSrsIdFromEPSG(srs);
-                PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING);
-                GeometryFactory geometryFactory = new GeometryFactory(pm, srsId);
-                Coordinate coordinate = referenceHelper.createCoordinate(lon, lat, h, srs);
-                Point point = geometryFactory.createPoint(coordinate);
-                point = referenceHelper.transformToWgs84(point, srs);
-                srs = wgs84;
-                lat = point.getX();
-                lon = point.getY();
-                LOGGER.trace(lon + "," + lat + " (" + wgs84 + ")");
+//                int srsId = referenceHelper.getSrsIdFromEPSG(srs);
+//                PrecisionModel pm = new PrecisionModel();
+//                GeometryFactory geometryFactory = new GeometryFactory(pm, srsId);
+//                Coordinate coordinate = referenceHelper.createPoint(lon, lat, h, srs);
+//                Point point = geometryFactory.createPoint(coordinate);
+//                point = referenceHelper.transformOuterToInner(point, srs);
+//                srs = wgs84;
+//                lat = point.getX();
+//                lon = point.getY();
+//                LOGGER.trace(lon + "," + lat + " (" + wgs84 + ")");
             }
             catch (Exception e) {
                 LOGGER.debug("Could not transform! Keeping old SRS: " + wgs84, e);
             }
         }
 		
-		return new ParsedPoint(lon+"", lat+"", srs);
+//		return new ParsedPoint(lon+"", lat+"", srs);
+        return null;
 	}
 
 	private OperationAccessor createGetFOI(String sosUrl, String sosVersion, String foi) throws OXFException {

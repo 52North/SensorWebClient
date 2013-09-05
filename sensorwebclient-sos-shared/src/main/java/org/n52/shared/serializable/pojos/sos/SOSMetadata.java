@@ -275,7 +275,7 @@ public class SOSMetadata implements Serializable {
     }
 
     /**
-     * @return the service's extent or the {@link Constants#FALLBACK_EXTENT} if it was not configured.
+     * @return the service's extent.
      */
     public BoundingBox getConfiguredExtent() {
         return configuredExtent;

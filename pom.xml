@@ -188,6 +188,11 @@
 				<version>2.1</version>
 			</dependency>
 			<dependency>
+				<groupId>net.sf</groupId>
+				<artifactId>jts4gwt</artifactId>
+				<version>1.10.2</version>
+			</dependency>
+			<dependency>
 				<groupId>com.vividsolutions</groupId>
 				<artifactId>jts</artifactId>
 				<version>1.11</version>
@@ -472,7 +477,7 @@
 						<draftCompile>${gwt.compile.draft}</draftCompile>
 						<compileReport>${gwt.compile.report}</compileReport>
 						<optimizationLevel>${gwt.compile.optimization.level}</optimizationLevel>
-						<extraJvmArgs>-XX:MaxPermSize=512m -Xmx512m</extraJvmArgs>
+						<extraJvmArgs>-XX:MaxPermSize=724m -Xmx724m</extraJvmArgs>
 					</configuration>
 					<executions>
 						<execution>
@@ -865,6 +870,11 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
+     <repository>
+        <id>jts4gwt-repo</id>
+        <name>jts4gwt repository</name>
+        <url>http://jts4gwt.sf.net/maven/repository</url>
+    </repository>
 		<repository>
 			<id>smartgwt</id>
 			<url>http://www.smartclient.com/maven2</url>

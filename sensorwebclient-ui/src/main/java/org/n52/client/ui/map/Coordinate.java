@@ -24,23 +24,39 @@
 
 package org.n52.client.ui.map;
 
+import static org.n52.shared.Constants.EPSG_4326;
+
 import org.gwtopenmaps.openlayers.client.LonLat;
-import org.n52.io.crs.EastingNorthing;
+
+import com.vividsolutions.jts.geom.Point;
 
 public class Coordinate extends LonLat {
+
+    public Coordinate(double lon, double lat) {
+        super(lon, lat);
+    }
 
     /**
      * Creates a {@link LonLat} coordinate ready to be rendered on a map.
      * 
-     * @param location
-     *        the location to be mapped.
      * @param mapProjection
      *        the projection of the map in which the coordinate will be rendered.
      */
-    public Coordinate(EastingNorthing location, String mapProjection) {
-        super(location.getEasting(), location.getNorthing());
-        if (location.getCrsDefinition() != null && !mapProjection.equals(location.getCrsDefinition())) {
-            transform(location.getCrsDefinition(), mapProjection);
+    private Coordinate(double lon, double lat, String mapProjection) {
+        this(lon, lat);
+        if ( !EPSG_4326.equals(mapProjection)) {
+            transform(EPSG_4326, mapProjection);
         }
+    }
+
+    /**
+     * @param point
+     *        the point to be mapped. Has to be in lon/lat order.
+     * @param mapProjection
+     *        the projection of the map in which the coordinate will be rendered.
+     * @return a Coordinate instance transformed to given map projection.
+     */
+    public static Coordinate createProjectedCoordinate(Point point, String mapProjection) {
+        return new Coordinate(point.getX(), point.getY(), mapProjection);
     }
 }

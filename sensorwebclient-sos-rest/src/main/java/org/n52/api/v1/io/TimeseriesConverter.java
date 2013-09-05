@@ -23,7 +23,8 @@
  */
 package org.n52.api.v1.io;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.n52.api.v1.srv.GetDataService;
 import org.n52.io.v1.data.CategoryOutput;
@@ -31,10 +32,14 @@ import org.n52.io.v1.data.FeatureOutput;
 import org.n52.io.v1.data.OfferingOutput;
 import org.n52.io.v1.data.PhenomenonOutput;
 import org.n52.io.v1.data.ProcedureOutput;
+import org.n52.io.v1.data.ReferenceValueOutput;
 import org.n52.io.v1.data.ServiceOutput;
 import org.n52.io.v1.data.StationOutput;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.TimeseriesOutput;
+import org.n52.shared.IdGenerator;
+import org.n52.shared.MD5HashIdGenerator;
+import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -53,9 +58,8 @@ public class TimeseriesConverter extends OutputConverter<SosTimeseries, Timeseri
     @Override
     public TimeseriesMetadataOutput convertExpanded(SosTimeseries timeseries) {
         TimeseriesMetadataOutput convertedTimeseries = convertCondensed(timeseries);
-        Procedure procedure = getLookup().getProcedure(timeseries.getProcedureId());
         convertedTimeseries.setParameters(getCondensedParameters(timeseries));
-        convertedTimeseries.setRefValues(getReferenceValues(procedure));
+        convertedTimeseries.setRefValues(getReferenceValues(timeseries));
         return convertedTimeseries;
     }
 
@@ -85,18 +89,36 @@ public class TimeseriesConverter extends OutputConverter<SosTimeseries, Timeseri
         return converter.convertCondensed(getMetadata());
     }
 
-    private String[] getReferenceValues(Procedure procedure) {
-        Set<String> referenceValues = procedure.getReferenceValues().keySet();
+    private ReferenceValueOutput[] getReferenceValues(SosTimeseries timeseries) {
+        Procedure procedure = getLookup().getProcedure(timeseries.getProcedureId());
+        if (procedure.getReferenceValues() == null || procedure.getReferenceValues().isEmpty()) {
+            return null;
+        }
+        
+        List<ReferenceValueOutput> referenceValues = new ArrayList<ReferenceValueOutput>();
+        for (String refValueName : procedure.getReferenceValues().keySet()) {
+            ReferenceValueOutput converted = new ReferenceValueOutput();
+            ReferenceValue value = procedure.getRefValue(refValueName);
+            String referenceValueId = generateRefValueId(value.getId(), procedure);
+            converted.setReferenceValueId(referenceValueId);
+            converted.setLastValue(value.getLastValue());
+            converted.setLabel(value.getId());
+            referenceValues.add(converted);
+        }
+        
         return !referenceValues.isEmpty()
-                ? referenceValues.toArray(new String[0])
+                ? referenceValues.toArray(new ReferenceValueOutput[0])
                 : null; // will not be listed in output
     }
 
+    private String generateRefValueId(String id, Procedure procedure) {
+        IdGenerator idGenerator = new MD5HashIdGenerator("ref_");
+        return idGenerator.generate(new String[]{id, getMetadata().getServiceUrl()});
+    }
+
     private CategoryOutput getCondensedCategory(SosTimeseries timeseries) {
-        
-        // TODO do we want a category to be an identifiable object or is a string just fine?
-        
-        return null;
+        CategoryConverter converter = new CategoryConverter(getMetadata());
+        return converter.convertCondensed(timeseries.getCategory());
     }
 
     private OfferingOutput getCondensedOffering(SosTimeseries timeseries) {

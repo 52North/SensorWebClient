@@ -140,22 +140,28 @@ public class SosInstanceContentHandler extends DefaultHandler {
                 boolean forceXYAxisOrder = Boolean.parseBoolean(parsedCharacters);
                 currentBuilder.setForceXYAxisOrder(forceXYAxisOrder);
                 break;
-            case LLEASTING:
-                double llEasting = Double.parseDouble(parsedCharacters);
-                currentBuilder.addLowerLeftEasting(llEasting);
-                break;
-            case LLNORTHING:
-                double llNorthing = Double.parseDouble(parsedCharacters);
-                currentBuilder.addLowerLeftNorthing(llNorthing);
-                break;
-            case UREASTING:
-                double urEasting = Double.parseDouble(parsedCharacters);
-                currentBuilder.addUpperRightEasting(urEasting);
-                break;
-            case URNORTHING:
-                double urNorthing = Double.parseDouble(parsedCharacters);
-                currentBuilder.addUpperRightNorthing(urNorthing);
-                break;
+                
+                /*
+                 * bbox coordinates are only relevant on client side
+                 * configuration is parsed on client side
+                 */
+//            case LLEASTING:
+//                double llEasting = Double.parseDouble(parsedCharacters);
+//                currentBuilder.addLowerLeftEasting(llEasting);
+//                break;
+//            case LLNORTHING:
+//                double llNorthing = Double.parseDouble(parsedCharacters);
+//                currentBuilder.addLowerLeftNorthing(llNorthing);
+//                break;
+//            case UREASTING:
+//                double urEasting = Double.parseDouble(parsedCharacters);
+//                currentBuilder.addUpperRightEasting(urEasting);
+//                break;
+//            case URNORTHING:
+//                double urNorthing = Double.parseDouble(parsedCharacters);
+//                currentBuilder.addUpperRightNorthing(urNorthing);
+//                break;
+                
             case URL:
                 String serviceURL = parsedCharacters;
                 currentBuilder.addServiceURL(serviceURL);

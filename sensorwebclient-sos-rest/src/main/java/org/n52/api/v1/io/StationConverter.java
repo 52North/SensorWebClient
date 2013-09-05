@@ -28,12 +28,13 @@ import static org.n52.io.geojson.GeojsonPoint.createWithCoordinates;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.n52.io.crs.EastingNorthing;
 import org.n52.io.geojson.GeojsonPoint;
 import org.n52.io.v1.data.StationOutput;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
+
+import com.vividsolutions.jts.geom.Point;
 
 public class StationConverter extends OutputConverter<Station, StationOutput> {
 
@@ -69,9 +70,10 @@ public class StationConverter extends OutputConverter<Station, StationOutput> {
     }
 
     private GeojsonPoint getCoordinates(Station station) {
-        EastingNorthing location = station.getLocation();
-        Double x = location.getEasting();
-        Double y = location.getNorthing();
-        return createWithCoordinates(new Double[] {x, y});
+        Point location = station.getLocation();
+        
+        // TODO 
+        
+        return createWithCoordinates(new Double[] {location.getX(), location.getY()});
     }
 }

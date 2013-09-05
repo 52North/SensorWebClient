@@ -36,12 +36,9 @@ import static org.n52.io.geojson.GeojsonPoint.createWithCoordinates;
 
 import org.n52.io.crs.BoundingBox;
 import org.n52.io.crs.CRSUtils;
-import org.n52.io.crs.EastingNorthing;
 import org.n52.io.geojson.GeojsonPoint;
 import org.opengis.referencing.FactoryException;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 /**
@@ -49,12 +46,7 @@ import com.vividsolutions.jts.geom.Point;
  * EPSG:4326, lon-lat ordered reference frame.
  */
 public class Vicinity {
-
-    private CRSUtils inputReference = createEpsgForcedXYAxisOrder();
-
-    private GeometryFactory geometryFactory = inputReference.createGeometryFactory(EPSG_4326);
-
-
+    
     private Point center;
 
     private double radius;
@@ -86,14 +78,15 @@ public class Vicinity {
      * @return a bounding rectangle.
      */
     public BoundingBox calculateBounds() {
+        CRSUtils inputReference = createEpsgForcedXYAxisOrder();
         double latInRad = toRadians(center.getY());
         double llEasting = normalizeLongitude(center.getX() - getLongitudeDelta(latInRad, radius));
         double llNorthing = normalizeLatitude(center.getY() - getLatitudeDelta(radius));
-        double ulEasting = normalizeLongitude(center.getX() + getLongitudeDelta(latInRad, radius));
-        double ulNorthing = normalizeLatitude(center.getY() + getLatitudeDelta(radius));
-        EastingNorthing ll = new EastingNorthing(llEasting, llNorthing, "4326");
-        EastingNorthing ur = new EastingNorthing(ulEasting, ulNorthing, "4326");
-        return new BoundingBox(ll, ur);
+        double urEasting = normalizeLongitude(center.getX() + getLongitudeDelta(latInRad, radius));
+        double urNorthing = normalizeLatitude(center.getY() + getLatitudeDelta(radius));
+        Point ll = inputReference.createPoint(llEasting, llNorthing, "CRS:84");
+        Point ur = inputReference.createPoint(urEasting, urNorthing, "CRS:84");
+        return new BoundingBox(ll, ur, "CRS:84");
     }
 
     /**
@@ -115,10 +108,10 @@ public class Vicinity {
      *         if creating coordinates fails.
      */
     private Point createCenter(GeojsonPoint center) throws FactoryException {
+        CRSUtils inputReference = createEpsgForcedXYAxisOrder();
         Double easting = center.getCoordinates()[0];
         Double northing = center.getCoordinates()[1];
-        Coordinate coordinate = inputReference.createCoordinate(easting, northing, EPSG_4326);
-        return geometryFactory.createPoint(coordinate);
+        return inputReference.createPoint(easting, northing, EPSG_4326);
     }
 
 
