@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.api.v1.io.StationConverter;
+import org.n52.io.crs.BoundingBox;
 import org.n52.io.v1.data.StationOutput;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -21,6 +22,7 @@ public class StationOutputAdapter implements ParameterService<StationOutput> {
     @Override
     public StationOutput[] getExpandedParameters(QueryMap map) {
         QueryParameters query = QueryParameterAdapter.createQueryParameters(map);
+        query.setSpatialFilter(map.getSpatialFilter());
         List<StationOutput> allStations = new ArrayList<StationOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             StationConverter converter = new StationConverter(metadata);
@@ -39,17 +41,6 @@ public class StationOutputAdapter implements ParameterService<StationOutput> {
             allStations.addAll(converter.convertCondensed(filter(metadata, query)));
         }
         return allStations.toArray(new StationOutput[0]);
-    }
-
-    private Station[] filter(SOSMetadata metadata, QueryParameters query) {
-        Set<Station> allStations = new HashSet<Station>();
-        for (SosTimeseries timeseries : metadata.getTimeseriesRelatedWith(query)) {
-            Station station = metadata.getStationByTimeSeries(timeseries);
-            if (query.getSpatialFilter().contains(station.getLocation())) {
-                allStations.add(station);
-            }
-        }
-        return allStations.toArray(new Station[0]);
     }
 
     @Override
@@ -79,12 +70,29 @@ public class StationOutputAdapter implements ParameterService<StationOutput> {
         for (SOSMetadata metadata : getSOSMetadatas()) {
             for (Station station : metadata.getStations()) {
                 if (station.getGlobalId().equals(stationId)) {
-                    StationConverter converter = new StationConverter(metadata);
-                    return converter.convertExpanded(station);  
+                    if (isStationWithinBounds(query.getSpatialFilter(), station)) {
+                        StationConverter converter = new StationConverter(metadata);
+                        return converter.convertExpanded(station);
+                    }
                 }
             }
         }
         return null;
+    }
+
+    private Station[] filter(SOSMetadata metadata, QueryParameters query) {
+        Set<Station> allStations = new HashSet<Station>();
+        for (SosTimeseries timeseries : metadata.getTimeseriesRelatedWith(query)) {
+            Station station = metadata.getStationByTimeSeries(timeseries);
+            if (isStationWithinBounds(query.getSpatialFilter(), station)) {
+                allStations.add(station);
+            }
+        }
+        return allStations.toArray(new Station[0]);
+    }
+
+    private boolean isStationWithinBounds(BoundingBox boundingBox, Station station) {
+        return boundingBox == null || boundingBox.contains(station.getLocation());
     }
 
 }
