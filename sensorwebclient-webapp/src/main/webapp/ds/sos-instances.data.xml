@@ -29,7 +29,7 @@
 		<metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
         <adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
 		<requestChunk>300</requestChunk>
-		<autoZoom>false</autoZoom>
+		<autoZoom>true</autoZoom>
 		<llEasting>5</llEasting>
 		<llNorthing>46.00</llNorthing>
 		<urEasting>16</urEasting>

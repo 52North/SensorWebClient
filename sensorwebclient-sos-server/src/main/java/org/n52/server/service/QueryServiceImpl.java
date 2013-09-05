@@ -101,9 +101,6 @@ public class QueryServiceImpl implements QueryService {
             LOGGER.debug("Request -> getStations(sosUrl: {}, filter: {})", serviceUrl, parameters);
 
             BoundingBox spatialFilter = parameters.getSpatialFilter();
-            boolean shallForceXYAxisOrder = metadata.isForceXYAxisOrder();
-            CRSUtils referencing = createReferenceHelper(shallForceXYAxisOrder);
-
             int currentPageIndex = 0;
             int offset = query.getOffset();
             int pageSize = query.getPageSize();
@@ -112,7 +109,7 @@ public class QueryServiceImpl implements QueryService {
                 // when query is done from server side without paging
                 List<Station> filteredStations = new ArrayList<Station>();
                 for (Station station : stations) {
-                    if (spatialFilter == null || referencing.isContainedByBBox(spatialFilter, station.asGeoJSON())) {
+                    if (spatialFilter == null || spatialFilter.contains(station.getLocation())) {
                         if (parameters.getStation() == null || station.getLabel().equals(parameters.getStation())) {
                             station = cloneAndMatchAgainstQuery(station, parameters);
                             if (station.hasAtLeastOneParameterConstellation()) {
@@ -128,7 +125,7 @@ public class QueryServiceImpl implements QueryService {
                 Station[] finalStations = new Station[pageSize];
                 for (int i = offset; i < stations.size() && currentPageIndex < pageSize; i++) {
                     Station station = stations.get(i);
-                    if (spatialFilter == null || referencing.isContainedByBBox(spatialFilter, station.asGeoJSON())) {
+                    if (spatialFilter == null || spatialFilter.contains(station.getLocation())) {
                         station = cloneAndMatchAgainstQuery(station, parameters);
                         if (station.hasAtLeastOneParameterConstellation()) {
                             finalStations[currentPageIndex++] = station;

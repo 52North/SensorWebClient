@@ -868,7 +868,7 @@ public class SOSRequestManager extends RequestManager {
         EventBus.getMainEventBus().fireEvent(event);
 	}
 
-	void getPositions(final String serviceUrl, int offset, final int pageSize, final BoundingBox boundingBox) throws Exception {
+	private void getPositions(final String serviceUrl, int offset, final int pageSize, final BoundingBox boundingBox) throws Exception {
 	    final long begin = System.currentTimeMillis();
 	    QueryCallback callback = new QueryCallback(this, "Could not get positions.") {
 	        @Override

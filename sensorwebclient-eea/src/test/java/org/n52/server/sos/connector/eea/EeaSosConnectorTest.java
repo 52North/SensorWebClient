@@ -23,7 +23,9 @@
  */
 package org.n52.server.sos.connector.eea;
 
+import static org.hamcrest.Matchers.closeTo;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.io.InputStream;
 
@@ -33,21 +35,24 @@ import net.opengis.sampling.x20.SFSamplingFeatureType;
 import org.apache.xmlbeans.XmlException;
 import org.junit.Before;
 import org.junit.Test;
+import org.n52.io.crs.CRSUtils;
 import org.n52.oxf.ows.capabilities.IBoundingBox;
 import org.n52.oxf.valueDomains.spatial.BoundingBox;
-import org.n52.server.parser.utils.ParsedPoint;
-import org.n52.server.sos.connector.eea.ArcGISSoeMetadataHandler;
-import org.n52.io.crs.CRSUtils;
+import org.opengis.referencing.FactoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vividsolutions.jts.geom.Point;
+
 public class EeaSosConnectorTest {
     
+    private static final double ALLOWED_DELTA = 0.0001;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(EeaSosConnectorTest.class);
     
     private static final String SF_SPATIAL_FEATURE = "/files/sf_spatial_feature.xml";
     
-    private static final CRSUtils referenceHelper = CRSUtils.createEpsgForcedXYAxisOrder();
+    private static CRSUtils referenceHelper;
     
     private SFSamplingFeatureDocument sfSamplingFeature;
 
@@ -55,22 +60,21 @@ public class EeaSosConnectorTest {
 
     @Before
     public void setUp() throws Exception {
+        referenceHelper = CRSUtils.createEpsgForcedXYAxisOrder();
         InputStream is = this.getClass().getResourceAsStream(SF_SPATIAL_FEATURE);
         sfSamplingFeature = SFSamplingFeatureDocument.Factory.parse(is);
         sosConnector = new ArcGISSoeMetadataHandler();
     }
 
     @Test
-    public void testGetPointOfSamplingFeatureType() throws XmlException {
+    public void testGetPointOfSamplingFeatureType() throws XmlException, FactoryException {
         SFSamplingFeatureType feature = sfSamplingFeature.getSFSamplingFeature();
-        ParsedPoint parsedPoint = sosConnector.getPointOfSamplingFeatureType(feature, referenceHelper);
+        Point parsedPoint = sosConnector.getPointOfSamplingFeatureType(feature, referenceHelper);
         // <gml:Point gml:id="BETR701-point-location">
         //  <gml:pos srsName="http://www.opengis.net/def/crs/EPSG/0/4326">3.729 51.058</gml:pos>
         // </gml:Point>
-        assertEquals(parsedPoint.getLon(), "3.729");
-        assertEquals(parsedPoint.getLat(), "51.058");
-        assertEquals(parsedPoint.getSrs(), "EPSG:4326");
-        LOGGER.debug(parsedPoint.toString());
+        assertThat(parsedPoint.getX(), closeTo(3.729, ALLOWED_DELTA));
+        assertThat(parsedPoint.getY(), closeTo(51.058, ALLOWED_DELTA));
     }
     
     @Test

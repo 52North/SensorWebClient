@@ -37,7 +37,6 @@ import org.gwtopenmaps.openlayers.client.event.EventHandler;
 import org.gwtopenmaps.openlayers.client.event.EventObject;
 import org.gwtopenmaps.openlayers.client.popup.FramedCloud;
 import org.gwtopenmaps.openlayers.client.popup.Popup;
-import org.n52.client.sos.ctrl.SosDataManager;
 import org.n52.client.sos.legend.TimeseriesLegendData;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
