@@ -41,6 +41,7 @@ import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
+import org.n52.shared.serializable.pojos.sos.ObservationParameter.DecodeType;
 
 public class Timeseries implements LegendData {
 
@@ -221,15 +222,13 @@ public class Timeseries implements LegendData {
         return metadata.getTimeseriesParametersLookup();
     }
 
-	public String getTimeSeriesLabel() {
-//		if (properties.getStationName() != null && properties.getStationName() != "") {
-//		    StringBuilder sb = new StringBuilder();
-//		    sb.append(properties.getPhenomenon().getLabel());
-//		    sb.append("@").append(properties.getStationName());
-//			return sb.toString();
-//		}
+	public String getTimeSeriesLabel( DecodeType decodeType ) {
 	    TimeseriesParametersLookup lookup = getParameterLookup(properties);
-		return lookup.getFeature(properties.getFeature()).getLabel();
+		return lookup.getFeature(properties.getFeature()).getLabel(decodeType);
+	}
+	
+	public String getTimeSeriesLabel() {
+		return getTimeSeriesLabel(DecodeType.ASCII);
 	}
 
 	public String getFeatureId() {
@@ -237,7 +236,11 @@ public class Timeseries implements LegendData {
 	}
 
 	public String getPhenomenonId() {
-		return properties.getPhenomenon();
+		return getPhenomenonId(DecodeType.ASCII);
+	}
+
+	public String getPhenomenonId(DecodeType decodeType) {
+		return properties.getPhenomenon(decodeType);
 	}
 
 	public String getProcedureId() {

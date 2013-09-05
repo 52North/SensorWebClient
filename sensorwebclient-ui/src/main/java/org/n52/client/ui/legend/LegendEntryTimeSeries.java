@@ -71,6 +71,7 @@ import org.n52.client.ui.btn.SmallButton;
 import org.n52.client.util.ClientUtils;
 import org.n52.shared.serializable.pojos.Scale;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.shared.serializable.pojos.sos.ObservationParameter.DecodeType;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
@@ -538,7 +539,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 	
 	private void createInformationWindow() {
 		informationWindow = new Window();
-		informationWindow.setTitle(LegendEntryTimeSeries.this.getTimeSeries().getTimeSeriesLabel());
+		informationWindow.setTitle(LegendEntryTimeSeries.this.getTimeSeries().getTimeSeriesLabel(DecodeType.NATURAL));
 		informationWindow.setWidth(450);
 		informationWindow.setHeight(500);
 		informationWindow.setShowMinimizeButton(false);
@@ -602,11 +603,11 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		Timeseries timeseries = getTimeSeries();
 		TimeseriesProperties properties = timeseries.getProperties();
 		TimeseriesParametersLookup lookup = getParameterLookup(properties);
-		String phenomenon = lookup.getPhenomenon(properties.getPhenomenon()).getLabel();
+		String phenomenon = lookup.getPhenomenon(properties.getPhenomenon()).getLabel(DecodeType.NATURAL);
 
 		this.titleLabel.setContents("<span>" + phenomenon + "@" + getStationName(timeseries) + "</span>");
 		this.titleCol.getCanvas().setBackgroundColor(properties.getHexColor());
-		this.styleChanger.setTitle(timeseries.getPhenomenonId() + "@" + getStationName(timeseries));
+		this.styleChanger.setTitle(timeseries.getPhenomenonId(DecodeType.NATURAL) + "@" + getStationName(timeseries));
 		if (timeseries.hasData()) {
 			this.noDataSign.hide();
 			if (this.isSelected) {

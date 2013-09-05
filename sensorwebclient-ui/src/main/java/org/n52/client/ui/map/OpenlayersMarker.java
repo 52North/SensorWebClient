@@ -42,6 +42,7 @@ import org.n52.client.sos.legend.Timeseries;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
+import org.n52.shared.serializable.pojos.sos.ObservationParameter.DecodeType;
 
 /**
  * The Class OpenlayersMarker.
@@ -124,7 +125,7 @@ public class OpenlayersMarker extends Marker {
         if (infoTxt == null || infoTxt.length() == 0) {
             StringBuilder sb = new StringBuilder();
             sb.append("Offering: ");
-            sb.append(lookup.getOffering(properties.getOffering()).getLabel());
+            sb.append(lookup.getOffering(properties.getOffering()).getLabel(DecodeType.NATURAL));
             sb.append("</br>Feature: ");
             sb.append(lookup.getFeature(properties.getFeature()).getLabel());
             sb.append("</br>Procedure: ");

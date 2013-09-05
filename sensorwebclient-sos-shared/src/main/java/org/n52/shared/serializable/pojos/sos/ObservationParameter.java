@@ -33,6 +33,10 @@ public abstract class ObservationParameter implements Serializable {
     
     protected String label;
     
+    public enum DecodeType {
+    	ASCII, NATURAL//, URLENC
+    }
+    
     ObservationParameter() {
         // for serialization
     }
@@ -58,9 +62,19 @@ public abstract class ObservationParameter implements Serializable {
     }
 
     public String getLabel() {
-        return label;
+        return getLabel(DecodeType.ASCII);
     }
-
+    
+    public String getLabel(DecodeType encodeType){
+    	switch(encodeType){
+		case NATURAL:
+			return SosTimeseries.decodeSpecialCharacters(this.label);
+		case ASCII:
+		default:
+			return this.label;
+    	}
+    }
+    
     protected String parseLabel(String parameterId) {
         if (parameterId.startsWith("urn")) {
             return parameterId.substring(parameterId.lastIndexOf(":") + 1);

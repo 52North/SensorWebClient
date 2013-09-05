@@ -28,6 +28,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.n52.shared.serializable.pojos.sos.ObservationParameter.DecodeType;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 
@@ -377,7 +378,11 @@ public class TimeseriesProperties implements Serializable {
      * @deprecated user {@link #getTimeseries()}
      */
 	public String getPhenomenon() {
-		return timeseries.getPhenomenon();
+		return getPhenomenon(DecodeType.ASCII);
+	}
+
+	public String getPhenomenon(DecodeType decodeType) {
+		return timeseries.getPhenomenon(decodeType);
 	}
 
 	public String getTimeseriesId() {

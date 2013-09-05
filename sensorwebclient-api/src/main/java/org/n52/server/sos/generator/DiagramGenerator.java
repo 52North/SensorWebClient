@@ -47,6 +47,7 @@ import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Feature;
+import org.n52.shared.serializable.pojos.sos.ObservationParameter.DecodeType;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
@@ -139,7 +140,7 @@ public class DiagramGenerator extends Generator {
             // text:
             legendGraphics.setColor(Color.black);
 
-            legendGraphics.drawString(dd.getFeature().getLabel() + " - "
+            legendGraphics.drawString(dd.getFeature().getLabel(DecodeType.NATURAL) + " - "
                     + dd.getLabel(), leftMargin + iconWidth
                     + horizontalSpaceBetweenIconAndText, yPos + iconHeight);
             

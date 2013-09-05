@@ -189,19 +189,4 @@ public class Station implements Serializable {
 			st.setType(this.getType());
 		}
 	}
-
-	public static String decodeSpecialCharacters( String str){
-        String retStr = str;
-        retStr = retStr.replaceAll("_", " ");
-        retStr = retStr.replaceAll("kuerzest", "kürzest");
-        retStr = retStr.replaceAll("laengst", "längst");
-        retStr = retStr.replaceAll("Leitfaehigkeit", "Leitfähigkeit");
-        retStr = retStr.replaceAll("Saettigung", "Sättigung");
-        retStr = retStr.replaceAll("Stroemung", "Strömung");
-        retStr = retStr.replaceAll("hoechst", "höchst");
-        retStr = retStr.replaceAll("Trueb", "Trüb");
-//        retStr = retStr.replaceAll("", "");
-
-        return retStr;
-    }
 }

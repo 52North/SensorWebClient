@@ -31,6 +31,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.n52.shared.serializable.pojos.sos.ObservationParameter.DecodeType;
 import org.n52.shared.serializable.pojos.sos.Station.Type;
 
 /**
@@ -123,7 +124,17 @@ public class SosTimeseries implements Serializable {
     }
 
     public String getPhenomenon() {
-        return phenomenon;
+        return getPhenomenon(DecodeType.ASCII);
+    }
+
+    public String getPhenomenon(DecodeType decodeType) {
+    	switch(decodeType){
+		case NATURAL:
+			return decodeSpecialCharacters(phenomenon);
+		case ASCII:
+		default:
+	        return phenomenon;
+    	}
     }
 
     public void setPhenomenon(String phenomenon) {
@@ -161,11 +172,26 @@ public class SosTimeseries implements Serializable {
      * @return a label to categorize stations on which filtering can take place.
      */
     public String getCategory() {
-        return category == null ? phenomenon : category;
+        return getCategory(DecodeType.ASCII);
     }
 
+    public String getCategory(DecodeType decodeType) {
+    	switch(decodeType){
+		case NATURAL:
+			return decodeSpecialCharacters(category == null ? phenomenon : category);
+		case ASCII:
+		default:
+			return category == null ? phenomenon : category;
+    	}
+        
+    }
+    
+    /**
+     * Use getCategory(DecodeType.NATURAL)
+     * @deprecated
+     */
     public String getCategoryDecoded() {
-        return Station.decodeSpecialCharacters(getCategory());
+        return getCategory(DecodeType.NATURAL);
     }
 
     /**
@@ -355,4 +381,20 @@ public class SosTimeseries implements Serializable {
 		}
 		return PARENT_NAME_DEFAULT;
 	}
+	
+	public static String decodeSpecialCharacters( String str){
+        String retStr = str;
+        retStr = retStr.replaceAll("_", " ");
+        retStr = retStr.replaceAll("kuerzest", "kürzest");
+        retStr = retStr.replaceAll("laengst", "längst");
+        retStr = retStr.replaceAll("Leitfaehigkeit", "Leitfähigkeit");
+        retStr = retStr.replaceAll("Saettigung", "Sättigung");
+        retStr = retStr.replaceAll("Stroemung", "Strömung");
+        retStr = retStr.replaceAll("hoechst", "höchst");
+        retStr = retStr.replaceAll("Trueb", "Trüb");
+//        retStr = retStr.replaceAll("", "");
+
+        return retStr;
+    }
+
 }
