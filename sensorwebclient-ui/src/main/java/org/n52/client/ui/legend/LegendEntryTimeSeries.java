@@ -88,6 +88,8 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.events.DragStopEvent;
 import com.smartgwt.client.widgets.events.DragStopHandler;
+import com.smartgwt.client.widgets.events.VisibilityChangedEvent;
+import com.smartgwt.client.widgets.events.VisibilityChangedHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.CheckboxItem;
 import com.smartgwt.client.widgets.form.fields.ColorPickerItem;
@@ -867,15 +869,6 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		String uom = "";
 		double scaleValueMin = 0;
 		double scaleValueMax = 0;
-		// TODO hier wird noch eine Exception geworfen. Irgendwie muss man aber an die Maßeinheit herankommen...
-		try{
-			TimeseriesProperties prop = this.getTimeSeries().getProperties(); 
-			uom = prop.getUnitOfMeasure();
-			scaleValueMin = prop.getAxisLowerBound();
-			scaleValueMax = prop.getAxisUpperBound();
-		}catch(Exception e){
-			// TimeseriesProperties konnten nicht geladen werden.
-		}
 		
 		this.scale = new RadioGroupItem();
 		this.scale.setTitle(i18n.scale());
@@ -883,6 +876,9 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.scale.addChangedHandler(new ChangedHandler() {
 			public void onChanged(ChangedEvent event) {
 				if( i18n.manualScale().equals( LegendEntryTimeSeries.this.scale.getValue() ) ){
+					TimeseriesProperties prop = LegendEntryTimeSeries.this.getTimeSeries().getProperties(); 
+					LegendEntryTimeSeries.this.scaleManualMin.setValue(prop.getAxisLowerBound());
+					LegendEntryTimeSeries.this.scaleManualMax.setValue(prop.getAxisUpperBound());
 					LegendEntryTimeSeries.this.scaleManualMin.show();
 					LegendEntryTimeSeries.this.scaleManualMax.show();
 				} else {
@@ -894,17 +890,13 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		
 		this.scaleManualMin = new FloatItem();
 		this.scaleManualMin.setTitle(i18n.manualScaleMinLabel());
-		this.scaleManualMin.setHint(uom);
 		this.scaleManualMin.setWidth(50);
 		this.scaleManualMin.setValue(scaleValueMin);
-		this.scaleManualMin.hide();
-		
+
 		this.scaleManualMax = new FloatItem();
 		this.scaleManualMax.setTitle(i18n.manualScaleMaxLabel());
-		this.scaleManualMax.setHint(uom);
 		this.scaleManualMax.setWidth(50);
 		this.scaleManualMax.setValue(scaleValueMax);
-		this.scaleManualMax.hide();
 
 		this.cpForm = new DynamicForm();
 		this.cpForm.setNumCols(1);
@@ -916,8 +908,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.colors.setTitle(i18n.color());
 		this.colors.setWidth(85);
 		this.cpForm.setShowComplexFields(false);
-		this.cpForm.setFields(this.scale, this.scaleManualMin, this.scaleManualMax, this.seriesType, this.lineStyles, 
-				this.lineWidth, this.colors, this.slider);
+		this.cpForm.setFields(this.scale, this.scaleManualMin, this.scaleManualMax, this.seriesType, this.lineStyles, this.lineWidth, this.colors, this.slider);
 		this.cpForm.setSaveOnEnter(true);
 
 		SmallButton conf = new SmallButton(
@@ -940,15 +931,9 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 				if (scaleTypeStr.equals(i18n.zeroScale())) {
 					scale.setZero();
 				} else if (scaleTypeStr.equals(i18n.manualScale() )) {
-					com.google.gwt.user.client.Window.alert("DEBUG Clickhandler");
-					try{
-						scale.setManual();
-						scale.setManualScaleMin(LegendEntryTimeSeries.this.scaleManualMin.getValueAsFloat());
-						scale.setManualScaleMax(LegendEntryTimeSeries.this.scaleManualMax.getValueAsFloat());
-					}catch(Exception e){
-						//DEBUG
-                		com.google.gwt.user.client.Window.alert("Fehler in LegendEntry Clickhandler:\n" + e.getMessage());
-					}
+					scale.setManual();
+					scale.setManualScaleMin(LegendEntryTimeSeries.this.scaleManualMin.getValueAsFloat());
+					scale.setManualScaleMax(LegendEntryTimeSeries.this.scaleManualMax.getValueAsFloat());
 				} else {
 					scale.setAuto();
 				}
@@ -993,6 +978,30 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.styleChanger.setStyleName("n52_sensorweb_client_styleChangerForm");
 		this.styleChanger.addItem(vlayout);
 
+		this.styleChanger.addVisibilityChangedHandler(new VisibilityChangedHandler() {
+			
+			@Override
+			public void onVisibilityChanged(VisibilityChangedEvent event) {
+				try{
+					TimeseriesProperties prop = LegendEntryTimeSeries.this.getTimeSeries().getProperties(); 
+					String uom = prop.getUnitOfMeasure();
+					LegendEntryTimeSeries.this.scaleManualMin.setHint(uom);
+					LegendEntryTimeSeries.this.scaleManualMax.setHint(uom);
+					if( i18n.manualScale().equals( LegendEntryTimeSeries.this.scale.getValue() ) ){
+						LegendEntryTimeSeries.this.scaleManualMin.setValue(prop.getAxisLowerBound());
+						LegendEntryTimeSeries.this.scaleManualMax.setValue(prop.getAxisUpperBound());
+						LegendEntryTimeSeries.this.scaleManualMin.show();
+						LegendEntryTimeSeries.this.scaleManualMax.show();
+					} else {
+						LegendEntryTimeSeries.this.scaleManualMin.hide();
+						LegendEntryTimeSeries.this.scaleManualMax.hide();
+					}
+				}catch(Exception e){
+					// TimeseriesProperties konnten nicht geladen werden.
+				}
+			}
+		});
+		
 		this.styleChanger.hide();
 
 		return this.styleChanger;
