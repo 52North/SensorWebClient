@@ -178,7 +178,7 @@ class StationSelectorController implements MapController {
     }
     
     public void loadTimeseriesByCategory(String category) {
-    	selectedCategory = category;
+    	selectedCategory = category.split("\\|",2)[0];
     	SosTimeseries timeseries = selectedStation.getTimeseriesByCategory(selectedCategory);
     	if (timeseries != null) {
     		fireGetTimeseries(timeseries);
