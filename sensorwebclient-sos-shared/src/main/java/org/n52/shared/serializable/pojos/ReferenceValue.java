@@ -35,8 +35,6 @@ public class ReferenceValue implements Serializable {
     
     private TimeseriesData values;
     
-    private String timeseriesId;
-
     private String label;
     
     
@@ -44,14 +42,15 @@ public class ReferenceValue implements Serializable {
     private String color;
     private boolean show = false;
     
+    @SuppressWarnings("unused")
     private ReferenceValue() {
         // for serialization
+        values = new TimeseriesData();
     }
     
-    public void addValues(TimeseriesValue... values) {
-        this.values.addValues(values);
+    public void addValues(TimeseriesValue... timeseriesValues) {
+        values.addValues(timeseriesValues);
     }
-    
     
     public TimeseriesValue[] getValues() {
         return values.getValues();
@@ -67,6 +66,8 @@ public class ReferenceValue implements Serializable {
      */
     @Deprecated
     public ReferenceValue(String label, Double value) {
+        values = new TimeseriesData();
+        addValues(new TimeseriesValue(0, value));
         this.label = label;
         this.value = value;
         Random rand = new Random();

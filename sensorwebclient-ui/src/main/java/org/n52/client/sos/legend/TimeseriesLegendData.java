@@ -25,6 +25,7 @@
 package org.n52.client.sos.legend;
 
 import static org.n52.client.sos.ctrl.SosDataManager.getDataManager;
+import static org.n52.client.ui.map.Coordinate.createProjectedCoordinate;
 import static org.n52.client.ui.map.OpenLayersMapWrapper.currentMapProjection;
 
 import java.util.HashMap;
@@ -128,18 +129,6 @@ public class TimeseriesLegendData implements LegendData {
 
 	public Coordinate getCoords() {
 		return this.coords;
-	}
-
-	/**
-	 * The coordinate has to be set explicitly, due to missing spatial
-	 * information at the time of instance creation. Use this method when
-	 * spatial information for this {@link TimeseriesLegendData} instance is available.
-	 * 
-	 * @param coords
-	 *            the spatial information as coordinate.
-	 */
-	public void setCoords(Coordinate coords) {
-		this.coords = coords;
 	}
 
 	public long getFirstValueDate() {
@@ -253,22 +242,6 @@ public class TimeseriesLegendData implements LegendData {
 		return properties.getServiceUrl();
 	}
 
-	public double getLat() {
-		return properties.getLat();
-	}
-
-	public double getLon() {
-		return properties.getLon();
-	}
-	
-	public void setStation(Station station) {
-	    properties.setStation(station);
-	}
-	
-	public Station getStation() {
-	    return properties.getStation();
-	}
-
 	public void setStationName(String name) {
 		this.properties.setStationName(name);
 		this.properties.setLabel(name);
@@ -294,10 +267,6 @@ public class TimeseriesLegendData implements LegendData {
 		return this.properties.getLineWidth();
 	}
 
-	public String getSrs() {
-		return this.properties.getSrs();
-	}
-
 	public LegendElement getLegendElement() {
 		return this.legendElement;
 	}
@@ -321,11 +290,11 @@ public class TimeseriesLegendData implements LegendData {
 	 *         not already available
 	 */
 	private Coordinate getCoords(Station station) {
-		if (properties.getSrs() == null) {
+		if (!properties.isStationInitialized()) {
 			// coords not available yet (eg client started from permalink)
 			return null;
 		}
-		return new Coordinate(station.getLocation(), currentMapProjection);
+		return createProjectedCoordinate(station.getLocation(), currentMapProjection);
 	}
 
 	public boolean hasData() {

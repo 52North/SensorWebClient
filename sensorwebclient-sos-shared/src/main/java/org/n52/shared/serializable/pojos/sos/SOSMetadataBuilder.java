@@ -25,8 +25,6 @@
 package org.n52.shared.serializable.pojos.sos;
 
 import org.n52.io.crs.BoundingBox;
-import org.n52.io.crs.EastingNorthing;
-import org.n52.shared.Constants;
 
 public class SOSMetadataBuilder {
 
@@ -50,16 +48,8 @@ public class SOSMetadataBuilder {
 
     private int requestChunk = 100;
     
-    private double llEasting = Double.NaN;
-
-    private double llNorthing = Double.NaN;
-
-    private double urEasting = Double.NaN;
-
-    private double urNorthing = Double.NaN;
-
-    private boolean sosSpecificBboxConfigured;
-
+    private BoundingBox extent;
+    
     public SOSMetadataBuilder() {
         // default
     }
@@ -134,52 +124,9 @@ public class SOSMetadataBuilder {
         }
         return this;
     }
-
-    public SOSMetadataBuilder addLowerLeftEasting(Double llEasting) {
-        if (llEasting == null) {
-            throw new NullPointerException("llEasting parameter must not be null or NaN.");
-        }
-        if (llEasting.isNaN()) {
-            throw new IllegalArgumentException("llEasting parameter must be valid Double: " + llEasting);
-        }
-        this.sosSpecificBboxConfigured = true;
-        this.llEasting = llEasting;
-        return this;
-    }
-
-    public SOSMetadataBuilder addLowerLeftNorthing(Double llNorthing) {
-        if (llNorthing == null) {
-            throw new NullPointerException("llNorthing parameter must not be null or NaN.");
-        }
-        if (llNorthing.isNaN()) {
-            throw new IllegalArgumentException("llNorthing parameter must be valid Double: " + llNorthing);
-        }
-        this.sosSpecificBboxConfigured = true;
-        this.llNorthing = llNorthing;
-        return this;
-    }
-
-    public SOSMetadataBuilder addUpperRightEasting(Double urEasting) {
-        if (urEasting == null) {
-            throw new NullPointerException("urEasting parameter must not be null or NaN.");
-        }
-        if (urEasting.isNaN()) {
-            throw new IllegalArgumentException("urEasting parameter must be valid Double: " + urEasting);
-        }
-        this.sosSpecificBboxConfigured = true;
-        this.urEasting = urEasting;
-        return this;
-    }
-
-    public SOSMetadataBuilder addUpperRightNorthing(Double urNorthing) {
-        if (urNorthing == null) {
-            throw new NullPointerException("urNorthing parameter must not be null or NaN.");
-        }
-        if (urNorthing.isNaN()) {
-            throw new IllegalArgumentException("urNorthing parameter must be valid Double: " + urNorthing);
-        }
-        this.sosSpecificBboxConfigured = true;
-        this.urNorthing = urNorthing;
+    
+    public SOSMetadataBuilder withExtent(BoundingBox bbox) {
+        this.extent = bbox;
         return this;
     }
     
@@ -227,16 +174,8 @@ public class SOSMetadataBuilder {
         return this.requestChunk;
     }
     
-    /**
-     * @return the configured SOS specific extent or {@link Constants#FALLBACK_EXTENT} if no one was configured.
-     */
     public BoundingBox getConfiguredServiceExtent() {
-        if ( !sosSpecificBboxConfigured) {
-            return Constants.FALLBACK_EXTENT;
-        }
-        EastingNorthing ll = new EastingNorthing(llEasting, llNorthing, "EPSG:4326");
-        EastingNorthing ur = new EastingNorthing(urEasting, urNorthing, "EPSG:4326");
-        return new BoundingBox(ll, ur);
+        return extent;
     }
 
 }

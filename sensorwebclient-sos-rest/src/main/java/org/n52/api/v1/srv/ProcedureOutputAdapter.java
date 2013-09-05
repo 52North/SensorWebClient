@@ -75,7 +75,12 @@ public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput>
 
 	@Override
     public ProcedureOutput[] getParameters(String[] procedureIds) {
-	    List<ProcedureOutput> selectedProcedures = new ArrayList<ProcedureOutput>();
+	    return getParameters(procedureIds, QueryMap.createDefaults());
+    }
+
+    @Override
+    public ProcedureOutput[] getParameters(String[] procedureIds, QueryMap query) {
+        List<ProcedureOutput> selectedProcedures = new ArrayList<ProcedureOutput>();
         for (String procedureId : procedureIds) {
             ProcedureOutput procedure = getParameter(procedureId);
             if (procedure != null) {
@@ -87,17 +92,23 @@ public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput>
 
     @Override
 	public ProcedureOutput getParameter(String procedureId) {
-		for (SOSMetadata metadata : getSOSMetadatas()) {
-			TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
-			for (Procedure procedure : lookup.getProcedures()) {
-				if (procedure.getGlobalId().equals(procedureId)) {
-					ProcedureConverter converter = new ProcedureConverter(metadata);
-					return converter.convertExpanded(procedure);
-				}
-			}
-		}
-		return null;
+		return getParameter(procedureId, QueryMap.createDefaults());
 	}
 
+    @Override
+    public ProcedureOutput getParameter(String procedureId, QueryMap query) {
+        for (SOSMetadata metadata : getSOSMetadatas()) {
+            TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
+            for (Procedure procedure : lookup.getProcedures()) {
+                if (procedure.getGlobalId().equals(procedureId)) {
+                    ProcedureConverter converter = new ProcedureConverter(metadata);
+                    return converter.convertExpanded(procedure);
+                }
+            }
+        }
+        return null;
+    }
+
+    
 
 }

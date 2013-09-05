@@ -26,7 +26,6 @@ package org.n52.client.sos.ui;
 
 import static org.n52.client.ctrl.PropertiesManager.getPropertiesManager;
 import static org.n52.client.ui.map.InfoMarker.createInfoMarker;
-import static org.n52.shared.Constants.DISPLAY_PROJECTION;
 import static org.n52.shared.Constants.EPSG_4326;
 
 import java.util.ArrayList;
@@ -45,19 +44,21 @@ import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ui.map.InfoMarker;
 import org.n52.client.ui.map.MapController;
 import org.n52.client.ui.map.OpenLayersMapWrapper;
-import org.n52.io.crs.BoundingBox;
-import org.n52.io.crs.EastingNorthing;
-import org.n52.shared.Constants;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
 
 import com.google.gwt.core.client.GWT;
 
 public class StationSelectorMap extends OpenLayersMapWrapper {
+    
+    /**
+     * A fall back extent if no other extent was configured (data source instance, or global).
+     */
+    static final Bounds FALLBACK_EXTENT = new Bounds(-180d, -90d, 180d, 90d);
 
     private final MapController controller;
 
-    private BoundingBox defaultExtent;
+    private Bounds defaultExtent;
 
     private ArrayList<InfoMarker> markersOnMap = new ArrayList<InfoMarker>();
 
@@ -77,18 +78,16 @@ public class StationSelectorMap extends OpenLayersMapWrapper {
                 double lleftY = new Double(propertiesMgr.getParameterAsString("lleftY"));
                 double urightX = new Double(propertiesMgr.getParameterAsString("urightX"));
                 double urightY = new Double(propertiesMgr.getParameterAsString("urightY"));
-                EastingNorthing ll = new EastingNorthing(lleftX, lleftY, DISPLAY_PROJECTION);
-                EastingNorthing ur = new EastingNorthing(urightX, urightY, DISPLAY_PROJECTION);
-                defaultExtent = new BoundingBox(ll, ur);
+                defaultExtent = new Bounds(lleftX, lleftY, urightX, urightY);
             }
             else {
-                GWT.log("No global extent configured. Zooming to: " + Constants.FALLBACK_EXTENT);
-                defaultExtent = Constants.FALLBACK_EXTENT;
+                GWT.log("No global extent configured. Zooming to: " + FALLBACK_EXTENT);
+                defaultExtent = FALLBACK_EXTENT;
             }
         }
         catch (NumberFormatException e) {
-            GWT.log("Error while parsing configured bounding box. Zooming to: " + Constants.FALLBACK_EXTENT);
-            defaultExtent = Constants.FALLBACK_EXTENT;
+            GWT.log("Error while parsing configured bounding box. Zooming to: " + FALLBACK_EXTENT);
+            defaultExtent = FALLBACK_EXTENT;
         }
         zoomToExtent(defaultExtent);
     }
@@ -219,25 +218,18 @@ public class StationSelectorMap extends OpenLayersMapWrapper {
         }
     }
 
-    public void zoomToExtent(BoundingBox bbox) {
-        String srs = bbox.getSrs();
-        String destSrs = getMapProjection();
-        EastingNorthing ll = bbox.getLowerLeftCorner();
-        EastingNorthing ur = bbox.getUpperRightCorner();
-        LonLat lowerleft = new LonLat(ll.getEasting(), ll.getNorthing());
-        LonLat upperright = new LonLat(ur.getEasting(), ur.getNorthing());
-        if ( !srs.equalsIgnoreCase(destSrs)) {
-            lowerleft.transform(srs, destSrs);
-            upperright.transform(srs, destSrs);
-        }
-        map.zoomToExtent(new Bounds(lowerleft.lon(), lowerleft.lat(), upperright.lon(), upperright.lat()));
+    /**
+     * @param bounds an extent to zoom to.
+     */
+    public void zoomToExtent(Bounds bounds) {
+        map.zoomToExtent(bounds);
     }
 
     /**
      * @return the default extent if configured. If no extent is configured the default extent probably has
-     *         been set to {@link Constants#FALLBACK_EXTENT}.
+     *         been set to {@link FALLBACK_EXTENT}.
      */
-    public BoundingBox getDefaultExtent() {
+    public Bounds getDefaultExtent() {
         return defaultExtent;
     }
 

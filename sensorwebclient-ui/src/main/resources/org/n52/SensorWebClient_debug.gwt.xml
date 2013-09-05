@@ -8,6 +8,7 @@
 	<inherits name="com.smartgwt.tools.SmartGwtTools" />
 	<inherits name="org.gwtopenmaps.openlayers.OpenLayers" />
 	<inherits name="org.n52.SensorWebClient_Ext" />
+	<inherits name="net.sf.jts4gwt.JTS4GWT" />
 	 
     <extend-property name="locale" values="en" />
     <extend-property name="locale" values="de" />

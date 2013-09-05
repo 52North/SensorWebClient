@@ -351,18 +351,15 @@ public class TimeseriesProperties implements Serializable {
 	}
 
 	public double getLat() {
-		return this.station.getLocation().getNorthing();
+		return this.station.getLocation().getY();
 	}
 
 	public double getLon() {
-		return this.station.getLocation().getEasting();
+		return this.station.getLocation().getX();
 	}
 
-    public String getSrs() {
-        if (station == null || station.getLocation() == null) {
-            return null;
-        }
-        return station.getLocation().getCrsDefinition();
+    public boolean isStationInitialized() {
+        return station != null && station.getLocation() != null;
     }
 
 	public void setOpacity(double opacityPercentage) {

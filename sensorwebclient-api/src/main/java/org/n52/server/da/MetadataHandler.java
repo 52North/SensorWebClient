@@ -242,11 +242,11 @@ public abstract class MetadataHandler {
 	 *            the SOS metadata containing SOS instance configuration.
 	 */
 	protected CRSUtils createReferencingHelper() {
-		if (sosMetadata.isForceXYAxisOrder()) {
-			return CRSUtils.createEpsgForcedXYAxisOrder();
-		} else {
-			return CRSUtils.createEpsgStrictAxisOrder();
-		}
+	    if (sosMetadata.isForceXYAxisOrder()) {
+            return CRSUtils.createEpsgForcedXYAxisOrder();
+        } else {
+            return CRSUtils.createEpsgStrictAxisOrder();
+        }
 	}
 	
 	protected Collection<String> getFoisByProcedure(String procedure)

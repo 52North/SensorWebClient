@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<sml:SensorML xmlns:sml="http://www.opengis.net/sensorML/1.0.1" xmlns="http://www.opengis.net/sos/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:om="http://www.opengis.net/om/1.0" xmlns:ows="http://www.opengeospatial.net/ows" xmlns:sa="http://www.opengis.net/sampling/1.0" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0.1">
+  <sml:member>
+    <sml:System>
+      <!--sml:identification element must contain the ID of the sensor-->
+      <sml:identification>
+        <sml:IdentifierList>
+          <sml:identifier>
+            <sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">
+              <sml:value>BrickDamKGR</sml:value>
+            </sml:Term>
+          </sml:identifier>
+        </sml:IdentifierList>
+      </sml:identification>
+      <!--sml:characteristics has to contain status and mobility information-->
+      <sml:characteristics>
+        <swe:SimpleDataRecord>
+          <!--status: sensor is collecting data at the moment (true) or not (false)-->
+          <swe:field name="status">
+            <swe:Boolean>
+              <swe:value>true</swe:value>
+            </swe:Boolean>
+          </swe:field>
+          <!--status whether sensor is mobile (true) or fixed (false)-->
+          <swe:field name="mobile">
+            <swe:Boolean>
+              <swe:value>false</swe:value>
+            </swe:Boolean>
+          </swe:field>
+        </swe:SimpleDataRecord>
+      </sml:characteristics>
+      <!--sml:capabilities used to link to a sensor to an FOI-->
+      <sml:capabilities>
+        <swe:DataRecord>
+          <swe:field name="FeatureOfInterestID">
+            <swe:Text definition="FeatureOfInterest identifier">
+              <swe:value>BrickDamKGR</swe:value>
+            </swe:Text>
+          </swe:field>
+        </swe:DataRecord>
+      </sml:capabilities>
+      <!--last measured position of sensor-->
+      <sml:position name="sensorPosition">
+        <swe:Position referenceFrame="urn:ogc:def:crs:EPSG::4326">
+          <swe:location>
+            <swe:Vector gml:id="STATION_LOCATION">
+              <swe:coordinate name="latitude">
+                <swe:Quantity>
+                  <swe:uom code="decimals_degrees"/>
+                  <swe:value>-26.06340</swe:value>
+                </swe:Quantity>
+              </swe:coordinate>
+              <swe:coordinate name="longitude">
+                <swe:Quantity>
+                  <swe:uom code="decimals_degrees"/>
+                  <swe:value>27.69591</swe:value>
+                </swe:Quantity>
+              </swe:coordinate>
+              <swe:coordinate name="altitude">
+                <swe:Quantity>
+                  <swe:uom code="m"/>
+                  <swe:value>1506.0</swe:value>
+                </swe:Quantity>
+              </swe:coordinate>
+            </swe:Vector>
+          </swe:location>
+        </swe:Position>
+      </sml:position>
+      <!--list containing the input phenomena for this sensor system
+     <sml:inputs>
+      <sml:InputList>
+      </sml:InputList>
+     </sml:inputs>-->
+      <!--list containing the output phenomena of this sensor system;
+      ATTENTION:
+      These phenomena are parsed and inserted into the database; they have to
+      contain offering elements to determine the correct offering for the sensors
+       and measured phenomena
+       NB: Ordering of gml elements IS important!-->
+      <sml:outputs>
+        <sml:OutputList>
+          <sml:output name="Calcium">
+            <swe:Quantity definition="urn:ogc:def:phenomenon:OGC:1.0.30:calcium">
+              <gml:metaDataProperty>
+                <offering>
+                  <id>DDSCIENCE</id>
+                  <name>DD SCIENCE cc LABORATORY</name>
+                </offering>
+              </gml:metaDataProperty>
+              <gml:description>Calcium</gml:description>
+              <swe:uom code="mg/l"/>
+              <!---->
+            </swe:Quantity>
+          </sml:output>
+          <sml:output name="Magnesium">
+            <swe:Quantity definition="urn:ogc:def:phenomenon:OGC:1.0.30:magnesium">
+              <gml:metaDataProperty>
+                <offering>
+                  <id>DDSCIENCE</id>
+                  <name>DD SCIENCE cc LABORATORY</name>
+                </offering>
+              </gml:metaDataProperty>
+              <gml:description>Magnesium</gml:description>
+              <swe:uom code="mg/l"/>
+              <!---->
+            </swe:Quantity>
+          </sml:output>
+          <sml:output name="Manganese">
+            <swe:Quantity definition="urn:ogc:def:phenomenon:OGC:1.0.30:manganese">
+              <gml:metaDataProperty>
+                <offering>
+                  <id>DDSCIENCE</id>
+                  <name>DD SCIENCE cc LABORATORY</name>
+                </offering>
+              </gml:metaDataProperty>
+              <gml:description>Manganese</gml:description>
+              <swe:uom code="mg/l"/>
+              <!---->
+            </swe:Quantity>
+          </sml:output>
+          <sml:output name="Sodium">
+            <swe:Quantity definition="urn:ogc:def:phenomenon:OGC:1.0.30:sodium">
+              <gml:metaDataProperty>
+                <offering>
+                  <id>DDSCIENCE</id>
+                  <name>DD SCIENCE cc LABORATORY</name>
+                </offering>
+              </gml:metaDataProperty>
+              <gml:description>Sodium</gml:description>
+              <swe:uom code="mg/l"/>
+              <!---->
+            </swe:Quantity>
+          </sml:output>
+          <sml:output name="Iron">
+            <swe:Quantity definition="urn:ogc:def:phenomenon:OGC:1.0.30:iron">
+              <gml:metaDataProperty>
+                <offering>
+                  <id>DDSCIENCE</id>
+                  <name>DD SCIENCE cc LABORATORY</name>
+                </offering>
+              </gml:metaDataProperty>
+              <gml:description>Iron</gml:description>
+              <swe:uom code="mg/l"/>
+              <!---->
+            </swe:Quantity>
+          </sml:output>
+          <sml:output name="Chloride">
+            <swe:Quantity definition="urn:ogc:def:phenomenon:OGC:1.0.30:cholride">
+              <gml:metaDataProperty>
+                <offering>
+                  <id>DDSCIENCE</id>
+                  <name>DD SCIENCE cc LABORATORY</name>
+                </offering>
+              </gml:metaDataProperty>
+              <gml:description>Chloride</gml:description>
+              <swe:uom code="mg/l"/>
+              <!---->
+            </swe:Quantity>
+          </sml:output>
+          <sml:output name="Sulphate">
+            <swe:Quantity definition="urn:ogc:def:phenomenon:OGC:1.0.30:sulphate">
+              <gml:metaDataProperty>
+                <offering>
+                  <id>DDSCIENCE</id>
+                  <name>DD SCIENCE cc LABORATORY</name>
+                </offering>
+              </gml:metaDataProperty>
+              <gml:description>Sulphate</gml:description>
+              <swe:uom code="mg/l"/>
+              <!---->
+            </swe:Quantity>
+          </sml:output>
+          <sml:output name="Lead">
+            <swe:Quantity definition="urn:ogc:def:phenomenon:OGC:1.0.30:lead">
+              <gml:metaDataProperty>
+                <offering>
+                  <id>DDSCIENCE</id>
+                  <name>DD SCIENCE cc LABORATORY</name>
+                </offering>
+              </gml:metaDataProperty>
+              <gml:description>Lead</gml:description>
+              <swe:uom code="mg/l"/>
+              <!---->
+            </swe:Quantity>
+          </sml:output>
+          <sml:output name="Acidity">
+            <swe:Quantity definition="urn:ogc:def:phenomenon:OGC:1.0.30:acidity">
+              <gml:metaDataProperty>
+                <offering>
+                  <id>DDSCIENCE</id>
+                  <name>DD SCIENCE cc LABORATORY</name>
+                </offering>
+              </gml:metaDataProperty>
+              <gml:description>Acidity</gml:description>
+              <swe:uom code="mg/l"/>
+              <!---->
+            </swe:Quantity>
+          </sml:output>
+        </sml:OutputList>
+      </sml:outputs>
+    </sml:System>
+  </sml:member>
+</sml:SensorML>

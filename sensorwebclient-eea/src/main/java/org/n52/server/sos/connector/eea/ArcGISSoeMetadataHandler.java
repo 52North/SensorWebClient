@@ -50,6 +50,7 @@ import net.opengis.sos.x20.GetFeatureOfInterestResponseType;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.n52.io.crs.CRSUtils;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
@@ -63,19 +64,15 @@ import org.n52.server.da.AccessorThreadPool;
 import org.n52.server.da.MetadataHandler;
 import org.n52.server.da.oxf.OperationAccessor;
 import org.n52.server.parser.ConnectorUtils;
-import org.n52.server.parser.utils.ParsedPoint;
-import org.n52.io.crs.CRSUtils;
-import org.n52.io.crs.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
+import org.opengis.referencing.FactoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 public class ArcGISSoeMetadataHandler extends MetadataHandler {
@@ -121,12 +118,9 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 						// create station if not exists
 						Station station = metadata.getStation(id);
 						if (station == null) {
-							ParsedPoint point = getPointOfSamplingFeatureType(sfSamplingFeature, referenceHelper);
-	                        double lat = Double.parseDouble(point.getLat());
-		                    double lng = Double.parseDouble(point.getLon());
-		                    EastingNorthing coords = new EastingNorthing(lat, lng, point.getSrs());
+							Point point = getPointOfSamplingFeatureType(sfSamplingFeature, referenceHelper);
 	                        station = new Station(id, sosUrl);
-	                        station.setLocation(coords);
+	                        station.setLocation(point);
 	                        metadata.addStation(station);
 						}
                         // add feature
@@ -157,8 +151,7 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 		return metadata;
 	}
 
-	public ParsedPoint getPointOfSamplingFeatureType(SFSamplingFeatureType sfSamplingFeature, CRSUtils referenceHelper) throws XmlException {
-		ParsedPoint point = new ParsedPoint();
+	public Point getPointOfSamplingFeatureType(SFSamplingFeatureType sfSamplingFeature, CRSUtils referenceHelper) throws XmlException, FactoryException {
 		XmlCursor cursor = sfSamplingFeature.newCursor();
 		if (cursor.toChild(new QName("http://www.opengis.net/samplingSpatial/2.0", "shape"))) {
 			ShapeDocument shapeDoc = ShapeDocument.Factory.parse(cursor.getDomNode());
@@ -166,31 +159,13 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 			if (abstractGeometry instanceof PointTypeImpl) {
 				PointTypeImpl pointDoc = (PointTypeImpl) abstractGeometry;
 				DirectPositionType pos = pointDoc.getPos();
-				String srsName = pos.getSrsName(); 
 				String[] lonLat = pos.getStringValue().split(" ");
-				
-		        String wgs84 = "EPSG:4326";
-                point.setLon(lonLat[0]);
-                point.setLat(lonLat[1]);
-                point.setSrs(wgs84);
-		        try {
-					String srs = referenceHelper.extractSRSCode(srsName);
-					GeometryFactory geometryFactory = referenceHelper.createGeometryFactory(srs);
-
-	                Double x = Double.parseDouble(lonLat[0]);
-	                Double y = Double.parseDouble(lonLat[1]);
-					Coordinate coord = referenceHelper.createCoordinate(srs, x, y, null);
-					
-					Point createdPoint = geometryFactory.createPoint(coord);
-					createdPoint = referenceHelper.transformToWgs84(createdPoint, srs);
-					
-					point = new ParsedPoint(createdPoint.getX() + "", createdPoint.getY() + "", wgs84);
-				} catch (Exception e) {
-					LOGGER.debug("Could not transform! Keeping old SRS: " + wgs84, e);
-				}
+                Double x = Double.parseDouble(lonLat[0]);
+                Double y = Double.parseDouble(lonLat[1]);
+		        return referenceHelper.createPoint(x, y, "CRS:84");
 			}
 		}
-		return point;
+		return null;
 	}
 	
 	private Map<String, String> getOfferingBBoxMap() throws OXFException {

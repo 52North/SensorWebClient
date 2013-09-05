@@ -26,6 +26,8 @@ package org.n52.server.ses.eml;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.empty;
 import static org.junit.Assert.assertThat;
+import static org.n52.shared.util.MathSymbolUtil.GREATER_THAN_INT;
+import static org.n52.shared.util.MathSymbolUtil.LESS_THAN_OR_EQUAL_TO_INT;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -44,6 +46,10 @@ import org.n52.shared.serializable.pojos.User;
 
 
 public class BasicRule_4_BuilderTest {
+
+    private static final String EXIT_VALUE = "400.0";
+
+    private static final String ENTRY_VALUE = "500.0";
     
     private BasicRule_4_Builder builder;
 
@@ -61,13 +67,15 @@ public class BasicRule_4_BuilderTest {
         metadata.setProcedure("procedure");
         metadata.setFeatureOfInterest("FOI");
         rule = RuleBuilder.aRule()
-                            .setEntryValue("500")
-                            .setExitValue("400")
-                            .setEntryUnit("m")
-                            .setExitUnit("m")
-                            .setTitle("MyTestRule")
-                            .setTimeseriesMetadata(metadata)
-                            .build();
+                    .setEntryValue(ENTRY_VALUE)
+                    .setExitValue(EXIT_VALUE)
+                    .setEntryOperatorIndex(GREATER_THAN_INT)
+                    .setExitOperatorIndex(LESS_THAN_OR_EQUAL_TO_INT)
+                    .setEntryUnit("m")
+                    .setExitUnit("m")
+                    .setTitle("MyTestRule")
+                    .setTimeseriesMetadata(metadata)
+                    .build();
     }
     
     @Test public void 

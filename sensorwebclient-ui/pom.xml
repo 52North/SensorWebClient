@@ -66,6 +66,10 @@
 			<classifier>sources</classifier>
 		</dependency>
 		<dependency>
+			<groupId>net.sf</groupId>
+			<artifactId>jts4gwt</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.eesgmbh</groupId>
 			<artifactId>gimv</artifactId>
 		</dependency>
