@@ -75,11 +75,17 @@ public class FeatureOutputAdapter implements ParameterService<FeatureOutput> {
 
 	@Override
     public FeatureOutput[] getParameters(String[] featureIds) {
+	    return getParameters(featureIds, QueryMap.createDefaults());
+    }
+
+
+    @Override
+    public FeatureOutput[] getParameters(String[] featureIds, QueryMap query) {
 
         // TODO consider query
-	    
-	    List<FeatureOutput> selectedFeatures = new ArrayList<FeatureOutput>();
-	    for (String featureId : featureIds) {
+        
+        List<FeatureOutput> selectedFeatures = new ArrayList<FeatureOutput>();
+        for (String featureId : featureIds) {
             FeatureOutput feature = getParameter(featureId);
             if (feature != null) {
                 selectedFeatures.add(feature);
@@ -88,19 +94,23 @@ public class FeatureOutputAdapter implements ParameterService<FeatureOutput> {
         return selectedFeatures.toArray(new FeatureOutput[0]);
     }
 
-
     @Override
 	public FeatureOutput getParameter(String featureId) {
-		for (SOSMetadata metadata : getSOSMetadatas()) {
-			TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
-			for (Feature feature : lookup.getFeatures()) {
-				if (feature.getGlobalId().equals(featureId)) {
-					FeatureConverter converter = new FeatureConverter(metadata);
-					return converter.convertExpanded(feature);
-				}
-			}
-		}
-		return null;
+		return getParameter(featureId, QueryMap.createDefaults());
 	}
+
+    @Override
+    public FeatureOutput getParameter(String featureId, QueryMap query) {
+        for (SOSMetadata metadata : getSOSMetadatas()) {
+            TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
+            for (Feature feature : lookup.getFeatures()) {
+                if (feature.getGlobalId().equals(featureId)) {
+                    FeatureConverter converter = new FeatureConverter(metadata);
+                    return converter.convertExpanded(feature);
+                }
+            }
+        }
+        return null;
+    }
 
 }

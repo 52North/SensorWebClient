@@ -75,10 +75,15 @@ public class OfferingOutputAdapter implements ParameterService<OfferingOutput> {
 
 	@Override
     public OfferingOutput[] getParameters(String[] offeringIds) {
+	    return getParameters(offeringIds, QueryMap.createDefaults());
+	}
+
+    @Override
+    public OfferingOutput[] getParameters(String[] offeringIds, QueryMap query) {
 
         // TODO consider query
-	    
-	    List<OfferingOutput> selectedOfferings = new ArrayList<OfferingOutput>();
+        
+        List<OfferingOutput> selectedOfferings = new ArrayList<OfferingOutput>();
         for (String offeringId : offeringIds) {
             OfferingOutput offering = getParameter(offeringId);
             if (offering != null) {
@@ -86,20 +91,25 @@ public class OfferingOutputAdapter implements ParameterService<OfferingOutput> {
             }
         }
         return selectedOfferings.toArray(new OfferingOutput[0]);
-	}
+    }
 
     @Override
 	public OfferingOutput getParameter(String offeringId) {
-		for (SOSMetadata metadata : getSOSMetadatas()) {
-			TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
-			for (Offering offering : lookup.getOfferings()) {
-				if(offering.getGlobalId().equals(offeringId)) {
-				    OfferingConverter converter = new OfferingConverter(metadata);
-					return converter.convertExpanded(offering);
-				}
-			}
-		}
-		return null;
+		return getParameter(offeringId, QueryMap.createDefaults());
 	}
+
+    @Override
+    public OfferingOutput getParameter(String offeringId, QueryMap query) {
+        for (SOSMetadata metadata : getSOSMetadatas()) {
+            TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
+            for (Offering offering : lookup.getOfferings()) {
+                if(offering.getGlobalId().equals(offeringId)) {
+                    OfferingConverter converter = new OfferingConverter(metadata);
+                    return converter.convertExpanded(offering);
+                }
+            }
+        }
+        return null;
+    }
 
 }

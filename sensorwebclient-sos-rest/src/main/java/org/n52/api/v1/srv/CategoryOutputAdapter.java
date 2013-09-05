@@ -53,26 +53,36 @@ public class CategoryOutputAdapter implements ParameterService<CategoryOutput> {
 
 	@Override
 	public CategoryOutput[] getParameters(String[] categories) {
-		List<CategoryOutput> selectedCategories = new ArrayList<CategoryOutput>();
-	    for (String categoryId : categories) {
-	    	CategoryOutput category = getParameter(categoryId);
+		return getParameters(categories, QueryMap.createDefaults());
+	}
+
+	@Override
+    public CategoryOutput[] getParameters(String[] categories, QueryMap query) {
+	    List<CategoryOutput> selectedCategories = new ArrayList<CategoryOutput>();
+        for (String categoryId : categories) {
+            CategoryOutput category = getParameter(categoryId);
             if (category != null) {
                 selectedCategories.add(category);
             }
         }
         return selectedCategories.toArray(new CategoryOutput[0]);
+    }
+
+    @Override
+	public CategoryOutput getParameter(String categoryId) {
+		return getParameter(categoryId, QueryMap.createDefaults());
 	}
 
-	@Override
-	public CategoryOutput getParameter(String categoryId) {
-		for (SOSMetadata metadata : getSOSMetadatas()) {
-			CategoryConverter converter = new CategoryConverter(metadata);
-			CategoryOutput result = converter.getCategorieByID(categoryId);
-			if (result != null) {
-				return result;
-			}
-		}
-		return null;
-	}
+    @Override
+    public CategoryOutput getParameter(String categoryId, QueryMap query) {
+        for (SOSMetadata metadata : getSOSMetadatas()) {
+            CategoryConverter converter = new CategoryConverter(metadata);
+            CategoryOutput result = converter.getCategorieByID(categoryId);
+            if (result != null) {
+                return result;
+            }
+        }
+        return null;
+    }
 
 }

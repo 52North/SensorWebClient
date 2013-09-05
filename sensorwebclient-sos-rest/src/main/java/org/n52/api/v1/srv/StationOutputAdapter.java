@@ -50,6 +50,11 @@ public class StationOutputAdapter implements ParameterService<StationOutput> {
 
     @Override
     public StationOutput[] getParameters(String[] stationIds) {
+        return getParameters(stationIds, QueryMap.createDefaults());
+    }
+    
+    @Override
+    public StationOutput[] getParameters(String[] stationIds, QueryMap query) {
         List<StationOutput> selectedStations = new ArrayList<StationOutput>();
         for (String stationId : stationIds) {
             StationOutput station = getParameter(stationId);
@@ -59,16 +64,21 @@ public class StationOutputAdapter implements ParameterService<StationOutput> {
         }
         return selectedStations.toArray(new StationOutput[0]);
     }
-    
+
     @Override
     public StationOutput getParameter(String stationId) {
+        return getParameter(stationId, QueryMap.createDefaults());
+    }
+
+    @Override
+    public StationOutput getParameter(String stationId, QueryMap query) {
         for (SOSMetadata metadata : getSOSMetadatas()) {
-        	for (Station station : metadata.getStations()) {
-				if (station.getGlobalId().equals(stationId)) {
-					StationConverter converter = new StationConverter(metadata);
-	                return converter.convertExpanded(station);	
-				}
-			}
+            for (Station station : metadata.getStations()) {
+                if (station.getGlobalId().equals(stationId)) {
+                    StationConverter converter = new StationConverter(metadata);
+                    return converter.convertExpanded(station);  
+                }
+            }
         }
         return null;
     }

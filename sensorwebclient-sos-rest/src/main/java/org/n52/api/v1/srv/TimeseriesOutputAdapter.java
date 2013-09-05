@@ -84,6 +84,11 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Timeserie
 
     @Override
     public TimeseriesMetadataOutput[] getParameters(String[] timeseriesIds) {
+        return getParameters(timeseriesIds, QueryMap.createDefaults());
+    }
+
+    @Override
+    public TimeseriesMetadataOutput[] getParameters(String[] timeseriesIds, QueryMap query) {
         List<TimeseriesMetadataOutput> selectedTimeseries = new ArrayList<TimeseriesMetadataOutput>();
         for (String timeseriesId : timeseriesIds) {
             TimeseriesMetadataOutput timeseries = getParameter(timeseriesId);
@@ -94,9 +99,13 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Timeserie
         return selectedTimeseries.toArray(new TimeseriesMetadataOutput[0]);
     }
 
-
     @Override
     public TimeseriesMetadataOutput getParameter(String timeseriesId) {
+        return getParameter(timeseriesId, QueryMap.createDefaults());
+    }
+
+    @Override
+    public TimeseriesMetadataOutput getParameter(String timeseriesId, QueryMap query) {
         for (SOSMetadata metadata : getSOSMetadatas()) {
             Station station = metadata.getStationByTimeSeriesId(timeseriesId);
             if (station != null) {
@@ -115,7 +124,6 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Timeserie
         }
         return null;
     }
-
 
     public GetDataService getDataService() {
         return dataService;
