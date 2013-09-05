@@ -75,7 +75,7 @@ import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.n52.shared.serializable.pojos.sos.ObservationParameter.EncodeType;
+import org.n52.shared.serializable.pojos.sos.ObservationParameter.DecodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -290,7 +290,7 @@ public class PdfGenerator extends Generator {
 
         table.setLeftColHeader(leftColHeader);
 
-        table.setRightColHeader(lookup.getPhenomenon(prop.getPhenomenon()).getLabel(EncodeType.HTML) + " ("
+        table.setRightColHeader(lookup.getPhenomenon(prop.getPhenomenon()).getLabel(DecodeType.NATURAL) + " ("
                 + prop.getUnitOfMeasure() + ")");
 
         //

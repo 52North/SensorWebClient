@@ -71,9 +71,9 @@ import org.n52.client.ui.btn.SmallButton;
 import org.n52.client.util.ClientUtils;
 import org.n52.shared.serializable.pojos.Scale;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.shared.serializable.pojos.sos.ObservationParameter.DecodeType;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.n52.shared.serializable.pojos.sos.ObservationParameter.EncodeType;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.smartgwt.client.types.Alignment;
@@ -603,7 +603,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		Timeseries timeseries = getTimeSeries();
 		TimeseriesProperties properties = timeseries.getProperties();
 		TimeseriesParametersLookup lookup = getParameterLookup(properties);
-		String phenomenon = lookup.getPhenomenon(properties.getPhenomenon()).getLabel(EncodeType.HTML);
+		String phenomenon = lookup.getPhenomenon(properties.getPhenomenon()).getLabel(DecodeType.NATURAL);
 
 		this.titleLabel.setContents("<span>" + phenomenon + "@" + getStationName(timeseries) + "</span>");
 		this.titleCol.getCanvas().setBackgroundColor(properties.getHexColor());

@@ -33,8 +33,8 @@ public abstract class ObservationParameter implements Serializable {
     
     protected String label;
     
-    public enum EncodeType {
-    	PLAIN, HTML//, URLENC
+    public enum DecodeType {
+    	ASCII, NATURAL//, URLENC
     }
     
     ObservationParameter() {
@@ -62,35 +62,19 @@ public abstract class ObservationParameter implements Serializable {
     }
 
     public String getLabel() {
-        return getLabel(EncodeType.PLAIN);
+        return getLabel(DecodeType.ASCII);
     }
     
-    public String getLabel(EncodeType encodeType){
+    public String getLabel(DecodeType encodeType){
     	switch(encodeType){
-		case HTML:
-			return encodeAsHTML(this.label);
-		case PLAIN:
+		case NATURAL:
+			return SosTimeseries.decodeSpecialCharacters(this.label);
+		case ASCII:
 		default:
 			return this.label;
     	}
     }
     
-    public static String encodeAsHTML( String str){
-        String retStr = str;
-        retStr = retStr.replaceAll("_", " ");
-        retStr = retStr.replaceAll("kuerzest", "kürzest");
-        retStr = retStr.replaceAll("laengst", "längst");
-        retStr = retStr.replaceAll("Leitfaehigkeit", "Leitfähigkeit");
-        retStr = retStr.replaceAll("Saettigung", "Sättigung");
-        retStr = retStr.replaceAll("Stroemung", "Strömung");
-        retStr = retStr.replaceAll("hoechst", "höchst");
-        retStr = retStr.replaceAll("Trueb", "Trüb");
-//        retStr = retStr.replaceAll("", "");
-
-        return retStr;
-    }
-    
-
     protected String parseLabel(String parameterId) {
         if (parameterId.startsWith("urn")) {
             return parameterId.substring(parameterId.lastIndexOf(":") + 1);

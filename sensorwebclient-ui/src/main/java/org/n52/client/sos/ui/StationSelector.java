@@ -55,7 +55,6 @@ import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.AnimationEffect;
 import com.smartgwt.client.types.ContentsType;
-import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.widgets.Canvas;
@@ -438,7 +437,7 @@ public class StationSelector extends Window {
 		for(String parentName : categoryTree.keySet()){
 			TreeNode parent = new TreeNode();
 			parent.setName(parentName);
-			parent.setTitle(Station.decodeSpecialCharacters(parentName));
+			parent.setTitle(SosTimeseries.decodeSpecialCharacters(parentName));
 			
 			HashMap<String, SosTimeseries> children = categoryTree.get(parentName);
 			Vector<TreeNode> childNodes = new Vector<TreeNode>();

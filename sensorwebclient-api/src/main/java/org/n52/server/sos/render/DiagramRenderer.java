@@ -74,7 +74,7 @@ import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.n52.shared.serializable.pojos.sos.ObservationParameter.EncodeType;
+import org.n52.shared.serializable.pojos.sos.ObservationParameter.DecodeType;
 
 public class DiagramRenderer {
     
@@ -432,7 +432,7 @@ public class DiagramRenderer {
                         plot.getRangeAxisForDataset(datasetIndex).setTickLabelFont(tickLabelDomain);
                         plot.getRangeAxisForDataset(datasetIndex).setTickLabelPaint(LABEL_COLOR);
                         StringBuilder unitOfMeasure = new StringBuilder();
-                        unitOfMeasure.append(dd.getPhenomenon().getLabel(EncodeType.HTML));
+                        unitOfMeasure.append(dd.getPhenomenon().getLabel(DecodeType.NATURAL));
                         String uomLabel = dd.getUomLabel();
                         if (uomLabel != null && !uomLabel.isEmpty()) {
                             unitOfMeasure.append(" (").append(uomLabel).append(")");
