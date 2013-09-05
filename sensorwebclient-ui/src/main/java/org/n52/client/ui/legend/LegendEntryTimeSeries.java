@@ -539,7 +539,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 	
 	private void createInformationWindow() {
 		informationWindow = new Window();
-		informationWindow.setTitle(LegendEntryTimeSeries.this.getTimeSeries().getTimeSeriesLabel());
+		informationWindow.setTitle(LegendEntryTimeSeries.this.getTimeSeries().getTimeSeriesLabel(DecodeType.NATURAL));
 		informationWindow.setWidth(450);
 		informationWindow.setHeight(500);
 		informationWindow.setShowMinimizeButton(false);
@@ -607,7 +607,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 
 		this.titleLabel.setContents("<span>" + phenomenon + "@" + getStationName(timeseries) + "</span>");
 		this.titleCol.getCanvas().setBackgroundColor(properties.getHexColor());
-		this.styleChanger.setTitle(timeseries.getPhenomenonId() + "@" + getStationName(timeseries));
+		this.styleChanger.setTitle(timeseries.getPhenomenonId(DecodeType.NATURAL) + "@" + getStationName(timeseries));
 		if (timeseries.hasData()) {
 			this.noDataSign.hide();
 			if (this.isSelected) {
