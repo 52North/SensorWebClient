@@ -50,6 +50,7 @@ import org.n52.client.ui.map.InfoMarker;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
+import org.n52.shared.serializable.pojos.sos.ObservationParameter.DecodeType;
 
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;
@@ -436,16 +437,16 @@ public class StationSelector extends Window {
 		Vector<TreeNode> parentNodes = new Vector<TreeNode>();
 		for(String parentName : categoryTree.keySet()){
 			TreeNode parent = new TreeNode();
-			parent.setName(parentName);
-			parent.setTitle(SosTimeseries.decodeSpecialCharacters(parentName));
+			parent.setName(SosTimeseries.decodeSpecialCharacters(parentName));
+			parent.setAttribute("nativeName", parentName);
 			
 			HashMap<String, SosTimeseries> children = categoryTree.get(parentName);
 			Vector<TreeNode> childNodes = new Vector<TreeNode>();
 			
 			for( SosTimeseries category : children.values()){
 				TreeNode newTreeNode = new TreeNode();
-				newTreeNode.setName(category.getCategory());
-				newTreeNode.setTitle(category.getCategoryDecoded());
+				newTreeNode.setName(category.getCategory(DecodeType.NATURAL));
+				newTreeNode.setAttribute("nativeName", category.getCategory(DecodeType.ASCII));
 				newTreeNode.setAttribute("type", category.getType().toString());
 				if( SosTimeseries.PARENT_NAME_DEFAULT.equals(parentName)){
 					parentNodes.add(newTreeNode);
@@ -550,7 +551,7 @@ public class StationSelector extends Window {
 						hideInfoWindow();
 						Record castedValue = (Record) value;
 						if( !castedValue.getAttributeAsBoolean("isFolder")){
-							controller.setStationFilter( castedValue.getAttribute("name") + "|" + castedValue.getAttribute("type"));
+							controller.setStationFilter( castedValue.getAttribute("nativeName") + "|" + castedValue.getAttribute("type"));
 							controller.updateContentUponStationFilter();
 						}
 					}
@@ -562,9 +563,5 @@ public class StationSelector extends Window {
 		treeGrid.setFields(field);
 		
 		return treeGrid;
-	}
-	
-	private static void d(String str){
-		Toaster.getToasterInstance().addMessage(str);
 	}
 }
