@@ -505,12 +505,12 @@ public class StationSelector extends Window {
     }
 
 	public void showInfoWindow(InfoMarker infoMarker, String header) {
-		updateInfoLabels();
 		String[] array = getStationCategories(infoMarker.getStation()).toArray(new String[0]);
 		phenomenonBox.setValueMap(array);
 		phenomenonBox.clearValue();
 		infoWindow.setWindowTitle(header);
 		infoWindow.show();
+		updateInfoLabels();
 		applyCancel.setLoading();
 	}
 	
