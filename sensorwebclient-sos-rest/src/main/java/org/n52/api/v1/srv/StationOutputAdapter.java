@@ -32,6 +32,7 @@ public class StationOutputAdapter implements ParameterService<StationOutput> {
     @Override
     public StationOutput[] getCondensedParameters(QueryMap map) {
         QueryParameters query = QueryParameterAdapter.createQueryParameters(map);
+        query.setSpatialFilter(map.getSpatialFilter());
         List<StationOutput> allStations = new ArrayList<StationOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             StationConverter converter = new StationConverter(metadata);
@@ -43,7 +44,10 @@ public class StationOutputAdapter implements ParameterService<StationOutput> {
     private Station[] filter(SOSMetadata metadata, QueryParameters query) {
         Set<Station> allStations = new HashSet<Station>();
         for (SosTimeseries timeseries : metadata.getTimeseriesRelatedWith(query)) {
-            allStations.add(metadata.getStationByTimeSeries(timeseries));
+            Station station = metadata.getStationByTimeSeries(timeseries);
+            if (query.getSpatialFilter().contains(station.getLocation())) {
+                allStations.add(station);
+            }
         }
         return allStations.toArray(new Station[0]);
     }

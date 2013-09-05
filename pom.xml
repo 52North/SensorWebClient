@@ -35,12 +35,12 @@
 			<dependency>
 				<groupId>org.n52.sensorweb</groupId>
 				<artifactId>timeseries-io</artifactId>
-				<version>1.0.0-SNAPSHOT</version>
+				<version>${timeseries.api.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.n52.sensorweb</groupId>
 				<artifactId>timeseries-web</artifactId>
-				<version>1.0.0-SNAPSHOT</version>
+				<version>${timeseries.api.version}</version>
 			</dependency>
 
 			<dependency>
@@ -680,23 +680,6 @@
 		</profile>
 
 		<profile>
-			<id>connector-grdc</id>
-			<modules>
-				<module>sensorwebclient-grdc</module>
-			</modules>
-			<dependencyManagement>
-				<dependencies>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-grdc</artifactId>
-						<version>${project.version}</version>
-						<scope>runtime</scope>
-					</dependency>
-				</dependencies>
-			</dependencyManagement>
-		</profile>
-
-		<profile>
 			<id>connector-hydro</id>
 			<modules>
 				<module>sensorwebclient-hydro</module>
@@ -827,6 +810,7 @@
 		<smartgwt.version>3.1</smartgwt.version>
 		<geotools.version>8.2</geotools.version>
 		<oxf.version>2.0.0-alpha.3</oxf.version>
+        <timeseries.api.version>1.0.0-SNAPSHOT</timeseries.api.version>
 		<hibernate.version>3.5.0-Final</hibernate.version>
 		<n52.xml.commons.version>1.1.5</n52.xml.commons.version>
 		<org.springframework.version>3.2.0.RELEASE</org.springframework.version>

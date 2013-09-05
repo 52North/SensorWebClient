@@ -308,16 +308,16 @@ public class HydroMetadataHandler extends MetadataHandler {
                     return null;
                 }
 
-                Double lon = Double.parseDouble(lonLat[1]);
-                Double lat = Double.parseDouble(lonLat[0]);
-                Double alt = null;
+                Double lon = Double.parseDouble(lonLat[0]);
+                Double lat = Double.parseDouble(lonLat[1]);
+                Double alt = Double.NaN;
                 if (lonLat.length == 3) {
                     alt = Double.parseDouble(lonLat[2]);
                 }
                 try {
-
-                    Point point = referenceHelper.createPoint(lon, lat, srsName);
-                    return referenceHelper.transformOuterToInner(point, srsName);
+                    String srs = referenceHelper.extractSRSCode(srsName);
+                    Point point = referenceHelper.createPoint(lon, lat, alt, srs);
+                    return referenceHelper.transformOuterToInner(point, srs);
                 }
                 catch (FactoryException e) {
                     LOGGER.warn("Could not create intern CRS.", e);
