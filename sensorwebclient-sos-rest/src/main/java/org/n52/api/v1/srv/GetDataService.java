@@ -30,16 +30,19 @@ import static org.n52.shared.serializable.pojos.DesignOptions.createOptionsForGe
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.n52.client.service.TimeSeriesDataService;
 import org.n52.io.format.TvpDataCollection;
 import org.n52.io.v1.data.TimeseriesData;
+import org.n52.io.v1.data.TimeseriesMetadata;
 import org.n52.io.v1.data.TimeseriesValue;
 import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.shared.requests.TimeSeriesDataRequest;
 import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
+import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.web.InternalServerException;
@@ -58,7 +61,8 @@ public class GetDataService extends DataService {
     private TimeSeriesDataService timeSeriesDataService;
 
     /**
-     * @param parameterSet containing request parameters.
+     * @param parameterSet
+     *        containing request parameters.
      * @return a time series result instance, identified by {@link SosTimeseries#getTimeseriesId()}
      */
     public TvpDataCollection getTimeSeriesFromParameterSet(UndesignedParameterSet parameterSet) {
@@ -72,10 +76,16 @@ public class GetDataService extends DataService {
             TimeSeriesDataRequest tsRequest = new TimeSeriesDataRequest(options);
             TimeSeriesDataResponse timeSeriesData = timeSeriesDataService.getTimeSeriesData(tsRequest);
             Map<String, HashMap<Long, Double>> data = timeSeriesData.getPayloadData();
-            
+
             for (String timeseriesId : timeSeriesResults.getAllTimeseries().keySet()) {
+
+                TimeseriesProperties properties = getTimeseriesProperties(timeseriesId, options);
+                GetDataInfos infos = new GetDataInfos(timeseriesId, properties, options);
                 HashMap<Long, Double> values = data.get(timeseriesId);
                 TimeseriesData timeseriesData = newTimeseriesData(values);
+                if (properties.getReferenceValues() != null) {
+                    timeseriesData.setMetadata(createTimeseriesMetadata(infos));
+                }
                 timeSeriesResults.addNewTimeseries(timeseriesId, timeseriesData);
             }
         }
@@ -84,33 +94,77 @@ public class GetDataService extends DataService {
         }
         return timeSeriesResults;
     }
-    
+
+    private TimeseriesMetadata createTimeseriesMetadata(GetDataInfos infos) {
+        HashMap<String, ReferenceValue> refValues = infos.getProperties().getRefvalues();
+        if (refValues == null || refValues.isEmpty()) {
+            return null;
+        }
+        TimeseriesMetadata timeseriesMetadata = new TimeseriesMetadata();
+        timeseriesMetadata.setReferenceValues(createReferenceValuesData(refValues, infos));
+        return timeseriesMetadata;
+    }
+
+    private Map<String, TimeseriesData> createReferenceValuesData(HashMap<String, ReferenceValue> refValues,
+                                                                  GetDataInfos infos) {
+        Map<String, TimeseriesData> refValuesDataCollection = new HashMap<String, TimeseriesData>();
+        for (String referenceValueId : refValues.keySet()) {
+            ReferenceValue referenceValue = refValues.get(referenceValueId);
+            TimeseriesValue[] referenceValues = referenceValue.getValues().length == 1
+                ? fitReferenceValuesForInterval(referenceValue, infos)
+                : referenceValue.getValues();
+            TimeseriesData timeseriesData = newTimeseriesData(referenceValues);
+            refValuesDataCollection.put(referenceValue.getGeneratedGlobalId(infos.getTimeseriesId()), timeseriesData);
+        }
+        return !refValuesDataCollection.isEmpty()
+            ? refValuesDataCollection
+            : null;
+    }
+
+    private TimeseriesValue[] fitReferenceValuesForInterval(ReferenceValue referenceValue, GetDataInfos infos) {
+        DesignOptions options = infos.getOptions();
+        long begin = options.getBegin();
+        long end = options.getEnd();
+
+        /*
+         * We create artificial interval bounds for "one value" references to match the requested timeframe.
+         * This is needed to render the particular reference value in a chart.
+         */
+
+        TimeseriesValue lastValue = referenceValue.getLastValue();
+        TimeseriesValue from = new TimeseriesValue(begin, lastValue.getValue());
+        TimeseriesValue to = new TimeseriesValue(end, lastValue.getValue());
+        return new TimeseriesValue[] {from, to};
+    }
+
     public TimeseriesValue getFirstValue(SosTimeseries timeseries) {
-        TimeseriesProperties properties = createTimeseriesProperties(timeseries.getTimeseriesId());
+        TimeseriesProperties properties = createCondensedTimeseriesProperties(timeseries.getTimeseriesId());
         DesignOptions designOptions = createOptionsForGetFirstValue(properties);
         return performFirstOrLastValueRequest(properties, designOptions);
     }
-    
+
     public TimeseriesValue getLastValue(SosTimeseries timeseries) {
-        TimeseriesProperties properties = createTimeseriesProperties(timeseries.getTimeseriesId());
+        TimeseriesProperties properties = createCondensedTimeseriesProperties(timeseries.getTimeseriesId());
         DesignOptions designOptions = createOptionsForGetLastValue(properties);
         return performFirstOrLastValueRequest(properties, designOptions);
     }
 
     private TimeseriesValue performFirstOrLastValueRequest(TimeseriesProperties properties, DesignOptions designOptions) {
-       try {
-           TvpDataCollection dataCollection = prepareTimeseriesResults(properties);
-           dataCollection = performTimeseriesDataRequest(dataCollection, designOptions);
-           TimeseriesValue[] data = dataCollection.getTimeseries(properties.getTimeseriesId()).getValues();
-           if (data.length == 0) {
-               LOGGER.error("Server did not return the first/last value for timeseries '{}'.", properties.getTimeseriesId());
-               return null;
-           } 
-           return data[0];
-       } catch (Exception e) {
-           LOGGER.debug("Could not retrieve first or last value request. Probably not supported.");
-           return null;
-       }
+        try {
+            TvpDataCollection dataCollection = prepareTimeseriesResults(properties);
+            dataCollection = performTimeseriesDataRequest(dataCollection, designOptions);
+            TimeseriesValue[] data = dataCollection.getTimeseries(properties.getTimeseriesId()).getValues();
+            if (data.length == 0) {
+                LOGGER.error("Server did not return the first/last value for timeseries '{}'.",
+                             properties.getTimeseriesId());
+                return null;
+            }
+            return data[0];
+        }
+        catch (Exception e) {
+            LOGGER.debug("Could not retrieve first or last value request. Probably not supported.");
+            return null;
+        }
     }
 
     public TimeSeriesDataService getTimeSeriesDataService() {
