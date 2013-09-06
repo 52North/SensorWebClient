@@ -36,8 +36,6 @@ import org.n52.io.v1.data.ServiceOutput;
 import org.n52.io.v1.data.StationOutput;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.TimeseriesOutput;
-import org.n52.shared.IdGenerator;
-import org.n52.shared.MD5HashIdGenerator;
 import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
@@ -99,7 +97,7 @@ public class TimeseriesConverter extends OutputConverter<SosTimeseries, Timeseri
         for (String refValueName : procedure.getReferenceValues().keySet()) {
             ReferenceValueOutput converted = new ReferenceValueOutput();
             ReferenceValue value = procedure.getRefValue(refValueName);
-            String referenceValueId = generateRefValueId(value.getId(), procedure);
+            String referenceValueId = value.getGeneratedGlobalId(timeseries.getTimeseriesId());
             converted.setReferenceValueId(referenceValueId);
             converted.setLastValue(value.getLastValue());
             converted.setLabel(value.getId());
@@ -109,11 +107,6 @@ public class TimeseriesConverter extends OutputConverter<SosTimeseries, Timeseri
         return !referenceValues.isEmpty()
                 ? referenceValues.toArray(new ReferenceValueOutput[0])
                 : null; // will not be listed in output
-    }
-
-    private String generateRefValueId(String id, Procedure procedure) {
-        IdGenerator idGenerator = new MD5HashIdGenerator("ref_");
-        return idGenerator.generate(new String[]{id, getMetadata().getServiceUrl()});
     }
 
     private CategoryOutput getCondensedCategory(SosTimeseries timeseries) {
