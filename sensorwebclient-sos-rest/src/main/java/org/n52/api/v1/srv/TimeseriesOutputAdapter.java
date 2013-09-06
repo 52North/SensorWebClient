@@ -40,10 +40,10 @@ import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.web.v1.ctrl.QueryMap;
+import org.n52.web.v1.srv.ParameterService;
 import org.n52.web.v1.srv.TimeseriesDataService;
-import org.n52.web.v1.srv.TimeseriesMetadataService;
 
-public class TimeseriesOutputAdapter implements TimeseriesDataService, TimeseriesMetadataService {
+public class TimeseriesOutputAdapter implements TimeseriesDataService, ParameterService<TimeseriesMetadataOutput> {
 
     private GetDataService dataService;
 
