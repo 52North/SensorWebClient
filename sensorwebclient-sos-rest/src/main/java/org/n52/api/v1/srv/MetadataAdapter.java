@@ -32,9 +32,9 @@ import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
-import org.n52.web.v1.srv.MetadataService;
+import org.n52.web.v1.srv.CountingMetadataService;
 
-public class MetadataAdapter implements MetadataService {
+public class MetadataAdapter implements CountingMetadataService {
 
 	@Override
 	public int getServiceCount() {

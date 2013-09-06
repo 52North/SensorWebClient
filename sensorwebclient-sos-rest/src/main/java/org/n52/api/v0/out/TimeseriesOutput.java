@@ -36,6 +36,10 @@ public class TimeseriesOutput {
     public TimeseriesOutput(SosTimeseries timseriesToWrap) {
         timeseries = timseriesToWrap;
     }
+    
+    public String getTimeseriesId() {
+        return timeseries.getTimeseriesId();
+    }
 
     public String getServiceUrl() {
         return timeseries.getServiceUrl();
