@@ -25,7 +25,6 @@ package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import org.n52.shared.serializable.pojos.ReferenceValue;
@@ -53,7 +52,7 @@ public class Procedure extends TimeseriesParameter implements Serializable {
         return getParameterId();
     }
 
-    public Map<String, ReferenceValue> getReferenceValues() {
+    public HashMap<String, ReferenceValue> getReferenceValues() {
         return refvalues;
     }
     

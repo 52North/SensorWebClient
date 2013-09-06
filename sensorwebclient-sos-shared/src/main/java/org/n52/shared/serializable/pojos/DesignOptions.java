@@ -52,7 +52,7 @@ public class DesignOptions implements Serializable {
     private String language;
 
     private String timeExtensionTerm; // getFirst or latest
-
+    
     @SuppressWarnings("unused")
 	private DesignOptions() {
         // do nothin

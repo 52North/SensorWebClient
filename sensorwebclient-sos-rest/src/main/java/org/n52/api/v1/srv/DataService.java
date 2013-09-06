@@ -29,6 +29,7 @@ import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +40,9 @@ import org.n52.io.format.TvpDataCollection;
 import org.n52.io.v1.data.TimeseriesData;
 import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.shared.serializable.pojos.DesignOptions;
+import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
@@ -99,7 +102,9 @@ public abstract class DataService {
         TvpDataCollection timeseriesCollection = new TvpDataCollection();
         for (String timeseriesId : parameterSet.getTimeseries()) {
             try {
-                TimeseriesProperties propertiesInstance = createTimeseriesProperties(timeseriesId);
+                TimeseriesProperties propertiesInstance = parameterSet.isExpanded()
+                    ? createExpandedTimeseriesProperties(timeseriesId) // e.g. with refValues
+                    : createCondensedTimeseriesProperties(timeseriesId);
                 TimeseriesData timeseriesData = createTimeseriesData(propertiesInstance);
                 timeseriesCollection.addNewTimeseries(timeseriesId, timeseriesData);
                 props.add(propertiesInstance);
@@ -116,7 +121,7 @@ public abstract class DataService {
         TvpDataCollection timeseriesCollection = new TvpDataCollection();
         try {
             String timeseriesId = props.getTimeseriesId();
-            TimeseriesProperties propertiesInstance = createTimeseriesProperties(timeseriesId);
+            TimeseriesProperties propertiesInstance = createCondensedTimeseriesProperties(timeseriesId);
             TimeseriesData timeseriesData = createTimeseriesData(propertiesInstance);
             timeseriesCollection.addNewTimeseries(timeseriesId, timeseriesData);
         }
@@ -126,8 +131,38 @@ public abstract class DataService {
         }
         return timeseriesCollection;
     }
+    
+    protected TimeseriesProperties createExpandedTimeseriesProperties(String timeseriesId) {
+        SOSMetadata metadata = getMetadataForTimeseriesId(timeseriesId);
+        TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
+        Station station = metadata.getStationByTimeSeriesId(timeseriesId);
+        SosTimeseries timeseries = station.getTimeseriesById(timeseriesId);
+        TimeseriesProperties condensedTimeseriesProperties = createCondensedTimeseriesProperties(timeseriesId);
+        Procedure procedure = lookup.getProcedure(timeseries.getProcedureId());
+        condensedTimeseriesProperties.addAllRefValues(procedure.getReferenceValues());
+        return condensedTimeseriesProperties;
+    }
 
-    protected TimeseriesProperties createTimeseriesProperties(String timeseriesId) {
+    protected HashMap<String,ReferenceValue> getReferenceValuesFor(String timeseriesId) {
+        SOSMetadata metadata = getMetadataForTimeseriesId(timeseriesId);
+        Station station = metadata.getStationByTimeSeriesId(timeseriesId);
+        SosTimeseries timeseries = station.getTimeseriesById(timeseriesId);
+        
+        TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
+        Procedure procedure = lookup.getProcedure(timeseries.getProcedureId());
+        return procedure.getReferenceValues();
+    }
+
+    protected TimeseriesProperties getTimeseriesProperties(String timeseriesId, DesignOptions options) {
+        for (TimeseriesProperties timeseriesProperties : options.getProperties()) {
+            if (timeseriesProperties.getTimeseriesId().equals(timeseriesId)) {
+                return timeseriesProperties;
+            }
+        }
+        return null;
+    }
+
+    protected TimeseriesProperties createCondensedTimeseriesProperties(String timeseriesId) {
         SOSMetadata metadata = getMetadataForTimeseriesId(timeseriesId);
         Station station = metadata.getStationByTimeSeriesId(timeseriesId);
         SosTimeseries timeseries = station.getTimeseriesById(timeseriesId);

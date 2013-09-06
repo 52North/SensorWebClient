@@ -390,10 +390,12 @@ public class TimeseriesProperties implements Serializable {
 		return this.refvalues.keySet();
 	}
 
-	public void addAllRefValues(HashMap<String, ReferenceValue> refvalues2) {
+	public HashMap<String, ReferenceValue> getRefvalues() {
+        return refvalues;
+    }
 
+    public void addAllRefValues(HashMap<String, ReferenceValue> refvalues2) {
 		this.refvalues.putAll(refvalues2);
-
 	}
 
 	public boolean isSetAxis() {

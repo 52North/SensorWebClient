@@ -28,6 +28,8 @@ import java.util.Random;
 
 import org.n52.io.v1.data.TimeseriesData;
 import org.n52.io.v1.data.TimeseriesValue;
+import org.n52.shared.IdGenerator;
+import org.n52.shared.MD5HashIdGenerator;
 
 public class ReferenceValue implements Serializable {
 
@@ -36,7 +38,6 @@ public class ReferenceValue implements Serializable {
     private TimeseriesData values;
     
     private String label;
-    
     
     private Double value;
     private String color;
@@ -99,6 +100,11 @@ public class ReferenceValue implements Serializable {
     public void setId(String id) {
         this.label = id;
     }
+    
+    public String getGeneratedGlobalId(String timeseriesId) {
+        IdGenerator idGenerator = new MD5HashIdGenerator("ref_");
+        return idGenerator.generate(new String[]{label, timeseriesId});
+    }
 
     /**
      * @deprecated use {@link #getLastValue()} of {@link #getValues()}
@@ -107,7 +113,6 @@ public class ReferenceValue implements Serializable {
     public Double getValue() {
         return this.value;
     }
-
     
     /**
      * @deprecated use {@link #addValues(TimeseriesValue...)}
