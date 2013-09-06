@@ -36,6 +36,7 @@ import org.n52.io.v1.data.ServiceOutput;
 import org.n52.io.v1.data.StationOutput;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.TimeseriesOutput;
+import org.n52.io.v1.data.TimeseriesValue;
 import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
@@ -99,7 +100,10 @@ public class TimeseriesConverter extends OutputConverter<SosTimeseries, Timeseri
             ReferenceValue value = procedure.getRefValue(refValueName);
             String referenceValueId = value.getGeneratedGlobalId(timeseries.getTimeseriesId());
             converted.setReferenceValueId(referenceValueId);
-            converted.setLastValue(value.getLastValue());
+            TimeseriesValue lastValue = value.getValues().length == 1
+                    ? createEverValidReferenceValue(value.getLastValue())
+                    : value.getLastValue();
+            converted.setLastValue(lastValue);
             converted.setLabel(value.getId());
             referenceValues.add(converted);
         }
@@ -107,6 +111,10 @@ public class TimeseriesConverter extends OutputConverter<SosTimeseries, Timeseri
         return !referenceValues.isEmpty()
                 ? referenceValues.toArray(new ReferenceValueOutput[0])
                 : null; // will not be listed in output
+    }
+
+    private TimeseriesValue createEverValidReferenceValue(TimeseriesValue lastValue) {
+        return new TimeseriesValue(System.currentTimeMillis(), lastValue.getValue());
     }
 
     private CategoryOutput getCondensedCategory(SosTimeseries timeseries) {
