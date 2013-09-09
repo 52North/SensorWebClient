@@ -24,12 +24,12 @@
 
 package org.n52.api.v1.srv;
 
+import org.n52.io.IoParameters;
 import org.n52.shared.requests.query.QueryParameters;
-import org.n52.web.v1.ctrl.QueryMap;
 
 public class QueryParameterAdapter {
 
-    public static QueryParameters createQueryParameters(QueryMap map) {
+    public static QueryParameters createQueryParameters(IoParameters map) {
         return QueryParameters.createEmptyFilterQuery()
                 .setService(map.getService())
                 .setFeature(map.getFeature())
