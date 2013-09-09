@@ -32,19 +32,19 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.api.v1.io.ProcedureConverter;
+import org.n52.io.IoParameters;
 import org.n52.io.v1.data.ProcedureOutput;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.n52.web.v1.ctrl.QueryMap;
 import org.n52.web.v1.srv.ParameterService;
 
 public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput> {
 
 	@Override
-	public ProcedureOutput[] getExpandedParameters(QueryMap map) {
+	public ProcedureOutput[] getExpandedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);
 		List<ProcedureOutput> allProcedures = new ArrayList<ProcedureOutput>();
 		for (SOSMetadata metadata : getSOSMetadatas()) {
@@ -55,7 +55,7 @@ public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput>
 	}
 	
 	@Override
-    public ProcedureOutput[] getCondensedParameters(QueryMap map) {
+    public ProcedureOutput[] getCondensedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);
         List<ProcedureOutput> allProcedures = new ArrayList<ProcedureOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
@@ -75,11 +75,11 @@ public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput>
 
 	@Override
     public ProcedureOutput[] getParameters(String[] procedureIds) {
-	    return getParameters(procedureIds, QueryMap.createDefaults());
+	    return getParameters(procedureIds, IoParameters.createDefaults());
     }
 
     @Override
-    public ProcedureOutput[] getParameters(String[] procedureIds, QueryMap query) {
+    public ProcedureOutput[] getParameters(String[] procedureIds,IoParameters query) {
         List<ProcedureOutput> selectedProcedures = new ArrayList<ProcedureOutput>();
         for (String procedureId : procedureIds) {
             ProcedureOutput procedure = getParameter(procedureId);
@@ -92,11 +92,11 @@ public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput>
 
     @Override
 	public ProcedureOutput getParameter(String procedureId) {
-		return getParameter(procedureId, QueryMap.createDefaults());
+		return getParameter(procedureId, IoParameters.createDefaults());
 	}
 
     @Override
-    public ProcedureOutput getParameter(String procedureId, QueryMap query) {
+    public ProcedureOutput getParameter(String procedureId, IoParameters query) {
         for (SOSMetadata metadata : getSOSMetadatas()) {
             TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
             for (Procedure procedure : lookup.getProcedures()) {

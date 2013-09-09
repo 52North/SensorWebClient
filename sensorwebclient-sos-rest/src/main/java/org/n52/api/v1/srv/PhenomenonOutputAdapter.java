@@ -32,19 +32,19 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.api.v1.io.PhenomenonConverter;
+import org.n52.io.IoParameters;
 import org.n52.io.v1.data.PhenomenonOutput;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.n52.web.v1.ctrl.QueryMap;
 import org.n52.web.v1.srv.ParameterService;
 
 public class PhenomenonOutputAdapter implements ParameterService<PhenomenonOutput> {
 
 	@Override
-	public PhenomenonOutput[] getExpandedParameters(QueryMap map) {
+	public PhenomenonOutput[] getExpandedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);
 		List<PhenomenonOutput> allPhenomenons = new ArrayList<PhenomenonOutput>();
 		for (SOSMetadata metadata : getSOSMetadatas()) {
@@ -55,7 +55,7 @@ public class PhenomenonOutputAdapter implements ParameterService<PhenomenonOutpu
 	}
 	
 	@Override
-    public PhenomenonOutput[] getCondensedParameters(QueryMap map) {
+    public PhenomenonOutput[] getCondensedParameters(IoParameters map) {
 	    QueryParameters query = createQueryParameters(map);
         List<PhenomenonOutput> allPhenomenons = new ArrayList<PhenomenonOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
@@ -75,11 +75,11 @@ public class PhenomenonOutputAdapter implements ParameterService<PhenomenonOutpu
 
 	@Override
     public PhenomenonOutput[] getParameters(String[] phenomenonIds) {
-        return getParameters(phenomenonIds, QueryMap.createDefaults());
+        return getParameters(phenomenonIds, IoParameters.createDefaults());
     }
 	
 	@Override
-    public PhenomenonOutput[] getParameters(String[] phenomenonIds, QueryMap query) {
+    public PhenomenonOutput[] getParameters(String[] phenomenonIds, IoParameters query) {
 	    List<PhenomenonOutput> selectedPhenomenons = new ArrayList<PhenomenonOutput>();
         for (String phenomenonId : phenomenonIds) {
             PhenomenonOutput phenomenon = getParameter(phenomenonId);
@@ -92,11 +92,11 @@ public class PhenomenonOutputAdapter implements ParameterService<PhenomenonOutpu
 
     @Override
 	public PhenomenonOutput getParameter(String phenomenonId) {
-		return getParameter(phenomenonId, QueryMap.createDefaults());
+		return getParameter(phenomenonId, IoParameters.createDefaults());
 	}
 
     @Override
-    public PhenomenonOutput getParameter(String phenomenonId, QueryMap query) {
+    public PhenomenonOutput getParameter(String phenomenonId, IoParameters query) {
         for (SOSMetadata metadata : getSOSMetadatas()) {
             TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
             for (Phenomenon phenomenon : lookup.getPhenomenons()) {

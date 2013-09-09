@@ -32,17 +32,17 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.api.v1.io.CategoryConverter;
+import org.n52.io.IoParameters;
 import org.n52.io.v1.data.CategoryOutput;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
-import org.n52.web.v1.ctrl.QueryMap;
 import org.n52.web.v1.srv.ParameterService;
 
 public class CategoryOutputAdapter implements ParameterService<CategoryOutput> {
 
 	@Override
-	public CategoryOutput[] getExpandedParameters(QueryMap map) {
+	public CategoryOutput[] getExpandedParameters(IoParameters map) {
 		QueryParameters query = createQueryParameters(map);
         List<CategoryOutput> allCategories = new ArrayList<CategoryOutput>();
 		for (SOSMetadata metadata : getSOSMetadatas()) {
@@ -53,7 +53,7 @@ public class CategoryOutputAdapter implements ParameterService<CategoryOutput> {
 	}
 
 	@Override
-	public CategoryOutput[] getCondensedParameters(QueryMap map) {
+	public CategoryOutput[] getCondensedParameters(IoParameters map) {
 		QueryParameters query = createQueryParameters(map);
         List<CategoryOutput> allCategories = new ArrayList<CategoryOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
@@ -76,11 +76,11 @@ public class CategoryOutputAdapter implements ParameterService<CategoryOutput> {
 
 	@Override
 	public CategoryOutput[] getParameters(String[] categories) {
-		return getParameters(categories, QueryMap.createDefaults());
+		return getParameters(categories, IoParameters.createDefaults());
 	}
 
 	@Override
-    public CategoryOutput[] getParameters(String[] categories, QueryMap query) {
+    public CategoryOutput[] getParameters(String[] categories, IoParameters query) {
 	    List<CategoryOutput> selectedCategories = new ArrayList<CategoryOutput>();
         for (String categoryId : categories) {
             CategoryOutput category = getParameter(categoryId);
@@ -93,11 +93,11 @@ public class CategoryOutputAdapter implements ParameterService<CategoryOutput> {
 
     @Override
 	public CategoryOutput getParameter(String categoryId) {
-		return getParameter(categoryId, QueryMap.createDefaults());
+		return getParameter(categoryId, IoParameters.createDefaults());
 	}
 
     @Override
-    public CategoryOutput getParameter(String categoryId, QueryMap query) {
+    public CategoryOutput getParameter(String categoryId, IoParameters query) {
         for (SOSMetadata metadata : getSOSMetadatas()) {
             CategoryConverter converter = new CategoryConverter(metadata);
             CategoryOutput result = converter.getCategorieByID(categoryId);
