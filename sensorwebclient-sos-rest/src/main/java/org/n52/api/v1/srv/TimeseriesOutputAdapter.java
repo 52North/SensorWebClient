@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.api.v1.io.TimeseriesConverter;
+import org.n52.io.IoParameters;
 import org.n52.io.format.TvpDataCollection;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.UndesignedParameterSet;
@@ -39,7 +40,6 @@ import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
-import org.n52.web.v1.ctrl.QueryMap;
 import org.n52.web.v1.srv.ParameterService;
 import org.n52.web.v1.srv.TimeseriesDataService;
 
@@ -53,7 +53,7 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
 	}
 
     @Override
-    public TimeseriesMetadataOutput[] getExpandedParameters(QueryMap map) {
+    public TimeseriesMetadataOutput[] getExpandedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);
         List<TimeseriesMetadataOutput> allProcedures = new ArrayList<TimeseriesMetadataOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
@@ -64,7 +64,7 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
     }
     
     @Override
-    public TimeseriesMetadataOutput[] getCondensedParameters(QueryMap map) {
+    public TimeseriesMetadataOutput[] getCondensedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);
         List<TimeseriesMetadataOutput> allProcedures = new ArrayList<TimeseriesMetadataOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
@@ -84,11 +84,11 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
 
     @Override
     public TimeseriesMetadataOutput[] getParameters(String[] timeseriesIds) {
-        return getParameters(timeseriesIds, QueryMap.createDefaults());
+        return getParameters(timeseriesIds, org.n52.io.QueryParameters.createDefaults());
     }
 
     @Override
-    public TimeseriesMetadataOutput[] getParameters(String[] timeseriesIds, QueryMap query) {
+    public TimeseriesMetadataOutput[] getParameters(String[] timeseriesIds, IoParameters query) {
         List<TimeseriesMetadataOutput> selectedTimeseries = new ArrayList<TimeseriesMetadataOutput>();
         for (String timeseriesId : timeseriesIds) {
             TimeseriesMetadataOutput timeseries = getParameter(timeseriesId);
@@ -101,11 +101,11 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
 
     @Override
     public TimeseriesMetadataOutput getParameter(String timeseriesId) {
-        return getParameter(timeseriesId, QueryMap.createDefaults());
+        return getParameter(timeseriesId, IoParameters.createDefaults());
     }
 
     @Override
-    public TimeseriesMetadataOutput getParameter(String timeseriesId, QueryMap query) {
+    public TimeseriesMetadataOutput getParameter(String timeseriesId, IoParameters query) {
         for (SOSMetadata metadata : getSOSMetadatas()) {
             Station station = metadata.getStationByTimeSeriesId(timeseriesId);
             if (station != null) {

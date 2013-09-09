@@ -32,19 +32,19 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.api.v1.io.FeatureConverter;
+import org.n52.io.IoParameters;
 import org.n52.io.v1.data.FeatureOutput;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.n52.web.v1.ctrl.QueryMap;
 import org.n52.web.v1.srv.ParameterService;
 
 public class FeatureOutputAdapter implements ParameterService<FeatureOutput> {
 
 	@Override
-	public FeatureOutput[] getExpandedParameters(QueryMap map) {
+	public FeatureOutput[] getExpandedParameters(IoParameters map) {
 	    QueryParameters query = createQueryParameters(map);
         List<FeatureOutput> allFeatures = new ArrayList<FeatureOutput>();
 		for (SOSMetadata metadata : getSOSMetadatas()) {
@@ -55,7 +55,7 @@ public class FeatureOutputAdapter implements ParameterService<FeatureOutput> {
 	}
 
     @Override
-    public FeatureOutput[] getCondensedParameters(QueryMap map) {
+    public FeatureOutput[] getCondensedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);
         List<FeatureOutput> allFeatures = new ArrayList<FeatureOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
@@ -75,12 +75,12 @@ public class FeatureOutputAdapter implements ParameterService<FeatureOutput> {
 
 	@Override
     public FeatureOutput[] getParameters(String[] featureIds) {
-	    return getParameters(featureIds, QueryMap.createDefaults());
+	    return getParameters(featureIds, IoParameters.createDefaults());
     }
 
 
     @Override
-    public FeatureOutput[] getParameters(String[] featureIds, QueryMap query) {
+    public FeatureOutput[] getParameters(String[] featureIds, IoParameters query) {
 
         // TODO consider query
         
@@ -96,11 +96,11 @@ public class FeatureOutputAdapter implements ParameterService<FeatureOutput> {
 
     @Override
 	public FeatureOutput getParameter(String featureId) {
-		return getParameter(featureId, QueryMap.createDefaults());
+		return getParameter(featureId, IoParameters.createDefaults());
 	}
 
     @Override
-    public FeatureOutput getParameter(String featureId, QueryMap query) {
+    public FeatureOutput getParameter(String featureId, IoParameters query) {
         for (SOSMetadata metadata : getSOSMetadatas()) {
             TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
             for (Feature feature : lookup.getFeatures()) {

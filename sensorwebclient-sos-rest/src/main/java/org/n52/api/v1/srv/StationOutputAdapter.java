@@ -31,19 +31,19 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.api.v1.io.StationConverter;
+import org.n52.io.IoParameters;
 import org.n52.io.crs.BoundingBox;
 import org.n52.io.v1.data.StationOutput;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
-import org.n52.web.v1.ctrl.QueryMap;
 import org.n52.web.v1.srv.ParameterService;
 
 public class StationOutputAdapter implements ParameterService<StationOutput> {
 
     @Override
-    public StationOutput[] getExpandedParameters(QueryMap map) {
+    public StationOutput[] getExpandedParameters(IoParameters map) {
         QueryParameters query = QueryParameterAdapter.createQueryParameters(map);
         query.setSpatialFilter(map.getSpatialFilter());
         List<StationOutput> allStations = new ArrayList<StationOutput>();
@@ -55,7 +55,7 @@ public class StationOutputAdapter implements ParameterService<StationOutput> {
     }
     
     @Override
-    public StationOutput[] getCondensedParameters(QueryMap map) {
+    public StationOutput[] getCondensedParameters(IoParameters map) {
         QueryParameters query = QueryParameterAdapter.createQueryParameters(map);
         query.setSpatialFilter(map.getSpatialFilter());
         List<StationOutput> allStations = new ArrayList<StationOutput>();
@@ -68,11 +68,11 @@ public class StationOutputAdapter implements ParameterService<StationOutput> {
 
     @Override
     public StationOutput[] getParameters(String[] stationIds) {
-        return getParameters(stationIds, QueryMap.createDefaults());
+        return getParameters(stationIds, IoParameters.createDefaults());
     }
     
     @Override
-    public StationOutput[] getParameters(String[] stationIds, QueryMap query) {
+    public StationOutput[] getParameters(String[] stationIds, IoParameters query) {
         List<StationOutput> selectedStations = new ArrayList<StationOutput>();
         for (String stationId : stationIds) {
             StationOutput station = getParameter(stationId);
@@ -85,11 +85,11 @@ public class StationOutputAdapter implements ParameterService<StationOutput> {
 
     @Override
     public StationOutput getParameter(String stationId) {
-        return getParameter(stationId, QueryMap.createDefaults());
+        return getParameter(stationId, org.n52.io.QueryParameters.createDefaults());
     }
 
     @Override
-    public StationOutput getParameter(String stationId, QueryMap query) {
+    public StationOutput getParameter(String stationId, IoParameters query) {
         for (SOSMetadata metadata : getSOSMetadatas()) {
             for (Station station : metadata.getStations()) {
                 if (station.getGlobalId().equals(stationId)) {

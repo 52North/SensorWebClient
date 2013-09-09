@@ -32,19 +32,19 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.api.v1.io.OfferingConverter;
+import org.n52.io.IoParameters;
 import org.n52.io.v1.data.OfferingOutput;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.n52.web.v1.ctrl.QueryMap;
 import org.n52.web.v1.srv.ParameterService;
 
 public class OfferingOutputAdapter implements ParameterService<OfferingOutput> {
 
 	@Override
-	public OfferingOutput[] getExpandedParameters(QueryMap map) {
+	public OfferingOutput[] getExpandedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);
 		List<OfferingOutput> allOfferings = new ArrayList<OfferingOutput>();
 		for (SOSMetadata metadata : getSOSMetadatas()) {
@@ -55,7 +55,7 @@ public class OfferingOutputAdapter implements ParameterService<OfferingOutput> {
 	}
 
 	@Override
-    public OfferingOutput[] getCondensedParameters(QueryMap map) {
+    public OfferingOutput[] getCondensedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);
         List<OfferingOutput> allOfferings = new ArrayList<OfferingOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
@@ -75,11 +75,11 @@ public class OfferingOutputAdapter implements ParameterService<OfferingOutput> {
 
 	@Override
     public OfferingOutput[] getParameters(String[] offeringIds) {
-	    return getParameters(offeringIds, QueryMap.createDefaults());
+	    return getParameters(offeringIds, IoParameters.createDefaults());
 	}
 
     @Override
-    public OfferingOutput[] getParameters(String[] offeringIds, QueryMap query) {
+    public OfferingOutput[] getParameters(String[] offeringIds, IoParameters query) {
 
         // TODO consider query
         
@@ -95,11 +95,11 @@ public class OfferingOutputAdapter implements ParameterService<OfferingOutput> {
 
     @Override
 	public OfferingOutput getParameter(String offeringId) {
-		return getParameter(offeringId, QueryMap.createDefaults());
+		return getParameter(offeringId, IoParameters.createDefaults());
 	}
 
     @Override
-    public OfferingOutput getParameter(String offeringId, QueryMap query) {
+    public OfferingOutput getParameter(String offeringId, IoParameters query) {
         for (SOSMetadata metadata : getSOSMetadatas()) {
             TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
             for (Offering offering : lookup.getOfferings()) {

@@ -30,10 +30,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.n52.api.v1.io.ServiceConverter;
+import org.n52.io.IoParameters;
 import org.n52.io.v1.data.ServiceOutput;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
-import org.n52.web.v1.ctrl.QueryMap;
 import org.n52.web.v1.srv.ServiceParameterService;
 
 public class ServiceOutputAdapter implements ServiceParameterService {
@@ -49,7 +49,7 @@ public class ServiceOutputAdapter implements ServiceParameterService {
     }
 
 	@Override
-	public ServiceOutput[] getExpandedParameters(QueryMap map) {
+	public ServiceOutput[] getExpandedParameters(IoParameters map) {
 	    QueryParameters query = createQueryParameters(map);
 		List<ServiceOutput> allServices = new ArrayList<ServiceOutput>();
 		for (SOSMetadata metadata : getSOSMetadatas()) {
@@ -62,7 +62,7 @@ public class ServiceOutputAdapter implements ServiceParameterService {
 	}
 	
 	@Override
-    public ServiceOutput[] getCondensedParameters(QueryMap map) {
+    public ServiceOutput[] getCondensedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);
         List<ServiceOutput> allServices = new ArrayList<ServiceOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
@@ -79,11 +79,11 @@ public class ServiceOutputAdapter implements ServiceParameterService {
     }
 
 	public ServiceOutput[] getParameters(String[] serviceIds) {
-        return getParameters(serviceIds, QueryMap.createDefaults());
+        return getParameters(serviceIds, IoParameters.createDefaults());
     }
 	
 	@Override
-    public ServiceOutput[] getParameters(String[] serviceIds, QueryMap query) {
+    public ServiceOutput[] getParameters(String[] serviceIds, IoParameters query) {
 	    List<ServiceOutput> selectedServices = new ArrayList<ServiceOutput>();
         for (String serviceId : serviceIds) {
             ServiceOutput serivce = getParameter(serviceId);
@@ -96,11 +96,11 @@ public class ServiceOutputAdapter implements ServiceParameterService {
 
     @Override
 	public ServiceOutput getParameter(String serviceId) {
-		return getParameter(serviceId, QueryMap.createDefaults());
+		return getParameter(serviceId, IoParameters.createDefaults());
 	}
 
     @Override
-    public ServiceOutput getParameter(String serviceId, QueryMap query) {
+    public ServiceOutput getParameter(String serviceId, IoParameters query) {
         for (SOSMetadata metadata : getSOSMetadatas()) {
             if (metadata.getGlobalId().equals(serviceId)) {
                 ServiceConverter converter = new ServiceConverter(metadata);
