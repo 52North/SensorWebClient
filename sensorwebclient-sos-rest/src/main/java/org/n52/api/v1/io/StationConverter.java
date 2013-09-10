@@ -26,13 +26,17 @@ package org.n52.api.v1.io;
 import static org.n52.io.geojson.GeojsonPoint.createWithCoordinates;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.n52.io.geojson.GeojsonPoint;
+import org.n52.io.v1.data.OutputValue;
 import org.n52.io.v1.data.StationOutput;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParameter;
 
 import com.vividsolutions.jts.geom.Point;
 
@@ -45,10 +49,8 @@ public class StationConverter extends OutputConverter<Station, StationOutput> {
     @Override
     public StationOutput convertExpanded(Station station) {
         StationOutput convertedStation = convertCondensed(station);
-        convertedStation.addProperty("timeseries", createFlatTimeseriesList(station));
-        convertedStation.addProperty("service", convertCondensedService());
+        convertedStation.addProperty("timeseries", createCondensedTimeseriesList(station));
         return convertedStation;
-        
     }
 
     @Override
@@ -61,19 +63,31 @@ public class StationConverter extends OutputConverter<Station, StationOutput> {
     }
     
     
-    private String[] createFlatTimeseriesList(Station station) {
-        List<String> timeseriesIds = new ArrayList<String>();
+    private List<Map<String, OutputValue>> createCondensedTimeseriesList(Station station) {
+        List<Map<String, OutputValue>> timeseriesOutputs = new ArrayList<Map<String, OutputValue>>();
         for (SosTimeseries timeseries : station.getObservedTimeseries()) {
-            timeseriesIds.add(timeseries.getTimeseriesId());
+            Map<String, OutputValue> timeseriesOutput = new HashMap<String, OutputValue>();
+            timeseriesOutput.put("service", createOutputValue(timeseries.getSosService()));
+            timeseriesOutput.put("offering", createOutputValue(timeseries.getOffering()));
+            timeseriesOutput.put("procedure", createOutputValue(timeseries.getProcedure()));
+            timeseriesOutput.put("phenomenon", createOutputValue(timeseries.getPhenomenon()));
+            timeseriesOutput.put("feature", createOutputValue(timeseries.getFeature()));
+            timeseriesOutputs.add(timeseriesOutput);
         }
-        return timeseriesIds.toArray(new String[0]);
+        return timeseriesOutputs;
+    }
+
+    private OutputValue createOutputValue(TimeseriesParameter parameter) {
+        OutputValue outputvalue = new OutputValue();
+        outputvalue.setId(parameter.getGlobalId());
+        outputvalue.setLabel(parameter.getLabel());
+        return outputvalue;
     }
 
     private GeojsonPoint getCoordinates(Station station) {
         Point location = station.getLocation();
-        
-        // TODO 
-        
-        return createWithCoordinates(new Double[] {location.getX(), location.getY()});
+        double x = location.getX();
+        double y = location.getY();
+        return createWithCoordinates(new Double[] {x, y});
     }
 }
