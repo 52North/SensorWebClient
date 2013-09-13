@@ -28,6 +28,8 @@ import java.io.Serializable;
 import org.n52.shared.IdGenerator;
 import org.n52.shared.MD5HashIdGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public abstract class TimeseriesParameter implements Serializable {
 
     private static final long serialVersionUID = -6244226109934637660L;
@@ -58,6 +60,7 @@ public abstract class TimeseriesParameter implements Serializable {
         return idGenerator.generate(parametersToGenerateId);
     }
 
+    @JsonIgnore
     public String getGlobalId() {
 		return globalId;
 	}
