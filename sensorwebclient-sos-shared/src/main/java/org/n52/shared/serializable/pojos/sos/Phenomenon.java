@@ -25,6 +25,8 @@ package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Phenomenon extends TimeseriesParameter implements Serializable {
 
     private static final long serialVersionUID = 207874913321466876L;
@@ -44,6 +46,7 @@ public class Phenomenon extends TimeseriesParameter implements Serializable {
         return "phe_";
     }
 
+    @JsonProperty("id")
     public String getPhenomenonId() {
         return getParameterId();
     }
