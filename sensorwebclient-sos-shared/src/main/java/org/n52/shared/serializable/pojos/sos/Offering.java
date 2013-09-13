@@ -26,6 +26,9 @@ package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Offering extends TimeseriesParameter implements Serializable {
 
     private static final long serialVersionUID = -544290033391799572L;
@@ -45,6 +48,7 @@ public class Offering extends TimeseriesParameter implements Serializable {
         return "off_";
     }
 
+    @JsonProperty("id")
     public String getOfferingId() {
         return getParameterId();
     }

@@ -29,6 +29,8 @@ import java.util.Set;
 
 import org.n52.shared.serializable.pojos.ReferenceValue;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Procedure extends TimeseriesParameter implements Serializable {
 
     private static final long serialVersionUID = 6941911617808330972L;
@@ -48,6 +50,7 @@ public class Procedure extends TimeseriesParameter implements Serializable {
         return "pro_";
     }
 
+    @JsonProperty("id")
     public String getProcedureId() {
         return getParameterId();
     }
