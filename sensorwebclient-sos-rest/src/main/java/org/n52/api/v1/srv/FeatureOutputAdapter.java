@@ -67,7 +67,7 @@ public class FeatureOutputAdapter implements ParameterService<FeatureOutput> {
 
     private Feature[] filter(SOSMetadata metadata, QueryParameters query) {
         Set<Feature> allFeatures = new HashSet<Feature>();
-        for (SosTimeseries timeseries : metadata.getTimeseriesRelatedWith(query)) {
+        for (SosTimeseries timeseries : metadata.getMatchingTimeseries(query)) {
           allFeatures.add(timeseries.getFeature());
         }
         return allFeatures.toArray(new Feature[0]);

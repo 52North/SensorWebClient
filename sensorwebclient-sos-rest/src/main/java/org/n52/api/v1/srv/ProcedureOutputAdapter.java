@@ -67,7 +67,7 @@ public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput>
 
     private Procedure[] filter(SOSMetadata metadata, QueryParameters query) {
         Set<Procedure> allProcedures = new HashSet<Procedure>();
-        for (SosTimeseries timeseries : metadata.getTimeseriesRelatedWith(query)) {
+        for (SosTimeseries timeseries : metadata.getMatchingTimeseries(query)) {
           allProcedures.add(timeseries.getProcedure());
         }
         return allProcedures.toArray(new Procedure[0]);

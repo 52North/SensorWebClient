@@ -105,7 +105,7 @@ public class StationOutputAdapter implements ParameterService<StationOutput> {
 
     private Station[] filter(SOSMetadata metadata, QueryParameters query) {
         Set<Station> allStations = new HashSet<Station>();
-        for (SosTimeseries timeseries : metadata.getTimeseriesRelatedWith(query)) {
+        for (SosTimeseries timeseries : metadata.getMatchingTimeseries(query)) {
             Station station = metadata.getStationByTimeSeries(timeseries);
             if (isStationWithinBounds(query.getSpatialFilter(), station)) {
                 allStations.add(station);

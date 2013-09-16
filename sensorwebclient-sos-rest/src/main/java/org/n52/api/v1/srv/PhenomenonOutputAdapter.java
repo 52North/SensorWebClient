@@ -67,7 +67,7 @@ public class PhenomenonOutputAdapter implements ParameterService<PhenomenonOutpu
 
     private Phenomenon[] filter(SOSMetadata metadata, QueryParameters query) {
         Set<Phenomenon> allPhenomena = new HashSet<Phenomenon>();
-        for (SosTimeseries timeseries : metadata.getTimeseriesRelatedWith(query)) {
+        for (SosTimeseries timeseries : metadata.getMatchingTimeseries(query)) {
           allPhenomena.add(timeseries.getPhenomenon());
         }
         return allPhenomena.toArray(new Phenomenon[0]);

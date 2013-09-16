@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.n52.io.crs.BoundingBox;
-import org.n52.shared.Constants;
 import org.n52.shared.IdGenerator;
 import org.n52.shared.MD5HashIdGenerator;
 import org.n52.shared.requests.query.QueryParameters;
@@ -289,11 +288,11 @@ public class SOSMetadata implements Serializable {
         return new ArrayList<Station>(stations.values());
     }
     
-    public SosTimeseries[] getTimeseriesRelatedWith(QueryParameters parameters) {
+    public SosTimeseries[] getMatchingTimeseries(QueryParameters parameters) {
         List<SosTimeseries> matchingTimeseries = new ArrayList<SosTimeseries>();
         for (Station station : stations.values()) {
             for (SosTimeseries timeseries : station.getObservedTimeseries()) {
-                if (timeseries.matchParameters(parameters)) {
+                if (timeseries.matchesGlobalIds(parameters)) {
                     matchingTimeseries.add(timeseries);
                 }
             }

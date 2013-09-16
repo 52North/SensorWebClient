@@ -76,7 +76,7 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
 
     private SosTimeseries[] filter(SOSMetadata metadata, QueryParameters query) {
         Set<SosTimeseries> allTimeseries = new HashSet<SosTimeseries>();
-        for (SosTimeseries timeseries : metadata.getTimeseriesRelatedWith(query)) {
+        for (SosTimeseries timeseries : metadata.getMatchingTimeseries(query)) {
             allTimeseries.add(timeseries);
         }
         return allTimeseries.toArray(new SosTimeseries[0]);

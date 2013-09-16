@@ -169,7 +169,7 @@ public class QueryServiceImpl implements QueryService {
         Iterator<SosTimeseries> iterator = observedTimeseries.iterator();
         while (iterator.hasNext()) {
             SosTimeseries timeseries = iterator.next();
-            if ( !timeseries.matchParameters(offering, phenomenon, procedure, feature)) {
+            if ( !timeseries.matchesLocalParamterIds(offering, phenomenon, procedure, feature)) {
                 iterator.remove();
             }
         }
