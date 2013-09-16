@@ -75,7 +75,7 @@ public class ServiceOutputAdapter implements ServiceParameterService {
     }
 
     private boolean matchesQuery(QueryParameters query, SOSMetadata metadata) {
-        return metadata.getTimeseriesRelatedWith(query).length != 0;
+        return metadata.getMatchingTimeseries(query).length != 0;
     }
 
 	public ServiceOutput[] getParameters(String[] serviceIds) {

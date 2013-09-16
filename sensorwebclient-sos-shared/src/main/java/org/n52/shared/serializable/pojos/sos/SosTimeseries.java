@@ -167,6 +167,23 @@ public class SosTimeseries implements Serializable {
 
     /**
      * Match against a filter criteria. The filter criteria is built as an <code>AND</code> criteria to match
+     * against all parameter names. If a parameter is <code>null</code> is will be ignored (to match).
+     * 
+     * @param searchParameters
+     *        filter to match a timeseries. If <code>null</code> the filter matches by default.
+     * @return <code>true</code> if constellation matches to the given filter.
+     */
+    public boolean matchesGlobalIds(QueryParameters searchParameters) {
+        boolean matchesService = matches(searchParameters.getService(), sosService.getGlobalId());
+        boolean matchesFeature = matches(searchParameters.getFeature(), feature.getGlobalId());
+        boolean matchesOffering = matches(searchParameters.getOffering(), offering.getGlobalId());
+        boolean matchesProcedure = matches(searchParameters.getProcedure(), procedure.getGlobalId());
+        boolean matchesPhenomenon = matches(searchParameters.getPhenomenon(), phenomenon.getGlobalId());
+        return matchesService && matchesFeature && matchesOffering && matchesProcedure && matchesPhenomenon;
+    }
+
+    /**
+     * Match against a search criteria. The filter criteria is built as an <code>AND</code> criteria to match
      * against all parameters. If a parameter is <code>null</code> is will be ignored (to match).
      * 
      * @param offeringFilter
@@ -179,43 +196,12 @@ public class SosTimeseries implements Serializable {
      *        filter to match the feature. If <code>null</code> the filter matches by default.
      * @return <code>true</code> if constellation matches to all given filters.
      */
-    public boolean matchParameters(QueryParameters filter) {
-        return matchesOffering(filter.getOffering()) 
-                && matchesService(filter.getService())
-                && matchesPhenomenon(filter.getPhenomenon())
-                && matchesProcedure(filter.getProcedure())
-                && matchesFeature(filter.getFeature());
-    }
-
-    /**
-     * Match against a filter criteria. The filter criteria is built as an <code>AND</code> criteria to match
-     * against all parameters. If a parameter is <code>null</code> is will be ignored (to match).
-     * 
-     * @param offeringFilter
-     *        filter to match the offering. If <code>null</code> the filter matches by default.
-     * @param phenomenonFilter
-     *        filter to match the phenomenon. If <code>null</code> the filter matches by default.
-     * @param procedureFilter
-     *        filter to match the procedure. If <code>null</code> the filter matches by default.
-     * @param featureFilter
-     *        filter to match the feature. If <code>null</code> the filter matches by default.
-     * @return <code>true</code> if constellation matches to all given filters.
-     */
-    public boolean matchParameters(String offering, String phenomenon, String procedure, String feature) {
-        return matchesOffering(offering) && matchesPhenomenon(phenomenon) && matchesProcedure(procedure)
-                && matchesFeature(feature);
-    }
-
-    /**
-     * Checks if given filter and currently set {@link #featureId} do match.
-     * 
-     * @param filter
-     *        the feature to match. If paramter is <code>null</code> the filter does not apply.
-     * @return <code>false</code> if filter does not match the {@link #featureId} of this instance. Returns
-     *         <code>true</code> if filter matches or is <code>null</code> .
-     */
-    public boolean matchesFeature(String filter) {
-        return (filter == null) ? true : filter.equals(feature.getFeatureId());
+    public boolean matchesLocalParamterIds(String offering, String phenomenon, String procedure, String feature) {
+        boolean matchesFeature = matches(feature, this.feature.getFeatureId());
+        boolean matchesOffering = matches(offering, this.offering.getOfferingId());
+        boolean matchesProcedure = matches(procedure, this.procedure.getProcedureId());
+        boolean matchesPhenomenon = matches(phenomenon, this.phenomenon.getPhenomenonId());
+        return matchesFeature && matchesOffering && matchesProcedure && matchesPhenomenon;
     }
 
     /**
@@ -227,19 +213,7 @@ public class SosTimeseries implements Serializable {
      *         <code>true</code> if filter matches or is <code>null</code> .
      */
     public boolean matchesProcedure(String filter) {
-        return (filter == null) ? true : filter.equals(procedure.getProcedureId());
-    }
-    
-    /**
-     * Checks if given filter and currently set {@link #sosService} do match.
-     * 
-     * @param filter
-     *        the service to match. If paramter is <code>null</code> the filter does not apply.
-     * @return <code>false</code> if filter does not match the {@link #sosService} of this instance. Returns
-     *         <code>true</code> if filter matches or is <code>null</code> .
-     */
-    public boolean matchesService(String filter) {
-        return (filter == null) ? true : filter.equals(sosService.getServiceUrl());
+        return matches(filter, procedure.getProcedureId());
     }
 
     /**
@@ -251,19 +225,11 @@ public class SosTimeseries implements Serializable {
      *         <code>true</code> if filter matches or is <code>null</code> .
      */
     public boolean matchesPhenomenon(String filter) {
-        return (filter == null) ? true : filter.equals(phenomenon.getPhenomenonId());
+        return matches(filter, phenomenon.getPhenomenonId());
     }
 
-    /**
-     * Checks if given filter and currently set {@link #offeringId} do match.
-     * 
-     * @param filter
-     *        the feature to match. If paramter is <code>null</code> the filter does not apply.
-     * @return <code>false</code> if filter does not match the {@link #offeringId} of this instance. Returns
-     *         <code>true</code> if filter matches or is <code>null</code> .
-     */
-    public boolean matchesOffering(String filter) {
-        return (filter == null) ? true : filter.equals(offering.getOfferingId());
+    private boolean matches(String actual, String toMatch) {
+        return actual == null || actual.equalsIgnoreCase(toMatch);
     }
 
     @Override
@@ -345,8 +311,8 @@ public class SosTimeseries implements Serializable {
         return timeseries;
     }
 
-	public String getLabel() {
-		return getPhenomenon().getLabel() + "@" + getFeature().getLabel();
-	}
+    public String getLabel() {
+        return getPhenomenon().getLabel() + "@" + getFeature().getLabel();
+    }
 
 }

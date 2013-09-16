@@ -24,6 +24,7 @@
 package org.n52.api.v1.srv;
 
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
+import static org.n52.shared.requests.query.QueryParameters.createEmptyFilterQuery;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,7 +39,6 @@ import org.n52.io.v1.data.search.SearchResult;
 import org.n52.io.v1.data.search.ServiceSearchResult;
 import org.n52.io.v1.data.search.StationSearchResult;
 import org.n52.io.v1.data.search.TimeseriesSearchResult;
-import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
@@ -68,7 +68,7 @@ public class SearchAdapter implements SearchService {
 	private Collection<SearchResult> requestTimeseries(String search) {
 		Collection<SearchResult> results = new ArrayList<SearchResult>();
 		for (SOSMetadata metadata : getSOSMetadatas()) {
-			SosTimeseries[] timeseries = metadata.getTimeseriesRelatedWith(QueryParameters.createEmptyFilterQuery());
+			SosTimeseries[] timeseries = metadata.getMatchingTimeseries(createEmptyFilterQuery());
 			for (SosTimeseries ts : timeseries) {
 				if (containsSearchString(ts.getFeature().getLabel(), search) ||
 					containsSearchString(ts.getPhenomenon().getLabel(), search) ||
@@ -123,7 +123,7 @@ public class SearchAdapter implements SearchService {
 				}
 			}
 			// categories
-			SosTimeseries[] timeseries = metadata.getTimeseriesRelatedWith(QueryParameters.createEmptyFilterQuery());
+			SosTimeseries[] timeseries = metadata.getMatchingTimeseries(createEmptyFilterQuery());
 			for (SosTimeseries sosTimeseries : timeseries) {
 				if (containsSearchString(sosTimeseries.getCategory(), search)) {
 					CategoryConverter converter = new CategoryConverter(metadata);
