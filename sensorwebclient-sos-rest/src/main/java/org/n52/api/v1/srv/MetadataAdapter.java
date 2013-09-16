@@ -75,7 +75,7 @@ public class MetadataAdapter implements CountingMetadataService {
 		int count = 0;
 		for (SOSMetadata metadata : getSOSMetadatas()) {
 			Set<String> categorieSet = new HashSet<String>();
-			SosTimeseries[] timeseries = metadata.getTimeseriesRelatedWith(QueryParameters.createEmptyFilterQuery());
+			SosTimeseries[] timeseries = metadata.getMatchingTimeseries(QueryParameters.createEmptyFilterQuery());
 			for (SosTimeseries timeserie : timeseries) {
 				categorieSet.add(timeserie.getCategory());
 			}

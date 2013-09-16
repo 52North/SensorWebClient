@@ -68,7 +68,7 @@ public class CategoryOutputAdapter implements ParameterService<CategoryOutput> {
 	    // TODO consider query
 	    
         Set<String> allCategories = new HashSet<String>();
-        for (SosTimeseries timeseries : metadata.getTimeseriesRelatedWith(query)) {
+        for (SosTimeseries timeseries : metadata.getMatchingTimeseries(query)) {
         	allCategories.add(timeseries.getCategory());
         }
         return allCategories.toArray(new String[0]);

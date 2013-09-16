@@ -67,7 +67,7 @@ public class OfferingOutputAdapter implements ParameterService<OfferingOutput> {
 
     private Offering[] filter(SOSMetadata metadata, QueryParameters query) {
         Set<Offering> allOfferings = new HashSet<Offering>();
-        for (SosTimeseries timeseries : metadata.getTimeseriesRelatedWith(query)) {
+        for (SosTimeseries timeseries : metadata.getMatchingTimeseries(query)) {
           allOfferings.add(timeseries.getOffering());
         }
         return allOfferings.toArray(new Offering[0]);

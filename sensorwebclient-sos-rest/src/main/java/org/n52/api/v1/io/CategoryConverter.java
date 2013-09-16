@@ -23,6 +23,8 @@
  */
 package org.n52.api.v1.io;
 
+import static org.n52.shared.requests.query.QueryParameters.createEmptyFilterQuery;
+
 import org.n52.io.v1.data.CategoryOutput;
 import org.n52.shared.IdGenerator;
 import org.n52.shared.MD5HashIdGenerator;
@@ -57,7 +59,7 @@ public class CategoryConverter extends OutputConverter<String, CategoryOutput> {
 	}
 
 	public CategoryOutput getCategorieByID(String categoryId) {
-		SosTimeseries[] timeseries = getMetadata().getTimeseriesRelatedWith(QueryParameters.createEmptyFilterQuery());
+		SosTimeseries[] timeseries = getMetadata().getMatchingTimeseries(createEmptyFilterQuery());
 		for (SosTimeseries sosTimeseries : timeseries) {
 			if (generateId(sosTimeseries.getCategory()).equals(categoryId)) {
 				return convertExpanded(sosTimeseries.getCategory());
