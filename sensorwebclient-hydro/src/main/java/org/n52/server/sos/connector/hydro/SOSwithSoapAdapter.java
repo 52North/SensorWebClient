@@ -29,6 +29,8 @@ import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_CAPABILITIES_SERVIC
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Scanner;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -54,11 +56,11 @@ import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
 public class SOSwithSoapAdapter extends SOSAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSwithSoapAdapter.class);
-    
+
     public static final String GET_DATA_AVAILABILITY = "GetDataAvailability";
-    
+
     private static final int SOCKET_TIMEOUT = 30000;
-    
+
     /**
      * Creates an adapter to connect SOS with SOAP binding. <br>
      * <br>
@@ -121,8 +123,8 @@ public class SOSwithSoapAdapter extends SOSAdapter {
             throw new OXFException("Version is not supported: " + serviceVersion);
         }
         catch (XmlException e) {
-//            BufferedReader reader = new BufferedReader(new InputStreamReader(resultStream));
-//            LOGGER.debug("First line of response: {}", reader.readLine());
+            // BufferedReader reader = new BufferedReader(new InputStreamReader(resultStream));
+            // LOGGER.debug("First line of response: {}", reader.readLine());
             throw new OXFException("Unparsable XML response.", e);
         }
         catch (IOException e) {
@@ -130,44 +132,52 @@ public class SOSwithSoapAdapter extends SOSAdapter {
         }
     }
 
+    private String readContent(InputStream stream) {
+        Scanner scanner = new Scanner(stream);
+        StringBuilder sb = new StringBuilder();
+        while (scanner.hasNext()) {
+            sb.append(scanner.nextLine());
+        }
+        return sb.toString();
+    }
+
     @Override
     public OperationResult doOperation(Operation operation, ParameterContainer parameters) throws ExceptionReport,
             OXFException {
-    	OperationResult result = null;
-		if (operation.getName().equals(GET_DATA_AVAILABILITY)) {
-			if (getRequestBuilder() instanceof SoapSOSRequestBuilder_200) {
-				try {
-					SoapSOSRequestBuilder_200 builder = (SoapSOSRequestBuilder_200) getRequestBuilder();
-					String request = builder.buildGetDataAvailabilityRequest(parameters);
-					HttpClient httpClient = new ProxyAwareHttpClient(new SimpleHttpClient());
-					String url = operation.getDcps()[0].getHTTPGetRequestMethods().get(0).getOnlineResource().getHref();
-					HttpResponse httpResponse = httpClient.executePost(url, request, ContentType.TEXT_XML);
-					HttpEntity responseEntity = httpResponse.getEntity();
-					result = new OperationResult(responseEntity.getContent(), parameters, request);
-				} catch (Exception e) {
-					LOGGER.error("Error occured, while sending GetDataAvailability.", e);
-				}
-			}
-		} else {
-			result = super.doOperation(operation, parameters);	
-		}
+        OperationResult result = null;
+        if (operation.getName().equals(GET_DATA_AVAILABILITY)) {
+            if (getRequestBuilder() instanceof SoapSOSRequestBuilder_200) {
+                try {
+                    SoapSOSRequestBuilder_200 builder = (SoapSOSRequestBuilder_200) getRequestBuilder();
+                    String request = builder.buildGetDataAvailabilityRequest(parameters);
+                    HttpClient httpClient = new ProxyAwareHttpClient(new SimpleHttpClient());
+                    String url = operation.getDcps()[0].getHTTPGetRequestMethods().get(0).getOnlineResource().getHref();
+                    HttpResponse httpResponse = httpClient.executePost(url, request, ContentType.TEXT_XML);
+                    HttpEntity responseEntity = httpResponse.getEntity();
+                    result = new OperationResult(responseEntity.getContent(), parameters, request);
+                }
+                catch (Exception e) {
+                    LOGGER.error("Error occured, while sending GetDataAvailability.", e);
+                }
+            }
+        }
+        else {
+            result = super.doOperation(operation, parameters);
+        }
         ByteArrayInputStream resultStream = result.getIncomingResultAsStream();
         try {
             XmlObject result_xb = XmlObject.Factory.parse(resultStream);
-            XmlObject document = null;
+            XmlObject body = null;
             if (result_xb instanceof EnvelopeDocument) {
                 EnvelopeDocument envelopeDoc = (EnvelopeDocument) result_xb;
-                document = SoapUtil.readBodyNodeFrom(envelopeDoc, null);
-                // TODO change, its very dirty!!!
-                return new OperationResult(new ByteArrayInputStream(document.xmlText().getBytes()),
+                body = SoapUtil.readBodyNodeFrom(envelopeDoc, null);
+                return new OperationResult(body.newInputStream(),
                                            result.getUsedParameters(),
                                            result.getSendedRequest());
             }
         }
         catch (XmlException e) {
-//            BufferedReader reader = new BufferedReader(new InputStreamReader(resultStream));
-//            LOGGER.debug("First line of response: {}", reader.readLine());
-            throw new OXFException("Unparsable XML response.", e);
+            throw new OXFException("Unparsable XML response: " + readContent(resultStream), e);
         }
         catch (IOException e) {
             throw new OXFException("Could not read from stream.", e);
