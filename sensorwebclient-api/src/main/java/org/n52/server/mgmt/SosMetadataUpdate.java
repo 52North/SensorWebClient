@@ -57,7 +57,7 @@ public class SosMetadataUpdate {
             try {
                 updateService(url);
             } catch (Exception e) {
-                LOGGER.error("Could not cache metadata for service " + url);
+                LOGGER.error("Could not cache metadata for service " + url, e);
                 continue; // ignore service and try next one.
             }
         }
