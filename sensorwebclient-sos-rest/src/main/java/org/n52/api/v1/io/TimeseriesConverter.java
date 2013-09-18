@@ -23,6 +23,8 @@
  */
 package org.n52.api.v1.io;
 
+import static java.lang.System.currentTimeMillis;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,11 +66,11 @@ public class TimeseriesConverter extends OutputConverter<SosTimeseries, Timeseri
     @Override
     public TimeseriesMetadataOutput convertCondensed(SosTimeseries timeseries) {
         TimeseriesMetadataOutput convertedTimeseries = new TimeseriesMetadataOutput();
-        convertedTimeseries.setLabel(timeseries.getLabel());
-        convertedTimeseries.setStation(getCondensedStation(timeseries));
         Phenomenon phenomenon = getLookup().getPhenomenon(timeseries.getPhenomenonId());
+        convertedTimeseries.setStation(getCondensedStation(timeseries));
         convertedTimeseries.setUom(phenomenon.getUnitOfMeasure());
         convertedTimeseries.setId(timeseries.getTimeseriesId());
+        convertedTimeseries.setLabel(timeseries.getLabel());
         return convertedTimeseries;
     }
 
@@ -90,10 +92,6 @@ public class TimeseriesConverter extends OutputConverter<SosTimeseries, Timeseri
 
     private ReferenceValueOutput[] getReferenceValues(SosTimeseries timeseries) {
         Procedure procedure = getLookup().getProcedure(timeseries.getProcedureId());
-        if (procedure.getReferenceValues() == null || procedure.getReferenceValues().isEmpty()) {
-            return null;
-        }
-        
         List<ReferenceValueOutput> referenceValues = new ArrayList<ReferenceValueOutput>();
         for (String refValueName : procedure.getReferenceValues().keySet()) {
             ReferenceValueOutput converted = new ReferenceValueOutput();
@@ -107,14 +105,11 @@ public class TimeseriesConverter extends OutputConverter<SosTimeseries, Timeseri
             converted.setLabel(value.getId());
             referenceValues.add(converted);
         }
-        
-        return !referenceValues.isEmpty()
-                ? referenceValues.toArray(new ReferenceValueOutput[0])
-                : null; // will not be listed in output
+        return referenceValues.toArray(new ReferenceValueOutput[0]);
     }
 
     private TimeseriesValue createEverValidReferenceValue(TimeseriesValue lastValue) {
-        return new TimeseriesValue(System.currentTimeMillis(), lastValue.getValue());
+        return new TimeseriesValue(currentTimeMillis(), lastValue.getValue());
     }
 
     private CategoryOutput getCondensedCategory(SosTimeseries timeseries) {
