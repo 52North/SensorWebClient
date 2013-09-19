@@ -662,6 +662,9 @@ public class DescribeSensorParser {
                     break;
                 }
             }
+        } else {
+            String xmlText = xmlObject == null ? null : xmlObject.xmlText();
+            throw new IllegalArgumentException("Could not parse sensor description: " + xmlText);
         }
     }
 
