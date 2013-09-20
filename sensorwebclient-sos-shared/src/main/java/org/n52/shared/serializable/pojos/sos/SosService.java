@@ -37,6 +37,8 @@ public class SosService extends TimeseriesParameter {
     public SosService(String serviceUrl, String version) {
         super(serviceUrl, new String[]{serviceUrl, version});
         this.version = version;
+        // reset label set by super class
+        setLabel("NA");
     }
     
     public String getServiceUrl() {

@@ -180,6 +180,7 @@ public abstract class MetadataHandler {
 						timeseries.setProcedure(new Procedure(procedure, sosUrl));
 						timeseries.setOffering(new Offering(offeringId, sosUrl));
 						timeseries.setSosService(new SosService(sosMetadata.getServiceUrl(), sosMetadata.getVersion()));
+						timeseries.getSosService().setLabel(sosMetadata.getTitle());
 						allObservedTimeseries.add(timeseries);
 					}
 					// add procedures

@@ -37,7 +37,6 @@ import org.eesgmbh.gimv.client.event.LoadImageDataEvent;
 import org.eesgmbh.gimv.client.event.SetDomainBoundsEvent;
 import org.eesgmbh.gimv.client.event.SetDomainBoundsEventHandler;
 import org.n52.client.bus.EventBus;
-import org.n52.client.ctrl.ExceptionHandler;
 import org.n52.client.model.ADataStore;
 import org.n52.client.sos.DataparsingException;
 import org.n52.client.sos.event.ChangeTimeSeriesStyleEvent;
