@@ -217,7 +217,7 @@ public class TimeseriesProperties implements Serializable {
 
 
 	public String getStationName() {
-		return station.getLabel();
+		return station == null ? "NA" : station.getLabel();
 	}
 
 	public String getServiceUrl() {
