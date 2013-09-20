@@ -278,6 +278,7 @@ public class HydroMetadataHandler extends MetadataHandler {
             addedtimeserie.setCategory(category);
             addedtimeserie.setOffering(new Offering(timeserie.getOfferingId(), metadata.getServiceUrl()));
             addedtimeserie.setSosService(new SosService(timeserie.getServiceUrl(), metadata.getVersion()));
+            addedtimeserie.getSosService().setLabel(metadata.getTitle());
             timeseries.add(addedtimeserie);
         }
         return timeseries;
