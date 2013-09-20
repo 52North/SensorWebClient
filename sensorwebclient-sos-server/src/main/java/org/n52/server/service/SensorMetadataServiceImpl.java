@@ -65,8 +65,8 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
             tsProperties.setMetadataUrl(parser.buildUpSensorMetadataHtmlUrl(procedureId, sosUrl));
             
             // XXX this could have already been read while creating the cache!
-            tsProperties.setStationName(parser.buildUpSensorMetadataStationName());
-            tsProperties.setUnitOfMeasure(parser.buildUpSensorMetadataUom(phenomenonId));
+//            tsProperties.setStationName(parser.buildUpSensorMetadataStationName());
+//            tsProperties.setUnitOfMeasure(parser.buildUpSensorMetadataUom(phenomenonId));
             // end xxx
             
             HashMap<String, ReferenceValue> refvalues = parser.parseReferenceValues();

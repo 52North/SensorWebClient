@@ -75,7 +75,7 @@ public class RenderingDesign implements Serializable {
     }
 
     public String getLabel() {
-        return timeseriesProperties.getLabel();
+        return timeseriesProperties.getStation().getLabel();
     }
 
     public String getUomLabel() {

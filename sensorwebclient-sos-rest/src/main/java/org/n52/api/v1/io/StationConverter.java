@@ -25,9 +25,7 @@ package org.n52.api.v1.io;
 
 import static org.n52.io.geojson.GeojsonPoint.createWithCoordinates;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.n52.io.geojson.GeojsonPoint;
@@ -63,8 +61,8 @@ public class StationConverter extends OutputConverter<Station, StationOutput> {
     }
     
     
-    private List<Map<String, OutputValue>> createCondensedTimeseriesList(Station station) {
-        List<Map<String, OutputValue>> timeseriesOutputs = new ArrayList<Map<String, OutputValue>>();
+    private  Map<String, Map<String, OutputValue>> createCondensedTimeseriesList(Station station) {
+        Map<String, Map<String, OutputValue>> timeseriesOutputs = new HashMap<String, Map<String, OutputValue>>();
         for (SosTimeseries timeseries : station.getObservedTimeseries()) {
             Map<String, OutputValue> timeseriesOutput = new HashMap<String, OutputValue>();
             timeseriesOutput.put("service", createOutputValue(timeseries.getSosService()));
@@ -72,7 +70,7 @@ public class StationConverter extends OutputConverter<Station, StationOutput> {
             timeseriesOutput.put("procedure", createOutputValue(timeseries.getProcedure()));
             timeseriesOutput.put("phenomenon", createOutputValue(timeseries.getPhenomenon()));
             timeseriesOutput.put("feature", createOutputValue(timeseries.getFeature()));
-            timeseriesOutputs.add(timeseriesOutput);
+            timeseriesOutputs.put(timeseries.getTimeseriesId(), timeseriesOutput);
         }
         return timeseriesOutputs;
     }
