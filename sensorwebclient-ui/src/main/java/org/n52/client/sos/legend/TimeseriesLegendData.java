@@ -79,7 +79,6 @@ public class TimeseriesLegendData implements LegendData {
 
 	private void init() {
         this.ordering = 0;
-		this.properties.setLabel(this.id);
 		this.legendElement = new LegendEntryTimeSeries(this, "100%", "30");
 	}
 
@@ -242,11 +241,6 @@ public class TimeseriesLegendData implements LegendData {
 		return properties.getServiceUrl();
 	}
 
-	public void setStationName(String name) {
-		this.properties.setStationName(name);
-		this.properties.setLabel(name);
-	}
-
 	public String getStationName() {
 		return properties.getStationName();
 	}
@@ -276,8 +270,8 @@ public class TimeseriesLegendData implements LegendData {
 	}
 
 	public void setProperties(TimeseriesProperties props) {
-		this.properties = props;
 		this.coords = getCoords(props.getStation());
+		this.properties = props;
 		updateLegendElement();
 	}
 

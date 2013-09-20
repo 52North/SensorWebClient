@@ -43,8 +43,6 @@ public class TimeseriesProperties implements Serializable {
 
 	private int width;
 
-	private String label;
-	
 	private String language;
 
 	private HashMap<String, ReferenceValue> refvalues = new HashMap<String, ReferenceValue>();
@@ -59,8 +57,6 @@ public class TimeseriesProperties implements Serializable {
 	private String lineStyle = "1";
 	
 	private String uom;
-
-	private String stationName;
 
 	private String metadataUrl = "";
 
@@ -115,14 +111,12 @@ public class TimeseriesProperties implements Serializable {
 		options.setColor(renderingOptions.getColor());
 		options.setLineWidth(renderingOptions.getLineWidth());
 		result.setRenderingOptions(options);
-		result.setLabel(this.label);
 		result.setLanguage(this.language);
 		result.setLineStyle(this.lineStyle);
 		result.setMetadataUrl(this.metadataUrl);
 		result.setOpacity(this.opacity);
 		result.setScaledToZero(this.isScaledToZero);
 		result.setShowYAxis(this.isYAxisVisible);
-		result.setStationName(this.stationName);
 		result.setUnitOfMeasure(this.uom);
 		result.setSeriesType(this.seriesType);
 		return result;
@@ -223,11 +217,7 @@ public class TimeseriesProperties implements Serializable {
 
 
 	public String getStationName() {
-		return stationName;
-	}
-
-	public void setStationName(String stationName) {
-		this.stationName = stationName;
+		return station.getLabel();
 	}
 
 	public String getServiceUrl() {
@@ -268,14 +258,6 @@ public class TimeseriesProperties implements Serializable {
 
 	public String getTimeseriesId() {
 		return timeseries.getTimeseriesId();
-	}
-
-	public String getLabel() {
-		return this.label;
-	}
-
-	public void setLabel(String label) {
-		this.label = label;
 	}
 
 	public String getLineStyle() {
