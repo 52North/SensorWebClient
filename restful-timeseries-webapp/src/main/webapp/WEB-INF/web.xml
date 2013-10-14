@@ -3,6 +3,19 @@
 	<display-name>${project.artifactId} (SVN r${svn.info.revision}, built
 		on ${timestamp})</display-name>
 
+
+    <!-- Cross origin resource sharing (uncomment to share REST-API) Filter 
+        requires Tomcat 7.0.32 or higher 
+    <filter>
+        <filter-name>CorsFilter</filter-name>
+        <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CorsFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>-->
+
+
 	<!-- listen for spring related configuration files -->
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener
@@ -26,17 +39,17 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>dispatcher</servlet-name>
-		<url-pattern>/rest/*</url-pattern>
+		<url-pattern>/api/*</url-pattern>
 	</servlet-mapping>
 
-	<servlet>
-		<!-- sensorwebclient-api module -->
-		<servlet-name>ConfigurationContext</servlet-name>
-		<servlet-class>
-			org.n52.server.oxf.util.ConfigurationContext
-		</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
+    <servlet>
+        <servlet-name>ConfigurationContext</servlet-name>
+        <servlet-class>
+            org.n52.server.mgmt.ConfigurationContext
+        </servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
 
 	<servlet>
 		<servlet-name>TimerTask</servlet-name>
