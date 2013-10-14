@@ -27,6 +27,7 @@
 		<module>sensorwebclient-sos-shared</module>
 		<module>sensorwebclient-ui</module>
 		<module>sensorwebclient-webapp</module>
+		<module>restful-timeseries-webapp</module>
 		<module>xml-pdf-format</module>
 	</modules>
 
