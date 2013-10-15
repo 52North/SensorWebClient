@@ -15,6 +15,7 @@ import org.n52.client.ses.event.SessionExpiredEvent;
 import org.n52.client.ses.event.SetRoleEvent;
 import org.n52.client.ses.event.handler.SessionExpiredEventHandler;
 import org.n52.client.ses.event.handler.SetRoleEventHandler;
+import org.n52.client.util.LabelFactory;
 import org.n52.shared.serializable.pojos.UserRole;
 
 import com.smartgwt.client.types.Alignment;
@@ -36,17 +37,17 @@ public class LoginHeaderLayout extends HLayout {
 	}
 
 	private void initializeLayout() {
-		setStyleName("n52_sensorweb_client_loginBlock");
+//		setStyleName("n52_sensorweb_client_loginBlock");
 		setAlign(Alignment.RIGHT);
 		
-		user = new Label();
-		user.setStyleName("n52_sensorweb_client_headerLoggedInAs");
+		user = LabelFactory.getFormattedLabel();
+//		user.setStyleName("n52_sensorweb_client_headerLoggedInAs");
 		user.setAutoWidth();
 		user.setWrap(false);
 		addMember(user);
 		
 		// logout link
-		Label logout = getHeaderLinkLabel("(" + i18n.logout() + ")");
+		Label logout = LabelFactory.getFormattedLinkLabel("(" + i18n.logout() + ")");
 		logout.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -57,10 +58,9 @@ public class LoginHeaderLayout extends HLayout {
 		
 		// admin link
 		admin = new HLayout();
-		admin.setStyleName("n52_sensorweb_client_headerLoggedInAs");
+//		admin.setStyleName("n52_sensorweb_client_headerLoggedInAs");
 		admin.setAutoWidth();
-		Label link = getHeaderLinkLabel(i18n.admin());		
-		admin.addMember(getSeparator());
+		Label link = LabelFactory.getFormattedLinkLabel(i18n.admin());		
 		admin.addMember(link);
 		link.addClickHandler(new ClickHandler() {
 			@Override
@@ -101,21 +101,6 @@ public class LoginHeaderLayout extends HLayout {
 	    hide();
 	}
 	
-    private Label getHeaderLinkLabel(String labelText) {
-    	Label label = new Label(labelText);
-        label.setStyleName("n52_sensorweb_client_headerlink");
-        label.setAutoWidth();
-        label.setWrap(false);
-		return label;
-	}
-    
-    private Label getSeparator(){
-        Label pipe = new Label("|");
-        pipe.setStyleName("n52_sensorweb_client_pipe");
-        pipe.setAutoWidth();
-        return pipe;
-    }
-    
     private static class LoginHeaderEventBroker implements SetRoleEventHandler, SessionExpiredEventHandler {
 
     	private final LoginHeaderLayout loginHeaderLayout;

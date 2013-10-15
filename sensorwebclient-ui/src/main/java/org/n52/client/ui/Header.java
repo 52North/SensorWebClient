@@ -36,6 +36,7 @@ import org.n52.client.ctrl.TimeManager;
 import org.n52.client.sos.ctrl.SosDataManager;
 import org.n52.client.sos.event.data.UpdateSOSMetadataEvent;
 import org.n52.client.sos.legend.Timeseries;
+import org.n52.client.util.ClientUtils;
 import org.n52.client.util.LabelFactory;
 import org.n52.client.util.PortalInfo;
 import org.n52.client.util.PortalInfos;
@@ -85,9 +86,8 @@ public class Header extends HLayout {
     	Layout headerBreadcrumb = getBreadcrumbLayout();
     	Layout headerIcons = getIconLayout();
     	
-    	headerMain.addMember(getHeaderLogo());//headerLogo);
+    	headerMain.addMember(getHeaderLogo());
     	headerMain.addMember(headerContent);
-//    	headerMain.setHeight(62);
     	headerMain.addStyleName("main");
     	
     	headerContent.addMember(headerContentTop);
@@ -97,29 +97,21 @@ public class Header extends HLayout {
     	headerContentTop.addMember(headerPortalLinks);
     	headerContentTop.addMember(headerMetaLinks);
     	headerContentTop.addStyleName("contentTop");
-//    	headerContentTop.setHeight("50%");
     	
     	headerContentBottom.addMember(headerBreadcrumb);
     	headerContentBottom.setAlign(VerticalAlignment.CENTER);
     	headerContentBottom.addMember(headerIcons);
     	headerContentBottom.addStyleName("contentBottom");
-//    	headerContentBottom.setHeight("50%");
     	
     	headerLogo.addMember(getHeaderLogo());
-//    	headerLogo.setWidth(95);
-//    	headerLogo.setHeight(62);
     	headerLogo.addStyleName("logo");
     	
-//    	headerPortalLinks.setWidth("75%");
     	headerPortalLinks.addStyleName("portalLinks");
     	
-//    	headerMetaLinks.setWidth("25%");
     	headerMetaLinks.addStyleName("metaLinks");
     	
-//    	headerBreadcrumb.setWidth("50%");
     	headerBreadcrumb.addStyleName("breadcrumb");
     	
-//    	headerIcons.setWidth("50%");
     	headerIcons.addStyleName("icons");
     	
         this.setHeight(62);
@@ -220,25 +212,24 @@ public class Header extends HLayout {
     }
 
     private Layout getMetaLinkLayout(){
-    	Layout metaLinks = new HLayout();
+    	Layout metaLinks = new VLayout();
     	metaLinks.setAlign(Alignment.RIGHT);
     	
-        metaLinks.addMember(getPermalinkLink());
-        metaLinks.addMember(getSeparator());
-//        metaLinks.addMember(getAddBookmarkLink());
-//        metaLinks.addMember(getSeparator());
-        metaLinks.addMember(getImprintLink());
-        metaLinks.addMember(getSeparator());
-        metaLinks.addMember(getOpenSourceLink());
-        metaLinks.addMember(getSeparator());
-//        metaLinks.addMember(getCopyrightLink());
-//        metaLinks.addMember(getSeparator());
-        metaLinks.addMember(getHelpLink());
-        
-//        if (ClientUtils.isSesEnabled()) {
-//        	metaLinks.addMember(createLoginInfo());
-//        }
-
+    	Layout metaLinksTop = new HLayout();
+    	metaLinksTop.setAlign(Alignment.RIGHT);
+    	metaLinksTop.addMember(getPermalinkLink());
+    	metaLinksTop.addMember(getSeparator());
+//        metaLinksTop.addMember(getAddBookmarkLink());
+//        metaLinksTop.addMember(getSeparator());
+    	metaLinksTop.addMember(getImprintLink());
+    	metaLinksTop.addMember(getSeparator());
+    	metaLinksTop.addMember(getOpenSourceLink());
+    	metaLinksTop.addMember(getSeparator());
+//        metaLinksTop.addMember(getCopyrightLink());
+//        metaLinksTop.addMember(getSeparator());
+    	metaLinksTop.addMember(getHelpLink());
+    	metaLinks.addMember(metaLinksTop);
+    	
         return metaLinks;
     }
     
@@ -256,6 +247,9 @@ public class Header extends HLayout {
     
     private Layout getIconLayout(){
     	Layout icons = new HLayout();
+        if (ClientUtils.isSesEnabled()) {
+        	icons.addMember(getLoginInfo());
+        }
     	icons.addMembers(getHeaderIconHome(), getHeaderIconSitemap(), getHeaderIconSearch(), getHeaderIconMail(), getHeaderIconFeedback());
     	icons.setAlign(Alignment.RIGHT);
     	return icons;
@@ -379,7 +373,7 @@ public class Header extends HLayout {
 		return restart;
 	}
 	
-	private LoginHeaderLayout createLoginInfo() {
+	private LoginHeaderLayout getLoginInfo() {
 		return new LoginHeaderLayout();
 	}
 	
