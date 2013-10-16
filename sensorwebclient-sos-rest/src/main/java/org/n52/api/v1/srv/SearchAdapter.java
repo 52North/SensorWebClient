@@ -31,15 +31,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.n52.api.v1.io.CategoryConverter;
-import org.n52.io.v1.data.search.CategorySearchResult;
-import org.n52.io.v1.data.search.FeatureSearchResult;
-import org.n52.io.v1.data.search.OfferingSearchResult;
-import org.n52.io.v1.data.search.PhenomenonSearchResult;
-import org.n52.io.v1.data.search.ProcedureSearchResult;
-import org.n52.io.v1.data.search.SearchResult;
-import org.n52.io.v1.data.search.ServiceSearchResult;
-import org.n52.io.v1.data.search.StationSearchResult;
-import org.n52.io.v1.data.search.TimeseriesSearchResult;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
@@ -49,12 +40,26 @@ import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.n52.web.v1.srv.SearchService;
+import org.n52.web.v1.srv.search.CategorySearchResult;
+import org.n52.web.v1.srv.search.FeatureSearchResult;
+import org.n52.web.v1.srv.search.OfferingSearchResult;
+import org.n52.web.v1.srv.search.PhenomenonSearchResult;
+import org.n52.web.v1.srv.search.ProcedureSearchResult;
+import org.n52.web.v1.srv.search.SearchResult;
+import org.n52.web.v1.srv.search.ServiceSearchResult;
+import org.n52.web.v1.srv.search.StationSearchResult;
+import org.n52.web.v1.srv.search.TimeseriesSearchResult;
 
 public class SearchAdapter implements SearchService {
 
     @Override
-    public Collection<SearchResult> searchResources(String search) {
+    public Collection<SearchResult> searchResources(String search, String locale) {
+        // language specific search is not supported by the aggregation component
+        return searchResources(search);
+    }
 
+    private Collection<SearchResult> searchResources(String search) {
+        
         // TODO extend search logic to support composed search strings
 
         ArrayList<SearchResult> results = new ArrayList<SearchResult>();
