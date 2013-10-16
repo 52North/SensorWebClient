@@ -45,7 +45,6 @@ public class ServiceConverter extends OutputConverter<SOSMetadata, ServiceOutput
         convertedService.setId(metadata.getGlobalId());
         convertedService.setServiceUrl(metadata.getServiceUrl());
         convertedService.setVersion(metadata.getVersion());
-        convertedService.setLabel(metadata.getTitle());
         convertedService.setType("SOS");
         
         convertedService.setQuantities(countParameters(metadata, convertedService));
