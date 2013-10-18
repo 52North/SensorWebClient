@@ -41,8 +41,7 @@ public class ServiceConverter extends OutputConverter<SOSMetadata, ServiceOutput
 
     @Override
     public ServiceOutput convertExpanded(SOSMetadata metadata) {
-        ServiceOutput convertedService = new ServiceOutput();
-        convertedService.setId(metadata.getGlobalId());
+        ServiceOutput convertedService = convertCondensed(metadata);
         convertedService.setServiceUrl(metadata.getServiceUrl());
         convertedService.setVersion(metadata.getVersion());
         convertedService.setType("SOS");
