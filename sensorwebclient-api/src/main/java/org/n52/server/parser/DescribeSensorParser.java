@@ -85,6 +85,7 @@ import org.n52.oxf.xmlbeans.parser.XMLHandlingException;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.slf4j.Logger;
@@ -148,16 +149,24 @@ public class DescribeSensorParser {
         return uom;
     }
 
-    public String buildUpSensorMetadataHtmlUrl(String procedureID, String sosUrlString) throws OXFException {
+    public String buildUpSensorMetadataHtmlUrl(SosTimeseries timeseries) throws OXFException {
         try {
-            String smlVersion = ConfigurationContext.getSOSMetadata(sosUrlString).getSensorMLVersion();
-            String filename = "sensorML_" + normalize(procedureID + "_at_" + sosUrlString);
+            String serviceUrl = timeseries.getServiceUrl();
+            String smlVersion = ConfigurationContext.getSOSMetadata(serviceUrl).getSensorMLVersion();
+            String filename = "sensorML_" + normalize(createSensorDescriptionFileName(timeseries));
             File sensorMLFile = saveSensorMLFile(filename);
             return new SensorMLToHTMLTransformer(sensorMLFile, smlVersion).transformSMLtoHTML(filename);
         }
         catch (IOException e) {
             throw new OXFException("Could not write file.", e);
         }
+    }
+
+    public String createSensorDescriptionFileName(SosTimeseries timeseries) {
+        String serviceUrl = timeseries.getServiceUrl();
+        String procedureId = timeseries.getProcedureId();
+        String phenomenonId = timeseries.getPhenomenonId();
+        return phenomenonId + "_via_" + procedureId + "_at_" + serviceUrl;
     }
 
     public Point buildUpSensorMetadataPosition() throws FactoryException, TransformException {

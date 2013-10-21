@@ -750,7 +750,7 @@ public class SOSRequestManager extends RequestManager {
         }
     }
 
-    public void requestProcedureDetailsUrl(String serviceURL, String procedure) {
+    public void requestProcedureDetailsUrl(SosTimeseries timeseries) {
 
 		// prepare callback
 		GetProcedureDetailsUrlCallback callback = new GetProcedureDetailsUrlCallback(this, "Could not get procedure details url") {
@@ -770,7 +770,7 @@ public class SOSRequestManager extends RequestManager {
 		
 		// request
 		addRequest();
-		this.sensorMetadataService.getProcedureDetailsUrl(serviceURL, procedure, callback);
+		this.sensorMetadataService.getProcedureDetailsUrl(timeseries, callback);
 	}
 
 	public void requestPhenomenons(String serviceUrl) {
