@@ -61,7 +61,7 @@ public class SOSMetadata implements Serializable {
     private String sensorMLVersion;
 
     private String omVersion;
-    
+
     private TimeseriesParametersLookup timeseriesParametersLookup;
 
     private HashMap<String, Station> stations = new HashMap<String, Station>();
@@ -77,12 +77,14 @@ public class SOSMetadata implements Serializable {
     private boolean waterML = false; // default
 
     private boolean autoZoom = true; // default
-    
+
     private boolean protectedService = false; // default
 
     private int requestChunk = 300; // default
 
     private boolean forceXYAxisOrder = false; // default
+
+    private boolean supportsFirstLatest = false; // default
 
     private BoundingBox configuredExtent;
 
@@ -138,6 +140,7 @@ public class SOSMetadata implements Serializable {
         this.waterML = builder.isWaterML();
         this.autoZoom = builder.isAutoZoom();
         this.forceXYAxisOrder = builder.isForceXYAxisOrder();
+        this.supportsFirstLatest = builder.isSupportsFirstLatest();
         this.requestChunk = builder.getRequestChunk();
         this.configuredExtent = builder.getConfiguredServiceExtent();
         this.protectedService = builder.isProctectedService();
@@ -199,7 +202,7 @@ public class SOSMetadata implements Serializable {
     public void setSrs(String srs) {
         this.srs = srs;
     }
-    
+
     public String getTitle() {
         return this.title;
     }
@@ -244,7 +247,6 @@ public class SOSMetadata implements Serializable {
         this.hasDonePositionRequest = hasDonePositionRequest;
     }
 
-    
     public boolean canGeneralize() {
         return this.canGeneralize;
     }
@@ -264,9 +266,13 @@ public class SOSMetadata implements Serializable {
     public boolean isForceXYAxisOrder() {
         return forceXYAxisOrder;
     }
-    
+
+    public boolean isSupportsFirstLatest() {
+        return supportsFirstLatest;
+    }
+
     public boolean isProtectedService() {
-    	return protectedService;
+        return protectedService;
     }
 
     public int getRequestChunk() {
@@ -287,7 +293,7 @@ public class SOSMetadata implements Serializable {
     public ArrayList<Station> getStations() {
         return new ArrayList<Station>(stations.values());
     }
-    
+
     public SosTimeseries[] getMatchingTimeseries(QueryParameters parameters) {
         List<SosTimeseries> matchingTimeseries = new ArrayList<SosTimeseries>();
         for (Station station : stations.values()) {
@@ -299,7 +305,7 @@ public class SOSMetadata implements Serializable {
         }
         return matchingTimeseries.toArray(new SosTimeseries[0]);
     }
-    
+
     public Station getStationByTimeSeriesId(String timeseriesId) {
         for (Station station : stations.values()) {
             if (station.contains(timeseriesId)) {
@@ -308,7 +314,7 @@ public class SOSMetadata implements Serializable {
         }
         return null;
     }
-    
+
     public boolean containsStationWithTimeseriesId(String timeseriesId) {
         for (Station station : stations.values()) {
             if (station.contains(timeseriesId)) {
@@ -317,7 +323,7 @@ public class SOSMetadata implements Serializable {
         }
         return false;
     }
-    
+
     public Station getStationByTimeSeries(SosTimeseries timeseries) {
         for (Station station : stations.values()) {
             if (station.contains(timeseries)) {
@@ -344,9 +350,9 @@ public class SOSMetadata implements Serializable {
      * @return a lookup helper for timeseries parameters.
      */
     public TimeseriesParametersLookup getTimeseriesParametersLookup() {
-        timeseriesParametersLookup = timeseriesParametersLookup == null 
-                ? new TimeseriesParametersLookup()
-                : timeseriesParametersLookup;
+        timeseriesParametersLookup = timeseriesParametersLookup == null
+            ? new TimeseriesParametersLookup()
+            : timeseriesParametersLookup;
         return timeseriesParametersLookup;
     }
 
@@ -360,18 +366,22 @@ public class SOSMetadata implements Serializable {
         sb.append(" ]");
         return sb.toString();
     }
-    
+
     public SOSMetadata clone() {
-    	SOSMetadata clone = new SOSMetadata(this.serviceUrl,this.version,this.sensorMLVersion,this.omVersion,this.title);
-    	clone.waterML = this.waterML;
-    	clone.autoZoom = this.autoZoom;
+        SOSMetadata clone = new SOSMetadata(this.serviceUrl,
+                                            this.version,
+                                            this.sensorMLVersion,
+                                            this.omVersion,
+                                            this.title);
+        clone.waterML = this.waterML;
+        clone.autoZoom = this.autoZoom;
         clone.forceXYAxisOrder = this.forceXYAxisOrder;
         clone.requestChunk = this.requestChunk;
         clone.configuredExtent = this.configuredExtent;
         clone.protectedService = this.protectedService;
         clone.setSosMetadataHandler(this.getSosMetadataHandler());
         clone.setAdapter(this.getAdapter());
-    	return clone;
+        return clone;
     }
 
     @Override
@@ -408,8 +418,8 @@ public class SOSMetadata implements Serializable {
     }
 
     public String getGlobalId() {
-    	String[] parameters = new String[]{serviceUrl,version};
-    	IdGenerator idGenerator = new MD5HashIdGenerator("srv_");
+        String[] parameters = new String[] {serviceUrl, version};
+        IdGenerator idGenerator = new MD5HashIdGenerator("srv_");
         return idGenerator.generate(parameters);
-	}
+    }
 }

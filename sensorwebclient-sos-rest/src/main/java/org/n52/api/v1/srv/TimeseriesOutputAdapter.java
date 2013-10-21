@@ -58,7 +58,15 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
         List<TimeseriesMetadataOutput> allProcedures = new ArrayList<TimeseriesMetadataOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             TimeseriesConverter converter = new TimeseriesConverter(metadata);
-            allProcedures.addAll(converter.convertExpanded(filter(metadata, query)));
+            SosTimeseries[] timeseriesToConvert = filter(metadata, query);
+            for (SosTimeseries sosTimeseries : timeseriesToConvert) {
+                TimeseriesMetadataOutput converted = converter.convertExpanded(sosTimeseries);
+                if (metadata.isSupportsFirstLatest() && map.isForceLatestValueRequests()) {
+                    // setting last values must be declared explicitly to avoid thousands of requests
+                    converted.setLastValue(dataService.getLastValue(sosTimeseries));
+                }
+                allProcedures.add(converted);
+            }
         }
         return allProcedures.toArray(new TimeseriesMetadataOutput[0]);
     }
@@ -91,6 +99,9 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
     public TimeseriesMetadataOutput[] getParameters(String[] timeseriesIds, IoParameters query) {
         List<TimeseriesMetadataOutput> selectedTimeseries = new ArrayList<TimeseriesMetadataOutput>();
         for (String timeseriesId : timeseriesIds) {
+            /*
+             * TODO we may not want to invoke getLatest requests for all timeseriesIds here
+             */
             TimeseriesMetadataOutput timeseries = getParameter(timeseriesId);
             if (timeseries != null) {
                 selectedTimeseries.add(timeseries);
@@ -112,13 +123,10 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
                 TimeseriesConverter converter = new TimeseriesConverter(metadata);
                 SosTimeseries timeseries = station.getTimeseriesById(timeseriesId);
                 TimeseriesMetadataOutput convertExpanded = converter.convertExpanded(timeseries);
-                /*
-                 * We have to ensure that first and last values are only set when an item
-                 * is being requested! Calling first/last value for a whole timeseries
-                 * collection would trigger thousands of requests otherwise
-                 */
-                convertExpanded.setFirstValue(dataService.getFirstValue(timeseries));
-                convertExpanded.setLastValue(dataService.getLastValue(timeseries));
+                if (metadata.isSupportsFirstLatest()) {
+                    convertExpanded.setFirstValue(dataService.getFirstValue(timeseries));
+                    convertExpanded.setLastValue(dataService.getLastValue(timeseries));
+                }
                 return convertExpanded;
             }
         }

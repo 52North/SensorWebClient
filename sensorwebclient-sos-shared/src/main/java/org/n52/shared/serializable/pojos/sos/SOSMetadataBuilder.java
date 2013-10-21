@@ -45,6 +45,8 @@ public class SOSMetadataBuilder {
     private boolean forceXYAxisOrder = false;
     
     private boolean protectedService = false;
+    
+    private boolean supportsFirstLatest = false;
 
     private int requestChunk = 100;
     
@@ -102,6 +104,11 @@ public class SOSMetadataBuilder {
 		this.protectedService = protectedService;
 		return this;
 	}
+	
+	public SOSMetadataBuilder addSupportsFirstLatest(boolean supportsFirstLatest) {
+        this.supportsFirstLatest = supportsFirstLatest;
+        return this;
+    }
 
     public SOSMetadataBuilder setWaterML(boolean waterML) {
         this.waterML = waterML;
@@ -168,6 +175,10 @@ public class SOSMetadataBuilder {
     
     public boolean isForceXYAxisOrder() {
         return this.forceXYAxisOrder;
+    }
+    
+    public boolean isSupportsFirstLatest() {
+        return this.supportsFirstLatest;
     }
 
     public int getRequestChunk() {
