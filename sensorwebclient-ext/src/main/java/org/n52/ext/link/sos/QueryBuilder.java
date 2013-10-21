@@ -172,7 +172,7 @@ class QueryBuilder {
         queryBuilder.append("=");
     
         for (String value : values) {
-            queryBuilder.append(value);
+            queryBuilder.append(encodeValue(value));
             queryBuilder.append(",");
         }
         removeLastComma(queryBuilder);
