@@ -28,8 +28,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -322,97 +322,7 @@ public class DescribeSensorParser {
         return sensorMLFile;
     }
 
-    private class SensorMLToHTMLTransformer {
-
-        private Source sensorMLSource;
-        private Result htmlResult;
-        private File xsltFile;
-
-        SensorMLToHTMLTransformer(File sensorMLFile, String smlVersion) throws OXFException {
-            this.sensorMLSource = new StreamSource(sensorMLFile);
-            this.xsltFile = getVersionDependentXSLTFile(smlVersion);
-        }
-
-        private File getVersionDependentXSLTFile(String smlVersion) throws OXFException {
-            if (isVersion100(smlVersion)) {
-                return new File(ConfigurationContext.XSL_DIR + "/SensorML_2_HTML_100.xslt");
-            }
-            else if (isVersion101(smlVersion)) {
-                return new File(ConfigurationContext.XSL_DIR + "/SensorML_2_HTML_101.xslt");
-            }
-            else if (isVersion20(smlVersion)) {
-                return new File(ConfigurationContext.XSL_DIR + "/SensorML_2_HTML_20.xslt");
-            }
-            else {
-                throw new OXFException(String.format("Tranforming SensorML version '%s' is not supported", smlVersion));
-            }
-        }
-
-        private boolean isVersion100(String version) {
-            return version.contains("1.0.0");
-        }
-
-        private boolean isVersion101(String version) {
-            return version.contains("1.0.1");
-        }
-
-        private boolean isVersion20(String version) {
-            return version.contains("2.0");
-        }
-
-        /**
-         * @param filename
-         * @return Returns the path to transformed HTML file.
-         */
-        private String transformSMLtoHTML(String filename) throws OXFException {
-            LOGGER.trace("Performing XSLT transformation ...");
-            FileOutputStream fileOut = null;
-            try {
-                File htmlFile = getHTMLFilePath(filename);
-                if ( !htmlFile.exists()) {
-                    fileOut = new FileOutputStream(htmlFile);
-                    htmlResult = new StreamResult(fileOut);
-                    getXSLTTansformer().transform(sensorMLSource, htmlResult);
-                    LOGGER.trace(String.format("Transformed successfully to '%s'", htmlFile));
-                }
-                return getExternalURLAsString(htmlFile);
-            }
-            catch (Exception e) {
-                throw new OXFException("Could not transform SensorML to HTML.", e);
-            }
-            finally {
-                if (fileOut != null) {
-                    try {
-                        fileOut.close();
-                    }
-                    catch (IOException e) {
-                        LOGGER.debug("Could not close file stream!", e);
-                        fileOut = null;
-                    }
-                }
-            }
-        }
-
-        private String getExternalURLAsString(File file) {
-            try {
-                String encodedFileName = URLEncoder.encode(file.getName(), "UTF-8");
-                return ConfigurationContext.GEN_URL + "/" + encodedFileName;
-            } catch(UnsupportedEncodingException e) {
-                throw new RuntimeException("Could not encode to external URL!", e);
-            }
-        }
-
-        private File getHTMLFilePath(String filename) {
-            return new File(ConfigurationContext.GEN_DIR + filename + ".html");
-        }
-
-        private Transformer getXSLTTansformer() throws TransformerFactoryConfigurationError,
-                TransformerConfigurationException {
-            TransformerFactory tFactory = TransformerFactory.newInstance();
-            return tFactory.newTransformer(new StreamSource(xsltFile));
-        }
-    }
-
+    
     /**
      * @return a normalized String for use in a file path, i.e. all [\,/,:,*,?,",<,>,;] characters are
      *         replaced by '_'.
