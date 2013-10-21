@@ -23,7 +23,10 @@
  */
 package org.n52.server.mgmt;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.InputStream;
@@ -83,12 +86,14 @@ public class SosInstanceContentHandlerTest {
         SOSMetadata metadata = (SOSMetadata) serviceMetadata;
         assertEquals(PEGELONLINE_URL, metadata.getServiceUrl());
         assertEquals("1.0.0", metadata.getVersion());
-        assertEquals(true, metadata.isWaterML());
         assertEquals(DEFAULT_CONNECTOR, metadata.getSosMetadataHandler());
         assertEquals(DEFAULT_ADAPTER, metadata.getAdapter());
-        assertEquals(false, metadata.isForceXYAxisOrder());
         assertEquals(300, metadata.getRequestChunk());
-        assertEquals(false, metadata.isAutoZoom());
+        
+        assertTrue(metadata.isWaterML());
+        assertFalse(metadata.isAutoZoom());
+        assertFalse(metadata.isForceXYAxisOrder());
+        assertTrue(metadata.isSupportsFirstLatest());
         // TODO check bbox
         // TODO check defaultZoom
     }
@@ -102,6 +107,7 @@ public class SosInstanceContentHandlerTest {
         assertEquals(DEFAULT_ADAPTER, metadata.getAdapter());
         assertEquals(300, metadata.getRequestChunk());
         assertEquals(false, metadata.isAutoZoom());
+        assertFalse(metadata.isSupportsFirstLatest());
         // TODO check bbox
         // TODO check defaultZoom
     }
@@ -115,6 +121,7 @@ public class SosInstanceContentHandlerTest {
         assertEquals(true, metadata.isForceXYAxisOrder());
         assertEquals(500, metadata.getRequestChunk());
         assertEquals(false, metadata.isAutoZoom());
+        assertFalse(metadata.isSupportsFirstLatest());
         // TODO check bbox
         // TODO check defaultZoom
     }
@@ -128,6 +135,7 @@ public class SosInstanceContentHandlerTest {
         assertEquals(DEFAULT_ADAPTER, metadata.getAdapter());
         assertEquals(200, metadata.getRequestChunk());
         assertEquals(true, metadata.isAutoZoom());
+        assertFalse(metadata.isSupportsFirstLatest());
         // TODO check bbox
         // TODO check defaultZoom
     }
