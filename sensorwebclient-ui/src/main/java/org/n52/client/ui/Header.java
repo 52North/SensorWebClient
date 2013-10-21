@@ -34,7 +34,6 @@ import java.util.Date;
 import org.n52.client.bus.EventBus;
 import org.n52.client.ctrl.TimeManager;
 import org.n52.client.sos.ctrl.SosDataManager;
-import org.n52.client.sos.data.TimeseriesDataStore;
 import org.n52.client.sos.event.data.UpdateSOSMetadataEvent;
 import org.n52.client.sos.legend.TimeseriesLegendData;
 import org.n52.client.util.ClientUtils;
@@ -47,7 +46,6 @@ import org.n52.shared.serializable.pojos.TimeseriesRenderingOptions;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.smartgwt.client.types.Alignment;
