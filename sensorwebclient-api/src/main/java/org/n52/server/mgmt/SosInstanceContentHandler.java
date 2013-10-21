@@ -37,7 +37,7 @@ public class SosInstanceContentHandler extends DefaultHandler {
     private static final Logger LOG = LoggerFactory.getLogger(SosInstanceContentHandler.class);
 
     enum TagNames {
-        INSTANCE, ITEMNAME, URL, VERSION, METADATAHANDLER, ADAPTER, WATERML, LLEASTING, LLNORTHING, UREASTING, URNORTHING, DEFAULTZOOM, AUTOZOOM, REQUESTCHUNK, FORCEXYAXISORDER, PROTECTEDSERVICE, NOELEMENT;
+        INSTANCE, ITEMNAME, URL, VERSION, METADATAHANDLER, ADAPTER, WATERML, LLEASTING, LLNORTHING, UREASTING, URNORTHING, DEFAULTZOOM, AUTOZOOM, REQUESTCHUNK, FORCEXYAXISORDER, PROTECTEDSERVICE, NOELEMENT, SUPPORTSFIRSTLATEST;
     }
 
     private SOSMetadataBuilder currentBuilder = new SOSMetadataBuilder();
@@ -97,7 +97,10 @@ public class SosInstanceContentHandler extends DefaultHandler {
             currentElement = TagNames.ADAPTER;
         }
         else if (TagNames.PROTECTEDSERVICE.name().equalsIgnoreCase(qName)) {
-        	currentElement = TagNames.PROTECTEDSERVICE;
+            currentElement = TagNames.PROTECTEDSERVICE;
+        }
+        else if (TagNames.SUPPORTSFIRSTLATEST.name().equalsIgnoreCase(qName)) {
+            currentElement = TagNames.SUPPORTSFIRSTLATEST;
         }
     }
 
@@ -107,13 +110,13 @@ public class SosInstanceContentHandler extends DefaultHandler {
     }
 
     @Override
-	public void endElement(String uri, String localName, String qName) throws SAXException {
-		if (TagNames.INSTANCE.name().equalsIgnoreCase(qName)) {
-			SOSMetadata metadata = currentBuilder.build();
-			LOG.debug("New SOS metadata: {}", metadata);
-			ConfigurationContext.addNewSOSMetadata(metadata);
-			currentBuilder = new SOSMetadataBuilder();
-		}
+    public void endElement(String uri, String localName, String qName) throws SAXException {
+        if (TagNames.INSTANCE.name().equalsIgnoreCase(qName)) {
+            SOSMetadata metadata = currentBuilder.build();
+            LOG.debug("New SOS metadata: {}", metadata);
+            ConfigurationContext.addNewSOSMetadata(metadata);
+            currentBuilder = new SOSMetadataBuilder();
+        }
 
         String parsedCharacters = currentContent.toString();
         if (isParsableContent(parsedCharacters)) {
@@ -126,7 +129,7 @@ public class SosInstanceContentHandler extends DefaultHandler {
                 break;
             case DEFAULTZOOM:
                 int defaultZoom = Integer.parseInt(parsedCharacters);
-//                    currentBuilder.setDefaultZoom(defaultZoom);
+                // currentBuilder.setDefaultZoom(defaultZoom);
                 break;
             case AUTOZOOM:
                 boolean autoZoom = Boolean.parseBoolean(parsedCharacters);
@@ -140,28 +143,27 @@ public class SosInstanceContentHandler extends DefaultHandler {
                 boolean forceXYAxisOrder = Boolean.parseBoolean(parsedCharacters);
                 currentBuilder.setForceXYAxisOrder(forceXYAxisOrder);
                 break;
-                
-                /*
-                 * bbox coordinates are only relevant on client side
-                 * configuration is parsed on client side
-                 */
-//            case LLEASTING:
-//                double llEasting = Double.parseDouble(parsedCharacters);
-//                currentBuilder.addLowerLeftEasting(llEasting);
-//                break;
-//            case LLNORTHING:
-//                double llNorthing = Double.parseDouble(parsedCharacters);
-//                currentBuilder.addLowerLeftNorthing(llNorthing);
-//                break;
-//            case UREASTING:
-//                double urEasting = Double.parseDouble(parsedCharacters);
-//                currentBuilder.addUpperRightEasting(urEasting);
-//                break;
-//            case URNORTHING:
-//                double urNorthing = Double.parseDouble(parsedCharacters);
-//                currentBuilder.addUpperRightNorthing(urNorthing);
-//                break;
-                
+
+            /*
+             * bbox coordinates are only relevant on client side configuration is parsed on client side
+             */
+            // case LLEASTING:
+            // double llEasting = Double.parseDouble(parsedCharacters);
+            // currentBuilder.addLowerLeftEasting(llEasting);
+            // break;
+            // case LLNORTHING:
+            // double llNorthing = Double.parseDouble(parsedCharacters);
+            // currentBuilder.addLowerLeftNorthing(llNorthing);
+            // break;
+            // case UREASTING:
+            // double urEasting = Double.parseDouble(parsedCharacters);
+            // currentBuilder.addUpperRightEasting(urEasting);
+            // break;
+            // case URNORTHING:
+            // double urNorthing = Double.parseDouble(parsedCharacters);
+            // currentBuilder.addUpperRightNorthing(urNorthing);
+            // break;
+
             case URL:
                 String serviceURL = parsedCharacters;
                 currentBuilder.addServiceURL(serviceURL);
@@ -183,14 +185,17 @@ public class SosInstanceContentHandler extends DefaultHandler {
                 currentBuilder.addAdapter(adapter);
                 break;
             case PROTECTEDSERVICE:
-            	boolean protectedService = Boolean.parseBoolean(parsedCharacters);
-            	currentBuilder.addProtectedService(protectedService);
+                boolean protectedService = Boolean.parseBoolean(parsedCharacters);
+                currentBuilder.addProtectedService(protectedService);
+            case SUPPORTSFIRSTLATEST:
+                boolean supportsFirstLast = Boolean.parseBoolean(parsedCharacters);
+                currentBuilder.addSupportsFirstLatest(supportsFirstLast);
             default:
                 currentElement = TagNames.NOELEMENT; // reset
             }
             currentContent = new StringBuffer(); // reset
         }
-	}
+    }
 
     private boolean isParsableContent(String parsedCharacters) {
         return !isNonParsableContent(parsedCharacters);

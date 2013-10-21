@@ -8,6 +8,7 @@
 		<url>http://pegelonline.wsv.de/webservices/gis/gdi-sos</url>
 		<version>1.0.0</version>
 		<waterML>false</waterML>
+		<supportsFirstLatest>true</supportsFirstLatest>
 		<metadataHandler>org.n52.server.oxf.util.parser.DefaultMetadataHandler</metadataHandler>
 		<adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension</adapter>
 		<requestChunk>300</requestChunk>
