@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.gwtopenmaps.openlayers.client.Bounds;
 import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.n52.client.bus.EventBus;
 import org.n52.client.sos.ctrl.SosDataManager;
@@ -65,7 +64,6 @@ import org.n52.client.ui.Toaster;
 import org.n52.client.ui.map.InfoMarker;
 import org.n52.client.ui.map.MapController;
 import org.n52.io.crs.BoundingBox;
-import org.n52.shared.Constants;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
@@ -185,7 +183,7 @@ class StationSelectorController implements MapController {
             fireGetTimeseries(timeseries);
         }
         else {
-            GWT.log("Timseries to load was null!");
+            GWT.log("Timeseries to load was null!");
         }
     }
 
@@ -193,7 +191,7 @@ class StationSelectorController implements MapController {
         getMainEventBus().fireEvent(new GetProcedureEvent(selectedServiceUrl, timeseries.getProcedureId()));
         getMainEventBus().fireEvent(new GetOfferingEvent(selectedServiceUrl, timeseries.getOfferingId()));
         getMainEventBus().fireEvent(new GetFeatureEvent(selectedServiceUrl, timeseries.getFeatureId()));
-        getMainEventBus().fireEvent(new GetProcedureDetailsUrlEvent(selectedServiceUrl, timeseries.getProcedureId()));
+        getMainEventBus().fireEvent(new GetProcedureDetailsUrlEvent(timeseries));
     }
 
     private boolean isServiceSelected() {

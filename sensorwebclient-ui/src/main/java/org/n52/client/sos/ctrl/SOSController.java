@@ -201,7 +201,7 @@ public class SOSController extends ServiceController {
 
 		@Override
 		public void onGetProcedureDetailsUrl(GetProcedureDetailsUrlEvent evt) {
-			getRequestManager().requestProcedureDetailsUrl(evt.getServiceURL(), evt.getProcedure());
+			getRequestManager().requestProcedureDetailsUrl(evt.getTimeseries());
 		}
 
 		@Override

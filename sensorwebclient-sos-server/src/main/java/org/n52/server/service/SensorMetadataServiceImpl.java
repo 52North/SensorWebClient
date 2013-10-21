@@ -41,6 +41,7 @@ import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +63,7 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
 
             XmlObject sml = getSensorDescriptionAsSensorML(procedureId, metadata);
             DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), metadata);
-            tsProperties.setMetadataUrl(parser.buildUpSensorMetadataHtmlUrl(procedureId, sosUrl));
+            tsProperties.setMetadataUrl(parser.buildUpSensorMetadataHtmlUrl(tsProperties.getTimeseries()));
             
 //            tsProperties.setStationName(parser.buildUpSensorMetadataStationName());
             tsProperties.setUnitOfMeasure(parser.buildUpSensorMetadataUom(phenomenonId));
@@ -85,13 +86,13 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
     }
 
     @Override
-    public GetProcedureDetailsUrlResponse getProcedureDetailsUrl(String serviceURL, String procedure) throws Exception {
+    public GetProcedureDetailsUrlResponse getProcedureDetailsUrl(SosTimeseries timeseries) throws Exception {
         try {
             LOG.debug("Request -> getProcedureDetailsUrl");
-            SOSMetadata metadata = ConfigurationContext.getSOSMetadata(serviceURL);
-            XmlObject sml = getSensorDescriptionAsSensorML(procedure, metadata);
+            SOSMetadata metadata = ConfigurationContext.getSOSMetadata(timeseries.getServiceUrl());
+            XmlObject sml = getSensorDescriptionAsSensorML(timeseries.getProcedureId(), metadata);
             DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), metadata);
-            String url = parser.buildUpSensorMetadataHtmlUrl(procedure, serviceURL);
+            String url = parser.buildUpSensorMetadataHtmlUrl(timeseries);
             return new GetProcedureDetailsUrlResponse(url);
         } catch (Exception e) {
             LOG.error("Exception occured on server side.", e);

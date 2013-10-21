@@ -25,19 +25,17 @@ package org.n52.client.sos.event.data;
 
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.data.handler.GetProcedureDetailsUrlEventHandler;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 
 public class GetProcedureDetailsUrlEvent extends
 		FilteredDispatchGwtEvent<GetProcedureDetailsUrlEventHandler> {
 
 	public static Type<GetProcedureDetailsUrlEventHandler> TYPE = new Type<GetProcedureDetailsUrlEventHandler>();
 
-	private String serviceURL;
+	private SosTimeseries timeseries;
 
-	private String procedure;
-
-	public GetProcedureDetailsUrlEvent(String serviceURL, String procedure) {
-		this.serviceURL = serviceURL;
-		this.procedure = procedure;
+	public GetProcedureDetailsUrlEvent(SosTimeseries timeseries) {
+		this.timeseries = timeseries;
 	}
 
 	@Override
@@ -50,12 +48,8 @@ public class GetProcedureDetailsUrlEvent extends
 		return TYPE;
 	}
 
-	public String getServiceURL() {
-		return serviceURL;
-	}
-
-	public String getProcedure() {
-		return procedure;
+	public SosTimeseries getTimeseries() {
+		return timeseries;
 	}
 
 }

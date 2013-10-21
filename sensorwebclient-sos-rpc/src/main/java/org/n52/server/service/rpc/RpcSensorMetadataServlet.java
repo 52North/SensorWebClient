@@ -33,6 +33,7 @@ import org.n52.shared.responses.GetProcedureDetailsUrlResponse;
 import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.responses.SensorMetadataResponse;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.service.rpc.RpcSensorMetadataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,9 +61,9 @@ public class RpcSensorMetadataServlet extends RemoteServiceServlet implements Rp
     }
 
 	@Override
-	public GetProcedureDetailsUrlResponse getProcedureDetailsUrl(String serviceURL, String procedure) throws Exception {
+	public GetProcedureDetailsUrlResponse getProcedureDetailsUrl(SosTimeseries timeseries) throws Exception {
         Statistics.saveHostRequest(this.getThreadLocalRequest().getRemoteHost());
-		return service.getProcedureDetailsUrl(serviceURL, procedure);
+		return service.getProcedureDetailsUrl(timeseries);
 	}
 
 	@Override
