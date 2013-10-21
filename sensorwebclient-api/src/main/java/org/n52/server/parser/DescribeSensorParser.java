@@ -28,6 +28,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -383,7 +385,12 @@ public class DescribeSensorParser {
         }
 
         private String getExternalURLAsString(File file) {
-            return ConfigurationContext.GEN_URL + "/" + file.getName();
+            try {
+                String encodedFileName = URLEncoder.encode(file.getName(), "UTF-8");
+                return ConfigurationContext.GEN_URL + "/" + encodedFileName;
+            } catch(UnsupportedEncodingException e) {
+                throw new RuntimeException("Could not encode to external URL!", e);
+            }
         }
 
         private File getHTMLFilePath(String filename) {
