@@ -54,7 +54,6 @@ import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Cursor;
 import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.HTMLPane;
 import com.smartgwt.client.widgets.Img;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -421,20 +420,7 @@ public class Header extends HLayout {
 		Label imprint = LabelFactory.getFormattedLinkLabel(i18n.Impressum());
         imprint.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                com.smartgwt.client.widgets.Window w = new com.smartgwt.client.widgets.Window();
-                w.setTitle(i18n.Impressum());
-                w.setWidth(450);
-                w.setHeight(460);
-                w.centerInPage();
-                w.setIsModal(true);
-
-                VLayout layout = new VLayout();
-                HTMLPane pane = new HTMLPane();
-                pane.setContentsURL(i18n.imprintPath());
-                layout.addStyleName("n52_sensorweb_client_imprint_content");
-                layout.addMember(pane);
-                w.addItem(layout);
-                w.show();
+                Window.open(i18n.imprintPath(), "", "");
             }
         });
 		return imprint;
