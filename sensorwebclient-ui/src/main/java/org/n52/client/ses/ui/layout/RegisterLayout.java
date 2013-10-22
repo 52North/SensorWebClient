@@ -31,14 +31,13 @@ import static org.n52.shared.serializable.pojos.UserRole.NOT_REGISTERED_USER;
 import java.util.Date;
 
 import org.n52.client.bus.EventBus;
-import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ses.ctrl.DataControlsSes;
 import org.n52.client.ses.event.ChangeLayoutEvent;
-import org.n52.client.ses.event.GetTermsOfUseEvent;
 import org.n52.client.ses.event.RegisterUserEvent;
 import org.n52.client.ses.ui.FormLayout;
 import org.n52.shared.serializable.pojos.UserDTO;
 
+import com.google.gwt.user.client.Window;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.fields.DataSourcePasswordField;
 import com.smartgwt.client.data.fields.DataSourceTextField;
@@ -161,7 +160,7 @@ public class RegisterLayout extends FormLayout {
         this.linkTerms.setShouldSaveValue(false);
         this.linkTerms.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                EventBus.getMainEventBus().fireEvent(new GetTermsOfUseEvent(PropertiesManager.language));
+            	Window.open(i18n.termsOfUseUrl(), i18n.termsOfUse(), "width=600,height=400,resizable=yes,menubar=no,location=false,scrollbars=no,status=no,dependent=true");
             }
         });
 

@@ -47,6 +47,8 @@ public interface I18N extends Constants {
 
     String termsOfUse();
 
+    String termsOfUseUrl();
+    
     String acceptTermsOfUse();
 
     String register();
