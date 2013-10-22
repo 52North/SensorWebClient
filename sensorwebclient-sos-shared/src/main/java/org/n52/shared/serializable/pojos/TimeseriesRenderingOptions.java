@@ -19,6 +19,8 @@ public class TimeseriesRenderingOptions implements Serializable {
 
     private int lineWidth = 2; // default
 
+    private Scale scale = new Scale();
+    
     /**
      * @return a default instance of rendering options and random hex color.
      */
@@ -77,6 +79,19 @@ public class TimeseriesRenderingOptions implements Serializable {
             sb.append(withQuotes("color"));
             sb.append(":").append(withQuotes(color));
         }
+        if (!scale.isAuto()){
+            sb.append(",");
+            sb.append(withQuotes("scale"));
+            sb.append(":").append(withQuotes(scale.getType().toString()));
+            if( scale.isManual()){
+                sb.append(",");
+                sb.append(withQuotes("scaleMin"));
+                sb.append(":").append(scale.getManualScaleMin());
+                sb.append(",");
+                sb.append(withQuotes("scaleMax"));
+                sb.append(":").append(scale.getManualScaleMax());
+            }
+        }
         return sb.append("}").toString();
     }
     
@@ -92,5 +107,13 @@ public class TimeseriesRenderingOptions implements Serializable {
         sb.append(", lineWidth: ").append(lineWidth);
         return sb.append(" ]").toString();
     }
+
+	public Scale getScale() {
+		return scale;
+	}
+
+	public void setScale(Scale scale) {
+		this.scale = scale;
+	}
 
 }

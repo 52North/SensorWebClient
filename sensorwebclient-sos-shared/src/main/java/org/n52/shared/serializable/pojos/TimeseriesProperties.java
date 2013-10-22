@@ -78,9 +78,6 @@ public class TimeseriesProperties implements Serializable {
 
 	private boolean isHasData = false;
 
-	private Scale scale = new Scale();
-	
-
 	public boolean hasData() {
 		return this.isHasData;
 	}
@@ -135,7 +132,7 @@ public class TimeseriesProperties implements Serializable {
 	public TimeseriesProperties copy() {
 		TimeseriesProperties result = new TimeseriesProperties(this.timeseries, this.station, 
 		                                                       this.width, this.height, this.uom, 
-		                                                       this.scale);
+		                                                       this.renderingOptions.getScale());
 		result.setAxisData(this.axis); // XXX this is not a deep copy! => CBR
 		TimeseriesRenderingOptions options = new TimeseriesRenderingOptions();
 		options.setColor(renderingOptions.getColor());
@@ -207,22 +204,22 @@ public class TimeseriesProperties implements Serializable {
 	}
 
 	public void setScale( Scale scale ){
-		this.scale = Scale.copy(scale);
+		this.renderingOptions.setScale(Scale.copy(scale));
 	}
 	
 	public void setScale( Scale.Type type ){
-		this.scale = new Scale(type);
+		this.renderingOptions.setScale(new Scale(type));
 	}
 	
 	public Scale getScale(){
-		if(this.scale == null){
-			this.scale = new Scale();
+		if(this.renderingOptions.getScale() == null){
+			this.renderingOptions.setScale(new Scale());
 		}
-		return this.scale;
+		return this.renderingOptions.getScale();
 	}
 	
 	public boolean isAutoScale() {
-		return this.scale.isAuto();
+		return this.renderingOptions.getScale().isAuto();
 	}
 
 	/**
@@ -233,7 +230,7 @@ public class TimeseriesProperties implements Serializable {
 	 * @deprecated
 	 */
 	public void setAutoScale(boolean autoScale) {
-		this.scale.setAuto(autoScale);
+		this.renderingOptions.getScale().setAuto(autoScale);
 	}
 
 	/**
@@ -244,15 +241,15 @@ public class TimeseriesProperties implements Serializable {
 	 * @deprecated
 	 */
 	public void setScaledToZero(boolean zeroScaled) {
-		this.scale.setZero(zeroScaled);
+		this.renderingOptions.getScale().setZero(zeroScaled);
 	}
 
 	public boolean isZeroScaled() {
-		return this.scale.isZero();
+		return this.renderingOptions.getScale().isZero();
 	}
 
 	public boolean isManualScaled() {
-		return this.scale.isManual();
+		return this.renderingOptions.getScale().isManual();
 	}
 
 	public void setMetadataUrl(String metadataUrl) {

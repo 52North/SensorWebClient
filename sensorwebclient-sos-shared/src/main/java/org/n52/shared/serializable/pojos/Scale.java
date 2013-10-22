@@ -40,6 +40,19 @@ public class Scale implements Serializable {
 			: Type.AUTO;
 	}
 	
+	/**
+	 * Tries to read the Type from a String.
+	 * If it fails, AUTO will be set.
+	 * @param typeString
+	 */
+	public void setType(String typeString){
+		try{
+			setType(Type.valueOf(typeString));
+		}catch(Exception e){
+			setType(Type.AUTO);
+		}
+	}
+	
 	public Type getType(){
 		return this.type != null
 			? this.type

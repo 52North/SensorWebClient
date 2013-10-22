@@ -71,6 +71,7 @@ import org.n52.client.ui.View;
 import org.n52.client.util.ClientUtils;
 import org.n52.ext.link.sos.PermalinkParameter;
 import org.n52.ext.link.sos.TimeRange;
+import org.n52.shared.serializable.pojos.Scale;
 import org.n52.shared.serializable.pojos.TimeseriesRenderingOptions;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SOSMetadataBuilder;
@@ -227,6 +228,23 @@ public final class Application implements EntryPoint {
         if (tsRenderingOptions.containsKey("lineWidth")) {
             JSONNumber lineWidth = tsRenderingOptions.get("lineWidth").isNumber();
             tsOptions.setLineWidth((int)lineWidth.doubleValue());
+        }
+        if (tsRenderingOptions.containsKey("scale")) {
+        	Scale scale = new Scale();
+        	try{
+	        	scale.setType(tsRenderingOptions.get("scale").isString().stringValue());
+	        	if(scale.isManual()){
+	        		if(tsRenderingOptions.containsKey("scaleMin") && tsRenderingOptions.containsKey("scaleMax")){
+	        			scale.setManualScaleMin(tsRenderingOptions.get("scaleMin").isNumber().doubleValue());
+	        			scale.setManualScaleMax(tsRenderingOptions.get("scaleMax").isNumber().doubleValue());
+	        		} else {
+	        			scale.setAuto();
+	        		}
+	        	}
+        	} catch (Exception e){
+        		scale = new Scale();
+        	}
+        	tsOptions.setScale(scale);
         }
         return tsOptions;
     }

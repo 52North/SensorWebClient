@@ -365,6 +365,7 @@ public class Header extends HLayout {
                     TimeseriesRenderingOptions renderingOptions = new TimeseriesRenderingOptions();
                     renderingOptions.setColor(timeSeries.getColor());
                     renderingOptions.setLineWidth(timeSeries.getLineWidth());
+                    renderingOptions.setScale(timeSeries.getScale());
                     options.append(renderingOptions.asJson()).append(",");
                 }
                 // delete last commas
