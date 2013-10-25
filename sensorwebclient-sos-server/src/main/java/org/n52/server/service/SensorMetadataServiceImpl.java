@@ -65,6 +65,13 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
             DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), metadata);
             tsProperties.setMetadataUrl(parser.buildUpSensorMetadataHtmlUrl(tsProperties.getTimeseries()));
             
+            
+            // TODO use different request strategy to obtain metadata/uom when SOS supports HydroProfile
+            // (HyProfile must request an Observation (without timestamp we get the last value))
+            // ==> move metadata obtaining strategy to MetadataHandler class: a different strategy can
+            // be used by overriding the default (metadata via SensorML)
+            
+            
 //            tsProperties.setStationName(parser.buildUpSensorMetadataStationName());
             tsProperties.setUnitOfMeasure(parser.buildUpSensorMetadataUom(phenomenonId));
             
