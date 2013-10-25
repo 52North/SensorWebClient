@@ -696,6 +696,7 @@
 			<id>connector-eea</id>
 			<modules>
 				<module>sensorwebclient-eea</module>
+				<module>sensorwebclient-ags</module>
 			</modules>
 			<dependencyManagement>
 				<dependencies>
@@ -705,6 +706,12 @@
 						<version>${project.version}</version>
 						<scope>runtime</scope>
 					</dependency>
+					<dependency>
+                        <groupId>org.n52.sensorweb</groupId>
+                        <artifactId>sensorwebclient-ags</artifactId>
+                        <version>${project.version}</version>
+                        <scope>runtime</scope>
+                    </dependency>
 				</dependencies>
 			</dependencyManagement>
 		</profile>
