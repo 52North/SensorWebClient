@@ -3,7 +3,7 @@
     web interface -->
 <!-- Some of these properties are not implemented yet! -->
 <instances>
-    <instance>
+    <!-- <instance>
         <itemName>EEA-SOS</itemName>
         <url>http://ags.dev.52north.org:6080/arcgis/rest/services/EEA/AirQualitySos/MapServer/exts/52nArcGisSos/</url>
         <version>2.0.0</version>
@@ -19,7 +19,7 @@
         <defaultZoom>9</defaultZoom>
         <requestChunk>500</requestChunk>
         <forceXYAxisOrder>true</forceXYAxisOrder>
-    </instance>
+    </instance> -->
     
     
     <!-- <instance>

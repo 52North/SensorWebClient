@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.xml.parsers.SAXParser;
@@ -49,18 +50,24 @@ import org.n52.shared.Constants;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.ServletConfigAware;
 
-public class ConfigurationContext extends HttpServlet {
+public class ConfigurationContext implements ServletConfigAware {
 
-    private static final long serialVersionUID = 88509894213362579L;
-    
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationContext.class);
 
-    private static Map<String, SOSMetadata> serviceMetadatas = Collections.synchronizedMap(new HashMap<String, SOSMetadata>());
+    @Autowired
+    private ServletConfig servletConfig;
     
+    
+    
+
+    private static Map<String, SOSMetadata> serviceMetadatas = Collections.synchronizedMap(new HashMap<String, SOSMetadata>());
+
     public static int STARTUP_DELAY;
 
-	public static String COPYRIGHT;
+    public static String COPYRIGHT;
 
     public static String XSL_DIR;
 
@@ -69,7 +76,7 @@ public class ConfigurationContext extends HttpServlet {
     public static String GEN_DIR;
 
     public static String GEN_URL;
-    
+
     public static String ZIP_POSTFIX;
 
     public static String IMAGE_SERVICE;
@@ -93,37 +100,47 @@ public class ConfigurationContext extends HttpServlet {
     public static int STATISTICS_INTERVAL = 60;
 
     public static int TOOLTIP_MIN_COUNT = 50;
-    
+
     public static List<String> NO_DATA_VALUES;
     
+    public ConfigurationContext() {
+        LOGGER.debug("Create ConfigurationContext ...");
+    }
+    
     @Override
-    public void init() throws ServletException {
-		String webappDirectory = getServletContext().getRealPath("/");
-		parsePreConfiguredServices(webappDirectory + "ds");
+    public void setServletConfig(ServletConfig servletConfig) {
+        this.servletConfig = servletConfig;
+    }
+    
+
+    void init() {
+        LOGGER.debug("Initialize ConfigurationContext ...");
+        String webappDirectory = servletConfig.getServletContext().getRealPath("/");
+        parsePreConfiguredServices(webappDirectory + "ds");
         XSL_DIR = webappDirectory + File.separator + "xslt" + File.separator;
         CACHE_DIR = webappDirectory + "cache" + File.separator;
         GEN_DIR = webappDirectory + "generated" + File.separator;
-        IMAGE_SERVICE = getAndCheckInitParameter("IMAGE_SERVICE");
-        ZIP_POSTFIX = getAndCheckInitParameter("ZIP_POSTFIX");
-        GEN_URL = getAndCheckInitParameter("GENERATE_URL");
-        COPYRIGHT = getAndCheckInitParameter("COPYRIGHT");
+        IMAGE_SERVICE = getMandatoryParameterValue("IMAGE_SERVICE");
+        ZIP_POSTFIX = getMandatoryParameterValue("ZIP_POSTFIX");
+        GEN_URL = getMandatoryParameterValue("GENERATE_URL");
+        COPYRIGHT = getMandatoryParameterValue("COPYRIGHT");
         try {
             // parameters which have to be parsed
-            THREAD_POOL_SIZE = new Integer(getAndCheckInitParameter("THREAD_POOL_SIZE")).intValue();
-            SERVER_TIMEOUT = new Long(getAndCheckInitParameter("SERVER_TIMEOUT")).longValue();
-            IS_DEV_MODE = new Boolean(getAndCheckInitParameter("DEV_MODE")).booleanValue();
-            FACADE_COMPRESSION = new Boolean(getAndCheckInitParameter("FACADE_COMPRESSION")).booleanValue();
-            STATISTICS_INTERVAL = new Integer(getAndCheckInitParameter("STATISTICS_INTERVAL")).intValue();
-            STARTUP_DELAY = new Integer(getAndCheckInitParameter("STARTUP_DELAY")).intValue();
-            TOOLTIP_MIN_COUNT = new Integer(getAndCheckInitParameter("TOOLTIP_MIN_COUNT")).intValue();
-            NO_DATA_VALUES = getNoDataValues(getAndCheckInitParameter("NO_DATA_VALUES"));
+            THREAD_POOL_SIZE = new Integer(getMandatoryParameterValue("THREAD_POOL_SIZE")).intValue();
+            SERVER_TIMEOUT = new Long(getMandatoryParameterValue("SERVER_TIMEOUT")).longValue();
+            IS_DEV_MODE = new Boolean(getMandatoryParameterValue("DEV_MODE")).booleanValue();
+            FACADE_COMPRESSION = new Boolean(getMandatoryParameterValue("FACADE_COMPRESSION")).booleanValue();
+            STATISTICS_INTERVAL = new Integer(getMandatoryParameterValue("STATISTICS_INTERVAL")).intValue();
+            STARTUP_DELAY = new Integer(getMandatoryParameterValue("STARTUP_DELAY")).intValue();
+            TOOLTIP_MIN_COUNT = new Integer(getMandatoryParameterValue("TOOLTIP_MIN_COUNT")).intValue();
+            NO_DATA_VALUES = getNoDataValues(getMandatoryParameterValue("NO_DATA_VALUES"));
         }
         catch (Exception e) {
             LOGGER.error("Could not read context parameter", e);
         }
 
         GEN_DIR_ZIP = GEN_DIR + "/zipped";
-//        USE_DEVEL_CACHING = IS_DEV_MODE;
+        // USE_DEVEL_CACHING = IS_DEV_MODE;
 
         LOGGER.info("INITIALIZED SERVER APPLICATION SUCESSFULLY");
         if (IS_DEV_MODE) {
@@ -131,36 +148,60 @@ public class ConfigurationContext extends HttpServlet {
         }
         Statistics.scheduleStatisticsLog(STATISTICS_INTERVAL);
     }
-    
+
     private void parsePreConfiguredServices(String dsDirectory) {
-		try {
-	    	File sosDataSource = new File(dsDirectory + File.separator + "sos-instances.data.xml");
-	    	SAXParserFactory factory = SAXParserFactory.newInstance();
-	    	SAXParser saxParser = factory.newSAXParser();
-	    	saxParser.parse(sosDataSource, new SosInstanceContentHandler());
-    	} catch (Exception e) {
-    		LOGGER.error("Could not parse preconfigured sos instances.", e);
-    	}
+        try {
+            File sosDataSource = new File(dsDirectory + File.separator + "sos-instances.data.xml");
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            SAXParser saxParser = factory.newSAXParser();
+            saxParser.parse(sosDataSource, new SosInstanceContentHandler());
+        }
+        catch (Exception e) {
+            LOGGER.error("Could not parse preconfigured sos instances.", e);
+        }
     }
 
     /**
-     * @param initParameter
-     *        the name of the initParameter
-     * @return the resolved parameter
+     * Gets the value of the passed in parameter which is considered to be mandatory. If a parameter is
+     * missing an exception is being thrown. If the parameter was found but empty a WARN message is logged.
+     * 
+     * @param parameter
+     *        the name of the parameter
+     * @return the resolved parameter value
      * @throws IllegalStateException
      *         if no parameter (null or empty) could be resolved.
      */
-    private String getAndCheckInitParameter(String initParameter) {
-        String p = getServletContext().getInitParameter(initParameter);
-        if (p == null) {
-            String msg = String.format("Parameter '%s' was invalid!", initParameter);
-            throw new NullPointerException(msg);
+    private String getMandatoryParameterValue(String parameter) {
+        String value = servletConfig.getServletContext().getInitParameter(parameter);
+        if (value == null) {
+            throw new IllegalStateException("Parameter '" + parameter + "' was invalid!");
         }
-        if (p.isEmpty()) {
-			LOGGER.warn(String.format("Parameter '%s' is empty!", initParameter));
-		}
-        LOGGER.debug(String.format("initParameter '%s' => " + p, initParameter.trim()));
-        return p.trim();
+        if (value.isEmpty()) {
+            LOGGER.warn("Empty parameter value for parameter {}.", parameter);
+        }
+        LOGGER.info("Set mandatory parameter {}={}.", parameter, value.trim());
+        return value.trim();
+    }
+
+    /**
+     * Gets the value of the passed in parameter which is considered to be optional. Logs an INFO message if
+     * parameter was not set, i.e. that a default value is being used instead. Logs a WARN message if
+     * parameter is empty.
+     * 
+     * @param parameter
+     *        an optional parameter value.
+     * @return the parameter value or <code>null</code> if parameter was not defined.
+     */
+    public String getOptionalParameterValue(String parameter) {
+        String value = servletConfig.getServletContext().getInitParameter(parameter);
+        if (value == null) {
+            LOGGER.info("Using default of parameter {}.", parameter);
+        }
+        if (value.isEmpty()) {
+            LOGGER.warn("Empty parameter value for parameter {}.", parameter);
+        }
+        LOGGER.info("Set optional parameter {}={}.", parameter, value.trim());
+        return value;
     }
 
     private List<String> getNoDataValues(String noDatas) {
@@ -170,9 +211,9 @@ public class ConfigurationContext extends HttpServlet {
             for (String sepNoData : seperatedNoDatas) {
                 try {
                     sepNoData = sepNoData.trim()
-                        .replaceAll("\n", "")
-                        .replaceAll("\t", "")
-                        .replaceAll(" ", "");
+                            .replaceAll("\n", "")
+                            .replaceAll("\t", "")
+                            .replaceAll(" ", "");
                     values.add(sepNoData);
                 }
                 catch (NumberFormatException e) {
@@ -183,16 +224,20 @@ public class ConfigurationContext extends HttpServlet {
         return values;
     }
 
+    
+    
+    
+
     public synchronized static Map<String, SOSMetadata> getServiceMetadatas() {
         return serviceMetadatas;
     }
-    
+
     public synchronized static Collection<SOSMetadata> getSOSMetadatas() {
-    	List<SOSMetadata> sosMetadatas = new ArrayList<SOSMetadata>();
-    	for (SOSMetadata metadata : serviceMetadatas.values()) {
-			sosMetadatas.add(metadata);
-		}
-    	return sosMetadatas;
+        List<SOSMetadata> sosMetadatas = new ArrayList<SOSMetadata>();
+        for (SOSMetadata metadata : serviceMetadatas.values()) {
+            sosMetadatas.add(metadata);
+        }
+        return sosMetadatas;
     }
 
     public synchronized static SOSMetadata getSOSMetadata(String url) {
@@ -213,30 +258,32 @@ public class ConfigurationContext extends HttpServlet {
 
     public synchronized static SOSMetadata getServiceMetadata(String url) throws Exception {
         url = url.trim();
-        if (!containsServiceMetadata(url)) {
+        if ( !containsServiceMetadata(url)) {
             new URL(url);
             serviceMetadatas.put(url, new SOSMetadata(url, url, DEFAULT_SOS_VERSION));
-//            throw new IllegalArgumentException("Unkown service url!");
+            // throw new IllegalArgumentException("Unkown service url!");
         }
         if (isMetadataAvailable(url)) {
             return getServiceMetadatas().get(url);
-        } else {
-        	SOSMetadata metadata = serviceMetadatas.get(url);
+        }
+        else {
+            SOSMetadata metadata = serviceMetadatas.get(url);
             MetadataHandler handler = createSosMetadataHandler(metadata);
-        	handler.performMetadataCompletion(url, getVersion(url));
-            if (!metadata.hasDonePositionRequest()) {
+            handler.performMetadataCompletion(url, getVersion(url));
+            if ( !metadata.hasDonePositionRequest()) {
                 SosMetadataUpdate.updateService(url);
             }
             return metadata;
         }
     }
 
-    private static MetadataHandler createSosMetadataHandler(SOSMetadata metadata)  {
+    private static MetadataHandler createSosMetadataHandler(SOSMetadata metadata) {
         String handler = metadata.getSosMetadataHandler();
         if (handler == null) {
             LOGGER.info("Using default SOS metadata handler for '{}'", metadata.getServiceUrl());
             return new DefaultMetadataHandler();
-        } else {
+        }
+        else {
             try {
                 Class<MetadataHandler> clazz = (Class<MetadataHandler>) Class.forName(handler);
                 return clazz.getConstructor().newInstance(); // default constructor
@@ -262,33 +309,35 @@ public class ConfigurationContext extends HttpServlet {
     public static boolean isMetadataAvailable(String sosURL) {
         return containsServiceMetadata(sosURL) && serviceMetadatas.get(sosURL).isInitialized();
     }
-    
+
     public static boolean containsServiceMetadata(String sosURL) {
         return serviceMetadatas.containsKey(sosURL) && serviceMetadatas.get(sosURL) != null;
     }
-    
+
     public static boolean containsServiceInstance(String instance) {
         return getSOSMetadataForItemName(instance) != null;
     }
-    
+
     /**
-     * @param itemName the configured item name of the SOS.
+     * @param itemName
+     *        the configured item name of the SOS.
      * @return the associated {@link SOSMetadata} or <code>null</code> if not found.
      */
     public static SOSMetadata getSOSMetadataForItemName(String itemName) {
-        for (SOSMetadata metadata  : getSOSMetadatas()) {
+        for (SOSMetadata metadata : getSOSMetadatas()) {
             if (metadata.getConfiguredItemName().equals(itemName)) {
                 return metadata;
             }
         }
         return null;
     }
-    
+
     private static String getVersion(String sosURL) throws TimeoutException, Exception {
         SOSMetadata serviceMetadata = serviceMetadatas.get(sosURL);
         if (serviceMetadata != null) {
             return serviceMetadata.getVersion();
-        } else {
+        }
+        else {
             return getServiceMetadata(sosURL).getVersion();
         }
     }
@@ -299,34 +348,36 @@ public class ConfigurationContext extends HttpServlet {
         metadata.setInitialized(true);
     }
 
-	public static void addNewSOSMetadata(SOSMetadata metadata) {
-		try {
-			String serviceURL = metadata.getServiceUrl();
-			LOGGER.debug(String.format("Add new SOS metadata for '%s' ", serviceURL));
-			serviceMetadatas.put(serviceURL, metadata);
-//			SosMetadataUpdate.loadLocation(metadata.getId());
-		} catch (Exception e) {
-			LOGGER.error("Could not load SOS from " + metadata, e);
-		}
-	}
-	
-	public static Map<String, SOSMetadata> updateSOSMetadata() {
-		LOGGER.debug("Update protected services");
-		Map<String, SOSMetadata> updatedMetadatas = new HashMap<String, SOSMetadata>();
-		for (String metadataKey : serviceMetadatas.keySet()) {
-			SOSMetadata sosMetadata = serviceMetadatas.get(metadataKey);
-			if(sosMetadata.isProtectedService()) {
-				try {
-					MetadataHandler metadataHandler = ConfigurationContext.createSosMetadataHandler(sosMetadata);
-					SOSMetadata updatedMetadata = metadataHandler.updateMetadata(sosMetadata);
-					updatedMetadatas.put(updatedMetadata.getServiceUrl(), updatedMetadata); 
-					LOGGER.debug("Update metadata for service with url '{}'", updatedMetadata.getServiceUrl());
-				} catch (Exception e) {
-					LOGGER.error("Could not update {} ", sosMetadata, e);
-				}
-			}
-		}
-		LOGGER.debug("Update #{} protected services", updatedMetadatas.size());
-		return updatedMetadatas;
-	}
+    public static void addNewSOSMetadata(SOSMetadata metadata) {
+        try {
+            String serviceURL = metadata.getServiceUrl();
+            LOGGER.debug(String.format("Add new SOS metadata for '%s' ", serviceURL));
+            serviceMetadatas.put(serviceURL, metadata);
+            // SosMetadataUpdate.loadLocation(metadata.getId());
+        }
+        catch (Exception e) {
+            LOGGER.error("Could not load SOS from " + metadata, e);
+        }
+    }
+
+    public static Map<String, SOSMetadata> updateSOSMetadata() {
+        LOGGER.debug("Update protected services");
+        Map<String, SOSMetadata> updatedMetadatas = new HashMap<String, SOSMetadata>();
+        for (String metadataKey : serviceMetadatas.keySet()) {
+            SOSMetadata sosMetadata = serviceMetadatas.get(metadataKey);
+            if (sosMetadata.isProtectedService()) {
+                try {
+                    MetadataHandler metadataHandler = ConfigurationContext.createSosMetadataHandler(sosMetadata);
+                    SOSMetadata updatedMetadata = metadataHandler.updateMetadata(sosMetadata);
+                    updatedMetadatas.put(updatedMetadata.getServiceUrl(), updatedMetadata);
+                    LOGGER.debug("Update metadata for service with url '{}'", updatedMetadata.getServiceUrl());
+                }
+                catch (Exception e) {
+                    LOGGER.error("Could not update {} ", sosMetadata, e);
+                }
+            }
+        }
+        LOGGER.debug("Update #{} protected services", updatedMetadatas.size());
+        return updatedMetadatas;
+    }
 }
