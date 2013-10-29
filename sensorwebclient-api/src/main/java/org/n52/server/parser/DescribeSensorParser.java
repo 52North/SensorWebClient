@@ -384,9 +384,10 @@ public class DescribeSensorParser {
      */
     private boolean isReferenceValue(String definition) {
         return definition != null
-                && ! ("urn:x-ogc:def:property:unit".equals(definition)
-                        || "urn:x-ogc:def:property:equidistance".equals(definition)
-                        || "FeatureOfInterest identifier".equals(definition) || "FeatureOfInterestID".equals(definition));
+                && ! ("urn:x-ogc:def:property:unit".equalsIgnoreCase(definition)
+                        || "urn:x-ogc:def:property:equidistance".equalsIgnoreCase(definition)
+                        || "FeatureOfInterest identifier".equalsIgnoreCase(definition)
+                        || "FeatureOfInterestID".equalsIgnoreCase(definition));
     }
 
     private ReferenceValue parseReferenceValue(Text text, String fieldName) {
