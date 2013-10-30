@@ -3,24 +3,7 @@
 	web interface -->
 <!-- Some of these properties are not implemented yet! -->
 <instances>
-<!-- 
-	<instance>
-		<itemName>localhost</itemName>
-		<url>http://localhost:7080/52nSOSv3.5.0/sos</url>
-		<version>1.0.0</version>
-		<waterML>false</waterML>
-		<metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
-		<adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
-		<requestChunk>300</requestChunk>
-		<autoZoom>false</autoZoom>
-		<llEasting>-80</llEasting>
-		<llNorthing>-80</llNorthing>
-		<urEasting>80</urEasting>
-		<urNorthing>80</urNorthing>
-		<defaultZoom>13</defaultZoom>
-	</instance>
- -->
- 
+
 	<instance>
 		<itemName>PEGELONLINE</itemName>
 		<url>http://pegelonline.wsv.de/webservices/gis/gdi-sos</url>
@@ -51,7 +34,7 @@
 		<urEasting>30.0</urEasting>
 		<urNorthing>0.0</urNorthing>
 		<defaultZoom>5</defaultZoom>
-	</instance><!--  -->
+	</instance>
 	
 	
     <!-- <instance>
@@ -70,7 +53,6 @@
         <defaultZoom>13</defaultZoom>
     </instance> -->
     
-    
     <instance>
         <itemName>Wupperverband</itemName>
         <url>http://fluggs.wupperverband.de/sos/sos</url>
@@ -85,8 +67,8 @@
         <defaultZoom>15</defaultZoom>
         <requestChunk>200</requestChunk>
         <autoZoom>true</autoZoom>
-    </instance> <!--  -->
-
+    </instance>
+    
 	<instance>
 		<itemName>GRDC (Kisters SOS)</itemName>
 		<url>http://kiwis.kisters.de/KiWIS/KiWIS?datasource=3</url>
@@ -121,7 +103,8 @@
 		<protectedService>true</protectedService>
 	</instance>
 	
-	<!-- <instance>
+<!--
+	 <instance>
 		<itemName>EEA-SOS</itemName>
 		<url>http://ags.dev.52north.org:6080/arcgis/rest/services/ObservationDB/MapServer/exts/SOSExtension/</url>
 		<version>2.0.0</version>
@@ -138,7 +121,6 @@
 		<forceXYAxisOrder>true</forceXYAxisOrder>
 	</instance> -->
 
-	
 	<instance>
 		<itemName>Air Quality Belgium</itemName>
 		<url>http://sos.irceline.be/sos</url>
@@ -156,24 +138,80 @@
 	</instance>
 	
 	<instance>
-		<itemName>Syke_Snow</itemName>
-		<url>http://paikkatieto.ymparisto.fi/arcgis/rest/services/InSitu/SYKE_SnowCoursesInSitu/MapServer/exts/SOSExtension/</url>
-		<version>2.0.0</version>
-		<metadataHandler>org.n52.server.sos.connector.eea.ArcGISSoeMetadataHandler</metadataHandler>
-		<adapter>org.n52.server.sos.connector.eea.SOSAdapterByGET</adapter>
+		<itemName>BfG SOS</itemName>
+		<url>http://geoportal.bafg.de/wiski-sos/sos</url>
+		<version>1.0.0</version>
 		<waterML>false</waterML>
+		<supportsFirstLatest>true</supportsFirstLatest>
+		<metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
+		<adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
+		<requestChunk>300</requestChunk>
 		<autoZoom>true</autoZoom>
-		<llEasting>15</llEasting>
-		<llNorthing>59.0</llNorthing>
-		<urEasting>35</urEasting>
-		<urNorthing>70.0</urNorthing>
+		<llEasting>-180</llEasting>
+		<llNorthing>-90</llNorthing>
+		<urEasting>180</urEasting>
+		<urNorthing>90</urNorthing>
 		<defaultZoom>13</defaultZoom>
-		<requestChunk>500</requestChunk>
-	</instance><!--  -->
+	</instance>
+	
+	
+<!-- 
+    <instance>
+        <itemName>SOS-Q</itemName>
+        <url>http://geoviqua.dev.52north.org/SOS-Q/sos/pox</url>
+        <version>2.0.0</version>
+        <waterML>false</waterML>
+        <supportsFirstLatest>true</supportsFirstLatest>
+        <metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
+        <adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
+        <requestChunk>300</requestChunk>
+        <autoZoom>true</autoZoom>
+        <llEasting>5</llEasting>
+        <llNorthing>46.00</llNorthing>
+        <urEasting>16</urEasting>
+        <urNorthing>56.0</urNorthing>
+        <defaultZoom>13</defaultZoom>
+    </instance>
+    
+     -->
+<!-- 
+    <instance>
+        <itemName>localhost</itemName>
+        <url>http://localhost:7080/52nSOSv3.5.0/sos</url>
+        <version>1.0.0</version>
+        <waterML>false</waterML>
+        <metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
+        <adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
+        <requestChunk>300</requestChunk>
+        <autoZoom>false</autoZoom>
+        <llEasting>-80</llEasting>
+        <llNorthing>-80</llNorthing>
+        <urEasting>80</urEasting>
+        <urNorthing>80</urNorthing>
+        <defaultZoom>13</defaultZoom>
+    </instance>
+ -->
+ 
 	
 <!-- 
 
-	CURRENTLY NOT SUPPORTED
+	CURRENTLY NOT SUPPORTED (anymore)
+	
+    <instance>
+        <itemName>Syke_Snow</itemName>
+        <url>http://paikkatieto.ymparisto.fi/arcgis/rest/services/InSitu/SYKE_SnowCoursesInSitu/MapServer/exts/SOSExtension/</url>
+        <version>2.0.0</version>
+        <metadataHandler>org.n52.server.sos.connector.eea.ArcGISSoeMetadataHandler</metadataHandler>
+        <adapter>org.n52.server.sos.connector.eea.SOSAdapterByGET</adapter>
+        <waterML>false</waterML>
+        <autoZoom>true</autoZoom>
+        <llEasting>15</llEasting>
+        <llNorthing>59.0</llNorthing>
+        <urEasting>35</urEasting>
+        <urNorthing>70.0</urNorthing>
+        <defaultZoom>13</defaultZoom>
+        <requestChunk>500</requestChunk>
+    </instance> 
 	
 	<instance>
 		<itemName>AQE 2.0</itemName>
