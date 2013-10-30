@@ -384,9 +384,10 @@ public class DescribeSensorParser {
      */
     private boolean isReferenceValue(String definition) {
         return definition != null
-                && ! ("urn:x-ogc:def:property:unit".equals(definition)
-                        || "urn:x-ogc:def:property:equidistance".equals(definition)
-                        || "FeatureOfInterest identifier".equals(definition) || "FeatureOfInterestID".equals(definition));
+                && ! ("urn:x-ogc:def:property:unit".equalsIgnoreCase(definition)
+                        || "urn:x-ogc:def:property:equidistance".equalsIgnoreCase(definition)
+                        || "FeatureOfInterest identifier".equalsIgnoreCase(definition)
+                        || "FeatureOfInterestID".equalsIgnoreCase(definition));
     }
 
     private ReferenceValue parseReferenceValue(Text text, String fieldName) {
@@ -395,10 +396,12 @@ public class DescribeSensorParser {
         if (stringValue.matches("([0-9\\,\\.\\+\\-]+)")) {
             return new ReferenceValue(fieldName, new Double(stringValue));
         }
-        // special case: value + " " + uom(e.g. "637.0 cm")
-        String tmp = stringValue.substring(0, stringValue.indexOf(" "));
-        if (tmp.matches("([0-9\\,\\.\\+\\-]+)")) {
-            return new ReferenceValue(fieldName, new Double(tmp));
+        if (stringValue.contains(" ")) {
+            // special case: value + " " + uom(e.g. "637.0 cm")
+            String tmp = stringValue.substring(0, stringValue.indexOf(" "));
+            if (tmp.matches("([0-9\\,\\.\\+\\-]+)")) {
+                return new ReferenceValue(fieldName, new Double(tmp));
+            }
         }
         return null;
     }

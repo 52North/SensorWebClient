@@ -369,11 +369,10 @@ class StationSelectorController implements MapController {
     }
 
     public void performSOSDataRequests(String serviceURL) {
-        /*
-         * XXX Using the current extent would require the client to get missing stations from the server part.
+        /* XXX Using the current extent would require the client to get missing stations from the server part.
          * this would make neccessary an interaction (zoom, pan) based rendering of stations!
-         */
-        // BoundingBox bbox = controller.getCurrentExtent();
+        BoundingBox bbox = controller.getCurrentExtent();*/
+        
         SosDataManager dataManager = SosDataManager.getDataManager();
         SOSMetadata metadata = dataManager.getServiceMetadata(serviceURL);
         BoundingBox bbox = metadata.getConfiguredExtent();

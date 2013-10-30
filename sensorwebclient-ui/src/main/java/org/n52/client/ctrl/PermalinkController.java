@@ -33,10 +33,12 @@ import java.util.List;
 import org.n52.client.sos.event.data.NewTimeSeriesEvent;
 import org.n52.client.sos.event.data.StoreFeatureEvent;
 import org.n52.client.sos.event.data.StoreOfferingEvent;
+import org.n52.client.sos.event.data.StorePhenomenaEvent;
 import org.n52.client.sos.event.data.StoreProcedureEvent;
 import org.n52.client.sos.event.data.StoreStationEvent;
 import org.n52.client.sos.event.data.handler.StoreFeatureEventHandler;
 import org.n52.client.sos.event.data.handler.StoreOfferingEventHandler;
+import org.n52.client.sos.event.data.handler.StorePhenomenaEventHandler;
 import org.n52.client.sos.event.data.handler.StoreProcedureEventHandler;
 import org.n52.client.sos.event.data.handler.StoreStationEventHandler;
 import org.n52.shared.serializable.pojos.TimeseriesRenderingOptions;
@@ -73,12 +75,14 @@ public class PermalinkController {
 	
 	private class PermalinkControllerEventBroker implements
 			StoreOfferingEventHandler,
+			StorePhenomenaEventHandler,
 			StoreProcedureEventHandler,
 			StoreFeatureEventHandler,
 			StoreStationEventHandler {
 		
 		public PermalinkControllerEventBroker() {
 			getMainEventBus().addHandler(StoreOfferingEvent.TYPE, this);
+            getMainEventBus().addHandler(StorePhenomenaEvent.TYPE, this);
 			getMainEventBus().addHandler(StoreProcedureEvent.TYPE, this);
 			getMainEventBus().addHandler(StoreFeatureEvent.TYPE, this);
 			getMainEventBus().addHandler(StoreStationEvent.TYPE, this);
@@ -88,6 +92,11 @@ public class PermalinkController {
 		public void onStore(StoreFeatureEvent evt) {
 			check();
 		}
+		
+		@Override
+        public void onStore(StorePhenomenaEvent evt) {
+            check();
+        }
 
 		@Override
 		public void onStore(StoreProcedureEvent evt) {
