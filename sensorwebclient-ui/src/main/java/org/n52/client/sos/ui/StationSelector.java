@@ -43,14 +43,12 @@ import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.n52.client.sos.event.data.NewTimeSeriesEvent;
 import org.n52.client.ui.ApplyCancelButtonLayout;
 import org.n52.client.ui.InteractionWindow;
-import org.n52.client.ui.LoadingSpinner;
-import org.n52.client.ui.Toaster;
 import org.n52.client.ui.legend.LegendEntryTimeSeries;
 import org.n52.client.ui.map.InfoMarker;
+import org.n52.shared.serializable.pojos.sos.ObservationParameter.DecodeType;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
-import org.n52.shared.serializable.pojos.sos.ObservationParameter.DecodeType;
 
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;
@@ -99,8 +97,6 @@ public class StationSelector extends Window {
 	private Layout guiContent;
 
 	private Map<String, DynamicForm> stationFilterGroups;
-	
-	private Label phenomenonInfoLabel;
 	
 	private Label stationInfoLabel;
 
@@ -221,7 +217,7 @@ public class StationSelector extends Window {
         layout.addMember(createExpandableSelectionGrid());
 		selectionMenu = new InteractionWindow(layout);
 		selectionMenu.setZIndex(1000000);
-		selectionMenu.setWidth(250);
+		selectionMenu.setWidth(300);
 		selectionMenu.setHeight(290);
 		selectionMenu.setWindowTitle(i18n.dataprovider());
 		setSelectionMenuWindowPosition();
@@ -321,22 +317,12 @@ public class StationSelector extends Window {
 		});
         DynamicForm form = new DynamicForm();
         form.setItems(phenomenonBox);
-//        phenomenonInfoLabel = new Label();
-//        phenomenonInfoLabel.setAutoHeight();
         stationInfoLabel = new Label();
         stationInfoLabel.setAutoHeight();
-//        layout.addMember(phenomenonInfoLabel);
         layout.addMember(form);
         layout.addMember(stationInfoLabel);
         layout.addMember(timeseriesInfoHTMLPane);
         return layout;
-    }
-
-    private Canvas createLoadingSpinner() {
-        String imgURL = "../img/loader_wide.gif";
-        LoadingSpinner loader = new LoadingSpinner(imgURL, 43, 11);
-        loader.setPadding(7);
-        return loader;
     }
 
 	private void setInfoWindowPosition() {
@@ -353,11 +339,10 @@ public class StationSelector extends Window {
 			DynamicForm selector = stationFilterGroups.get(serviceUrl);
 			return selector;
 		}
-		DynamicForm dynamicForm = new DynamicForm();//("sosDataSource");
+		DynamicForm dynamicForm = new DynamicForm();
 		TreeGrid treeGrid = getNewTreeGrid();
 		
 		Tree tree = new Tree();
-		tree.setID(serviceUrl);
 
 		treeGrid.setData(tree);
 		
@@ -471,6 +456,7 @@ public class StationSelector extends Window {
 		treeGrid.setData(tree);
 		treeGrid.sort();
 		treeGrid.setHeight(230);
+		treeGrid.setWidth(250);
 
 		String serviceUrl = currentMetadata.getId();
 		DynamicForm selector = stationFilterGroups.get(serviceUrl);
