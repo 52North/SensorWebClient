@@ -23,19 +23,78 @@
  */
 package org.n52.server.sos.connector.ags;
 
+import static org.junit.Assert.assertNotNull;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.n52.oxf.OXFException;
+import org.n52.oxf.ows.ExceptionReport;
+import org.n52.server.da.oxf.ResponseFromFileSosAdapter;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SOSMetadataBuilder;
 
 public class ArcGISSoeEReportingMetadataHandlerTest {
+    
+    private static final String FAKE_URL = "http://points.nowhere";
+    
+    private static final String VERSION_200 = "2.0.0";
 
+    private ArcGISSoeEReportingMetadataHandlerSeam seam;
+
+    private SOSMetadata metadata;
+
+    
+    @Before public void
+    setUp() {
+        seam = new ArcGISSoeEReportingMetadataHandlerSeam();
+        metadata = seam.initMetadata(FAKE_URL, VERSION_200);
+    }
+    
+    @Test public void
+    shouldInitEReportingCapabilities() {
+        assertNotNull(metadata);
+    }
+    
+    @Test public void
+    shouldPerformMetadataCompletion() throws Exception {
+        
+        // TODO
+        SOSMetadata metadata = seam.performMetadataCompletion(FAKE_URL, VERSION_200);
+        
+    }
+    
     static class ArcGISSoeEReportingMetadataHandlerSeam extends ArcGISSoeEReportingMetadataHandler {
         
         private static final String CAPABILITIES_EREPORTING = "/files/capabilities-ereporting.xml";
+        
+        private static final String SENSOR_NETWORK = "/files/describe-sensor-network_complete.xml";
+
+        public ArcGISSoeEReportingMetadataHandlerSeam() {
+            super(createAgsSosMetadata());
+        }
 
         @Override
         protected SOSMetadata initMetadata(String sosUrl, String sosVersion) {
+            setSosAdapter(new ResponseFromFileSosAdapter(CAPABILITIES_EREPORTING));
             return super.initMetadata(sosUrl, sosVersion);
+        }
+
+        @Override
+        protected void performDescribeSensor(String procedure) throws OXFException, ExceptionReport {
+            setSosAdapter(new ResponseFromFileSosAdapter(SENSOR_NETWORK));
+            super.performDescribeSensor(procedure);
         }
         
         
+
     }
+    
+    private static SOSMetadata createAgsSosMetadata() {
+        SOSMetadataBuilder builder = new SOSMetadataBuilder();
+        builder
+            .addServiceVersion(VERSION_200)
+            .addServiceURL(FAKE_URL);
+        return new SOSMetadata(builder);
+    }
+
 }
