@@ -55,13 +55,13 @@
 				<artifactId>sensorwebclient-api</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-	        <dependency>
-	            <groupId>org.n52.sensorweb</groupId>
-	            <artifactId>sensorwebclient-api</artifactId>
-	            <version>${project.version}</version>
-	            <type>test-jar</type>
-	            <scope>test</scope>
-	        </dependency>
+			<dependency>
+				<groupId>org.n52.sensorweb</groupId>
+				<artifactId>sensorwebclient-api</artifactId>
+				<version>${project.version}</version>
+				<type>test-jar</type>
+				<scope>test</scope>
+			</dependency>
 			<dependency>
 				<groupId>org.n52.sensorweb</groupId>
 				<artifactId>sensorwebclient-ext</artifactId>
@@ -138,6 +138,11 @@
 				<artifactId>oxf-ses-adapter</artifactId>
 				<version>${oxf.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-oxf-sml-v101</artifactId>
+                <version>${oxf.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>org.n52.sensorweb</groupId>
 				<artifactId>52n-oxf-xmlbeans</artifactId>
@@ -330,12 +335,6 @@
 				<version>1.0.13</version>
 			</dependency>
 			<dependency>
-				<groupId>net.sf.saxon</groupId>
-				<artifactId>saxon-dom</artifactId>
-				<version>8.7</version>
-				<scope>runtime</scope>
-			</dependency>
-			<dependency>
 				<groupId>org.vast</groupId>
 				<artifactId>swe-common-data-framework</artifactId>
 				<version>0.8.2</version>
@@ -437,33 +436,47 @@
 					<version>2.8</version>
 				</plugin>
 
-	            <plugin>
-	                <groupId>com.mycila.maven-license-plugin</groupId>
-	                <artifactId>maven-license-plugin</artifactId>
-	                <version>1.9.0</version>
-	                <configuration>
-	                    <header>misc/52N_license-header.txt</header>
-	                    <aggregate>true</aggregate>
-	                    <includes>
-	                        <include>**/*.java</include>
-	                    </includes>
-	                    <excludes>
-	                        <exclude>**/generated-sources/xml-pdf-format</exclude>
-	                    </excludes>
-	                    <strictCheck>true</strictCheck>
-	                    <properties>
-	                        <year>${project.inceptionYear}</year>
-	                    </properties>
-	                </configuration>
-	                <executions>
-	                    <execution>
-	                        <phase>test</phase>
-	                        <goals>
-	                            <goal>format</goal>
-	                        </goals>
-	                    </execution>
-	                </executions>
-	            </plugin>
+				<plugin>
+					<groupId>com.mycila.maven-license-plugin</groupId>
+					<artifactId>maven-license-plugin</artifactId>
+					<version>1.9.0</version>
+					<configuration>
+						<header>misc/52N_license-header.txt</header>
+						<aggregate>true</aggregate>
+						<includes>
+							<include>**/*.java</include>
+						</includes>
+						<excludes>
+							<exclude>**/generated-sources/xml-pdf-format</exclude>
+						</excludes>
+						<strictCheck>true</strictCheck>
+						<properties>
+							<year>${project.inceptionYear}</year>
+						</properties>
+					</configuration>
+					<executions>
+						<execution>
+							<phase>test</phase>
+							<goals>
+								<goal>format</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>license-maven-plugin</artifactId>
+					<version>1.5</version>
+					<executions>
+						<execution>
+							<id>download-licenses</id>
+							<goals>
+								<goal>download-licenses</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
@@ -557,20 +570,20 @@
 										<ignore />
 									</action>
 								</pluginExecution>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.codehaus.mojo</groupId>
-                                        <artifactId>license-maven-plugin</artifactId>
-                                        <versionRange>[1.5,)</versionRange>
-                                        <goals>
-                                            <goal>download-licenses</goal>
-                                            <goal>add-third-party</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore />
-                                    </action>
-                                </pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.codehaus.mojo</groupId>
+										<artifactId>license-maven-plugin</artifactId>
+										<versionRange>[1.5,)</versionRange>
+										<goals>
+											<goal>download-licenses</goal>
+											<goal>add-third-party</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
@@ -602,20 +615,6 @@
 			<!-- =========== PLUGINS ACTIVE BY DEFAULT ============== -->
 			<!-- ==================================================== -->
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<version>1.5</version>
-				<executions>
-					<execution>
-						<id>download-licenses</id>
-						<goals>
-							<goal>download-licenses</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-eclipse-plugin</artifactId>
@@ -714,11 +713,11 @@
 						<scope>runtime</scope>
 					</dependency>
 					<dependency>
-                        <groupId>org.n52.sensorweb</groupId>
-                        <artifactId>sensorwebclient-ags</artifactId>
-                        <version>${project.version}</version>
-                        <scope>runtime</scope>
-                    </dependency>
+						<groupId>org.n52.sensorweb</groupId>
+						<artifactId>sensorwebclient-ags</artifactId>
+						<version>${project.version}</version>
+						<scope>runtime</scope>
+					</dependency>
 				</dependencies>
 			</dependencyManagement>
 		</profile>
@@ -750,6 +749,24 @@
 			</activation>
 			<build>
 				<plugins>
+
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>license-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>download-licenses</id>
+								<goals>
+									<goal>download-licenses</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>com.mycila.maven-license-plugin</groupId>
+						<artifactId>maven-license-plugin</artifactId>
+					</plugin>
 					<plugin>
 						<artifactId>maven-release-plugin</artifactId>
 						<version>2.3.2</version>
