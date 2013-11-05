@@ -27,6 +27,7 @@ package org.n52.server.mgmt;
 import static org.n52.shared.Constants.DEFAULT_SOS_VERSION;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -37,28 +38,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
+import javax.servlet.ServletContext;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.n52.server.da.MetadataHandler;
 import org.n52.server.da.oxf.DefaultMetadataHandler;
 import org.n52.server.util.Statistics;
-import org.n52.shared.Constants;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.ServletConfigAware;
+import org.springframework.web.context.ServletContextAware;
 
-public class ConfigurationContext implements ServletConfigAware {
+public class ConfigurationContext implements ServletContextAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationContext.class);
 
     @Autowired
-    private ServletConfig servletConfig;
+    private ServletContext servletContext;
     
     
     
@@ -108,14 +106,14 @@ public class ConfigurationContext implements ServletConfigAware {
     }
     
     @Override
-    public void setServletConfig(ServletConfig servletConfig) {
-        this.servletConfig = servletConfig;
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
     }
     
 
     void init() {
         LOGGER.debug("Initialize ConfigurationContext ...");
-        String webappDirectory = servletConfig.getServletContext().getRealPath("/");
+        String webappDirectory = servletContext.getRealPath("/");
         parsePreConfiguredServices(webappDirectory + "ds");
         XSL_DIR = webappDirectory + File.separator + "xslt" + File.separator;
         CACHE_DIR = webappDirectory + "cache" + File.separator;
@@ -172,7 +170,7 @@ public class ConfigurationContext implements ServletConfigAware {
      *         if no parameter (null or empty) could be resolved.
      */
     private String getMandatoryParameterValue(String parameter) {
-        String value = servletConfig.getServletContext().getInitParameter(parameter);
+        String value = servletContext.getInitParameter(parameter);
         if (value == null) {
             throw new IllegalStateException("Parameter '" + parameter + "' was invalid!");
         }
@@ -193,7 +191,7 @@ public class ConfigurationContext implements ServletConfigAware {
      * @return the parameter value or <code>null</code> if parameter was not defined.
      */
     public String getOptionalParameterValue(String parameter) {
-        String value = servletConfig.getServletContext().getInitParameter(parameter);
+        String value = servletContext.getInitParameter(parameter);
         if (value == null) {
             LOGGER.info("Using default of parameter {}.", parameter);
         }
@@ -241,13 +239,25 @@ public class ConfigurationContext implements ServletConfigAware {
     }
 
     public synchronized static SOSMetadata getSOSMetadata(String url) {
+        url = url.trim();
         if (isMetadataAvailable(url)) {
             return (SOSMetadata) getServiceMetadatas().get(url);
         }
         try {
-            DefaultMetadataHandler parser = new DefaultMetadataHandler();
-            SOSMetadata metadata = parser.performMetadataCompletion(url, Constants.DEFAULT_SOS_VERSION);
-            return metadata;
+            if (containsServiceMetadata(url)) {
+                SOSMetadata metadata = getServiceMetadatas().get(url);
+                MetadataHandler handler = createSosMetadataHandler(metadata);
+                handler.performMetadataCompletion(url, getVersion(url));
+                if ( !metadata.hasDonePositionRequest()) {
+                    SosMetadataUpdate.updateService(url);
+                }
+                return metadata;
+            } else {
+                // try to get metadata with default SOS version.
+                SOSMetadata metadata = new SOSMetadata(url, url, DEFAULT_SOS_VERSION);
+                serviceMetadatas.put(url, metadata);
+                return getServiceMetadatas().get(url); // repeat call
+            }
         }
         catch (Exception e) {
             // throw new RuntimeException("Error building server metadata", e);
@@ -256,52 +266,33 @@ public class ConfigurationContext implements ServletConfigAware {
         }
     }
 
-    public synchronized static SOSMetadata getServiceMetadata(String url) throws Exception {
-        url = url.trim();
-        if ( !containsServiceMetadata(url)) {
-            new URL(url);
-            serviceMetadatas.put(url, new SOSMetadata(url, url, DEFAULT_SOS_VERSION));
-            // throw new IllegalArgumentException("Unkown service url!");
-        }
-        if (isMetadataAvailable(url)) {
-            return getServiceMetadatas().get(url);
-        }
-        else {
-            SOSMetadata metadata = serviceMetadatas.get(url);
-            MetadataHandler handler = createSosMetadataHandler(metadata);
-            handler.performMetadataCompletion(url, getVersion(url));
-            if ( !metadata.hasDonePositionRequest()) {
-                SosMetadataUpdate.updateService(url);
-            }
-            return metadata;
-        }
-    }
-
+    @SuppressWarnings("unchecked")
     private static MetadataHandler createSosMetadataHandler(SOSMetadata metadata) {
         String handler = metadata.getSosMetadataHandler();
         if (handler == null) {
             LOGGER.info("Using default SOS metadata handler for '{}'", metadata.getServiceUrl());
-            return new DefaultMetadataHandler();
+            return new DefaultMetadataHandler(metadata);
         }
         else {
             try {
                 Class<MetadataHandler> clazz = (Class<MetadataHandler>) Class.forName(handler);
-                return clazz.getConstructor().newInstance(); // default constructor
+                Constructor<MetadataHandler> constructor = clazz.getConstructor(SOSMetadata.class);
+                return constructor.newInstance(metadata);
             }
             catch (ClassNotFoundException e) {
-                throw new RuntimeException("Could not find Adapter class.", e);
+                throw new RuntimeException("Could not find metadata handler class.", e);
             }
             catch (NoSuchMethodException e) {
-                throw new RuntimeException("Invalid Adapter constructor. ", e);
+                throw new RuntimeException("Invalid metadata handler constructor. ", e);
             }
             catch (InstantiationException e) {
-                throw new RuntimeException("Could not create Adapter.", e);
+                throw new RuntimeException("Could not create metadata handler.", e);
             }
             catch (IllegalAccessException e) {
-                throw new RuntimeException("Not allowed to create Adapter.", e);
+                throw new RuntimeException("Not allowed to create metadata handler.", e);
             }
             catch (InvocationTargetException e) {
-                throw new RuntimeException("Instantiation of Adapter failed.", e);
+                throw new RuntimeException("Instantiation of metadata handler failed.", e);
             }
         }
     }
@@ -338,7 +329,7 @@ public class ConfigurationContext implements ServletConfigAware {
             return serviceMetadata.getVersion();
         }
         else {
-            return getServiceMetadata(sosURL).getVersion();
+            return getSOSMetadata(sosURL).getVersion();
         }
     }
 

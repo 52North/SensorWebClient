@@ -24,6 +24,8 @@
 
 package org.n52.server.mgmt;
 
+import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadata;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -139,15 +141,11 @@ public class SosMetadataUpdate {
         OutputStream os = new FileOutputStream(cache);
         ObjectOutput serializer = new ObjectOutputStream(new BufferedOutputStream(os));
         try {
-            serializer.writeObject(getServiceMetadataFor(serviceUrl));
+            serializer.writeObject(getSOSMetadata(serviceUrl));
         }
         finally {
             serializer.close();
         }
-    }
-
-    protected static SOSMetadata getServiceMetadataFor(String serviceUrl) throws Exception {
-        return ConfigurationContext.getServiceMetadata(serviceUrl);
     }
 
 }
