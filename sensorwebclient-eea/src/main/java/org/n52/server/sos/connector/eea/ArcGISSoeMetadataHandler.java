@@ -79,7 +79,11 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ArcGISSoeMetadataHandler.class);
 
-	@Override
+	public ArcGISSoeMetadataHandler(SOSMetadata metadata) {
+        super(metadata);
+    }
+
+    @Override
 	public SOSMetadata performMetadataCompletion(String sosUrl, String sosVersion) throws Exception {
 		SOSMetadata metadata = initMetadata(sosUrl, sosVersion);
 		TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
@@ -170,7 +174,7 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 	
 	private Map<String, String> getOfferingBBoxMap() throws OXFException {
 		Map<String, String> offeringBBox = new HashMap<String, String>();
-		Contents contents = getServiceDescriptorContent();
+		Contents contents = getServiceDescriptor().getContents();
 		for (String dataIdent : contents.getDataIdentificationIDArray()) {
 			ObservationOffering offering = (ObservationOffering) contents.getDataIdentification(dataIdent);
 			String key = offering.getIdentifier(); 

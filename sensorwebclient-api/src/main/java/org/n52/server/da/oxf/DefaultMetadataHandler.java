@@ -70,6 +70,10 @@ import com.vividsolutions.jts.geom.Point;
 public class DefaultMetadataHandler extends MetadataHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultMetadataHandler.class);
+    
+    public DefaultMetadataHandler(SOSMetadata metadata) {
+        super(metadata);
+    }
 
     public SOSMetadata performMetadataCompletion(String sosUrl, String sosVersion) throws OXFException,
             InterruptedException,

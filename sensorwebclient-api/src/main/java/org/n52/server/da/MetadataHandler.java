@@ -51,7 +51,6 @@ import org.n52.oxf.ows.capabilities.IBoundingBox;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.adapter.SOSAdapter;
 import org.n52.oxf.sos.capabilities.ObservationOffering;
-import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.server.parser.ConnectorUtils;
 import org.n52.server.util.SosAdapterFactory;
 import org.n52.shared.serializable.pojos.sos.Feature;
@@ -76,6 +75,10 @@ public abstract class MetadataHandler {
 	
 	private SOSMetadata sosMetadata;
 	
+	protected MetadataHandler(SOSMetadata metadata) {
+	    this.sosMetadata = metadata;
+	}
+	
 	protected void infoLogServiceSummary(SOSMetadata metadata) {
         int timeseriesCount = 0;
         int stationCount = metadata.getStations().size();
@@ -91,8 +94,7 @@ public abstract class MetadataHandler {
 	public abstract SOSMetadata updateMetadata(SOSMetadata metadata) throws Exception;
 
 	protected SOSMetadata initMetadata(String sosUrl, String sosVersion) {
-		sosMetadata = ConfigurationContext.getServiceMetadatas().get(sosUrl);
-		initServiceDescription(sosMetadata);
+        serviceDescriptor = ConnectorUtils.getServiceDescriptor(sosMetadata.getServiceUrl(), getSosAdapter());
 		String sosTitle = serviceDescriptor.getServiceIdentification().getTitle();
 		String omResponseFormat = ConnectorUtils.getResponseFormat(serviceDescriptor, "om");
 		String smlVersion = ConnectorUtils.getSMLVersion(serviceDescriptor, sosVersion);
@@ -108,12 +110,10 @@ public abstract class MetadataHandler {
 		return sosMetadata;
 	}
 
-	protected void initServiceDescription(SOSMetadata metadata) {
-		sosMetadata = metadata; 
-		adapter = SosAdapterFactory.createSosAdapter(metadata);
-		serviceDescriptor = ConnectorUtils.getServiceDescriptor(metadata.getServiceUrl(), adapter);
-	}
-	
+    protected SOSAdapter createSosAdapter(SOSMetadata metadata) {
+        return SosAdapterFactory.createSosAdapter(metadata);
+    }
+
 	protected Collection<SosTimeseries> createObservingTimeseries(String sosUrl) throws OXFException {
 		// association: Offering - FOIs
 		Map<String, String[]> offeringFoiMap = new HashMap<String, String[]>();
@@ -127,7 +127,7 @@ public abstract class MetadataHandler {
 		
 		HashSet<String> featureIds = new HashSet<String>();
 
-		Contents contents = getServiceDescriptorContent();
+		Contents contents = serviceDescriptor.getContents();
 		for (int i = 0; i < contents.getDataIdentificationCount(); i++) {
 			ObservationOffering offering = (ObservationOffering) contents.getDataIdentification(i);
 
@@ -136,7 +136,7 @@ public abstract class MetadataHandler {
 			String offeringID = offering.getIdentifier();
 
 			// associate:
-			String[] procArray = offering.getProcedures();
+			String[] procArray = getProceduresFor(offering);
 			offeringProcMap.put(offeringID, procArray);
 
 			// associate:
@@ -169,11 +169,9 @@ public abstract class MetadataHandler {
 				} else {
 					for (String phenomenon : offeringPhenMap.get(offeringId)) {
 						/*
-						 * add a station for a procedure expecting that there is
-						 * only one for each right now. Further stations may be
-						 * added later when additional information is parsed
-						 * from getFeatureOfInterest of describeSensor
-						 * operations.
+						 * add a timeseries for each procedure-phenomenon-offering
+						 * constellation. One of such constellation may be later
+						 * related to n features.
 						 */
 						SosTimeseries timeseries = new SosTimeseries();
 						timeseries.setPhenomenon(new Phenomenon(phenomenon, sosUrl));
@@ -196,7 +194,11 @@ public abstract class MetadataHandler {
 		return allObservedTimeseries;
 	}
 	
-	protected void normalizeDefaultCategories(Collection<SosTimeseries> observingTimeseries) {
+	protected String[] getProceduresFor(ObservationOffering offering) {
+        return offering.getProcedures();
+    }
+
+    protected void normalizeDefaultCategories(Collection<SosTimeseries> observingTimeseries) {
 		for (SosTimeseries timeseries : observingTimeseries) {
 			String phenomenon = timeseries.getPhenomenonId();
 			String category = phenomenon.substring(phenomenon.lastIndexOf(":") + 1);
@@ -222,16 +224,12 @@ public abstract class MetadataHandler {
 		}
 	}
 	
-	protected Contents getServiceDescriptorContent() throws OXFException {
-		if (serviceDescriptor != null) {
-			return serviceDescriptor.getContents();
-		} else {
-			throw new OXFException("No valid GetFeatureOfInterestREsponse");
-		}
-	}
-
 	protected SOSAdapter getSosAdapter() {
-		return adapter;
+		return adapter == null ? createSosAdapter(sosMetadata) : adapter;
+	}
+	
+	protected void setSosAdapter(SOSAdapter sosAdapter) {
+	    this.adapter = sosAdapter;
 	}
 
 	/**
@@ -260,7 +258,7 @@ public abstract class MetadataHandler {
 			container.addParameterShell(GET_FOI_VERSION_PARAMETER, sosMetadata.getVersion());
 			container.addParameterShell("procedure", procedure);
 			Operation operation = new Operation(GET_FEATURE_OF_INTEREST, url, url);
-			OperationResult result = adapter.doOperation(operation, container);
+			OperationResult result = getSosAdapter().doOperation(operation, container);
 			XmlObject foiResponse = XmlObject.Factory.parse(result
 					.getIncomingResultAsStream());
 			if (foiResponse instanceof GetFeatureOfInterestResponseDocument) {
@@ -276,7 +274,7 @@ public abstract class MetadataHandler {
 							.getStringValue());
 				}
 			} else {
-				throw new OXFException("No valid GetFeatureOfInterestREsponse");
+				throw new OXFException("No valid GetFeatureOfInterestResponse");
 			}
 		} catch (Exception e) {
 			LOGGER.error("Error while send GetFeatureOfInterest: "
