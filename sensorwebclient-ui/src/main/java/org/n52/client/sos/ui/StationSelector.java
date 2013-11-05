@@ -253,7 +253,7 @@ public class StationSelector extends Window {
 		
 		infoWindow = new InteractionWindow(layout);
 		infoWindow.setZIndex(1000000);
-		infoWindow.setWidth(300);
+		infoWindow.setWidth(500);
 		infoWindow.setHeight(300);
 		setInfoWindowPosition();
 		infoWindow.hide();
@@ -307,8 +307,8 @@ public class StationSelector extends Window {
 			String stationUrl = LegendEntryTimeSeries.STATION_DESCRIPTION_URL+stationId;
 			timeseriesInfoHTMLPane.setContentsURL(stationUrl);
 			timeseriesInfoHTMLPane.setContentsType(ContentsType.PAGE);
-			//timeseriesInfoHTMLPane.setContents(stationUrl);
 			timeseriesInfoHTMLPane.show();
+
 		}
         
         phenomenonBox = new SelectItem(i18n.phenomenonLabel());
