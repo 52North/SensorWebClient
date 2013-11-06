@@ -392,11 +392,6 @@ public class Legend extends VLayout {
         toZIP.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-            	/*LOGGER.debug("------------------------------------------------------------");
-            	LOGGER.debug("ClickHandler ZIP geklickt");
-            	LOGGER.debug("------------------------------------------------------------");*/
-            	//System.out.println("ClickHandler ZIP geklickt");
-                //controller.exportTo(ExportType.DATADOWNLOAD_ZIP);
             	
             	TimeseriesDataStore dataStore = TimeseriesDataStore.getTimeSeriesDataStore();
         		HashMap<String, Timeseries> dataItems = dataStore.getDataItems();

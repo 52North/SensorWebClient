@@ -117,22 +117,14 @@ public class LegendController {
 			legend.startExportLoadingSpinner();
 			if (exportType == ExportType.DATADOWNLOAD_ZIP){
 				// TODO Generate Export ZIP with appl/data/direct_download/directDownload_XXXX.zip
-				System.out.println("--------EXPORT TYPE DATADOWNLOAD_ZIP -----------------------");
-				for( String key: dataItems.keySet()){
-					System.out.println("Key: " + key );
-				}
-				System.out.println("------------------------------------------------------------");
 				Collection<Timeseries> values = dataItems.values();
 				ExportEvent event = new ExportEvent(values, exportType);
 				EventBus.getMainEventBus().fireEvent(event);
 			} 
 			else {
-				System.out.println("--------EXPORT TYPE OTHER ----------------------------------");
 				Collection<Timeseries> values = dataItems.values();
 				ExportEvent event = new ExportEvent(values, exportType);
 				EventBus.getMainEventBus().fireEvent(event);
-				
-				GWT.log("--------EXPORT TYPE OTHER ----------------------------------");
 			}
         }
 	}
