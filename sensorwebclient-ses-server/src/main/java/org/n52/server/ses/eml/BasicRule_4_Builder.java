@@ -32,9 +32,6 @@ import static org.n52.shared.util.MathSymbolUtil.LESS_THAN_INT;
 import static org.n52.shared.util.MathSymbolUtil.LESS_THAN_OR_EQUAL_TO_INT;
 import static org.n52.shared.util.MathSymbolUtil.NOT_EQUAL_TO_INT;
 import static org.n52.shared.util.MathSymbolUtil.getSymbolIndexForFilter;
-
-import java.io.IOException;
-
 import net.opengis.eml.x001.ComplexPatternDocument.ComplexPattern;
 import net.opengis.eml.x001.EMLDocument;
 import net.opengis.eml.x001.EMLDocument.EML.ComplexPatterns;
@@ -362,7 +359,7 @@ public class BasicRule_4_Builder extends BasicRuleBuilder {
     private Quantity parseFilterQuantity(ComparisonOpsType comparisonOps, int binaryOperatorIndex) {
         try {
             if (binaryOperatorIndex == LESS_THAN_INT) {
-                PropertyIsLessThanDocument lessThan = PropertyIsLessThanDocument.Factory.parse(comparisonOps.newInputStream());
+                PropertyIsLessThanDocument lessThan = PropertyIsLessThanDocument.Factory.parse(comparisonOps.getDomNode());
                 return getQuantityFrom(lessThan.getPropertyIsLessThan());
             } else if (binaryOperatorIndex == GREATER_THAN_INT) {
                 PropertyIsGreaterThanDocument binaryOperator = PropertyIsGreaterThanDocument.Factory.parse(comparisonOps.getDomNode());
@@ -382,9 +379,6 @@ public class BasicRule_4_Builder extends BasicRuleBuilder {
             } else {
                 throw new IllegalStateException("Unknown ComparisonType in EML: " + comparisonOps.schemaType());
             }
-        }
-        catch (IOException e) {
-            throw new IllegalStateException("Could not get Quantity from EML filter!", e);
         }
         catch (XmlException e) {
             throw new IllegalStateException("Could not get Quantity from EML filter!", e);

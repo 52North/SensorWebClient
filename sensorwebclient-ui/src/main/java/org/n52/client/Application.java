@@ -71,7 +71,6 @@ import org.n52.client.ui.View;
 import org.n52.client.util.ClientUtils;
 import org.n52.ext.link.sos.PermalinkParameter;
 import org.n52.ext.link.sos.TimeRange;
-import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.TimeseriesRenderingOptions;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
