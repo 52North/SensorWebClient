@@ -24,28 +24,28 @@
 
 package org.n52.server.sos.connector.ags;
 
+import static org.n52.io.crs.CRSUtils.createEpsgStrictAxisOrder;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_DESCRIPTION_FORMAT;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_SERVICE_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_VERSION_PARAMETER;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER;
 import static org.n52.oxf.sos.adapter.SOSAdapter.DESCRIBE_SENSOR;
-import static org.n52.server.util.XmlHelper.getRelatedFeatures;
-import static org.n52.server.util.XmlHelper.getRelatedPhenomena;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.opengis.sensorML.x101.CapabilitiesDocument.Capabilities;
 import net.opengis.sensorML.x101.ComponentType;
 
-import org.n52.io.crs.CRSUtils;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.ows.ExceptionReport;
 import org.n52.oxf.ows.capabilities.Operation;
-import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.server.da.MetadataHandler;
 import org.n52.server.util.XmlHelper;
@@ -65,15 +65,24 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArcGISSoeEReportingMetadataHandler.class);
 
-    private static final String smlVersion = "http://www.opengis.net/sensorML/1.0.1";
+    private static final String SML_NAMESPACE = "http://www.opengis.net/sensorML/1.0.1";
+    
+    private static final Map<String, String> namespaceDeclarations = new HashMap<String, String>();
+    
+    {
+        namespaceDeclarations.put("sml", SML_NAMESPACE);
+        namespaceDeclarations.put("swe", "http://www.opengis.net/swe/1.0.1");
+        namespaceDeclarations.put("aqd", "http://aqd.ec.europa.eu/aqd/0.3.7c");
+        namespaceDeclarations.put("base", "http://inspire.ec.europa.eu/schemas/base/3.3rc3/");
+    }
+
+    private XmlHelper xmlHelper = new XmlHelper(namespaceDeclarations);
 
     /**
      * Component descriptions parsed from a sensor network. Each contain information how to associate
      * timeseries parameters. Perform a DescribeSensor on each instance to get more detailed information.
      */
     private Map<String, ComponentType> sensorDescriptions;
-
-    private Map<String, Point> featureLocations;
 
     private String sosVersion = "2.0.0";
 
@@ -84,7 +93,6 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
         this.sosVersion = metadata.getVersion();
         this.serviceUrl = metadata.getServiceUrl();
         this.sensorDescriptions = new HashMap<String, ComponentType>();
-        this.featureLocations = new HashMap<String, Point>();
     }
 
     @Override
@@ -92,36 +100,40 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
         SOSMetadata metadata = initMetadata(sosUrl, sosVersion);
 
         Collection<SosTimeseries> observingTimeseries = createObservingTimeseries(sosUrl);
-
         TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
+        Map<Feature, Point> featureLocations = performGetFeatureOfInterest(lookup);
+        
         for (SosTimeseries timeseries : observingTimeseries) {
             Procedure procedure = timeseries.getProcedure();
             ComponentType component = sensorDescriptions.get(procedure.getProcedureId());
-            Phenomenon[] phenomena = getRelatedPhenomena(component.getOutputs());
+            
+            /*
+             * TODO phenomenon relations has to be checked as MetadataHandler creates 
+             * a timeseries offering-procedure-phenomenon relation for each phenomenon in
+             * an offering (this however is not true in all cases).
+             */
+            String[] phenomena = xmlHelper.getRelatedPhenomena(component.getOutputs());
             if (!relatesToPhenomena(timeseries, phenomena)) {
                 continue;
             }
 
             // get feature relations
             if (component.getCapabilitiesArray().length > 0) {
-                String[] fois = getRelatedFeatures(component.getCapabilitiesArray(0));
+                Capabilities sensorCapabilties = component.getCapabilitiesArray(0);
+                String[] fois = xmlHelper.getRelatedFeatures(sensorCapabilties);
                 for (String featureId : fois) {
+                    if (!lookup.containsFeature(featureId)) {
+                        // orphaned timeseries (w/o station)
+                        continue;
+                    }
+                    Feature feature = lookup.getFeature(featureId);
                     Station station = metadata.getStation(featureId);
                     if (station == null) {
-                        Point location = featureLocations.get(featureId);
+                        Point location = featureLocations.get(feature);
                         station = new Station(featureId, sosUrl);
                         station.setLocation(location);
                         metadata.addStation(station);
                     }
-                    
-                    String label = featureId;
-//                    if (sfSamplingFeature.getNameArray().length > 0) {
-//                        label = sfSamplingFeature.getNameArray(0).getStringValue();
-//                    } 
-                    
-                    Feature feature = new Feature(featureId, sosUrl);
-                    feature.setLabel(label);
-                    lookup.addFeature(feature);
                     
                     SosTimeseries tmp = timeseries.clone();
                     tmp.setFeature(new Feature(featureId, sosUrl));
@@ -147,8 +159,8 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
         return metadata;
     }
 
-    private boolean relatesToPhenomena(SosTimeseries timeseries, Phenomenon[] phenomena) {
-        return Arrays.binarySearch(phenomena, timeseries.getPhenomenon()) >= 0;
+    private boolean relatesToPhenomena(SosTimeseries timeseries, String[] phenomena) {
+        return Arrays.asList(phenomena).contains(timeseries.getPhenomenonId());
     }
 
     @Override
@@ -180,7 +192,7 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
             paramCon.addParameterShell(DESCRIBE_SENSOR_SERVICE_PARAMETER, "SOS");
             paramCon.addParameterShell(DESCRIBE_SENSOR_VERSION_PARAMETER, sosVersion);
             paramCon.addParameterShell(DESCRIBE_SENSOR_PROCEDURE_PARAMETER, procedure);
-            paramCon.addParameterShell(DESCRIBE_SENSOR_PROCEDURE_DESCRIPTION_FORMAT, smlVersion);
+            paramCon.addParameterShell(DESCRIBE_SENSOR_PROCEDURE_DESCRIPTION_FORMAT, SML_NAMESPACE);
             Operation operation = new Operation(DESCRIBE_SENSOR, serviceUrl, serviceUrl);
             OperationResult result = getSosAdapter().doOperation(operation, paramCon);
 
@@ -189,24 +201,25 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
         }
     }
 
+    protected Map<Feature, Point> performGetFeatureOfInterest(TimeseriesParametersLookup lookup) throws OXFException, ExceptionReport {
+        ParameterContainer paramCon = new ParameterContainer();
+        paramCon.addParameterShell(GET_FOI_SERVICE_PARAMETER, "SOS");
+        paramCon.addParameterShell(GET_FOI_VERSION_PARAMETER, sosVersion);
+        Operation operation = new Operation("GetFeatureOfInterest", serviceUrl, serviceUrl);
+        OperationResult result = getSosAdapter().doOperation(operation, paramCon);
+        
+        FeatureParser parser = new FeatureParser(serviceUrl, createEpsgStrictAxisOrder());
+        Map<Feature, Point> features = parser.parseFeatures(result.getIncomingResultAsStream());
+        for (Feature feature : features.keySet()) {
+            lookup.addFeature(feature);
+        }
+        return features;
+    }
+
     public boolean isCached(String procedure) {
         return sensorDescriptions.containsKey(procedure);
     }
     
-    protected void performGetFeatureOfInterest(String procedure) throws OXFException, ExceptionReport {
-        if ( !isCached(procedure)) {
-            ParameterContainer paramCon = new ParameterContainer();
-            paramCon.addParameterShell(ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER, "SOS");
-            paramCon.addParameterShell(ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER, sosVersion);
-            Operation operation = new Operation("GetFeatureOfInterest", serviceUrl, serviceUrl);
-            OperationResult result = getSosAdapter().doOperation(operation, paramCon);
-            
-            CRSUtils crsHelper = CRSUtils.createEpsgStrictAxisOrder();
-            FeatureParser featureParser = new FeatureParser(crsHelper);
-            featureLocations = featureParser.parseFeatures(result.getIncomingResultAsStream());
-        }
-    }
-
     @Override
     public SOSMetadata updateMetadata(SOSMetadata metadata) throws Exception {
         throw new UnsupportedOperationException();

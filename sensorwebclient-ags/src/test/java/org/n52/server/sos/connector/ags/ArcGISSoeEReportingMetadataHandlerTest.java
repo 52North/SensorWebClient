@@ -25,13 +25,19 @@ package org.n52.server.sos.connector.ags;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.ows.ExceptionReport;
 import org.n52.server.da.oxf.ResponseFromFileSosAdapter;
+import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SOSMetadataBuilder;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
+
+import com.vividsolutions.jts.geom.Point;
 
 public class ArcGISSoeEReportingMetadataHandlerTest {
     
@@ -67,7 +73,9 @@ public class ArcGISSoeEReportingMetadataHandlerTest {
         
         private static final String CAPABILITIES_EREPORTING = "/files/capabilities-ereporting.xml";
         
-        private static final String SENSOR_NETWORK = "/files/describe-sensor-network_complete.xml";
+        private static final String SENSOR_NETWORK = "/files/describe-sensor-network_subset.xml";
+
+        private static final String GET_FOI_RESPONSE = "/files/get-features_subset.xml";
 
         public ArcGISSoeEReportingMetadataHandlerSeam() {
             super(createAgsSosMetadata());
@@ -85,6 +93,11 @@ public class ArcGISSoeEReportingMetadataHandlerTest {
             super.performDescribeSensor(procedure);
         }
         
+        @Override
+        protected Map<Feature, Point> performGetFeatureOfInterest(TimeseriesParametersLookup lookup) throws OXFException, ExceptionReport {
+            setSosAdapter(new ResponseFromFileSosAdapter(GET_FOI_RESPONSE));
+            return super.performGetFeatureOfInterest(lookup);
+        }
         
 
     }

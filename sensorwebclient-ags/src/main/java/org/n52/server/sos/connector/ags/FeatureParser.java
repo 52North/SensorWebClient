@@ -1,3 +1,4 @@
+
 package org.n52.server.sos.connector.ags;
 
 import java.io.IOException;
@@ -13,8 +14,11 @@ import net.opengis.sos.x20.GetFeatureOfInterestResponseDocument;
 import net.opengis.sos.x20.GetFeatureOfInterestResponseType;
 
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.n52.io.crs.CRSUtils;
+import org.n52.oxf.xmlbeans.tools.XmlUtil;
 import org.n52.server.util.XmlHelper;
+import org.n52.shared.serializable.pojos.sos.Feature;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.slf4j.Logger;
@@ -23,24 +27,39 @@ import org.slf4j.LoggerFactory;
 import com.vividsolutions.jts.geom.Point;
 
 public final class FeatureParser {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(FeatureParser.class);
-    
+
+    private static final Map<String, String> namespaceDeclarations = new HashMap<String, String>();
+
+    {
+        namespaceDeclarations.put("sml", "http://www.opengis.net/sensorML/1.0.1");
+        namespaceDeclarations.put("swe", "http://www.opengis.net/swe/1.0.1");
+        namespaceDeclarations.put("aqd", "http://aqd.ec.europa.eu/aqd/0.3.7c");
+        namespaceDeclarations.put("base", "http://inspire.ec.europa.eu/schemas/base/3.3rc3/");
+    }
+
+    private XmlHelper xmlHelper = new XmlHelper(namespaceDeclarations);
+
+    private String serviceUrl;
+
     private CRSUtils crsUtil;
 
-    public FeatureParser(CRSUtils crsHelper) {
+    public FeatureParser(String serviceUrl, CRSUtils crsHelper) {
+        this.serviceUrl = serviceUrl;
         this.crsUtil = crsHelper;
     }
 
-    public Map<String, Point> parseFeatures(InputStream stream) {
-        Map<String, Point> featureLocations = new HashMap<String, Point>();
+    public Map<Feature, Point> parseFeatures(InputStream stream) {
+        Map<Feature, Point> featureLocations = new HashMap<Feature, Point>();
         try {
             GetFeatureOfInterestResponseDocument responseDoc = GetFeatureOfInterestResponseDocument.Factory.parse(stream);
             GetFeatureOfInterestResponseType response = responseDoc.getGetFeatureOfInterestResponse();
             for (FeaturePropertyType member : response.getFeatureMemberArray()) {
-                PointDocument pointDoc = XmlHelper.getPoint(member, crsUtil);
+                PointDocument pointDoc = xmlHelper.getPoint(member, crsUtil);
+                Feature feature = parseFeatureFrom(member);
                 Point location = getCrs84Location(pointDoc);
-                featureLocations.put(pointDoc.getPoint().getId(), location);
+                featureLocations.put(feature, location);
             }
         }
         catch (XmlException e) {
@@ -50,6 +69,19 @@ public final class FeatureParser {
             LOGGER.error("Could not read GetFeatureOfInterestResponse.", e);
         }
         return featureLocations;
+    }
+
+    private Feature parseFeatureFrom(FeaturePropertyType member) {
+        String id = getTextFrom(member, "$this//base:Identifier/base:localId/text()");
+        String namespace = getTextFrom(member, "$this//base:Identifier/base:namespace");
+        return new Feature(namespace + id, serviceUrl);
+
+    }
+
+    private String getTextFrom(FeaturePropertyType member, String xpath) {
+        XmlObject textNode = xmlHelper.parseFirst(member, xpath, XmlObject.class);
+        return XmlUtil.getTextContentFromAnyNode(textNode);
+
     }
 
     private Point getCrs84Location(PointDocument pointDoc) {
