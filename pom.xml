@@ -606,6 +606,21 @@
 						</descriptors>
 					</configuration>
 				</plugin>
+				
+	            <plugin>
+	                <groupId>org.codehaus.mojo</groupId>
+	                <artifactId>license-maven-plugin</artifactId>
+	                <version>1.5</version>
+	                <executions>
+	                    <execution>
+	                        <id>download-licenses</id>
+	                        <goals>
+	                            <goal>download-licenses</goal>
+	                        </goals>
+	                    </execution>
+	                </executions>
+	            </plugin>
+            
 			</plugins>
 		</pluginManagement>
 
@@ -614,6 +629,34 @@
 			<!-- ==================================================== -->
 			<!-- =========== PLUGINS ACTIVE BY DEFAULT ============== -->
 			<!-- ==================================================== -->
+
+			<plugin>
+				<groupId>com.mycila.maven-license-plugin</groupId>
+				<artifactId>maven-license-plugin</artifactId>
+				<version>1.9.0</version>
+				<configuration>
+					<header>misc/52N_license-header.txt</header>
+					<aggregate>true</aggregate>
+					<includes>
+						<include>**/*.java</include>
+					</includes>
+					<excludes>
+						<exclude>**/generated-sources/xml-pdf-format</exclude>
+					</excludes>
+					<strictCheck>true</strictCheck>
+					<properties>
+						<year>${project.inceptionYear}</year>
+					</properties>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>test</phase>
+						<goals>
+							<goal>format</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -749,24 +792,13 @@
 			</activation>
 			<build>
 				<plugins>
+				    
+		            <plugin>
+		                <groupId>org.codehaus.mojo</groupId>
+		                <artifactId>license-maven-plugin</artifactId>
+		            </plugin>
+            
 
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>license-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>download-licenses</id>
-								<goals>
-									<goal>download-licenses</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-
-					<plugin>
-						<groupId>com.mycila.maven-license-plugin</groupId>
-						<artifactId>maven-license-plugin</artifactId>
-					</plugin>
 					<plugin>
 						<artifactId>maven-release-plugin</artifactId>
 						<version>2.3.2</version>
