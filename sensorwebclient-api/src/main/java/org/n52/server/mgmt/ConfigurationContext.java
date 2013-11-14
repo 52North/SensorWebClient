@@ -267,7 +267,7 @@ public class ConfigurationContext implements ServletContextAware {
     }
 
     @SuppressWarnings("unchecked")
-    private static MetadataHandler createSosMetadataHandler(SOSMetadata metadata) {
+    public static MetadataHandler createSosMetadataHandler(SOSMetadata metadata) {
         String handler = metadata.getSosMetadataHandler();
         if (handler == null) {
             LOGGER.info("Using default SOS metadata handler for '{}'", metadata.getServiceUrl());
