@@ -16,24 +16,47 @@ public class Scale implements Serializable {
 		ZERO, AUTO, MANUAL
 	}
 	
+	/**
+	 * Create a default Scale object (Auto-Scaling)
+	 */
 	public Scale(){
 		this(Type.AUTO, 0d, 0d);
 	}
 
+	/**
+	 * Create a Scale object of type type
+	 * @param type
+	 */
 	public Scale(Type type){
 		this(type, 0d, 0d);
 	}
 	
+	/**
+	 * Create a Scale object of type type and with min/max values
+	 * (usually used with type MANUAL)
+	 * @param type
+	 * @param min
+	 * @param max
+	 */
 	public Scale(Type type, double min, double max){
 		this.setType(type);
 		this.setManualScaleMin(min);
 		this.setManualScaleMax(max);
 	}
 
+	/**
+	 * Creates a Scale object of type MANUAL with min/max values
+	 * @param min
+	 * @param max
+	 */
 	public Scale(double min, double max){
 		this(Type.MANUAL, min, max);
 	}
 	
+	/**
+	 * Swithces the type of the object to type
+	 * @param type
+	 */
 	public void setType(Type type){
 		this.type = type != null 
 			? type 
@@ -41,7 +64,7 @@ public class Scale implements Serializable {
 	}
 	
 	/**
-	 * Tries to read the Type from a String.
+	 * Tries to read the Type from typeString.
 	 * If it fails, AUTO will be set.
 	 * @param typeString
 	 */
@@ -126,6 +149,11 @@ public class Scale implements Serializable {
 		return this.type == Type.MANUAL;
 	}
 	
+	/**
+	 * Returns a copy of given Scale object
+	 * @param scale
+	 * @return
+	 */
 	public static Scale copy(Scale scale){
 		if(scale != null){
 			return new Scale(scale.getType(), scale.getManualScaleMin(), scale.getManualScaleMax());
@@ -134,7 +162,11 @@ public class Scale implements Serializable {
 		}
 	}
 	
+	/**
+	 * Returns a new Scale object copy of itself
+	 * @return
+	 */
 	public Scale getCopy(){
-		return new Scale(this.getType(), this.getManualScaleMin(), this.getManualScaleMax());
+		return copy(this);
 	}
 }
