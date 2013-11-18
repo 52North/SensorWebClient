@@ -140,9 +140,8 @@ public class DiagramGenerator extends Generator {
             // text:
             legendGraphics.setColor(Color.black);
 
-            legendGraphics.drawString(dd.getFeature().getLabel(DecodeType.NATURAL) + " - "
-                    + dd.getLabel(), leftMargin + iconWidth
-                    + horizontalSpaceBetweenIconAndText, yPos + iconHeight);
+            String legendText = dd.getFeature().getLabel(DecodeType.NATURAL);// + " - " + dd.getLabel();
+            legendGraphics.drawString(legendText, leftMargin + iconWidth + horizontalSpaceBetweenIconAndText, yPos + iconHeight);
             
             offset++;
         }
