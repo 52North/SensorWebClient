@@ -288,6 +288,14 @@ public class Timeseries implements LegendData {
 		return properties.getStationName();
 	}
 
+	public void setStationLongname(String name) {
+		this.properties.setStationLongname(name);
+	}
+
+	public String getStationLongname() {
+		return properties.getStationLongname();
+	}
+
 	public void setLineStyle(String lineStyle) {
 		this.properties.setLineStyle(lineStyle);
 	}

@@ -65,6 +65,8 @@ public class TimeseriesProperties implements Serializable {
 	private String uom;
 
 	private String stationName;
+	
+	private String stationLongname;
 
 	private String metadataUrl = "";
 
@@ -145,6 +147,7 @@ public class TimeseriesProperties implements Serializable {
 		result.setOpacity(this.opacity);
 		result.setShowYAxis(this.isYAxisVisible);
 		result.setStationName(this.stationName);
+		result.setStationLongname(this.stationLongname);
 		result.setUnitOfMeasure(this.uom);
 		result.setSeriesType(this.seriesType);
 		return result;
@@ -332,14 +335,19 @@ public class TimeseriesProperties implements Serializable {
 	}
 
 	public String getStationName() {
-//		if (this.stationName == null || this.stationName.isEmpty()) {
-//			return this.foi.getLabel();
-//		}
 		return stationName;
 	}
 
 	public void setStationName(String stationName) {
 		this.stationName = stationName;
+	}
+
+	public String getStationLongname() {
+		return stationLongname;
+	}
+
+	public void setStationLongname(String stationLongname) {
+		this.stationLongname = stationLongname;
 	}
 
 	public String getServiceUrl() {

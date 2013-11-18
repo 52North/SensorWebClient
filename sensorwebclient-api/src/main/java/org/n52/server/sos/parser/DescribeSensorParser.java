@@ -95,6 +95,9 @@ public class DescribeSensorParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(DescribeSensorParser.class);
 
     private SensorMLDocument smlDoc = null;
+
+    public static final String LONG_NAME = "longname";
+    public static final String SHORT_NAME = "shortname";
     
     private AReferencingHelper referenceHelper = AReferencingHelper.createEpsgStrictAxisOrder();
 
@@ -125,6 +128,15 @@ public class DescribeSensorParser {
             stationName = getStationNameByAbstractComponentType((AbstractComponentType) abstractProcessType);
         }
         return stationName;
+    }
+
+    public String buildUpSensorMetadataStationLongname() {
+        String stationLongname = "";
+        AbstractProcessType abstractProcessType = smlDoc.getSensorML().getMemberArray(0).getProcess();
+        if (abstractProcessType instanceof AbstractComponentType) {
+            stationLongname = getStationLongnameByAbstractComponentType((AbstractComponentType) abstractProcessType);
+        }
+        return stationLongname;
     }
 
     public String buildUpSensorMetadataUom(String phenomenonID) {
@@ -288,6 +300,14 @@ public class DescribeSensorParser {
     }
 
     private String getStationNameByAbstractComponentType(AbstractComponentType absComponentType) {
+    	return getStationNameByAbstractComponentType(absComponentType, SHORT_NAME);
+    }
+    
+    private String getStationLongnameByAbstractComponentType(AbstractComponentType absComponentType) {
+    	return getStationNameByAbstractComponentType(absComponentType, LONG_NAME);
+    }
+    
+    private String getStationNameByAbstractComponentType(AbstractComponentType absComponentType, String nameType) {
         String station = null;
         String uniqueId = null;
         Identification[] identifications = getSensorMLIdentification(absComponentType);
@@ -295,12 +315,12 @@ public class DescribeSensorParser {
 
             Identifier[] identifiers = identification.getIdentifierList().getIdentifierArray();
             for (Identifier identifier : identifiers) {
-                // find shortname, if not present at all the uniqueID is chosen
+                // find nametype, if not present at all the uniqueID is chosen
                 if (identifier.isSetName()) {
                     // supports discovery profile
-                    if (identifier.getName().equalsIgnoreCase("shortname")) {
+                    if (identifier.getName().equalsIgnoreCase(nameType)) {
                         station = identifier.getTerm().getValue();
-                        LOGGER.trace("use station shortname: " + station);
+                        LOGGER.trace("use station "+nameType+": " + station);
                         break;
                     }
                 }

@@ -64,6 +64,7 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
             DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), metadata);
             tsProperties.setMetadataUrl(parser.buildUpSensorMetadataHtmlUrl(procedureId, sosUrl));
             tsProperties.setStationName(parser.buildUpSensorMetadataStationName());
+            tsProperties.setStationLongname(parser.buildUpSensorMetadataStationLongname());
             tsProperties.setUnitOfMeasure(parser.buildUpSensorMetadataUom(phenomenonId));
             
             HashMap<String, ReferenceValue> refvalues = parser.parseReferenceValues();

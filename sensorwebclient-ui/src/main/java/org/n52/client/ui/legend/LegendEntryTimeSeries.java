@@ -659,7 +659,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		setFirstValueInterval();
 		setLastValueInterval();
 		
-		String stationText = getStationName(this.getTimeSeries());
+		String stationText = getStationLongname(this.getTimeSeries());
 
 		this.stationLabel.setContents("<span>"
 				+ i18n.foiLabel() + ":</span> "
@@ -734,7 +734,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.loadingSpinner.hide();
 	}
 
-	private String getStationName(Timeseries ts) {
+	private static String getStationName(Timeseries ts) {
 		// TODO perhaps use regular expressions
 		String station = ts.getStationName();
 		// remove phenomenon identifier
@@ -753,6 +753,10 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		station = station.substring(0,1).toUpperCase()+station.substring(1);
 		
 		return station;
+	}
+
+	private static String getStationLongname(Timeseries ts) {
+		return ts.getStationLongname();
 	}
 
 	protected void setFirstValueInterval() {
