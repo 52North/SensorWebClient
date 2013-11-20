@@ -30,6 +30,7 @@ import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 import static org.n52.client.sos.ui.SelectionMenuModel.createListGrid;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -114,6 +115,8 @@ public class StationSelector extends Window {
 
 	private SelectItem phenomenonBox;
 	
+	private HashSet<String> phenomenonBoxValueMap = new HashSet<String>();
+		
     public static StationSelector getInst() {
         if (instance == null) {
         	controller = new StationSelectorController();
@@ -395,7 +398,14 @@ public class StationSelector extends Window {
 		applyCancel.finishLoading();
 	}
 	
+	/**
+	 * @deprecated Use hideProcedureDetails instead
+	 */
 	public void clearProcedureDetails() {
+		hideProcedureDetails();
+	}
+	
+	public void hideProcedureDetails() {
 		timeseriesInfoHTMLPane.hide();
 	}
 	
@@ -493,6 +503,7 @@ public class StationSelector extends Window {
 	public void showInfoWindow(InfoMarker infoMarker, String header) {
 		String[] array = getStationCategories(infoMarker.getStation()).toArray(new String[0]);
 		phenomenonBox.setValueMap(array);
+		phenomenonBoxValueMap = new HashSet<String>(Arrays.asList(array));
 		phenomenonBox.clearValue();
 		infoWindow.setWindowTitle(header);
 		infoWindow.show();
@@ -517,9 +528,11 @@ public class StationSelector extends Window {
 		if (controller.getSelectedPhenomenon() != null) {
 			selectedPhenomenon = controller.getSelectedPhenomenon().getLabel();
 		}
-		if (selectedPhenomenon != null && !selectedPhenomenon.isEmpty()) {
+		if (selectedPhenomenon != null && !selectedPhenomenon.isEmpty() && phenomenonBoxValueMap.contains(selectedPhenomenon)) {
 			phenomenonBox.setValue(selectedPhenomenon);
 			stationInfoLabel.hide();
+		} else {
+			hideProcedureDetails();
 		}
 	}
 	
