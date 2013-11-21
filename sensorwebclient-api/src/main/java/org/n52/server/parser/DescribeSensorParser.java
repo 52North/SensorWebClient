@@ -540,6 +540,9 @@ public class DescribeSensorParser {
             else if (output.isSetQuantity()) {
                 phenomenons.add(output.getQuantity().getDefinition());
             }
+            else if (isCategoryCodeSpaceHrefSet(output)) {
+            	phenomenons.add(output.getCategory().getDefinition());
+            }
             else {
                 phenomenons.add(output.getName());
             }
@@ -547,7 +550,12 @@ public class DescribeSensorParser {
         return phenomenons;
     }
 
-    protected void setDataStreamToParse(InputStream incomingResultAsStream) throws XmlException,
+	private boolean isCategoryCodeSpaceHrefSet(final IoComponentPropertyType output)
+	{
+		return output.isSetCategory() && output.getCategory().isSetDefinition();
+	}
+
+    protected void setDataStreamToParse(final InputStream incomingResultAsStream) throws XmlException,
             IOException,
             XMLHandlingException {
         final XmlObject xmlObject = XmlObject.Factory.parse(incomingResultAsStream);
