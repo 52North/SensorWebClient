@@ -492,9 +492,8 @@ public class DescribeSensorParser {
                 for (int j = 0; j < rec.getFieldArray().length; j++) {
                     final AnyScalarPropertyType field = rec.getFieldArray(j);
                     if (field.isSetText()) {
-                        String definition = field.getText().getDefinition();
-                        if ("FeatureOfInterest identifier".equalsIgnoreCase(definition)
-                                || "FeatureOfInterestID".equalsIgnoreCase(definition)) {
+                        final String definition = field.getText().getDefinition();
+                        if (isValidFeatureIdDefinition(definition)) {
                             // foiRef = true;
                             fois.add(field.getText().getValue());
                         }
@@ -507,9 +506,8 @@ public class DescribeSensorParser {
                 for (int j = 0; j < rec.getFieldArray().length; j++) {
                     final DataComponentPropertyType field = rec.getFieldArray(j);
                     if (field.isSetText()) {
-                        String definition = field.getText().getDefinition();
-                        if ("FeatureOfInterest identifier".equalsIgnoreCase(definition)
-                                || "FeatureOfInterestID".equalsIgnoreCase(definition)) {
+                        final String definition = field.getText().getDefinition();
+                        if (isValidFeatureIdDefinition(definition)) {
                             // foiRef = true;
                             fois.add(field.getText().getValue());
                         }
@@ -519,6 +517,13 @@ public class DescribeSensorParser {
         }
         return fois;
     }
+
+    // TODO parse all allowed values from a CSV list, that can be updated after compile time
+	private boolean isValidFeatureIdDefinition(final String definition)	{
+		return "FeatureOfInterest identifier".equalsIgnoreCase(definition)
+		        || "FeatureOfInterestID".equalsIgnoreCase(definition) // TODO maybe change to startsWith
+		        || "http://www.opengis.net/def/featureOfInterest/identifier".equalsIgnoreCase(definition);
+	}
 
     public List<String> getPhenomenons() {
         final List<String> phenomenons = new ArrayList<String>();
