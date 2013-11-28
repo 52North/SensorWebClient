@@ -221,18 +221,16 @@ public class DescribeSensorParser {
 
     private String getUomByAbstractComponentType(final String phenomenonID, final AbstractComponentType absComponent) {
         String uom = "";
-        try {
-            final OutputList outList = absComponent.getOutputs().getOutputList();
-            final IoComponentPropertyType[] outputs = outList.getOutputArray();
-            for (final IoComponentPropertyType output : outputs) {
-                if (output.getQuantity().getDefinition().equals(phenomenonID)) {
-                    uom = output.getQuantity().getUom().getCode();
-                }
-            }
-        }
-        catch (final NullPointerException e) {
-            // FIXME dirty hack, improve above parsing
-            LOGGER.trace("improve parsing here!", e);
+        if (absComponent.isSetOutputs() && absComponent.getOutputs().isSetOutputList()) {
+        	final OutputList outList = absComponent.getOutputs().getOutputList();
+        	final IoComponentPropertyType[] outputs = outList.getOutputArray();
+        	for (final IoComponentPropertyType output : outputs) {
+        		if (output != null &&
+        				isPhenomenonIdMatchingQuantityDefinition(phenomenonID, output) &&
+        				isUomCodeSet(output.getQuantity())) {
+        			uom = output.getQuantity().getUom().getCode();
+        		}
+        	}
         }
 
         try {
@@ -274,6 +272,19 @@ public class DescribeSensorParser {
 
         return uom;
     }
+
+	private boolean isUomCodeSet(final Quantity quantity)
+	{
+		return quantity.isSetUom() && quantity.getUom().isSetCode();
+	}
+
+	private boolean isPhenomenonIdMatchingQuantityDefinition(final String phenomenonID,
+			final IoComponentPropertyType output)
+	{
+		return output.isSetQuantity() && 
+				output.getQuantity().isSetDefinition() && 
+				output.getQuantity().getDefinition().equals(phenomenonID);
+	}
 
     private String getStationNameByAbstractComponentType(final AbstractComponentType absComponentType) {
         String station = null;
