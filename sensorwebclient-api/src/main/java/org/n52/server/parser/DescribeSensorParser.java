@@ -273,14 +273,13 @@ public class DescribeSensorParser {
         return uom;
     }
 
-	private boolean isUomCodeSet(final Quantity quantity)
-	{
+	private boolean isUomCodeSet(final Quantity quantity) {
 		return quantity.isSetUom() && quantity.getUom().isSetCode();
 	}
 
-	private boolean isPhenomenonIdMatchingQuantityDefinition(final String phenomenonID,
-			final IoComponentPropertyType output)
-	{
+	private boolean isPhenomenonIdMatchingQuantityDefinition(
+			final String phenomenonID,
+			final IoComponentPropertyType output){
 		return output.isSetQuantity() && 
 				output.getQuantity().isSetDefinition() && 
 				output.getQuantity().getDefinition().equals(phenomenonID);
