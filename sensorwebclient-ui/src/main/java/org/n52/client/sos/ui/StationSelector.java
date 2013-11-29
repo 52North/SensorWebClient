@@ -265,6 +265,7 @@ public class StationSelector extends Window {
             applyCancel.createApplyButton(i18n.addNewTimeseries(), i18n.addNewTimeseriesExt(), createApplyHandler());
             applyCancel.createCancelButton(i18n.cancel(), i18n.cancel(), createCancelHandler());
             applyCancel.setAlign(Alignment.RIGHT);
+            applyCancel.disableApplyButton();
         }
         return applyCancel;
     }
@@ -315,6 +316,7 @@ public class StationSelector extends Window {
 			@Override
 			public void onChanged(ChangedEvent event) {
 				String category = (String) event.getItem().getValue();
+				applyCancel.switchApplyButton(category != null && !category.isEmpty());
 				controller.loadTimeseriesByCategory(category);
 			}
 		});
@@ -530,9 +532,11 @@ public class StationSelector extends Window {
 		}
 		if (selectedPhenomenon != null && !selectedPhenomenon.isEmpty() && phenomenonBoxValueMap.contains(selectedPhenomenon)) {
 			phenomenonBox.setValue(selectedPhenomenon);
+			applyCancel.enableApplyButton();
 			stationInfoLabel.hide();
 		} else {
 			hideProcedureDetails();
+			applyCancel.disableApplyButton();
 		}
 	}
 	

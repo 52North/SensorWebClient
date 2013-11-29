@@ -17,6 +17,8 @@ public class ApplyCancelButtonLayout extends HLayout {
     
     private String loaderImg = "../img/loader_wide.gif";
     
+    private Canvas applyButton;
+    
     public ApplyCancelButtonLayout() {
         loadingSpinner = createLoadingSpinner();
         addMember(loadingSpinner);
@@ -32,6 +34,7 @@ public class ApplyCancelButtonLayout extends HLayout {
         Canvas applyButton = createSmallButton(applyImg, tooltip, longTooltip);
         applyButton.addClickHandler(handler);
         addMember(applyButton);
+        this.applyButton = applyButton;
     }
     
     public void createCancelButton(String tooltip, String longTooltip, ClickHandler handler) {
@@ -50,5 +53,25 @@ public class ApplyCancelButtonLayout extends HLayout {
     
     public void finishLoading() {
         loadingSpinner.hide();
+    }
+    
+    public void enableApplyButton(){
+    	if(this.applyButton != null){
+    		this.applyButton.enable();
+    	}
+    }
+    
+    public void disableApplyButton(){
+    	if(this.applyButton != null){
+    		this.applyButton.disable();
+    	}
+    }
+    
+    public void switchApplyButton(boolean enable){
+    	if(enable){
+    		enableApplyButton();
+    	} else {
+    		disableApplyButton();
+    	}
     }
 }
