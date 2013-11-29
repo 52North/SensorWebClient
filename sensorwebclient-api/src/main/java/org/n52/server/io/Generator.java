@@ -24,7 +24,7 @@
 
 package org.n52.server.io;
 
-import static org.n52.server.mgmt.ConfigurationContext.getServiceMetadata;
+import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadata;
 import static org.n52.server.util.TimeUtil.createIso8601Formatter;
 
 import java.awt.Color;
@@ -85,7 +85,7 @@ public abstract class Generator {
     
     protected TimeseriesParametersLookup getParameterLookup(String serviceUrl) {
         try {
-            SOSMetadata metadata = getServiceMetadata(serviceUrl);
+            SOSMetadata metadata = getSOSMetadata(serviceUrl);
             return metadata.getTimeseriesParametersLookup();
         } catch (Exception e) {
             throw new IllegalStateException("No parameter lookup available for service '" + serviceUrl + "'.", e);

@@ -75,7 +75,7 @@ public class Phenomenon extends TimeseriesParameter implements Serializable {
         result = prime * result + ( (getLabel() == null) ? 0 : getLabel().hashCode());
         result = prime * result + ( (getPhenomenonId() == null) ? 0 : getPhenomenonId().hashCode());
         result = prime * result + ( (getGlobalId() == null) ? 0 : getGlobalId().hashCode());
-        result = prime * result + ( (unitOfMeasure == null) ? 0 : unitOfMeasure.hashCode());
+        result = prime * result + ( (getUnitOfMeasure() == null) ? 0 : getUnitOfMeasure().hashCode());
         return result;
     }
 
@@ -94,11 +94,11 @@ public class Phenomenon extends TimeseriesParameter implements Serializable {
         }
         else if ( !getPhenomenonId().equals(other.getPhenomenonId()))
             return false;
-        if (unitOfMeasure == null) {
-            if (other.unitOfMeasure != null)
+        if (getUnitOfMeasure() == null) {
+            if (other.getUnitOfMeasure() != null)
                 return false;
         }
-        else if ( !unitOfMeasure.equals(other.unitOfMeasure))
+        else if ( !getUnitOfMeasure().equals(other.getUnitOfMeasure()))
             return false;
         return true;
     }

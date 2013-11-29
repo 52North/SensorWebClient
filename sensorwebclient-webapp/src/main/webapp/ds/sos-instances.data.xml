@@ -9,6 +9,7 @@
 		<url>http://pegelonline.wsv.de/webservices/gis/gdi-sos</url>
 		<version>1.0.0</version>
 		<waterML>false</waterML>
+        <supportsFirstLatest>true</supportsFirstLatest>
 		<metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
         <adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
 		<requestChunk>300</requestChunk>
@@ -25,6 +26,7 @@
 		<url>http://ict4eo.meraka.csir.co.za/AMD_SOS/sos</url>
 		<version>1.0.0</version>
 		<waterML>false</waterML>
+        <supportsFirstLatest>true</supportsFirstLatest>
 		<metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
         <adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
 		<requestChunk>200</requestChunk>
@@ -36,12 +38,12 @@
 		<defaultZoom>5</defaultZoom>
 	</instance>
 	
-	
     <!-- <instance>
         <itemName>Tideelbe SOS</itemName>
         <url>http://geodata-srv02.rzi.dlz-it.de:8080/52nSOS_ZDM_PORTALE/sos</url>
         <version>2.0.0</version>
         <waterML>false</waterML>
+        <supportsFirstLatest>false</supportsFirstLatest>
         <metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
         <adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
         <requestChunk>2100</requestChunk>
@@ -57,6 +59,7 @@
         <itemName>Wupperverband</itemName>
         <url>http://fluggs.wupperverband.de/sos/sos</url>
         <version>1.0.0</version>
+        <supportsFirstLatest>true</supportsFirstLatest>
         <metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
         <adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
         <waterML>false</waterML>
@@ -90,6 +93,7 @@
 		<itemName>GRDC-SOS_GEOWOW</itemName>
 		<url>http://geowow.dev.52north.org/52n-sos-grdc-webapp/sos/soap</url>
 		<version>2.0.0</version>
+        <supportsFirstLatest>true</supportsFirstLatest>
 		<metadataHandler>org.n52.server.sos.connector.hydro.HydroMetadataHandler</metadataHandler>
 		<adapter>org.n52.server.sos.connector.hydro.SOSwithSoapAdapter</adapter>
 		<waterML>true</waterML>
@@ -102,12 +106,32 @@
 		<autoZoom>true</autoZoom>
 		<protectedService>true</protectedService>
 	</instance>
+	 
+	 <!--
+	 <instance>
+        <itemName>WV HydroSOS</itemName>
+        <url>http://vpn.52north.org/52n-sos-wv-webapp/sos/soap</url>
+        <version>2.0.0</version>
+        <supportsFirstLatest>true</supportsFirstLatest>
+        <metadataHandler>org.n52.server.sos.connector.hydro.HydroMetadataHandler</metadataHandler>
+        <adapter>org.n52.server.sos.connector.hydro.SOSwithSoapAdapter</adapter>
+        <waterML>true</waterML>
+        <llEasting>-180</llEasting>
+        <llNorthing>-80</llNorthing>
+        <urEasting>180</urEasting>
+        <urNorthing>90</urNorthing>
+        <defaultZoom>10</defaultZoom>
+        <requestChunk>200</requestChunk>
+        <autoZoom>true</autoZoom>
+        <protectedService>true</protectedService>
+    </instance>
+    -->
 	
-<!--
 	 <instance>
 		<itemName>EEA-SOS</itemName>
 		<url>http://ags.dev.52north.org:6080/arcgis/rest/services/ObservationDB/MapServer/exts/SOSExtension/</url>
 		<version>2.0.0</version>
+        <supportsFirstLatest>false</supportsFirstLatest>
 		<metadataHandler>org.n52.server.sos.connector.eea.ArcGISSoeMetadataHandler</metadataHandler>
 		<adapter>org.n52.server.sos.connector.eea.SOSAdapterByGET</adapter>
 		<waterML>false</waterML>
@@ -119,13 +143,14 @@
 		<defaultZoom>9</defaultZoom>
 		<requestChunk>500</requestChunk>
 		<forceXYAxisOrder>true</forceXYAxisOrder>
-	</instance> -->
+	</instance>
 
 	<instance>
 		<itemName>Air Quality Belgium</itemName>
 		<url>http://sos.irceline.be/sos</url>
 		<version>1.0.0</version>
 		<waterML>false</waterML>
+        <supportsFirstLatest>false</supportsFirstLatest>
 		<metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
 		<adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
 		<requestChunk>300</requestChunk>
@@ -153,7 +178,6 @@
 		<urNorthing>90</urNorthing>
 		<defaultZoom>13</defaultZoom>
 	</instance>
-	
 	
 <!-- 
     <instance>

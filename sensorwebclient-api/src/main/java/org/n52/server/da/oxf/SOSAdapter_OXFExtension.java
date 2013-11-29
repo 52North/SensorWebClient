@@ -41,13 +41,15 @@ public class SOSAdapter_OXFExtension extends SOSAdapter {
 
     private static Logger log = LoggerFactory.getLogger(SOSAdapter_OXFExtension.class);
     
+    private static final int CONNECTION_TIMEOUT = 5000;
+    
     private static final int SOCKET_TIMEOUT = 30000;
 
     /**
      * @param sosVersion the SOS version the adapter shall connect to.
      */
     public SOSAdapter_OXFExtension(String sosVersion) {
-        super(sosVersion, new SimpleHttpClient(5000, SOCKET_TIMEOUT));
+        super(sosVersion, new SimpleHttpClient(CONNECTION_TIMEOUT, SOCKET_TIMEOUT));
         setRequestBuilder(SosRequestBuilderFactory.createRequestBuilder(sosVersion));
     }
 
@@ -61,7 +63,7 @@ public class SOSAdapter_OXFExtension extends SOSAdapter {
     @Deprecated
     public SOSAdapter_OXFExtension(String sosVersion, ISOSRequestBuilder requestBuilder) {
         super(sosVersion, requestBuilder);
-        setHttpClient(new SimpleHttpClient(5000, SOCKET_TIMEOUT));
+        setHttpClient(new SimpleHttpClient(CONNECTION_TIMEOUT, SOCKET_TIMEOUT));
     }
 
     @Override

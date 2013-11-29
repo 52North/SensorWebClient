@@ -1,0 +1,417 @@
+<sos:Capabilities version="2.0.0"
+	xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:swe="http://www.opengis.net/swe/2.0"
+	xmlns:swes="http://www.opengis.net/swes/2.0" xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:sos="http://www.opengis.net/sos/2.0" xmlns:fes="http://www.opengis.net/fes/2.0"
+	xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:ogc="http://www.opengis.net/ogc"
+	xmlns:xlink="http://www.w3.org/1999/xlink">
+	<!--ServiceIdentification contains general information about the service 
+		like title, type and version as well as information about supported profiles 
+		of the service -->
+	<ows:ServiceIdentification>
+		<ows:Title>AirQualitySOS</ows:Title>
+		<ows:Abstract>Air quality observation across Europe</ows:Abstract>
+		<ows:Keywords>
+			<ows:Keywords>
+				<ows:Keyword>Air quality</ows:Keyword>
+				<ows:Keyword>CO</ows:Keyword>
+				<ows:Keyword>O3</ows:Keyword>
+				<ows:Keyword>Carbon Monoxide</ows:Keyword>
+				<ows:Keyword>Ozone</ows:Keyword>
+			</ows:Keywords>
+		</ows:Keywords>
+		<ows:ServiceType codeSpace="http://opengeospatial.net">OGC:SOS</ows:ServiceType>
+		<ows:ServiceTypeVersion>2.0.0</ows:ServiceTypeVersion>
+		<ows:Profile>http://www.opengis.net/spec/SOS/2.0/conf/gfoi</ows:Profile>
+		<ows:Profile>http://www.opengis.net/spec/SOS/2.0/conf/soap</ows:Profile>
+		<ows:Profile>http://www.opengis.net/spec/OMXML/2.0/conf/samplingPoint</ows:Profile>
+		<ows:Profile>http://www.opengis.net/spec/OMXML/2.0/conf/observation</ows:Profile>
+		<ows:Fees>NONE</ows:Fees>
+		<ows:AccessConstraints>NONE</ows:AccessConstraints>
+	</ows:ServiceIdentification>
+	<!--ServiceProvider section contains information about service provider 
+		like contact, adress, etc. -->
+	<ows:ServiceProvider>
+		<ows:ProviderName>52North</ows:ProviderName>
+		<ows:ProviderSite xlink:href="http://52north.org" />
+		<ows:ServiceContact>
+			<ows:ContactInfo>
+				<ows:Phone>
+					<ows:Voice>+4925139637132</ows:Voice>
+					<ows:Facsimile />
+				</ows:Phone>
+				<ows:Address>
+					<ows:DeliveryPoint>Martin-Luther-King-Weg 24</ows:DeliveryPoint>
+					<ows:City>Muenster</ows:City>
+					<ows:PostalCode>48155</ows:PostalCode>
+					<ows:Country>Germany</ows:Country>
+					<ows:ElectronicMailAddress>broering@52north.org</ows:ElectronicMailAddress>
+				</ows:Address>
+			</ows:ContactInfo>
+			<ows:Role />
+		</ows:ServiceContact>
+	</ows:ServiceProvider>
+	<ows:OperationsMetadata>
+		<ows:Operation name="GetCapabilities">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get
+						xlink:href="http://myServer/arcgis/rest/services/myMapServer/MapServer/exts/52nArcGisSos/GetCapabilities?f=xml&amp;" />
+				</ows:HTTP>
+			</ows:DCP>
+		</ows:Operation>
+		<ows:Operation name="GetObservationByID">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get
+						xlink:href="http://myServer/arcgis/rest/services/myMapServer/MapServer/exts/52nArcGisSos/GetObservationByID?f=xml&amp;" />
+				</ows:HTTP>
+			</ows:DCP>
+			<ows:Parameter name="observation">
+				<ows:AllowedValues>
+					<ows:Value>ANY</ows:Value>
+				</ows:AllowedValues>
+			</ows:Parameter>
+		</ows:Operation>
+		<ows:Operation name="GetObservation">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get
+						xlink:href="http://myServer/arcgis/rest/services/myMapServer/MapServer/exts/52nArcGisSos/GetObservation?f=xml&amp;" />
+				</ows:HTTP>
+			</ows:DCP>
+			<ows:Parameter name="responseFormat">
+				<ows:AllowedValues>
+					<ows:Value>http://www.opengis.net/om/2.0</ows:Value>
+					<ows:Value>http://aqd.ec.europa.eu/aqd/0.3.7c</ows:Value>
+				</ows:AllowedValues>
+			</ows:Parameter>
+			<ows:Parameter name="observedProperty">
+				<ows:AllowedValues>
+					<ows:Value>ANY</ows:Value>
+				</ows:AllowedValues>
+			</ows:Parameter>
+			<ows:Parameter name="procedure">
+				<ows:AllowedValues>
+					<ows:Value>ANY</ows:Value>
+				</ows:AllowedValues>
+			</ows:Parameter>
+			<ows:Parameter name="offering">
+				<ows:AllowedValues>
+					<ows:Value>ANY</ows:Value>
+				</ows:AllowedValues>
+			</ows:Parameter>
+			<ows:Parameter name="temporalFilter">
+				<ows:AllowedValues>
+					<ows:Value>ANY</ows:Value>
+				</ows:AllowedValues>
+			</ows:Parameter>
+			<ows:Parameter name="spatialFilter">
+				<ows:AllowedValues>
+					<ows:Value>ANY</ows:Value>
+				</ows:AllowedValues>
+			</ows:Parameter>
+			<ows:Parameter name="featureOfInterest">
+				<ows:AllowedValues>
+					<ows:Value>ANY</ows:Value>
+				</ows:AllowedValues>
+			</ows:Parameter>
+			<ows:Parameter name="aggregationType">
+				<ows:AllowedValues>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1d</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1h</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/3y</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/8h</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/highsummer</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/maxd8h</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/summer</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/winter</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1ddc</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1dmf</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y_nt</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y_nv</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y_min</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y_max</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y_dc</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1ydx_nv</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1ydx_min</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1ydx_max</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1ydx_dc</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1ydx</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y_max19</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1ydx_max4</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y_max25</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1ydx_max26</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1ydx_max36</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y_ex180</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y_ex200</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y_ex240</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y_ex350</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y_ex400</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1ydx_ex10</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1ydx_ex50</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1ydx_ex120</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1ydx_ex125</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y_ex100</ows:Value>
+					<ows:Value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y_pe50</ows:Value>
+				</ows:AllowedValues>
+			</ows:Parameter>
+		</ows:Operation>
+		<ows:Operation name="DescribeSensor">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get
+						xlink:href="http://geowow.dev.52north.org:8080/52n-sos-grdc-webapp/sos/kvp?">
+						<ows:Constraint name="Content-Type">
+							<ows:AllowedValues>
+								<ows:Value>application/x-kvp</ows:Value>
+							</ows:AllowedValues>
+						</ows:Constraint>
+					</ows:Get>
+					<ows:Post
+						xlink:href="http://geowow.dev.52north.org:8080/52n-sos-grdc-webapp/sos/soap">
+						<ows:Constraint name="Content-Type">
+							<ows:AllowedValues>
+								<ows:Value>application/soap+xml</ows:Value>
+							</ows:AllowedValues>
+						</ows:Constraint>
+					</ows:Post>
+				</ows:HTTP>
+			</ows:DCP>
+			<ows:Parameter name="procedure">
+				<ows:AllowedValues>
+                    <ows:Value>ANY</ows:Value>
+                </ows:AllowedValues>
+			</ows:Parameter>
+			<ows:Parameter name="procedureDescriptionFormat">
+				<ows:AllowedValues>
+					<ows:Value>http://www.opengis.net/sensorML/1.0.1</ows:Value>
+				</ows:AllowedValues>
+			</ows:Parameter>
+		</ows:Operation>
+	</ows:OperationsMetadata>
+	<!--the filterCapabilities section lists the filters and operands which 
+		are supported in the observation, result and feature retrieval operations -->
+	<sos:filterCapabilities>
+		<fes:Filter_Capabilities>
+			<fes:Conformance>
+				<fes:Constraint name="ImplementsQuery">
+					<ows:NoValues />
+					<ows:DefaultValue>false</ows:DefaultValue>
+				</fes:Constraint>
+				<fes:Constraint name="ImplementsAdHocQuery">
+					<ows:NoValues />
+					<ows:DefaultValue>false</ows:DefaultValue>
+				</fes:Constraint>
+				<fes:Constraint name="ImplementsFunctions">
+					<ows:NoValues />
+					<ows:DefaultValue>false</ows:DefaultValue>
+				</fes:Constraint>
+				<fes:Constraint name="ImplementsMinStandardFilter">
+					<ows:NoValues />
+					<ows:DefaultValue>false</ows:DefaultValue>
+				</fes:Constraint>
+				<fes:Constraint name="ImplementsStandardFilter">
+					<ows:NoValues />
+					<ows:DefaultValue>false</ows:DefaultValue>
+				</fes:Constraint>
+				<fes:Constraint name="ImplementsMinSpatialFilter">
+					<ows:NoValues />
+					<ows:DefaultValue>true</ows:DefaultValue>
+				</fes:Constraint>
+				<fes:Constraint name="ImplementsSpatialFilter">
+					<ows:NoValues />
+					<ows:DefaultValue>true</ows:DefaultValue>
+				</fes:Constraint>
+				<fes:Constraint name="ImplementsMinTemporalFilter">
+					<ows:NoValues />
+					<ows:DefaultValue>true</ows:DefaultValue>
+				</fes:Constraint>
+				<fes:Constraint name="ImplementsTemporalFilter">
+					<ows:NoValues />
+					<ows:DefaultValue>true</ows:DefaultValue>
+				</fes:Constraint>
+				<fes:Constraint name="ImplementsVersionNav">
+					<ows:NoValues />
+					<ows:DefaultValue>false</ows:DefaultValue>
+				</fes:Constraint>
+				<fes:Constraint name="ImplementsSorting">
+					<ows:NoValues />
+					<ows:DefaultValue>false</ows:DefaultValue>
+				</fes:Constraint>
+				<fes:Constraint name="ImplementsExtendedOperators">
+					<ows:NoValues />
+					<ows:DefaultValue>false</ows:DefaultValue>
+				</fes:Constraint>
+			</fes:Conformance>
+			<fes:Spatial_Capabilities>
+				<fes:GeometryOperands>
+					<fes:GeometryOperand name="gml:Point" />
+					<fes:GeometryOperand name="gml:Polygon" />
+				</fes:GeometryOperands>
+				<fes:SpatialOperators>
+					<fes:SpatialOperator name="BBOX" />
+					<fes:SpatialOperator name="Intersects" />
+					<fes:SpatialOperator name="Within" />
+				</fes:SpatialOperators>
+			</fes:Spatial_Capabilities>
+			<fes:Temporal_Capabilities>
+				<fes:TemporalOperands>
+					<fes:TemporalOperand name="gml:TimePeriod" />
+					<fes:TemporalOperand name="gml:TimeInstant" />
+				</fes:TemporalOperands>
+				<fes:TemporalOperators>
+					<fes:TemporalOperator name="During" />
+					<fes:TemporalOperator name="After" />
+					<fes:TemporalOperator name="TEquals" />
+				</fes:TemporalOperators>
+			</fes:Temporal_Capabilities>
+		</fes:Filter_Capabilities>
+	</sos:filterCapabilities>
+	<!--The contents section contains information about the observations offered 
+		by the service. The observations are group per sensor(-system) into observation 
+		offerings. -->
+	<sos:contents>
+		<sos:Contents>
+			<swes:offering>
+				<sos:ObservationOffering>
+					<swes:identifier>Network_GBXXXX</swes:identifier>
+					<swes:procedure>Network_GBXXXX</swes:procedure>
+					<!--currently not supported: <swes:procedureDescriptionFormat>http://www.opengis.net/sensorML/2.0</swes:procedureDescriptionFormat> -->
+					<swes:procedureDescriptionFormat>http://www.opengis.net/sensorML/1.0.1</swes:procedureDescriptionFormat>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/7</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/8</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/1</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/5</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/10</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/9</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/38</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/24</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/6005</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/20</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/6007</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/428</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/431</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/430</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/432</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/447</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/450</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/451</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/464</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/394</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/441</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/443</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/486</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/482</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/503</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/505</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/6006</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/21</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/6011</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/6013</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/316</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/12</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/6001</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/5655</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/5029</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/5626</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/715</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/6012</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/6008</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/449</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/475</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/6</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/18</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/14</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/7013</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/15</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/13</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/4813</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/4406</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/417</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/5625</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/381</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/5129</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/5654</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/622</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/364</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/637</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/415</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/636</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/638</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/488</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/310</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/313</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/317</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/606</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/712</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/435</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/351</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/352</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/5609</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/508</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/643</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/1047</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/315</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/309</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/390</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/633</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/1629</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/1631</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/1657</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/1659</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/1668</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/611</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/7015</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/5610</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/714</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/608</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/624</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/656</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/7029</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/627</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/717</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/645</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/7018</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/7014</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/7012</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/4013</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/653</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/1046</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/1045</swes:observableProperty>
+					<swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/1771</swes:observableProperty>
+					<sos:observedArea>
+						<gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+							<gml:lowerCorner>6405958.010899998 -841198.3786000013</gml:lowerCorner>
+							<gml:upperCorner>6405974.035700001 -841183.5421000011</gml:upperCorner>
+						</gml:Envelope>
+					</sos:observedArea>
+					<sos:phenomenonTime>
+						<gml:TimePeriod gml:id="phenomenonTime">
+							<gml:beginPosition>2013-04-01T01:00:00+00:00</gml:beginPosition>
+							<gml:endPosition>2014-01-01T00:00:00+00:00</gml:endPosition>
+						</gml:TimePeriod>
+					</sos:phenomenonTime>
+				</sos:ObservationOffering>
+			</swes:offering>
+			<swes:offering>
+				<sos:ObservationOffering>
+					<swes:identifier>Network_BM0001</swes:identifier>
+					<swes:procedure>Network_BM0001</swes:procedure>
+					<!--currently not supported: <swes:procedureDescriptionFormat>http://www.opengis.net/sensorML/2.0</swes:procedureDescriptionFormat> -->
+					<swes:procedureDescriptionFormat>http://www.opengis.net/sensorML/1.0.1</swes:procedureDescriptionFormat>
+					<sos:phenomenonTime>
+						<gml:TimePeriod gml:id="phenomenonTime">
+							<gml:beginPosition>2007-01-01T01:00:00+00:00</gml:beginPosition>
+							<gml:endPosition>2012-04-01T00:00:00+00:00</gml:endPosition>
+						</gml:TimePeriod>
+					</sos:phenomenonTime>
+				</sos:ObservationOffering>
+			</swes:offering>
+			<sos:responseFormat>http://www.opengis.net/om/2.0</sos:responseFormat>
+			<sos:responseFormat>http://aqd.ec.europa.eu/aqd/0.3.7c</sos:responseFormat>
+			<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Observation</sos:observationType>
+		</sos:Contents>
+	</sos:contents>
+</sos:Capabilities>

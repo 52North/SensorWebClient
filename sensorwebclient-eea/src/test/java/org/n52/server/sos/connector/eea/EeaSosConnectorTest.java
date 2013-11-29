@@ -63,7 +63,7 @@ public class EeaSosConnectorTest {
         referenceHelper = CRSUtils.createEpsgForcedXYAxisOrder();
         InputStream is = this.getClass().getResourceAsStream(SF_SPATIAL_FEATURE);
         sfSamplingFeature = SFSamplingFeatureDocument.Factory.parse(is);
-        sosConnector = new ArcGISSoeMetadataHandler();
+        sosConnector = new ArcGISSoeMetadataHandler(null);
     }
 
     @Test

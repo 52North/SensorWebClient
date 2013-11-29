@@ -87,6 +87,10 @@ public class HydroMetadataHandler extends MetadataHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HydroMetadataHandler.class);
 
+    public HydroMetadataHandler(SOSMetadata metadata) {
+        super(metadata);
+    }
+
     @Override
     public SOSMetadata performMetadataCompletion(String sosUrl, String sosVersion) throws Exception {
         SOSMetadata metadata = initMetadata(sosUrl, sosVersion);
@@ -102,7 +106,7 @@ public class HydroMetadataHandler extends MetadataHandler {
     @Override
     public SOSMetadata updateMetadata(SOSMetadata metadata) throws Exception {
         SOSMetadata newMetadata = metadata.clone();
-        initServiceDescription(newMetadata);
+        initMetadata(metadata.getServiceUrl(), metadata.getVersion());
         collectTimeseries(newMetadata);
         return newMetadata;
     }

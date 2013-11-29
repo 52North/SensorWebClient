@@ -24,6 +24,7 @@
 package org.n52.server.service;
 
 import static org.n52.server.da.oxf.DescribeSensorAccessor.getSensorDescriptionAsSensorML;
+import static org.n52.server.mgmt.ConfigurationContext.createSosMetadataHandler;
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadata;
 
 import java.util.HashMap;
@@ -31,7 +32,11 @@ import java.util.Map;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.client.service.SensorMetadataService;
+import org.n52.io.v1.data.ReferenceValueOutput;
+import org.n52.io.v1.data.TimeseriesMetadataOutput;
+import org.n52.io.v1.data.TimeseriesValue;
 import org.n52.oxf.util.JavaHelper;
+import org.n52.server.da.MetadataHandler;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.server.parser.DescribeSensorParser;
 import org.n52.shared.responses.GetProcedureDetailsUrlResponse;
@@ -54,21 +59,52 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
     public SensorMetadataResponse getSensorMetadata(TimeseriesProperties tsProperties) throws Exception {
         try {
             LOG.debug("Request -> GetSensorMetadata");
-            String sosUrl = tsProperties.getServiceUrl();
-            SOSMetadata metadata = getSOSMetadata(sosUrl);
+            
+            SosTimeseries timeseries = tsProperties.getTimeseries();
+            SOSMetadata sosMetadata = getSOSMetadata(timeseries.getServiceUrl());
+            
+            
+
+//            MetadataHandler metadataHandler = createSosMetadataHandler(sosMetadata);
+//            TimeseriesMetadataOutput timeseriesMetadata = metadataHandler.getTimeseriesMetadata(timeseries);
+//            String uom = timeseriesMetadata.getUom();
+//            
+//            ReferenceValueOutput[] referenceValues = timeseriesMetadata.getReferenceValues();
+//            Map<String, ReferenceValue> refValues = new HashMap<String, ReferenceValue>();
+//            for (ReferenceValueOutput referenceValue : referenceValues) {
+//                String label = referenceValue.getLabel();
+//                TimeseriesValue lastValue = referenceValue.getLastValue();
+//                refValues.put(label, new ReferenceValue(label, lastValue.getValue()));
+//            }
+            
+            
+            
+            
+
+            // TODO use different request strategy to obtain metadata/uom when SOS supports HydroProfile
+            // (HyProfile must request an Observation (without timestamp we get the last value))
+            // ==> move metadata obtaining strategy to MetadataHandler class: a different strategy can
+            // be used by overriding the default (metadata via SensorML)
+            
+
+            
+            XmlObject sml = getSensorDescriptionAsSensorML(timeseries.getProcedureId(), sosMetadata);
+            DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), sosMetadata);
+            String url = parser.buildUpSensorMetadataHtmlUrl(tsProperties.getTimeseries());
+            tsProperties.setMetadataUrl(url);
+
+
+
             String procedureId = tsProperties.getProcedure();
             String phenomenonId = tsProperties.getPhenomenon();
-            TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
+            TimeseriesParametersLookup lookup = sosMetadata.getTimeseriesParametersLookup();
             Procedure procedure = lookup.getProcedure(procedureId);
-
-            XmlObject sml = getSensorDescriptionAsSensorML(procedureId, metadata);
-            DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), metadata);
-            tsProperties.setMetadataUrl(parser.buildUpSensorMetadataHtmlUrl(tsProperties.getTimeseries()));
             
 //            tsProperties.setStationName(parser.buildUpSensorMetadataStationName());
             tsProperties.setUnitOfMeasure(parser.buildUpSensorMetadataUom(phenomenonId));
-            
             HashMap<String, ReferenceValue> refvalues = parser.parseReferenceValues();
+            
+            
             tsProperties.addAllRefValues(refvalues);
             procedure.addAllRefValues(refvalues);
     

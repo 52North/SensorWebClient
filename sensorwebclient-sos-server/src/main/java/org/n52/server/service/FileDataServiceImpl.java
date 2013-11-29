@@ -177,7 +177,7 @@ public class FileDataServiceImpl implements FileDataService {
     private OperationResult sendDescSens(TimeseriesProperties prop) throws ServerException {
         try {
             String sosUrl = prop.getServiceUrl();
-            SOSMetadata meta = (SOSMetadata)ConfigurationContext.getServiceMetadata(sosUrl);
+            SOSMetadata meta = ConfigurationContext.getSOSMetadata(sosUrl);
             
             OperationResult opResult = null;
             // build up parameterContainer for DescribeSensor operation:
