@@ -85,6 +85,10 @@ public class TimeManager {
         return this.begin;
     }
 
+    public void setBegin(long begin) {
+    	this.begin = begin;
+    }
+
     public long getOverviewInterval() {
         return this.overviewInterval;
     }
@@ -104,6 +108,10 @@ public class TimeManager {
 
     public long getEnd() {
         return this.end;
+    }
+
+    public void setEnd(long end) {
+        this.end = end;
     }
 
     protected void undoLast() {

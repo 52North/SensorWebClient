@@ -62,8 +62,10 @@ public class Timeseries implements LegendData {
 	private HashMap<Long, String> data;
 
 	private long firstValueDate = 0;
+	private boolean firstValueDateIsSet = false;
 
 	private long lastValueDate = 0;
+	private boolean lastValueDateIsSet = false;
 
 	private String firstValue = "";
 
@@ -149,7 +151,12 @@ public class Timeseries implements LegendData {
 	}
 
 	public void setFirstValueDate(long firstValueDate) {
+		this.firstValueDateIsSet = true;
 		this.firstValueDate = firstValueDate;
+	}
+
+	public boolean getFirstValueDateIsSet(){
+		return this.firstValueDateIsSet;
 	}
 
 	public long getLastValueDate() {
@@ -157,7 +164,12 @@ public class Timeseries implements LegendData {
 	}
 
 	public void setLastValueDate(long lastValueDate) {
+		this.lastValueDateIsSet = true;
 		this.lastValueDate = lastValueDate;
+	}
+	
+	public boolean getLastValueDateIsSet(){
+		return this.lastValueDateIsSet;
 	}
 
 	public void setFirstValue(String firstValue) {

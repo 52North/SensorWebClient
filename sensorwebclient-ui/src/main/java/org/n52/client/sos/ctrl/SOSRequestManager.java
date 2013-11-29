@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eesgmbh.gimv.client.event.LoadImageDataEvent;
 import org.eesgmbh.gimv.client.event.SetDataAreaPixelBoundsEvent;
 import org.eesgmbh.gimv.client.event.SetDomainBoundsEvent;
 import org.eesgmbh.gimv.client.event.SetDomainBoundsEventHandler;
@@ -196,7 +197,10 @@ public class SOSRequestManager extends RequestManager {
     }
 
     public void requestSensorMetadata(NewTimeSeriesEvent evt) throws Exception {
+    	boolean jumpToLatestTimeSeriesDate = getTimeSeriesDataStore().getTimeSeriesCount() == 0;
+    	
         TimeseriesProperties props = createTimeseriesProperties(evt, evt.getServiceUrl());
+        props.setJumpToLatestTimeSeriesDate(jumpToLatestTimeSeriesDate);
         
         Timeseries timeSeries = new Timeseries(evt.getTimeseries().getTimeseriesId(), props);
 
@@ -363,6 +367,10 @@ public class SOSRequestManager extends RequestManager {
                         long date = timeSeriesData.keySet().iterator().next().longValue();
                         String lastValue = timeSeriesData.get(date).toString();
                         EventBus.getMainEventBus().fireEvent(new StoreTimeSeriesLastValueEvent(date, lastValue, id));
+                        // (re-)draw diagram when waiting for latest date
+                        if(timeSeries.getProperties().isJumpToLatestTimeSeriesDate()){
+                        	EventBus.getMainEventBus().fireEvent(new LoadImageDataEvent());
+                        }
                     }
                 }
                 catch (Exception e) {
@@ -436,6 +444,13 @@ public class SOSRequestManager extends RequestManager {
             properties.add(timeSerie.getProperties());
         }
 
+        // Jumping to latest date available
+        if( timeSeries.length == 1 && timeSeries[0].getProperties().isJumpToLatestTimeSeriesDate() && timeSeries[0].getLastValueDateIsSet()){
+        	timeSeries[0].getProperties().setJumpToLatestTimeSeriesDate(false);
+        	TimeManager.getInst().setBegin(timeSeries[0].getLastValueDate() - (24 * 60 * 60 * 1000));
+        	TimeManager.getInst().setEnd(timeSeries[0].getLastValueDate());
+        }
+        
         long begin = TimeManager.getInst().getBegin();
         long end = TimeManager.getInst().getEnd();
         boolean grid = TimeseriesDataStore.getTimeSeriesDataStore().isGridEnabled();

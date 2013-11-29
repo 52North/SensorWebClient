@@ -79,6 +79,8 @@ public class TimeseriesProperties implements Serializable {
 	private boolean isYAxisVisible = true;
 
 	private boolean isHasData = false;
+	
+	private boolean jumpToLatestTimeSeriesDate = false;
 
 	public boolean hasData() {
 		return this.isHasData;
@@ -535,6 +537,14 @@ public class TimeseriesProperties implements Serializable {
 		sb.append("Procedure: ").append(timeseries.getProcedure()).append(", ");
 		sb.append("Phenomenon: ").append(timeseries.getPhenomenon()).append("]");
 		return sb.toString();
+	}
+
+	public boolean isJumpToLatestTimeSeriesDate() {
+		return jumpToLatestTimeSeriesDate;
+	}
+
+	public void setJumpToLatestTimeSeriesDate(boolean jumpToLatestTimeSeriesDate) {
+		this.jumpToLatestTimeSeriesDate = jumpToLatestTimeSeriesDate;
 	}
 
 }

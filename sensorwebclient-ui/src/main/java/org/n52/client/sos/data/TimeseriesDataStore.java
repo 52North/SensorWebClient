@@ -100,6 +100,14 @@ public class TimeseriesDataStore extends ADataStore<Timeseries> {
         Arrays.sort(getDataAsArray(timeSeries), new LegendDataComparator());
         return timeSeries;
     }
+    
+    public int getTimeSeriesCount(){
+    	if(this.dataItems == null){
+    		return 0;
+    	} else {
+    		return this.dataItems.size();
+    	}
+    }
 
     public DataStoreTimeSeriesEventBroker getEventBroker() {
         return this.eventBroker;
