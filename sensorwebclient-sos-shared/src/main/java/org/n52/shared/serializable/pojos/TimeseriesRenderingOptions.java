@@ -1,7 +1,7 @@
-
 package org.n52.shared.serializable.pojos;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Random;
 
 /**
@@ -12,12 +12,23 @@ public class TimeseriesRenderingOptions implements Serializable {
 
     private static final long serialVersionUID = -8863370584243957802L;
 
+	public static final String GRAPH_STYLE_DEFAULT = "1";
+	public static final String LINE_STYLE_DEFAULT = "1";
+	public static final double OPACITY_DEFAULT = 100d;
+	public static final int LINE_WIDTH_DEFAULT = 2;
+
     /**
      * Color as 6-digit hex value.
      */
     private String color = getRandomHexColor();
 
-    private int lineWidth = 2; // default
+	private String graphStyle = GRAPH_STYLE_DEFAULT;
+
+	private String lineStyle = LINE_STYLE_DEFAULT;
+
+	private int lineWidth = LINE_WIDTH_DEFAULT; // default
+
+	private double opacity = OPACITY_DEFAULT;
 
     private Scale scale = new Scale();
     
@@ -71,29 +82,44 @@ public class TimeseriesRenderingOptions implements Serializable {
      * @return one-line formatted JSON represenation of the set values.
      */
     public String asJson() {
-        StringBuilder sb = new StringBuilder("{");
-        sb.append(withQuotes("lineWidth"));
-        sb.append(":").append(lineWidth);
-        if (color != null) {
-            sb.append(",");
-            sb.append(withQuotes("color"));
-            sb.append(":").append(withQuotes(color));
-        }
-        if (!scale.isAuto()){
-            sb.append(",");
-            sb.append(withQuotes("scale"));
-            sb.append(":").append(withQuotes(scale.getType().toString()));
-            if( scale.isManual()){
-                sb.append(",");
-                sb.append(withQuotes("scaleMin"));
-                sb.append(":").append(scale.getManualScaleMin());
-                sb.append(",");
-                sb.append(withQuotes("scaleMax"));
-                sb.append(":").append(scale.getManualScaleMax());
-            }
-        }
-        return sb.append("}").toString();
-    }
+		HashMap<String, String> options = new HashMap<String, String>();
+		if (color != null) {
+			options.put("color", withQuotes(color));
+		}
+		if (lineWidth != LINE_WIDTH_DEFAULT) {
+			options.put("lineWidth", String.valueOf(lineWidth));
+		}
+		if (graphStyle != null
+				&& !graphStyle.equals(GRAPH_STYLE_DEFAULT)) {
+			options.put("graphStyle", withQuotes(graphStyle));
+		}
+		if (lineStyle != null && !lineStyle.equals(LINE_STYLE_DEFAULT)) {
+			options.put("lineStyle", withQuotes(lineStyle));
+		}
+		if (opacity != OPACITY_DEFAULT) {
+			options.put("opacity", String.valueOf(opacity));
+		}
+		if (!scale.isAuto()) {
+			options.put("scale", withQuotes(scale.getType().toString()));
+			if (scale.isManual()) {
+				options.put("scaleMin", String.valueOf(scale.getManualScaleMin()));
+				options.put("scaleMax", String.valueOf(scale.getManualScaleMax()));
+			}
+		}
+
+		StringBuilder sb = new StringBuilder("{");
+		boolean first = true;
+		for (String key : options.keySet()) {
+			if (!first)
+				sb.append(",");
+			sb.append(withQuotes(key));
+			sb.append(":").append(options.get(key));
+			first = false;
+		}
+		sb.append("}").toString();
+
+		return sb.toString();
+	}
     
     private String withQuotes(String toQuote) {
         return "\"".concat(toQuote).concat("\"");
@@ -114,6 +140,30 @@ public class TimeseriesRenderingOptions implements Serializable {
 
 	public void setScale(Scale scale) {
 		this.scale = scale;
+	}
+
+	public String getGraphStyle() {
+		return graphStyle;
+	}
+
+	public void setGraphStyle(String graphStyle) {
+		this.graphStyle = graphStyle;
+	}
+
+	public String getLineStyle() {
+		return lineStyle;
+	}
+
+	public void setLineStyle(String lineStyle) {
+		this.lineStyle = lineStyle;
+	}
+
+	public double getOpacity() {
+		return opacity;
+	}
+
+	public void setOpacity(double opacity) {
+		this.opacity = opacity;
 	}
 
 }

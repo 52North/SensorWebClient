@@ -229,6 +229,18 @@ public final class Application implements EntryPoint {
             JSONNumber lineWidth = tsRenderingOptions.get("lineWidth").isNumber();
             tsOptions.setLineWidth((int)lineWidth.doubleValue());
         }
+        if (tsRenderingOptions.containsKey("graphStyle")) {
+            JSONString graphStyle = tsRenderingOptions.get("graphStyle").isString();
+            tsOptions.setGraphStyle(graphStyle.stringValue());
+        }
+        if (tsRenderingOptions.containsKey("lineStyle")) {
+            JSONString lineStyle = tsRenderingOptions.get("lineStyle").isString();
+            tsOptions.setLineStyle(lineStyle.stringValue());
+        }
+        if (tsRenderingOptions.containsKey("opacity")) {
+            JSONNumber opacity = tsRenderingOptions.get("opacity").isNumber();
+            tsOptions.setOpacity(opacity.doubleValue());
+        }
         if (tsRenderingOptions.containsKey("scale")) {
         	Scale scale = new Scale();
         	try{

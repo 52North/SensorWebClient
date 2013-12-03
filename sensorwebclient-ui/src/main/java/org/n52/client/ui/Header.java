@@ -359,6 +359,9 @@ public class Header extends HLayout {
                     TimeseriesRenderingOptions renderingOptions = new TimeseriesRenderingOptions();
                     renderingOptions.setColor(timeSeries.getColor());
                     renderingOptions.setLineWidth(timeSeries.getLineWidth());
+                    renderingOptions.setGraphStyle(timeSeries.getGraphStyle());
+                    renderingOptions.setLineStyle(timeSeries.getLineStyle());
+                    renderingOptions.setOpacity(timeSeries.getOpacity());
                     renderingOptions.setScale(timeSeries.getScale());
                     options.append(renderingOptions.asJson()).append(",");
                 }
