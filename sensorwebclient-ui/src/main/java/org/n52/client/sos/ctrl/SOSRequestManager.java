@@ -86,6 +86,7 @@ import org.n52.client.sos.event.data.StoreTimeSeriesEvent;
 import org.n52.client.sos.event.data.StoreTimeSeriesLastValueEvent;
 import org.n52.client.sos.event.data.StoreTimeSeriesPropsEvent;
 import org.n52.client.sos.event.data.TimeSeriesHasDataEvent;
+import org.n52.client.sos.event.data.NewTimeSeriesEvent.Source;
 import org.n52.client.sos.legend.Timeseries;
 import org.n52.client.sos.ui.DiagramTab;
 import org.n52.client.ui.Toaster;
@@ -197,7 +198,11 @@ public class SOSRequestManager extends RequestManager {
     }
 
     public void requestSensorMetadata(NewTimeSeriesEvent evt) throws Exception {
-    	boolean jumpToLatestTimeSeriesDate = getTimeSeriesDataStore().getTimeSeriesCount() == 0;
+    	boolean jumpToLatestTimeSeriesDate = // Jump to latest date only when
+    			// event has been fired not from permalink
+    			evt.getCalledFrom() != Source.PERMALINK
+    			// and this is the first time series
+    			&& getTimeSeriesDataStore().getTimeSeriesCount() == 0;
     	
         TimeseriesProperties props = createTimeseriesProperties(evt, evt.getServiceUrl());
         props.setJumpToLatestTimeSeriesDate(jumpToLatestTimeSeriesDate);

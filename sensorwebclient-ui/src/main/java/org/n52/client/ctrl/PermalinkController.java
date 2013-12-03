@@ -35,6 +35,7 @@ import org.n52.client.sos.event.data.StoreFeatureEvent;
 import org.n52.client.sos.event.data.StoreOfferingEvent;
 import org.n52.client.sos.event.data.StoreProcedureEvent;
 import org.n52.client.sos.event.data.StoreStationEvent;
+import org.n52.client.sos.event.data.NewTimeSeriesEvent.Source;
 import org.n52.client.sos.event.data.handler.StoreFeatureEventHandler;
 import org.n52.client.sos.event.data.handler.StoreOfferingEventHandler;
 import org.n52.client.sos.event.data.handler.StoreProcedureEventHandler;
@@ -118,7 +119,7 @@ public class PermalinkController {
                         .addStation(station)
                         .addTimeseries(timeseries)
                         .addRenderingOptions(loadingStatus.options)
-                        .build();
+                        .build(Source.PERMALINK);
                 getMainEventBus().fireEvent(event);
                 iterator.remove();
             }

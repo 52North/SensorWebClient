@@ -46,6 +46,12 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
 
     private TimeseriesRenderingOptions renderingOptions;
 
+    private Source calledFrom = Source.DEFAULT;
+    
+	public enum Source{
+		DEFAULT, PERMALINK
+	}
+	
     public static class Builder {
 		private Station station; // required
 		private SosTimeseries timeseries; // required
@@ -54,7 +60,9 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
 		private TimeseriesRenderingOptions renderingOptions;
 		private boolean requestSensorData = true;
 		private NewTimeSeriesEventHandler[] blockedHandlers = new NewTimeSeriesEventHandler[0];
-    	
+		// From which source this event was fired?
+		private Source calledFrom;
+		
     	public Builder addStation(final Station station) {
     		this.station = station;
     		return this;
@@ -87,8 +95,18 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
             return this;
         }
     	public NewTimeSeriesEvent build() {
+    		return build(Source.DEFAULT);
+    	}
+
+    	public NewTimeSeriesEvent build(Source calledFrom) {
+    		if(calledFrom != null){
+    			this.calledFrom = calledFrom;
+    		} else {
+    			this.calledFrom = Source.DEFAULT;
+    		}
     		return new NewTimeSeriesEvent(this);
     	}
+    	
     	Station getStation() {
     		return this.station;
     	}
@@ -110,6 +128,9 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
     	TimeseriesRenderingOptions getRenderingOptions() {
     	    return renderingOptions;
     	}
+    	Source getCalledFrom(){
+    		return calledFrom;
+    	}
     }
     
     private NewTimeSeriesEvent(Builder builder) {
@@ -119,6 +140,7 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
     	this.height = builder.getHeight();
     	this.requestSensorData = builder.isRequestSensordata();
     	this.renderingOptions = builder.getRenderingOptions();
+    	this.calledFrom = builder.getCalledFrom();
     }
     
     public boolean requestSensordata() {
@@ -157,5 +179,9 @@ public class NewTimeSeriesEvent extends FilteredDispatchGwtEvent<NewTimeSeriesEv
     public Type<NewTimeSeriesEventHandler> getAssociatedType() {
         return TYPE;
     }
+
+	public Source getCalledFrom() {
+		return calledFrom;
+	}
 
 }
