@@ -5,7 +5,7 @@
 		<!-- If SES is not available or required comment out the 'SesTab'. Then 
 			the SES Tab will not be rendered in the client NOTE: Do not forget to comment 
 			out the SES related Servlet declared in the web.xml also. -->
-		<!-- <tab>SesTab</tab> -->
+		<tab>SesTab</tab>
 	</tabs>
 
 	<!-- default time frame for loading timeseries data in days -->

@@ -663,6 +663,7 @@
             </dependencyManagement>
         </profile>
 
+		<!-- Konfiguration release -->
         <profile>
             <id>release</id>
             <build>
@@ -681,6 +682,7 @@
             </build>
         </profile>
 
+		<!-- Konfiguration example -->
         <profile>
             <id>env-example</id>
             <activation>
@@ -741,6 +743,7 @@
             </properties>
         </profile>
 
+		<!-- Konfiguration properties-file -->
         <profile>
             <id>env-dev</id>
             <properties>
@@ -754,6 +757,162 @@
                 </filters>
             </build>
         </profile>
+
+		<!-- Konfiguration lx54 -->
+        <profile>
+            <id>env-lx54</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <!-- TRIGGER MAVEN BUILD WITH `mvn install -Penv-lx54'. -->
+
+                <application.title>Sensor Web Client</application.title>
+
+                <!-- Sensor Client settings -->
+                <ses.eml.resources.url>http://localhost/SWC/eml/</ses.eml.resources.url>
+                <!-- ses.client.user.service.url: URL shown in registration mails - use external address! -->
+                <ses.client.user.service.url>http://isb-lx54.ag.isb.de/SWC/client/SesUserService</ses.client.user.service.url>
+                <ses.services.url>http://localhost:8080/SES/services</ses.services.url>
+                <ses.outgoing.notification.consumer.url>http://localhost:8080/SES-WNS-Translator/translate</ses.outgoing.notification.consumer.url>
+                <wns.service.url>http://localhost:8080/WNS/wns</wns.service.url>
+
+                <ses.database.user>52n</ses.database.user>
+                <ses.database.password>mKiXsF7RObr01YGNLh3R</ses.database.password>
+                <ses.database.connection>jdbc:postgresql://localhost:5432/zdm?searchpath=52n</ses.database.connection>
+
+                <mail.username></mail.username>
+                <mail.password></mail.password>
+                <mail.sender.address>swc@isb-ag.de</mail.sender.address>
+                <mail.smtp.host>localhost</mail.smtp.host>
+                <mail.starttls.enable>false</mail.starttls.enable>
+                <mail.authenticate>false</mail.authenticate>
+                <mail.ssl.enable>false</mail.ssl.enable>
+                <mail.port>25</mail.port>
+
+                <!-- Logging settings -->
+                <config.logger.fileappender.filepath>${catalina.base:-.}/logs</config.logger.fileappender.filepath>
+                <config.logger.level>DEBUG</config.logger.level>
+                <config.logger.level.oxf>WARN</config.logger.level.oxf>
+                <config.logger.level.client>DEBUG</config.logger.level.client>
+                <config.logger.level.server>DEBUG</config.logger.level.server>
+                <config.logger.consoleappender.level>DEBUG</config.logger.consoleappender.level>
+                <config.logger.fileappender.level>WARN</config.logger.fileappender.level>
+
+                <!-- Feeder settings -->
+                <feeder.nodata.values>-999999999</feeder.nodata.values>
+                <feeder.only.youngest.observation>true</feeder.only.youngest.observation>
+                <feeder.getobservations.update.time>60000</feeder.getobservations.update.time>
+                <feeder.minimal.update.interval.range>120000</feeder.minimal.update.interval.range>
+                <feeder.latest.considered.timeinterval>900000</feeder.latest.considered.timeinterval>
+                <feeder.ses.register.publisher.lifetime>2999-12-31T23:59:59+00:00</feeder.ses.register.publisher.lifetime>
+                <feeder.ses.default.topic>ses:Measurements</feeder.ses.default.topic>
+
+                <!-- GWT compile settings -->
+                <gwt.compile.level>INFO</gwt.compile.level>
+                <gwt.compile.style>PRETTY</gwt.compile.style>
+                <gwt.compile.report>true</gwt.compile.report>
+                <gwt.compile.draft>true</gwt.compile.draft>
+                <gwt.compile.optimization.level>0</gwt.compile.optimization.level>
+                <gwt.compile.module>org.n52.SensorWebClient_debug</gwt.compile.module>
+            </properties>
+        </profile>
+
+		<!-- Konfiguration phoebe -->
+        <profile>
+            <id>env-phoebe</id>
+            <properties>
+                <!-- TRIGGER MAVEN BUILD WITH `mvn install -Penv-phoebe'. -->
+
+                <application.title>Sensor Web Client</application.title>
+
+                <!-- Sensor Client settings -->
+                <ses.eml.resources.url>http://localhost:8081/SWC/eml/</ses.eml.resources.url>
+                <ses.client.user.service.url>http://bs-test.ilmenau.baw.de/SWC/client/SesUserService</ses.client.user.service.url>
+                <ses.services.url>http://localhost:8081/SES/services</ses.services.url>
+                <ses.outgoing.notification.consumer.url>http://localhost:8081/SES-WNS-Translator/translate</ses.outgoing.notification.consumer.url>
+                <wns.service.url>http://localhost:8081/WNS/wns</wns.service.url>
+
+                <ses.database.user>52n-qs</ses.database.user>
+                <ses.database.password>WSKJvLj71o5MeWZU6vuq</ses.database.password>
+                <ses.database.connection>jdbc:postgresql://columba.ilmenau.baw.de:5432/zdm?searchpath=52n-qs</ses.database.connection>
+
+                <mail.username></mail.username>
+                <mail.password></mail.password>
+                <mail.sender.address>zdm-noreply@dlz-it-bvbs.bund.de</mail.sender.address>
+                <mail.smtp.host>localhost</mail.smtp.host>
+                <mail.starttls.enable>false</mail.starttls.enable>
+                <mail.authenticate>false</mail.authenticate>
+                <mail.ssl.enable>false</mail.ssl.enable>
+                <mail.port>25</mail.port>
+
+                <!-- Logging settings -->
+                <config.logger.fileappender.filepath>${catalina.base:-.}/logs</config.logger.fileappender.filepath>
+                <config.logger.level>DEBUG</config.logger.level>
+                <config.logger.level.oxf>WARN</config.logger.level.oxf>
+                <config.logger.level.client>DEBUG</config.logger.level.client>
+                <config.logger.level.server>DEBUG</config.logger.level.server>
+                <config.logger.consoleappender.level>DEBUG</config.logger.consoleappender.level>
+                <config.logger.fileappender.level>WARN</config.logger.fileappender.level>
+
+                <!-- GWT compile settings -->
+                <gwt.compile.level>INFO</gwt.compile.level>
+                <gwt.compile.style>PRETTY</gwt.compile.style>
+                <gwt.compile.report>true</gwt.compile.report>
+                <gwt.compile.draft>true</gwt.compile.draft>
+                <gwt.compile.optimization.level>0</gwt.compile.optimization.level>
+                <gwt.compile.module>org.n52.SensorWebClient</gwt.compile.module>
+            </properties>
+        </profile>
+
+		<!-- Konfiguration columba -->
+        <profile>
+            <id>env-columba</id>
+            <properties>
+                <!-- TRIGGER MAVEN BUILD WITH `mvn install -Penv-columba'. -->
+
+                <application.title>Sensor Web Client</application.title>
+
+                <!-- Sensor Client settings -->
+                <ses.eml.resources.url>http://localhost:8080/SWC/eml/</ses.eml.resources.url>
+                <ses.client.user.service.url>http://www.kuestendaten.de/SWC/client/SesUserService</ses.client.user.service.url>
+                <ses.services.url>http://localhost:8080/SES/services</ses.services.url>
+                <ses.outgoing.notification.consumer.url>http://localhost:8080/SES-WNS-Translator/translate</ses.outgoing.notification.consumer.url>
+                <wns.service.url>http://localhost:8080/WNS/wns</wns.service.url>
+
+                <ses.database.user>52n</ses.database.user>
+                <ses.database.password>Q6e9sscEMbnwsypQibyX</ses.database.password>
+                <ses.database.connection>jdbc:postgresql://columba.ilmenau.baw.de:5432/zdm?searchpath=52n</ses.database.connection>
+
+                <mail.username></mail.username>
+                <mail.password></mail.password>
+                <mail.sender.address>zdm-noreply@dlz-it-bvbs.bund.de</mail.sender.address>
+                <mail.smtp.host>localhost</mail.smtp.host>
+                <mail.starttls.enable>false</mail.starttls.enable>
+                <mail.authenticate>false</mail.authenticate>
+                <mail.ssl.enable>false</mail.ssl.enable>
+                <mail.port>25</mail.port>
+
+                <!-- Logging settings -->
+                <config.logger.fileappender.filepath>${catalina.base:-.}/logs</config.logger.fileappender.filepath>
+                <config.logger.level>WARN</config.logger.level>
+                <config.logger.level.oxf>WARN</config.logger.level.oxf>
+                <config.logger.level.client>WARN</config.logger.level.client>
+                <config.logger.level.server>WARN</config.logger.level.server>
+                <config.logger.consoleappender.level>WARN</config.logger.consoleappender.level>
+                <config.logger.fileappender.level>WARN</config.logger.fileappender.level>
+
+                <!-- GWT compile settings -->
+                <gwt.compile.level>INFO</gwt.compile.level>
+                <gwt.compile.style>PRETTY</gwt.compile.style>
+                <gwt.compile.report>true</gwt.compile.report>
+                <gwt.compile.draft>true</gwt.compile.draft>
+                <gwt.compile.optimization.level>0</gwt.compile.optimization.level>
+                <gwt.compile.module>org.n52.SensorWebClient</gwt.compile.module>
+            </properties>
+        </profile>
+
+
     </profiles>
 
     <properties>
