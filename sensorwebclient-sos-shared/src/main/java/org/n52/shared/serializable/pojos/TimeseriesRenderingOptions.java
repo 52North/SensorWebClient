@@ -3,6 +3,7 @@ package org.n52.shared.serializable.pojos;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Vector;
 
 /**
  * Planned successor to replace {@link TimeseriesProperties} in the future. Currently used to define client
@@ -32,6 +33,8 @@ public class TimeseriesRenderingOptions implements Serializable {
 
     private Scale scale = new Scale();
     
+    private static final ColorManager colorManager = new ColorManager();
+    
     /**
      * @return a default instance of rendering options and random hex color.
      */
@@ -40,19 +43,7 @@ public class TimeseriesRenderingOptions implements Serializable {
     }
     
     private static String getRandomHexColor() {
-        String redHex = getNextFormattedRandomNumber();
-        String yellowHex = getNextFormattedRandomNumber();
-        String blueHex = getNextFormattedRandomNumber();
-        return "#" + redHex + yellowHex + blueHex;
-    }
-
-    private static String getNextFormattedRandomNumber() {
-        String randomHex = Integer.toHexString(new Random().nextInt(256));
-        if (randomHex.length() == 1) {
-            // ensure two digits
-            randomHex = "0" + randomHex;
-        }
-        return randomHex;
+    	return colorManager.getNewRandomColor();
     }
 
     /**
@@ -165,5 +156,4 @@ public class TimeseriesRenderingOptions implements Serializable {
 	public void setOpacity(double opacity) {
 		this.opacity = opacity;
 	}
-
 }
