@@ -169,12 +169,12 @@ public class Header extends HLayout {
     	return getHeaderIconTemplate(name, url, title, width, height);
     }
     
-    private static Label getHeaderIconTemplate(String name, final String url, String title, int width, int height){
+    private static Label getHeaderIconTemplate(String name, final String url, String tooltip, int width, int height){
     	Label label = LabelFactory.getBaseLabel();
     	label.setWidth(width);
-    	//label.setHeight(height);
     	label.setPadding(0);
     	label.setMargin(0);
+    	label.setTooltip(tooltip);
     	label.addStyleName("icon");
     	label.addStyleName(name);
     	label.setValign(VerticalAlignment.CENTER);
