@@ -860,6 +860,15 @@
                 <config.logger.consoleappender.level>DEBUG</config.logger.consoleappender.level>
                 <config.logger.fileappender.level>WARN</config.logger.fileappender.level>
 
+                <!-- Feeder settings -->
+                <feeder.nodata.values>-999999999</feeder.nodata.values>
+                <feeder.only.youngest.observation>true</feeder.only.youngest.observation>
+                <feeder.getobservations.update.time>60000</feeder.getobservations.update.time>
+                <feeder.minimal.update.interval.range>120000</feeder.minimal.update.interval.range>
+                <feeder.latest.considered.timeinterval>900000</feeder.latest.considered.timeinterval>
+                <feeder.ses.register.publisher.lifetime>2999-12-31T23:59:59+00:00</feeder.ses.register.publisher.lifetime>
+                <feeder.ses.default.topic>ses:Measurements</feeder.ses.default.topic>
+
                 <!-- GWT compile settings -->
                 <gwt.compile.level>INFO</gwt.compile.level>
                 <gwt.compile.style>PRETTY</gwt.compile.style>
@@ -906,6 +915,15 @@
                 <config.logger.level.server>WARN</config.logger.level.server>
                 <config.logger.consoleappender.level>WARN</config.logger.consoleappender.level>
                 <config.logger.fileappender.level>WARN</config.logger.fileappender.level>
+
+                <!-- Feeder settings -->
+                <feeder.nodata.values>-999999999</feeder.nodata.values>
+                <feeder.only.youngest.observation>true</feeder.only.youngest.observation>
+                <feeder.getobservations.update.time>60000</feeder.getobservations.update.time>
+                <feeder.minimal.update.interval.range>120000</feeder.minimal.update.interval.range>
+                <feeder.latest.considered.timeinterval>900000</feeder.latest.considered.timeinterval>
+                <feeder.ses.register.publisher.lifetime>2999-12-31T23:59:59+00:00</feeder.ses.register.publisher.lifetime>
+                <feeder.ses.default.topic>ses:Measurements</feeder.ses.default.topic>
 
                 <!-- GWT compile settings -->
                 <gwt.compile.level>INFO</gwt.compile.level>
