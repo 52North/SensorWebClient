@@ -369,6 +369,11 @@
             <version>1.3</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+                <groupId>net.bull.javamelody</groupId>
+                <artifactId>javamelody-core</artifactId>
+                <version>1.45.0</version>
+        </dependency>
     </dependencies>
 
     <build>
