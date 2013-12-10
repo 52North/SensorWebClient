@@ -32,6 +32,7 @@ public class PhenomenonCategories implements Serializable {
 
 		list = new  ArrayList<String>();
 		list.add("Windgeschwindigkeit");
+		list.add("Windrichtung");
 		categories.put("Meteorologie", list);
 
 		list = new  ArrayList<String>();
@@ -115,6 +116,10 @@ public class PhenomenonCategories implements Serializable {
 		list = new  ArrayList<String>();
 		list.add("Truebung");
 		categories.put("Truebung", list);
+
+		list = new  ArrayList<String>();
+		list.add("pH-Wert");
+		categories.put("Chemische Parameter", list);
 
 	}
 
