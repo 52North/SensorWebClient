@@ -53,13 +53,6 @@ public class TimeseriesProperties implements Serializable {
     private TimeseriesRenderingOptions renderingOptions = new TimeseriesRenderingOptions();
 
 	/**
-	 * The series type. 1 = levelline 2 = sumline
-	 */
-	private String seriesType = "1";
-
-	private String lineStyle = "1";
-	
-	/**
 	 * Units of measurement
 	 */
 	private String uom;
@@ -73,8 +66,6 @@ public class TimeseriesProperties implements Serializable {
 	private Axis axis = null;
 
 	private boolean setAxis = true;
-
-	private double opacity = 100d;
 
 	private boolean isYAxisVisible = true;
 
@@ -131,27 +122,28 @@ public class TimeseriesProperties implements Serializable {
         this.uom = uom;
 	}
 
-	
+	private TimeseriesProperties(SosTimeseries timeseries, Station station,
+			int width, int height, String uom) {
+	    this.timeseries = timeseries;
+        this.station = station;
+        this.width = width;
+        this.height = height;
+		this.station = station;
+        this.uom = uom;
+	}
 	
 	public TimeseriesProperties copy() {
 		TimeseriesProperties result = new TimeseriesProperties(this.timeseries, this.station, 
-		                                                       this.width, this.height, this.uom, 
-		                                                       this.renderingOptions.getScale());
-		result.setAxisData(this.axis); // XXX this is not a deep copy! => CBR
-		TimeseriesRenderingOptions options = new TimeseriesRenderingOptions();
-		options.setColor(renderingOptions.getColor());
-		options.setLineWidth(renderingOptions.getLineWidth());
-		result.setRenderingOptions(options);
+		                                                       this.width, this.height, this.uom);
+		result.setAxisData(this.axis);
+		result.setRenderingOptions(renderingOptions.copy());
 		result.setLabel(this.label);
 		result.setLanguage(this.language);
-		result.setLineStyle(this.lineStyle);
 		result.setMetadataUrl(this.metadataUrl);
-		result.setOpacity(this.opacity);
 		result.setShowYAxis(this.isYAxisVisible);
 		result.setStationName(this.stationName);
 		result.setStationLongname(this.stationLongname);
 		result.setUnitOfMeasure(this.uom);
-		result.setSeriesType(this.seriesType);
 		return result;
 	}
 
@@ -163,13 +155,19 @@ public class TimeseriesProperties implements Serializable {
 		this.isYAxisVisible = showYAxis;
 	}
 
+	/**
+	 * @deprecated use {@link #getRenderingOptions()}
+	 */
 	public String getGraphStyle() {
 	    // XXX clear difference to lineStyle!
-		return this.seriesType;
+		return this.renderingOptions.getGraphStyle();
 	}
 
+	/**
+	 * @deprecated use {@link #getRenderingOptions()}
+	 */
 	public void setSeriesType(String sumLine) {
-		this.seriesType = sumLine;
+		this.renderingOptions.setGraphStyle(sumLine);
 	}
 
 	public Axis getAxis() {
@@ -208,21 +206,30 @@ public class TimeseriesProperties implements Serializable {
 		return this.metadataUrl;
 	}
 
+	/**
+	 * @deprecated use {@link #getRenderingOptions()}
+	 */
 	public void setScale( Scale scale ){
 		this.renderingOptions.setScale(Scale.copy(scale));
 	}
 	
+	/**
+	 * @deprecated use {@link #getRenderingOptions()}
+	 */
 	public void setScale( Scale.Type type ){
 		this.renderingOptions.setScale(new Scale(type));
 	}
 	
+	/**
+	 * @deprecated use {@link #getRenderingOptions()}
+	 */
 	public Scale getScale(){
-		if(this.renderingOptions.getScale() == null){
-			this.renderingOptions.setScale(new Scale());
-		}
 		return this.renderingOptions.getScale();
 	}
 	
+	/**
+	 * @deprecated use {@link #getRenderingOptions()}
+	 */
 	public boolean isAutoScale() {
 		return this.renderingOptions.getScale().isAuto();
 	}
@@ -249,10 +256,16 @@ public class TimeseriesProperties implements Serializable {
 		this.renderingOptions.getScale().setZero(zeroScaled);
 	}
 
+	/**
+	 * @deprecated use {@link #getRenderingOptions()}
+	 */
 	public boolean isZeroScaled() {
 		return this.renderingOptions.getScale().isZero();
 	}
 
+	/**
+	 * @deprecated use {@link #getRenderingOptions()}
+	 */
 	public boolean isManualScaled() {
 		return this.renderingOptions.getScale().isManual();
 	}
@@ -404,12 +417,18 @@ public class TimeseriesProperties implements Serializable {
 		this.label = label;
 	}
 
+	/**
+	 * @deprecated use {@link #getRenderingOptions()}
+	 */
 	public String getLineStyle() {
-		return this.lineStyle;
+		return this.renderingOptions.getLineStyle();
 	}
 
+	/**
+	 * @deprecated use {@link #getRenderingOptions()}
+	 */
 	public void setLineStyle(String lineStyle) {
-		this.lineStyle = lineStyle;
+		this.renderingOptions.setLineStyle(lineStyle);
 	}
 
     /**
@@ -423,9 +442,6 @@ public class TimeseriesProperties implements Serializable {
      * @deprecated use {@link #setRenderingOptions(TimeseriesRenderingOptions)}
      */
     public void setHexColor(String hexColor) {
-        if (renderingOptions == null) {
-            renderingOptions = new TimeseriesRenderingOptions();
-        }
         renderingOptions.setColor(hexColor);
     }
 
@@ -441,9 +457,6 @@ public class TimeseriesProperties implements Serializable {
 	 */
 	@Deprecated
 	public void setLineWidth(int lineWidth) {
-	    if (renderingOptions == null) {
-            renderingOptions = new TimeseriesRenderingOptions();
-        }
 	    renderingOptions.setLineWidth(lineWidth);
 	}
 	
@@ -495,12 +508,18 @@ public class TimeseriesProperties implements Serializable {
         this.station.getLocation().setSrs(srs);
     }
 
+	/**
+	 * @deprecated use {@link #getRenderingOptions()}
+	 */
 	public void setOpacity(double opacityPercentage) {
-		this.opacity = opacityPercentage;
+		this.renderingOptions.setOpacity(opacityPercentage);
 	}
 
+	/**
+	 * @deprecated use {@link #getRenderingOptions()}
+	 */
 	public double getOpacity() {
-		return this.opacity;
+		return this.renderingOptions.getOpacity();
 	}
 
 	public void addRefValue(ReferenceValue v) {

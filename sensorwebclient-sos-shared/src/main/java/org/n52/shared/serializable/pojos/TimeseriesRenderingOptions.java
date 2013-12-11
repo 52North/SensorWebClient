@@ -130,7 +130,10 @@ public class TimeseriesRenderingOptions implements Serializable {
 	}
 
 	public void setScale(Scale scale) {
-		this.scale = scale;
+		if(scale != null){
+			this.scale = scale;
+		}
+		
 	}
 
 	public String getGraphStyle() {
@@ -155,5 +158,17 @@ public class TimeseriesRenderingOptions implements Serializable {
 
 	public void setOpacity(double opacity) {
 		this.opacity = opacity;
+	}
+	
+	public TimeseriesRenderingOptions copy(){
+		TimeseriesRenderingOptions newOptions = new TimeseriesRenderingOptions();
+		newOptions.setColor(getColor());
+		newOptions.setGraphStyle(getGraphStyle());
+		newOptions.setLineStyle(getLineStyle());
+		newOptions.setLineWidth(getLineWidth());
+		newOptions.setOpacity(getOpacity());
+		newOptions.setScale(getScale().getCopy());
+		
+		return newOptions;
 	}
 }
