@@ -24,16 +24,13 @@
 
 package org.n52.client.ui.legend;
 
-import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.ctrl.PropertiesManager.getPropertiesManager;
 import static org.n52.client.sos.ctrl.SosDataManager.getDataManager;
 import static org.n52.client.sos.data.TimeseriesDataStore.getTimeSeriesDataStore;
 import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Set;
 
 import org.eesgmbh.gimv.client.event.LoadImageDataEvent;
@@ -50,7 +47,6 @@ import org.n52.client.sos.event.LegendElementSelectedEvent;
 import org.n52.client.sos.event.TimeSeriesChangedEvent;
 import org.n52.client.sos.event.UpdateScaleEvent;
 import org.n52.client.sos.event.data.DeleteTimeSeriesEvent;
-import org.n52.client.sos.event.data.ExportEvent;
 import org.n52.client.sos.event.data.FirstValueOfTimeSeriesEvent;
 import org.n52.client.sos.event.data.StoreTimeSeriesLastValueEvent;
 import org.n52.client.sos.event.data.StoreTimeSeriesPropsEvent;
@@ -66,7 +62,6 @@ import org.n52.client.sos.event.handler.UpdateScaleEventHandler;
 import org.n52.client.sos.legend.Timeseries;
 import org.n52.client.ui.Toaster;
 import org.n52.client.ui.View;
-import org.n52.client.ui.btn.ImageButton;
 import org.n52.client.ui.btn.SmallButton;
 import org.n52.client.util.ClientUtils;
 import org.n52.shared.serializable.pojos.Scale;
@@ -130,7 +125,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 
 	private Label titleLabel;
 
-	private String width;
+//	private String width;
 
 	private String height;
 
@@ -193,7 +188,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
     private LoginWindow subsriptionWindow;
 
 	public LegendEntryTimeSeries(Timeseries ts, String width, String height) {
-		this.width = width;
+//		this.width = width;
 		this.height = height;
 		this.timeseriesID = ts.getId();
 		this.eventBroker = new LegendEntryTimeSeriesEventBroker();
@@ -392,119 +387,119 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		return tools;
 	}
 
-	private ImageButton createJumpToLastValueButton() {
-		final ImageButton jumpLast = new ImageButton("jumpLast",
-				"../img/icons/control_end_blue.png",
-				i18n.jumpToLast(),
-				i18n.jumpToLastExtended());
-		View.getView().registerTooltip(jumpLast);
-		jumpLast.addClickHandler(new ClickHandler() {
-
-			public void onClick(ClickEvent event) {
-				long date = LegendEntryTimeSeries.this.getTimeSeries()
-						.getLastValueDate();
-				if (date == 0) {
-					Toaster.getToasterInstance().addMessage(
-							i18n.errorSOS() + ": "
-									+ i18n.jumpToLast());
-					return;
-				}
-				long interval = TimeManager.getInst().getEnd() - date;
-
-				long begin = TimeManager.getInst().getBegin() - interval;
-
-				EventBus.getMainEventBus().fireEvent(
-						new DatesChangedEvent(begin, date));
-
-			}
-		});
-		return jumpLast;
-	}
-
-	private ImageButton createJumpToFirstValueButton() {
-		ImageButton jumpFirst = new ImageButton("jumpFirst",
-				"../img/icons/control_start_blue.png",
-				i18n.jumpToFirst(),
-				i18n.jumpToFirstExtended());
-		View.getView().registerTooltip(jumpFirst);
-		jumpFirst.addClickHandler(new ClickHandler() {
-
-			public void onClick(ClickEvent event) {
-				long date = LegendEntryTimeSeries.this.getTimeSeries()
-						.getFirstValueDate();
-
-				if (date == 0) {
-					Toaster.getToasterInstance().addMessage(
-							i18n.errorSOS() + ": "
-									+ i18n.jumpToFirst());
-					return;
-				}
-
-				long interval = TimeManager.getInst().getBegin() - date;
-
-				long end = TimeManager.getInst().getEnd() - interval;
-
-				EventBus.getMainEventBus().fireEvent(
-						new DatesChangedEvent(date, end));
-
-			}
-		});
-		return jumpFirst;
-	}
-
-	private ImageButton createPDFExportButton() {
-		ImageButton exportPDF = new ImageButton("exportPDF",
-				"../img/icons/page_white_acrobat.png",
-				i18n.exportPDF(), i18n.exportPDFExtended());
-		View.getView().registerTooltip(exportPDF);
-		exportPDF.addClickHandler(new ClickHandler() {
-
-			public void onClick(ClickEvent event) {
-				ArrayList<Timeseries> series = new ArrayList<Timeseries>();
-				series.add(getTimeSeries());
-				EventBus.getMainEventBus().fireEvent(
-						new ExportEvent(series, ExportEvent.ExportType.PDF));
-
-			}
-		});
-		return exportPDF;
-	}
-
-	private ImageButton createXLSExportButton() {
-		ImageButton exportXLS = new ImageButton(
-				"exportXLS", "../img/icons/page_white_excel.png", //$NON-NLS-2$
-				i18n.exportXLS(), i18n.exportXLSExtended());
-		View.getView().registerTooltip(exportXLS);
-		exportXLS.addClickHandler(new ClickHandler() {
-
-			public void onClick(ClickEvent event) {
-				List<Timeseries> series = new ArrayList<Timeseries>();
-				series.add(getTimeSeries());
-				EventBus.getMainEventBus().fireEvent(
-						new ExportEvent(series, ExportEvent.ExportType.XLS));
-
-			}
-		});
-		return exportXLS;
-	}
-
-	private ImageButton createCSVExportButton() {
-		ImageButton exportCSV = new ImageButton(
-				"exportCSV", "../img/icons/table.png", //$NON-NLS-2$
-				i18n.exportCSV(), i18n.exportCSVExtended());
-		View.getView().registerTooltip(exportCSV);
-		exportCSV.addClickHandler(new ClickHandler() {
-
-			public void onClick(ClickEvent event) {
-				List<Timeseries> series = new ArrayList<Timeseries>();
-				series.add(getTimeSeries());
-				EventBus.getMainEventBus().fireEvent(
-						new ExportEvent(series, ExportEvent.ExportType.CSV));
-
-			}
-		});
-		return exportCSV;
-	}
+//	private ImageButton createJumpToLastValueButton() {
+//		final ImageButton jumpLast = new ImageButton("jumpLast",
+//				"../img/icons/control_end_blue.png",
+//				i18n.jumpToLast(),
+//				i18n.jumpToLastExtended());
+//		View.getView().registerTooltip(jumpLast);
+//		jumpLast.addClickHandler(new ClickHandler() {
+//
+//			public void onClick(ClickEvent event) {
+//				long date = LegendEntryTimeSeries.this.getTimeSeries()
+//						.getLastValueDate();
+//				if (date == 0) {
+//					Toaster.getToasterInstance().addMessage(
+//							i18n.errorSOS() + ": "
+//									+ i18n.jumpToLast());
+//					return;
+//				}
+//				long interval = TimeManager.getInst().getEnd() - date;
+//
+//				long begin = TimeManager.getInst().getBegin() - interval;
+//
+//				EventBus.getMainEventBus().fireEvent(
+//						new DatesChangedEvent(begin, date));
+//
+//			}
+//		});
+//		return jumpLast;
+//	}
+//
+//	private ImageButton createJumpToFirstValueButton() {
+//		ImageButton jumpFirst = new ImageButton("jumpFirst",
+//				"../img/icons/control_start_blue.png",
+//				i18n.jumpToFirst(),
+//				i18n.jumpToFirstExtended());
+//		View.getView().registerTooltip(jumpFirst);
+//		jumpFirst.addClickHandler(new ClickHandler() {
+//
+//			public void onClick(ClickEvent event) {
+//				long date = LegendEntryTimeSeries.this.getTimeSeries()
+//						.getFirstValueDate();
+//
+//				if (date == 0) {
+//					Toaster.getToasterInstance().addMessage(
+//							i18n.errorSOS() + ": "
+//									+ i18n.jumpToFirst());
+//					return;
+//				}
+//
+//				long interval = TimeManager.getInst().getBegin() - date;
+//
+//				long end = TimeManager.getInst().getEnd() - interval;
+//
+//				EventBus.getMainEventBus().fireEvent(
+//						new DatesChangedEvent(date, end));
+//
+//			}
+//		});
+//		return jumpFirst;
+//	}
+//
+//	private ImageButton createPDFExportButton() {
+//		ImageButton exportPDF = new ImageButton("exportPDF",
+//				"../img/icons/page_white_acrobat.png",
+//				i18n.exportPDF(), i18n.exportPDFExtended());
+//		View.getView().registerTooltip(exportPDF);
+//		exportPDF.addClickHandler(new ClickHandler() {
+//
+//			public void onClick(ClickEvent event) {
+//				ArrayList<Timeseries> series = new ArrayList<Timeseries>();
+//				series.add(getTimeSeries());
+//				EventBus.getMainEventBus().fireEvent(
+//						new ExportEvent(series, ExportEvent.ExportType.PDF));
+//
+//			}
+//		});
+//		return exportPDF;
+//	}
+//
+//	private ImageButton createXLSExportButton() {
+//		ImageButton exportXLS = new ImageButton(
+//				"exportXLS", "../img/icons/page_white_excel.png", //$NON-NLS-2$
+//				i18n.exportXLS(), i18n.exportXLSExtended());
+//		View.getView().registerTooltip(exportXLS);
+//		exportXLS.addClickHandler(new ClickHandler() {
+//
+//			public void onClick(ClickEvent event) {
+//				List<Timeseries> series = new ArrayList<Timeseries>();
+//				series.add(getTimeSeries());
+//				EventBus.getMainEventBus().fireEvent(
+//						new ExportEvent(series, ExportEvent.ExportType.XLS));
+//
+//			}
+//		});
+//		return exportXLS;
+//	}
+//
+//	private ImageButton createCSVExportButton() {
+//		ImageButton exportCSV = new ImageButton(
+//				"exportCSV", "../img/icons/table.png", //$NON-NLS-2$
+//				i18n.exportCSV(), i18n.exportCSVExtended());
+//		View.getView().registerTooltip(exportCSV);
+//		exportCSV.addClickHandler(new ClickHandler() {
+//
+//			public void onClick(ClickEvent event) {
+//				List<Timeseries> series = new ArrayList<Timeseries>();
+//				series.add(getTimeSeries());
+//				EventBus.getMainEventBus().fireEvent(
+//						new ExportEvent(series, ExportEvent.ExportType.CSV));
+//
+//			}
+//		});
+//		return exportCSV;
+//	}
 
 	private void createDeleteLegendEntryButton() {
 		this.deleteButton = new SmallButton(new Img("../img/icons/del.png"),
@@ -603,10 +598,10 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		Timeseries timeseries = getTimeSeries();
 		TimeseriesProperties properties = timeseries.getProperties();
 		TimeseriesParametersLookup lookup = getParameterLookup(properties);
-		String phenomenon = lookup.getPhenomenon(properties.getPhenomenon()).getLabel(DecodeType.NATURAL);
+		String phenomenon = lookup.getPhenomenon(properties.getTimeseries().getPhenomenon()).getLabel(DecodeType.NATURAL);
 
 		this.titleLabel.setContents("<span>" + phenomenon + "@" + getStationName(timeseries) + "</span>");
-		this.titleCol.getCanvas().setBackgroundColor(properties.getHexColor());
+		this.titleCol.getCanvas().setBackgroundColor(properties.getRenderingOptions().getColor());
 		this.styleChanger.setTitle(timeseries.getPhenomenonId(DecodeType.NATURAL) + "@" + getStationName(timeseries));
 		if (timeseries.hasData()) {
 			this.noDataSign.hide();
@@ -1038,103 +1033,103 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		// TODO not needed?
 	}
 
-	private HLayout createOrderEntryTools() {
-		HLayout ordButt = new HLayout();
-		ordButt.setTabIndex(-1);
-		ordButt.setWidth(40);
-		ordButt.setAlign(Alignment.RIGHT);
-
-		ImageButton up = new ImageButton("up", "../img/icons/arrow_up.png",
-				i18n.up(), i18n.upExt());
-		ImageButton down = new ImageButton("down",
-				"../img/icons/arrow_down.png", i18n.down(),
-				i18n.downExt());
-		up.addClickHandler(new ClickHandler() {
-
-			public void onClick(ClickEvent event) {
-				Canvas[] members = View.getView().getLegend()
-						.getLegendStack().getMembers();
-
-				for (int i = 0; i < members.length; i++) {
-
-					if (members[i] instanceof LegendElement) {
-
-						LegendElement le = (LegendElement) members[i];
-
-						if (le.equals(LegendEntryTimeSeries.this)) {
-							try {
-								EventBus.getMainEventBus().fireEvent(
-										new LegendElementSelectedEvent(le,
-												false));
-								LegendElement pred = (LegendElement) members[i - 1];
-								int tmp = pred.getOrdering();
-								pred.setOrdering(le.getOrdering());
-								le.setOrdering(tmp);
-
-								TimeseriesDataStore.getTimeSeriesDataStore()
-										.getDataItem(le.getElemId())
-										.setOrdering(le.getOrdering());
-								TimeseriesDataStore.getTimeSeriesDataStore()
-										.getDataItem(pred.getElemId())
-										.setOrdering(pred.getOrdering());
-
-							} catch (Exception e) {
-								// was the first one, so do nothing
-								return;
-							}
-						}
-					}
-				}
-
-				getMainEventBus().fireEvent(new TimeSeriesChangedEvent());
-				getMainEventBus().fireEvent(new LoadImageDataEvent());
-			}
-		});
-
-		down.addClickHandler(new ClickHandler() {
-
-			public void onClick(ClickEvent event) {
-				Canvas[] members = View.getView().getLegend()
-						.getLegendStack().getMembers();
-
-				for (int i = 0; i < members.length; i++) {
-
-					if (members[i] instanceof LegendElement) {
-
-						LegendElement le = (LegendElement) members[i];
-
-						if (le.equals(LegendEntryTimeSeries.this)) {
-							try {
-								getMainEventBus().fireEvent(new LegendElementSelectedEvent(le, false));
-								LegendElement succ = (LegendElement) members[i + 1];
-								int tmp = succ.getOrdering();
-								succ.setOrdering(le.getOrdering());
-								le.setOrdering(tmp);
-
-								TimeseriesDataStore.getTimeSeriesDataStore()
-										.getDataItem(le.getElemId())
-										.setOrdering(le.getOrdering());
-								TimeseriesDataStore.getTimeSeriesDataStore()
-										.getDataItem(succ.getElemId())
-										.setOrdering(succ.getOrdering());
-
-							} catch (Exception e) {
-								// was the last one, so do nothing
-								return;
-							}
-						}
-					}
-				}
-				EventBus.getMainEventBus().fireEvent(
-						new TimeSeriesChangedEvent());
-				EventBus.getMainEventBus().fireEvent(new LoadImageDataEvent());
-			}
-		});
-
-		ordButt.addMember(up);
-		ordButt.addMember(down);
-		return ordButt;
-	}
+//	private HLayout createOrderEntryTools() {
+//		HLayout ordButt = new HLayout();
+//		ordButt.setTabIndex(-1);
+//		ordButt.setWidth(40);
+//		ordButt.setAlign(Alignment.RIGHT);
+//
+//		ImageButton up = new ImageButton("up", "../img/icons/arrow_up.png",
+//				i18n.up(), i18n.upExt());
+//		ImageButton down = new ImageButton("down",
+//				"../img/icons/arrow_down.png", i18n.down(),
+//				i18n.downExt());
+//		up.addClickHandler(new ClickHandler() {
+//
+//			public void onClick(ClickEvent event) {
+//				Canvas[] members = View.getView().getLegend()
+//						.getLegendStack().getMembers();
+//
+//				for (int i = 0; i < members.length; i++) {
+//
+//					if (members[i] instanceof LegendElement) {
+//
+//						LegendElement le = (LegendElement) members[i];
+//
+//						if (le.equals(LegendEntryTimeSeries.this)) {
+//							try {
+//								EventBus.getMainEventBus().fireEvent(
+//										new LegendElementSelectedEvent(le,
+//												false));
+//								LegendElement pred = (LegendElement) members[i - 1];
+//								int tmp = pred.getOrdering();
+//								pred.setOrdering(le.getOrdering());
+//								le.setOrdering(tmp);
+//
+//								TimeseriesDataStore.getTimeSeriesDataStore()
+//										.getDataItem(le.getElemId())
+//										.setOrdering(le.getOrdering());
+//								TimeseriesDataStore.getTimeSeriesDataStore()
+//										.getDataItem(pred.getElemId())
+//										.setOrdering(pred.getOrdering());
+//
+//							} catch (Exception e) {
+//								// was the first one, so do nothing
+//								return;
+//							}
+//						}
+//					}
+//				}
+//
+//				getMainEventBus().fireEvent(new TimeSeriesChangedEvent());
+//				getMainEventBus().fireEvent(new LoadImageDataEvent());
+//			}
+//		});
+//
+//		down.addClickHandler(new ClickHandler() {
+//
+//			public void onClick(ClickEvent event) {
+//				Canvas[] members = View.getView().getLegend()
+//						.getLegendStack().getMembers();
+//
+//				for (int i = 0; i < members.length; i++) {
+//
+//					if (members[i] instanceof LegendElement) {
+//
+//						LegendElement le = (LegendElement) members[i];
+//
+//						if (le.equals(LegendEntryTimeSeries.this)) {
+//							try {
+//								getMainEventBus().fireEvent(new LegendElementSelectedEvent(le, false));
+//								LegendElement succ = (LegendElement) members[i + 1];
+//								int tmp = succ.getOrdering();
+//								succ.setOrdering(le.getOrdering());
+//								le.setOrdering(tmp);
+//
+//								TimeseriesDataStore.getTimeSeriesDataStore()
+//										.getDataItem(le.getElemId())
+//										.setOrdering(le.getOrdering());
+//								TimeseriesDataStore.getTimeSeriesDataStore()
+//										.getDataItem(succ.getElemId())
+//										.setOrdering(succ.getOrdering());
+//
+//							} catch (Exception e) {
+//								// was the last one, so do nothing
+//								return;
+//							}
+//						}
+//					}
+//				}
+//				EventBus.getMainEventBus().fireEvent(
+//						new TimeSeriesChangedEvent());
+//				EventBus.getMainEventBus().fireEvent(new LoadImageDataEvent());
+//			}
+//		});
+//
+//		ordButt.addMember(up);
+//		ordButt.addMember(down);
+//		return ordButt;
+//	}
 
 	public int getOrdering() {
 		return this.getTimeSeries().getOrdering();
