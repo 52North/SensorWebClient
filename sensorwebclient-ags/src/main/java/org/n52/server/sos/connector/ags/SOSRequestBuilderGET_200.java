@@ -43,6 +43,7 @@ public class SOSRequestBuilderGET_200 implements ISOSRequestBuilder {
 
 	@Override
 	public String buildGetCapabilitiesRequest(ParameterContainer parameters) {
+	    // TODO add acceptVersions parameter
 		return "request=GetCapabilities&service=SOS&f=xml";
 	}
 
@@ -140,7 +141,7 @@ public class SOSRequestBuilderGET_200 implements ISOSRequestBuilder {
 
 	private String getSpecifiedStringValue(ParameterContainer parameters, String parameterName) {
         ParameterShell parameter = parameters.getParameterShellWithServiceSidedName(parameterName);
-        return (String) parameter.getSpecifiedValue();
+        return parameter == null ? "" : (String) parameter.getSpecifiedValue();
     }
 
     @Override
