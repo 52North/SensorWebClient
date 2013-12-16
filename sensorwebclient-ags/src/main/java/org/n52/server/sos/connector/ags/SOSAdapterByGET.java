@@ -171,6 +171,7 @@ public class SOSAdapterByGET extends SOSAdapter {
     }
 
     private String concatGetRequest(String requestString, String serviceUrl) {
+        serviceUrl += !serviceUrl.endsWith("/") ? "/": "";
         return serviceUrl + "?" + requestString;
     }
 
