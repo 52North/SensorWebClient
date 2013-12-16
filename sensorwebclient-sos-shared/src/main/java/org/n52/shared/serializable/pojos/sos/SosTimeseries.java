@@ -27,7 +27,7 @@ package org.n52.shared.serializable.pojos.sos;
 import java.io.Serializable;
 
 import org.n52.shared.IdGenerator;
-import org.n52.shared.MD5HashIdGenerator;
+import org.n52.shared.MD5HashGenerator;
 import org.n52.shared.requests.query.QueryParameters;
 
 /**
@@ -79,7 +79,7 @@ public class SosTimeseries implements Serializable {
      */
     public String getTimeseriesId() {
         String[] parameters = getParamtersAsArray();
-        IdGenerator idGenerator = new MD5HashIdGenerator("ts_");
+        IdGenerator idGenerator = new MD5HashGenerator("ts_");
         return idGenerator.generate(parameters);
     }
 

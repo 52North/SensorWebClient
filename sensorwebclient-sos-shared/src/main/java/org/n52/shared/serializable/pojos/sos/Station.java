@@ -31,7 +31,7 @@ import java.util.ArrayList;
 
 import org.n52.io.geojson.GeojsonPoint;
 import org.n52.shared.IdGenerator;
-import org.n52.shared.MD5HashIdGenerator;
+import org.n52.shared.MD5HashGenerator;
 
 import com.vividsolutions.jts.geom.Point;
 
@@ -163,7 +163,7 @@ public class Station implements Serializable {
 
     public String getGlobalId() {
         String[] parameters = new String[] {serviceUrl, location.toString()};
-        IdGenerator idGenerator = new MD5HashIdGenerator("sta_");
+        IdGenerator idGenerator = new MD5HashGenerator("sta_");
         return idGenerator.generate(parameters);
     }
 

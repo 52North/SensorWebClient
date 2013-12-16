@@ -29,7 +29,7 @@ import java.util.Random;
 import org.n52.io.v1.data.TimeseriesData;
 import org.n52.io.v1.data.TimeseriesValue;
 import org.n52.shared.IdGenerator;
-import org.n52.shared.MD5HashIdGenerator;
+import org.n52.shared.MD5HashGenerator;
 
 public class ReferenceValue implements Serializable {
 
@@ -102,7 +102,7 @@ public class ReferenceValue implements Serializable {
     }
     
     public String getGeneratedGlobalId(String timeseriesId) {
-        IdGenerator idGenerator = new MD5HashIdGenerator("ref_");
+        IdGenerator idGenerator = new MD5HashGenerator("ref_");
         return idGenerator.generate(new String[]{label, timeseriesId});
     }
 

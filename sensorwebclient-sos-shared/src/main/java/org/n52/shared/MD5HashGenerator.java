@@ -27,11 +27,11 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class MD5HashIdGenerator implements IdGenerator {
+public class MD5HashGenerator implements IdGenerator {
     
     private String prefix;
 
-    public MD5HashIdGenerator(String prefix) {
+    public MD5HashGenerator(String prefix) {
         this.prefix = prefix;
     }
 
