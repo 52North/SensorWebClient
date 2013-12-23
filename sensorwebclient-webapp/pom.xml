@@ -322,6 +322,12 @@
 						<version>${project.version}</version>
 						<scope>provided</scope>
 					</dependency>
+                    <dependency>
+                        <groupId>org.n52.sensorweb</groupId>
+                        <artifactId>sensorwebclient-ags</artifactId>
+                        <version>${project.version}</version>
+                        <scope>provided</scope>
+                    </dependency>
 					<dependency>
 						<groupId>org.n52.sensorweb</groupId>
 						<artifactId>sensorwebclient-hydro</artifactId>
