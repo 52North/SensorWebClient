@@ -311,6 +311,9 @@ public class SosTimeseries implements Serializable {
         return timeseries;
     }
 
+    /**
+     * @return a label constructed via <code>phenomenonLabel@featureLabel</code>.
+     */
     public String getLabel() {
         return getPhenomenon().getLabel() + "@" + getFeature().getLabel();
     }
