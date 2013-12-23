@@ -1,0 +1,162 @@
+<swes:DescribeSensorResponse 
+xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 
+http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd 
+http://www.opengis.net/sos/2.0 
+http://schemas.opengis.net/sos/2.0/sos.xsd" 
+xmlns="http://www.opengis.net/sensorML/1.0.1" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns:swe="http://www.opengis.net/swe/1.0.1" 
+xmlns:swes="http://www.opengis.net/swes/2.0" 
+xmlns:gml="http://www.opengis.net/gml" 
+xmlns:xlink="http://www.w3.org/1999/xlink">
+   <swes:procedureDescriptionFormat>http://www.opengis.net/sensorML/1.0.1</swes:procedureDescriptionFormat>
+   <swes:description>
+      <swes:SensorDescription>
+         <swes:data>
+            <SensorML version="1.0.1">
+               <member>
+                  <Component>
+                     <identification>
+                        <IdentifierList>
+                           <identifier name="URN">
+                              <Term definition="urn:ogc:def:identifier:OGC:1.0:uniqueID">
+                                 <value>http://cdr.eionet.europa.eu/gb/eu/aqd/e2a/colutn32a/envuvlxkq/D_GB_StationProcess.xml#GB_StationProcess_1</value>
+                              </Term>
+                           </identifier>
+                           <identifier name="shortName">
+                              <Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">
+                                 <value>GB_StationProcess_1</value>
+                              </Term>
+                           </identifier>
+                        </IdentifierList>
+                     </identification>
+                     <capabilities>
+                        <swe:DataRecord>
+                           <swe:field name="AggregationType-1">
+                              <swe:Text definition="http://dd.eionet.europa.eu/vocabularies/aq/averagingperiod">
+                                 <swe:value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1d</swe:value>
+                              </swe:Text>
+                           </swe:field>
+                           <swe:field name="AggregationType-2">
+                              <swe:Text definition="http://dd.eionet.europa.eu/vocabularies/aq/averagingperiod">
+                                 <swe:value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1ddc</swe:value>
+                              </swe:Text>
+                           </swe:field>
+                           <swe:field name="AggregationType-3">
+                              <swe:Text definition="http://dd.eionet.europa.eu/vocabularies/aq/averagingperiod">
+                                 <swe:value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1dmf</swe:value>
+                              </swe:Text>
+                           </swe:field>
+                           <swe:field name="AggregationType-4">
+                              <swe:Text definition="http://dd.eionet.europa.eu/vocabularies/aq/averagingperiod">
+                                 <swe:value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y</swe:value>
+                              </swe:Text>
+                           </swe:field>
+                           <swe:field name="AggregationType-5">
+                              <swe:Text definition="http://dd.eionet.europa.eu/vocabularies/aq/averagingperiod">
+                                 <swe:value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y_dc</swe:value>
+                              </swe:Text>
+                           </swe:field>
+                           <swe:field name="AggregationType-6">
+                              <swe:Text definition="http://dd.eionet.europa.eu/vocabularies/aq/averagingperiod">
+                                 <swe:value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y_ex200</swe:value>
+                              </swe:Text>
+                           </swe:field>
+                           <swe:field name="AggregationType-7">
+                              <swe:Text definition="http://dd.eionet.europa.eu/vocabularies/aq/averagingperiod">
+                                 <swe:value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y_ex400</swe:value>
+                              </swe:Text>
+                           </swe:field>
+                           <swe:field name="AggregationType-8">
+                              <swe:Text definition="http://dd.eionet.europa.eu/vocabularies/aq/averagingperiod">
+                                 <swe:value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y_max</swe:value>
+                              </swe:Text>
+                           </swe:field>
+                           <swe:field name="AggregationType-9">
+                              <swe:Text definition="http://dd.eionet.europa.eu/vocabularies/aq/averagingperiod">
+                                 <swe:value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y_max19</swe:value>
+                              </swe:Text>
+                           </swe:field>
+                           <swe:field name="AggregationType-10">
+                              <swe:Text definition="http://dd.eionet.europa.eu/vocabularies/aq/averagingperiod">
+                                 <swe:value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y_min</swe:value>
+                              </swe:Text>
+                           </swe:field>
+                           <swe:field name="AggregationType-11">
+                              <swe:Text definition="http://dd.eionet.europa.eu/vocabularies/aq/averagingperiod">
+                                 <swe:value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1y_nv</swe:value>
+                              </swe:Text>
+                           </swe:field>
+                           <swe:field name="AggregationType-12">
+                              <swe:Text definition="http://dd.eionet.europa.eu/vocabularies/aq/averagingperiod">
+                                 <swe:value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1ydx</swe:value>
+                              </swe:Text>
+                           </swe:field>
+                           <swe:field name="AggregationType-13">
+                              <swe:Text definition="http://dd.eionet.europa.eu/vocabularies/aq/averagingperiod">
+                                 <swe:value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1ydx_dc</swe:value>
+                              </swe:Text>
+                           </swe:field>
+                           <swe:field name="AggregationType-14">
+                              <swe:Text definition="http://dd.eionet.europa.eu/vocabularies/aq/averagingperiod">
+                                 <swe:value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1ydx_max</swe:value>
+                              </swe:Text>
+                           </swe:field>
+                           <swe:field name="AggregationType-15">
+                              <swe:Text definition="http://dd.eionet.europa.eu/vocabularies/aq/averagingperiod">
+                                 <swe:value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1ydx_min</swe:value>
+                              </swe:Text>
+                           </swe:field>
+                           <swe:field name="AggregationType-16">
+                              <swe:Text definition="http://dd.eionet.europa.eu/vocabularies/aq/averagingperiod">
+                                 <swe:value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1ydx_nv</swe:value>
+                              </swe:Text>
+                           </swe:field>
+                           <swe:field name="AggregationType-17">
+                              <swe:Text definition="http://dd.eionet.europa.eu/vocabularies/aq/averagingperiod">
+                                 <swe:value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/8h</swe:value>
+                              </swe:Text>
+                           </swe:field>
+                           <swe:field name="AggregationType-18">
+                              <swe:Text definition="http://dd.eionet.europa.eu/vocabularies/aq/averagingperiod">
+                                 <swe:value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/maxd8h</swe:value>
+                              </swe:Text>
+                           </swe:field>
+                           <swe:field name="AggregationType-19">
+                              <swe:Text definition="http://dd.eionet.europa.eu/vocabularies/aq/averagingperiod">
+                                 <swe:value>http://dd.eionet.europa.eu/vocabulary/aq/averagingperiod/1h</swe:value>
+                              </swe:Text>
+                           </swe:field>
+                           <swe:field name="FeatureOfInterest-1">
+                              <swe:Text definition="FeatureOfInterestID">
+                                 <swe:value>http://cdr.eionet.europa.eu/gb/eu/aqd/e2a/colutn32a/envuvlxkq/D_GB_Sample.xml#GB_SamplingFeature_850</swe:value>
+                              </swe:Text>
+                           </swe:field>
+                        </swe:DataRecord>
+                     </capabilities>
+                     <inputs>
+                        <InputList>
+                           <input name="ambient-air">
+                              <swe:ObservableProperty definition="ambient-air"/>
+                           </input>
+                        </InputList>
+                     </inputs>
+                     <outputs>
+                        <OutputList>
+                           <output name="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/8">
+                              <swe:Quantity definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/8"></swe:Quantity>
+                           </output>
+                           <output name="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/8">
+                              <swe:Quantity definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/8">
+                                 <swe:uom code="ug.m-3"/>
+                              </swe:Quantity>
+                           </output>
+                        </OutputList>
+                     </outputs>
+                  </Component>
+               </member>
+            </SensorML>
+         </swes:data>
+      </swes:SensorDescription>
+   </swes:description>
+</swes:DescribeSensorResponse>
