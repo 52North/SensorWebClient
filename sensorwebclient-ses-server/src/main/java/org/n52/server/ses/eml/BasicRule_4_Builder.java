@@ -71,7 +71,6 @@ public class BasicRule_4_Builder extends BasicRuleBuilder {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(BasicRule_4_Builder.class);
 
-    @SuppressWarnings("unused") // static pattern
     private final int INDEX_SIMPLE_PATTERN_INTIAL_COUNT = 0;
 
     private final int INDEX_EXIT_CONDITION_PATTERN = 1;
@@ -177,6 +176,9 @@ public class BasicRule_4_Builder extends BasicRuleBuilder {
             ComplexPatterns complexPatterns = emlTemplateDoc.getEML().getComplexPatterns();
 
             // set patternID of simplePatterns
+            SimplePatternType staticInitPattern = simplePatterns.getSimplePatternArray(INDEX_SIMPLE_PATTERN_INTIAL_COUNT);
+            processPropertyRestrictions(staticInitPattern, rule.getTimeseriesMetadata());
+            
             RuleFilter entryFilter = createEntryFilter(rule);
             SimplePatternType ruleUndershoot = simplePatterns.getSimplePatternArray(INDEX_ENTRY_CONDITION_PATTERN);
             processSimplePattern(ruleUndershoot, overshootPatternId, overshootEventName);

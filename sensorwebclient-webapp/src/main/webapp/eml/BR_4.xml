@@ -28,6 +28,14 @@
 				</fes:Filter>
 			</Guard>
 			<PropertyRestrictions>
+                <PropertyRestriction>
+                    <name>observedProperty</name>
+                    <value>urn:ogc:def:phenomenon:OGC::WaterLevel</value>
+                </PropertyRestriction>
+                <PropertyRestriction>
+                    <name>sensorID</name>
+                    <value>sensorA漢</value>
+                </PropertyRestriction>
 			</PropertyRestrictions>
 		</SimplePattern>
 		
