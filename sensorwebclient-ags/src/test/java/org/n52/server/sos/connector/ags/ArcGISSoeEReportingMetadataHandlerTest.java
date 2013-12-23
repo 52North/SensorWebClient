@@ -53,7 +53,7 @@ public class ArcGISSoeEReportingMetadataHandlerTest {
     @Before public void
     setUp() {
         seam = new ArcGISSoeEReportingMetadataHandlerSeam();
-        metadata = seam.initMetadata(FAKE_URL, VERSION_200);
+        metadata = seam.initMetadata();
     }
     
     @Test public void
@@ -65,7 +65,8 @@ public class ArcGISSoeEReportingMetadataHandlerTest {
     shouldPerformMetadataCompletion() throws Exception {
         
         // TODO
-        SOSMetadata metadata = seam.performMetadataCompletion(FAKE_URL, VERSION_200);
+        SOSMetadata metadata = seam.performMetadataCompletion();
+        System.out.println(metadata);
         
     }
     
@@ -75,16 +76,16 @@ public class ArcGISSoeEReportingMetadataHandlerTest {
         
         private static final String SENSOR_NETWORK = "/files/describe-sensor-network_subset.xml";
 
-        private static final String GET_FOI_RESPONSE = "/files/get-features_subset.xml";
+        private static final String GET_FOI_RESPONSE = "/files/get-features_all.xml";
 
         public ArcGISSoeEReportingMetadataHandlerSeam() {
             super(createAgsSosMetadata());
         }
 
         @Override
-        protected SOSMetadata initMetadata(String sosUrl, String sosVersion) {
+        protected SOSMetadata initMetadata() {
             setSosAdapter(new ResponseFromFileSosAdapter(CAPABILITIES_EREPORTING));
-            return super.initMetadata(sosUrl, sosVersion);
+            return super.initMetadata();
         }
 
         @Override

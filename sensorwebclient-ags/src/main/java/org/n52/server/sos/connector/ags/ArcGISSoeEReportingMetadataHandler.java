@@ -32,6 +32,8 @@ import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_VERSION
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER;
 import static org.n52.oxf.sos.adapter.SOSAdapter.DESCRIBE_SENSOR;
+import static org.n52.server.da.oxf.DescribeSensorAccessor.getSensorDescriptionAsSensorML;
+import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadata;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,6 +43,7 @@ import java.util.Map;
 import net.opengis.sensorML.x101.CapabilitiesDocument.Capabilities;
 import net.opengis.sensorML.x101.ComponentType;
 
+import org.apache.xmlbeans.XmlObject;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
@@ -48,7 +51,9 @@ import org.n52.oxf.ows.ExceptionReport;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.server.da.MetadataHandler;
+import org.n52.server.util.PropertiesToHtml;
 import org.n52.server.util.XmlHelper;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -83,20 +88,49 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
      */
     private Map<String, ComponentType> sensorDescriptions;
 
-    private String sosVersion = "2.0.0";
-
-    private String serviceUrl;
-
     public ArcGISSoeEReportingMetadataHandler(SOSMetadata metadata) {
         super(metadata);
-        this.sosVersion = metadata.getVersion();
-        this.serviceUrl = metadata.getServiceUrl();
         this.sensorDescriptions = new HashMap<String, ComponentType>();
     }
 
     @Override
-    public SOSMetadata performMetadataCompletion(String sosUrl, String sosVersion) throws Exception {
-        SOSMetadata metadata = initMetadata(sosUrl, sosVersion);
+    public void assembleTimeseriesMetadata(TimeseriesProperties properties) throws Exception {
+        SosTimeseries timeseries = properties.getTimeseries();
+        SOSMetadata sosMetadata = getSOSMetadata(timeseries.getServiceUrl());
+        Map<String, String> tsMetadata = new HashMap<String, String>();
+        
+        XmlObject sml = getSensorDescriptionAsSensorML(timeseries.getProcedureId(), sosMetadata);
+//        DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), sosMetadata);
+
+        String phenomenonId = timeseries.getPhenomenonId();
+        ArcGISSoeDescribeSensorParser parser = new ArcGISSoeDescribeSensorParser(sml);
+        String uom = parser.getUomFor(phenomenonId);
+        String shortName = parser.getShortName();
+        
+        tsMetadata.put("UOM", uom);
+        tsMetadata.put("Name", shortName);
+        properties.setUnitOfMeasure(uom);
+        
+        PropertiesToHtml toHtml = PropertiesToHtml.createFromProperties(tsMetadata);
+        properties.setMetadataUrl(toHtml.create(timeseries));
+        
+//        String url = parser.buildUpSensorMetadataHtmlUrl(properties.getTimeseries());
+//        properties.setMetadataUrl(url);
+        
+        // TODO
+//        properties.setMetadataUrl(url); 
+//        String phenomenonId = timeseries.getPhenomenonId();
+//        properties.setUnitOfMeasure(parser.buildUpSensorMetadataUom(phenomenonId));
+//        String url = parser.buildUpSensorMetadataHtmlUrl(properties.getTimeseries());
+//        properties.addAllRefValues(parser.parseReferenceValues());
+//        properties.setMetadataUrl(url);
+        
+    }
+
+    @Override
+    public SOSMetadata performMetadataCompletion() throws Exception {
+        String sosUrl = getServiceUrl();
+        SOSMetadata metadata = initMetadata();
 
         Collection<SosTimeseries> observingTimeseries = createObservingTimeseries(sosUrl);
         TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
@@ -186,10 +220,10 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
         if ( !isCached(procedure)) {
             ParameterContainer paramCon = new ParameterContainer();
             paramCon.addParameterShell(DESCRIBE_SENSOR_SERVICE_PARAMETER, "SOS");
-            paramCon.addParameterShell(DESCRIBE_SENSOR_VERSION_PARAMETER, sosVersion);
+            paramCon.addParameterShell(DESCRIBE_SENSOR_VERSION_PARAMETER, getServiceVersion());
             paramCon.addParameterShell(DESCRIBE_SENSOR_PROCEDURE_PARAMETER, procedure);
             paramCon.addParameterShell(DESCRIBE_SENSOR_PROCEDURE_DESCRIPTION_FORMAT, SML_NAMESPACE);
-            Operation operation = new Operation(DESCRIBE_SENSOR, serviceUrl, serviceUrl);
+            Operation operation = new Operation(DESCRIBE_SENSOR, getServiceUrl(), getServiceUrl());
             OperationResult result = getSosAdapter().doOperation(operation, paramCon);
 
             SensorNetworkParser networkParser = new SensorNetworkParser();
@@ -201,11 +235,11 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
             ExceptionReport {
         ParameterContainer paramCon = new ParameterContainer();
         paramCon.addParameterShell(GET_FOI_SERVICE_PARAMETER, "SOS");
-        paramCon.addParameterShell(GET_FOI_VERSION_PARAMETER, sosVersion);
-        Operation operation = new Operation("GetFeatureOfInterest", serviceUrl, serviceUrl);
+        paramCon.addParameterShell(GET_FOI_VERSION_PARAMETER, getServiceVersion());
+        Operation operation = new Operation("GetFeatureOfInterest", getServiceUrl(), getServiceUrl());
         OperationResult result = getSosAdapter().doOperation(operation, paramCon);
 
-        FeatureParser parser = new FeatureParser(serviceUrl, createEpsgStrictAxisOrder());
+        FeatureParser parser = new FeatureParser(getServiceUrl(), createEpsgStrictAxisOrder());
         Map<Feature, Point> features = parser.parseFeatures(result.getIncomingResultAsStream());
         for (Feature feature : features.keySet()) {
             lookup.addFeature(feature);
