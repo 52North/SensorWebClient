@@ -64,6 +64,7 @@ import org.n52.server.da.AccessorThreadPool;
 import org.n52.server.da.MetadataHandler;
 import org.n52.server.da.oxf.OperationAccessor;
 import org.n52.server.parser.ConnectorUtils;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
@@ -84,8 +85,19 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
     }
 
     @Override
-	public SOSMetadata performMetadataCompletion(String sosUrl, String sosVersion) throws Exception {
-		SOSMetadata metadata = initMetadata(sosUrl, sosVersion);
+    public void assembleTimeseriesMetadata(TimeseriesProperties properties) throws Exception {
+        /* 
+         * XXX separating metadata assembling would need to be implemented here but the old 
+         * SOE connector module is obsolete so we leave it as is. See sensorwebclient-ags 
+         * module for implementation targeting the current SOS SOE implementation.
+         */
+    }
+
+    @Override
+	public SOSMetadata performMetadataCompletion() throws Exception {
+		String sosUrl = getServiceUrl();
+        String sosVersion = getServiceVersion();
+        SOSMetadata metadata = initMetadata();
 		TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
 		
         Collection<SosTimeseries> observingTimeseries = createObservingTimeseries(sosUrl);

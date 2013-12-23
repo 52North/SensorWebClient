@@ -21,6 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
+
 package org.n52.client.service;
 
 import org.n52.shared.responses.GetProcedureDetailsUrlResponse;
@@ -31,10 +32,22 @@ import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 
 public interface SensorMetadataService {
 
-    public SensorMetadataResponse getSensorMetadata(TimeseriesProperties properties) throws Exception;
+    /**
+     * Assembles metadata for given timeseries' properties object. Metadata has to be set within the passed
+     * object which is set and returned via {@link SensorMetadataResponse}. This is needed to keep reference
+     * infos set by the client.
+     * 
+     * @param properties
+     *        the timeseries' properties to fill. Holds reference information important for the client later
+     *        on.
+     * @return the sensor metadata response containing the assembled metadata of the timeseries.
+     * @throws Exception
+     *         if assembling metdata fails for some reason.
+     */
+    public SensorMetadataResponse getSensorMetadata(final TimeseriesProperties properties) throws Exception;
 
-    public GetProcedureDetailsUrlResponse getProcedureDetailsUrl(SosTimeseries timeseries) throws Exception;
-    
+    public GetProcedureDetailsUrlResponse getProcedureDetailsUrl(final SosTimeseries timeseries) throws Exception;
+
     public SOSMetadataResponse getUpdatedSOSMetadata();
-    
+
 }

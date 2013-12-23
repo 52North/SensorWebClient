@@ -70,6 +70,7 @@ public final class XmlHelper {
     }
 
     public String getUniqueId(IdentifierList identifiers) {
+        // TODO use regex when xpath 2.0 is being used
         String xpath = "$this//sml:identifier//sml:Term[@definition='urn:ogc:def:identifier:OGC:1.0:uniqueID']";
         Term uniqueId = parseFirst(identifiers, xpath, Term.class);
         return uniqueId == null ? null : uniqueId.getValue();

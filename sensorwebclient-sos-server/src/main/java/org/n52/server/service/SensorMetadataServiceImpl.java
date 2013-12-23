@@ -23,26 +23,18 @@
  */
 package org.n52.server.service;
 
-import static org.n52.server.da.oxf.DescribeSensorAccessor.getSensorDescriptionAsSensorML;
 import static org.n52.server.mgmt.ConfigurationContext.createSosMetadataHandler;
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadata;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.xmlbeans.XmlObject;
 import org.n52.client.service.SensorMetadataService;
-import org.n52.io.v1.data.ReferenceValueOutput;
-import org.n52.io.v1.data.TimeseriesMetadataOutput;
-import org.n52.io.v1.data.TimeseriesValue;
 import org.n52.oxf.util.JavaHelper;
 import org.n52.server.da.MetadataHandler;
 import org.n52.server.mgmt.ConfigurationContext;
-import org.n52.server.parser.DescribeSensorParser;
 import org.n52.shared.responses.GetProcedureDetailsUrlResponse;
 import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.responses.SensorMetadataResponse;
-import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -56,64 +48,26 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
     private static final Logger LOG = LoggerFactory.getLogger(SensorMetadataServiceImpl.class);
 
     @Override
-    public SensorMetadataResponse getSensorMetadata(TimeseriesProperties tsProperties) throws Exception {
+    public SensorMetadataResponse getSensorMetadata(final TimeseriesProperties tsProperties) throws Exception {
         try {
             LOG.debug("Request -> GetSensorMetadata");
+            JavaHelper.cleanUpDir(ConfigurationContext.XSL_DIR, ConfigurationContext.FILE_KEEPING_TIME, "xml");
             
             SosTimeseries timeseries = tsProperties.getTimeseries();
             SOSMetadata sosMetadata = getSOSMetadata(timeseries.getServiceUrl());
+            MetadataHandler metadataHandler = createSosMetadataHandler(sosMetadata);
+            metadataHandler.assembleTimeseriesMetadata(tsProperties);
             
-            
-
-//            MetadataHandler metadataHandler = createSosMetadataHandler(sosMetadata);
-//            TimeseriesMetadataOutput timeseriesMetadata = metadataHandler.getTimeseriesMetadata(timeseries);
-//            String uom = timeseriesMetadata.getUom();
-//            
-//            ReferenceValueOutput[] referenceValues = timeseriesMetadata.getReferenceValues();
-//            Map<String, ReferenceValue> refValues = new HashMap<String, ReferenceValue>();
-//            for (ReferenceValueOutput referenceValue : referenceValues) {
-//                String label = referenceValue.getLabel();
-//                TimeseriesValue lastValue = referenceValue.getLastValue();
-//                refValues.put(label, new ReferenceValue(label, lastValue.getValue()));
-//            }
-            
-            
-            
-            
-
-            // TODO use different request strategy to obtain metadata/uom when SOS supports HydroProfile
-            // (HyProfile must request an Observation (without timestamp we get the last value))
-            // ==> move metadata obtaining strategy to MetadataHandler class: a different strategy can
-            // be used by overriding the default (metadata via SensorML)
-            
-
-            
-            XmlObject sml = getSensorDescriptionAsSensorML(timeseries.getProcedureId(), sosMetadata);
-            DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), sosMetadata);
-            String url = parser.buildUpSensorMetadataHtmlUrl(tsProperties.getTimeseries());
-            tsProperties.setMetadataUrl(url);
-
-
-
-            String procedureId = tsProperties.getProcedure();
-            String phenomenonId = tsProperties.getPhenomenon();
+            String procedureId = timeseries.getProcedureId();
             TimeseriesParametersLookup lookup = sosMetadata.getTimeseriesParametersLookup();
             Procedure procedure = lookup.getProcedure(procedureId);
-            
-//            tsProperties.setStationName(parser.buildUpSensorMetadataStationName());
-            tsProperties.setUnitOfMeasure(parser.buildUpSensorMetadataUom(phenomenonId));
-            HashMap<String, ReferenceValue> refvalues = parser.parseReferenceValues();
-            
-            
-            tsProperties.addAllRefValues(refvalues);
-            procedure.addAllRefValues(refvalues);
+            procedure.addAllRefValues(tsProperties.getRefvalues());
     
             SensorMetadataResponse response = new SensorMetadataResponse(tsProperties);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Parsed SensorMetadata: {}", response.toDebugString());
             }
     
-            JavaHelper.cleanUpDir(ConfigurationContext.XSL_DIR, ConfigurationContext.FILE_KEEPING_TIME, "xml");
             return response;
         } catch (Exception e) {
             LOG.error("Exception occured on server side.", e);
@@ -125,11 +79,11 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
     public GetProcedureDetailsUrlResponse getProcedureDetailsUrl(SosTimeseries timeseries) throws Exception {
         try {
             LOG.debug("Request -> getProcedureDetailsUrl");
+            TimeseriesProperties properties = new TimeseriesProperties(timeseries, null, -1, -1);
             SOSMetadata metadata = ConfigurationContext.getSOSMetadata(timeseries.getServiceUrl());
-            XmlObject sml = getSensorDescriptionAsSensorML(timeseries.getProcedureId(), metadata);
-            DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), metadata);
-            String url = parser.buildUpSensorMetadataHtmlUrl(timeseries);
-            return new GetProcedureDetailsUrlResponse(url);
+            MetadataHandler metadataHandler = createSosMetadataHandler(metadata);
+            metadataHandler.assembleTimeseriesMetadata(properties);
+            return new GetProcedureDetailsUrlResponse(properties.getMetadataUrl());
         } catch (Exception e) {
             LOG.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side

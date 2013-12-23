@@ -67,6 +67,7 @@ import org.n52.server.da.AccessorThreadPool;
 import org.n52.server.da.MetadataHandler;
 import org.n52.server.da.oxf.OperationAccessor;
 import org.n52.server.parser.ConnectorUtils;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
@@ -92,8 +93,18 @@ public class HydroMetadataHandler extends MetadataHandler {
     }
 
     @Override
-    public SOSMetadata performMetadataCompletion(String sosUrl, String sosVersion) throws Exception {
-        SOSMetadata metadata = initMetadata(sosUrl, sosVersion);
+    public void assembleTimeseriesMetadata(TimeseriesProperties properties) throws Exception {
+
+        // TODO use different request strategy to obtain metadata/uom when SOS supports HydroProfile
+        // (HyProfile must request an Observation (without timestamp we get the last value))
+        // ==> move metadata obtaining strategy to MetadataHandler class: a different strategy can
+        // be used by overriding the default (metadata via SensorML)
+        
+    }
+
+    @Override
+    public SOSMetadata performMetadataCompletion() throws Exception {
+        SOSMetadata metadata = initMetadata();
         // get a waterml specific responseFormat if set
         String responseFormat = ConnectorUtils.getResponseFormat(getServiceDescriptor(), "waterml");
         if (responseFormat != null) {
@@ -106,7 +117,7 @@ public class HydroMetadataHandler extends MetadataHandler {
     @Override
     public SOSMetadata updateMetadata(SOSMetadata metadata) throws Exception {
         SOSMetadata newMetadata = metadata.clone();
-        initMetadata(metadata.getServiceUrl(), metadata.getVersion());
+        initMetadata();
         collectTimeseries(newMetadata);
         return newMetadata;
     }

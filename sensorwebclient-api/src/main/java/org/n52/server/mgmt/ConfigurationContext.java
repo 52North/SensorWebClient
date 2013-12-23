@@ -29,7 +29,6 @@ import static org.n52.shared.Constants.DEFAULT_SOS_VERSION;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -247,7 +246,7 @@ public class ConfigurationContext implements ServletContextAware {
             if (containsServiceMetadata(url)) {
                 SOSMetadata metadata = getServiceMetadatas().get(url);
                 MetadataHandler handler = createSosMetadataHandler(metadata);
-                handler.performMetadataCompletion(url, getVersion(url));
+                handler.performMetadataCompletion();
                 if ( !metadata.hasDonePositionRequest()) {
                     SosMetadataUpdate.updateService(url);
                 }
@@ -255,8 +254,9 @@ public class ConfigurationContext implements ServletContextAware {
             } else {
                 // try to get metadata with default SOS version.
                 SOSMetadata metadata = new SOSMetadata(url, url, DEFAULT_SOS_VERSION);
+                SosMetadataUpdate.updateService(url);
                 serviceMetadatas.put(url, metadata);
-                return getServiceMetadatas().get(url); // repeat call
+                return metadata;
             }
         }
         catch (Exception e) {
@@ -335,7 +335,7 @@ public class ConfigurationContext implements ServletContextAware {
 
     public static void initializeMetadata(SOSMetadata metadata) {
         SOSMetadata old = serviceMetadatas.put(metadata.getServiceUrl(), metadata);
-        LOGGER.debug("Replace old metadata for: " + old);
+        LOGGER.debug(old == null ? "SOS metadata initialized." : "SOS metadata replaced with " + metadata);
         metadata.setInitialized(true);
     }
 
