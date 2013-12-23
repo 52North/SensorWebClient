@@ -71,6 +71,7 @@ import org.n52.oxf.xml.NcNameResolver;
 import org.n52.oxf.xmlbeans.parser.XMLBeansParser;
 import org.n52.oxf.xmlbeans.parser.XMLHandlingException;
 import org.n52.server.mgmt.ConfigurationContext;
+import org.n52.server.util.SensorMLToHtml;
 import org.n52.shared.MD5HashGenerator;
 import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -143,8 +144,8 @@ public class DescribeSensorParser {
             String serviceUrl = timeseries.getServiceUrl();
             String smlVersion = ConfigurationContext.getSOSMetadata(serviceUrl).getSensorMLVersion();
             String filename = createSensorDescriptionFileName(timeseries);
-            File sensorMLFile = saveSensorMLFile(filename);
-            return new SensorMLToHTMLTransformer(sensorMLFile, smlVersion).transformSMLtoHTML(filename);
+            File sensorMLFile = saveFile(filename);
+            return SensorMLToHtml.createFromSensorML(sensorMLFile, smlVersion).transformSMLtoHTML(filename);
         }
         catch (IOException e) {
             throw new OXFException("Could not write file.", e);
@@ -157,6 +158,21 @@ public class DescribeSensorParser {
         String phenomenonId = timeseries.getPhenomenonId();
         MD5HashGenerator generator = new MD5HashGenerator("sensorML_");
         return generator.generate(new String[] {phenomenonId, procedureId, serviceUrl});
+    }
+
+    private File saveFile(String filename) throws IOException {
+        String normalizedFilename = normalize(filename);
+        File sensorMLFile = JavaHelper.genFile(ConfigurationContext.GEN_DIR, normalizedFilename, "xml");
+        IOHelper.saveFile(sensorMLFile, smlDoc.newInputStream());
+        return sensorMLFile;
+    }
+
+    /**
+     * @return a normalized String for use in a file path, i.e. all [\,/,:,*,?,",<,>,;,#] characters are
+     *         replaced by '_'.
+     */
+    private String normalize(String toNormalize) {
+        return toNormalize.replaceAll("[\\\\,/,:,\\*,?,\",<,>,;,#]", "_");
     }
 
     public Point buildUpSensorMetadataPosition() throws FactoryException, TransformException {
@@ -303,22 +319,6 @@ public class DescribeSensorParser {
         String stationName = station != null ? station : uniqueId;
         LOGGER.debug(String.format("parsed '%s' as station name", stationName));
         return stationName;
-    }
-
-    private File saveSensorMLFile(String filename) throws IOException {
-        String normalizedFilename = normalize(filename);
-        File sensorMLFile = JavaHelper.genFile(ConfigurationContext.GEN_DIR, normalizedFilename, "xml");
-        IOHelper.saveFile(sensorMLFile, smlDoc.newInputStream());
-        return sensorMLFile;
-    }
-
-    
-    /**
-     * @return a normalized String for use in a file path, i.e. all [\,/,:,*,?,",<,>,;,#] characters are
-     *         replaced by '_'.
-     */
-    private String normalize(String toNormalize) {
-        return toNormalize.replaceAll("[\\\\,/,:,\\*,?,\",<,>,;,#]", "_");
     }
 
     public HashMap<String, ReferenceValue> parseReferenceValues() {
