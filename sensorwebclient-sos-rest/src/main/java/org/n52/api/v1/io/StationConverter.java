@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.n52.io.geojson.GeojsonPoint;
-import org.n52.io.v1.data.OutputValue;
+import org.n52.io.v1.data.ParameterOutput;
 import org.n52.io.v1.data.StationOutput;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
@@ -61,10 +61,10 @@ public class StationConverter extends OutputConverter<Station, StationOutput> {
     }
     
     
-    private  Map<String, Map<String, OutputValue>> createCondensedTimeseriesList(Station station) {
-        Map<String, Map<String, OutputValue>> timeseriesOutputs = new HashMap<String, Map<String, OutputValue>>();
+    private  Map<String, Map<String, ParameterOutput>> createCondensedTimeseriesList(Station station) {
+        Map<String, Map<String, ParameterOutput>> timeseriesOutputs = new HashMap<String, Map<String, ParameterOutput>>();
         for (SosTimeseries timeseries : station.getObservedTimeseries()) {
-            Map<String, OutputValue> timeseriesOutput = new HashMap<String, OutputValue>();
+            Map<String, ParameterOutput> timeseriesOutput = new HashMap<String, ParameterOutput>();
             timeseriesOutput.put("service", createOutputValue(timeseries.getSosService()));
             timeseriesOutput.put("offering", createOutputValue(timeseries.getOffering()));
             timeseriesOutput.put("procedure", createOutputValue(timeseries.getProcedure()));
@@ -75,8 +75,8 @@ public class StationConverter extends OutputConverter<Station, StationOutput> {
         return timeseriesOutputs;
     }
 
-    private OutputValue createOutputValue(TimeseriesParameter parameter) {
-        OutputValue outputvalue = new OutputValue();
+    private ParameterOutput createOutputValue(TimeseriesParameter parameter) {
+        ParameterOutput outputvalue = new ParameterOutput();
         outputvalue.setId(parameter.getGlobalId());
         outputvalue.setLabel(parameter.getLabel());
         return outputvalue;
