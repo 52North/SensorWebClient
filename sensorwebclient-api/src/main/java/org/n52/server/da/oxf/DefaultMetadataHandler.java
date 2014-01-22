@@ -25,7 +25,9 @@
 package org.n52.server.da.oxf;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.n52.server.da.oxf.DescribeSensorAccessor.getSensorDescriptionAsSensorML;
 import static org.n52.server.mgmt.ConfigurationContext.SERVER_TIMEOUT;
+import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadata;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -54,6 +56,7 @@ import org.n52.server.da.AccessorThreadPool;
 import org.n52.server.da.MetadataHandler;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.server.parser.DescribeSensorParser;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -70,14 +73,36 @@ import com.vividsolutions.jts.geom.Point;
 public class DefaultMetadataHandler extends MetadataHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultMetadataHandler.class);
+    
+    public DefaultMetadataHandler(SOSMetadata metadata) {
+        super(metadata);
+    }
 
-    public SOSMetadata performMetadataCompletion(String sosUrl, String sosVersion) throws OXFException,
+    /* 
+     * Assembles timeseries' metadata by performing DescribeSensor request and parsing the returned  SensorML. 
+     * 
+     * @see org.n52.server.da.MetadataHandler#assembleTimeseriesMetadata(org.n52.shared.serializable.pojos.TimeseriesProperties)
+     */
+    @Override
+    public void assembleTimeseriesMetadata(TimeseriesProperties properties) throws Exception {
+        SosTimeseries timeseries = properties.getTimeseries();
+        SOSMetadata sosMetadata = getSOSMetadata(timeseries.getServiceUrl());
+        XmlObject sml = getSensorDescriptionAsSensorML(timeseries.getProcedureId(), sosMetadata);
+        DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), sosMetadata);
+        
+        String phenomenonId = timeseries.getPhenomenonId();
+        properties.setUnitOfMeasure(parser.buildUpSensorMetadataUom(phenomenonId));
+        String url = parser.buildUpSensorMetadataHtmlUrl(properties.getTimeseries());
+        properties.addAllRefValues(parser.parseReferenceValues());
+        properties.setMetadataUrl(url);
+    }
+
+    public SOSMetadata performMetadataCompletion() throws OXFException,
             InterruptedException,
             XMLHandlingException {
 
-        SOSMetadata sosMetadata = initMetadata(sosUrl, sosVersion);
-
-        Collection<SosTimeseries> observingTimeseries = createObservingTimeseries(sosUrl);
+        SOSMetadata sosMetadata = initMetadata();
+        Collection<SosTimeseries> observingTimeseries = createObservingTimeseries(getServiceVersion());
 
         normalizeDefaultCategories(observingTimeseries);
 
@@ -86,7 +111,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
         // XXX hack to get conjunctions between procedures and fois
         if ( !sosMetadata.hasDonePositionRequest()) {
             try {
-                performMetadataInterlinking(sosUrl, observingTimeseries);
+                performMetadataInterlinking(observingTimeseries);
             }
             catch (IOException e) {
                 LOGGER.warn("Could not retrieve relations between procedures and fois", e);
@@ -104,8 +129,6 @@ public class DefaultMetadataHandler extends MetadataHandler {
      * <bf>Note:</bf> to create the associations between these key items the Sensor Web Client assumes that
      * the selected SOS provides the 52°North discovery profile.
      * 
-     * @param sosUrl
-     *        the SOS service URL.
      * @param observingTimeseries
      *        all timeseries being observed.
      * @throws OXFException
@@ -119,10 +142,11 @@ public class DefaultMetadataHandler extends MetadataHandler {
      * @throws IllegalStateException
      *         if SOS version is not supported.
      */
-    private void performMetadataInterlinking(String sosUrl, Collection<SosTimeseries> observingTimeseries) throws OXFException,
+    private void performMetadataInterlinking(Collection<SosTimeseries> observingTimeseries) throws OXFException,
             InterruptedException,
             XMLHandlingException,
             IOException {
+        String sosUrl = getServiceUrl();
         SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosUrl);
         TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
         ArrayList<Procedure> procedures = lookup.getProcedures();

@@ -3,28 +3,48 @@
 	web interface -->
 <!-- Some of these properties are not implemented yet! -->
 <instances>
+    
+    <instance>
+        <itemName>PEGELONLINE</itemName>
+        <url>http://pegelonline.wsv.de/webservices/gis/gdi-sos</url>
+        <version>1.0.0</version>
+        <waterML>false</waterML>
+        <supportsFirstLatest>true</supportsFirstLatest>
+        <metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
+        <adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
+        <requestChunk>300</requestChunk>
+        <autoZoom>true</autoZoom>
+        <llEasting>5</llEasting>
+        <llNorthing>46.00</llNorthing>
+        <urEasting>16</urEasting>
+        <urNorthing>56.0</urNorthing>
+        <defaultZoom>13</defaultZoom>
+    </instance>
+
 
 	<instance>
-		<itemName>PEGELONLINE</itemName>
-		<url>http://pegelonline.wsv.de/webservices/gis/gdi-sos</url>
-		<version>1.0.0</version>
-		<waterML>false</waterML>
-		<metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
-        <adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
-		<requestChunk>300</requestChunk>
-		<autoZoom>true</autoZoom>
-		<llEasting>5</llEasting>
-		<llNorthing>46.00</llNorthing>
-		<urEasting>16</urEasting>
-		<urNorthing>56.0</urNorthing>
-		<defaultZoom>13</defaultZoom>
+		  <itemName>Wupperverband SOS 2.0</itemName>
+		  <url>http://vpn.52north.org/52n-sos-wv-webapp/sos/soap</url>
+		  <version>2.0.0</version>
+		  <metadataHandler>org.n52.server.sos.connector.hydro.HydroMetadataHandler</metadataHandler>
+		  <adapter>org.n52.server.sos.connector.hydro.SOSwithSoapAdapter</adapter>
+		  <waterML>true</waterML>
+		  <llEasting>6</llEasting>
+		  <llNorthing>51</llNorthing>
+		  <urEasting>8</urEasting>
+		  <urNorthing>52</urNorthing>
+		  <defaultZoom>15</defaultZoom>
+		  <requestChunk>200</requestChunk>
+		  <autoZoom>true</autoZoom>
+		  <protectedService>true</protectedService>
 	</instance>
-	
+
 	<instance>
 		<itemName>CSIR</itemName>
 		<url>http://ict4eo.meraka.csir.co.za/AMD_SOS/sos</url>
 		<version>1.0.0</version>
 		<waterML>false</waterML>
+        <supportsFirstLatest>true</supportsFirstLatest>
 		<metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
         <adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
 		<requestChunk>200</requestChunk>
@@ -35,13 +55,13 @@
 		<urNorthing>0.0</urNorthing>
 		<defaultZoom>5</defaultZoom>
 	</instance>
-	
-	
+
     <!-- <instance>
         <itemName>Tideelbe SOS</itemName>
         <url>http://geodata-srv02.rzi.dlz-it.de:8080/52nSOS_ZDM_PORTALE/sos</url>
         <version>2.0.0</version>
         <waterML>false</waterML>
+        <supportsFirstLatest>false</supportsFirstLatest>
         <metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
         <adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
         <requestChunk>2100</requestChunk>
@@ -52,11 +72,12 @@
         <urNorthing>54.1</urNorthing>
         <defaultZoom>13</defaultZoom>
     </instance> -->
-    
+
     <instance>
         <itemName>Wupperverband</itemName>
         <url>http://fluggs.wupperverband.de/sos/sos</url>
         <version>1.0.0</version>
+        <supportsFirstLatest>true</supportsFirstLatest>
         <metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
         <adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
         <waterML>false</waterML>
@@ -90,6 +111,7 @@
 		<itemName>GRDC-SOS_GEOWOW</itemName>
 		<url>http://geowow.dev.52north.org/52n-sos-grdc-webapp/sos/soap</url>
 		<version>2.0.0</version>
+        <supportsFirstLatest>true</supportsFirstLatest>
 		<metadataHandler>org.n52.server.sos.connector.hydro.HydroMetadataHandler</metadataHandler>
 		<adapter>org.n52.server.sos.connector.hydro.SOSwithSoapAdapter</adapter>
 		<waterML>true</waterML>
@@ -103,40 +125,65 @@
 		<protectedService>true</protectedService>
 	</instance>
 	
-<!--
-	 <instance>
-		<itemName>EEA-SOS</itemName>
-		<url>http://ags.dev.52north.org:6080/arcgis/rest/services/ObservationDB/MapServer/exts/SOSExtension/</url>
-		<version>2.0.0</version>
-		<metadataHandler>org.n52.server.sos.connector.eea.ArcGISSoeMetadataHandler</metadataHandler>
-		<adapter>org.n52.server.sos.connector.eea.SOSAdapterByGET</adapter>
-		<waterML>false</waterML>
-		<autoZoom>false</autoZoom>
-		<llEasting>-16</llEasting>
-		<llNorthing>25</llNorthing>
-		<urEasting>35</urEasting>
-		<urNorthing>60.0</urNorthing>
-		<defaultZoom>9</defaultZoom>
-		<requestChunk>500</requestChunk>
-		<forceXYAxisOrder>true</forceXYAxisOrder>
-	</instance> -->
-
-	<instance>
-		<itemName>Air Quality Belgium</itemName>
-		<url>http://sos.irceline.be/sos</url>
-		<version>1.0.0</version>
-		<waterML>false</waterML>
-		<metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
-		<adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
-		<requestChunk>300</requestChunk>
-		<autoZoom>true</autoZoom>
-		<llEasting>2.4</llEasting>
-		<llNorthing>49.3</llNorthing>
-		<urEasting>6.5</urEasting>
-		<urNorthing>51.6</urNorthing>
-		<defaultZoom>11</defaultZoom>
-	</instance>
 	
+    <instance>
+        <itemName>Air Quality Belgium</itemName>
+        <url>http://sos.irceline.be/sos</url>
+        <version>1.0.0</version>
+        <waterML>false</waterML>
+        <supportsFirstLatest>true</supportsFirstLatest>
+        <metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
+        <adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
+        <requestChunk>300</requestChunk>
+        <autoZoom>true</autoZoom>
+        <llEasting>2.4</llEasting>
+        <llNorthing>49.3</llNorthing>
+        <urEasting>6.5</urEasting>
+        <urNorthing>51.6</urNorthing>
+        <defaultZoom>11</defaultZoom>
+    </instance>
+    
+    <!-- 
+    <instance>
+        <itemName>EEA-SOS</itemName>
+        <url>http://ags.dev.52north.org:6080/arcgis/rest/services/EEA/AirQualitySos/MapServer/exts/52nArcGisSos/</url>
+        <version>2.0.0</version>
+        <supportsFirstLatest>false</supportsFirstLatest>
+        <metadataHandler>org.n52.server.sos.connector.ags.ArcGISSoeEReportingMetadataHandler</metadataHandler>
+        <adapter>org.n52.server.sos.connector.ags.SOSAdapterByGET</adapter>
+        <waterML>false</waterML>
+        <autoZoom>false</autoZoom>
+        <llEasting>-11.79</llEasting>
+        <llNorthing>47.0</llNorthing>
+        <urEasting>-5.5</urEasting>
+        <urNorthing>52.0</urNorthing>
+        <defaultZoom>9</defaultZoom>
+        <requestChunk>500</requestChunk>
+        <forceXYAxisOrder>false</forceXYAxisOrder>
+    </instance>
+     -->
+
+	 <!--
+	 <instance>
+        <itemName>WV HydroSOS</itemName>
+        <url>http://vpn.52north.org/52n-sos-wv-webapp/sos/soap</url>
+        <version>2.0.0</version>
+        <supportsFirstLatest>true</supportsFirstLatest>
+        <metadataHandler>org.n52.server.sos.connector.hydro.HydroMetadataHandler</metadataHandler>
+        <adapter>org.n52.server.sos.connector.hydro.SOSwithSoapAdapter</adapter>
+        <waterML>true</waterML>
+        <llEasting>-180</llEasting>
+        <llNorthing>-80</llNorthing>
+        <urEasting>180</urEasting>
+        <urNorthing>90</urNorthing>
+        <defaultZoom>10</defaultZoom>
+        <requestChunk>200</requestChunk>
+        <autoZoom>true</autoZoom>
+        <protectedService>true</protectedService>
+    </instance>
+    -->
+	
+<!-- 
 	<instance>
 		<itemName>BfG SOS</itemName>
 		<url>http://geoportal.bafg.de/wiski-sos/sos</url>
@@ -153,8 +200,8 @@
 		<urNorthing>90</urNorthing>
 		<defaultZoom>13</defaultZoom>
 	</instance>
-	
-	
+ -->
+ 
 <!-- 
     <instance>
         <itemName>SOS-Q</itemName>
@@ -174,28 +221,29 @@
     </instance>
     
      -->
-<!-- 
-    <instance>
-        <itemName>localhost</itemName>
-        <url>http://localhost:7080/52nSOSv3.5.0/sos</url>
-        <version>1.0.0</version>
-        <waterML>false</waterML>
-        <metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
-        <adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
-        <requestChunk>300</requestChunk>
-        <autoZoom>false</autoZoom>
-        <llEasting>-80</llEasting>
-        <llNorthing>-80</llNorthing>
-        <urEasting>80</urEasting>
-        <urNorthing>80</urNorthing>
-        <defaultZoom>13</defaultZoom>
-    </instance>
- -->
- 
 	
 <!-- 
 
-	CURRENTLY NOT SUPPORTED (anymore)
+	CURRENTLY NOT SUPPORTED (not yet supported or not supported anymore)
+	
+	
+    <instance>
+        <itemName>Ozon (envirocloud.de)</itemName>
+        <url>http://www.envirocloud.se/Ozon/api/sos/soap</url>
+        <version>2.0.0</version>
+        <supportsFirstLatest>true</supportsFirstLatest>
+        <metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
+        <adapter>org.n52.server.sos.connector.hydro.SOSwithSoapAdapter</adapter>
+        <waterML>true</waterML>
+        <llEasting>11.00</llEasting>
+        <llNorthing>54.00</llNorthing>
+        <urEasting>24.0</urEasting>
+        <urNorthing>70.0</urNorthing>
+        <defaultZoom>10</defaultZoom>
+        <requestChunk>200</requestChunk>
+        <autoZoom>true</autoZoom>
+        <protectedService>true</protectedService>
+    </instance>
 	
     <instance>
         <itemName>Syke_Snow</itemName>

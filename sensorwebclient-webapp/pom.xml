@@ -184,7 +184,7 @@
 							<outputDirectory>${webappDirectory}</outputDirectory>
 							<overWrite>false</overWrite>
 						</artifactItem>
-					
+
 						<artifactItem>
 							<groupId>${project.groupId}</groupId>
 							<artifactId>timeseries-web</artifactId>
@@ -230,14 +230,9 @@
 					<groupId>org.n52.sensorweb</groupId>
 					<artifactId>sensorwebclient-eea</artifactId>
 				</dependency>
-			</dependencies>
-		</profile>
-		<profile>
-			<id>connector-grdc</id>
-			<dependencies>
 				<dependency>
 					<groupId>org.n52.sensorweb</groupId>
-					<artifactId>sensorwebclient-grdc</artifactId>
+					<artifactId>sensorwebclient-ags</artifactId>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -255,40 +250,40 @@
 			<id>all-modules-provided</id>
 			<dependencyManagement>
 				<dependencies>
-                    <dependency>
-                        <groupId>org.n52.sensorweb</groupId>
-                        <artifactId>timeseries-io</artifactId>
-                        <version>${timeseries.api.version}</version>
-                        <scope>provided</scope>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.n52.sensorweb</groupId>
-                        <artifactId>timeseries-web</artifactId>
-                        <version>${timeseries.api.version}</version>
-                        <scope>provided</scope>
-                    </dependency>
+					<dependency>
+						<groupId>org.n52.sensorweb</groupId>
+						<artifactId>timeseries-io</artifactId>
+						<version>${timeseries.api.version}</version>
+						<scope>provided</scope>
+					</dependency>
+					<dependency>
+						<groupId>org.n52.sensorweb</groupId>
+						<artifactId>timeseries-web</artifactId>
+						<version>${timeseries.api.version}</version>
+						<scope>provided</scope>
+					</dependency>
 					<dependency>
 						<groupId>org.n52.sensorweb</groupId>
 						<artifactId>sensorwebclient-api</artifactId>
-                        <version>${project.version}</version>
+						<version>${project.version}</version>
 						<scope>provided</scope>
 					</dependency>
 					<dependency>
 						<groupId>org.n52.sensorweb</groupId>
 						<artifactId>sensorwebclient-ext</artifactId>
-                        <version>${project.version}</version>
+						<version>${project.version}</version>
 						<scope>provided</scope>
 					</dependency>
 					<dependency>
 						<groupId>org.n52.sensorweb</groupId>
 						<artifactId>sensorwebclient-sos-rpc</artifactId>
-                        <version>${project.version}</version>
+						<version>${project.version}</version>
 						<scope>provided</scope>
 					</dependency>
 					<dependency>
 						<groupId>org.n52.sensorweb</groupId>
 						<artifactId>sensorwebclient-sos-server</artifactId>
-                        <version>${project.version}</version>
+						<version>${project.version}</version>
 						<scope>provided</scope>
 					</dependency>
 					<dependency>
@@ -300,43 +295,49 @@
 					<dependency>
 						<groupId>org.n52.sensorweb</groupId>
 						<artifactId>sensorwebclient-ses-rpc</artifactId>
-                        <version>${project.version}</version>
+						<version>${project.version}</version>
 						<scope>provided</scope>
 					</dependency>
 					<dependency>
 						<groupId>org.n52.sensorweb</groupId>
 						<artifactId>sensorwebclient-ses-server</artifactId>
-                        <version>${project.version}</version>
+						<version>${project.version}</version>
 						<scope>provided</scope>
 					</dependency>
 					<dependency>
 						<groupId>org.n52.sensorweb</groupId>
 						<artifactId>sensorwebclient-ses-shared</artifactId>
-                        <version>${project.version}</version>
+						<version>${project.version}</version>
 						<scope>provided</scope>
 					</dependency>
 					<dependency>
 						<groupId>org.n52.sensorweb</groupId>
 						<artifactId>sensorwebclient-sos-rest</artifactId>
-                        <version>${project.version}</version>
+						<version>${project.version}</version>
 						<scope>provided</scope>
 					</dependency>
 					<dependency>
 						<groupId>org.n52.sensorweb</groupId>
 						<artifactId>sensorwebclient-eea</artifactId>
-                        <version>${project.version}</version>
+						<version>${project.version}</version>
 						<scope>provided</scope>
 					</dependency>
+                    <dependency>
+                        <groupId>org.n52.sensorweb</groupId>
+                        <artifactId>sensorwebclient-ags</artifactId>
+                        <version>${project.version}</version>
+                        <scope>provided</scope>
+                    </dependency>
 					<dependency>
 						<groupId>org.n52.sensorweb</groupId>
 						<artifactId>sensorwebclient-hydro</artifactId>
-                        <version>${project.version}</version>
+						<version>${project.version}</version>
 						<scope>provided</scope>
 					</dependency>
 					<dependency>
 						<groupId>org.n52.sensorweb</groupId>
 						<artifactId>sensorwebclient-ui</artifactId>
-                        <version>${project.version}</version>
+						<version>${project.version}</version>
 						<scope>provided</scope>
 					</dependency>
 				</dependencies>

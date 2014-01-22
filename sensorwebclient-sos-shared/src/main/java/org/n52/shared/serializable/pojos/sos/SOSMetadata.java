@@ -31,7 +31,7 @@ import java.util.List;
 
 import org.n52.io.crs.BoundingBox;
 import org.n52.shared.IdGenerator;
-import org.n52.shared.MD5HashIdGenerator;
+import org.n52.shared.MD5HashGenerator;
 import org.n52.shared.requests.query.QueryParameters;
 
 /**
@@ -419,7 +419,7 @@ public class SOSMetadata implements Serializable {
 
     public String getGlobalId() {
         String[] parameters = new String[] {serviceUrl, version};
-        IdGenerator idGenerator = new MD5HashIdGenerator("srv_");
+        IdGenerator idGenerator = new MD5HashGenerator("srv_");
         return idGenerator.generate(parameters);
     }
 }

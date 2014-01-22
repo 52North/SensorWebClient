@@ -26,7 +26,6 @@ package org.n52.server.io.render;
 
 import static org.n52.server.io.TimeseriesFactory.compressToTimeSeries;
 import static org.n52.server.io.TimeseriesFactory.createTimeSeries;
-import static org.n52.server.mgmt.ConfigurationContext.getServiceMetadata;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -69,11 +68,6 @@ import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.shared.serializable.pojos.Axis;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
-import org.n52.shared.serializable.pojos.sos.Feature;
-import org.n52.shared.serializable.pojos.sos.Phenomenon;
-import org.n52.shared.serializable.pojos.sos.Procedure;
-import org.n52.shared.serializable.pojos.sos.SOSMetadata;
-import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
 public class DiagramRenderer {
     

@@ -25,23 +25,11 @@
 package org.n52.server.parser;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import net.opengis.sensorML.x101.AbstractComponentType;
 import net.opengis.sensorML.x101.AbstractProcessType;
@@ -83,6 +71,8 @@ import org.n52.oxf.xml.NcNameResolver;
 import org.n52.oxf.xmlbeans.parser.XMLBeansParser;
 import org.n52.oxf.xmlbeans.parser.XMLHandlingException;
 import org.n52.server.mgmt.ConfigurationContext;
+import org.n52.server.util.SensorMLToHtml;
+import org.n52.shared.MD5HashGenerator;
 import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
@@ -153,9 +143,9 @@ public class DescribeSensorParser {
         try {
             String serviceUrl = timeseries.getServiceUrl();
             String smlVersion = ConfigurationContext.getSOSMetadata(serviceUrl).getSensorMLVersion();
-            String filename = "sensorML_" + normalize(createSensorDescriptionFileName(timeseries));
-            File sensorMLFile = saveSensorMLFile(filename);
-            return new SensorMLToHTMLTransformer(sensorMLFile, smlVersion).transformSMLtoHTML(filename);
+            String filename = createSensorDescriptionFileName(timeseries);
+            File sensorMLFile = saveFile(filename);
+            return SensorMLToHtml.createFromSensorML(sensorMLFile, smlVersion).transformSMLtoHTML(filename);
         }
         catch (IOException e) {
             throw new OXFException("Could not write file.", e);
@@ -166,7 +156,23 @@ public class DescribeSensorParser {
         String serviceUrl = timeseries.getServiceUrl();
         String procedureId = timeseries.getProcedureId();
         String phenomenonId = timeseries.getPhenomenonId();
-        return phenomenonId + "_via_" + procedureId + "_at_" + serviceUrl;
+        MD5HashGenerator generator = new MD5HashGenerator("sensorML_");
+        return generator.generate(new String[] {phenomenonId, procedureId, serviceUrl});
+    }
+
+    private File saveFile(String filename) throws IOException {
+        String normalizedFilename = normalize(filename);
+        File sensorMLFile = JavaHelper.genFile(ConfigurationContext.GEN_DIR, normalizedFilename, "xml");
+        IOHelper.saveFile(sensorMLFile, smlDoc.newInputStream());
+        return sensorMLFile;
+    }
+
+    /**
+     * @return a normalized String for use in a file path, i.e. all [\,/,:,*,?,",<,>,;,#] characters are
+     *         replaced by '_'.
+     */
+    private String normalize(String toNormalize) {
+        return toNormalize.replaceAll("[\\\\,/,:,\\*,?,\",<,>,;,#]", "_");
     }
 
     public Point buildUpSensorMetadataPosition() throws FactoryException, TransformException {
@@ -313,22 +319,6 @@ public class DescribeSensorParser {
         String stationName = station != null ? station : uniqueId;
         LOGGER.debug(String.format("parsed '%s' as station name", stationName));
         return stationName;
-    }
-
-    private File saveSensorMLFile(String filename) throws IOException {
-        String normalizedFilename = normalize(filename);
-        File sensorMLFile = JavaHelper.genFile(ConfigurationContext.GEN_DIR, normalizedFilename, "xml");
-        IOHelper.saveFile(sensorMLFile, smlDoc.newInputStream());
-        return sensorMLFile;
-    }
-
-    
-    /**
-     * @return a normalized String for use in a file path, i.e. all [\,/,:,*,?,",<,>,;] characters are
-     *         replaced by '_'.
-     */
-    private String normalize(String toNormalize) {
-        return toNormalize.replaceAll("[\\\\,/,:,\\*,?,\",<,>,;]", "_");
     }
 
     public HashMap<String, ReferenceValue> parseReferenceValues() {
@@ -593,7 +583,7 @@ public class DescribeSensorParser {
             }
         } else {
             String xmlText = xmlObject == null ? null : xmlObject.xmlText();
-            throw new IllegalArgumentException("Could not parse sensor description: " + xmlText);
+            throw new IllegalArgumentException("Illegal sensor description: " + xmlText);
         }
     }
 

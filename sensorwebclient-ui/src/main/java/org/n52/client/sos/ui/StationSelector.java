@@ -367,6 +367,7 @@ public class StationSelector extends Window {
 	}
 	
 	public void clearProcedureDetails() {
+	    timeseriesInfoHTMLPane.clear();
 		timeseriesInfoHTMLPane.hide();
 	}
 	

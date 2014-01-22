@@ -27,7 +27,7 @@ import static org.n52.shared.requests.query.QueryParameters.createEmptyFilterQue
 
 import org.n52.io.v1.data.CategoryOutput;
 import org.n52.shared.IdGenerator;
-import org.n52.shared.MD5HashIdGenerator;
+import org.n52.shared.MD5HashGenerator;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
@@ -54,7 +54,7 @@ public class CategoryConverter extends OutputConverter<String, CategoryOutput> {
 	}
 
 	public String generateId(String category) {
-		IdGenerator idGenerator = new MD5HashIdGenerator("cat_");
+		IdGenerator idGenerator = new MD5HashGenerator("cat_");
 		return idGenerator.generate(new String[]{category, getMetadata().getServiceUrl()});
 	}
 

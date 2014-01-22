@@ -420,7 +420,7 @@ public class SesServerUtil {
      * @return the broker URL.
      */
     public static String getBrokerUrl(String serviceUrl) {
-        return serviceUrl.endsWith("/") ? serviceUrl + "Broker" : serviceUrl + "/Broker";
+        return concatServiceUrl(serviceUrl, "Broker");
     }
     
     /**
@@ -436,7 +436,7 @@ public class SesServerUtil {
      * @return the SubscriptionManager URL.
      */
     public static String getSubscriptionManagerUrl(String serviceUrl) {
-        return serviceUrl.endsWith("/") ? serviceUrl + "SubscriptionManager" : serviceUrl + "/SubscriptionManager";
+        return concatServiceUrl(serviceUrl, "SubscriptionManager");
     }
     
     /**
@@ -449,6 +449,10 @@ public class SesServerUtil {
      * @return the PublisherRegistrationManager URL.
      */
     public static String getPublisherRegistrationManagerUrl(String serviceUrl) {
-        return serviceUrl.endsWith("/") ? serviceUrl + "PublisherRegistrationManager" : serviceUrl + "/PublisherRegistrationManager";
+        return concatServiceUrl(serviceUrl, "PublisherRegistrationManager");
+    }
+    
+    private static String concatServiceUrl(String baseUrl, String service) {
+        return service.endsWith("/") ? baseUrl + service : baseUrl + "/" + service;
     }
 }

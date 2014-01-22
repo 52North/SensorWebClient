@@ -38,9 +38,9 @@ import org.junit.Test;
 import org.n52.io.crs.CRSUtils;
 import org.n52.oxf.ows.capabilities.IBoundingBox;
 import org.n52.oxf.valueDomains.spatial.BoundingBox;
+import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SOSMetadataBuilder;
 import org.opengis.referencing.FactoryException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Point;
 
@@ -48,9 +48,11 @@ public class EeaSosConnectorTest {
     
     private static final double ALLOWED_DELTA = 0.0001;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EeaSosConnectorTest.class);
-    
     private static final String SF_SPATIAL_FEATURE = "/files/sf_spatial_feature.xml";
+
+    private static final String VERSION_200 = "2.0.0";
+
+    private static final String FAKE_URL = "http://fake.url";
     
     private static CRSUtils referenceHelper;
     
@@ -63,7 +65,7 @@ public class EeaSosConnectorTest {
         referenceHelper = CRSUtils.createEpsgForcedXYAxisOrder();
         InputStream is = this.getClass().getResourceAsStream(SF_SPATIAL_FEATURE);
         sfSamplingFeature = SFSamplingFeatureDocument.Factory.parse(is);
-        sosConnector = new ArcGISSoeMetadataHandler();
+        sosConnector = new ArcGISSoeMetadataHandler(createSosMetadata());
     }
 
     @Test
@@ -89,5 +91,12 @@ public class EeaSosConnectorTest {
         bboxString = sosConnector.createBboxString(bbox, referenceHelper);
         assertEquals("om:featureOfInterest/*/sams:shape,-176.0,-70.5,179.0,88.7,urn:ogc:def:crs:EPSG::4325", bboxString);
     }
-
+    
+    private static SOSMetadata createSosMetadata() {
+        SOSMetadataBuilder builder = new SOSMetadataBuilder();
+        builder
+            .addServiceVersion(VERSION_200)
+            .addServiceURL(FAKE_URL);
+        return new SOSMetadata(builder);
+    }
 }

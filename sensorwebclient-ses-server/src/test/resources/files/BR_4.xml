@@ -1,218 +1,226 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <EML xmlns="http://www.opengis.net/eml/0.0.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.opengis.net/eml/0.0.1 3111_XSD\eml\0.0.1\OGC-EML-0_0_1-eml.xsd">
-	<SimplePatterns>
-	
-		<!-- input pattern if only one value is in the eventing queue -->
-		<SimplePattern inputName="input" patternID="initial_count">
-			<SelectFunctions>
-				<SelectFunction newEventName="initial_count_stream">
-					<SelectEvent eventName="input" />
-				</SelectFunction>
-			</SelectFunctions>
-			<View>
-				<LengthView>
-					<EventCount>2</EventCount>
-				</LengthView>
-			</View>
-			<Guard>
-				<fes:Filter xmlns:fes="http://www.opengis.net/fes/2.0">
-					<fes:PropertyIsEqualTo>
-						<fes:ValueReference>VIEW_COUNT</fes:ValueReference>
-						<ns:Literal xmlns:ns="http://www.opengis.net/fes/2.0">
-							<ns1:Count xmlns:ns1="http://www.opengis.net/swe/1.0.1">
-								<ns1:value>1</ns1:value>
-							</ns1:Count>
-						</ns:Literal>
-					</fes:PropertyIsEqualTo>
-				</fes:Filter>
-			</Guard>
-			<PropertyRestrictions>
-			</PropertyRestrictions>
-		</SimplePattern>
-		
-		<SimplePattern inputName="input" patternID="rule4_overshoot_stream">
-			<SelectFunctions>
-				<SelectFunction newEventName="rule4_overshoot"
-					createCausality="false">
-					<SelectEvent eventName="input" />
-				</SelectFunction>
-			</SelectFunctions>
-			<View>
-				<LengthView>
-					<EventCount>1</EventCount>
-				</LengthView>
-			</View>
-			<Guard>
-				<fes:Filter xmlns:fes="http://www.opengis.net/fes/2.0">
-				</fes:Filter>
-			</Guard>
-			<PropertyRestrictions>
-				<PropertyRestriction>
-					<name>observedProperty</name>
-					<value>urn:ogc:def:phenomenon:OGC::WaterLevel</value>
-				</PropertyRestriction>
-				<PropertyRestriction>
-					<name>sensorID</name>
-					<value>sensorA漢</value>
-				</PropertyRestriction>
-			</PropertyRestrictions>
-		</SimplePattern>
+    xsi:schemaLocation="http://www.opengis.net/eml/0.0.1 3111_XSD\eml\0.0.1\OGC-EML-0_0_1-eml.xsd">
+    <SimplePatterns>
+    
+        <!-- input pattern if only one value is in the eventing queue -->
+        <SimplePattern inputName="input" patternID="initial_count">
+            <SelectFunctions>
+                <SelectFunction newEventName="initial_count_stream">
+                    <SelectEvent eventName="input" />
+                </SelectFunction>
+            </SelectFunctions>
+            <View>
+                <LengthView>
+                    <EventCount>2</EventCount>
+                </LengthView>
+            </View>
+            <Guard>
+                <fes:Filter xmlns:fes="http://www.opengis.net/fes/2.0">
+                    <fes:PropertyIsEqualTo>
+                        <fes:ValueReference>VIEW_COUNT</fes:ValueReference>
+                        <ns:Literal xmlns:ns="http://www.opengis.net/fes/2.0">
+                            <ns1:Count xmlns:ns1="http://www.opengis.net/swe/1.0.1">
+                                <ns1:value>1</ns1:value>
+                            </ns1:Count>
+                        </ns:Literal>
+                    </fes:PropertyIsEqualTo>
+                </fes:Filter>
+            </Guard>
+            <PropertyRestrictions>
+                <PropertyRestriction>
+                    <name>observedProperty</name>
+                    <value>urn:ogc:def:phenomenon:OGC::WaterLevel</value>
+                </PropertyRestriction>
+                <PropertyRestriction>
+                    <name>sensorID</name>
+                    <value>sensorA漢</value>
+                </PropertyRestriction>
+            </PropertyRestrictions>
+        </SimplePattern>
+        
+        <SimplePattern inputName="input" patternID="rule4_overshoot_stream">
+            <SelectFunctions>
+                <SelectFunction newEventName="rule4_overshoot"
+                    createCausality="false">
+                    <SelectEvent eventName="input" />
+                </SelectFunction>
+            </SelectFunctions>
+            <View>
+                <LengthView>
+                    <EventCount>1</EventCount>
+                </LengthView>
+            </View>
+            <Guard>
+                <fes:Filter xmlns:fes="http://www.opengis.net/fes/2.0">
+                </fes:Filter>
+            </Guard>
+            <PropertyRestrictions>
+                <PropertyRestriction>
+                    <name>observedProperty</name>
+                    <value>urn:ogc:def:phenomenon:OGC::WaterLevel</value>
+                </PropertyRestriction>
+                <PropertyRestriction>
+                    <name>sensorID</name>
+                    <value>sensorA漢</value>
+                </PropertyRestriction>
+            </PropertyRestrictions>
+        </SimplePattern>
 
-		<SimplePattern inputName="input" patternID="rule4_undershoot_stream">
-			<SelectFunctions>
-				<SelectFunction newEventName="rule4_undershoot"
-					createCausality="false">
-					<SelectEvent eventName="input" />
-				</SelectFunction>
-			</SelectFunctions>
-			<View>
-				<LengthView>
-					<EventCount>1</EventCount>
-				</LengthView>
-			</View>
-			<Guard>
-				<fes:Filter xmlns:fes="http://www.opengis.net/fes/2.0">
-				</fes:Filter>
-			</Guard>
-			<PropertyRestrictions>
-				<PropertyRestriction>
-					<name>observedProperty</name>
-					<value>urn:ogc:def:phenomenon:OGC::WaterLevel</value>
-				</PropertyRestriction>
-				<PropertyRestriction>
-					<name>sensorID</name>
-					<value>sensorA漢</value>
-				</PropertyRestriction>
-			</PropertyRestrictions>
-		</SimplePattern>
+        <SimplePattern inputName="input" patternID="rule4_undershoot_stream">
+            <SelectFunctions>
+                <SelectFunction newEventName="rule4_undershoot"
+                    createCausality="false">
+                    <SelectEvent eventName="input" />
+                </SelectFunction>
+            </SelectFunctions>
+            <View>
+                <LengthView>
+                    <EventCount>1</EventCount>
+                </LengthView>
+            </View>
+            <Guard>
+                <fes:Filter xmlns:fes="http://www.opengis.net/fes/2.0">
+                </fes:Filter>
+            </Guard>
+            <PropertyRestrictions>
+                <PropertyRestriction>
+                    <name>observedProperty</name>
+                    <value>urn:ogc:def:phenomenon:OGC::WaterLevel</value>
+                </PropertyRestriction>
+                <PropertyRestriction>
+                    <name>sensorID</name>
+                    <value>sensorA漢</value>
+                </PropertyRestriction>
+            </PropertyRestrictions>
+        </SimplePattern>
 
-	</SimplePatterns>
-	<ComplexPatterns>
-	
-		<!-- Initial overshoot pattern applies if an overshoot occurs without having 
-			any events happened before. The rule initially applies then so that users 
-			get notified for the first value directly after subscribing. -->
-		<ComplexPattern patternID="initial_count_einstieg_stream_event">
-			<SelectFunctions>
-				<SelectFunction newEventName="rule4_overshoot_notification" 
-					createCausality="true" outputName="rule4_einstieg">
-					<NotifyOnSelect>
-						<Message>Einstiegsklausel</Message>
-					</NotifyOnSelect>
-				</SelectFunction>
-			</SelectFunctions>
-			<Guard>
-				<fes:Filter xmlns:fes="http://www.opengis.net/fes/2.0">
-				</fes:Filter>
-			</Guard>
-			<StructuralOperator>
-				<CAUSE />
-			</StructuralOperator>
-			<FirstPattern>
-				<PatternReference>initial_count</PatternReference>
-				<SelectFunctionNumber>0</SelectFunctionNumber>
-			</FirstPattern>
-			<SecondPattern>
-				<PatternReference>initial_count</PatternReference>
-				<SelectFunctionNumber>0</SelectFunctionNumber>
-			</SecondPattern>
-		</ComplexPattern>
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-	
-		<!-- Einstiegsklausel -->
-		<ComplexPattern patternID="rule4_overshoot_notification_stream">
-			<SelectFunctions>
-				<SelectFunction newEventName="rule4_overshoot_notification"
-					createCausality="true" outputName="rule4_einstieg">
-					<NotifyOnSelect>
-						<Message>Einstiegsklausel</Message>
-					</NotifyOnSelect>
-				</SelectFunction>
-			</SelectFunctions>
-			<StructuralOperator>
-				<BEFORE />
-			</StructuralOperator>
-			<FirstPattern>
-				<PatternReference>rule4_undershoot_stream</PatternReference>
-				<SelectFunctionNumber>0</SelectFunctionNumber>
-			</FirstPattern>
-			<SecondPattern>
-				<PatternReference>rule4_overshoot_stream</PatternReference>
-				<SelectFunctionNumber>0</SelectFunctionNumber>
-			</SecondPattern>
-		</ComplexPattern>
+    </SimplePatterns>
+    <ComplexPatterns>
+    
+        <!-- Initial overshoot pattern applies if an overshoot occurs without having 
+            any events happened before. The rule initially applies then so that users 
+            get notified for the first value directly after subscribing. -->
+        <ComplexPattern patternID="initial_count_einstieg_stream_event">
+            <SelectFunctions>
+                <SelectFunction newEventName="rule4_overshoot_notification" 
+                    createCausality="true" outputName="rule4_einstieg">
+                    <NotifyOnSelect>
+                        <Message>Einstiegsklausel</Message>
+                    </NotifyOnSelect>
+                </SelectFunction>
+            </SelectFunctions>
+            <Guard>
+                <fes:Filter xmlns:fes="http://www.opengis.net/fes/2.0">
+                </fes:Filter>
+            </Guard>
+            <StructuralOperator>
+                <CAUSE />
+            </StructuralOperator>
+            <FirstPattern>
+                <PatternReference>initial_count</PatternReference>
+                <SelectFunctionNumber>0</SelectFunctionNumber>
+            </FirstPattern>
+            <SecondPattern>
+                <PatternReference>initial_count</PatternReference>
+                <SelectFunctionNumber>0</SelectFunctionNumber>
+            </SecondPattern>
+        </ComplexPattern>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+        <!-- Einstiegsklausel -->
+        <ComplexPattern patternID="rule4_overshoot_notification_stream">
+            <SelectFunctions>
+                <SelectFunction newEventName="rule4_overshoot_notification"
+                    createCausality="true" outputName="rule4_einstieg">
+                    <NotifyOnSelect>
+                        <Message>Einstiegsklausel</Message>
+                    </NotifyOnSelect>
+                </SelectFunction>
+            </SelectFunctions>
+            <StructuralOperator>
+                <BEFORE />
+            </StructuralOperator>
+            <FirstPattern>
+                <PatternReference>rule4_undershoot_stream</PatternReference>
+                <SelectFunctionNumber>0</SelectFunctionNumber>
+            </FirstPattern>
+            <SecondPattern>
+                <PatternReference>rule4_overshoot_stream</PatternReference>
+                <SelectFunctionNumber>0</SelectFunctionNumber>
+            </SecondPattern>
+        </ComplexPattern>
 
-		<ComplexPattern patternID="rule4_undershoot_notification_stream">
-			<SelectFunctions>
-				<SelectFunction newEventName="rule4_undershoot_notification"
-					createCausality="true" outputName="rule4_ausstieg">
-					<NotifyOnSelect>
-						<Message>Ausstiegsklausel</Message>
-					</NotifyOnSelect>
-				</SelectFunction>
-			</SelectFunctions>
-			<StructuralOperator>
-				<BEFORE />
-			</StructuralOperator>
-			<FirstPattern>
-				<PatternReference>rule4_overshoot_stream</PatternReference>
-				<SelectFunctionNumber>0</SelectFunctionNumber>
-			</FirstPattern>
-			<SecondPattern>
-				<PatternReference>rule4_undershoot_stream</PatternReference>
-				<SelectFunctionNumber>0</SelectFunctionNumber>
-			</SecondPattern>
-		</ComplexPattern>
-		
-		
-		
-		<!-- Initial undershoot pattern applies if an undershoot occurs without 
-			having any events happened before. The rule initially applies then so that 
-			users get notified directly after subscribing. -->
-		<ComplexPattern patternID="wasserstand_initial_ausstieg_count_event">
-			<SelectFunctions>
-				<SelectFunction newEventName="rule4_overshoot_notification" 
-					createCausality="true" outputName="rule4_ausstieg">
-					<NotifyOnSelect>
-						<Message>Ausstiegsklausel</Message>
-					</NotifyOnSelect>
-				</SelectFunction>
-			</SelectFunctions>
-			<Guard>
-				<fes:Filter xmlns:fes="http://www.opengis.net/fes/2.0">
-				</fes:Filter>
-			</Guard>
-			<StructuralOperator>
-				<CAUSE />
-			</StructuralOperator>
-			<FirstPattern>
-				<PatternReference>initial_count</PatternReference>
-				<SelectFunctionNumber>0</SelectFunctionNumber>
-			</FirstPattern>
-			<SecondPattern>
-				<PatternReference>initial_count</PatternReference>
-				<SelectFunctionNumber>0</SelectFunctionNumber>
-			</SecondPattern>
-		</ComplexPattern>
-		
-		
-	</ComplexPatterns>
-	<TimerPatterns />
-	<RepetitivePatterns />
+        <ComplexPattern patternID="rule4_undershoot_notification_stream">
+            <SelectFunctions>
+                <SelectFunction newEventName="rule4_undershoot_notification"
+                    createCausality="true" outputName="rule4_ausstieg">
+                    <NotifyOnSelect>
+                        <Message>Ausstiegsklausel</Message>
+                    </NotifyOnSelect>
+                </SelectFunction>
+            </SelectFunctions>
+            <StructuralOperator>
+                <BEFORE />
+            </StructuralOperator>
+            <FirstPattern>
+                <PatternReference>rule4_overshoot_stream</PatternReference>
+                <SelectFunctionNumber>0</SelectFunctionNumber>
+            </FirstPattern>
+            <SecondPattern>
+                <PatternReference>rule4_undershoot_stream</PatternReference>
+                <SelectFunctionNumber>0</SelectFunctionNumber>
+            </SecondPattern>
+        </ComplexPattern>
+        
+        
+        <!-- 
+        initial pattern match for exit conditions is not of interest
+        
+        <ComplexPattern patternID="wasserstand_initial_ausstieg_count_event">
+            <SelectFunctions>
+                <SelectFunction newEventName="rule4_overshoot_notification" 
+                    createCausality="true" outputName="rule4_ausstieg">
+                    <NotifyOnSelect>
+                        <Message>Ausstiegsklausel</Message>
+                    </NotifyOnSelect>
+                </SelectFunction>
+            </SelectFunctions>
+            <Guard>
+                <fes:Filter xmlns:fes="http://www.opengis.net/fes/2.0">
+                </fes:Filter>
+            </Guard>
+            <StructuralOperator>
+                <CAUSE />
+            </StructuralOperator>
+            <FirstPattern>
+                <PatternReference>initial_count</PatternReference>
+                <SelectFunctionNumber>0</SelectFunctionNumber>
+            </FirstPattern>
+            <SecondPattern>
+                <PatternReference>initial_count</PatternReference>
+                <SelectFunctionNumber>0</SelectFunctionNumber>
+            </SecondPattern>
+        </ComplexPattern>
+         -->
+        
+        
+    </ComplexPatterns>
+    <TimerPatterns />
+    <RepetitivePatterns />
 </EML>

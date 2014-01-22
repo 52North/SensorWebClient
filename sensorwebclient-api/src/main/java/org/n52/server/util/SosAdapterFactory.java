@@ -27,6 +27,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.n52.oxf.sos.adapter.SOSAdapter;
+import org.n52.oxf.util.web.ProxyAwareHttpClient;
+import org.n52.oxf.util.web.SimpleHttpClient;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,14 +49,16 @@ public class SosAdapterFactory {
         String adapter = metadata.getAdapter();
         String sosVersion = metadata.getSosVersion();
         try {
+            SOSAdapter sosAdapter = new SOSAdapter(sosVersion);
+            sosAdapter.setHttpClient(new ProxyAwareHttpClient(new SimpleHttpClient()));
             if (adapter == null) {
-                return new SOSAdapter(sosVersion);
+                return sosAdapter;
             }
             else {
                 
                 if (!SOSAdapter.class.isAssignableFrom(Class.forName(adapter))) {
                     LOGGER.warn("'{}' is not an SOSAdapter implementation! Create default.", adapter);
-                    return new SOSAdapter(sosVersion);
+                    return sosAdapter;
                 }
                 @SuppressWarnings("unchecked") // unassignable case handled already
                 Class<SOSAdapter> clazz = (Class<SOSAdapter>) Class.forName(adapter);
