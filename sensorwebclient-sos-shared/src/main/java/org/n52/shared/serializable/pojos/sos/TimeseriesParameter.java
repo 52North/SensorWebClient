@@ -81,7 +81,11 @@ public abstract class TimeseriesParameter implements Serializable {
         if (parameterId.startsWith("urn")) {
             return parameterId.substring(parameterId.lastIndexOf(":") + 1);
         } else if (parameterId.startsWith("http")) {
-            return parameterId.substring(parameterId.lastIndexOf("/") + 1);
+            if (!parameterId.contains("#")) {
+                return parameterId.substring(parameterId.lastIndexOf("/") + 1);
+            } else {
+                return parameterId.substring(parameterId.lastIndexOf("#") + 1);
+            }
         } else {
             return parameterId;
         }
