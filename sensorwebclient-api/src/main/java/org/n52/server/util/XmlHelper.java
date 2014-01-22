@@ -28,8 +28,10 @@ import static org.n52.oxf.xmlbeans.tools.XmlUtil.selectPath;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.opengis.gml.x32.FeaturePropertyType;
 import net.opengis.gml.x32.PointDocument;
@@ -139,8 +141,9 @@ public final class XmlHelper {
      * </pre>
      * 
      * With this a search can be performed via:
+     *
      * <pre>
-     *     SystemType systemType = xmlHelper.parseFirst(smlDoc, "$this//sml:member//sml:System", SystemType.class);
+     * SystemType systemType = xmlHelper.parseFirst(smlDoc, &quot;$this//sml:member//sml:System&quot;, SystemType.class);
      * </pre>
      * 
      * @param from
