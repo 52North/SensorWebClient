@@ -190,34 +190,35 @@
 		
 		
 		
-		<!-- Initial undershoot pattern applies if an undershoot occurs without 
-			having any events happened before. The rule initially applies then so that 
-			users get notified directly after subscribing. -->
-		<ComplexPattern patternID="wasserstand_initial_ausstieg_count_event">
-			<SelectFunctions>
-				<SelectFunction newEventName="rule4_overshoot_notification" 
-					createCausality="true" outputName="rule4_ausstieg">
-					<NotifyOnSelect>
-						<Message>Ausstiegsklausel</Message>
-					</NotifyOnSelect>
-				</SelectFunction>
-			</SelectFunctions>
-			<Guard>
-				<fes:Filter xmlns:fes="http://www.opengis.net/fes/2.0">
-				</fes:Filter>
-			</Guard>
-			<StructuralOperator>
-				<CAUSE />
-			</StructuralOperator>
-			<FirstPattern>
-				<PatternReference>initial_count</PatternReference>
-				<SelectFunctionNumber>0</SelectFunctionNumber>
-			</FirstPattern>
-			<SecondPattern>
-				<PatternReference>initial_count</PatternReference>
-				<SelectFunctionNumber>0</SelectFunctionNumber>
-			</SecondPattern>
-		</ComplexPattern>
+        <!-- 
+        initial pattern match for exit conditions is not of interest
+        
+        <ComplexPattern patternID="wasserstand_initial_ausstieg_count_event">
+            <SelectFunctions>
+                <SelectFunction newEventName="rule4_overshoot_notification" 
+                    createCausality="true" outputName="rule4_ausstieg">
+                    <NotifyOnSelect>
+                        <Message>Ausstiegsklausel</Message>
+                    </NotifyOnSelect>
+                </SelectFunction>
+            </SelectFunctions>
+            <Guard>
+                <fes:Filter xmlns:fes="http://www.opengis.net/fes/2.0">
+                </fes:Filter>
+            </Guard>
+            <StructuralOperator>
+                <CAUSE />
+            </StructuralOperator>
+            <FirstPattern>
+                <PatternReference>initial_count</PatternReference>
+                <SelectFunctionNumber>0</SelectFunctionNumber>
+            </FirstPattern>
+            <SecondPattern>
+                <PatternReference>initial_count</PatternReference>
+                <SelectFunctionNumber>0</SelectFunctionNumber>
+            </SecondPattern>
+        </ComplexPattern>
+         -->
 		
 		
 	</ComplexPatterns>

@@ -189,10 +189,9 @@
         </ComplexPattern>
         
         
+        <!-- 
+        initial pattern match for exit conditions is not of interest
         
-        <!-- Initial undershoot pattern applies if an undershoot occurs without 
-            having any events happened before. The rule initially applies then so that 
-            users get notified directly after subscribing. -->
         <ComplexPattern patternID="wasserstand_initial_ausstieg_count_event">
             <SelectFunctions>
                 <SelectFunction newEventName="rule4_overshoot_notification" 
@@ -218,6 +217,7 @@
                 <SelectFunctionNumber>0</SelectFunctionNumber>
             </SecondPattern>
         </ComplexPattern>
+         -->
         
         
     </ComplexPatterns>

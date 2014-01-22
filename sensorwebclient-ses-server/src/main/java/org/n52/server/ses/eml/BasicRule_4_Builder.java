@@ -83,7 +83,8 @@ public class BasicRule_4_Builder extends BasicRuleBuilder {
 
     private final int INDEX_EXIT_NOTIFICATION_PATTERN = 2;
 
-    private final int INDEX_COMPLEX_PATTERN_INTIAL_EXIT = 3;
+    // initial pattern match for exit conditions is not of interest
+    //private final int INDEX_COMPLEX_PATTERN_INTIAL_EXIT = 3;
 
 
     private final String overshoot = "_overshoot";
@@ -207,8 +208,8 @@ public class BasicRule_4_Builder extends BasicRuleBuilder {
              * i.e. when the first and initial value matches the rule applies.
              */
             ComplexPattern initialEntryClause = complexPatterns.getComplexPatternArray(INDEX_COMPLEX_PATTERN_INTIAL_ENTRY);
-            ComplexPattern initialExitClause = complexPatterns.getComplexPatternArray(INDEX_COMPLEX_PATTERN_INTIAL_EXIT);
-            processFilterGuard(initialExitClause.getGuard(), exitFilter, INITIAL_STREAM_NAME);
+//            ComplexPattern initialExitClause = complexPatterns.getComplexPatternArray(INDEX_COMPLEX_PATTERN_INTIAL_EXIT);
+//            processFilterGuard(initialExitClause.getGuard(), exitFilter, INITIAL_STREAM_NAME);
             processFilterGuard(initialEntryClause.getGuard(), entryFilter, INITIAL_STREAM_NAME);
             
             eml = emlTemplateDoc.xmlText();
