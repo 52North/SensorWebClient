@@ -39,9 +39,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.opengis.sensorML.x101.CapabilitiesDocument.Capabilities;
 import net.opengis.sensorML.x101.ComponentType;
+import net.opengis.sensorML.x101.IdentificationDocument.Identification;
+import net.opengis.sensorML.x101.OutputsDocument.Outputs;
+import net.opengis.sensorML.x101.OutputsDocument.Outputs.OutputList;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.oxf.OXFException;
@@ -55,6 +60,7 @@ import org.n52.server.util.PropertiesToHtml;
 import org.n52.server.util.XmlHelper;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Feature;
+import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
@@ -97,34 +103,21 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
     public void assembleTimeseriesMetadata(TimeseriesProperties properties) throws Exception {
         SosTimeseries timeseries = properties.getTimeseries();
         SOSMetadata sosMetadata = getSOSMetadata(timeseries.getServiceUrl());
+
         Map<String, String> tsMetadata = new HashMap<String, String>();
-        
         XmlObject sml = getSensorDescriptionAsSensorML(timeseries.getProcedureId(), sosMetadata);
-//        DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), sosMetadata);
+        ArcGISSoeDescribeSensorParser parser = new ArcGISSoeDescribeSensorParser(sml);
 
         String phenomenonId = timeseries.getPhenomenonId();
-        ArcGISSoeDescribeSensorParser parser = new ArcGISSoeDescribeSensorParser(sml);
         String uom = parser.getUomFor(phenomenonId);
         String shortName = parser.getShortName();
-        
+
         tsMetadata.put("UOM", uom);
         tsMetadata.put("Name", shortName);
-        properties.setUnitOfMeasure(uom);
-        
         PropertiesToHtml toHtml = PropertiesToHtml.createFromProperties(tsMetadata);
+
         properties.setMetadataUrl(toHtml.create(timeseries));
-        
-//        String url = parser.buildUpSensorMetadataHtmlUrl(properties.getTimeseries());
-//        properties.setMetadataUrl(url);
-        
-        // TODO
-//        properties.setMetadataUrl(url); 
-//        String phenomenonId = timeseries.getPhenomenonId();
-//        properties.setUnitOfMeasure(parser.buildUpSensorMetadataUom(phenomenonId));
-//        String url = parser.buildUpSensorMetadataHtmlUrl(properties.getTimeseries());
-//        properties.addAllRefValues(parser.parseReferenceValues());
-//        properties.setMetadataUrl(url);
-        
+        properties.setUnitOfMeasure(uom);
     }
 
     @Override
@@ -139,15 +132,28 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
         for (SosTimeseries timeseries : observingTimeseries) {
             Procedure procedure = timeseries.getProcedure();
             ComponentType component = sensorDescriptions.get(procedure.getProcedureId());
+            completeProcedure(procedure, component);
 
             /*
              * TODO phenomenon relations has to be checked as MetadataHandler creates a timeseries
              * offering-procedure-phenomenon relation for each phenomenon in an offering (this however is not
              * true in all cases).
              */
-            String[] phenomena = xmlHelper.getRelatedPhenomena(component.getOutputs());
+            Outputs outputs = component.getOutputs();
+            String[] phenomena = xmlHelper.getRelatedPhenomena(outputs);
             if ( !relatesToPhenomena(timeseries, phenomena)) {
                 continue;
+            }
+
+            // get phenomenon/category labels
+            for (String phenomenonId : phenomena) {
+                OutputList outputList = outputs.getOutputList();
+                Phenomenon phenomenon = lookup.getPhenomenon(phenomenonId);
+                if (outputList.getOutputArray().length > 0) {
+                    String name = outputList.getOutputArray(0).getName();
+                    timeseries.setCategory(parseCategory(name));
+                    phenomenon.setLabel(name);
+                }
             }
 
             // get feature relations
@@ -156,14 +162,14 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
                 String[] fois = xmlHelper.getRelatedFeatures(sensorCapabilties);
                 for (String featureId : fois) {
                     if ( !lookup.containsFeature(featureId)) {
-                        // orphaned timeseries (w/o station)
+                        // orphaned timeseries (i.e. no station)
                         continue;
                     }
                     Feature feature = lookup.getFeature(featureId);
                     Station station = metadata.getStation(featureId);
                     if (station == null) {
                         Point location = featureLocations.get(feature);
-                        station = new Station(featureId, sosUrl);
+                        station = new Station(feature.getLabel(), sosUrl);
                         station.setLocation(location);
                         metadata.addStation(station);
                     }
@@ -172,19 +178,43 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
                     tmp.setFeature(new Feature(featureId, sosUrl));
                     station.addTimeseries(tmp);
                 }
-
             }
             else {
                 LOGGER.info("Procedure '{}' does not link to any feature.", procedure.getProcedureId());
             }
-
-            // get phenomenona descriptions
-
         }
 
         infoLogServiceSummary(metadata);
         metadata.setHasDonePositionRequest(true);
         return metadata;
+    }
+
+    /**
+     * Parses content of the last group of braces, i.e. <code>(content)</code>. If no braces are available at
+     * all, the whole passed parameter is returned.
+     * 
+     * @param phenomenonLabel
+     *        to parse content from.
+     * @return the content of the last brace group.
+     */
+    protected String parseCategory(String phenomenonLabel) {
+        Pattern pattern = Pattern.compile("\\((.*)\\)$"); // (<category>)
+        Matcher matcher = pattern.matcher(parseLastBraceGroup(phenomenonLabel));
+        return matcher.find() ? matcher.group(1) : phenomenonLabel;
+    }
+
+    private String parseLastBraceGroup(String phenomenonLabel) {
+        int groupStart = phenomenonLabel.lastIndexOf("(");
+        if (groupStart < 0) {
+            return phenomenonLabel;
+        }
+        int groupEnd = phenomenonLabel.length();
+        return phenomenonLabel.substring(groupStart, groupEnd);
+    }
+
+    private void completeProcedure(Procedure procedure, ComponentType component) {
+        Identification identification = component.getIdentificationArray(0);
+        procedure.setLabel(xmlHelper.getShortName(identification.getIdentifierList()));
     }
 
     private boolean relatesToPhenomena(SosTimeseries timeseries, String[] phenomena) {

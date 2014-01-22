@@ -23,7 +23,9 @@
  */
 package org.n52.server.sos.connector.ags;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 import java.util.Map;
 
@@ -61,13 +63,32 @@ public class ArcGISSoeEReportingMetadataHandlerTest {
         assertNotNull(metadata);
     }
     
-    @Test public void
+//    @Test
+    public void
     shouldPerformMetadataCompletion() throws Exception {
         
         // TODO
         SOSMetadata metadata = seam.performMetadataCompletion();
         System.out.println(metadata);
         
+    }
+    
+    @Test public void
+    shouldParseCategoryFromPhenomenonLabelWithSingleBraceGroup() {
+        String category = seam.parseCategory("Cadmium lajsdf (aerosol)");
+        assertThat(category, is("aerosol"));
+    }
+    
+    @Test public void
+    shouldParseCategoryFromPhenomenonLabelWithMultipleBraceGroup() {
+        String category = seam.parseCategory("Benzo(a)anthracene in PM10 (air+aerosol)");
+        assertThat(category, is("air+aerosol"));
+    }
+    
+    @Test public void
+    shouldParseWholePhenomenonWhenNoBraceGroupAvailable() {
+        String category = seam.parseCategory("aerosol");
+        assertThat(category, is("aerosol"));
     }
     
     static class ArcGISSoeEReportingMetadataHandlerSeam extends ArcGISSoeEReportingMetadataHandler {
