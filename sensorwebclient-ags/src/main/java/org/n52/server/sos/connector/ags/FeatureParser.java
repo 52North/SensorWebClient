@@ -97,8 +97,9 @@ public final class FeatureParser {
     private Feature parseFeatureFrom(FeaturePropertyType member) {
         String id = getTextFrom(member, "$this//base:Identifier/base:localId/text()");
         String namespace = getTextFrom(member, "$this//base:Identifier/base:namespace");
-        return new Feature(namespace + id, serviceUrl);
-
+        Feature feature = new Feature(namespace + id, serviceUrl);
+        feature.setLabel(id);
+        return feature;
     }
 
     private String getTextFrom(FeaturePropertyType member, String xpath) {
