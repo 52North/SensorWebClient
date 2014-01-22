@@ -107,8 +107,15 @@ public final class XmlHelper {
         }
     }
 
+    /**
+     * Finds all phenomena (quantity) which are referenced in the outputs section.
+     * 
+     * @param outputs
+     *        the outputs section of a SensorML description.
+     * @return an array of (unique) phenomena found in the outputs section.
+     */
     public String[] getRelatedPhenomena(Outputs outputs) {
-        List<String> phenomena = new ArrayList<String>();
+        Set<String> phenomena = new HashSet<String>();
         OutputList outputList = outputs.getOutputList();
         IoComponentPropertyType[] outputArray = outputList.getOutputArray();
         for (IoComponentPropertyType output : outputArray) {
@@ -141,7 +148,7 @@ public final class XmlHelper {
      * </pre>
      * 
      * With this a search can be performed via:
-     *
+     * 
      * <pre>
      * SystemType systemType = xmlHelper.parseFirst(smlDoc, &quot;$this//sml:member//sml:System&quot;, SystemType.class);
      * </pre>
