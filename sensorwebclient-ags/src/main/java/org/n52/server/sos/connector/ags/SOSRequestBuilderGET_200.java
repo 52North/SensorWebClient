@@ -31,7 +31,6 @@ import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.adapter.ParameterShell;
 import org.n52.oxf.ows.capabilities.ITime;
 import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
-import org.n52.oxf.valueDomains.time.ITimePosition;
 import org.n52.oxf.valueDomains.time.TimeFactory;
 import org.n52.oxf.valueDomains.time.TimePeriod;
 import org.slf4j.Logger;
@@ -43,6 +42,7 @@ public class SOSRequestBuilderGET_200 implements ISOSRequestBuilder {
 
 	@Override
 	public String buildGetCapabilitiesRequest(ParameterContainer parameters) {
+	    // TODO add acceptVersions parameter
 		return "request=GetCapabilities&service=SOS&f=xml";
 	}
 
@@ -94,11 +94,12 @@ public class SOSRequestBuilderGET_200 implements ISOSRequestBuilder {
 
     private String createOMPhenomenonTime(ITime specifiedTime) {
 		if (specifiedTime instanceof TimePeriod) {
-			TimePeriod timePeriod = (TimePeriod) specifiedTime;
-			ITimePosition start = timePeriod.getStart();
-            ITimePosition end = timePeriod.getEnd();
-            return start.toISO8601Format() + "/" + end.toISO8601Format();
-//			return createIso8601Duration(start2.toISO8601Format(), end.toISO8601Format());
+            TimePeriod timePeriod = (TimePeriod) specifiedTime;
+		    StringBuilder sb = new StringBuilder();
+		    sb.append("om:phenomenonTime,");
+		    sb.append(timePeriod.getStart().toISO8601Format());
+		    sb.append("/").append(timePeriod.getEnd().toISO8601Format());
+            return sb.toString();
 		} else {
 		    if (specifiedTime != null) {
 	            LOGGER.error("Invalid temporalFilter: " + specifiedTime.toString());
@@ -140,7 +141,7 @@ public class SOSRequestBuilderGET_200 implements ISOSRequestBuilder {
 
 	private String getSpecifiedStringValue(ParameterContainer parameters, String parameterName) {
         ParameterShell parameter = parameters.getParameterShellWithServiceSidedName(parameterName);
-        return (String) parameter.getSpecifiedValue();
+        return parameter == null ? "" : (String) parameter.getSpecifiedValue();
     }
 
     @Override

@@ -132,24 +132,6 @@ public class ConnectorUtils {
         }
         return smlVersion;
     }
-
-    public static void setVersionNumbersToMetadata(String sosUrl, String title, String sosVersion, String omFormat, String smlVersion){
-        SOSMetadata metadata = null;
-        try {
-            metadata = (SOSMetadata) ConfigurationContext.getServiceMetadatas().get(sosUrl);
-        } catch (Exception e) {
-            Log.error("Cannot cast SOSMetadata", e);
-        }
-        if (metadata != null) {
-        	metadata.setTitle(title);
-            metadata.setSensorMLVersion(smlVersion);
-            metadata.setSosVersion(sosVersion);
-            metadata.setOmVersion(omFormat);
-            metadata.setInitialized(true);
-        } else {
-            ConfigurationContext.initializeMetadata(new SOSMetadata(sosUrl, sosVersion, smlVersion, omFormat, title));
-        }
-    }
     
     public static IBoundingBox createBbox(ObservationOffering offering) {
         return createBbox(null, offering);

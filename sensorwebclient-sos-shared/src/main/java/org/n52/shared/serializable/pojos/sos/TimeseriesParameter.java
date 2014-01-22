@@ -26,7 +26,7 @@ package org.n52.shared.serializable.pojos.sos;
 import java.io.Serializable;
 
 import org.n52.shared.IdGenerator;
-import org.n52.shared.MD5HashIdGenerator;
+import org.n52.shared.MD5HashGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -56,7 +56,7 @@ public abstract class TimeseriesParameter implements Serializable {
     protected abstract String getGlobalIdPrefix();
     
     private String generateGlobalId(String id, String[] parametersToGenerateId) {
-        IdGenerator idGenerator = new MD5HashIdGenerator(getGlobalIdPrefix());
+        IdGenerator idGenerator = new MD5HashGenerator(getGlobalIdPrefix());
         return idGenerator.generate(parametersToGenerateId);
     }
 
@@ -81,7 +81,11 @@ public abstract class TimeseriesParameter implements Serializable {
         if (parameterId.startsWith("urn")) {
             return parameterId.substring(parameterId.lastIndexOf(":") + 1);
         } else if (parameterId.startsWith("http")) {
-            return parameterId.substring(parameterId.lastIndexOf("/") + 1);
+            if (!parameterId.contains("#")) {
+                return parameterId.substring(parameterId.lastIndexOf("/") + 1);
+            } else {
+                return parameterId.substring(parameterId.lastIndexOf("#") + 1);
+            }
         } else {
             return parameterId;
         }
