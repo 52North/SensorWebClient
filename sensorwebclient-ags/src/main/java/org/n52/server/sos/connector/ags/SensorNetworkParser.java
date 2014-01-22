@@ -64,9 +64,6 @@ public final class SensorNetworkParser {
 
     private XmlHelper xmlHelper = new XmlHelper(namespaceDeclarations);
 
-    public SensorNetworkParser() {
-    }
-
     /**
      * @param stream
      *        a DescribeSensorResponse stream.

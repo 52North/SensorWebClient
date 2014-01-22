@@ -57,7 +57,7 @@ public class SOSAdapterByGET extends SOSAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSAdapterByGET.class);
     
-    private static final int CONNECTION_TIMEOUT = 10000;
+    private static final int CONNECTION_TIMEOUT = 20000;
 
     private static final int SOCKET_TIMEOUT = 30000;
 
