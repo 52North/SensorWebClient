@@ -199,6 +199,12 @@ public abstract class MetadataHandler {
 
             // iterate over fois to delete double entries for the request
             for (int j = 0; j < foiArray.length; j++) {
+                
+                /*
+                 * TODO perform GetFOI operations if capabilities does not
+                 * list any features but offer a GetFOI operation.
+                 */
+                
                 featureIds.add(foiArray[j]);
             }
         }
