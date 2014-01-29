@@ -17,6 +17,13 @@
 			<version>2.6.0</version>
 		</dependency>
 	</dependencies>
+    
+    <licenses>
+		<license>
+			<name>GNU General Public License v2.0 only</name>
+			<url>http://www.spdx.org/licenses/GPL-2.0</url>
+		</license>
+	</licenses>
 
 	<build>
 		<plugins>

@@ -54,6 +54,7 @@ import net.opengis.swe.x101.QuantityDocument.Quantity;
 import net.opengis.swe.x101.SimpleDataRecordType;
 import net.opengis.swe.x101.TextDocument.Text;
 import net.opengis.swe.x101.VectorPropertyType;
+import net.opengis.swe.x101.VectorType.Coordinate;
 import net.opengis.swes.x20.DescribeSensorResponseDocument;
 import net.opengis.swes.x20.DescribeSensorResponseType;
 import net.opengis.swes.x20.DescribeSensorResponseType.Description;
@@ -108,7 +109,7 @@ public class DescribeSensorParser {
      * @throws FactoryException
      *         if creating default spatial reference failed.
      */
-    public DescribeSensorParser(InputStream inputStream, SOSMetadata metadata) throws XmlException,
+    public DescribeSensorParser(final InputStream inputStream, final SOSMetadata metadata) throws XmlException,
             IOException,
             XMLHandlingException,
             FactoryException {
@@ -120,16 +121,16 @@ public class DescribeSensorParser {
 
     public String buildUpSensorMetadataStationName() {
         String stationName = "";
-        AbstractProcessType abstractProcessType = smlDoc.getSensorML().getMemberArray(0).getProcess();
+        final AbstractProcessType abstractProcessType = smlDoc.getSensorML().getMemberArray(0).getProcess();
         if (abstractProcessType instanceof AbstractComponentType) {
             stationName = getStationNameByAbstractComponentType((AbstractComponentType) abstractProcessType);
         }
         return stationName;
     }
 
-    public String buildUpSensorMetadataUom(String phenomenonID) {
+    public String buildUpSensorMetadataUom(final String phenomenonID) {
         String uom = "";
-        AbstractProcessType abstractProcessType = smlDoc.getSensorML().getMemberArray(0).getProcess();
+        final AbstractProcessType abstractProcessType = smlDoc.getSensorML().getMemberArray(0).getProcess();
         if (abstractProcessType instanceof AbstractComponentType) {
             uom = getUomByAbstractComponentType(phenomenonID, (AbstractComponentType) abstractProcessType);
         }
@@ -139,30 +140,30 @@ public class DescribeSensorParser {
         return uom;
     }
 
-    public String buildUpSensorMetadataHtmlUrl(SosTimeseries timeseries) throws OXFException {
+    public String buildUpSensorMetadataHtmlUrl(final SosTimeseries timeseries) throws OXFException {
         try {
-            String serviceUrl = timeseries.getServiceUrl();
-            String smlVersion = ConfigurationContext.getSOSMetadata(serviceUrl).getSensorMLVersion();
-            String filename = createSensorDescriptionFileName(timeseries);
-            File sensorMLFile = saveFile(filename);
+        	final String serviceUrl = timeseries.getServiceUrl();
+            final String smlVersion = ConfigurationContext.getSOSMetadata(serviceUrl).getSensorMLVersion();
+            final String filename = createSensorDescriptionFileName(timeseries);
+            final File sensorMLFile = saveFile(filename);
             return SensorMLToHtml.createFromSensorML(sensorMLFile, smlVersion).transformSMLtoHTML(filename);
         }
-        catch (IOException e) {
+        catch (final IOException e) {
             throw new OXFException("Could not write file.", e);
         }
     }
 
-    public String createSensorDescriptionFileName(SosTimeseries timeseries) {
-        String serviceUrl = timeseries.getServiceUrl();
-        String procedureId = timeseries.getProcedureId();
-        String phenomenonId = timeseries.getPhenomenonId();
-        MD5HashGenerator generator = new MD5HashGenerator("sensorML_");
+    public String createSensorDescriptionFileName(final SosTimeseries timeseries) {
+        final String serviceUrl = timeseries.getServiceUrl();
+        final String procedureId = timeseries.getProcedureId();
+        final String phenomenonId = timeseries.getPhenomenonId();
+        final MD5HashGenerator generator = new MD5HashGenerator("sensorML_");
         return generator.generate(new String[] {phenomenonId, procedureId, serviceUrl});
     }
 
-    private File saveFile(String filename) throws IOException {
-        String normalizedFilename = normalize(filename);
-        File sensorMLFile = JavaHelper.genFile(ConfigurationContext.GEN_DIR, normalizedFilename, "xml");
+    private File saveFile(final String filename) throws IOException {
+        final String normalizedFilename = normalize(filename);
+        final File sensorMLFile = JavaHelper.genFile(ConfigurationContext.GEN_DIR, normalizedFilename, "xml");
         IOHelper.saveFile(sensorMLFile, smlDoc.newInputStream());
         return sensorMLFile;
     }
@@ -171,35 +172,35 @@ public class DescribeSensorParser {
      * @return a normalized String for use in a file path, i.e. all [\,/,:,*,?,",<,>,;,#] characters are
      *         replaced by '_'.
      */
-    private String normalize(String toNormalize) {
+    private String normalize(final String toNormalize) {
         return toNormalize.replaceAll("[\\\\,/,:,\\*,?,\",<,>,;,#]", "_");
     }
 
     public Point buildUpSensorMetadataPosition() throws FactoryException, TransformException {
-        SensorML sensorML = smlDoc.getSensorML();
-        Member[] members = sensorML.getMemberArray();
+        final SensorML sensorML = smlDoc.getSensorML();
+        final Member[] members = sensorML.getMemberArray();
         if (members != null && members.length > 0) {
-            AbstractComponentType sysDoc = (AbstractComponentType) members[0].getProcess();
-            PositionType position = sysDoc.getPosition().getPosition();
+            final AbstractComponentType sysDoc = (AbstractComponentType) members[0].getProcess();
+            final PositionType position = sysDoc.getPosition().getPosition();
             return createPoint(position);
         }
         return null;
     }
 
-    protected Point createPoint(PositionType position) throws FactoryException, TransformException {
+    protected Point createPoint(final PositionType position) throws FactoryException, TransformException {
         double x = 0d;
         double y = 0d; 
         double z = Double.NaN;
 
-        String outerReferenceFrame = position.getReferenceFrame();
-        String srs = referenceHelper.extractSRSCode(outerReferenceFrame);
+        final String outerReferenceFrame = position.getReferenceFrame();
+        final String srs = referenceHelper.extractSRSCode(outerReferenceFrame);
         
         
-        VectorPropertyType location = position.getLocation();
-        net.opengis.swe.x101.VectorType.Coordinate[] coords = location.getVector().getCoordinateArray();
-        for (int j = 0; j < coords.length; j++) {
-            String name = coords[j].getName();
-            Quantity quantity = coords[j].getQuantity();
+        final VectorPropertyType location = position.getLocation();
+        final net.opengis.swe.x101.VectorType.Coordinate[] coords = location.getVector().getCoordinateArray();
+        for (final Coordinate coord : coords) {
+            final String name = coord.getName();
+            final Quantity quantity = coord.getQuantity();
             if (name.equalsIgnoreCase("latitude") || name.equalsIgnoreCase("lat") || name.equalsIgnoreCase("northing")) {
                 if (referenceHelper.isLatLonAxesOrder(srs)) {
                     x = quantity.getValue();
@@ -218,16 +219,16 @@ public class DescribeSensorParser {
                 z = quantity.getValue();
             }
         }
-        Point point = referenceHelper.createPoint(x, y, z, srs);
+        final Point point = referenceHelper.createPoint(x, y, z, srs);
         return referenceHelper.transformOuterToInner(point, srs);
     }
 
-    private String getUomByProcessModelTypeImpl(String phenomenonID, ProcessModelTypeImpl processModel) {
+    private String getUomByProcessModelTypeImpl(final String phenomenonID, final ProcessModelTypeImpl processModel) {
         String uom = "";
         if (processModel.getOutputs() != null) {
-            OutputList outputList = processModel.getOutputs().getOutputList();
-            IoComponentPropertyType[] outputArray = outputList.getOutputArray();
-            for (IoComponentPropertyType output : outputArray) {
+            final OutputList outputList = processModel.getOutputs().getOutputList();
+            final IoComponentPropertyType[] outputArray = outputList.getOutputArray();
+            for (final IoComponentPropertyType output : outputArray) {
                 if (output.getQuantity().getDefinition().equals(phenomenonID)) {
                     uom = output.getQuantity().getUom().getCode();
                 }
@@ -236,29 +237,27 @@ public class DescribeSensorParser {
         return uom;
     }
 
-    private String getUomByAbstractComponentType(String phenomenonID, AbstractComponentType absComponent) {
+    private String getUomByAbstractComponentType(final String phenomenonID, final AbstractComponentType absComponent) {
         String uom = "";
-        try {
-            OutputList outList = absComponent.getOutputs().getOutputList();
-            IoComponentPropertyType[] outputs = outList.getOutputArray();
-            for (int j = 0; j < outputs.length; j++) {
-                if (outputs[j].getQuantity().getDefinition().equals(phenomenonID)) {
-                    uom = outputs[j].getQuantity().getUom().getCode();
-                }
-            }
-        }
-        catch (NullPointerException e) {
-            // FIXME dirty hack, improve above parsing
-            LOGGER.trace("improve parsing here!", e);
+        if (absComponent.isSetOutputs() && absComponent.getOutputs().isSetOutputList()) {
+        	final OutputList outList = absComponent.getOutputs().getOutputList();
+        	final IoComponentPropertyType[] outputs = outList.getOutputArray();
+        	for (final IoComponentPropertyType output : outputs) {
+        		if (output != null &&
+        				isPhenomenonIdMatchingQuantityDefinition(phenomenonID, output) &&
+        				isUomCodeSet(output.getQuantity())) {
+        			uom = output.getQuantity().getUom().getCode();
+        		}
+        	}
         }
 
         try {
             // search in capabilities
-            Capabilities[] caps = getSensorMLCapabilities(smlDoc.getSensorML());
-            for (int i = 0; i < caps.length; i++) {
+            final Capabilities[] caps = getSensorMLCapabilities(smlDoc.getSensorML());
+            for (final Capabilities cap : caps) {
 
-                if (caps[i].getAbstractDataRecord() instanceof SimpleDataRecordType) {
-                    SimpleDataRecordType datarec = (SimpleDataRecordType) caps[i].getAbstractDataRecord();
+                if (cap.getAbstractDataRecord() instanceof SimpleDataRecordType) {
+                    final SimpleDataRecordType datarec = (SimpleDataRecordType) cap.getAbstractDataRecord();
                     for (int j = 0; j < datarec.getFieldArray().length; j++) {
 
                         if (datarec.getFieldArray(j).getName().equals("unit")) {
@@ -266,8 +265,8 @@ public class DescribeSensorParser {
                         }
                     }
                 }
-                else if (caps[i].getAbstractDataRecord() instanceof DataRecordType) {
-                    DataRecordType datarec = (DataRecordType) caps[i].getAbstractDataRecord();
+                else if (cap.getAbstractDataRecord() instanceof DataRecordType) {
+                    final DataRecordType datarec = (DataRecordType) cap.getAbstractDataRecord();
                     for (int j = 0; j < datarec.getFieldArray().length; j++) {
                         if (datarec.getFieldArray(j).getName().equals("unit")) {
                             uom = datarec.getFieldArray(j).getText().getValue();
@@ -277,7 +276,7 @@ public class DescribeSensorParser {
 
             }
         }
-        catch (NullPointerException e) {
+        catch (final NullPointerException e) {
             // FIXME dirty hack, improve above parsing
             LOGGER.trace("improve parsing here!", e);
         }
@@ -292,14 +291,26 @@ public class DescribeSensorParser {
         return uom;
     }
 
-    private String getStationNameByAbstractComponentType(AbstractComponentType absComponentType) {
+	private boolean isUomCodeSet(final Quantity quantity) {
+		return quantity.isSetUom() && quantity.getUom().isSetCode();
+	}
+
+	private boolean isPhenomenonIdMatchingQuantityDefinition(
+			final String phenomenonID,
+			final IoComponentPropertyType output){
+		return output.isSetQuantity() && 
+				output.getQuantity().isSetDefinition() && 
+				output.getQuantity().getDefinition().equals(phenomenonID);
+	}
+
+    private String getStationNameByAbstractComponentType(final AbstractComponentType absComponentType) {
         String station = null;
         String uniqueId = null;
-        Identification[] identifications = getSensorMLIdentification(absComponentType);
-        for (Identification identification : identifications) {
+        final Identification[] identifications = getSensorMLIdentification(absComponentType);
+        for (final Identification identification : identifications) {
 
-            Identifier[] identifiers = identification.getIdentifierList().getIdentifierArray();
-            for (Identifier identifier : identifiers) {
+            final Identifier[] identifiers = identification.getIdentifierList().getIdentifierArray();
+            for (final Identifier identifier : identifiers) {
                 // find shortname, if not present at all the uniqueID is chosen
                 if (identifier.isSetName()) {
                     // supports discovery profile
@@ -309,36 +320,44 @@ public class DescribeSensorParser {
                         break;
                     }
                 }
-                String termDefinition = identifier.getTerm().getDefinition();
+                final String termDefinition = identifier.getTerm().getDefinition();
                 if (termDefinition != null && termDefinition.equals("urn:ogc:def:identifier:OGC:uniqueID")) {
                     uniqueId = identifier.getTerm().getValue();
                     LOGGER.trace("uniqueID found: " + uniqueId);
                 }
             }
         }
-        String stationName = station != null ? station : uniqueId;
+        final String stationName = station != null ? station : uniqueId;
         LOGGER.debug(String.format("parsed '%s' as station name", stationName));
         return stationName;
     }
 
+    private File saveSensorMLFile(final String filename) throws IOException {
+        final String normalizedFilename = normalize(filename);
+        final File sensorMLFile = JavaHelper.genFile(ConfigurationContext.GEN_DIR, normalizedFilename, "xml");
+        IOHelper.saveFile(sensorMLFile, smlDoc.newInputStream());
+        return sensorMLFile;
+    }
+
+    
     public HashMap<String, ReferenceValue> parseReferenceValues() {
-        Capabilities[] capabilities = getSensorMLCapabilities(smlDoc.getSensorML());
-        HashMap<String, ReferenceValue> map = new HashMap<String, ReferenceValue>();
+        final Capabilities[] capabilities = getSensorMLCapabilities(smlDoc.getSensorML());
+        final HashMap<String, ReferenceValue> map = new HashMap<String, ReferenceValue>();
         if (capabilities == null || capabilities.length == 0) {
             return map;
         }
 
-        for (Capabilities capability : capabilities) {
-            AbstractDataRecordType abstractDataRecord = capability.getAbstractDataRecord();
+        for (final Capabilities capability : capabilities) {
+            final AbstractDataRecordType abstractDataRecord = capability.getAbstractDataRecord();
             if (abstractDataRecord instanceof SimpleDataRecordType) {
-                SimpleDataRecordType simpleDataRecord = (SimpleDataRecordType) abstractDataRecord;
-                for (AnyScalarPropertyType field : simpleDataRecord.getFieldArray()) {
+                final SimpleDataRecordType simpleDataRecord = (SimpleDataRecordType) abstractDataRecord;
+                for (final AnyScalarPropertyType field : simpleDataRecord.getFieldArray()) {
                     if (field.isSetText()) {
-                        String fieldName = field.getName();
-                        Text textComponent = field.getText();
-                        String definition = textComponent.getDefinition();
+                        final String fieldName = field.getName();
+                        final Text textComponent = field.getText();
+                        final String definition = textComponent.getDefinition();
                         if (isReferenceValue(definition)) {
-                            ReferenceValue referenceValue = parseReferenceValue(textComponent, fieldName);
+                            final ReferenceValue referenceValue = parseReferenceValue(textComponent, fieldName);
                             if (referenceValue != null) {
                                 map.put(fieldName, referenceValue);
                             }
@@ -347,14 +366,14 @@ public class DescribeSensorParser {
                 }
             }
             else if (abstractDataRecord instanceof DataRecordType) {
-                DataRecordType dataRecord = (DataRecordType) abstractDataRecord;
-                for (DataComponentPropertyType field : dataRecord.getFieldArray()) {
+                final DataRecordType dataRecord = (DataRecordType) abstractDataRecord;
+                for (final DataComponentPropertyType field : dataRecord.getFieldArray()) {
                     if (field.isSetText()) {
-                        String fieldName = field.getName();
-                        Text textComponent = field.getText();
-                        String definition = textComponent.getDefinition();
+                        final String fieldName = field.getName();
+                        final Text textComponent = field.getText();
+                        final String definition = textComponent.getDefinition();
                         if (isReferenceValue(definition)) {
-                            ReferenceValue referenceValue = parseReferenceValue(textComponent, fieldName);
+                            final ReferenceValue referenceValue = parseReferenceValue(textComponent, fieldName);
                             if (referenceValue != null) {
                                 map.put(fieldName, referenceValue);
                             }
@@ -372,7 +391,7 @@ public class DescribeSensorParser {
      * @param definition
      * @return
      */
-    private boolean isReferenceValue(String definition) {
+    private boolean isReferenceValue(final String definition) {
         return definition != null
                 && ! ("urn:x-ogc:def:property:unit".equalsIgnoreCase(definition)
                         || "urn:x-ogc:def:property:equidistance".equalsIgnoreCase(definition)
@@ -380,15 +399,15 @@ public class DescribeSensorParser {
                         || "FeatureOfInterestID".equalsIgnoreCase(definition));
     }
 
-    private ReferenceValue parseReferenceValue(Text text, String fieldName) {
+    private ReferenceValue parseReferenceValue(final Text text, final String fieldName) {
 
-        String stringValue = text.getValue();
+        final String stringValue = text.getValue();
         if (stringValue.matches("([0-9\\,\\.\\+\\-]+)")) {
             return new ReferenceValue(fieldName, new Double(stringValue));
         }
         if (stringValue.contains(" ")) {
             // special case: value + " " + uom(e.g. "637.0 cm")
-            String tmp = stringValue.substring(0, stringValue.indexOf(" "));
+            final String tmp = stringValue.substring(0, stringValue.indexOf(" "));
             if (tmp.matches("([0-9\\,\\.\\+\\-]+)")) {
                 return new ReferenceValue(fieldName, new Double(tmp));
             }
@@ -401,18 +420,18 @@ public class DescribeSensorParser {
      *        the sensorML document
      * @return the sensorML's capabilities modeled either in SensorML root or within Member/System
      */
-    private Capabilities[] getSensorMLCapabilities(SensorML sml) {
-        Capabilities[] capabilitiesArray = sml.getCapabilitiesArray();
+    private Capabilities[] getSensorMLCapabilities(final SensorML sml) {
+        final Capabilities[] capabilitiesArray = sml.getCapabilitiesArray();
         if (capabilitiesArray != null && capabilitiesArray.length != 0) {
             return capabilitiesArray;
         }
         else {
-            Member member = sml.getMemberArray(0);
+            final Member member = sml.getMemberArray(0);
             if (member.getProcess() instanceof AbstractComponentType) {
                 return ((AbstractComponentType) member.getProcess()).getCapabilitiesArray();
             }
             else {
-                SchemaType type = member.getProcess() != null ? member.getProcess().schemaType() : null;
+                final SchemaType type = member.getProcess() != null ? member.getProcess().schemaType() : null;
                 LOGGER.warn("SensorML does not contain a process substitution: {}", type);
                 return new Capabilities[0];
             }
@@ -424,8 +443,8 @@ public class DescribeSensorParser {
      *        the sensorML document
      * @return the sensorML's identification modeled either in SensorML root or within Member/System
      */
-    private Identification[] getSensorMLIdentification(AbstractComponentType absComponent) {
-        Identification[] identificationArray = absComponent.getIdentificationArray();
+    private Identification[] getSensorMLIdentification(final AbstractComponentType absComponent) {
+        final Identification[] identificationArray = absComponent.getIdentificationArray();
         if (identificationArray != null && identificationArray.length != 0) {
             return identificationArray;
         }
@@ -439,15 +458,15 @@ public class DescribeSensorParser {
      *        the sensorML document
      * @return the sensorML's characteristics modeled either in SensorML root or within Member/System
      */
-    private Characteristics[] getSensorMLCharacteristics(SensorML sml) {
+    private Characteristics[] getSensorMLCharacteristics(final SensorML sml) {
         // stub method for eventual later use
-        Characteristics[] characteristicsArray = sml.getCharacteristicsArray();
+        final Characteristics[] characteristicsArray = sml.getCharacteristicsArray();
         if (characteristicsArray != null && characteristicsArray.length != 0) {
             return characteristicsArray;
         }
         else {
-            Member member = sml.getMemberArray(0);
-            AbstractComponentType absComponent = member.isSetProcess() ? (AbstractComponentType) member.getProcess()
+            final Member member = sml.getMemberArray(0);
+            final AbstractComponentType absComponent = member.isSetProcess() ? (AbstractComponentType) member.getProcess()
                                                                       : null;
             if (absComponent == null) {
                 LOGGER.warn("SensorML does not contain a process substitution.");
@@ -462,15 +481,15 @@ public class DescribeSensorParser {
      *        the sensorML document
      * @return the sensorML's classifications modeled either in SensorML root or within Member/System
      */
-    private Classification[] getSensorMLClassifications(SensorML sml) {
+    private Classification[] getSensorMLClassifications(final SensorML sml) {
         // stub method for eventual later use
-        Classification[] classificationArray = sml.getClassificationArray();
+        final Classification[] classificationArray = sml.getClassificationArray();
         if (classificationArray != null && classificationArray.length != 0) {
             return classificationArray;
         }
         else {
-            Member member = sml.getMemberArray(0);
-            AbstractComponentType absComponent = member.isSetProcess() ? (AbstractComponentType) member.getProcess()
+            final Member member = sml.getMemberArray(0);
+            final AbstractComponentType absComponent = member.isSetProcess() ? (AbstractComponentType) member.getProcess()
                                                                       : null;
             if (absComponent == null) {
                 LOGGER.warn("SensorML does not contain a process substitution.");
@@ -482,35 +501,33 @@ public class DescribeSensorParser {
 
     public List<String> parseFOIReferences() {
 
-        List<String> fois = new ArrayList<String>();
-        Capabilities[] caps = getSensorMLCapabilities(smlDoc.getSensorML());
+        final List<String> fois = new ArrayList<String>();
+        final Capabilities[] caps = getSensorMLCapabilities(smlDoc.getSensorML());
 
         // get linkage of procedure<->foi
-        for (int i = 0; i < caps.length; i++) {
-            if (caps[i].getAbstractDataRecord() instanceof SimpleDataRecordType) {
-                SimpleDataRecordType rec = (SimpleDataRecordType) caps[i].getAbstractDataRecord();
+        for (final Capabilities cap : caps) {
+            if (cap.getAbstractDataRecord() instanceof SimpleDataRecordType) {
+                final SimpleDataRecordType rec = (SimpleDataRecordType) cap.getAbstractDataRecord();
                 // boolean foiRef = false;
                 for (int j = 0; j < rec.getFieldArray().length; j++) {
-                    AnyScalarPropertyType field = rec.getFieldArray(j);
+                    final AnyScalarPropertyType field = rec.getFieldArray(j);
                     if (field.isSetText()) {
-                        String definition = field.getText().getDefinition();
-                        if ("FeatureOfInterest identifier".equalsIgnoreCase(definition)
-                                || "FeatureOfInterestID".equalsIgnoreCase(definition)) {
+                        final String definition = field.getText().getDefinition();
+                        if (isValidFeatureIdDefinition(definition)) {
                             // foiRef = true;
                             fois.add(field.getText().getValue());
                         }
                     }
                 }
             }
-            else if (caps[i].getAbstractDataRecord() instanceof DataRecordType) {
-                DataRecordType rec = (DataRecordType) caps[i].getAbstractDataRecord();
+            else if (cap.getAbstractDataRecord() instanceof DataRecordType) {
+                final DataRecordType rec = (DataRecordType) cap.getAbstractDataRecord();
                 // boolean foiRef = false;
                 for (int j = 0; j < rec.getFieldArray().length; j++) {
-                    DataComponentPropertyType field = rec.getFieldArray(j);
+                    final DataComponentPropertyType field = rec.getFieldArray(j);
                     if (field.isSetText()) {
-                        String definition = field.getText().getDefinition();
-                        if ("FeatureOfInterest identifier".equalsIgnoreCase(definition)
-                                || "FeatureOfInterestID".equalsIgnoreCase(definition)) {
+                        final String definition = field.getText().getDefinition();
+                        if (isValidFeatureIdDefinition(definition)) {
                             // foiRef = true;
                             fois.add(field.getText().getValue());
                         }
@@ -521,12 +538,19 @@ public class DescribeSensorParser {
         return fois;
     }
 
+    // TODO parse all allowed values from a CSV list, that can be updated after compile time
+	private boolean isValidFeatureIdDefinition(final String definition)	{
+		return "FeatureOfInterest identifier".equalsIgnoreCase(definition)
+		        || "FeatureOfInterestID".equalsIgnoreCase(definition) // TODO maybe change to startsWith
+		        || "http://www.opengis.net/def/featureOfInterest/identifier".equalsIgnoreCase(definition);
+	}
+
     public List<String> getPhenomenons() {
-        List<String> phenomenons = new ArrayList<String>();
-        Member member = smlDoc.getSensorML().getMemberArray()[0];
-        AbstractComponentType absComponent = (AbstractComponentType) member.getProcess();
-        OutputList outputs = absComponent.getOutputs().getOutputList();
-        for (IoComponentPropertyType output : outputs.getOutputArray()) {
+        final List<String> phenomenons = new ArrayList<String>();
+        final Member member = smlDoc.getSensorML().getMemberArray()[0];
+        final AbstractComponentType absComponent = (AbstractComponentType) member.getProcess();
+        final OutputList outputs = absComponent.getOutputs().getOutputList();
+        for (final IoComponentPropertyType output : outputs.getOutputArray()) {
             if (output.isSetObservableProperty()) {
                 phenomenons.add(output.getObservableProperty().getDefinition());
             }
@@ -536,6 +560,9 @@ public class DescribeSensorParser {
             else if (output.isSetQuantity()) {
                 phenomenons.add(output.getQuantity().getDefinition());
             }
+            else if (isCategoryCodeSpaceHrefSet(output)) {
+            	phenomenons.add(output.getCategory().getDefinition());
+            }
             else {
                 phenomenons.add(output.getName());
             }
@@ -543,35 +570,40 @@ public class DescribeSensorParser {
         return phenomenons;
     }
 
-    protected void setDataStreamToParse(InputStream incomingResultAsStream) throws XmlException,
+	private boolean isCategoryCodeSpaceHrefSet(final IoComponentPropertyType output)
+	{
+		return output.isSetCategory() && output.getCategory().isSetDefinition();
+	}
+
+    protected void setDataStreamToParse(final InputStream incomingResultAsStream) throws XmlException,
             IOException,
             XMLHandlingException {
-        XmlObject xmlObject = XmlObject.Factory.parse(incomingResultAsStream);
+        final XmlObject xmlObject = XmlObject.Factory.parse(incomingResultAsStream);
         if (xmlObject instanceof SensorMLDocument) {
             smlDoc = (SensorMLDocument) xmlObject;
         }
         else if (xmlObject instanceof DescribeSensorResponseDocument) {
-            DescribeSensorResponseDocument responseDoc = (DescribeSensorResponseDocument) xmlObject;
-            DescribeSensorResponseType response = responseDoc.getDescribeSensorResponse();
-            Description[] descriptionArray = response.getDescriptionArray();
+            final DescribeSensorResponseDocument responseDoc = (DescribeSensorResponseDocument) xmlObject;
+            final DescribeSensorResponseType response = responseDoc.getDescribeSensorResponse();
+            final Description[] descriptionArray = response.getDescriptionArray();
             if (descriptionArray.length == 0) {
                 LOGGER.warn("No SensorDescription available in response!");
             }
             else {
-                for (Description description : descriptionArray) {
-                    Data dataDescription = description.getSensorDescription().getData();
-                    String namespace = "declare namespace gml='http://www.opengis.net/gml'; ";
-                    for (XmlObject xml : dataDescription.selectPath(namespace + "$this//*/@gml:id")) {
-                        XmlCursor cursor = xml.newCursor();
-                        String gmlId = cursor.getTextValue();
+                for (final Description description : descriptionArray) {
+                    final Data dataDescription = description.getSensorDescription().getData();
+                    final String namespace = "declare namespace gml='http://www.opengis.net/gml'; ";
+                    for (final XmlObject xml : dataDescription.selectPath(namespace + "$this//*/@gml:id")) {
+                        final XmlCursor cursor = xml.newCursor();
+                        final String gmlId = cursor.getTextValue();
                         if ( !NcNameResolver.isNCName(gmlId)) {
                             cursor.setTextValue(NcNameResolver.fixNcName(gmlId));
                         }
                     }
-                    XmlObject object = XmlObject.Factory.parse(dataDescription.xmlText());
+                    final XmlObject object = XmlObject.Factory.parse(dataDescription.xmlText());
                     if (object instanceof SystemDocumentImpl) {
                         smlDoc = SensorMLDocument.Factory.newInstance();
-                        Member member = smlDoc.addNewSensorML().addNewMember();
+                        final Member member = smlDoc.addNewSensorML().addNewMember();
                         member.set(XMLBeansParser.parse(object.newInputStream()));
                     }
                     else {
@@ -582,12 +614,12 @@ public class DescribeSensorParser {
                 }
             }
         } else {
-            String xmlText = xmlObject == null ? null : xmlObject.xmlText();
+            final String xmlText = xmlObject == null ? null : xmlObject.xmlText();
             throw new IllegalArgumentException("Illegal sensor description: " + xmlText);
         }
     }
 
-    public void setReferencingHelper(CRSUtils refHelper) {
-        this.referenceHelper = refHelper;
+    public void setReferencingHelper(final CRSUtils refHelper) {
+        referenceHelper = refHelper;
     }
 }
