@@ -142,11 +142,11 @@ public class DescribeSensorParser {
 
     public String buildUpSensorMetadataHtmlUrl(final SosTimeseries timeseries) throws OXFException {
         try {
-            final String serviceUrl = timeseries.getServiceUrl();
+        	final String serviceUrl = timeseries.getServiceUrl();
             final String smlVersion = ConfigurationContext.getSOSMetadata(serviceUrl).getSensorMLVersion();
-            final String filename = "sensorML_" + normalize(createSensorDescriptionFileName(timeseries));
-            final File sensorMLFile = saveSensorMLFile(filename);
-            return new SensorMLToHTMLTransformer(sensorMLFile, smlVersion).transformSMLtoHTML(filename);
+            final String filename = createSensorDescriptionFileName(timeseries);
+            final File sensorMLFile = saveFile(filename);
+            return SensorMLToHtml.createFromSensorML(sensorMLFile, smlVersion).transformSMLtoHTML(filename);
         }
         catch (final IOException e) {
             throw new OXFException("Could not write file.", e);
@@ -157,13 +157,13 @@ public class DescribeSensorParser {
         final String serviceUrl = timeseries.getServiceUrl();
         final String procedureId = timeseries.getProcedureId();
         final String phenomenonId = timeseries.getPhenomenonId();
-        MD5HashGenerator generator = new MD5HashGenerator("sensorML_");
+        final MD5HashGenerator generator = new MD5HashGenerator("sensorML_");
         return generator.generate(new String[] {phenomenonId, procedureId, serviceUrl});
     }
 
-    private File saveFile(String filename) throws IOException {
-        String normalizedFilename = normalize(filename);
-        File sensorMLFile = JavaHelper.genFile(ConfigurationContext.GEN_DIR, normalizedFilename, "xml");
+    private File saveFile(final String filename) throws IOException {
+        final String normalizedFilename = normalize(filename);
+        final File sensorMLFile = JavaHelper.genFile(ConfigurationContext.GEN_DIR, normalizedFilename, "xml");
         IOHelper.saveFile(sensorMLFile, smlDoc.newInputStream());
         return sensorMLFile;
     }
@@ -172,7 +172,7 @@ public class DescribeSensorParser {
      * @return a normalized String for use in a file path, i.e. all [\,/,:,*,?,",<,>,;,#] characters are
      *         replaced by '_'.
      */
-    private String normalize(String toNormalize) {
+    private String normalize(final String toNormalize) {
         return toNormalize.replaceAll("[\\\\,/,:,\\*,?,\",<,>,;,#]", "_");
     }
 
@@ -340,14 +340,6 @@ public class DescribeSensorParser {
     }
 
     
-    /**
-     * @return a normalized String for use in a file path, i.e. all [\,/,:,*,?,",<,>,;] characters are
-     *         replaced by '_'.
-     */
-    private String normalize(final String toNormalize) {
-        return toNormalize.replaceAll("[\\\\,/,:,\\*,?,\",<,>,;]", "_");
-    }
-
     public HashMap<String, ReferenceValue> parseReferenceValues() {
         final Capabilities[] capabilities = getSensorMLCapabilities(smlDoc.getSensorML());
         final HashMap<String, ReferenceValue> map = new HashMap<String, ReferenceValue>();
