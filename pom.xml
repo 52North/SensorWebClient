@@ -15,6 +15,13 @@
 	<url>http://52north.org/communities/sensorweb/</url>
 	<inceptionYear>2012</inceptionYear>
 
+	<licenses>
+		<license>
+			<name>GNU General Public License v2.0 only</name>
+			<url>http://www.spdx.org/licenses/GPL-2.0</url>
+		</license>
+	</licenses>
+
 	<modules>
 		<module>sensorwebclient-api</module>
 		<module>sensorwebclient-ext</module>
@@ -45,7 +52,7 @@
 			</dependency>
 
 			<dependency>
-				<!-- ensure loading before ealier versions -->
+				<!-- ensure loading before earlier versions -->
 				<groupId>org.geotools</groupId>
 				<artifactId>gt-opengis</artifactId>
 				<version>${geotools.version}</version>
