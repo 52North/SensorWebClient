@@ -1,5 +1,5 @@
 WICHTIG!
-In den Texten duerfen keine Sonderzeichen vorkommen!
+In den Texten duerfen Quotes ('-Zeichen) nur für den Regelnamen verwendet werden.
 SMS-Mitteilungen (shortMessages) duerfen insgesamt maximal 160 Zeichen lang sein.
 META-Muster-Tag <Message> muss folgende Elemente enthalten:
 
