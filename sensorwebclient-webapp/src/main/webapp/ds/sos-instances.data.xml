@@ -125,6 +125,25 @@
 		<protectedService>true</protectedService>
 	</instance>
 	
+	<!--
+	<instance>
+        <itemName>ECMWF-SOS</itemName>
+        <url>http://incubator.ecmwf.int/52n-sos-webapp/sos/soap</url>
+        <version>2.0.0</version>
+        <metadataHandler>org.n52.server.sos.connector.hydro.HydroMetadataHandler</metadataHandler>
+        <adapter>org.n52.server.sos.connector.hydro.SOSwithSoapAdapter</adapter>
+        <waterML>true</waterML>
+        <llEasting>-180</llEasting>
+        <llNorthing>-80</llNorthing>
+        <urEasting>180</urEasting>
+        <urNorthing>90</urNorthing>
+        <defaultZoom>10</defaultZoom>
+        <requestChunk>200</requestChunk>
+        <autoZoom>true</autoZoom>
+        <protectedService>true</protectedService>
+    </instance>
+    -->
+	
 	
     <instance>
         <itemName>Air Quality Belgium</itemName>
@@ -202,7 +221,6 @@
 	</instance>
  -->
  
-<!-- 
     <instance>
         <itemName>SOS-Q</itemName>
         <url>http://geoviqua.dev.52north.org/SOS-Q/sos/pox</url>
@@ -219,8 +237,6 @@
         <urNorthing>56.0</urNorthing>
         <defaultZoom>13</defaultZoom>
     </instance>
-    
-     -->
 	
 <!-- 
 
