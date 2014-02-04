@@ -21,8 +21,8 @@
       <directory>${project.basedir}</directory>
       <outputDirectory>/bin</outputDirectory>
       <includes>
-        <include>**/*.jar</include>  
-        <include>**/*.war</include>    
+        <include>**/target/*.jar</include>  
+        <include>**/target/*.war</include> 
       </includes>
       <excludes>
         <exclude>**/*-sources.jar</exclude>
