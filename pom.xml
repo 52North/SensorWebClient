@@ -883,8 +883,16 @@
 						<artifactId>license-maven-plugin</artifactId>
 						<version>1.5</version>
 						<configuration>
-                            <fileTemplate>misc/license-as-csv.ftl</fileTemplate>
+							<fileTemplate>misc/license-as-csv.ftl</fileTemplate>
 							<useMissingFile>true</useMissingFile>
+							<licenseMerges>
+								<licenseMerge>The Apache Software License, Version 2.0|Apache 2|Apache License, Version 2.0|Apache Public License 2.0</licenseMerge>
+								<licenseMerge>Apache Software Licenses|Apache Software License|Apache License</licenseMerge>
+								<licenseMerge>GNU General Public License, v2.0|GNU GENERAL PUBLIC LICENSE Version 2, June 1991|GNU General Public License, Version 2.0</licenseMerge>
+								<licenseMerge>Common Development and Distribution License (CDDL), version 1.0| Common Development and Distribution License (CDDL) v1.0</licenseMerge>
+								<licenseMerge>GNU Lesser General Public License, version 2.1|LGPL 2.1</licenseMerge>
+								<licenseMerge>Mozilla Public License version 1.1|MPL 1.1</licenseMerge>
+							</licenseMerges>
 						</configuration>
 						<executions>
 							<execution>
@@ -930,9 +938,8 @@
 		<timestamp>${maven.build.timestamp}</timestamp>
 
 		<currentYear>2014</currentYear> <!-- manual setting -->
-		<!-- 
-		<maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
-		<currentYearDynamic>${maven.build.timestamp}</currentYearDynamic> -->
+		<!-- <maven.build.timestamp.format>yyyy</maven.build.timestamp.format> 
+			<currentYearDynamic>${maven.build.timestamp}</currentYearDynamic> -->
 	</properties>
 
 	<repositories>
@@ -958,17 +965,17 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
-        <repository>
-            <id>Apache</id>
-            <name>Apache repository</name>
-            <url>http://repo1.maven.org/maven2</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
+		<repository>
+			<id>Apache</id>
+			<name>Apache repository</name>
+			<url>http://repo1.maven.org/maven2</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
 		<repository>
 			<id>geotools-new</id>
 			<url>http://repo.opengeo.org/</url>
@@ -984,11 +991,11 @@
 			<name>jts4gwt repository</name>
 			<url>http://jts4gwt.sf.net/maven/repository</url>
 			<releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
 		</repository>
 		<repository>
 			<id>smartgwt</id>
@@ -1021,16 +1028,16 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
-        <repository>
-            <id>jboss</id>
-            <url>http://repository.jboss.org/nexus/content/groups/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
+		<repository>
+			<id>jboss</id>
+			<url>http://repository.jboss.org/nexus/content/groups/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
 	</repositories>
 
 	<scm>
