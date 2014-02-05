@@ -57,6 +57,12 @@
 		<dependency>
 			<groupId>org.vast</groupId>
 			<artifactId>swe-common-data-framework</artifactId>
+			<exclusions>
+			     <exclusion>
+			         <groupId>java3d</groupId>
+			         <artifactId>vecmath</artifactId>
+			     </exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 </project>
