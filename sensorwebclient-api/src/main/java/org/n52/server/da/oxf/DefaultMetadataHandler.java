@@ -29,8 +29,7 @@ package org.n52.server.da.oxf;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.n52.server.da.oxf.DescribeSensorAccessor.getSensorDescriptionAsSensorML;
-import static org.n52.server.mgmt.ConfigurationContext.SERVER_TIMEOUT;
-import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadata;
+import static org.n52.server.mgmt.ConfigurationContext.*;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -61,6 +60,7 @@ import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.server.parser.DescribeSensorParser;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Feature;
+import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
@@ -77,7 +77,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultMetadataHandler.class);
     
-    public DefaultMetadataHandler(SOSMetadata metadata) {
+    public DefaultMetadataHandler(final SOSMetadata metadata) {
         super(metadata);
     }
 
@@ -87,25 +87,26 @@ public class DefaultMetadataHandler extends MetadataHandler {
      * @see org.n52.server.da.MetadataHandler#assembleTimeseriesMetadata(org.n52.shared.serializable.pojos.TimeseriesProperties)
      */
     @Override
-    public void assembleTimeseriesMetadata(TimeseriesProperties properties) throws Exception {
-        SosTimeseries timeseries = properties.getTimeseries();
-        SOSMetadata sosMetadata = getSOSMetadata(timeseries.getServiceUrl());
-        XmlObject sml = getSensorDescriptionAsSensorML(timeseries.getProcedureId(), sosMetadata);
-        DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), sosMetadata);
+    public void assembleTimeseriesMetadata(final TimeseriesProperties properties) throws Exception {
+        final SosTimeseries timeseries = properties.getTimeseries();
+        final SOSMetadata sosMetadata = getSOSMetadata(timeseries.getServiceUrl());
+        final XmlObject sml = getSensorDescriptionAsSensorML(timeseries.getProcedureId(), sosMetadata);
+        final DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), sosMetadata);
         
-        String phenomenonId = timeseries.getPhenomenonId();
+        final String phenomenonId = timeseries.getPhenomenonId();
         properties.setUnitOfMeasure(parser.buildUpSensorMetadataUom(phenomenonId));
-        String url = parser.buildUpSensorMetadataHtmlUrl(properties.getTimeseries());
+        final String url = parser.buildUpSensorMetadataHtmlUrl(properties.getTimeseries());
         properties.addAllRefValues(parser.parseReferenceValues());
         properties.setMetadataUrl(url);
     }
 
-    public SOSMetadata performMetadataCompletion() throws OXFException,
+    @Override
+	public SOSMetadata performMetadataCompletion() throws OXFException,
             InterruptedException,
             XMLHandlingException {
 
-        SOSMetadata sosMetadata = initMetadata();
-        Collection<SosTimeseries> observingTimeseries = createObservingTimeseries(getServiceVersion());
+        final SOSMetadata sosMetadata = initMetadata();
+        final Collection<SosTimeseries> observingTimeseries = createObservingTimeseries(getServiceVersion());
 
         normalizeDefaultCategories(observingTimeseries);
 
@@ -116,7 +117,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
             try {
                 performMetadataInterlinking(observingTimeseries);
             }
-            catch (IOException e) {
+            catch (final IOException e) {
                 LOGGER.warn("Could not retrieve relations between procedures and fois", e);
             }
         }
@@ -145,59 +146,59 @@ public class DefaultMetadataHandler extends MetadataHandler {
      * @throws IllegalStateException
      *         if SOS version is not supported.
      */
-    private void performMetadataInterlinking(Collection<SosTimeseries> observingTimeseries) throws OXFException,
+    private void performMetadataInterlinking(final Collection<SosTimeseries> observingTimeseries) throws OXFException,
             InterruptedException,
             XMLHandlingException,
             IOException {
-        String sosUrl = getServiceUrl();
-        SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosUrl);
-        TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
-        ArrayList<Procedure> procedures = lookup.getProcedures();
+        final String sosUrl = getServiceUrl();
+        final SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosUrl);
+        final TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
+        final ArrayList<Procedure> procedures = lookup.getProcedures();
 
         // do describe sensor for each procedure
-        String sosVersion = metadata.getSosVersion();
-        String smlVersion = metadata.getSensorMLVersion();
-        Map<String, FutureTask<OperationResult>> futureTasks = new ConcurrentHashMap<String, FutureTask<OperationResult>>();
-        for (Procedure proc : procedures) {
-            OperationAccessor opAccessorCallable = createDescribeSensorAccessor(
+        final String sosVersion = metadata.getSosVersion();
+        final String smlVersion = metadata.getSensorMLVersion();
+        final Map<String, FutureTask<OperationResult>> futureTasks = new ConcurrentHashMap<String, FutureTask<OperationResult>>();
+        for (final Procedure proc : procedures) {
+            final OperationAccessor opAccessorCallable = createDescribeSensorAccessor(
                                                                                 sosUrl, sosVersion, smlVersion, proc);
             futureTasks.put(proc.getProcedureId(), new FutureTask<OperationResult>(opAccessorCallable));
         }
 
         int i = 1;
-        List<String> illegalProcedures = new ArrayList<String>();
+        final List<String> illegalProcedures = new ArrayList<String>();
         LOGGER.debug("Going to send #{} DescribeSensor requests.", futureTasks.size());
-        for (String procedureId : futureTasks.keySet()) {
+        for (final String procedureId : futureTasks.keySet()) {
             ByteArrayInputStream incomingResultAsStream = null;
             try {
                 LOGGER.trace("Sending request {}", i++);
-                FutureTask<OperationResult> futureTask = futureTasks.get(procedureId);
+                final FutureTask<OperationResult> futureTask = futureTasks.get(procedureId);
                 AccessorThreadPool.execute(futureTask);
-                OperationResult opResult = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
+                final OperationResult opResult = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
                 if (opResult == null) {
                     illegalProcedures.add(procedureId);
                     LOGGER.debug("Got NO sensor description for '{}'", procedureId);
                 }
                 else {
                     incomingResultAsStream = opResult.getIncomingResultAsStream();
-                    DescribeSensorParser parser = new DescribeSensorParser(incomingResultAsStream, metadata);
+                    final DescribeSensorParser parser = new DescribeSensorParser(incomingResultAsStream, metadata);
 
-                    Procedure procedure = lookup.getProcedure(procedureId);
+                    final Procedure procedure = lookup.getProcedure(procedureId);
                     procedure.addAllRefValues(parser.parseReferenceValues());
-                    List<String> phenomenons = parser.getPhenomenons();
-                    List<String> fois = parser.parseFOIReferences();
-                    Point point = parser.buildUpSensorMetadataPosition();
+                    final List<String> phenomenons = parser.getPhenomenons();
+                    final List<String> fois = parser.parseFOIReferences();
+                    final Point point = parser.buildUpSensorMetadataPosition();
 
                     if (fois.isEmpty()) {
-                        Collection<Feature> features = lookup.getFeatures();
+                        final Collection<Feature> features = lookup.getFeatures();
                         LOGGER.warn("No FOI references found for procedure '{}'.", procedureId);
                         LOGGER.warn("==> Reference all ({}) available.", features.size());
-                        for (Feature foi : features) {
+                        for (final Feature foi : features) {
                             fois.add(foi.getFeatureId());
                         }
                     }
 
-                    for (String featureId : fois) {
+                    for (final String featureId : fois) {
                         Station station = metadata.getStation(featureId);
                         if (station == null) {
                             station = new Station(featureId, sosUrl);
@@ -205,15 +206,20 @@ public class DefaultMetadataHandler extends MetadataHandler {
                             metadata.addStation(station);
                         }
 
-                        for (String phenomenon : phenomenons) {
-                            String uom = parser.buildUpSensorMetadataUom(phenomenon);
-                            lookup.getPhenomenon(phenomenon).setUnitOfMeasure(uom);
-                            Collection<SosTimeseries> paramConstellations = getMatchingConstellations(observingTimeseries,
+                        for (final String phenomenon : phenomenons) {
+                            final String uom = parser.buildUpSensorMetadataUom(phenomenon);
+                            final Phenomenon lokupPhen = lookup.getPhenomenon(phenomenon);
+                            if (lokupPhen != null) {
+                            	lokupPhen.setUnitOfMeasure(uom);
+                            } else {
+                            	LOGGER.error("Could not find matching phenomenon in internal 'lookup' storage for '{}'",phenomenon);
+                            }
+                            final Collection<SosTimeseries> paramConstellations = getMatchingConstellations(observingTimeseries,
                                                                                                       procedureId,
                                                                                                       phenomenon);
 
                             station.setLocation(point);
-                            for (SosTimeseries timseries : paramConstellations) {
+                            for (final SosTimeseries timseries : paramConstellations) {
                                 timseries.setFeature(new Feature(featureId, sosUrl));
                                 station.addTimeseries(timseries);
                             }
@@ -222,47 +228,47 @@ public class DefaultMetadataHandler extends MetadataHandler {
                     LOGGER.trace("Got Procedure data for '{}'.", procedure);
                 }
             }
-            catch (TimeoutException e) {
+            catch (final TimeoutException e) {
                 LOGGER.warn("Could NOT connect to SOS '{}'.", sosUrl, e);
                 illegalProcedures.add(procedureId);
             }
-            catch (ExecutionException e) {
+            catch (final ExecutionException e) {
                 LOGGER.warn("Could NOT get OperationResult from SOS for '{}'.", procedureId, e.getCause());
                 illegalProcedures.add(procedureId);
             }
-            catch (XmlException e) {
+            catch (final XmlException e) {
                 LOGGER.warn("Could NOT parse OperationResult from '{}'", sosUrl, e);
                 if (LOGGER.isDebugEnabled()) {
                     try {
-                        XmlObject response = XmlObject.Factory.parse(incomingResultAsStream);
-                        StringBuilder sb = new StringBuilder();
+                        final XmlObject response = XmlObject.Factory.parse(incomingResultAsStream);
+                        final StringBuilder sb = new StringBuilder();
                         sb.append(String.format("Error sending DescribeSensor for '%s'\n", procedureId));
                         sb.append(String.format("Could NOT parse incoming OperationResult:\n %s", response));
                         LOGGER.debug(sb.toString(), e);
                         illegalProcedures.add(procedureId);
                     }
-                    catch (XmlException ex) {
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(incomingResultAsStream));
+                    catch (final XmlException ex) {
+                        final BufferedReader reader = new BufferedReader(new InputStreamReader(incomingResultAsStream));
                         LOGGER.warn("No XML response for procedure '{}'.", procedureId);
                         LOGGER.debug("First line of response: {}", reader.readLine());
                     }
-                    catch (IOException ex) {
+                    catch (final IOException ex) {
                         LOGGER.warn("Could read result", ex);
                     }
                 }
             }
-            catch (IOException e) {
+            catch (final IOException e) {
                 illegalProcedures.add(procedureId);
                 LOGGER.info("Could NOT parse sensorML for procedure '{}'.", procedureId, e);
             }
-            catch (IllegalStateException e) {
+            catch (final IllegalStateException e) {
                 illegalProcedures.add(procedureId);
                 LOGGER.info("Could NOT link procedure '{}' appropriatly.", procedureId, e);
             }
-            catch (FactoryException e) {
+            catch (final FactoryException e) {
                 LOGGER.info("Could not create intern CRS to transform coordinates.", e);
             }
-            catch (TransformException e) {
+            catch (final TransformException e) {
                 LOGGER.info("Could not transform to intern CRS.", e);
             }
             finally {
@@ -275,9 +281,9 @@ public class DefaultMetadataHandler extends MetadataHandler {
         }
 
         if ( !illegalProcedures.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
+            final StringBuilder sb = new StringBuilder();
             sb.append("Removed procedures: \n");
-            for (String procedure : illegalProcedures) {
+            for (final String procedure : illegalProcedures) {
                 lookup.removeProcedure(procedure);
                 sb.append("Removed ==> ");
                 sb.append(procedure);
@@ -290,11 +296,11 @@ public class DefaultMetadataHandler extends MetadataHandler {
         metadata.setHasDonePositionRequest(true);
     }
 
-    private OperationAccessor createDescribeSensorAccessor(String sosUrl,
-                                                           String sosVersion, String smlVersion, Procedure proc)
+    private OperationAccessor createDescribeSensorAccessor(final String sosUrl,
+                                                           final String sosVersion, final String smlVersion, final Procedure proc)
             throws OXFException {
-        Operation operation = new Operation(SOSAdapter.DESCRIBE_SENSOR, sosUrl, sosUrl);
-        ParameterContainer paramCon = new ParameterContainer();
+        final Operation operation = new Operation(SOSAdapter.DESCRIBE_SENSOR, sosUrl, sosUrl);
+        final ParameterContainer paramCon = new ParameterContainer();
         paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_SERVICE_PARAMETER, "SOS");
         paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_VERSION_PARAMETER, sosVersion);
         paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_PARAMETER, proc.getProcedureId());
@@ -307,15 +313,15 @@ public class DefaultMetadataHandler extends MetadataHandler {
         else {
             throw new IllegalStateException("SOS Version (" + sosVersion + ") is not supported!");
         }
-        OperationAccessor opAccessorCallable = new OperationAccessor(getSosAdapter(), operation, paramCon);
+        final OperationAccessor opAccessorCallable = new OperationAccessor(getSosAdapter(), operation, paramCon);
         return opAccessorCallable;
     }
 
-    private Collection<SosTimeseries> getMatchingConstellations(Collection<SosTimeseries> observingTimeseries,
-                                                                String procedure,
-                                                                String phenomenon) {
-        Collection<SosTimeseries> result = new ArrayList<SosTimeseries>();
-        for (SosTimeseries timeseries : observingTimeseries) {
+    private Collection<SosTimeseries> getMatchingConstellations(final Collection<SosTimeseries> observingTimeseries,
+                                                                final String procedure,
+                                                                final String phenomenon) {
+        final Collection<SosTimeseries> result = new ArrayList<SosTimeseries>();
+        for (final SosTimeseries timeseries : observingTimeseries) {
             if (timeseries.matchesProcedure(procedure) && timeseries.matchesPhenomenon(phenomenon)) {
                 result.add(timeseries);
             }
@@ -324,7 +330,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
     }
 
 	@Override
-	public SOSMetadata updateMetadata(SOSMetadata metadata) throws Exception {
+	public SOSMetadata updateMetadata(final SOSMetadata metadata) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
