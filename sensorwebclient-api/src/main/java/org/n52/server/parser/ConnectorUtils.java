@@ -35,7 +35,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeoutException;
 
-import org.jfree.util.Log;
 import org.n52.oxf.ows.ServiceDescriptor;
 import org.n52.oxf.ows.capabilities.IBoundingBox;
 import org.n52.oxf.ows.capabilities.Operation;
@@ -46,8 +45,6 @@ import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.oxf.sos.util.SosUtil;
 import org.n52.oxf.valueDomains.StringValueDomain;
 import org.n52.server.da.AccessorThreadPool;
-import org.n52.server.mgmt.ConfigurationContext;
-import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,28 +63,28 @@ public class ConnectorUtils {
         try {
             /* TODO SOSWrapper is not capable of intercepting custom IRequestBuilders yet! */
 //            ServiceDescriptor descriptor = SOSWrapper.doGetCapabilities(sosUrl, adapter.getServiceVersion());
-            Callable<ServiceDescriptor> callable = new Callable<ServiceDescriptor>() {
+            final Callable<ServiceDescriptor> callable = new Callable<ServiceDescriptor>() {
                 @Override
                 public ServiceDescriptor call() throws Exception {
                     return adapter.initService(sosUrl);
                 }
             };
-            FutureTask<ServiceDescriptor> t = new FutureTask<ServiceDescriptor>(callable);
+            final FutureTask<ServiceDescriptor> t = new FutureTask<ServiceDescriptor>(callable);
             AccessorThreadPool.execute(t);
             return t.get(SERVER_TIMEOUT, MILLISECONDS);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             LOGGER.warn("Requesting capabilities of '{}' was interrupted.", sosUrl, e);
 //            throw new IllegalStateException(String.format("Service descriptor unaccessable: %s ", sosUrl));
         }
-        catch (ExecutionException e) {
-            StringBuilder sb = new StringBuilder();
+        catch (final ExecutionException e) {
+            final StringBuilder sb = new StringBuilder();
             sb.append("Error executing capabilities request,  ");
             sb.append("SOS URL: '").append(sosUrl).append("', ");
             sb.append("SOSAdapter: ").append(adapter.getClass().getName());
             LOGGER.warn(sb.toString(), e.getCause());
 //            throw new IllegalStateException(String.format("Service descriptor unaccessable: %s ", sosUrl));
         }
-        catch (TimeoutException e) {
+        catch (final TimeoutException e) {
             LOGGER.warn("Server '{}' did not repond.", sosUrl, e);
 //            throw new IllegalStateException(String.format("Service descriptor unaccessable: %s ", sosUrl));
         }
@@ -100,14 +97,14 @@ public class ConnectorUtils {
         return null; 
     }
 
-    public static String getResponseFormat(ServiceDescriptor serviceDesc, String matchingPattern) {
+    public static String getResponseFormat(final ServiceDescriptor serviceDesc, final String matchingPattern) {
         String respFormat = null;
-        OperationsMetadata metadata = serviceDesc.getOperationsMetadata();
+        final OperationsMetadata metadata = serviceDesc.getOperationsMetadata();
         if (metadata != null) {
-        	Operation op = metadata.getOperationByName("GetObservation");
-            Parameter parameter = op.getParameter("responseFormat");
-            StringValueDomain respDomain = (StringValueDomain) parameter.getValueDomain();
-            for (String elem : respDomain.getPossibleValues()) {
+        	final Operation op = metadata.getOperationByName("GetObservation");
+            final Parameter parameter = op.getParameter("responseFormat");
+            final StringValueDomain respDomain = (StringValueDomain) parameter.getValueDomain();
+            for (final String elem : respDomain.getPossibleValues()) {
                 if (elem.toLowerCase().contains(matchingPattern.toLowerCase())) {
                     respFormat = elem;
                 }
@@ -115,38 +112,38 @@ public class ConnectorUtils {
         }
         return respFormat;
     }
-
-    public static String getSMLVersion(ServiceDescriptor serviceDesc, String sosVersion) {
+    // TODO Review for the case of multiple SensorML versions
+    public static String getSMLVersion(final ServiceDescriptor serviceDesc, final String sosVersion) {
         String smlVersion = null;
-        OperationsMetadata metadata = serviceDesc.getOperationsMetadata();
+        final OperationsMetadata metadata = serviceDesc.getOperationsMetadata();
         if (metadata != null) {
-        	Operation opSensorML = metadata.getOperationByName("DescribeSensor");
+        	final Operation opSensorML = metadata.getOperationByName("DescribeSensor");
             Parameter outputFormat = null;
             if (SosUtil.isVersion100(sosVersion)) { // SOS 1.0
                 outputFormat = opSensorML.getParameter("outputFormat");
             } else if (SosUtil.isVersion200(sosVersion)) { // SOS 2.0
                 outputFormat = opSensorML.getParameter("procedureDescriptionFormat");
             }
-            StringValueDomain sensorMLDomain = (StringValueDomain) outputFormat.getValueDomain();
-            for (String elem : sensorMLDomain.getPossibleValues()) {
+            final StringValueDomain sensorMLDomain = (StringValueDomain) outputFormat.getValueDomain();
+            for (final String elem : sensorMLDomain.getPossibleValues()) {
                 if (elem.contains("sensorML")) {
-                    smlVersion = elem;
+                    smlVersion = elem;  
                 }
             }        	
         }
         return smlVersion;
     }
     
-    public static IBoundingBox createBbox(ObservationOffering offering) {
+    public static IBoundingBox createBbox(final ObservationOffering offering) {
         return createBbox(null, offering);
     }
 
-    public static IBoundingBox createBbox(IBoundingBox sosBbox, ObservationOffering offering) {
+    public static IBoundingBox createBbox(IBoundingBox sosBbox, final ObservationOffering offering) {
         if (sosBbox == null) {
             sosBbox = offering.getBoundingBoxes()[0];
         } else {
             if (!sosBbox.containsValue(offering.getBoundingBoxes()[0])) {
-                IBoundingBox newBbox = offering.getBoundingBoxes()[0];
+                final IBoundingBox newBbox = offering.getBoundingBoxes()[0];
                 // lower left
                 if (sosBbox.getLowerCorner()[0] > newBbox.getLowerCorner()[0]) {
                     sosBbox.getLowerCorner()[0] = newBbox.getLowerCorner()[0];
