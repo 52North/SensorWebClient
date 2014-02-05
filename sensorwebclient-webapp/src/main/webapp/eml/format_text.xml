@@ -3,7 +3,7 @@
   <SelectFunctions>
     <SelectFunction newEventName="BAW_META">
       <NotifyOnSelect>
-        <Message>_T_userID=wnsID_T_shortMessageEinstieg=Regel _ruleName_ hat einen Alarm ausgeloest um _R__T_MessageEinstieg=Regel _ruleName_ hat einen Alarm ausgeloest um _R_ _T_shortMessageAusstieg=Regel _ruleName_ Alarmzustand beendet um _R__T_MessageAusstieg=Alarmzustand fuer Regel _ruleName_ beendet um _R_ _T_</Message>
+        <Message>_T_userID=wnsID_T_shortMessageEinstieg=Regel '_ruleName_' hat einen Alarm ausgeloest um _R__T_MessageEinstieg=Regel '_ruleName_' hat einen Alarm ausgeloest um _R_ _T_shortMessageAusstieg=Regel '_ruleName_' Alarmzustand beendet um _R__T_MessageAusstieg=Alarmzustand fuer Regel '_ruleName_' beendet um _R_ _T_</Message>
       </NotifyOnSelect>
     </SelectFunction>
   </SelectFunctions>

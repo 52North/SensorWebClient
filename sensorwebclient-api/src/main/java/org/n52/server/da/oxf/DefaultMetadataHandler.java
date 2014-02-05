@@ -1,31 +1,36 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * ﻿Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
-
 package org.n52.server.da.oxf;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.n52.server.da.oxf.DescribeSensorAccessor.getSensorDescriptionAsSensorML;
 import static org.n52.server.mgmt.ConfigurationContext.SERVER_TIMEOUT;
+import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadata;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -54,6 +59,7 @@ import org.n52.server.da.AccessorThreadPool;
 import org.n52.server.da.MetadataHandler;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.server.parser.DescribeSensorParser;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -70,14 +76,36 @@ import com.vividsolutions.jts.geom.Point;
 public class DefaultMetadataHandler extends MetadataHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultMetadataHandler.class);
+    
+    public DefaultMetadataHandler(SOSMetadata metadata) {
+        super(metadata);
+    }
 
-    public SOSMetadata performMetadataCompletion(String sosUrl, String sosVersion) throws OXFException,
+    /* 
+     * Assembles timeseries' metadata by performing DescribeSensor request and parsing the returned  SensorML. 
+     * 
+     * @see org.n52.server.da.MetadataHandler#assembleTimeseriesMetadata(org.n52.shared.serializable.pojos.TimeseriesProperties)
+     */
+    @Override
+    public void assembleTimeseriesMetadata(TimeseriesProperties properties) throws Exception {
+        SosTimeseries timeseries = properties.getTimeseries();
+        SOSMetadata sosMetadata = getSOSMetadata(timeseries.getServiceUrl());
+        XmlObject sml = getSensorDescriptionAsSensorML(timeseries.getProcedureId(), sosMetadata);
+        DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), sosMetadata);
+        
+        String phenomenonId = timeseries.getPhenomenonId();
+        properties.setUnitOfMeasure(parser.buildUpSensorMetadataUom(phenomenonId));
+        String url = parser.buildUpSensorMetadataHtmlUrl(properties.getTimeseries());
+        properties.addAllRefValues(parser.parseReferenceValues());
+        properties.setMetadataUrl(url);
+    }
+
+    public SOSMetadata performMetadataCompletion() throws OXFException,
             InterruptedException,
             XMLHandlingException {
 
-        SOSMetadata sosMetadata = initMetadata(sosUrl, sosVersion);
-
-        Collection<SosTimeseries> observingTimeseries = createObservingTimeseries(sosUrl);
+        SOSMetadata sosMetadata = initMetadata();
+        Collection<SosTimeseries> observingTimeseries = createObservingTimeseries(getServiceVersion());
 
         normalizeDefaultCategories(observingTimeseries);
 
@@ -86,7 +114,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
         // XXX hack to get conjunctions between procedures and fois
         if ( !sosMetadata.hasDonePositionRequest()) {
             try {
-                performMetadataInterlinking(sosUrl, observingTimeseries);
+                performMetadataInterlinking(observingTimeseries);
             }
             catch (IOException e) {
                 LOGGER.warn("Could not retrieve relations between procedures and fois", e);
@@ -104,8 +132,6 @@ public class DefaultMetadataHandler extends MetadataHandler {
      * <bf>Note:</bf> to create the associations between these key items the Sensor Web Client assumes that
      * the selected SOS provides the 52°North discovery profile.
      * 
-     * @param sosUrl
-     *        the SOS service URL.
      * @param observingTimeseries
      *        all timeseries being observed.
      * @throws OXFException
@@ -119,10 +145,11 @@ public class DefaultMetadataHandler extends MetadataHandler {
      * @throws IllegalStateException
      *         if SOS version is not supported.
      */
-    private void performMetadataInterlinking(String sosUrl, Collection<SosTimeseries> observingTimeseries) throws OXFException,
+    private void performMetadataInterlinking(Collection<SosTimeseries> observingTimeseries) throws OXFException,
             InterruptedException,
             XMLHandlingException,
             IOException {
+        String sosUrl = getServiceUrl();
         SOSMetadata metadata = ConfigurationContext.getSOSMetadata(sosUrl);
         TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
         ArrayList<Procedure> procedures = lookup.getProcedures();

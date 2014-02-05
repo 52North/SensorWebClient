@@ -1,25 +1,29 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * ﻿Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
 package org.n52.server.ses.eml;
 
@@ -71,7 +75,6 @@ public class BasicRule_4_Builder extends BasicRuleBuilder {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(BasicRule_4_Builder.class);
 
-    @SuppressWarnings("unused") // static pattern
     private final int INDEX_SIMPLE_PATTERN_INTIAL_COUNT = 0;
 
     private final int INDEX_EXIT_CONDITION_PATTERN = 1;
@@ -84,7 +87,8 @@ public class BasicRule_4_Builder extends BasicRuleBuilder {
 
     private final int INDEX_EXIT_NOTIFICATION_PATTERN = 2;
 
-    private final int INDEX_COMPLEX_PATTERN_INTIAL_EXIT = 3;
+    // initial pattern match for exit conditions is not of interest
+    //private final int INDEX_COMPLEX_PATTERN_INTIAL_EXIT = 3;
 
 
     private final String overshoot = "_overshoot";
@@ -177,6 +181,9 @@ public class BasicRule_4_Builder extends BasicRuleBuilder {
             ComplexPatterns complexPatterns = emlTemplateDoc.getEML().getComplexPatterns();
 
             // set patternID of simplePatterns
+            SimplePatternType staticInitPattern = simplePatterns.getSimplePatternArray(INDEX_SIMPLE_PATTERN_INTIAL_COUNT);
+            processPropertyRestrictions(staticInitPattern, rule.getTimeseriesMetadata());
+            
             RuleFilter entryFilter = createEntryFilter(rule);
             SimplePatternType ruleUndershoot = simplePatterns.getSimplePatternArray(INDEX_ENTRY_CONDITION_PATTERN);
             processSimplePattern(ruleUndershoot, overshootPatternId, overshootEventName);
@@ -205,8 +212,8 @@ public class BasicRule_4_Builder extends BasicRuleBuilder {
              * i.e. when the first and initial value matches the rule applies.
              */
             ComplexPattern initialEntryClause = complexPatterns.getComplexPatternArray(INDEX_COMPLEX_PATTERN_INTIAL_ENTRY);
-            ComplexPattern initialExitClause = complexPatterns.getComplexPatternArray(INDEX_COMPLEX_PATTERN_INTIAL_EXIT);
-            processFilterGuard(initialExitClause.getGuard(), exitFilter, INITIAL_STREAM_NAME);
+//            ComplexPattern initialExitClause = complexPatterns.getComplexPatternArray(INDEX_COMPLEX_PATTERN_INTIAL_EXIT);
+//            processFilterGuard(initialExitClause.getGuard(), exitFilter, INITIAL_STREAM_NAME);
             processFilterGuard(initialEntryClause.getGuard(), entryFilter, INITIAL_STREAM_NAME);
             
             eml = emlTemplateDoc.xmlText();

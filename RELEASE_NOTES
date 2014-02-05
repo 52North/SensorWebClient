@@ -7,11 +7,17 @@ Release Notes for Sensor Web Client 3.3.0
 =========================================
 This release contains new features and bugfixes from versions 3.2.x. 
 
-Most work has been done to create specify and implement a version 1 for the
-leightweight RESTful interface. Accessing timeseries data and metadata from 
-external clients (not only from shipped UI) is now more consistent and more 
-flexible. Configure your servlet container with a CORS filter and provide 
-the data to external clients.
+We moved from SVN to GitHub with this release! Please note that issues are  
+going to be tracked on that platform. Refer to
+
+  https://github.com/52North/SensorWebClient
+
+Most work has been done to separate timeseries-api version 1.0.0 along with
+implementing its service provider interface to provide leightweight RESTful 
+access to timeseries resources. That integration makes accessing timeseries 
+data and metadata from external clients (not only from shipped UI) much more 
+consistent and more flexible! Configure your servlet container with a CORS 
+filter and provide the data to external clients.
 
 Another part of the work was to modulerazing IO processing functionality to 
 an external timeseries module. In combination with the timeseries web module 
@@ -19,8 +25,16 @@ provides an interface so that both can be re-used in other applications, e.g.
 directly on an SOS with implementing the interface with DB access to speed 
 up things.
 
+Have a look at 
+
+  https://github.com/52North/timeseries-api
+  
+if you are interested in the timeseries-api.
+
 Features:
 ---------
+ * Create ArcGIS SOS SOE module supporting SOS e-reporting profile
+ * Implement SPI of timeseries-api version 1.0.0-rc.x
  * Be more graceful when caching a service fails. Won't break cache update for the other configured services.
 
 3.2.x Bugfixes:

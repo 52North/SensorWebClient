@@ -1,27 +1,30 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * ﻿Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
-
 package org.n52.server.parser;
 
 import java.io.File;
@@ -72,6 +75,8 @@ import org.n52.oxf.xml.NcNameResolver;
 import org.n52.oxf.xmlbeans.parser.XMLBeansParser;
 import org.n52.oxf.xmlbeans.parser.XMLHandlingException;
 import org.n52.server.mgmt.ConfigurationContext;
+import org.n52.server.util.SensorMLToHtml;
+import org.n52.shared.MD5HashGenerator;
 import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
@@ -140,11 +145,11 @@ public class DescribeSensorParser {
 
     public String buildUpSensorMetadataHtmlUrl(final SosTimeseries timeseries) throws OXFException {
         try {
-            final String serviceUrl = timeseries.getServiceUrl();
+        	final String serviceUrl = timeseries.getServiceUrl();
             final String smlVersion = ConfigurationContext.getSOSMetadata(serviceUrl).getSensorMLVersion();
-            final String filename = "sensorML_" + normalize(createSensorDescriptionFileName(timeseries));
-            final File sensorMLFile = saveSensorMLFile(filename);
-            return new SensorMLToHTMLTransformer(sensorMLFile, smlVersion).transformSMLtoHTML(filename);
+            final String filename = createSensorDescriptionFileName(timeseries);
+            final File sensorMLFile = saveFile(filename);
+            return SensorMLToHtml.createFromSensorML(sensorMLFile, smlVersion).transformSMLtoHTML(filename);
         }
         catch (final IOException e) {
             throw new OXFException("Could not write file.", e);
@@ -155,7 +160,23 @@ public class DescribeSensorParser {
         final String serviceUrl = timeseries.getServiceUrl();
         final String procedureId = timeseries.getProcedureId();
         final String phenomenonId = timeseries.getPhenomenonId();
-        return phenomenonId + "_via_" + procedureId + "_at_" + serviceUrl;
+        final MD5HashGenerator generator = new MD5HashGenerator("sensorML_");
+        return generator.generate(new String[] {phenomenonId, procedureId, serviceUrl});
+    }
+
+    private File saveFile(final String filename) throws IOException {
+        final String normalizedFilename = normalize(filename);
+        final File sensorMLFile = JavaHelper.genFile(ConfigurationContext.GEN_DIR, normalizedFilename, "xml");
+        IOHelper.saveFile(sensorMLFile, smlDoc.newInputStream());
+        return sensorMLFile;
+    }
+
+    /**
+     * @return a normalized String for use in a file path, i.e. all [\,/,:,*,?,",<,>,;,#] characters are
+     *         replaced by '_'.
+     */
+    private String normalize(final String toNormalize) {
+        return toNormalize.replaceAll("[\\\\,/,:,\\*,?,\",<,>,;,#]", "_");
     }
 
     public Point buildUpSensorMetadataPosition() throws FactoryException, TransformException {
@@ -322,14 +343,6 @@ public class DescribeSensorParser {
     }
 
     
-    /**
-     * @return a normalized String for use in a file path, i.e. all [\,/,:,*,?,",<,>,;] characters are
-     *         replaced by '_'.
-     */
-    private String normalize(final String toNormalize) {
-        return toNormalize.replaceAll("[\\\\,/,:,\\*,?,\",<,>,;]", "_");
-    }
-
     public HashMap<String, ReferenceValue> parseReferenceValues() {
         final Capabilities[] capabilities = getSensorMLCapabilities(smlDoc.getSensorML());
         final HashMap<String, ReferenceValue> map = new HashMap<String, ReferenceValue>();
@@ -605,7 +618,7 @@ public class DescribeSensorParser {
             }
         } else {
             final String xmlText = xmlObject == null ? null : xmlObject.xmlText();
-            throw new IllegalArgumentException("Could not parse sensor description: " + xmlText);
+            throw new IllegalArgumentException("Illegal sensor description: " + xmlText);
         }
     }
 
