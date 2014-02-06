@@ -45,6 +45,8 @@ public class QueryParameters implements Serializable {
 	private String procedure;
 
 	private String phenomenon;
+	
+	private String category;
 
 	private String featureOfInterest;
 
@@ -61,7 +63,7 @@ public class QueryParameters implements Serializable {
 	public boolean hasParameterFilter() {
 	    return service != null || station != null || featureOfInterest != null 
 	            || procedure != null || offering != null  
-	            || phenomenon != null;
+	            || phenomenon != null || category != null;
 	}
 	
 	public boolean hasSpatialFilter() {
@@ -113,7 +115,16 @@ public class QueryParameters implements Serializable {
 	    return this;
 	}
 
-	public String getStation() {
+	public String getCategory() {
+        return category;
+    }
+
+    public QueryParameters setCategory(String category) {
+        this.category = category;
+        return this;
+    }
+
+    public String getStation() {
 	    return station;
 	}
 

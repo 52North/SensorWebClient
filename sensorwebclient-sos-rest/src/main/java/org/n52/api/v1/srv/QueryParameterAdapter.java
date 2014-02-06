@@ -38,6 +38,8 @@ public class QueryParameterAdapter {
                 .setFeature(map.getFeature())
                 .setOffering(map.getOffering())
                 .setProcedure(map.getProcedure())
-                .setPhenomenon(map.getPhenomenon());
+                .setPhenomenon(map.getPhenomenon())
+                .setCategory(map.getCategory())
+                .setStation(map.getStation());
     }
 }
