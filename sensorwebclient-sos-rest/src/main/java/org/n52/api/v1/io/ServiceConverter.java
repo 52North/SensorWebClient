@@ -55,7 +55,7 @@ public class ServiceConverter extends OutputConverter<SOSMetadata, ServiceOutput
     }
 
     private ParameterCount countParameters(SOSMetadata metadata, ServiceOutput convertedService) {
-        ParameterCount parameterCount = convertedService.new ParameterCount();
+        ParameterCount parameterCount = new ServiceOutput.ParameterCount();
         parameterCount.setFeaturesSize(getLookup().getFeatures().size());
         parameterCount.setOfferingsSize(getLookup().getOfferings().size());
         parameterCount.setPhenomenaSize(getLookup().getPhenomenons().size());
