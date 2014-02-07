@@ -925,7 +925,7 @@
 		<jackson.version>2.2.2</jackson.version>
 		<smartgwt.version>3.1</smartgwt.version>
 		<geotools.version>8.2</geotools.version>
-		<oxf.version>2.0.0-alpha.3.1</oxf.version>
+		<oxf.version>2.0.0-alpha.3.2-SNAPSHOT</oxf.version>
 		<hamcrest.version>1.3</hamcrest.version>
 		<timeseries.api.version>1.0.1-SNAPSHOT</timeseries.api.version>
 		<hibernate.version>3.5.0-Final</hibernate.version>
