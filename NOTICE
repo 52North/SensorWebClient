@@ -3,12 +3,12 @@ Copyright 2013 52°North Initiative for Geospatial Open Source Software GmbH
 Licensed under GNU General Public License, v2.0
 
 This project includes:
-  52North OxFramework Common under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  52North OxFramework OWS under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  52North OxFramework SWES under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  52North OxFramework Xmlbeans Handling under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  52North OxFramework Common under GNU General Public License, v2.0
+  52North OxFramework OWS under GNU General Public License, v2.0
+  52North OxFramework SWES under GNU General Public License, v2.0
+  52North OxFramework Xmlbeans Handling under GNU General Public License, v2.0
   52North Sensor Web Client under GNU General Public License, v2.0
-  52North Sensor Web Client PDF report structure under GNU General Public License v2.0 only
+  52North Sensor Web Client PDF report structure under GNU General Public License, v2.0
   AntLR under Public Domain
   AOP alliance under Public Domain
   Apache FOP under The Apache Software License, Version 2.0
@@ -43,7 +43,7 @@ This project includes:
   EPSG Authority Service using HSQL database under Lesser General Public License (LGPL) or EPSG database distribution license or BSD License for HSQL
   FindBugs-jsr305 under The Apache Software License, Version 2.0
   gimv under The Apache Software License, Version 2.0
-  GRDC schema binding under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  GRDC schema binding under GNU General Public License, v2.0
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   gwt-openlayers-client under The Apache Software License, Version 2.0
   gwt-servlet under Google Web Toolkit Terms
@@ -61,7 +61,6 @@ This project includes:
   Jackson-core under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
   jackson-databind under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
   jackson-module-jsonSchema under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
-  jai_codec under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   jai_core under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   Java Excel API under GNU Lesser General Public License
   Java Transaction API under Common Development and Distribution License (CDDL), version 1.0
@@ -110,10 +109,10 @@ This project includes:
   OGC SWES schema (spec. v2.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   OGC WaterML schema (spec. v2.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
-  OxF Features under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OxFramework Adapters API under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OxFramework SES Adapter under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OxFramework SOS Adapter under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  OxF Features under GNU General Public License, v2.0
+  OxFramework Adapters API under GNU General Public License, v2.0
+  OxFramework SES Adapter under GNU General Public License, v2.0
+  OxFramework SOS Adapter under GNU General Public License, v2.0
   PostgreSQL JDBC Driver under BSD License
   Referencing services under Lesser General Public License (LGPL)
   RESTful Timeseries Web Application under GNU General Public License, v2.0
@@ -144,7 +143,7 @@ This project includes:
   StAX API under The Apache Software License, Version 2.0
   swe-common-data-framework under Mozilla Public License version 1.1
   User Interface under GNU General Public License, v2.0
-  vecmath under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  vecmath under GNU General Public License (GPL), version 2, with the CLASSPATH exception
   W3C SOAP specification recommondation (v1.2 part 1) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   W3C WS-Addressing specification schemas (v1.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   W3C xlink schema (spec. v1.1.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991

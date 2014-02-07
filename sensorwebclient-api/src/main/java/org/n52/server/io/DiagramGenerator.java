@@ -28,6 +28,7 @@
 package org.n52.server.io;
 
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
+import static javax.imageio.ImageIO.write;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -39,6 +40,8 @@ import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Map;
 
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+
 import org.jfree.chart.JFreeChart;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.feature.OXFFeatureCollection;
@@ -49,10 +52,6 @@ import org.n52.server.io.render.RenderingDesign;
 import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
-
-import com.sun.media.jai.codec.ImageCodec;
-import com.sun.media.jai.codec.ImageEncoder;
-import com.sun.media.jai.codec.JPEGEncodeParam;
 
 public class DiagramGenerator extends Generator {
 
@@ -86,11 +85,9 @@ public class DiagramGenerator extends Generator {
 
         diagramChart.draw(chartGraphics, new Rectangle2D.Float(0, 0, width, height));
 
-        JPEGEncodeParam p = new JPEGEncodeParam();
-        p.setQuality(1f);
-        ImageEncoder encoder = ImageCodec.createImageEncoder("jpeg", out, p);
-
-        encoder.encode(diagramImage);
+        JPEGImageWriteParam p = new JPEGImageWriteParam(null);
+        p.setCompressionMode(JPEGImageWriteParam.MODE_DEFAULT);
+        write(diagramImage, FORMAT, out);
     }
 
     public void createLegend(DesignOptions options, OutputStream out) throws OXFException, IOException {
@@ -129,12 +126,9 @@ public class DiagramGenerator extends Generator {
             offset++;
         }
 
-        // draw legend into image:
-        JPEGEncodeParam p = new JPEGEncodeParam();
-        p.setQuality(1f);
-        ImageEncoder encoder = ImageCodec.createImageEncoder("jpeg", out, p);
-
-        encoder.encode(legendImage);
+        JPEGImageWriteParam p = new JPEGImageWriteParam(null);
+        p.setCompressionMode(JPEGImageWriteParam.MODE_DEFAULT);
+        write(legendImage, FORMAT, out);
     }
 
     /**
