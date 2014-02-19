@@ -115,6 +115,8 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 
 	private static final String LINE_STYLE_LINE = "1";
 
+	protected Timeseries timeseries;
+	
 	protected String timeseriesID;
 
 	protected HLayout legendEntryHead;
@@ -190,6 +192,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 	public LegendEntryTimeSeries(Timeseries ts, String width, String height) {
 //		this.width = width;
 		this.height = height;
+		this.timeseries = ts;
 		this.timeseriesID = ts.getId();
 		this.eventBroker = new LegendEntryTimeSeriesEventBroker();
 
@@ -1023,6 +1026,10 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 
 	public String getElemId() {
 		return this.timeseriesID;
+	}
+	
+	public Timeseries getTimeseries(){
+		return timeseries;
 	}
 
 	public LegendData getDataWrapper() {

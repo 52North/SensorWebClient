@@ -313,6 +313,8 @@ public interface I18N extends Constants {
     String ddEmptyValue();
 
     String jumpTo();
+    
+    String jumpToTooltip();
 
     String jumpToTypes();
 

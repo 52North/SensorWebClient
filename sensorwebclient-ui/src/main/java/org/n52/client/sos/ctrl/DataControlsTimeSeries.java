@@ -56,6 +56,8 @@ import org.n52.client.ui.InteractionWindow;
 import org.n52.client.ui.Toaster;
 import org.n52.client.ui.View;
 import org.n52.client.ui.btn.ImageButton;
+import org.n52.client.ui.legend.LegendElement;
+import org.n52.client.ui.legend.LegendEntryTimeSeries;
 import org.n52.client.util.ClientUtils;
 
 import com.google.gwt.core.client.GWT;
@@ -740,6 +742,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
 	private Canvas createJumpToTimeIntervalForm() {
     	ComboBoxItem jumpToCombo = new ComboBoxItem();
         jumpToCombo.setTitle(i18n.jumpTo());
+        jumpToCombo.setTooltip(i18n.jumpToTooltip());
     	jumpToCombo.setDefaultToFirstOption(true);
         jumpToCombo.setWrapTitle(false);
         jumpToCombo.setShowTitle(true);
@@ -758,11 +761,11 @@ public abstract class DataControlsTimeSeries extends DataControls {
                 long interval = 1000 * 60;
                 // FIXME validierung mit overview
                 switch (type) {
-                case TODAY:
-					long dayInMillis = 1000 * 60 * 60 * 24;
-                	long lastmidnight = now.getTime() / dayInMillis * dayInMillis;
-                	EventBus.getMainEventBus().fireEvent(new DatesChangedEvent(lastmidnight, lastmidnight + (dayInMillis)));
-					return;
+//                case TODAY:
+//					long dayInMillis = 1000 * 60 * 60 * 24;
+//                	long lastmidnight = now.getTime() / dayInMillis * dayInMillis;
+//                	EventBus.getMainEventBus().fireEvent(new DatesChangedEvent(lastmidnight, lastmidnight + (dayInMillis)));
+//					return;
                 case LASTHOUR:
                     interval *= 60;
                     break;
@@ -781,8 +784,14 @@ public abstract class DataControlsTimeSeries extends DataControls {
                 default:
                     break;
                 }
-                final long start = now.getTime() - interval;
-                final long end = now.getTime();
+                long referenceTime;
+                if( getSelectedTimeSeries() != null){
+                	referenceTime = getSelectedTimeSeries().getLastValueDate();
+                } else {
+                	referenceTime = now.getTime();
+                }
+                final long start = referenceTime - interval;
+                final long end = referenceTime;
 
                 EventBus.getMainEventBus().fireEvent(new DatesChangedEvent(start,end));
             }
@@ -794,6 +803,15 @@ public abstract class DataControlsTimeSeries extends DataControls {
         jumpToForm.setFields(jumpToCombo);
         jumpToForm.setHeight("*");
         return jumpToForm;
+	}
+	
+	private Timeseries getSelectedTimeSeries(){
+		LegendElement legendElement = View.getView().getLegend().getSelectedLegendelement();
+		if(legendElement instanceof LegendEntryTimeSeries){
+			LegendEntryTimeSeries legendEntryTimeSeries = (LegendEntryTimeSeries)legendElement;
+			return legendEntryTimeSeries.getTimeseries();
+		}
+		return null;
 	}
 
 	private Canvas createGridToggleButton() {

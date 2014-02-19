@@ -37,11 +37,11 @@ import org.n52.client.ui.map.Coordinate;
 import org.n52.shared.serializable.pojos.Axis;
 import org.n52.shared.serializable.pojos.Scale;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.shared.serializable.pojos.sos.ObservationParameter.DecodeType;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.n52.shared.serializable.pojos.sos.ObservationParameter.DecodeType;
 
 public class Timeseries implements LegendData {
 
