@@ -37,7 +37,9 @@ import java.util.Set;
 
 import org.n52.api.v1.io.TimeseriesConverter;
 import org.n52.io.IoParameters;
+import org.n52.io.RenderingHintsService;
 import org.n52.io.format.TvpDataCollection;
+import org.n52.io.v1.data.StyleProperties;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.shared.requests.query.QueryParameters;
@@ -50,6 +52,8 @@ import org.n52.web.v1.srv.TimeseriesDataService;
 public class TimeseriesOutputAdapter implements TimeseriesDataService, ParameterService<TimeseriesMetadataOutput> {
 
     private GetDataService dataService;
+    
+    private RenderingHintsService renderingHintsService;
 
 	@Override
 	public TvpDataCollection getTimeseriesData(UndesignedParameterSet parameters) {
@@ -131,6 +135,8 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
                     convertExpanded.setFirstValue(dataService.getFirstValue(timeseries));
                     convertExpanded.setLastValue(dataService.getLastValue(timeseries));
                 }
+                StyleProperties renderingHints = renderingHintsService.getStyles(timeseries.getPhenomenon().getGlobalId(), timeseriesId);
+                convertExpanded.setRenderingHints(renderingHints);
                 return convertExpanded;
             }
         }
@@ -144,5 +150,13 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
     public void setDataService(GetDataService dataService) {
         this.dataService = dataService;
     }
+
+	public RenderingHintsService getRenderingHintsService() {
+		return renderingHintsService;
+	}
+
+	public void setRenderingHintsService(RenderingHintsService renderingHintsService) {
+		this.renderingHintsService = renderingHintsService;
+	}
 
 }
