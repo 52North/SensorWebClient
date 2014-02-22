@@ -33,6 +33,7 @@ import java.util.Set;
 
 import org.n52.io.v1.data.ServiceOutput;
 import org.n52.io.v1.data.ServiceOutput.ParameterCount;
+import org.n52.shared.serializable.pojos.sos.Category;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
@@ -76,7 +77,7 @@ public class ServiceConverter extends OutputConverter<SOSMetadata, ServiceOutput
     }
 
     private Integer countCategories(Collection<Station> stations) {
-        Set<String> categories = new HashSet<String>();
+        Set<Category> categories = new HashSet<Category>();
         for (Station station : stations) {
             for (SosTimeseries timeseries : station.getObservedTimeseries()) {
                 categories.add(timeseries.getCategory());

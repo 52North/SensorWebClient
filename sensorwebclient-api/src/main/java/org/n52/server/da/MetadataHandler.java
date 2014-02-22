@@ -58,6 +58,7 @@ import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.server.parser.ConnectorUtils;
 import org.n52.server.util.SosAdapterFactory;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.shared.serializable.pojos.sos.Category;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
@@ -261,7 +262,8 @@ public abstract class MetadataHandler {
         for (SosTimeseries timeseries : observingTimeseries) {
             String phenomenon = timeseries.getPhenomenonId();
             String category = phenomenon.substring(phenomenon.lastIndexOf(":") + 1);
-            timeseries.setCategory(category);
+            String serviceUrl = timeseries.getServiceUrl();
+            timeseries.setCategory(new Category(category, serviceUrl));
         }
     }
 
