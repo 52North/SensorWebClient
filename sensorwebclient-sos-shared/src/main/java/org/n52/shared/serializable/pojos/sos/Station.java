@@ -130,9 +130,9 @@ public class Station implements Serializable {
         return sb.toString();
     }
 
-    public boolean hasStationCategory(String filterCategory) {
+    public boolean hasStationCategoryLabel(String categoryLabel) {
         for (SosTimeseries timeseries : observingTimeseries) {
-            if (timeseries.getCategory().equals(filterCategory)) {
+            if (timeseries.getCategory().getLabel().equals(categoryLabel)) {
                 return true;
             }
         }
@@ -141,7 +141,7 @@ public class Station implements Serializable {
 
     public SosTimeseries getTimeseriesByCategory(String category) {
         for (SosTimeseries paramConst : observingTimeseries) {
-            if (paramConst.getCategory().equals(category)) {
+            if (paramConst.getCategory().getLabel().equals(category)) {
                 return paramConst;
             }
         }

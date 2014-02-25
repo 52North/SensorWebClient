@@ -397,6 +397,14 @@ public class StationSelector extends Window {
 		}
 		return categories;
 	}
+	
+	private String[] getStationCategoryLabels(Station station) {
+		Set<String> labels = new HashSet<String>();
+		for (SosTimeseries timeseries : station.getObservedTimeseries()) {
+			labels.add(timeseries.getCategory().getLabel());
+		}
+		return labels.toArray(new String[0]);
+	}
 
 	public void setSelectedFilter(String serviceURL, String filter) {
 		RadioGroupItem selector = stationFilterGroups.get(serviceURL);
@@ -422,7 +430,7 @@ public class StationSelector extends Window {
 
 	public void showInfoWindow(InfoMarker infoMarker, String header) {
 		updateInfoLabels();
-		String[] array = getStationCategories(infoMarker.getStation()).toArray(new String[0]);
+		String[] array = getStationCategoryLabels(infoMarker.getStation());
 		phenomenonBox.setValueMap(array);
 		phenomenonBox.clearValue();
 		infoWindow.setWindowTitle(header);
