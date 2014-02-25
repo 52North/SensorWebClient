@@ -754,8 +754,16 @@ public abstract class DataControlsTimeSeries extends DataControls {
             jumpToValues.put(jumpToTypes[i], jumpToTypes[i + 1]);
         }
         jumpToCombo.setValueMap(jumpToValues);
+        jumpToCombo.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
+			public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
+				event.getItem().setValue("");
+			}
+		});
         jumpToCombo.addChangedHandler(new ChangedHandler() {
             public void onChanged(ChangedEvent event) {
+            	if( "".equals((String) event.getValue()) ){
+            		return;
+            	}
                 RecentTimeTerm type = RecentTimeTerm.valueOf((String) event.getValue());
                 final Date now = new Date();
                 long interval = 1000 * 60;
