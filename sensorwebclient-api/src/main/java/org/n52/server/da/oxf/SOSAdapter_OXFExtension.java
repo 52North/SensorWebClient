@@ -33,6 +33,7 @@ import org.n52.oxf.ows.ServiceDescriptor;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.sos.adapter.SOSAdapter;
+import org.n52.oxf.util.web.ProxyAwareHttpClient;
 import org.n52.oxf.util.web.SimpleHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +48,7 @@ public class SOSAdapter_OXFExtension extends SOSAdapter {
      * @param sosVersion the SOS version the adapter shall connect to.
      */
     public SOSAdapter_OXFExtension(String sosVersion) {
-        super(sosVersion, new SimpleHttpClient(5000, SOCKET_TIMEOUT));
+        super(sosVersion, new ProxyAwareHttpClient(new SimpleHttpClient(5000, SOCKET_TIMEOUT)));
         setRequestBuilder(SosRequestBuilderFactory.createRequestBuilder(sosVersion));
     }
 
@@ -61,7 +62,8 @@ public class SOSAdapter_OXFExtension extends SOSAdapter {
     @Deprecated
     public SOSAdapter_OXFExtension(String sosVersion, ISOSRequestBuilder requestBuilder) {
         super(sosVersion, requestBuilder);
-        setHttpClient(new SimpleHttpClient(5000, SOCKET_TIMEOUT));
+        log.debug("SOSAdapter_OXFExtension");
+        setHttpClient(new ProxyAwareHttpClient(new SimpleHttpClient(5000, SOCKET_TIMEOUT)));
     }
 
     @Override
