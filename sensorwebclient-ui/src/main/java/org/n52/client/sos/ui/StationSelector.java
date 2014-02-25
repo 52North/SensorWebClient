@@ -221,7 +221,7 @@ public class StationSelector extends Window {
 		selectionMenu = new InteractionWindow(layout);
 		selectionMenu.setZIndex(1000000);
 		selectionMenu.setWidth(300);
-		selectionMenu.setHeight(290);
+		selectionMenu.setHeight(301);
 		selectionMenu.setWindowTitle(i18n.dataprovider());
 		setSelectionMenuWindowPosition();
 		return selectionMenu;
@@ -295,7 +295,6 @@ public class StationSelector extends Window {
         VLayout layout = new VLayout();
         timeseriesInfoHTMLPane = new HTMLPane();
 		Station station = controller.getSelectedStation();
-		
 		if (station!=null) {
 	        String stationName = station.getId();
 			String stationId = stationName;
@@ -378,25 +377,24 @@ public class StationSelector extends Window {
 	}
 
 	public void updateProcedureDetailsURL(String url) {
-		final Station station = controller.getSelectedStation();
-		//final SosTimeseries ts = controller.getSelectedTimeseries();
-		//String proc = "I:"+controller.getSelectedFeatureId();
-		
-		String stationName = station.getId();
-		String stationId = stationName;
-		if (stationName.contains("/")) {
-			String[] nameSplitted = stationName.split("/");
-			stationId = nameSplitted[nameSplitted.length-1];
+		if(url != null && url.contains("www.portal-tideelbe.de")){
+			final Station station = controller.getSelectedStation();
+			
+			String stationName = station.getId();
+			String stationId = stationName;
+			if (stationName.contains("/")) {
+				String[] nameSplitted = stationName.split("/");
+				stationId = nameSplitted[nameSplitted.length-1];
+			}
+					
+			String stationUrl = LegendEntryTimeSeries.STATION_DESCRIPTION_URL+stationId;
+			timeseriesInfoHTMLPane.setContentsURL(stationUrl);
+			timeseriesInfoHTMLPane.setContentsType(ContentsType.PAGE);
+		} else {
+			timeseriesInfoHTMLPane.setContentsURL(url);
+			timeseriesInfoHTMLPane.setContentsType(ContentsType.FRAGMENT);
 		}
-		
-				
-		String stationUrl = LegendEntryTimeSeries.STATION_DESCRIPTION_URL+stationId;
-		//proc = proc+"<hr/>"+stationUrl;
-		timeseriesInfoHTMLPane.setContentsURL(stationUrl);
-		timeseriesInfoHTMLPane.setContentsType(ContentsType.PAGE);
-		//timeseriesInfoHTMLPane.setContents(proc);
 		timeseriesInfoHTMLPane.show();
-		
 		applyCancel.finishLoading();
 	}
 	
