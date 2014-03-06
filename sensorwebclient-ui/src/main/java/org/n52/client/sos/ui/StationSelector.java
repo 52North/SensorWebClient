@@ -95,6 +95,8 @@ public class StationSelector extends Window {
 
     private static StationSelectorController controller;
     
+    private static final String SERVICE_URL_ZDM = "http://localhost/SOS/sos";
+    
 	private Layout guiContent;
 
 	private Map<String, DynamicForm> stationFilterGroups;
@@ -411,17 +413,24 @@ public class StationSelector extends Window {
 	
 	public void updateStationFilters(final SOSMetadata currentMetadata) {
 		hideInfoWindow();
-
+		/** categoryTree contains all Main nodes (String) and corresponding subnodes (HashMap) */
 		HashMap<String, HashMap<String, SosTimeseries>> categoryTree = new HashMap<String, HashMap<String, SosTimeseries>>();
 		for (Station station : currentMetadata.getStations()) {
 			ArrayList<SosTimeseries> categories = station.getObservedTimeseries();
 			for (SosTimeseries category : categories) {
+				/** parentMap contains all subnodes */
 				HashMap<String, SosTimeseries> parentMap;
-				if(categoryTree.containsKey(category.getParentName())){
-					parentMap = categoryTree.get(category.getParentName());
+				String categoryName;
+				if(category.getServiceUrl() != null && category.getServiceUrl().contains(SERVICE_URL_ZDM)){
+					categoryName = category.getParentName();
+				} else {
+					categoryName = SosTimeseries.PARENT_NAME_DEFAULT;
+				}
+				if(categoryTree.containsKey(categoryName)){
+					parentMap = categoryTree.get(categoryName);
 				} else {
 					parentMap = new HashMap<String, SosTimeseries>();
-					categoryTree.put(category.getParentName(), parentMap);
+					categoryTree.put(categoryName, parentMap);
 				}
 				if( !parentMap.containsKey(category.getCategory())){
 					parentMap.put(category.getCategory(), category);
