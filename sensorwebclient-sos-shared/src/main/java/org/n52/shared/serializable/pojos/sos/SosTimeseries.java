@@ -54,7 +54,7 @@ public class SosTimeseries implements Serializable {
 
     private Offering offering;
 
-    private String category;
+    private Category category;
 
     public SosTimeseries() {
         // for serialization
@@ -140,15 +140,15 @@ public class SosTimeseries implements Serializable {
      * 
      * @return a label to categorize stations on which filtering can take place.
      */
-    public String getCategory() {
-        return category == null ? getPhenomenonId() : category;
+    public Category getCategory() {
+        return category == null ? Category.createCategoryByPhenomenon(this.phenomenon, getServiceUrl()) : category;
     }
 
     /**
      * @param category
      *        a filter to categorize stations.
      */
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 
@@ -182,7 +182,8 @@ public class SosTimeseries implements Serializable {
         boolean matchesOffering = matches(searchParameters.getOffering(), offering.getGlobalId());
         boolean matchesProcedure = matches(searchParameters.getProcedure(), procedure.getGlobalId());
         boolean matchesPhenomenon = matches(searchParameters.getPhenomenon(), phenomenon.getGlobalId());
-        return matchesService && matchesFeature && matchesOffering && matchesProcedure && matchesPhenomenon;
+        boolean matchesCategory = matches(searchParameters.getCategory(), category.getGlobalId());
+        return matchesService && matchesFeature && matchesOffering && matchesProcedure && matchesPhenomenon && matchesCategory;
     }
 
     /**
@@ -243,6 +244,7 @@ public class SosTimeseries implements Serializable {
         result = prime * result + ( (offering == null) ? 0 : offering.hashCode());
         result = prime * result + ( (phenomenon == null) ? 0 : phenomenon.hashCode());
         result = prime * result + ( (procedure == null) ? 0 : procedure.hashCode());
+        result = prime * result + ( (category == null) ? 0 : category.hashCode());
         result = prime * result + ( (sosService == null) ? 0 : sosService.hashCode());
         return result;
     }
@@ -298,7 +300,7 @@ public class SosTimeseries implements Serializable {
         sb.append("\tFeature: ").append(getFeatureId()).append("\n");
         sb.append("\tProcedure: ").append(getProcedureId()).append("\n");
         sb.append("\tPhenomenon: ").append(getPhenomenonId()).append("\n");
-        sb.append("\tCategory: ").append(category).append("\n]");
+        sb.append("\tCategory: ").append(getCategory()).append("\n]");
         return sb.toString();
     }
 

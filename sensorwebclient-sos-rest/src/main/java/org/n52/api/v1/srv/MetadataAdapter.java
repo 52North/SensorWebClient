@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.n52.shared.requests.query.QueryParameters;
+import org.n52.shared.serializable.pojos.sos.Category;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
@@ -78,7 +79,7 @@ public class MetadataAdapter implements CountingMetadataService {
 	public int getCategoriesCount() {
 		int count = 0;
 		for (SOSMetadata metadata : getSOSMetadatas()) {
-			Set<String> categorieSet = new HashSet<String>();
+			Set<Category> categorieSet = new HashSet<Category>();
 			SosTimeseries[] timeseries = metadata.getMatchingTimeseries(QueryParameters.createEmptyFilterQuery());
 			for (SosTimeseries timeserie : timeseries) {
 				categorieSet.add(timeserie.getCategory());

@@ -215,7 +215,7 @@ public class StationSelectorMap extends OpenLayersMapWrapper {
     public void applyFilterToStationsOnMap(String filterCategory) {
         clearMarkerLayer();
         for (InfoMarker marker : markersOnMap) {
-            if (marker.getStation().hasStationCategory(filterCategory)) {
+            if (marker.getStation().hasStationCategoryLabel(filterCategory)) {
                 markerLayer.addMarker(marker);
             }
         }

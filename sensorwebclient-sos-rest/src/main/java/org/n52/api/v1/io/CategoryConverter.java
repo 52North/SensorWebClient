@@ -32,28 +32,28 @@ import static org.n52.shared.requests.query.QueryParameters.createEmptyFilterQue
 import org.n52.io.v1.data.CategoryOutput;
 import org.n52.shared.IdGenerator;
 import org.n52.shared.MD5HashGenerator;
-import org.n52.shared.requests.query.QueryParameters;
+import org.n52.shared.serializable.pojos.sos.Category;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 
-public class CategoryConverter extends OutputConverter<String, CategoryOutput> {
+public class CategoryConverter extends OutputConverter<Category, CategoryOutput> {
 
 	public CategoryConverter(SOSMetadata metadata) {
 		super(metadata);
 	}
 
 	@Override
-	public CategoryOutput convertExpanded(String category) {
+	public CategoryOutput convertExpanded(Category category) {
 		CategoryOutput convertedCategory = convertCondensed(category);
 		convertedCategory.setService(convertCondensedService());
 		return convertedCategory;
 	}
 
 	@Override
-	public CategoryOutput convertCondensed(String category) {
+	public CategoryOutput convertCondensed(Category category) {
 		CategoryOutput convertedCategory = new CategoryOutput();
-		convertedCategory.setId(generateId(category));
-		convertedCategory.setLabel(category);
+		convertedCategory.setId(category.getGlobalId());
+		convertedCategory.setLabel(category.getLabel());
 		return convertedCategory;
 	}
 
@@ -65,7 +65,7 @@ public class CategoryConverter extends OutputConverter<String, CategoryOutput> {
 	public CategoryOutput getCategorieByID(String categoryId) {
 		SosTimeseries[] timeseries = getMetadata().getMatchingTimeseries(createEmptyFilterQuery());
 		for (SosTimeseries sosTimeseries : timeseries) {
-			if (generateId(sosTimeseries.getCategory()).equals(categoryId)) {
+			if(sosTimeseries.getCategory().getGlobalId().equals(categoryId)) {
 				return convertExpanded(sosTimeseries.getCategory());
 			}
 		}

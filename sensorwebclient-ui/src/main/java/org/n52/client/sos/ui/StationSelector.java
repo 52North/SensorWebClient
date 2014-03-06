@@ -48,6 +48,7 @@ import org.n52.client.ui.ApplyCancelButtonLayout;
 import org.n52.client.ui.InteractionWindow;
 import org.n52.client.ui.LoadingSpinner;
 import org.n52.client.ui.map.InfoMarker;
+import org.n52.shared.serializable.pojos.sos.Category;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
@@ -378,9 +379,9 @@ public class StationSelector extends Window {
 		hideInfoWindow();
 		Map<String, String> sortedCategories = getAlphabeticallySortedMap();
 		for (Station station : currentMetadata.getStations()) {
-			Set<String> categories = getStationCategories(station);
-			for (String category : categories) {
-				sortedCategories.put(category, category);
+			Set<Category> categories = getStationCategories(station);
+			for (Category category : categories) {
+				sortedCategories.put(category.getLabel(), category.getLabel());
 			}
 		}
 		String serviceUrl = currentMetadata.getServiceUrl();
@@ -389,12 +390,20 @@ public class StationSelector extends Window {
 		selector.setValueMap(categories);
 	}
 	
-	private Set<String> getStationCategories(Station station) {
-		Set<String> categories = new HashSet<String>();
+	private Set<Category> getStationCategories(Station station) {
+		Set<Category> categories = new HashSet<Category>();
 		for (SosTimeseries timeseries : station.getObservedTimeseries()) {
 			categories.add(timeseries.getCategory());
 		}
 		return categories;
+	}
+	
+	private String[] getStationCategoryLabels(Station station) {
+		Set<String> labels = new HashSet<String>();
+		for (SosTimeseries timeseries : station.getObservedTimeseries()) {
+			labels.add(timeseries.getCategory().getLabel());
+		}
+		return labels.toArray(new String[0]);
 	}
 
 	public void setSelectedFilter(String serviceURL, String filter) {
@@ -421,7 +430,7 @@ public class StationSelector extends Window {
 
 	public void showInfoWindow(InfoMarker infoMarker, String header) {
 		updateInfoLabels();
-		String[] array = getStationCategories(infoMarker.getStation()).toArray(new String[0]);
+		String[] array = getStationCategoryLabels(infoMarker.getStation());
 		phenomenonBox.setValueMap(array);
 		phenomenonBox.clearValue();
 		infoWindow.setWindowTitle(header);

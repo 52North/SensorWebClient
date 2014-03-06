@@ -71,6 +71,7 @@ import org.n52.server.da.MetadataHandler;
 import org.n52.server.da.oxf.OperationAccessor;
 import org.n52.server.parser.ConnectorUtils;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.shared.serializable.pojos.sos.Category;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
@@ -293,7 +294,7 @@ public class HydroMetadataHandler extends MetadataHandler {
             addedtimeserie.setProcedure(new Procedure(procedure, metadata.getServiceUrl()));
             // create the category for every parameter constellation out of phenomenon and procedure
             String category = getLastPartOf(phenomenon) + " (" + getLastPartOf(procedure) + ")";
-            addedtimeserie.setCategory(category);
+            addedtimeserie.setCategory(new Category(category, metadata.getServiceUrl()));
             addedtimeserie.setOffering(new Offering(timeserie.getOfferingId(), metadata.getServiceUrl()));
             addedtimeserie.setSosService(new SosService(timeserie.getServiceUrl(), metadata.getVersion()));
             addedtimeserie.getSosService().setLabel(metadata.getTitle());

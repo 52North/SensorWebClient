@@ -29,67 +29,52 @@ package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+public class Category extends TimeseriesParameter implements Serializable {
 
-public class Offering extends TimeseriesParameter implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-    private static final long serialVersionUID = -544290033391799572L;
+	Category() {
+		// for serialization
+	}
+	
+	public Category(String parameterId, String serviceUrl) {
+		super(parameterId, new String[]{parameterId, serviceUrl});
+	}
+	
+	@Override
+	protected String getGlobalIdPrefix() {
+		return "cat_";
+	}
 
-    // TODO store responseFormat as it may vary for each offering
-
-    Offering() {
-        // for serialization
-    }
-
-    public Offering(String parameterId, String serviceUrl) {
-        super(parameterId, new String[]{parameterId, serviceUrl});
-    }
-    
-    @Override
-    protected String getGlobalIdPrefix() {
-        return "off_";
-    }
-
-    @JsonProperty("id")
-    public String getOfferingId() {
-        return getParameterId();
-    }
-    
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder(getClass().getName());
-        sb.append(" [").append("offeringId: '").append(getOfferingId());
-        sb.append("', ").append("internalId: '").append(getGlobalId());
+	public static Category createCategoryByPhenomenon(Phenomenon phenomenon, String serviceUrl) {
+		return new Category(phenomenon.getParameterId(), serviceUrl);
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder(getClass().getName());
+        sb.append(" [").append("internalId: '").append(getGlobalId());
         sb.append("', ").append("label: '").append(getLabel());
         return sb.append("']").toString();
-    }
-    
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ( (getLabel() == null) ? 0 : getLabel().hashCode());
-        result = prime * result + ( (getOfferingId() == null) ? 0 : getOfferingId().hashCode());
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ( (getLabel() == null) ? 0 : getLabel().hashCode());
         result = prime * result + ( (getGlobalId() == null) ? 0 : getGlobalId().hashCode());
         return result;
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
             return true;
         if (obj == null)
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Offering other = (Offering) obj;
-        if (getOfferingId() == null) {
-            if (other.getOfferingId() != null)
-                return false;
-        }
-        else if ( !getOfferingId().equals(other.getOfferingId()))
-            return false;
         return true;
-    }
-
+	}
 }

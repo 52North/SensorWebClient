@@ -33,7 +33,6 @@ import static org.n52.shared.requests.query.QueryParameters.createEmptyFilterQue
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.n52.api.v1.io.CategoryConverter;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
@@ -82,7 +81,7 @@ public class SearchAdapter implements SearchService {
                         || containsSearchString(ts.getPhenomenon().getLabel(), search)
                         || containsSearchString(ts.getProcedure().getLabel(), search)
                         || containsSearchString(ts.getOffering().getLabel(), search)
-                        || containsSearchString(ts.getCategory(), search)) {
+                        || containsSearchString(ts.getCategory().getLabel(), search)) {
                     results.add(new TimeseriesSearchResult(ts.getTimeseriesId(), ts.getLabel()));
                 }
             }
@@ -133,10 +132,8 @@ public class SearchAdapter implements SearchService {
             // categories
             SosTimeseries[] timeseries = metadata.getMatchingTimeseries(createEmptyFilterQuery());
             for (SosTimeseries sosTimeseries : timeseries) {
-                if (containsSearchString(sosTimeseries.getCategory(), search)) {
-                    CategoryConverter converter = new CategoryConverter(metadata);
-                    String generateCategoryId = converter.generateId(sosTimeseries.getCategory());
-                    results.add(new CategorySearchResult(generateCategoryId, sosTimeseries.getCategory()));
+                if (containsSearchString(sosTimeseries.getCategory().getLabel(), search)) {
+                    results.add(new CategorySearchResult(sosTimeseries.getCategory().getGlobalId(), sosTimeseries.getCategory().getLabel()));
                 }
             }
         }

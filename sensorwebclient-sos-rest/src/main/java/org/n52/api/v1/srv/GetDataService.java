@@ -33,7 +33,6 @@ import static org.n52.shared.serializable.pojos.DesignOptions.createOptionsForGe
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.n52.client.service.TimeSeriesDataService;
