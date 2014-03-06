@@ -43,10 +43,13 @@ import com.smartgwt.client.widgets.layout.VLayout;
 
 public class Toaster {
 
+	private static boolean SHOW_MESSAGES = false;
+	private static boolean SHOW_ERROR_MESSAGES = true;
+	
     /**
      * how long the toaster message appears to the user.
      */
-    private Integer fadeout = new Integer(2000); // default
+    private Integer fadeout = new Integer(10000); // default
 
     private int width;
 
@@ -150,24 +153,25 @@ public class Toaster {
 
     public void addMessage(String msg) {
 
-        Date d = new Date();
-        String timeStamp = DateTimeFormat.getFormat("dd.MM.yyyy HH:mm").format(d);
-
-        Label l = new Label(timeStamp + " " + msg);
-        l.setCanSelectText(true);
-        l.setStyleName("n52_sensorweb_client_toasterMsg");
-        l.setAutoHeight();
-
-        this.messages.add(l);
-
-        for (int i = 0; i < this.messages.size(); i++) {
-            if (this.layout.hasMember(this.messages.get(i))) {
-                this.layout.removeMember(this.messages.get(i));
-            }
-        }
-        for (int i = this.messages.size() - 1; i >= 0; i--) {
-            this.layout.addMember(this.messages.get(i));
-        }
+    	if(SHOW_MESSAGES){
+	        Date d = new Date();
+	        String timeStamp = DateTimeFormat.getFormat("dd.MM.yyyy HH:mm").format(d);
+	
+	        Label l = new Label(timeStamp + " " + msg);
+	        l.setCanSelectText(true);
+	        l.setStyleName("n52_sensorweb_client_toasterMsg");
+	        l.setAutoHeight();
+	
+	        this.messages.add(l);
+	
+	        for (int i = 0; i < this.messages.size(); i++) {
+	            if (this.layout.hasMember(this.messages.get(i))) {
+	                this.layout.removeMember(this.messages.get(i));
+	            }
+	        }
+	        for (int i = this.messages.size() - 1; i >= 0; i--) {
+	            this.layout.addMember(this.messages.get(i));
+	        }
 
 //        this.left = this.toasterWindow.getParentElement().getWidth().intValue() - this.width - 10;
 //        this.top = this.toasterWindow.getParentElement().getHeight().intValue() - this.height - 30;
@@ -175,35 +179,38 @@ public class Toaster {
 //        this.toasterWindow.setLeft(this.left);
 //        this.toasterWindow.setTop(this.top);
 
-        animateToaster();
+        	animateToaster();
+    	}
     }
 
     public void addErrorMessage(String error) {
 
-        Date d = new Date();
-        String timeStamp = DateTimeFormat.getFormat("dd.MM.yyyy HH:mm").format(d);
-
-        Label l = new Label(timeStamp + " " + error);
-        l.setCanSelectText(true);
-        l.setStyleName("n52_sensorweb_client_toasterErrorMsg");
-        l.setAutoHeight();
-
-        for (int i = 0; i < this.messages.size(); i++) {
-            this.layout.removeMember(this.messages.get(i));
-
-        }
-        this.messages.add(l);
-        for (int i = this.messages.size() - 1; i >= 0; i--) {
-            this.layout.addMember(this.messages.get(i));
-        }
-
-        this.left = this.toasterWindow.getParentElement().getWidth().intValue() - this.width - 10;
-        this.top = this.toasterWindow.getParentElement().getHeight().intValue() - this.height - 30;
-
-        this.toasterWindow.setLeft(this.left);
-        this.toasterWindow.setTop(this.top);
-
-        animateToaster();
+    	if(SHOW_ERROR_MESSAGES){
+	        Date d = new Date();
+	        String timeStamp = DateTimeFormat.getFormat("dd.MM.yyyy HH:mm").format(d);
+	
+	        Label l = new Label(timeStamp + " " + error);
+	        l.setCanSelectText(true);
+	        l.setStyleName("n52_sensorweb_client_toasterErrorMsg");
+	        l.setAutoHeight();
+	
+	        for (int i = 0; i < this.messages.size(); i++) {
+	            this.layout.removeMember(this.messages.get(i));
+	
+	        }
+	        this.messages.add(l);
+	        for (int i = this.messages.size() - 1; i >= 0; i--) {
+	            this.layout.addMember(this.messages.get(i));
+	        }
+	
+	        this.left = this.toasterWindow.getParentElement().getWidth().intValue() - this.width - 10;
+	        this.top = this.toasterWindow.getParentElement().getHeight().intValue() - this.height - 30;
+	
+	        this.toasterWindow.setLeft(this.left);
+	        this.toasterWindow.setTop(this.top);
+	
+	        animateToaster();
+    	}
     }
 
     public void show() {
