@@ -141,8 +141,10 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
                     convertExpanded.setFirstValue(dataService.getFirstValue(timeseries));
                     convertExpanded.setLastValue(dataService.getLastValue(timeseries));
                 }
-                StyleProperties renderingHints = renderingHintsService.getStyles(timeseries.getPhenomenon().getGlobalId(), timeseriesId);
-                convertExpanded.setRenderingHints(renderingHints);
+                if (query.isRenderingHintsRequests()) {
+                	StyleProperties renderingHints = renderingHintsService.getStyles(timeseries.getPhenomenon().getGlobalId(), timeseriesId);
+                    convertExpanded.setRenderingHints(renderingHints);
+                }
                 return convertExpanded;
             }
         }
