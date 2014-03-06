@@ -79,6 +79,10 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
                 if (map.isStatusIntervalsRequests()) {
                 	getStatusIntervalsService().setIntervals(converted);
                 }
+                if (map.isRenderingHintsRequests()) {
+                	StyleProperties renderingHints = renderingHintsService.getStyles(sosTimeseries.getPhenomenon().getGlobalId(), sosTimeseries.getTimeseriesId());
+                	converted.setRenderingHints(renderingHints);
+                }
                 allTimeseries.add(converted);
             }
         }
