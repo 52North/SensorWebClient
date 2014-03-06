@@ -38,6 +38,7 @@ import java.util.Set;
 import org.n52.api.v1.io.TimeseriesConverter;
 import org.n52.io.IoParameters;
 import org.n52.io.RenderingHintsService;
+import org.n52.io.StatusIntervalsService;
 import org.n52.io.format.TvpDataCollection;
 import org.n52.io.v1.data.StyleProperties;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
@@ -54,6 +55,8 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
     private GetDataService dataService;
     
     private RenderingHintsService renderingHintsService;
+    
+    private StatusIntervalsService statusIntervalsService;
 
 	@Override
 	public TvpDataCollection getTimeseriesData(UndesignedParameterSet parameters) {
@@ -63,7 +66,7 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
     @Override
     public TimeseriesMetadataOutput[] getExpandedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);
-        List<TimeseriesMetadataOutput> allProcedures = new ArrayList<TimeseriesMetadataOutput>();
+        List<TimeseriesMetadataOutput> allTimeseries = new ArrayList<TimeseriesMetadataOutput>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             TimeseriesConverter converter = new TimeseriesConverter(metadata);
             SosTimeseries[] timeseriesToConvert = filter(metadata, query);
@@ -73,10 +76,13 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
                     // setting last values must be declared explicitly to avoid thousands of requests
                     converted.setLastValue(dataService.getLastValue(sosTimeseries));
                 }
-                allProcedures.add(converted);
+                if (map.isStatusIntervalsRequests()) {
+                	getStatusIntervalsService().setIntervals(converted);
+                }
+                allTimeseries.add(converted);
             }
         }
-        return allProcedures.toArray(new TimeseriesMetadataOutput[0]);
+        return allTimeseries.toArray(new TimeseriesMetadataOutput[0]);
     }
     
     @Override
@@ -157,6 +163,14 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
 
 	public void setRenderingHintsService(RenderingHintsService renderingHintsService) {
 		this.renderingHintsService = renderingHintsService;
+	}
+
+	public StatusIntervalsService getStatusIntervalsService() {
+		return statusIntervalsService;
+	}
+
+	public void setStatusIntervalsService(StatusIntervalsService statusIntervalsService) {
+		this.statusIntervalsService = statusIntervalsService;
 	}
 
 }
