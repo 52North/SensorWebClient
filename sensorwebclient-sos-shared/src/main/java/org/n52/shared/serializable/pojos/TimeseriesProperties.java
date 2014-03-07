@@ -565,5 +565,8 @@ public class TimeseriesProperties implements Serializable {
 	public void setJumpToLatestTimeSeriesDate(boolean jumpToLatestTimeSeriesDate) {
 		this.jumpToLatestTimeSeriesDate = jumpToLatestTimeSeriesDate;
 	}
-
+	
+	public boolean isTypeZdm(){
+		return timeseries.isTypeZdm();
+	}
 }

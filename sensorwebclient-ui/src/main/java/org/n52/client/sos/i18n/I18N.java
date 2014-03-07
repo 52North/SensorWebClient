@@ -90,6 +90,10 @@ public interface I18N extends Constants {
     String confirm();
 
     String cancel();
+    
+    String yes();
+
+    String no();
 
     String noData();
 
@@ -328,8 +332,6 @@ public interface I18N extends Constants {
     
     String sosError();
 
-    String OK();
-
     String expertsMenu();
 
     String expertsMenuButton();
@@ -385,6 +387,11 @@ public interface I18N extends Constants {
 	String toPDF();
 	
 	String toZIP();
+	String toZIPTooltip();
+	String toZIPMixedInfoTitle();
+	String toZIPMixedInfoText();
+	String toZIPNonZdmInfoTitle();
+	String toZIPNonZdmInfoText();
 
 	String lineWidth();
 

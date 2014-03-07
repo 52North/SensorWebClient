@@ -95,8 +95,6 @@ public class StationSelector extends Window {
 
     private static StationSelectorController controller;
     
-    private static final String SERVICE_URL_ZDM = "http://localhost/SOS/sos";
-    
 	private Layout guiContent;
 
 	private Map<String, DynamicForm> stationFilterGroups;
@@ -421,7 +419,7 @@ public class StationSelector extends Window {
 				/** parentMap contains all subnodes */
 				HashMap<String, SosTimeseries> parentMap;
 				String categoryName;
-				if(category.getServiceUrl() != null && category.getServiceUrl().contains(SERVICE_URL_ZDM)){
+				if(category.isTypeZdm()){
 					categoryName = category.getParentName();
 				} else {
 					categoryName = SosTimeseries.PARENT_NAME_DEFAULT;

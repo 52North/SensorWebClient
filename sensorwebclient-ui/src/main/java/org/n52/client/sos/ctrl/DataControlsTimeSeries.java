@@ -474,8 +474,7 @@ public abstract class DataControlsTimeSeries extends DataControls {
         this.expertsLayout.addMember(oIntervalForm);
 
         ImageButton confExp =
-                new ImageButton("confExp", "../img/icons/accept.png", i18n.OK(),
-                        i18n.OK());
+                new ImageButton("confExp", "../img/icons/accept.png", i18n.confirm(),i18n.confirm());
         confExp.addClickHandler(new ClickHandler() {
 
             public void onClick(ClickEvent event) {

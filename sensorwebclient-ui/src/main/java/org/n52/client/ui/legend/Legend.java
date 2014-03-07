@@ -46,13 +46,14 @@ import org.n52.client.ui.btn.ImageButton;
 import org.n52.client.util.ClientUtils;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Button;
+import com.smartgwt.client.widgets.Dialog;
 import com.smartgwt.client.widgets.Img;
 import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.events.ButtonClickEvent;
+import com.smartgwt.client.widgets.events.ButtonClickHandler;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
@@ -62,7 +63,7 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
 
 public class Legend extends VLayout {
-	
+
 	//@TODO: In properties-Datei auslagern!
 	public final static String DOWNLOAD_ZIP_URL="/appl/bs/Main.php?do=getZips&messreihen=";
 	
@@ -91,6 +92,10 @@ public class Legend extends VLayout {
     private HLayout exportLoadingSpinner;
 
     private LoginWindow profileWindow;
+    
+    private Label toZIP;
+    
+    private String zipDownloadUrl;
 
     public Legend(String id) {
         this.elemID = id;
@@ -192,7 +197,7 @@ public class Legend extends VLayout {
 
             public void onClick(ClickEvent event) {
                 String helpUrl = GWT.getHostPageBaseURL() + i18n.helpPath();
-                Window.open(helpUrl, "", "");
+                com.google.gwt.user.client.Window.open(helpUrl, "", "");
             }
         });
 
@@ -383,7 +388,8 @@ public class Legend extends VLayout {
     }
 
     private Label createZIPLabel() {
-        Label toZIP = new Label(i18n.toZIP());
+        toZIP = new Label(i18n.toZIP());
+		toZIP.setTooltip(i18n.toZIPTooltip());
         toZIP.setWrap(false);
         toZIP.setAutoFit(true);
         toZIP.setPadding(3);
@@ -398,18 +404,58 @@ public class Legend extends VLayout {
         		Collection<Timeseries> values = dataItems.values();
             	
         		String infos="";
+        		Integer countZdm = 0;
+        		Integer countNonZdm = 0;
         		for (Timeseries ts: values) {
-        			String paramName=ts.getPhenomenonId();
-        			String stationName=ts.getProcedureId();
-        			if (stationName.indexOf("/")!=stationName.lastIndexOf("/")) {
-        				stationName = stationName.substring(stationName.lastIndexOf("/")+1);
+        			if(ts.isTypeZdm()){
+        				countZdm++;
+	        			String paramName=ts.getPhenomenonId();
+	        			String stationName=ts.getProcedureId();
+	        			if (stationName.indexOf("/")!=stationName.lastIndexOf("/")) {
+	        				stationName = stationName.substring(stationName.lastIndexOf("/")+1);
+	        			}
+	        			String queryString=paramName+":"+stationName+",";
+	        			infos+=queryString;
+        			} else {
+        				countNonZdm++;
         			}
-        			String queryString=paramName+":"+stationName+",";
-        			infos+=queryString;
         		}
-        		
-        		String url=DOWNLOAD_ZIP_URL+infos;
-            	Window.open(url, "_blank", "");
+        		zipDownloadUrl=DOWNLOAD_ZIP_URL+infos;
+
+        		if( countZdm > 0 && countNonZdm > 0){
+                    final Dialog mixedDataDialog = new Dialog();
+                    mixedDataDialog.setTitle(i18n.toZIPMixedInfoTitle());
+                    mixedDataDialog.setMessage(i18n.toZIPMixedInfoText());
+                    mixedDataDialog.setIsModal(true);
+                    mixedDataDialog.setShowModalMask(true);
+                    mixedDataDialog.setButtons(new Button(i18n.yes()), new Button(i18n.no()));
+                    mixedDataDialog.addButtonClickHandler(new ButtonClickHandler() {
+						@Override
+						public void onButtonClick(ButtonClickEvent event) {
+							if(i18n.yes().equals(event.getButton().getTitle())){
+			        			com.google.gwt.user.client.Window.open(zipDownloadUrl, "_blank", "");
+							}
+							mixedDataDialog.destroy();
+						}
+					});
+                    mixedDataDialog.draw();
+        		} else if( countNonZdm > 0){
+                    final Dialog nonZdmDataDialog = new Dialog();
+                    nonZdmDataDialog.setTitle(i18n.toZIPNonZdmInfoTitle());
+                    nonZdmDataDialog.setMessage(i18n.toZIPNonZdmInfoText());
+                    nonZdmDataDialog.setIsModal(true);
+                    nonZdmDataDialog.setShowModalMask(true);
+                    nonZdmDataDialog.setButtons(new Button(i18n.confirm()));
+                    nonZdmDataDialog.addButtonClickHandler(new ButtonClickHandler() {
+						@Override
+						public void onButtonClick(ButtonClickEvent event) {
+							nonZdmDataDialog.destroy();
+						}
+					});
+                    nonZdmDataDialog.draw();
+        		} else {
+        			com.google.gwt.user.client.Window.open(zipDownloadUrl, "_blank", "");
+        		}
             	
                 exportMenu.hide();
             }

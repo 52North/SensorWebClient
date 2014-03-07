@@ -63,7 +63,9 @@ public class SosTimeseries implements Serializable {
     private static final String PHENOMENON_SUFFIX_SURFACE = " - Oberfläche";
     
     public static final String PARENT_NAME_DEFAULT = "DEFAULT";
-    
+
+    private static final String SERVICE_URL_ZDM = "http://localhost/SOS/sos";
+
     public SosTimeseries() {
         // for serialization
     }
@@ -396,5 +398,9 @@ public class SosTimeseries implements Serializable {
 
         return retStr;
     }
+
+	public boolean isTypeZdm(){
+		return getServiceUrl() != null && getServiceUrl().contains(SERVICE_URL_ZDM);
+	}
 
 }

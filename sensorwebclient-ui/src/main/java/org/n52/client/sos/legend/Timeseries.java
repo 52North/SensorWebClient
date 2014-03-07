@@ -425,5 +425,9 @@ public class Timeseries implements LegendData {
 	public void setHasData(boolean hasData) {
 		this.properties.setHasData(hasData);
 	}
+	
+	public boolean isTypeZdm(){
+		return properties.isTypeZdm();
+	}
 
 }
