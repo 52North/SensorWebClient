@@ -2,3 +2,8 @@ language: java
 jdk:
   - oraclejdk7
   - openjdk7
+  
+irc:
+  channels:
+    - "irc.freenode.org#52north"
+  use_notice: true
