@@ -62,6 +62,7 @@ import org.n52.server.da.MetadataHandler;
 import org.n52.server.util.PropertiesToHtml;
 import org.n52.server.util.XmlHelper;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.shared.serializable.pojos.sos.Category;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
@@ -154,7 +155,7 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
                 Phenomenon phenomenon = lookup.getPhenomenon(phenomenonId);
                 if (outputList.getOutputArray().length > 0) {
                     String name = outputList.getOutputArray(0).getName();
-                    timeseries.setCategory(parseCategory(name));
+                    timeseries.setCategory(new Category(parseCategory(name), sosUrl));
                     phenomenon.setLabel(name);
                 }
             }
