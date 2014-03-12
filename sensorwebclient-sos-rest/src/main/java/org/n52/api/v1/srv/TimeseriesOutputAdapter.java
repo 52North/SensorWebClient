@@ -37,10 +37,9 @@ import java.util.Set;
 
 import org.n52.api.v1.io.TimeseriesConverter;
 import org.n52.io.IoParameters;
-import org.n52.io.RenderingHintsService;
-import org.n52.io.StatusIntervalsService;
+import org.n52.io.RenderingHintsConfigApplier;
+import org.n52.io.StatusIntervalsConfigApplier;
 import org.n52.io.format.TvpDataCollection;
-import org.n52.io.v1.data.StyleProperties;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.shared.requests.query.QueryParameters;
@@ -54,9 +53,9 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
 
     private GetDataService dataService;
     
-    private RenderingHintsService renderingHintsService;
+    private RenderingHintsConfigApplier renderingHintsService;
     
-    private StatusIntervalsService statusIntervalsService;
+    private StatusIntervalsConfigApplier statusIntervalsService;
 
 	@Override
 	public TvpDataCollection getTimeseriesData(UndesignedParameterSet parameters) {
@@ -75,13 +74,6 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
                 if (metadata.isSupportsFirstLatest() && map.isForceLatestValueRequests()) {
                     // setting last values must be declared explicitly to avoid thousands of requests
                     converted.setLastValue(dataService.getLastValue(sosTimeseries));
-                }
-                if (map.isStatusIntervalsRequests()) {
-                	getStatusIntervalsService().setIntervals(converted);
-                }
-                if (map.isRenderingHintsRequests()) {
-                	StyleProperties renderingHints = renderingHintsService.getStyles(sosTimeseries.getPhenomenon().getGlobalId(), sosTimeseries.getTimeseriesId());
-                	converted.setRenderingHints(renderingHints);
                 }
                 allTimeseries.add(converted);
             }
@@ -145,13 +137,6 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
                     convertExpanded.setFirstValue(dataService.getFirstValue(timeseries));
                     convertExpanded.setLastValue(dataService.getLastValue(timeseries));
                 }
-                if (query.isStatusIntervalsRequests()) {
-                	getStatusIntervalsService().setIntervals(convertExpanded);
-                }
-                if (query.isRenderingHintsRequests()) {
-                	StyleProperties renderingHints = renderingHintsService.getStyles(timeseries.getPhenomenon().getGlobalId(), timeseriesId);
-                    convertExpanded.setRenderingHints(renderingHints);
-                }
                 return convertExpanded;
             }
         }
@@ -166,19 +151,19 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
         this.dataService = dataService;
     }
 
-	public RenderingHintsService getRenderingHintsService() {
+	public RenderingHintsConfigApplier getRenderingHintsService() {
 		return renderingHintsService;
 	}
 
-	public void setRenderingHintsService(RenderingHintsService renderingHintsService) {
+	public void setRenderingHintsService(RenderingHintsConfigApplier renderingHintsService) {
 		this.renderingHintsService = renderingHintsService;
 	}
 
-	public StatusIntervalsService getStatusIntervalsService() {
+	public StatusIntervalsConfigApplier getStatusIntervalsService() {
 		return statusIntervalsService;
 	}
 
-	public void setStatusIntervalsService(StatusIntervalsService statusIntervalsService) {
+	public void setStatusIntervalsService(StatusIntervalsConfigApplier statusIntervalsService) {
 		this.statusIntervalsService = statusIntervalsService;
 	}
 
