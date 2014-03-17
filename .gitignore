@@ -5,3 +5,4 @@ target
 .settings
 META-INF
 output.txt
+restful-timeseries-webapp/src/main/tmp/

@@ -17,7 +17,6 @@
 	</properties>
 
 	<dependencies>
-
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>sensorwebclient-webapp</artifactId>
@@ -106,9 +105,9 @@
 							<includes>
 								<include>ds/sos-instances.data.xml</include>
 								<include>js/**/*.js</include>
-                                <include>css/**/*.css</include>
-								<include>WEB-INF/classes/dispatcher-control.xml</include>
-								<include>WEB-INF/classes/spring-view-config.xml</include>
+								<include>css/**/*.css</include>
+								<include>WEB-INF/classes/*.json</include>
+								<include>WEB-INF/classes/*.xml</include>
 								<include>WEB-INF/pages/*</include>
 								<include>xslt/SensorML*.xslt</include>
 							</includes>
