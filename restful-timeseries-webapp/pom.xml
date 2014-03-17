@@ -22,6 +22,10 @@
 			<artifactId>sensorwebclient-webapp</artifactId>
 			<type>war</type>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>timeseries-web</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
@@ -31,15 +35,15 @@
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>sensorwebclient-sos-server</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>org.n52.sensorweb</groupId>
-            <artifactId>sensorwebclient-hydro</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.n52.sensorweb</groupId>
-            <artifactId>sensorwebclient-ags</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.n52.sensorweb</groupId>
+			<artifactId>sensorwebclient-hydro</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.n52.sensorweb</groupId>
+			<artifactId>sensorwebclient-ags</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>sensorwebclient-sos-rest</artifactId>
@@ -88,6 +92,42 @@
 			</resource>
 		</resources>
 		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+					</execution>
+				</executions>
+
+				<configuration>
+					<artifactItems>
+						<artifactItem>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>timeseries-web</artifactId>
+							<includes>api-doc/**</includes>
+							<outputDirectory>${webappDirectory}</outputDirectory>
+							<overWrite>false</overWrite>
+						</artifactItem>
+
+						<artifactItem>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>timeseries-web</artifactId>
+							<includes>*.xml,*.json</includes>
+							<!-- tmp files will be copied into WEB-INF/classes -->
+							<outputDirectory>src/main/tmp</outputDirectory>
+							<overWrite>true</overWrite>
+						</artifactItem>
+					</artifactItems>
+				</configuration>
+			</plugin>
+
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
@@ -113,16 +153,12 @@
 							<artifactId>sensorwebclient-webapp</artifactId>
 							<includes>
 								<include>ds/sos-instances.data.xml</include>
-								<include>js/**/*.js</include>
-								<include>css/**/*.css</include>
 								<include>WEB-INF/classes/*.json</include>
 								<include>WEB-INF/classes/*.xml</include>
-								<include>WEB-INF/pages/*</include>
-								<include>xslt/SensorML*.xslt</include>
 							</includes>
 							<excludes>
-                                <exclude>WEB-INF/classes/spring-ses-config.xml</exclude>
-                            </excludes>
+								<exclude>WEB-INF/classes/spring-ses-config.xml</exclude>
+							</excludes>
 						</overlay>
 					</overlays>
 				</configuration>
