@@ -57,6 +57,19 @@
 				<artifactId>gt-opengis</artifactId>
 				<version>${geotools.version}</version>
 			</dependency>
+
+			<!-- CONNECTOR PLUGINS -->
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>sensorwebclient-hydro</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+			<dependency>
+				<groupId>org.n52.sensorweb</groupId>
+				<artifactId>sensorwebclient-ags</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
 			<dependency>
 				<groupId>org.n52.sensorweb</groupId>
 				<artifactId>sensorwebclient-api</artifactId>
@@ -729,47 +742,6 @@
 		</profile>
 
 		<profile>
-			<id>connector-eea</id>
-			<modules>
-				<module>sensorwebclient-eea</module>
-				<module>sensorwebclient-ags</module>
-			</modules>
-			<dependencyManagement>
-				<dependencies>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-eea</artifactId>
-						<version>${project.version}</version>
-						<scope>runtime</scope>
-					</dependency>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-ags</artifactId>
-						<version>${project.version}</version>
-						<scope>runtime</scope>
-					</dependency>
-				</dependencies>
-			</dependencyManagement>
-		</profile>
-
-		<profile>
-			<id>connector-hydro</id>
-			<modules>
-				<module>sensorwebclient-hydro</module>
-			</modules>
-			<dependencyManagement>
-				<dependencies>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-hydro</artifactId>
-						<version>${project.version}</version>
-						<scope>runtime</scope>
-					</dependency>
-				</dependencies>
-			</dependencyManagement>
-		</profile>
-
-		<profile>
 			<id>release</id>
 			<activation>
 				<property>
@@ -886,11 +858,18 @@
 							<fileTemplate>misc/license-as-csv.ftl</fileTemplate>
 							<useMissingFile>true</useMissingFile>
 							<licenseMerges>
-								<licenseMerge>The Apache Software License, Version 2.0|Apache 2|Apache License, Version 2.0|Apache Public License 2.0</licenseMerge>
-								<licenseMerge>Apache Software Licenses|Apache Software License|Apache License</licenseMerge>
-								<licenseMerge>GNU General Public License, v2.0|GNU GENERAL PUBLIC LICENSE Version 2, June 1991|GNU General Public License, Version 2.0</licenseMerge>
-								<licenseMerge>Common Development and Distribution License (CDDL), version 1.0| Common Development and Distribution License (CDDL) v1.0</licenseMerge>
-								<licenseMerge>GNU Lesser General Public License, version 2.1|LGPL 2.1</licenseMerge>
+								<licenseMerge>The Apache Software License, Version 2.0|Apache
+									2|Apache License, Version 2.0|Apache Public License 2.0</licenseMerge>
+								<licenseMerge>Apache Software Licenses|Apache Software
+									License|Apache License</licenseMerge>
+								<licenseMerge>GNU General Public License, v2.0|GNU GENERAL
+									PUBLIC LICENSE Version 2, June 1991|GNU General Public License,
+									Version 2.0</licenseMerge>
+								<licenseMerge>Common Development and Distribution License
+									(CDDL), version 1.0| Common Development and Distribution
+									License (CDDL) v1.0</licenseMerge>
+								<licenseMerge>GNU Lesser General Public License, version
+									2.1|LGPL 2.1</licenseMerge>
 								<licenseMerge>Mozilla Public License version 1.1|MPL 1.1</licenseMerge>
 							</licenseMerges>
 						</configuration>

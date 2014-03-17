@@ -31,6 +31,15 @@
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>sensorwebclient-sos-server</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>sensorwebclient-hydro</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>sensorwebclient-ags</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>sensorwebclient-sos-rest</artifactId>
@@ -111,6 +120,9 @@
 								<include>WEB-INF/pages/*</include>
 								<include>xslt/SensorML*.xslt</include>
 							</includes>
+							<excludes>
+                                <exclude>WEB-INF/classes/spring-ses-config.xml</exclude>
+                            </excludes>
 						</overlay>
 					</overlays>
 				</configuration>
