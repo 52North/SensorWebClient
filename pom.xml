@@ -61,11 +61,11 @@
 			</dependency>
 
 			<!-- CONNECTOR PLUGINS -->
-            <dependency>
-                <groupId>org.n52.sensorweb</groupId>
-                <artifactId>sensorwebclient-hydro</artifactId>
-                <version>${project.version}</version>
-            </dependency>
+			<dependency>
+				<groupId>org.n52.sensorweb</groupId>
+				<artifactId>sensorwebclient-hydro</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>org.n52.sensorweb</groupId>
 				<artifactId>sensorwebclient-ags</artifactId>
@@ -683,6 +683,9 @@
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
+					<showWarnings>true</showWarnings>
+					<showDeprecation>true</showDeprecation>
+					<compilerArgument>-Xlint:all</compilerArgument>
 					<meminitial>256m</meminitial>
 					<maxmem>512m</maxmem>
 				</configuration>
@@ -739,7 +742,9 @@
 				<gwt.compile.draft>true</gwt.compile.draft>
 				<gwt.compile.optimization.level>0</gwt.compile.optimization.level>
 				<gwt.compile.module>org.n52.SensorWebClient_debug</gwt.compile.module>
-				<gwt.user.agent>gecko1_8</gwt.user.agent>
+				<!-- is FF27+ devmode plugin dead?! https://code.google.com/p/google-web-toolkit/issues/detail?id=8553  -->
+                <!-- <gwt.user.agent>gecko1_8</gwt.user.agent> -->
+				<gwt.user.agent>ie9</gwt.user.agent>
 			</properties>
 		</profile>
 
@@ -757,7 +762,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>license-maven-plugin</artifactId>
-                        <version>1.6</version>
+						<version>1.6</version>
 					</plugin>
 
 
