@@ -41,12 +41,14 @@ import org.n52.io.v1.data.TimeseriesData;
 import org.n52.io.v1.data.TimeseriesMetadata;
 import org.n52.io.v1.data.TimeseriesValue;
 import org.n52.io.v1.data.UndesignedParameterSet;
+import org.n52.server.da.oxf.ResponseExceedsSizeLimitException;
 import org.n52.shared.requests.TimeSeriesDataRequest;
 import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
+import org.n52.web.BadRequestException;
 import org.n52.web.InternalServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +75,7 @@ public class GetDataService extends DataService {
         return performTimeseriesDataRequest(timeseriesCollection, createDesignOptions(parameterSet, tsProperties));
     }
 
-    private TvpDataCollection performTimeseriesDataRequest(TvpDataCollection timeSeriesResults, DesignOptions options) throws InternalServerException {
+    private TvpDataCollection performTimeseriesDataRequest(TvpDataCollection timeSeriesResults, DesignOptions options) {
         try {
             TimeSeriesDataRequest tsRequest = new TimeSeriesDataRequest(options);
             TimeSeriesDataResponse timeSeriesData = timeSeriesDataService.getTimeSeriesData(tsRequest);
@@ -90,6 +92,9 @@ public class GetDataService extends DataService {
                 }
                 timeSeriesResults.addNewTimeseries(timeseriesId, timeseriesData);
             }
+        }
+        catch (ResponseExceedsSizeLimitException e) {
+            throw new BadRequestException(e.getMessage());
         }
         catch (Exception e) {
             throw new InternalServerException("Could not get timeseries data for options: " + options, e);
