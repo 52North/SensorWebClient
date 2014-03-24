@@ -83,7 +83,7 @@ public class BasicRule_4_BuilderTest {
     }
     
     @Test public void 
-    shouldBlah() 
+    havingRule_parseEmlFromBasicRule_noXmlErrors() 
     throws Exception {
         String eml = builder.create(rule).getEml();
         assertThat(XMLBeansParser.validate(XmlObject.Factory.parse(eml)), is(empty()));
