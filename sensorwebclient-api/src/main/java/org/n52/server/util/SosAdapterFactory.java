@@ -31,6 +31,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.n52.oxf.sos.adapter.SOSAdapter;
+import org.n52.oxf.util.web.GzipEnabledHttpClient;
+import org.n52.oxf.util.web.HttpClient;
 import org.n52.oxf.util.web.ProxyAwareHttpClient;
 import org.n52.oxf.util.web.SimpleHttpClient;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -40,6 +42,10 @@ import org.slf4j.LoggerFactory;
 public class SosAdapterFactory {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(SosAdapterFactory.class);
+    
+    private static final int CONNECTION_TIMEOUT = 15000;
+
+    private static final int SOCKET_TIMEOUT = 20000;
     
     /**
      * Creates an adapter to make requests to an SOS instance. If the given metadata does not
@@ -54,7 +60,7 @@ public class SosAdapterFactory {
         String sosVersion = metadata.getSosVersion();
         try {
             SOSAdapter sosAdapter = new SOSAdapter(sosVersion);
-            sosAdapter.setHttpClient(new ProxyAwareHttpClient(new SimpleHttpClient()));
+            sosAdapter.setHttpClient(createHttpClient());
             if (adapter == null) {
                 return sosAdapter;
             }
@@ -87,4 +93,9 @@ public class SosAdapterFactory {
             throw new RuntimeException("Instantiation failed for Adapter " + adapter + "'.", e);
         }
     }
+    
+    private static HttpClient createHttpClient() {
+        return new GzipEnabledHttpClient(new ProxyAwareHttpClient(new SimpleHttpClient(CONNECTION_TIMEOUT, SOCKET_TIMEOUT)));
+    }
+    
 }
