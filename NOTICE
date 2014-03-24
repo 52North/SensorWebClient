@@ -3,6 +3,7 @@ Copyright 2013 52°North Initiative for Geospatial Open Source Software GmbH
 Licensed under GNU General Public License, v2.0
 
 This project includes:
+  52North OX-Framework SML under GNU General Public License, v2.0
   52North OxFramework Common under GNU General Public License, v2.0
   52North OxFramework OWS under GNU General Public License, v2.0
   52North OxFramework SWES under GNU General Public License, v2.0
@@ -38,6 +39,7 @@ This project includes:
   Commons Logging under The Apache Software License, Version 2.0
   Commons Pool under The Apache Software License, Version 2.0
   commons-collections under The Apache Software License, Version 2.0
+  Connector for an ArcGIS SOS extension. under GNU General Public License, v2.0
   dom4j under DOM4J license, http://dom4j.sourceforge.net/dom4j-1.6.1/license.html (BSD style)
   Ehcache Core under The Apache Software License, Version 2.0
   EPSG Authority Service using HSQL database under Lesser General Public License (LGPL) or EPSG database distribution license or BSD License for HSQL
@@ -129,6 +131,7 @@ This project includes:
   Shared SOS Components under GNU General Public License, v2.0
   SLF4J API Module under MIT License
   smartgwt under GNU Lesser General Public License (LGPL)
+  SOS Hydrology Profil Connector under GNU General Public License, v2.0
   SOS Rest Interface under GNU General Public License, v2.0
   SOS RPC Bindings under GNU General Public License, v2.0
   SOS Server Components under GNU General Public License, v2.0
