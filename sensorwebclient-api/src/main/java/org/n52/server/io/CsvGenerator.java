@@ -25,6 +25,7 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
+
 package org.n52.server.io;
 
 import java.io.File;
@@ -34,6 +35,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.n52.oxf.feature.OXFFeature;
 import org.n52.oxf.feature.OXFFeatureCollection;
@@ -54,9 +57,9 @@ public class CsvGenerator extends Generator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CsvGenerator.class);
 
-	private boolean zip;
+    private boolean zip;
 
-	// XXX zip is unused ATM
+    // XXX zip is unused ATM
     public CsvGenerator(boolean zip, String folder) {
         this.folderPostfix = folder;
     }
@@ -64,24 +67,36 @@ public class CsvGenerator extends Generator {
     @Override
     public RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException {
 
-        Collection<OXFFeatureCollection> observationCollList = getFeatureCollectionFor(options, false).values();
-
-        if (observationCollList.size() != 1) {
-            throw new IllegalArgumentException(
-                    "Just ONE observation collection for ONE SOS-offering allowed.");
+        LOGGER.debug("Starting producing representation with " + options);
+        Map<String, OXFFeatureCollection> entireCollMap = new HashMap<String, OXFFeatureCollection>();
+        try {
+            entireCollMap = getFeatureCollectionFor(options, false);
+        }
+        catch (Exception e) {
+            throw new GeneratorException("Error creating Csv data.", e);
         }
 
-        OXFFeatureCollection entireColl =
-                (OXFFeatureCollection) observationCollList.toArray()[0];
+        Collection<OXFFeatureCollection> observationCollList = entireCollMap.values();
 
-        
+        if (observationCollList.size() > 1) {
+            throw new IllegalArgumentException(
+                                               "Just ONE observation collection for ONE SOS-offering allowed.");
+        }
+
+        if (observationCollList.size() == 1) {
+        }
+
         TimeseriesProperties pc = options.getProperties().get(0);
-        File csv = JavaHelper.genRndFile(ConfigurationContext.GEN_DIR+"/"+folderPostfix, pc.getProcedure().replaceAll("/", "_")+"_"+formatDate(new Date(options.getBegin()))+"_"
-                +formatDate(new Date(options.getEnd()))+"_", "csv");
+        File csv = JavaHelper.genRndFile(ConfigurationContext.GEN_DIR + "/" + folderPostfix,
+                                         pc.getProcedure().replaceAll("/", "_") + "_"
+                                                 + formatDate(new Date(options.getBegin())) + "_"
+                                                 + formatDate(new Date(options.getEnd())) + "_",
+                                         "csv");
         OutputStream out;
         try {
             out = new FileOutputStream(csv);
-        } catch (FileNotFoundException e1) {
+        }
+        catch (FileNotFoundException e1) {
             LOGGER.error("Could not produce presentation.", e1);
             return null;
         }
@@ -93,56 +108,65 @@ public class CsvGenerator extends Generator {
             csvString += "Sensor Station;Sensor Phenomenon;Date;Value\n";
 
             // fill cells:
-			for (TimeseriesProperties prop : options.getProperties()) {
-			    
-			    TimeseriesParametersLookup lookup = getParameterLookup(prop.getServiceUrl());
-				String featureId = prop.getFeature();
-				String phenomenonId = prop.getPhenomenon();
+            for (TimeseriesProperties prop : options.getProperties()) {
 
-				ObservationSeriesCollection seriesCollection = new ObservationSeriesCollection(
-						entireColl, new String[] { featureId },
-						new String[] { phenomenonId }, false);
-				ITimePosition timeArray[] = seriesCollection
-						.getSortedTimeArray();
+                TimeseriesParametersLookup lookup = getParameterLookup(prop.getServiceUrl());
+                String featureId = prop.getFeature();
+                String phenomenonId = prop.getPhenomenon();
 
-				if (timeArray.length > 0) {
-					ObservedValueTuple nextObservation = seriesCollection
-							.getTuple(
-									new OXFFeature(featureId, entireColl
-											.getFeatureType()), timeArray[0]);
-					ObservedValueTuple observation = nextObservation;
+                OXFFeatureCollection entireColl = (OXFFeatureCollection) observationCollList.toArray()[0];
+                if ( !entireColl.isEmpty()) {
+                    ObservationSeriesCollection seriesCollection = new ObservationSeriesCollection(
+                                                                                                   entireColl,
+                                                                                                   new String[] {featureId},
+                                                                                                   new String[] {phenomenonId},
+                                                                                                   false);
+                    ITimePosition timeArray[] = seriesCollection
+                            .getSortedTimeArray();
 
-					for (int i = 0; i < timeArray.length; i++) {
+                    if (timeArray.length > 0) {
+                        ObservedValueTuple nextObservation = seriesCollection
+                                .getTuple(
+                                          new OXFFeature(featureId, entireColl
+                                                  .getFeatureType()), timeArray[0]);
+                        ObservedValueTuple observation = nextObservation;
 
-						observation = nextObservation;
+                        for (int i = 0; i < timeArray.length; i++) {
 
-						if (i + 1 < timeArray.length) {
-							nextObservation = seriesCollection.getTuple(
-									new OXFFeature(featureId, null),
-									timeArray[i + 1]);
-						}
+                            observation = nextObservation;
 
-						csvString += lookup.getFeature(featureId).getLabel() + ";";
-						csvString += lookup.getPhenomenon(phenomenonId).getLabel()
-								+ " (" + prop.getUnitOfMeasure() + ")"
-								+ ";";
-						csvString += observation.getTime().toISO8601Format()
-								+ ";";
-						csvString += observation.getValue(0).toString() + "\n";
-						// csvString +=
-						// observation.getValue(0).toString().replace(".", ",")
-						// + "\n";
-					}
-				}
-			}
+                            if (i + 1 < timeArray.length) {
+                                nextObservation = seriesCollection.getTuple(
+                                                                            new OXFFeature(featureId, null),
+                                                                            timeArray[i + 1]);
+                            }
+
+                            csvString += lookup.getFeature(featureId).getLabel() + ";";
+                            csvString += lookup.getPhenomenon(phenomenonId).getLabel()
+                                    + " (" + prop.getUnitOfMeasure() + ")"
+                                    + ";";
+                            csvString += observation.getTime().toISO8601Format()
+                                    + ";";
+                            csvString += observation.getValue(0).toString() + "\n";
+                            // csvString +=
+                            // observation.getValue(0).toString().replace(".", ",")
+                            // + "\n";
+                        }
+                    }
+                }
+
+            }
             out.write(csvString.getBytes());
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new GeneratorException(e.getMessage(), e);
-        } finally {
+        }
+        finally {
             try {
                 out.flush();
                 out.close();
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 LOGGER.error("Could not produce presentation.", e);
             }
         }

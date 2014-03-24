@@ -315,10 +315,11 @@ public class PdfGenerator extends Generator {
     }
 
     @Override
-    public RepresentationResponse producePresentation(DesignOptions options) throws Exception {
-        Map<String, OXFFeatureCollection> observationCollMap = getFeatureCollectionFor(options, false);
-
+    public RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException {
         try {
+
+            Map<String, OXFFeatureCollection> observationCollMap = getFeatureCollectionFor(options, false);
+            
             // produce document structure:
             DocumentStructureDocument docStructureDoc =
                     buildUpDocumentStructure(options, observationCollMap);

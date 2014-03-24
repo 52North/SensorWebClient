@@ -118,7 +118,7 @@ public class ZipGenerator extends Generator {
     }
 
     @Override
-    public RepresentationResponse producePresentation(DesignOptions options) throws Exception {
+    public RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException {
         ZipOutputStream zipOutputStream = null;
         File file = new File(ConfigurationContext.GEN_DIR+"/"+folder);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");

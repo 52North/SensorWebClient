@@ -50,6 +50,7 @@ import org.jfree.chart.entity.StandardEntityCollection;
 import org.jfree.chart.entity.XYItemEntity;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.feature.OXFFeatureCollection;
+import org.n52.server.da.AccessException;
 import org.n52.server.io.render.DiagramRenderer;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.shared.responses.EESDataResponse;
@@ -79,7 +80,7 @@ public class EESGenerator extends Generator {
     }
 
     @Override
-    public RepresentationResponse producePresentation(DesignOptions options) throws Exception {
+    public RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException {
         ChartRenderingInfo renderingInfo = new ChartRenderingInfo(new StandardEntityCollection());
         String chartUrl = createChart(options, renderingInfo);
         
@@ -101,13 +102,19 @@ public class EESGenerator extends Generator {
         return new EESDataResponse(chartUrl, options, chartArea, entities, renderer.getAxisMapping());
     }
 
-    public String createChart(DesignOptions options, ChartRenderingInfo renderingInfo) throws Exception {
-        Map<String, OXFFeatureCollection> entireCollMap = getFeatureCollectionFor(options, true);
-        JFreeChart chart = producePresentation(entireCollMap, options);
-        chart.removeLegend();
-        
-        String chartFileName = createAndSaveImage(options, chart, renderingInfo);
-        return ConfigurationContext.IMAGE_SERVICE + chartFileName; 
+    public String createChart(DesignOptions options, ChartRenderingInfo renderingInfo) throws GeneratorException {
+        try {
+            Map<String, OXFFeatureCollection> entireCollMap = getFeatureCollectionFor(options, true);
+            JFreeChart chart = producePresentation(entireCollMap, options);
+            chart.removeLegend();
+            
+            String chartFileName = createAndSaveImage(options, chart, renderingInfo);
+            return ConfigurationContext.IMAGE_SERVICE + chartFileName;
+        } catch (AccessException e) {
+            throw new GeneratorException("Error requesting data.", e);
+        } catch (IOException e) {
+            throw new GeneratorException("Could not render chart.", e);
+        }
     }
 
 	public void createChartToOutputStream(DesignOptions options,
@@ -189,7 +196,7 @@ public class EESGenerator extends Generator {
         return html.toString();
     }
 
-    private JFreeChart producePresentation(Map<String, OXFFeatureCollection> entireCollMap, DesignOptions options) throws OXFException, IOException {
+    private JFreeChart producePresentation(Map<String, OXFFeatureCollection> entireCollMap, DesignOptions options) throws IOException {
 
         Calendar begin = Calendar.getInstance();
         Calendar end = Calendar.getInstance();
