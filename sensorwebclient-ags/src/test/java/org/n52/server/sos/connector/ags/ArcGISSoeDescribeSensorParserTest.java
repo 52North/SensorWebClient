@@ -44,7 +44,7 @@ public class ArcGISSoeDescribeSensorParserTest {
 
     private final static String DESCRIBE_SENSOR_INSTANCE = "/files/describe-sensor-instance.xml";
     
-    private final static String PHENOMENON = "http://dd.eionet.europa.eu/vocabulary/aq/pollutant/8";
+    private final static String PHENOMENON = "http://dd.eionet.europa.eu/vocabulary/aq/pollutant/1";
     
     private ArcGISSoeDescribeSensorParser parser;
     
@@ -57,12 +57,12 @@ public class ArcGISSoeDescribeSensorParserTest {
     
     @Test public void 
     shouldParseFirstAvailableUomFromInconsistentMultipleOutputSection() {
-        assertThat("UOM code is not correct!", parser.getUomFor(PHENOMENON), is("ug.m-3"));
+        assertThat("UOM code is not correct!", parser.getUomFor(PHENOMENON), is("mg.m-3"));
     }
     
     @Test public void
     shouldParseShortName() {
-        assertThat("shortName is incorrect!", parser.getShortName(), is("GB_StationProcess_1"));
+        assertThat("shortName is incorrect!", parser.getShortName(), is("GB_StationProcess_3746"));
     }
 
 }
