@@ -5,7 +5,7 @@
 	</display-name>
 
 	<!-- Cross origin resource sharing (uncomment to share REST-API) Filter 
-		requires Tomcat 7.0.32 or higher 
+		requires Tomcat 7.0.32 or higher -->
 	<filter>
 		<filter-name>CorsFilter</filter-name>
 		<filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
@@ -13,7 +13,7 @@
 	<filter-mapping>
 		<filter-name>CorsFilter</filter-name>
 		<url-pattern>/*</url-pattern>
-	</filter-mapping>-->
+	</filter-mapping>
 	
 	<!-- listen for spring related configuration files -->
 	<listener>
