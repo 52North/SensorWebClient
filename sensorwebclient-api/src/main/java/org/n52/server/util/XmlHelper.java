@@ -69,7 +69,7 @@ public final class XmlHelper {
     }
 
     public String getShortName(IdentifierList identifiers) {
-        String xpath = "$this//*//sml:identifier[@name='shortName']";
+        String xpath = "$this//sml:identifier[@name='shortName']";
         Identifier shortName = parseFirst(identifiers, xpath, Identifier.class);
         return shortName == null ? null : shortName.getTerm().getValue();
     }

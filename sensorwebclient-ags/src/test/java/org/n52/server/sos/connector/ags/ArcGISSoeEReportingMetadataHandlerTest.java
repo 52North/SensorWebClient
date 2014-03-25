@@ -39,6 +39,7 @@ import org.n52.oxf.OXFException;
 import org.n52.oxf.ows.ExceptionReport;
 import org.n52.server.da.oxf.ResponseFromFileSosAdapter;
 import org.n52.shared.serializable.pojos.sos.Feature;
+import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SOSMetadataBuilder;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
@@ -67,14 +68,13 @@ public class ArcGISSoeEReportingMetadataHandlerTest {
         assertNotNull(metadata);
     }
     
-//    @Test
+    @Test
     public void
     shouldPerformMetadataCompletion() throws Exception {
-        
-        // TODO
         SOSMetadata metadata = seam.performMetadataCompletion();
-        System.out.println(metadata);
-        
+        TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
+        Procedure procedure = lookup.getProcedure("http://cdr.eionet.europa.eu/gb/eu/aqd/e2a/colutn32a/envuvlxkq/D_GB_StationProcess.xml#GB_StationProcess_1");
+        assertThat(procedure.getLabel(), is("GB_StationProcess_1"));
     }
     
     @Test public void
