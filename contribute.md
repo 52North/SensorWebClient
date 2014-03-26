@@ -62,4 +62,4 @@ it’s used in daily life. Take screenshots and make videos! Share what you have
 
 # Still Puzzled?
 
-* If you have further questions, contact: [Henning Bredel](mailto:h.bredel@52north.org) | @ridoo
+* If you have further questions, contact: [Henning Bredel](mailto:h.bredel@52north.org) | [@ridoo](https://github.com/ridoo)
