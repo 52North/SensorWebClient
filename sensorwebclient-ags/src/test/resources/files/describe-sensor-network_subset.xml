@@ -52,7 +52,9 @@
                                  <outputs>
                                     <OutputList>
                                        <output name="Nitrogen dioxide (air)">
-                                          <swe:Quantity definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/8"></swe:Quantity>
+                                          <swe:Quantity definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/8">
+                                             <swe:uom code="ug.m-3"/>
+                                          </swe:Quantity>
                                        </output>
                                     </OutputList>
                                  </outputs>
@@ -93,7 +95,9 @@
                                  <outputs>
                                     <OutputList>
                                        <output name="Ozone (air)">
-                                          <swe:Quantity definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/7"></swe:Quantity>
+                                          <swe:Quantity definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/7">
+                                             <swe:uom code="ug.m-3"/>
+                                          </swe:Quantity>
                                        </output>
                                     </OutputList>
                                  </outputs>
@@ -133,8 +137,10 @@
                                  </inputs>
                                  <outputs>
                                     <OutputList>
-                                       <output name="Particulate matter &lt; 10 Âµm (aerosol)">
-                                          <swe:Quantity definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/5"></swe:Quantity>
+                                       <output name="Particulate matter &lt; 10 Ã‚Âµm (aerosol)">
+                                          <swe:Quantity definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/5">
+                                             <swe:uom code="ug.m-3"/>
+                                          </swe:Quantity>
                                        </output>
                                     </OutputList>
                                  </outputs>
@@ -174,8 +180,10 @@
                                  </inputs>
                                  <outputs>
                                     <OutputList>
-                                       <output name="Particulate matter &lt; 2.5 Âµm (aerosol)">
-                                          <swe:Quantity definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/6001"></swe:Quantity>
+                                       <output name="Particulate matter &lt; 2.5 Ã‚Âµm (aerosol)">
+                                          <swe:Quantity definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/6001">
+                                             <swe:uom code="ug.m-3"/>
+                                          </swe:Quantity>
                                        </output>
                                     </OutputList>
                                  </outputs>
