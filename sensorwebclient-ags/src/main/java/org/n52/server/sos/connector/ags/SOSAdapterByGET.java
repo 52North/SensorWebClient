@@ -49,11 +49,8 @@ import org.n52.oxf.ows.capabilities.OnlineResource;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.sos.adapter.SOSAdapter;
-import org.n52.oxf.util.web.GzipEnabledHttpClient;
 import org.n52.oxf.util.web.HttpClient;
 import org.n52.oxf.util.web.HttpClientException;
-import org.n52.oxf.util.web.ProxyAwareHttpClient;
-import org.n52.oxf.util.web.SimpleHttpClient;
 import org.n52.server.da.oxf.ResponseExceedsSizeLimitException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,10 +59,6 @@ public class SOSAdapterByGET extends SOSAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSAdapterByGET.class);
     
-    private static final int CONNECTION_TIMEOUT = 20000;
-
-    private static final int SOCKET_TIMEOUT = 30000;
-
     private HttpClient httpClient;
     
     /**
@@ -80,12 +73,12 @@ public class SOSAdapterByGET extends SOSAdapter {
     public SOSAdapterByGET(String sosVersion) {
         super(sosVersion);
         setRequestBuilder(new SOSRequestBuilderGET_200());
-        HttpClient proxyAwareClient = createHttpClient();
-        httpClient = new GzipEnabledHttpClient(proxyAwareClient);
     }
 
-    private HttpClient createHttpClient() {
-        return new GzipEnabledHttpClient(new ProxyAwareHttpClient(new SimpleHttpClient(CONNECTION_TIMEOUT, SOCKET_TIMEOUT)));
+    @Override
+    public void setHttpClient(HttpClient httpClient) {
+        this.httpClient = httpClient;
+        super.setHttpClient(httpClient);
     }
 
     /**
@@ -105,7 +98,6 @@ public class SOSAdapterByGET extends SOSAdapter {
      */
     public SOSAdapterByGET(String sosVersion, ISOSRequestBuilder requestBuilder) {
         super(sosVersion, new SOSRequestBuilderGET_200());
-        setHttpClient(createHttpClient());
         LOGGER.warn("This is a deprecated constructor and will be removed soon w/o notice.");
     }
 

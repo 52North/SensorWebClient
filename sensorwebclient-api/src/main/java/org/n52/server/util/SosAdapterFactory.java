@@ -70,7 +70,9 @@ public class SosAdapterFactory {
                 Class<SOSAdapter> clazz = (Class<SOSAdapter>) Class.forName(adapter);
                 Class< ? >[] arguments = new Class< ? >[] {String.class};
                 Constructor<SOSAdapter> constructor = clazz.getConstructor(arguments);
-                return constructor.newInstance(sosVersion);
+                sosAdapter = constructor.newInstance(sosVersion);
+                sosAdapter.setHttpClient(createHttpClient(metadata));
+                return sosAdapter;
             }
         }
         catch (ClassNotFoundException e) {
