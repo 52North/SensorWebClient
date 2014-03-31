@@ -27,8 +27,6 @@
  */
 package org.n52.server.mgmt;
 
-import javax.swing.text.html.HTML.Tag;
-
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SOSMetadataBuilder;
 import org.slf4j.Logger;
@@ -187,6 +185,7 @@ public class SosInstanceContentHandler extends DefaultHandler {
             case TIMEOUT:
                 int timeout = Integer.parseInt(parsedCharacters);
                 currentBuilder.setTimeout(timeout);
+                break;
             case METADATAHANDLER:
                 String connector = parsedCharacters;
                 currentBuilder.addSosMetadataHandler(connector);
