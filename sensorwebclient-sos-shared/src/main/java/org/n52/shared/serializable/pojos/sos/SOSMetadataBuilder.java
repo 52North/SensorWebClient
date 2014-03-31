@@ -52,9 +52,11 @@ public class SOSMetadataBuilder {
     private boolean supportsFirstLatest = false;
 
     private int requestChunk = 100;
-    
+
+    private int timeout = 10000;
+
     private BoundingBox extent;
-    
+
     public SOSMetadataBuilder() {
         // default
     }
@@ -127,14 +129,19 @@ public class SOSMetadataBuilder {
         this.forceXYAxisOrder = forceXYAxisOrder;
         return this;
     }
-    
+
     public SOSMetadataBuilder setRequestChunk(int requestChunk) {
         if (requestChunk > 0) {
             this.requestChunk = requestChunk;
         }
         return this;
     }
-    
+
+    public SOSMetadataBuilder setTimeout(int timeout) {
+        this.timeout = timeout;
+        return this;
+    }
+
     public SOSMetadataBuilder withExtent(BoundingBox bbox) {
         this.extent = bbox;
         return this;
@@ -188,6 +195,10 @@ public class SOSMetadataBuilder {
         return this.requestChunk;
     }
     
+    public int getTimeout() {
+        return timeout;
+    }
+
     public BoundingBox getConfiguredServiceExtent() {
         return extent;
     }

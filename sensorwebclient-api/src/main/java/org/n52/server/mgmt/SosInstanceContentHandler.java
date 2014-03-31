@@ -27,6 +27,8 @@
  */
 package org.n52.server.mgmt;
 
+import javax.swing.text.html.HTML.Tag;
+
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SOSMetadataBuilder;
 import org.slf4j.Logger;
@@ -40,7 +42,7 @@ public class SosInstanceContentHandler extends DefaultHandler {
     private static final Logger LOG = LoggerFactory.getLogger(SosInstanceContentHandler.class);
 
     enum TagNames {
-        INSTANCE, ITEMNAME, URL, VERSION, METADATAHANDLER, ADAPTER, WATERML, LLEASTING, LLNORTHING, UREASTING, URNORTHING, DEFAULTZOOM, AUTOZOOM, REQUESTCHUNK, FORCEXYAXISORDER, PROTECTEDSERVICE, NOELEMENT, SUPPORTSFIRSTLATEST;
+        INSTANCE, ITEMNAME, URL, VERSION, METADATAHANDLER, ADAPTER, WATERML, TIMEOUT, LLEASTING, LLNORTHING, UREASTING, URNORTHING, DEFAULTZOOM, AUTOZOOM, REQUESTCHUNK, FORCEXYAXISORDER, PROTECTEDSERVICE, NOELEMENT, SUPPORTSFIRSTLATEST;
     }
 
     private SOSMetadataBuilder currentBuilder = new SOSMetadataBuilder();
@@ -92,6 +94,9 @@ public class SosInstanceContentHandler extends DefaultHandler {
         }
         else if (TagNames.WATERML.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.WATERML;
+        }
+        else if (TagNames.TIMEOUT.name().equalsIgnoreCase(qName)) {
+            currentElement = TagNames.TIMEOUT;
         }
         else if (TagNames.METADATAHANDLER.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.METADATAHANDLER;
@@ -179,6 +184,9 @@ public class SosInstanceContentHandler extends DefaultHandler {
                 boolean waterML = Boolean.parseBoolean(parsedCharacters);
                 currentBuilder.setWaterML(waterML);
                 break;
+            case TIMEOUT:
+                int timeout = Integer.parseInt(parsedCharacters);
+                currentBuilder.setTimeout(timeout);
             case METADATAHANDLER:
                 String connector = parsedCharacters;
                 currentBuilder.addSosMetadataHandler(connector);
