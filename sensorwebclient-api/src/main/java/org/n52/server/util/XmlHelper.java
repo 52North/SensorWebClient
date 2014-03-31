@@ -163,12 +163,24 @@ public final class XmlHelper {
      * @param ofType
      *        which type is expected.
      * @return the first value which could be parsed.
+     * 
      */
     public <T> T parseFirst(XmlObject from, String xPath, Class<T> ofType) {
         T[] results = parseAll(from, xPath, ofType);
         return results.length > 0 ? results[0] : null;
     }
 
+    /**
+     * @see #parseFirst(XmlObject, String, Class)
+     * 
+     * @param from
+     *        the node where search is started.
+     * @param xPath
+     *        the xpath search string.
+     * @param ofType
+     *        which type is expected.
+     * @return all values which could be parsed.
+     */
     @SuppressWarnings("unchecked")
     public <T> T[] parseAll(XmlObject from, String xPath, Class<T> ofType) {
         String query = String.format("%s ; %s", buildNamespaceDeclarationString(), xPath);
