@@ -38,7 +38,7 @@ import java.util.Map;
 import org.n52.client.service.TimeSeriesDataService;
 import org.n52.io.format.TvpDataCollection;
 import org.n52.io.v1.data.TimeseriesData;
-import org.n52.io.v1.data.TimeseriesMetadata;
+import org.n52.io.v1.data.TimeseriesDataMetadata;
 import org.n52.io.v1.data.TimeseriesValue;
 import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.server.da.oxf.ResponseExceedsSizeLimitException;
@@ -102,12 +102,12 @@ public class GetDataService extends DataService {
         return timeSeriesResults;
     }
 
-    private TimeseriesMetadata createTimeseriesMetadata(GetDataInfos infos) {
+    private TimeseriesDataMetadata createTimeseriesMetadata(GetDataInfos infos) {
         HashMap<String, ReferenceValue> refValues = infos.getProperties().getRefvalues();
         if (refValues == null || refValues.isEmpty()) {
             return null;
         }
-        TimeseriesMetadata timeseriesMetadata = new TimeseriesMetadata();
+        TimeseriesDataMetadata timeseriesMetadata = new TimeseriesDataMetadata();
         timeseriesMetadata.setReferenceValues(createReferenceValuesData(refValues, infos));
         return timeseriesMetadata;
     }
