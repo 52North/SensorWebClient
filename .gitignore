@@ -7,3 +7,5 @@ META-INF
 output.txt
 restful-timeseries-webapp/src/main/tmp/
 sensorwebclient-webapp/nb-configuration.xml
+restful-timeseries-webapp/nbactions.xml
+sensorwebclient-webapp/nbactions.xml
