@@ -116,7 +116,8 @@ public class ConfigurationContext implements ServletContextAware {
     void init() {
         LOGGER.debug("Initialize ConfigurationContext ...");
         String webappDirectory = servletContext.getRealPath("/");
-        parsePreConfiguredServices(webappDirectory + "ds");
+        webappDirectory += webappDirectory.endsWith("/") ? "" : File.separator;
+        parsePreConfiguredServices(webappDirectory + File.separator + "ds");
         XSL_DIR = webappDirectory + File.separator + "xslt" + File.separator;
         CACHE_DIR = webappDirectory + "cache" + File.separator;
         GEN_DIR = webappDirectory + "generated" + File.separator;
@@ -151,7 +152,8 @@ public class ConfigurationContext implements ServletContextAware {
 
     private void parsePreConfiguredServices(String dsDirectory) {
         try {
-            File sosDataSource = new File(dsDirectory + File.separator + "sos-instances.data.xml");
+            String path = File.separator + dsDirectory + File.separator;
+            File sosDataSource = new File(path + "sos-instances.data.xml");
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
             saxParser.parse(sosDataSource, new SosInstanceContentHandler());
