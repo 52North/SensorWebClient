@@ -1,0 +1,3 @@
+Git does not version empty directories. For eclipse setup, keep this
+directory for convenience reasons or delete this file if other files 
+are stored in the future.
