@@ -205,10 +205,10 @@
 						<artifactItem>
 							<groupId>${project.groupId}</groupId>
 							<artifactId>timeseries-web</artifactId>
-							<includes>*.xml,*.json</includes>
+							<includes>timeseries-api_v1_web.xml,*.json</includes>
 							<!-- tmp files will be copied into WEB-INF/classes -->
 							<outputDirectory>src/main/tmp</outputDirectory>
-							<overWrite>true</overWrite>
+							<overWrite>false</overWrite>
 						</artifactItem>
 					</artifactItems>
 				</configuration>
