@@ -7,6 +7,9 @@ This project includes:
   52North OxFramework Common under GNU General Public License, v2.0
   52North OxFramework OWS under GNU General Public License, v2.0
   52North OxFramework SWES under GNU General Public License, v2.0
+  52North OxFramework Third Party - NanoHTTPD under BSD 3-clause "New" or "Revised" License
+  52North OxFramework Third Party - NCName resolver under BSD 2-clause "Simplified" or "FreeBSD" License
+  52North OxFramework Third Party - Saxon under Apache License 2.0
   52North OxFramework Xmlbeans Handling under GNU General Public License, v2.0
   52North Sensor Web Client under GNU General Public License, v2.0
   52North Sensor Web Client PDF report structure under GNU General Public License, v2.0
@@ -74,7 +77,7 @@ This project includes:
   jcommon under GNU Lesser General Public Licence
   jdom under JDOM license, https://github.com/hunterhacker/jdom/blob/master/LICENSE.txt
   jfreechart under GNU Lesser General Public Licence
-  jgridshift:jgridshift under GNU Lesser General Public License, version 2.0 (LGPLv2)
+  jgridshift under GNU Lesser General Public License, version 2.0 (LGPLv2)
   Joda time under Apache 2
   JSON (JavaScript Object Notation) under provided without support or warranty
   jsr-275 under BSD License
