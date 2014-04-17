@@ -169,6 +169,9 @@
 								<include>WEB-INF/classes/*.xml</include>
 							</includes>
 							<excludes>
+                                <exclude>WEB-INF/classes/ehcache.xml</exclude>
+                                <exclude>WEB-INF/classes/hibernate.cfg.xml</exclude>
+                                <exclude>WEB-INF/classes/feeder-properties.xml</exclude>
 								<exclude>WEB-INF/classes/spring-ses-config.xml</exclude>
 							</excludes>
 						</overlay>
