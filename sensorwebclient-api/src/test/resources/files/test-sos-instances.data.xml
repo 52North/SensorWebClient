@@ -12,6 +12,7 @@
 		<metadataHandler>org.n52.server.oxf.util.parser.DefaultMetadataHandler</metadataHandler>
 		<adapter>org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension</adapter>
 		<requestChunk>300</requestChunk>
+		<timeout>45000</timeout>
 		<waterML>true</waterML>
 		<autoZoom>false</autoZoom>
 		<llEasting>5</llEasting>

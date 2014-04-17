@@ -349,7 +349,7 @@ public class TimeseriesFactory {
     }
 
     public static HashMap<Long, Double> compressToHashMap(ObservationSeriesCollection coll, String foiID,
-            String phenID, String procID) throws NumberFormatException, ParseException {
+            String phenID, String procID) throws ParseException {
 
         HashMap<Long, Double> data = new HashMap<Long, Double>();
 

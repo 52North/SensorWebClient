@@ -85,6 +85,8 @@ public class SOSMetadata implements Serializable {
 
     private int requestChunk = 300; // default
 
+    private int timeout = 10000; // default
+
     private boolean forceXYAxisOrder = false; // default
 
     private boolean supportsFirstLatest = false; // default
@@ -145,6 +147,7 @@ public class SOSMetadata implements Serializable {
         this.forceXYAxisOrder = builder.isForceXYAxisOrder();
         this.supportsFirstLatest = builder.isSupportsFirstLatest();
         this.requestChunk = builder.getRequestChunk();
+        this.timeout = builder.getTimeout();
         this.configuredExtent = builder.getConfiguredServiceExtent();
         this.protectedService = builder.isProctectedService();
         this.setSosMetadataHandler(builder.getSosMetadataHandler());
@@ -281,6 +284,10 @@ public class SOSMetadata implements Serializable {
     public int getRequestChunk() {
         return requestChunk;
     }
+    
+    public int getTimeout() {
+        return timeout;
+    }
 
     /**
      * @return the service's extent.
@@ -380,6 +387,7 @@ public class SOSMetadata implements Serializable {
         clone.autoZoom = this.autoZoom;
         clone.forceXYAxisOrder = this.forceXYAxisOrder;
         clone.requestChunk = this.requestChunk;
+        clone.timeout = this.timeout;
         clone.configuredExtent = this.configuredExtent;
         clone.protectedService = this.protectedService;
         clone.setSosMetadataHandler(this.getSosMetadataHandler());

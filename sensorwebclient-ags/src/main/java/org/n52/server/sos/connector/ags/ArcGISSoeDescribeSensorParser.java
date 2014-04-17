@@ -58,7 +58,10 @@ public class ArcGISSoeDescribeSensorParser {
         if (sml == null) {
             throw new NullPointerException("no SensorML to parse (was null)");
         }
-        this.sensorML = xmlHelper.parseFirst(sml, "$this//*/sml:SensorML", SensorML.class);
+        sensorML = xmlHelper.parseFirst(sml, "$this//sml:SensorML", SensorML.class);
+        if (sensorML == null) {
+            sensorML = xmlHelper.parseFirst(sml, "$this//*/sml:SensorML", SensorML.class);
+        }
     }
 
     public String getUomFor(String phenomenonId) {

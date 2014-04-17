@@ -31,6 +31,8 @@ package org.n52.server.io;
 import java.io.File;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import jxl.Workbook;
 import jxl.write.DateFormat;
@@ -47,6 +49,7 @@ import org.n52.oxf.feature.sos.ObservationSeriesCollection;
 import org.n52.oxf.feature.sos.ObservedValueTuple;
 import org.n52.oxf.util.JavaHelper;
 import org.n52.oxf.valueDomains.time.ITimePosition;
+import org.n52.server.da.AccessException;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.shared.responses.FileResponse;
 import org.n52.shared.responses.RepresentationResponse;
@@ -83,8 +86,16 @@ public class XlsGenerator extends Generator {
      * .shared.serializable.pojos.RepresentationDesignOptions)
      */
     @Override
-    public RepresentationResponse producePresentation(DesignOptions options) throws Exception {
-        Collection<OXFFeatureCollection> observationCollList = getFeatureCollectionFor(options, false).values();
+    public RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException {
+        LOGGER.debug("Starting producing representation with " + options);
+        Map<String, OXFFeatureCollection> entireCollMap = new HashMap<String, OXFFeatureCollection>();
+        try {
+            entireCollMap = getFeatureCollectionFor(options, false);
+        } catch (AccessException e) {
+            throw new GeneratorException("Error creating TimeSeriesDataResponse.", e);
+        }
+        
+        Collection<OXFFeatureCollection> observationCollList = entireCollMap.values();
 
         if (observationCollList.size() != 1) {
             throw new IllegalArgumentException(
@@ -189,7 +200,7 @@ public class XlsGenerator extends Generator {
             workbook.write();
             workbook.close();
         } catch (Exception e) {
-            throw new Exception("Error creating XLS!", e);
+            throw new GeneratorException("Error creating XLS!", e);
         }
         LOGGER.debug("Produced XLS file url '{}'.", ConfigurationContext.GEN_URL + "/" + xls.getName());
         JavaHelper.cleanUpDir(ConfigurationContext.GEN_DIR, ConfigurationContext.FILE_KEEPING_TIME);

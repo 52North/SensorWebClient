@@ -30,6 +30,7 @@ package org.n52.server.mgmt;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -93,6 +94,7 @@ public class SosInstanceContentHandlerTest {
         assertEquals(DEFAULT_CONNECTOR, metadata.getSosMetadataHandler());
         assertEquals(DEFAULT_ADAPTER, metadata.getAdapter());
         assertEquals(300, metadata.getRequestChunk());
+        assertThat(metadata.getTimeout(), is(45000));
         
         assertTrue(metadata.isWaterML());
         assertFalse(metadata.isAutoZoom());

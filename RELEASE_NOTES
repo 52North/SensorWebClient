@@ -16,8 +16,8 @@ Most work has been done to separate timeseries-api version 1.0.0 along with
 implementing its service provider interface to provide leightweight RESTful 
 access to timeseries resources. That integration makes accessing timeseries 
 data and metadata from external clients (not only from shipped UI) much more 
-consistent and more flexible! Configure your servlet container with a CORS 
-filter and provide the data to external clients.
+consistent and flexible! Configure your servlet container with a CORS filter 
+and provide the data to external clients.
 
 Another part of the work was to modulerazing IO processing functionality to 
 an external timeseries module. In combination with the timeseries web module 

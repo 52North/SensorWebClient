@@ -157,8 +157,7 @@ public class DiagramGenerator extends Generator {
     }
 
     @Override
-    public RepresentationResponse producePresentation(DesignOptions options) throws Exception {
-        // TODO Auto-generated method stub
+    public RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException {
         throw new UnsupportedOperationException();
     }
 

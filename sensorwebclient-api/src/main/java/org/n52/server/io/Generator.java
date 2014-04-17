@@ -81,10 +81,10 @@ public abstract class Generator {
      * @param options
      *        the options
      * @return RepresentationResponse
-     * @throws Exception
+     * @throws GeneratorException
      *         if generating presentation fails.
      */
-    public abstract RepresentationResponse producePresentation(DesignOptions options) throws Exception;
+    public abstract RepresentationResponse producePresentation(DesignOptions options) throws GeneratorException;
     
     protected TimeseriesParametersLookup getParameterLookup(String serviceUrl) {
         try {
@@ -105,8 +105,9 @@ public abstract class Generator {
      * @param onlyActiveTimeseries
      *        the only active timeseries
      * @return the map
+     * @throws AccessException 
      */
-    protected Map<String, OXFFeatureCollection> getFeatureCollectionFor(DesignOptions options, boolean generalize) {
+    protected Map<String, OXFFeatureCollection> getFeatureCollectionFor(DesignOptions options, boolean generalize) throws AccessException {
         ITime time = null;
         if (options.getTimeParam() == null) {
             time = getTimeFrom(options);
@@ -172,7 +173,7 @@ public abstract class Generator {
         return this.folderPostfix;
     }
 
-    protected String createAndSaveImage(DesignOptions options, JFreeChart chart, ChartRenderingInfo renderingInfo) throws Exception {
+    protected String createAndSaveImage(DesignOptions options, JFreeChart chart, ChartRenderingInfo renderingInfo) throws GeneratorException {
         int width = options.getWidth();
         int height = options.getHeight();
         BufferedImage image = chart.createBufferedImage(width, height, renderingInfo);
@@ -185,23 +186,17 @@ public abstract class Generator {
             return ServletUtilities.saveChartAsPNG(chart, width, height, renderingInfo, null);
         }
         catch (IOException e) {
-            throw new Exception("Could not save PNG!", e);
+            throw new GeneratorException("Could not save PNG!", e);
         }
     }
 
-    private Map<String, OXFFeatureCollection> sendRequest(DesignOptions options, ITime time) {
-        List<RequestConfig> requests = createRequestList(options, time);
-        Map<String, OXFFeatureCollection> result = new HashMap<String, OXFFeatureCollection>();
+    private Map<String, OXFFeatureCollection> sendRequest(DesignOptions options, ITime time) throws AccessException {
         try {
-            result = new ObservationAccessor().sendRequests(requests);
+            List<RequestConfig> requests = createRequestList(options, time);
+            return new ObservationAccessor().sendRequests(requests);
+        } catch (OXFRuntimeException e) {
+            throw new AccessException("Error during GetObservation request.", e);
         }
-        catch (OXFRuntimeException e) {
-            LOGGER.error("Failure when requesting GetObservation.", e);
-        }
-        catch (AccessException e) {
-            LOGGER.error("Could not access features.", e);
-        }
-        return result;
     }
 
     private List<RequestConfig> createRequestList(DesignOptions options, ITime time) {

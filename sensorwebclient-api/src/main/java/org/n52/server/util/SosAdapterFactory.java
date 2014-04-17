@@ -31,6 +31,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.n52.oxf.sos.adapter.SOSAdapter;
+import org.n52.oxf.util.web.GzipEnabledHttpClient;
+import org.n52.oxf.util.web.HttpClient;
 import org.n52.oxf.util.web.ProxyAwareHttpClient;
 import org.n52.oxf.util.web.SimpleHttpClient;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -54,7 +56,7 @@ public class SosAdapterFactory {
         String sosVersion = metadata.getSosVersion();
         try {
             SOSAdapter sosAdapter = new SOSAdapter(sosVersion);
-            sosAdapter.setHttpClient(new ProxyAwareHttpClient(new SimpleHttpClient()));
+            sosAdapter.setHttpClient(createHttpClient(metadata));
             if (adapter == null) {
                 return sosAdapter;
             }
@@ -68,7 +70,9 @@ public class SosAdapterFactory {
                 Class<SOSAdapter> clazz = (Class<SOSAdapter>) Class.forName(adapter);
                 Class< ? >[] arguments = new Class< ? >[] {String.class};
                 Constructor<SOSAdapter> constructor = clazz.getConstructor(arguments);
-                return constructor.newInstance(sosVersion);
+                sosAdapter = constructor.newInstance(sosVersion);
+                sosAdapter.setHttpClient(createHttpClient(metadata));
+                return sosAdapter;
             }
         }
         catch (ClassNotFoundException e) {
@@ -87,4 +91,11 @@ public class SosAdapterFactory {
             throw new RuntimeException("Instantiation failed for Adapter " + adapter + "'.", e);
         }
     }
+    
+    private static HttpClient createHttpClient(SOSMetadata metadata) {
+        int timeout = metadata.getTimeout();
+        SimpleHttpClient simpleClient = new SimpleHttpClient(timeout, timeout);
+        return new GzipEnabledHttpClient(new ProxyAwareHttpClient(simpleClient));
+    }
+    
 }

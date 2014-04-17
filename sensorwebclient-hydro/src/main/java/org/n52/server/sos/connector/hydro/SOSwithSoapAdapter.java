@@ -49,6 +49,7 @@ import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.sos.adapter.SOSAdapter;
 import org.n52.oxf.sos.util.SosUtil;
+import org.n52.oxf.util.web.GzipEnabledHttpClient;
 import org.n52.oxf.util.web.HttpClient;
 import org.n52.oxf.util.web.ProxyAwareHttpClient;
 import org.n52.oxf.util.web.SimpleHttpClient;
@@ -62,6 +63,8 @@ public class SOSwithSoapAdapter extends SOSAdapter {
 
     public static final String GET_DATA_AVAILABILITY = "GetDataAvailability";
 
+    private static final int CONNECTION_TIMEOUT = 30000;
+    
     private static final int SOCKET_TIMEOUT = 30000;
 
     /**
@@ -74,8 +77,13 @@ public class SOSwithSoapAdapter extends SOSAdapter {
      *        the SOS version
      */
     public SOSwithSoapAdapter(String sosVersion) {
-        super(sosVersion, new SimpleHttpClient(5000, SOCKET_TIMEOUT));
+        super(sosVersion);
+        setHttpClient(createHttpClient());
         setRequestBuilder(new SoapSOSRequestBuilder_200());
+    }
+    
+    private HttpClient createHttpClient() {
+        return new GzipEnabledHttpClient(new ProxyAwareHttpClient(new SimpleHttpClient(CONNECTION_TIMEOUT, SOCKET_TIMEOUT)));
     }
 
     /**
@@ -94,7 +102,7 @@ public class SOSwithSoapAdapter extends SOSAdapter {
      */
     public SOSwithSoapAdapter(String sosVersion, ISOSRequestBuilder requestBuilder) {
         super(sosVersion, new SoapSOSRequestBuilder_200());
-        setHttpClient(new SimpleHttpClient(5000, SOCKET_TIMEOUT));
+        setHttpClient(createHttpClient());
         LOGGER.warn("This is a deprecated constructor and will be removed soon w/o notice.");
     }
 

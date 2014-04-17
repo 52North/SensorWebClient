@@ -39,6 +39,8 @@ import org.n52.oxf.OXFException;
 import org.n52.oxf.ows.ExceptionReport;
 import org.n52.server.da.oxf.ResponseFromFileSosAdapter;
 import org.n52.shared.serializable.pojos.sos.Feature;
+import org.n52.shared.serializable.pojos.sos.Phenomenon;
+import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SOSMetadataBuilder;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
@@ -67,14 +69,16 @@ public class ArcGISSoeEReportingMetadataHandlerTest {
         assertNotNull(metadata);
     }
     
-//    @Test
-    public void
+    @Test public void
     shouldPerformMetadataCompletion() throws Exception {
-        
-        // TODO
         SOSMetadata metadata = seam.performMetadataCompletion();
-        System.out.println(metadata);
+        TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
+        Procedure procedure = lookup.getProcedure("http://cdr.eionet.europa.eu/gb/eu/aqd/e2a/colutn32a/envuvlxkq/D_GB_StationProcess.xml#GB_StationProcess_1");
+        assertThat(procedure.getLabel(), is("GB_StationProcess_1"));
         
+        
+        Phenomenon phenomenon = lookup.getPhenomenon("http://dd.eionet.europa.eu/vocabulary/aq/pollutant/8");
+        assertThat(phenomenon.getUnitOfMeasure(), is("ug.m-3"));
     }
     
     @Test public void

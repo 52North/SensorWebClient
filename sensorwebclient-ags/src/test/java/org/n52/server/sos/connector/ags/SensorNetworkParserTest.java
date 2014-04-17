@@ -31,38 +31,25 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.util.Map;
 
-import net.opengis.sensorML.x101.SensorMLDocument.SensorML;
+import net.opengis.sensorML.x101.ComponentType;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.junit.Before;
 import org.junit.Test;
 import org.n52.oxf.xmlbeans.tools.XmlFileLoader;
 
-public class ArcGISSoeDescribeSensorParserTest {
+public class SensorNetworkParserTest {
+    
+    private static final String SENSOR_NETWORK_SUBSET = "/files/describe-sensor-network_subset.xml";
 
-    private final static String DESCRIBE_SENSOR_INSTANCE = "/files/describe-sensor-instance.xml";
-    
-    private final static String PHENOMENON = "http://dd.eionet.europa.eu/vocabulary/aq/pollutant/1";
-    
-    private ArcGISSoeDescribeSensorParser parser;
-    
-    @Before public void 
-    setUp() throws IOException, XmlException {
-        XmlObject sml = XmlFileLoader.loadXmlFileViaClassloader(DESCRIBE_SENSOR_INSTANCE, getClass());
-        parser = new ArcGISSoeDescribeSensorParser(sml);
-        assertThat("XML is not a SensorML 1.0.1!", parser.getSensorML().schemaType(), is(SensorML.type));
-    }
-    
-    @Test public void 
-    shouldParseFirstAvailableUomFromInconsistentMultipleOutputSection() {
-        assertThat("UOM code is not correct!", parser.getUomFor(PHENOMENON), is("mg.m-3"));
-    }
-    
-    @Test public void
-    shouldParseShortName() {
-        assertThat("shortName is incorrect!", parser.getShortName(), is("GB_StationProcess_3746"));
+    @Test
+    public void 
+    givenSensorNetwork_parsingNetwork_parsedCorrectNumberOfNetworkMembers() throws XmlException, IOException {
+        XmlObject network = XmlFileLoader.loadXmlFileViaClassloader(SENSOR_NETWORK_SUBSET, getClass());
+        Map<String, ComponentType> descriptions = new SensorNetworkParser().parseSensorDescriptions(network.newInputStream());
+        assertThat(descriptions.size(), is(4));
     }
 
 }

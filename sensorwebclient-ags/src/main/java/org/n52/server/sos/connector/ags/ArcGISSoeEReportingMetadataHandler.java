@@ -45,11 +45,17 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.opengis.sensorML.x101.AbstractProcessType;
 import net.opengis.sensorML.x101.CapabilitiesDocument.Capabilities;
+import net.opengis.sensorML.x101.ComponentDocument;
 import net.opengis.sensorML.x101.ComponentType;
 import net.opengis.sensorML.x101.IdentificationDocument.Identification;
+import net.opengis.sensorML.x101.IoComponentPropertyType;
 import net.opengis.sensorML.x101.OutputsDocument.Outputs;
 import net.opengis.sensorML.x101.OutputsDocument.Outputs.OutputList;
+import net.opengis.sensorML.x101.SensorMLDocument;
+import net.opengis.sensorML.x101.SensorMLDocument.SensorML;
+import net.opengis.sensorML.x101.SensorMLDocument.SensorML.Member;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.oxf.OXFException;
@@ -154,6 +160,8 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
                 OutputList outputList = outputs.getOutputList();
                 Phenomenon phenomenon = lookup.getPhenomenon(phenomenonId);
                 if (outputList.getOutputArray().length > 0) {
+                    ArcGISSoeDescribeSensorParser parser = createSensorMLParser(component);
+                    phenomenon.setUnitOfMeasure(parser.getUomFor(phenomenonId));
                     String name = outputList.getOutputArray(0).getName();
                     timeseries.setCategory(new Category(parseCategory(name), sosUrl));
                     phenomenon.setLabel(name);
@@ -191,6 +199,13 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
         infoLogServiceSummary(metadata);
         metadata.setHasDonePositionRequest(true);
         return metadata;
+    }
+
+    private ArcGISSoeDescribeSensorParser createSensorMLParser(ComponentType component) {
+        SensorMLDocument smlTemp = SensorMLDocument.Factory.newInstance();
+        Member smlMember = smlTemp.addNewSensorML().addNewMember();
+        smlMember.setProcess(component);
+        return new ArcGISSoeDescribeSensorParser(smlTemp);
     }
 
     /**

@@ -31,6 +31,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 
 import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.ows.x11.ExceptionType;
@@ -48,11 +49,9 @@ import org.n52.oxf.ows.capabilities.OnlineResource;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.sos.adapter.SOSAdapter;
-import org.n52.oxf.util.web.GzipEnabledHttpClient;
 import org.n52.oxf.util.web.HttpClient;
 import org.n52.oxf.util.web.HttpClientException;
-import org.n52.oxf.util.web.ProxyAwareHttpClient;
-import org.n52.oxf.util.web.SimpleHttpClient;
+import org.n52.server.da.oxf.ResponseExceedsSizeLimitException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,10 +59,6 @@ public class SOSAdapterByGET extends SOSAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSAdapterByGET.class);
     
-    private static final int CONNECTION_TIMEOUT = 20000;
-
-    private static final int SOCKET_TIMEOUT = 30000;
-
     private HttpClient httpClient;
     
     /**
@@ -76,10 +71,14 @@ public class SOSAdapterByGET extends SOSAdapter {
      *        the SOS version
      */
     public SOSAdapterByGET(String sosVersion) {
-        super(sosVersion, new SimpleHttpClient(CONNECTION_TIMEOUT, SOCKET_TIMEOUT));
+        super(sosVersion);
         setRequestBuilder(new SOSRequestBuilderGET_200());
-        HttpClient proxyAwareClient = new ProxyAwareHttpClient(new SimpleHttpClient());
-        httpClient = new GzipEnabledHttpClient(proxyAwareClient);
+    }
+
+    @Override
+    public void setHttpClient(HttpClient httpClient) {
+        this.httpClient = httpClient;
+        super.setHttpClient(httpClient);
     }
 
     /**
@@ -99,9 +98,6 @@ public class SOSAdapterByGET extends SOSAdapter {
      */
     public SOSAdapterByGET(String sosVersion, ISOSRequestBuilder requestBuilder) {
         super(sosVersion, new SOSRequestBuilderGET_200());
-        setHttpClient(new SimpleHttpClient(CONNECTION_TIMEOUT, SOCKET_TIMEOUT));
-        HttpClient proxyAwareClient = new ProxyAwareHttpClient(new SimpleHttpClient());
-        httpClient = new GzipEnabledHttpClient(proxyAwareClient);
         LOGGER.warn("This is a deprecated constructor and will be removed soon w/o notice.");
     }
 
@@ -252,6 +248,11 @@ public class SOSAdapterByGET extends SOSAdapter {
         for (ExceptionType exceptionType : exceptions) {
             String exceptionCode = exceptionType.getExceptionCode();
             String[] exceptionMessages = exceptionType.getExceptionTextArray();
+            if ("ResponseExceedsSizeLimit".equalsIgnoreCase(exceptionCode)) {
+                String errorMsg = Arrays.toString(exceptionMessages);
+                errorMsg = errorMsg.replace("[", "").replace("]", "");
+                throw new ResponseExceedsSizeLimitException(errorMsg);
+            }
             String locator = exceptionType.getLocator();
             String sentRequest = result.getSendedRequest();
 

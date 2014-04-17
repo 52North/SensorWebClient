@@ -31,6 +31,14 @@
 		</dependency>
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
+			<artifactId>sensorwebclient-hydro</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>sensorwebclient-ags</artifactId>
+        </dependency>
+		<dependency>
+			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>sensorwebclient-ui</artifactId>
 		</dependency>
 		<dependency>
@@ -94,6 +102,15 @@
 			</resource>
 		</resources>
 		<plugins>
+
+			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<configuration>
+					<header>../misc/52N_license-header.txt</header>
+				</configuration>
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -200,7 +217,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>2.2</version>
+				<version>2.4</version>
 				<configuration>
 					<webappDirectory>${webappDirectory}</webappDirectory>
 					<webResources>

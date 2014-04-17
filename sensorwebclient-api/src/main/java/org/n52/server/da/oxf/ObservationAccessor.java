@@ -134,7 +134,10 @@ public class ObservationAccessor {
             throw new AccessException("Thread got interrupted during GetObservation request.", e);
         }
         catch (ExecutionException e) {
-            throw new AccessException("Could not execute GetObservation request.", e.getCause());
+            if (e.getCause() instanceof ResponseExceedsSizeLimitException) {
+                throw (RuntimeException) e.getCause();
+            }
+            throw new AccessException("Could not execute GetObservation request.", e);
         }
     }
 
