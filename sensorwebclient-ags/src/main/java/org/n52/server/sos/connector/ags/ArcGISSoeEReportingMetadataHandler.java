@@ -276,7 +276,7 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
             OperationResult result = getSosAdapter().doOperation(operation, paramCon);
 
             SensorNetworkParser networkParser = new SensorNetworkParser();
-            sensorDescriptions = networkParser.parseSensorDescriptions(result.getIncomingResultAsStream());
+            sensorDescriptions.putAll(networkParser.parseSensorDescriptions(result.getIncomingResultAsStream()));
         }
     }
 
