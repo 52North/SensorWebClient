@@ -581,13 +581,26 @@
 										<ignore />
 									</action>
 								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+						                <groupId>org.codehaus.groovy.maven</groupId>
+						                <artifactId>gmaven-plugin</artifactId>
+						                <versionRange>[1.0,)</versionRange>
+						                <goals>
+											<goal>execute</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
 				</plugin>
 
 				<plugin>
-					<!-- NOTE: We don't need a groupId specification because the group is 
+					<!-- NOTE: We don't need a groupId specification because the group is
 						org.apache.maven.plugins ...which is assumed by default. -->
 					<artifactId>maven-assembly-plugin</artifactId>
 					<version>2.4</version>
@@ -628,6 +641,29 @@
 			<!-- =========== PLUGINS ACTIVE BY DEFAULT ============== -->
 			<!-- ==================================================== -->
 
+            <plugin>
+                <groupId>org.codehaus.groovy.maven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source>
+                                import java.util.Date
+                                import java.text.MessageFormat
+                                def vartimestamp = MessageFormat.format("{0,date,yyyy}", new
+                                Date())
+                                project.properties['currentYearDynamic'] = vartimestamp
+                            </source>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
 			<plugin>
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>
@@ -636,8 +672,7 @@
 					<header>misc/52N_license-header.txt</header>
 					<properties>
 						<inceptionYear>${project.inceptionYear}</inceptionYear>
-						<latestYearOfContribution>${currentYear}</latestYearOfContribution>
-						<!-- <latestYearOfContribution>${currentYearDynamic}</latestYearOfContribution> -->
+						<latestYearOfContribution>${currentYearDynamic}</latestYearOfContribution>
 					</properties>
 					<aggregate>true</aggregate>
 					<includes>
@@ -730,8 +765,21 @@
 			</plugin>
 		</plugins>
 	</build>
-
+	
 	<profiles>
+	
+		<profile>
+			<id>no-gwt</id>
+			<activation>
+				<property>
+					<name>no-gwt</name>
+				</property>
+			</activation>
+			<properties>
+				<gwt.compiler.skip>true</gwt.compiler.skip>
+			</properties>
+		</profile>
+		
 		<profile>
 			<id>debug</id>
 			<activation>
@@ -791,8 +839,8 @@
 				</property>
 			</activation>
 			<properties>
-				<!-- EXAMPLE CONFIG PROPERTIES FOLLOW. TO SEPARATE CONFIGURATION FROM 
-					PROJECT, COPY build-example.properties to ${user.home}/sensorwebclient-build-dev.properties 
+				<!-- EXAMPLE CONFIG PROPERTIES FOLLOW. TO SEPARATE CONFIGURATION FROM
+					PROJECT, COPY build-example.properties to ${user.home}/sensorwebclient-build-dev.properties
 					CUSTOMIZE PROPERTIES AND TRIGGER MAVEN BUILD WITH `mvn install -Penv-dev'. -->
 
 				<application.title>Sensor Web Client</application.title>
@@ -919,12 +967,10 @@
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sensorwebclient.webapp.name>${project.artifactId}-${project.version}</sensorwebclient.webapp.name>
-		<maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
-		<timestamp>${maven.build.timestamp}</timestamp>
 
-		<currentYear>2014</currentYear> <!-- manual setting -->
-		<!-- <maven.build.timestamp.format>yyyy</maven.build.timestamp.format> 
-			<currentYearDynamic>${maven.build.timestamp}</currentYearDynamic> -->
+		<timestamp>${maven.build.timestamp}</timestamp>
+		<maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
+        <currentYearDynamic>${maven.build.timestamp}</currentYearDynamic>
 	</properties>
 
 	<repositories>
