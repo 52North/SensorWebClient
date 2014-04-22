@@ -29,15 +29,18 @@ package org.n52.server.util;
 
 import static org.n52.oxf.xmlbeans.tools.XmlUtil.selectPath;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import net.opengis.gml.x32.FeaturePropertyType;
 import net.opengis.gml.x32.PointDocument;
+import net.opengis.gml.x32.PointType;
 import net.opengis.sensorML.x101.CapabilitiesDocument.Capabilities;
 import net.opengis.sensorML.x101.IdentificationDocument.Identification.IdentifierList;
 import net.opengis.sensorML.x101.IdentificationDocument.Identification.IdentifierList.Identifier;
@@ -106,7 +109,13 @@ public final class XmlHelper {
             return PointDocument.Factory.parse(points[0].xmlText());
         }
         else {
-            return null;
+        	PointDocument point = PointDocument.Factory.newInstance();
+        	PointType gmlPoint = point.addNewPoint();
+        	gmlPoint.setId("id_" + UUID.randomUUID().toString());
+        	gmlPoint.setSrsDimension(new BigInteger("2"));
+        	gmlPoint.setSrsName("urn:ogc:def:crs:EPSG::4326");
+        	gmlPoint.addNewPos().setStringValue("0 0");
+            return point;
         }
     }
 
