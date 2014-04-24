@@ -42,7 +42,7 @@ import org.n52.shared.requests.query.QueryParameters;
  * side and Server side. Depending on if the SOS metadata representation is used on either Client sider or
  * Server side, attributes have to be set differently (see constructor notes) ! It is the developer's
  * responsibility to keep them in sync.
- * 
+ *
  * TODO this above fact is based on historical reasons and have to refactored!
  */
 public class SOSMetadata implements Serializable {
@@ -114,7 +114,7 @@ public class SOSMetadata implements Serializable {
 
     /**
      * @deprecated use {@link #SOSMetadata(String, String)}
-     * 
+     *
      * @see {@link #SOSMetadata(String, String)} to explicitly set version
      */
     @Deprecated
@@ -125,7 +125,7 @@ public class SOSMetadata implements Serializable {
     /**
      * Use this constructor only for non-configurated SOS instances! Prefer using
      * {@link SOSMetadata#SOSMetadata(SOSMetadataBuilder)}.
-     * 
+     *
      * @param url
      *        the service URL
      * @param title
@@ -284,7 +284,7 @@ public class SOSMetadata implements Serializable {
     public int getRequestChunk() {
         return requestChunk;
     }
-    
+
     public int getTimeout() {
         return timeout;
     }
@@ -307,9 +307,13 @@ public class SOSMetadata implements Serializable {
     public SosTimeseries[] getMatchingTimeseries(QueryParameters parameters) {
         List<SosTimeseries> matchingTimeseries = new ArrayList<SosTimeseries>();
         for (Station station : stations.values()) {
-            for (SosTimeseries timeseries : station.getObservedTimeseries()) {
-                if (timeseries.matchesGlobalIds(parameters)) {
-                    matchingTimeseries.add(timeseries);
+            final String stationFilter = parameters.getStation();
+            boolean hasStationFilter = stationFilter != null;
+            if ( !hasStationFilter || station.getGlobalId().equals(stationFilter)) {
+                for (SosTimeseries timeseries : station.getObservedTimeseries()) {
+                    if (timeseries.matchesGlobalIds(parameters)) {
+                        matchingTimeseries.add(timeseries);
+                    }
                 }
             }
         }
