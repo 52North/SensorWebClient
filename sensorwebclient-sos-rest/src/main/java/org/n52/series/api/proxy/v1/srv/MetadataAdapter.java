@@ -37,7 +37,7 @@ import org.n52.shared.serializable.pojos.sos.Category;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
-import org.n52.web.v1.srv.CountingMetadataService;
+import org.n52.sensorweb.v1.spi.CountingMetadataService;
 
 public class MetadataAdapter implements CountingMetadataService {
 

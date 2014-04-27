@@ -46,15 +46,15 @@ import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
-import org.n52.web.v1.srv.ParameterService;
-import org.n52.web.v1.srv.TimeseriesDataService;
+import org.n52.sensorweb.v1.spi.ParameterService;
+import org.n52.sensorweb.v1.spi.TimeseriesDataService;
 
 public class TimeseriesOutputAdapter implements TimeseriesDataService, ParameterService<TimeseriesMetadataOutput> {
 
     private GetDataService dataService;
-    
+
     private RenderingHintsConfigApplier renderingHintsService;
-    
+
     private StatusIntervalsConfigApplier statusIntervalsService;
 
 	@Override
@@ -80,7 +80,7 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
         }
         return allTimeseries.toArray(new TimeseriesMetadataOutput[0]);
     }
-    
+
     @Override
     public TimeseriesMetadataOutput[] getCondensedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);

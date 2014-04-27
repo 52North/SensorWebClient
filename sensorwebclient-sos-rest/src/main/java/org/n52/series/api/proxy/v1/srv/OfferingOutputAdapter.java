@@ -43,7 +43,7 @@ import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.n52.web.v1.srv.ParameterService;
+import org.n52.sensorweb.v1.spi.ParameterService;
 
 public class OfferingOutputAdapter implements ParameterService<OfferingOutput> {
 
@@ -86,7 +86,7 @@ public class OfferingOutputAdapter implements ParameterService<OfferingOutput> {
     public OfferingOutput[] getParameters(String[] offeringIds, IoParameters query) {
 
         // TODO consider query
-        
+
         List<OfferingOutput> selectedOfferings = new ArrayList<OfferingOutput>();
         for (String offeringId : offeringIds) {
             OfferingOutput offering = getParameter(offeringId);

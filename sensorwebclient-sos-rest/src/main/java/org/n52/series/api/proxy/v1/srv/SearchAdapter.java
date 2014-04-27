@@ -41,16 +41,16 @@ import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.n52.web.v1.srv.SearchService;
-import org.n52.web.v1.srv.search.CategorySearchResult;
-import org.n52.web.v1.srv.search.FeatureSearchResult;
-import org.n52.web.v1.srv.search.OfferingSearchResult;
-import org.n52.web.v1.srv.search.PhenomenonSearchResult;
-import org.n52.web.v1.srv.search.ProcedureSearchResult;
-import org.n52.web.v1.srv.search.SearchResult;
-import org.n52.web.v1.srv.search.ServiceSearchResult;
-import org.n52.web.v1.srv.search.StationSearchResult;
-import org.n52.web.v1.srv.search.TimeseriesSearchResult;
+import org.n52.sensorweb.v1.spi.SearchService;
+import org.n52.sensorweb.v1.spi.search.CategorySearchResult;
+import org.n52.sensorweb.v1.spi.search.FeatureSearchResult;
+import org.n52.sensorweb.v1.spi.search.OfferingSearchResult;
+import org.n52.sensorweb.v1.spi.search.PhenomenonSearchResult;
+import org.n52.sensorweb.v1.spi.search.ProcedureSearchResult;
+import org.n52.sensorweb.v1.spi.search.SearchResult;
+import org.n52.sensorweb.v1.spi.search.ServiceSearchResult;
+import org.n52.sensorweb.v1.spi.search.StationSearchResult;
+import org.n52.sensorweb.v1.spi.search.TimeseriesSearchResult;
 
 public class SearchAdapter implements SearchService {
 
@@ -61,7 +61,7 @@ public class SearchAdapter implements SearchService {
     }
 
     private Collection<SearchResult> searchResources(String search) {
-        
+
         // TODO extend search logic to support composed search strings
 
         ArrayList<SearchResult> results = new ArrayList<SearchResult>();

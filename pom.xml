@@ -47,6 +47,11 @@
 				<artifactId>timeseries-io</artifactId>
 				<version>${timeseries.api.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>timeseries-spi</artifactId>
+				<version>${timeseries.api.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>org.n52.sensorweb</groupId>
 				<artifactId>timeseries-web</artifactId>
@@ -765,9 +770,9 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<profiles>
-	
+
 		<profile>
 			<id>no-gwt</id>
 			<activation>
@@ -779,7 +784,7 @@
 				<gwt.compiler.skip>true</gwt.compiler.skip>
 			</properties>
 		</profile>
-		
+
 		<profile>
 			<id>debug</id>
 			<activation>

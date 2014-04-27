@@ -43,7 +43,7 @@ import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.n52.web.v1.srv.ParameterService;
+import org.n52.sensorweb.v1.spi.ParameterService;
 
 public class PhenomenonOutputAdapter implements ParameterService<PhenomenonOutput> {
 
@@ -57,7 +57,7 @@ public class PhenomenonOutputAdapter implements ParameterService<PhenomenonOutpu
 		}
 		return allPhenomenons.toArray(new PhenomenonOutput[0]);
 	}
-	
+
 	@Override
     public PhenomenonOutput[] getCondensedParameters(IoParameters map) {
 	    QueryParameters query = createQueryParameters(map);
@@ -81,7 +81,7 @@ public class PhenomenonOutputAdapter implements ParameterService<PhenomenonOutpu
     public PhenomenonOutput[] getParameters(String[] phenomenonIds) {
         return getParameters(phenomenonIds, IoParameters.createDefaults());
     }
-	
+
 	@Override
     public PhenomenonOutput[] getParameters(String[] phenomenonIds, IoParameters query) {
 	    List<PhenomenonOutput> selectedPhenomenons = new ArrayList<PhenomenonOutput>();

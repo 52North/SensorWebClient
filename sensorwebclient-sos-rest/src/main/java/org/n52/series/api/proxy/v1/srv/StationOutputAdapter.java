@@ -42,7 +42,7 @@ import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
-import org.n52.web.v1.srv.ParameterService;
+import org.n52.sensorweb.v1.spi.ParameterService;
 
 public class StationOutputAdapter implements ParameterService<StationOutput> {
 
@@ -57,7 +57,7 @@ public class StationOutputAdapter implements ParameterService<StationOutput> {
         }
         return allStations.toArray(new StationOutput[0]);
     }
-    
+
     @Override
     public StationOutput[] getCondensedParameters(IoParameters map) {
         QueryParameters query = QueryParameterAdapter.createQueryParameters(map);
@@ -74,7 +74,7 @@ public class StationOutputAdapter implements ParameterService<StationOutput> {
     public StationOutput[] getParameters(String[] stationIds) {
         return getParameters(stationIds, IoParameters.createDefaults());
     }
-    
+
     @Override
     public StationOutput[] getParameters(String[] stationIds, IoParameters query) {
         List<StationOutput> selectedStations = new ArrayList<StationOutput>();

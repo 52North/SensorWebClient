@@ -43,7 +43,7 @@ import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.n52.web.v1.srv.ParameterService;
+import org.n52.sensorweb.v1.spi.ParameterService;
 
 public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput> {
 
@@ -57,7 +57,7 @@ public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput>
 		}
 		return allProcedures.toArray(new ProcedureOutput[0]);
 	}
-	
+
 	@Override
     public ProcedureOutput[] getCondensedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);
@@ -113,6 +113,6 @@ public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput>
         return null;
     }
 
-    
+
 
 }

@@ -82,7 +82,6 @@ public class GetDataService extends DataService {
             Map<String, HashMap<Long, Double>> data = timeSeriesData.getPayloadData();
 
             for (String timeseriesId : timeSeriesResults.getAllTimeseries().keySet()) {
-
                 TimeseriesProperties properties = getTimeseriesProperties(timeseriesId, options);
                 GetDataInfos infos = new GetDataInfos(timeseriesId, properties, options);
                 HashMap<Long, Double> values = data.get(timeseriesId);

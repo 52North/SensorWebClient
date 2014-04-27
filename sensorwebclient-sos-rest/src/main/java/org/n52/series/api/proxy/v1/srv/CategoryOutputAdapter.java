@@ -42,7 +42,7 @@ import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.Category;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
-import org.n52.web.v1.srv.ParameterService;
+import org.n52.sensorweb.v1.spi.ParameterService;
 
 public class CategoryOutputAdapter implements ParameterService<CategoryOutput> {
 
@@ -67,11 +67,11 @@ public class CategoryOutputAdapter implements ParameterService<CategoryOutput> {
         }
         return allCategories.toArray(new CategoryOutput[0]);
 	}
-	
+
 	private Category[] filter(SOSMetadata metadata, QueryParameters query) {
-	    
+
 	    // TODO consider query
-	    
+
         Set<Category> allCategories = new HashSet<Category>();
         for (SosTimeseries timeseries : metadata.getMatchingTimeseries(query)) {
         	allCategories.add(timeseries.getCategory());

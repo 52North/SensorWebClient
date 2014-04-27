@@ -43,7 +43,7 @@ import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.n52.web.v1.srv.ParameterService;
+import org.n52.sensorweb.v1.spi.ParameterService;
 
 public class FeatureOutputAdapter implements ParameterService<FeatureOutput> {
 
@@ -87,7 +87,7 @@ public class FeatureOutputAdapter implements ParameterService<FeatureOutput> {
     public FeatureOutput[] getParameters(String[] featureIds, IoParameters query) {
 
         // TODO consider query
-        
+
         List<FeatureOutput> selectedFeatures = new ArrayList<FeatureOutput>();
         for (String featureId : featureIds) {
             FeatureOutput feature = getParameter(featureId);
