@@ -66,7 +66,6 @@ This project includes:
   Jackson-core under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
   jackson-databind under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
   jackson-module-jsonSchema under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
-  jai_core under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   Java Excel API under GNU Lesser General Public License
   Java Transaction API under Common Development and Distribution License (CDDL), version 1.0
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
@@ -125,8 +124,9 @@ This project includes:
   Sensor Web Client API under GNU General Public License, v2.0
   Sensor Web Client External Tools under GNU General Public License, v2.0
   Sensor Web Client Web Application under GNU General Public License, v2.0
-  Sensor Web Timeseries Input/Output devices under GNU General Public License, Version 2.0
-  Sensor Web Timeseries WEB Binding under GNU General Public License, Version 2.0
+  Sensor Web Timeseries API - IO under GNU General Public License, Version 2.0
+  Sensor Web Timeseries API - REST Binding under GNU General Public License, Version 2.0
+  Sensor Web Timeseries API - SPI under GNU General Public License, Version 2.0
   servlet-api under CDDL 1.1 or GPL2 w/ CPE
   SES RPC Bindings under GNU General Public License, v2.0
   SES Server Components under GNU General Public License, v2.0
