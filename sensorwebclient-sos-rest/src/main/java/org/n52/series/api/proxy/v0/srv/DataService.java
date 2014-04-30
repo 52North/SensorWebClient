@@ -53,7 +53,7 @@ public abstract class DataService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DataService.class);
 
     private SensorMetadataService sensorMetadataService;
-    
+
     private ServiceInstancesService serviceInstancesService;
 
     /**
@@ -82,7 +82,7 @@ public abstract class DataService {
         SOSMetadata metadata = serviceInstancesService.getSOSMetadataForItemName(instance);
         if (metadata == null) {
             LOGGER.warn("Could not find configured SOS instance for itemName '{}'" + instance);
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException("not found.");
         }
         return metadata;
     }
@@ -104,7 +104,7 @@ public abstract class DataService {
             }
             catch (Exception e) {
                 LOGGER.error("Could not process time series request.", e);
-                throw new InternalServerException();
+                throw new InternalServerException("internal error!", e);
             }
         }
         return timeseriesCollection;
@@ -126,7 +126,7 @@ public abstract class DataService {
     /**
      * Override if passed properties have to be extended/complemented/expanded. If not overridden the
      * properties remain as passed.
-     * 
+     *
      * @param timeSeriesProperties
      *        the properties to decorate.
      * @param parameterSet

@@ -126,7 +126,7 @@ public class RestfulStationsController extends QueryController implements Restfu
         QueryResponse< ? > result = performQuery(instance, parameters);
         Station[] stations = (Station[]) result.getResults();
         if (stations.length == 0) {
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException("Not found.");
         }
         ModelAndView mav = new ModelAndView("stations");
         return mav.addObject("station", createCompleteStationOutput(stations[0]));

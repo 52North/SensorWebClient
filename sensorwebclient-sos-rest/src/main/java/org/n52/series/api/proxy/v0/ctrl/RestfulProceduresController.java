@@ -95,7 +95,7 @@ public class RestfulProceduresController extends QueryController implements Rest
         QueryResponse< ? > result = performQuery(instance, parameters);
 
         if (result.getResults().length == 0) {
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException("Not found.");
         }
 
         Procedure[] procedures = (Procedure[]) result.getResults();

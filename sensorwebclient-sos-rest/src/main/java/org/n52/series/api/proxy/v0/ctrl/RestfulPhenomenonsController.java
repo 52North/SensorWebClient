@@ -92,7 +92,7 @@ public class RestfulPhenomenonsController extends QueryController implements Res
         QueryResponse< ? > result = performQuery(instance, parameters);
 
         if (result.getResults().length == 0) {
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException("Not found.");
         }
 
         mav.addObject("phenomenon", result.getResults()[0]);

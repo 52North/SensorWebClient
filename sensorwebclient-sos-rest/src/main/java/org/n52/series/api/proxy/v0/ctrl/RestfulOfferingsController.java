@@ -92,7 +92,7 @@ public class RestfulOfferingsController extends QueryController implements Restf
         QueryResponse< ? > result = performQuery(instance, parameters);
 
         if (result.getResults().length == 0) {
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException("Not found.");
         }
 
         mav.addObject("offering", result.getResults()[0]);

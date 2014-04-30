@@ -66,7 +66,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class RestfulTimeSeriesController extends QueryController implements RestfulKvp, RestfulUrls {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestfulTimeSeriesController.class);
-    
+
     private GetDataService dataService;
 
     private GetImageService imageService;
@@ -108,7 +108,7 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
                 .setProcedure(procedure);
         QueryResponse< ? > result = performQuery(instance, parameters);
         Station[] stations = (Station[]) result.getResults();
-        
+
         List<Object> allTimeseries = new ArrayList<Object>();
         for (Station station : stations) {
             if (shallShowCompleteResults(details)) {
@@ -144,7 +144,7 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
 
         TimeseriesData timeseries = results.getTimeseries(timeseriesId);
         if (timeseries == null) {
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException("Not found.");
         }
 
         ModelAndView mav = new ModelAndView("timeseries");
@@ -162,12 +162,12 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
         try {
             if (!containsServiceInstance(instance)) {
                 LOGGER.info("SOS instance {} is not available.", instance);
-                throw new ResourceNotFoundException();
+                throw new ResourceNotFoundException("Not found.");
             }
             SOSMetadata metadata = findServiceMetadataForItemName(instance);
             if ( !metadata.containsStationWithTimeseriesId(timeseriesId)) {
                 LOGGER.info("Timeseries {} is not available.", timeseriesId);
-                throw new ResourceNotFoundException();
+                throw new ResourceNotFoundException("Not found.");
             }
 
             for (Station station : getAllStations(instance)) {
@@ -211,7 +211,7 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
             return parameterSet;
         }
         catch (IllegalArgumentException e) {
-            throw new BadRequestException();
+            throw new BadRequestException("bad parameter(s)", e);
         }
     }
 
@@ -224,7 +224,7 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
             return parameterSet;
         }
         catch (IllegalArgumentException e) {
-            throw new BadRequestException();
+            throw new BadRequestException("bad parameter(s)", e);
         }
     }
 
@@ -232,7 +232,7 @@ public class RestfulTimeSeriesController extends QueryController implements Rest
         QueryResponse< ? > results = performQuery(instance, createEmptyFilterQuery());
         Station[] stations = (Station[]) results.getResults();
         if (stations.length == 0) {
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException("not found.");
         }
         return stations;
     }

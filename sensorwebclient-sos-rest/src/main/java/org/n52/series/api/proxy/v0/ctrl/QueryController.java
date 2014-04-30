@@ -46,9 +46,9 @@ import org.n52.web.ResourceNotFoundException;
 public abstract class QueryController {
 
     private QueryService queryService;
-    
+
     private ServiceInstancesService serviceInstancesService;
-    
+
     /**
      * @param kvpDetailsValue
      *        the value of KVP parameter <code>details</code>.
@@ -61,7 +61,7 @@ public abstract class QueryController {
 
     /**
      * Creates a query factory for the given service instance.
-     * 
+     *
      * @param serviceInstance
      *        the service instance to create queries for.
      * @return a query factory for a given service instance to create queries for.
@@ -82,15 +82,15 @@ public abstract class QueryController {
     protected SOSMetadata findServiceMetadataForItemName(String serviceInstance) {
     	SOSMetadata metadata = serviceInstancesService.getSOSMetadataForItemName(serviceInstance);
         if (metadata == null) {
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException("Not found.");
         }
         return metadata;
     }
-    
+
     protected boolean containsServiceInstance(String serviceInstance) {
     	return serviceInstancesService.containsServiceInstance(serviceInstance);
     }
-    
+
     protected abstract QueryResponse< ? > performQuery(String instance, QueryParameters parameters) throws Exception;
 
     protected QueryResponse< ? > doQuery(QueryRequest queryRequest) throws Exception {
@@ -99,7 +99,7 @@ public abstract class QueryController {
 
     /**
      * Determines the decoded identifier of an individuum of the given collection.
-     * 
+     *
      * @param collectionName
      *        the name of the collection (e.g. <code>features</code>).
      * @param request
@@ -116,7 +116,7 @@ public abstract class QueryController {
 
     /**
      * Decodes given URL encoded string. Assumes and uses UTF-8 encoding.
-     * 
+     *
      * @param toDecode
      *        the string to decode.
      * @return a decoded version of the input.
@@ -133,8 +133,8 @@ public abstract class QueryController {
      * <li><code>.json</code></li>
      * <li><code>.html</code></li>
      * </ul>
-     * 
-     * 
+     *
+     *
      * @param toStrip
      *        to strip the file extension from.
      * @return a stripped version of the given parameter (without file extension).

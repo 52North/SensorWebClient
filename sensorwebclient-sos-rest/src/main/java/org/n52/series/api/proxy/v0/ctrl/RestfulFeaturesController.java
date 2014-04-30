@@ -92,9 +92,9 @@ public class RestfulFeaturesController extends QueryController implements Restfu
         QueryResponse< ? > result = performQuery(instance, parameters);
 
         if (result.getResults().length == 0) {
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException("Not found.");
         }
-        
+
         mav.addObject("feature", result.getResults()[0]);
         return mav;
     }

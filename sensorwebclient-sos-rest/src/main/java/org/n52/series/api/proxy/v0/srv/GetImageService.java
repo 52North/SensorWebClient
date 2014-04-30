@@ -71,7 +71,7 @@ public class GetImageService extends DataService {
         }
         catch (Exception e) {
             LOGGER.error("Could not render time series chart.", e);
-            throw new InternalServerException();
+            throw new InternalServerException("internal error!", e);
         }
     }
 
@@ -94,7 +94,7 @@ public class GetImageService extends DataService {
         }
         catch (Exception e) {
             LOGGER.error("Could not render timeseries chart.", e);
-            throw new InternalServerException();
+            throw new InternalServerException("internal error!", e);
         }
     }
 

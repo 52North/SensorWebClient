@@ -90,7 +90,7 @@ public class GetDataService extends DataService {
         }
         catch (Exception e) {
             LOGGER.error("Could not get timeseries data for options: " + options);
-            throw new InternalServerException();
+            throw new InternalServerException("internal error!", e);
         }
         return timeSeriesResults;
     }

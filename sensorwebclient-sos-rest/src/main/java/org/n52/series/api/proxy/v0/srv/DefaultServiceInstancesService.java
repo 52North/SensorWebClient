@@ -50,7 +50,7 @@ public class DefaultServiceInstancesService implements ServiceInstancesService {
     public ServiceInstance getServiceInstance(String id) {
         SOSMetadata metadata = ConfigurationContext.getSOSMetadataForItemName(id);
         if (metadata == null) {
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException("not found.");
         }
         return new ServiceInstance(metadata);
     }
