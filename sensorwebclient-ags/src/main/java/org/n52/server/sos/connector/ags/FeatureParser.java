@@ -94,6 +94,7 @@ public final class FeatureParser {
         catch (IOException e) {
             LOGGER.error("Could not read GetFeatureOfInterestResponse.", e);
         }
+        LOGGER.debug("Parsed #" + featureLocations.size() + " feature locations.");
         return featureLocations;
     }
 
