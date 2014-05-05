@@ -34,7 +34,6 @@ import static org.n52.series.api.proxy.v0.out.ProcedureOutput.createSimpleProced
 import javax.servlet.http.HttpServletRequest;
 
 import org.n52.series.api.proxy.v0.out.ModelAndViewPager;
-import org.n52.series.api.proxy.v0.out.ProcedureOutput;
 import org.n52.shared.requests.query.QueryFactory;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.requests.query.queries.QueryRequest;

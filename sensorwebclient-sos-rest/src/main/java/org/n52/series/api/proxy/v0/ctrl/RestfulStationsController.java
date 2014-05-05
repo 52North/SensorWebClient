@@ -46,7 +46,6 @@ import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.requests.query.queries.QueryRequest;
 import org.n52.shared.requests.query.responses.QueryResponse;
 import org.n52.shared.serializable.pojos.sos.Station;
-import org.n52.web.ResourceNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,6 +54,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.n52.web.ResourceNotFoundException;
 
 @Controller
 @RequestMapping(value = DEFAULT_PATH, produces = {"application/json"})
