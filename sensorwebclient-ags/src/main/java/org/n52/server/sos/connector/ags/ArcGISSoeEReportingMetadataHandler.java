@@ -148,6 +148,7 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
         TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
         Map<Feature, Point> featureLocations = performGetFeatureOfInterest(lookup);
 
+        LOGGER.debug("Start linking parameters ...");
         for (SosTimeseries timeseries : observingTimeseries) {
             Procedure procedure = timeseries.getProcedure();
             ComponentType component = sensorDescriptions.get(procedure.getProcedureId());

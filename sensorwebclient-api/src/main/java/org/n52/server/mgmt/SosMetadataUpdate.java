@@ -54,7 +54,7 @@ public class SosMetadataUpdate {
         long startTimeInMillis = System.currentTimeMillis();
         performServiceUpdateFor(sosServices);
         float secondsElapsed = getSecondsElapsedSince(startTimeInMillis);
-        LOGGER.debug("Cache update took {} seconds.", secondsElapsed);
+        LOGGER.info("Cache update took {} seconds.", secondsElapsed);
     }
 
     private static void performServiceUpdateFor(Iterable<String> sosUrls) throws Exception {
@@ -63,7 +63,6 @@ public class SosMetadataUpdate {
                 updateService(url);
             } catch (Exception e) {
                 LOGGER.error("Could not cache metadata for service " + url, e);
-                continue; // ignore service and try next one.
             }
         }
     }
@@ -74,7 +73,7 @@ public class SosMetadataUpdate {
     }
 
     public static void updateService(String serviceUrl) throws Exception {
-        LOGGER.debug("Update service metadata for '{}'", serviceUrl);
+        LOGGER.info("Update service metadata for '{}'", serviceUrl);
         File cache = getCacheTarget(serviceUrl);
         if (isCacheAvailable(cache)) {
             try {
@@ -130,7 +129,7 @@ public class SosMetadataUpdate {
     /**
      * Checks if the dedicated caching target exists already. The target is defined as configurable parameter
      * in {@link ConfigurationContext#CACHE_DIR}. If not all necessary directories are created.
-     * 
+     *
      * @throws IOException if subdirectories could not be created.
      */
     protected static void prepareCacheTargetDirectory() throws IOException {

@@ -75,8 +75,6 @@ public final class SensorNetworkParser {
     public Map<String, ComponentType> parseSensorDescriptions(InputStream stream) {
         Map<String, ComponentType> sensorDescriptions = new HashMap<String, ComponentType>();
         ComponentDocument[] components = parseNetworkComponentsFromDescribeSensorResponse(stream);
-        if (components.length == 0)
-            LOGGER.info("No components found in SensorML.");
         for (ComponentDocument componentDocument : components) {
             ComponentType networkComponent = componentDocument.getComponent();
             if (networkComponent.getIdentificationArray().length > 0) {
@@ -120,8 +118,8 @@ public final class SensorNetworkParser {
     private SystemType getSystemFrom(SensorMLDocument smlDoc) {
         Member[] members = smlDoc.getSensorML().getMemberArray();
         return (members == null || members.length > 0)
-                                                      ? (SystemType) members[0].getProcess()
-                                                      : SystemDocument.Factory.newInstance().addNewSystem();
+                ? (SystemType) members[0].getProcess()
+                : SystemDocument.Factory.newInstance().addNewSystem();
 
     }
 }
