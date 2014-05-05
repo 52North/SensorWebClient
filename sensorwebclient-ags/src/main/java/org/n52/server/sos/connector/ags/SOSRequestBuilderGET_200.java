@@ -41,7 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SOSRequestBuilderGET_200 implements ISOSRequestBuilder {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSRequestBuilderGET_200.class);
 
 	@Override
@@ -111,13 +111,13 @@ public class SOSRequestBuilderGET_200 implements ISOSRequestBuilder {
 			return "";
 		}
 	}
-    
+
 //    String createIso8601Duration(String start, String end) {
 //        StringBuilder sb = new StringBuilder();
 //        sb.append(fixTimeZone(start)).append("/");
 //        return sb.append(fixTimeZone(end)).toString();
 //    }
-//    
+//
 //    String fixTimeZone(String timeString) {
 //        StringBuilder sb = new StringBuilder(timeString);
 //        int insertionIndex = timeString.length() - 2;
@@ -152,11 +152,16 @@ public class SOSRequestBuilderGET_200 implements ISOSRequestBuilder {
 	public String buildGetFeatureOfInterestRequest(ParameterContainer parameters) {
         String sosVersion = getSpecifiedStringValue(parameters, GET_FOI_VERSION_PARAMETER);
         String phenomenon = getSpecifiedStringValue(parameters, "phenomenon");
-        String procedure = getSpecifiedStringValue(parameters, "procedure");
-        
+        String[] procedures = getSpecifiedStringArrayValue(parameters, "procedure");
+        StringBuilder proceduresCsv = new StringBuilder();
+        for (String procedure : procedures) {
+            proceduresCsv.append(procedure).append(",");
+        }
+        proceduresCsv.deleteCharAt(proceduresCsv.length() - 1);
+
         StringBuilder request = new StringBuilder("service=SOS&");
         request.append("version=").append(encode(sosVersion)).append("&");
-        request.append("procedure=").append(encode(procedure)).append("&");
+        request.append("procedure=").append(encode(proceduresCsv.toString())).append("&");
         request.append("observedProperty=").append(encode(phenomenon)).append("&");
         request.append("request=GetFeatureOfInterest&");
         return request.append("f=xml").toString();
