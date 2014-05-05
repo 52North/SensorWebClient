@@ -58,18 +58,18 @@ public final class FeatureParser {
 
     private static final Map<String, String> namespaceDeclarations = new HashMap<String, String>();
 
-    {
+    static {
         namespaceDeclarations.put("sml", "http://www.opengis.net/sensorML/1.0.1");
         namespaceDeclarations.put("swe", "http://www.opengis.net/swe/1.0.1");
         namespaceDeclarations.put("aqd", "http://aqd.ec.europa.eu/aqd/0.3.7c");
         namespaceDeclarations.put("base", "http://inspire.ec.europa.eu/schemas/base/3.3rc3/");
     }
 
-    private XmlHelper xmlHelper = new XmlHelper(namespaceDeclarations);
+    private final XmlHelper xmlHelper = new XmlHelper(namespaceDeclarations);
 
-    private String serviceUrl;
+    private final String serviceUrl;
 
-    private CRSUtils crsUtil;
+    private final CRSUtils crsUtil;
 
     public FeatureParser(String serviceUrl, CRSUtils crsHelper) {
         this.serviceUrl = serviceUrl;
