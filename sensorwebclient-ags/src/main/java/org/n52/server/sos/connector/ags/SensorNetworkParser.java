@@ -61,11 +61,11 @@ public final class SensorNetworkParser {
 
     private static final Map<String, String> namespaceDeclarations = new HashMap<String, String>();
 
-    {
+    static {
         namespaceDeclarations.put("sml", "http://www.opengis.net/sensorML/1.0.1");
     }
 
-    private XmlHelper xmlHelper = new XmlHelper(namespaceDeclarations);
+    private final XmlHelper xmlHelper = new XmlHelper(namespaceDeclarations);
 
     /**
      * @param stream
@@ -75,6 +75,8 @@ public final class SensorNetworkParser {
     public Map<String, ComponentType> parseSensorDescriptions(InputStream stream) {
         Map<String, ComponentType> sensorDescriptions = new HashMap<String, ComponentType>();
         ComponentDocument[] components = parseNetworkComponentsFromDescribeSensorResponse(stream);
+        if (components.length == 0)
+            LOGGER.info("No components found in SensorML.");
         for (ComponentDocument componentDocument : components) {
             ComponentType networkComponent = componentDocument.getComponent();
             if (networkComponent.getIdentificationArray().length > 0) {
@@ -97,9 +99,12 @@ public final class SensorNetworkParser {
                 SensorDescriptionType sensorDescription = description.getSensorDescription();
                 Data descriptionContent = sensorDescription.getData();
                 SensorMLDocument smlDoc = (SensorMLDocument) getXmlAnyNodeFrom(descriptionContent, "SensorML");
-                ComponentList components = getSystemFrom(smlDoc).getComponents().getComponentList();
-                for (Component component : components.getComponentArray()) {
-                    componentDocs.add(ComponentDocument.Factory.parse(component.getProcess().getDomNode()));
+                SystemType system = getSystemFrom(smlDoc);
+                if (system.isSetComponents()) {
+                    ComponentList components = system.getComponents().getComponentList();
+                    for (Component component : components.getComponentArray()) {
+                        componentDocs.add(ComponentDocument.Factory.parse(component.getProcess().getDomNode()));
+                    }
                 }
             }
         }
