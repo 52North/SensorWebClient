@@ -27,21 +27,16 @@
  */
 package org.n52.server.sos.connector.ags;
 
-import static org.n52.io.crs.CRSUtils.createEpsgStrictAxisOrder;
-import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_DESCRIPTION_FORMAT;
-import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_PARAMETER;
-import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_SERVICE_PARAMETER;
-import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_VERSION_PARAMETER;
-import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER;
-import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER;
-import static org.n52.oxf.sos.adapter.SOSAdapter.DESCRIBE_SENSOR;
-import static org.n52.server.da.oxf.DescribeSensorAccessor.getSensorDescriptionAsSensorML;
-import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadata;
-
+import com.vividsolutions.jts.geom.Point;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,15 +51,25 @@ import net.opengis.sensorML.x101.OutputsDocument.Outputs.OutputList;
 import net.opengis.sensorML.x101.SensorMLDocument;
 import net.opengis.sensorML.x101.SensorMLDocument.SensorML;
 import net.opengis.sensorML.x101.SensorMLDocument.SensorML.Member;
-
 import org.apache.xmlbeans.XmlObject;
+import static org.n52.io.crs.CRSUtils.createEpsgStrictAxisOrder;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.ows.ExceptionReport;
 import org.n52.oxf.ows.capabilities.Operation;
+import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_DESCRIPTION_FORMAT;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_PARAMETER;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_SERVICE_PARAMETER;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_VERSION_PARAMETER;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER;
+import static org.n52.oxf.sos.adapter.SOSAdapter.DESCRIBE_SENSOR;
 import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.server.da.MetadataHandler;
+import static org.n52.server.da.oxf.DescribeSensorAccessor.getSensorDescriptionAsSensorML;
+import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadata;
 import org.n52.server.util.PropertiesToHtml;
 import org.n52.server.util.XmlHelper;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
@@ -79,8 +84,6 @@ import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vividsolutions.jts.geom.Point;
-
 public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArcGISSoeEReportingMetadataHandler.class);
@@ -89,20 +92,26 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
 
     private static final Map<String, String> namespaceDeclarations = new HashMap<String, String>();
 
-    {
+    static {
         namespaceDeclarations.put("sml", SML_NAMESPACE);
         namespaceDeclarations.put("swe", "http://www.opengis.net/swe/1.0.1");
         namespaceDeclarations.put("aqd", "http://aqd.ec.europa.eu/aqd/0.3.7c");
         namespaceDeclarations.put("base", "http://inspire.ec.europa.eu/schemas/base/3.3rc3/");
     }
 
-    private XmlHelper xmlHelper = new XmlHelper(namespaceDeclarations);
+    private final XmlHelper xmlHelper = new XmlHelper(namespaceDeclarations);
 
     /**
      * Component descriptions parsed from a sensor network. Each contain information how to associate
      * timeseries parameters. Perform a DescribeSensor on each instance to get more detailed information.
      */
-    private Map<String, ComponentType> sensorDescriptions;
+    private final Map<String, ComponentType> sensorDescriptions;
+
+    /**
+     * Holds all network procedures referenced in the capabilities document. Holding networks is needed
+     * so that features can be requested network for network to avoid one gigantic GetFoi request.
+     */
+    private final Map<String, String[]> networks = new HashMap<String, String[]>();
 
     public ArcGISSoeEReportingMetadataHandler(SOSMetadata metadata) {
         super(metadata);
@@ -196,6 +205,13 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
             }
         }
 
+        for (Iterator<SosTimeseries> it = observingTimeseries.iterator(); it.hasNext();) {
+            SosTimeseries timeseries = it.next();
+            if ( !timeseries.parametersComplete()) {
+                it.remove();
+            }
+        }
+
         infoLogServiceSummary(metadata);
         metadata.setHasDonePositionRequest(true);
         return metadata;
@@ -211,7 +227,7 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
     /**
      * Parses content of the last group of braces, i.e. <code>(content)</code>. If no braces are available at
      * all, the whole passed parameter is returned.
-     * 
+     *
      * @param phenomenonLabel
      *        to parse content from.
      * @return the content of the last brace group.
@@ -244,10 +260,17 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
     protected String[] getProceduresFor(ObservationOffering offering) {
         try {
             // SOS 2.0.0 has just one mandatory procedure id
-            performDescribeSensor(offering.getProcedures()[0]);
+            String network = offering.getProcedures()[0];
+            Set<String> members = describeSensorNetwork(network);
+            if (members.size() > 0) {
+                networks.put(network, members.toArray(new String[0]));
+            }
             return sensorDescriptions.keySet().toArray(new String[0]);
         }
-        catch (Exception e) {
+        catch (OXFException e) {
+            LOGGER.error("Could not get procedure description for offering {}", offering.getIdentifier(), e);
+            return new String[0];
+        } catch (ExceptionReport e) {
             LOGGER.error("Could not get procedure description for offering {}", offering.getIdentifier(), e);
             return new String[0];
         }
@@ -257,16 +280,17 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
      * Performs a DescribeSensor request and caches the procedure description within
      * {@link #sensorDescriptions}. If procedure is already known no further DescribeSensor request will be
      * sent.
-     * 
+     *
      * @param procedure
      *        the procedure id which SensorDescription is needed.
+     * @return the procedure id(s).
      * @throws OXFException
      *         when request preparation failed.
      * @throws ExceptionReport
      *         when request processing failed.
      */
-    protected void performDescribeSensor(String procedure) throws OXFException, ExceptionReport {
-        if ( !isCached(procedure)) {
+    protected Set<String> describeSensorNetwork(String procedure) throws OXFException, ExceptionReport {
+//        if ( !isCached(procedure)) {
             ParameterContainer paramCon = new ParameterContainer();
             paramCon.addParameterShell(DESCRIBE_SENSOR_SERVICE_PARAMETER, "SOS");
             paramCon.addParameterShell(DESCRIBE_SENSOR_VERSION_PARAMETER, getServiceVersion());
@@ -275,21 +299,30 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
             Operation operation = new Operation(DESCRIBE_SENSOR, getServiceUrl(), getServiceUrl());
             OperationResult result = getSosAdapter().doOperation(operation, paramCon);
 
+            InputStream stream = result.getIncomingResultAsStream();
             SensorNetworkParser networkParser = new SensorNetworkParser();
-            sensorDescriptions.putAll(networkParser.parseSensorDescriptions(result.getIncomingResultAsStream()));
-        }
+            Map<String, ComponentType> descriptions = networkParser.parseSensorDescriptions(stream);
+            sensorDescriptions.putAll(descriptions);
+            return descriptions.keySet();
+//        }
     }
 
     protected Map<Feature, Point> performGetFeatureOfInterest(TimeseriesParametersLookup lookup) throws OXFException,
             ExceptionReport {
-        ParameterContainer paramCon = new ParameterContainer();
-        paramCon.addParameterShell(GET_FOI_SERVICE_PARAMETER, "SOS");
-        paramCon.addParameterShell(GET_FOI_VERSION_PARAMETER, getServiceVersion());
-        Operation operation = new Operation("GetFeatureOfInterest", getServiceUrl(), getServiceUrl());
-        OperationResult result = getSosAdapter().doOperation(operation, paramCon);
+        HashMap<Feature, Point> features = new HashMap<Feature, Point>();
+        for (String network : networks.keySet()) {
+            ParameterContainer paramCon = new ParameterContainer();
+            paramCon.addParameterShell(GET_FOI_SERVICE_PARAMETER, "SOS");
+            paramCon.addParameterShell(GET_FOI_VERSION_PARAMETER, getServiceVersion());
+            paramCon.addParameterShell("procedure", networks.get(network));
+            Operation operation = new Operation("GetFeatureOfInterest", getServiceUrl(), getServiceUrl());
+            OperationResult result = getSosAdapter().doOperation(operation, paramCon);
 
-        FeatureParser parser = new FeatureParser(getServiceUrl(), createEpsgStrictAxisOrder());
-        Map<Feature, Point> features = parser.parseFeatures(result.getIncomingResultAsStream());
+            // TODO probably we do have to handle an ExceedsSizeLimitException here
+
+            FeatureParser parser = new FeatureParser(getServiceUrl(), createEpsgStrictAxisOrder());
+            features.putAll(parser.parseFeatures(result.getIncomingResultAsStream()));
+        }
         for (Feature feature : features.keySet()) {
             lookup.addFeature(feature);
         }
