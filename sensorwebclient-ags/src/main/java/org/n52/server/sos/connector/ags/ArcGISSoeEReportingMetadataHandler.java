@@ -284,7 +284,7 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
             if (members.size() > 0) {
                 networks.put(network, members.toArray(new String[0]));
             }
-            return sensorDescriptions.keySet().toArray(new String[0]);
+            return members.toArray(new String[0]);
         }
         catch (OXFException e) {
             LOGGER.error("Could not get procedure description for offering {}", offering.getIdentifier(), e);
