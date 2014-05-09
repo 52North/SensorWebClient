@@ -148,11 +148,15 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
         TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
         Map<Feature, Point> featureLocations = performGetFeatureOfInterest(lookup);
 
-        LOGGER.debug("Start linking parameters ...");
+        LOGGER.debug("Destillate from #{} potential timeseries. This may take a while.", observingTimeseries.size());
         for (SosTimeseries timeseries : observingTimeseries) {
+            LOGGER.trace("##############################################");
+            LOGGER.trace("Create timeseries '{}'.", timeseries.toString());
             Procedure procedure = timeseries.getProcedure();
             ComponentType component = sensorDescriptions.get(procedure.getProcedureId());
             completeProcedure(procedure, component);
+
+            LOGGER.trace("With procedure '{}'.", procedure.toString());
 
             /*
              * TODO phenomenon relations has to be checked as MetadataHandler creates a timeseries
@@ -162,11 +166,18 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
             Outputs outputs = component.getOutputs();
             String[] phenomena = xmlHelper.getRelatedPhenomena(outputs);
             if ( !relatesToPhenomena(timeseries, phenomena)) {
+                LOGGER.trace("Ignore timeseries as it does not relate to any of '{}'.", Arrays.toString(phenomena));
                 continue;
             }
 
             // get phenomenon/category labels
             for (String phenomenonId : phenomena) {
+
+                /*
+                 * TODO low performance here.
+                 */
+
+                LOGGER.trace("Relate to '{}'.", phenomenonId);
                 OutputList outputList = outputs.getOutputList();
                 Phenomenon phenomenon = lookup.getPhenomenon(phenomenonId);
                 if (outputList.getOutputArray().length > 0) {
@@ -178,37 +189,43 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
                 }
             }
 
-            // get feature relations
-            if (component.getCapabilitiesArray().length > 0) {
-                Capabilities sensorCapabilties = component.getCapabilitiesArray(0);
-                String[] fois = xmlHelper.getRelatedFeatures(sensorCapabilties);
-                for (String featureId : fois) {
-                    if ( !lookup.containsFeature(featureId)) {
-                        // orphaned timeseries (i.e. no station)
-                        continue;
-                    }
-                    Feature feature = lookup.getFeature(featureId);
-                    Station station = metadata.getStation(featureId);
-                    if (station == null) {
-                        Point location = featureLocations.get(feature);
-                        station = new Station(feature.getLabel(), sosUrl);
-                        station.setLocation(location);
-                        metadata.addStation(station);
-                    }
-
-                    SosTimeseries tmp = timeseries.clone();
-                    tmp.setFeature(new Feature(featureId, sosUrl));
-                    station.addTimeseries(tmp);
-                }
-            }
-            else {
+            if (component.getCapabilitiesArray().length == 0) {
                 LOGGER.info("Procedure '{}' does not link to any feature.", procedure.getProcedureId());
+                continue;
             }
+
+            // get feature relations
+            Capabilities sensorCapabilties = component.getCapabilitiesArray(0);
+            String[] fois = xmlHelper.getRelatedFeatures(sensorCapabilties);
+            for (String featureId : fois) {
+                if ( !lookup.containsFeature(featureId)) {
+                    // orphaned timeseries (i.e. no station)
+                    continue;
+                }
+                Feature feature = lookup.getFeature(featureId);
+                Station station = new Station(feature.getLabel(), sosUrl);
+                Point location = featureLocations.get(feature);
+                station.setLocation(location);
+                if (metadata.getStation(station.getGlobalId()) == null) {
+                    LOGGER.trace("Create new Station at '{}'.", location);
+                    metadata.addStation(station);
+                }
+                // get existing station
+                station = metadata.getStation(station.getGlobalId());
+
+                SosTimeseries tmp = timeseries.clone();
+                tmp.setFeature(new Feature(featureId, sosUrl));
+                LOGGER.trace("Add timeseries '{}' to station '{}'.", tmp.getLabel(), station.getGlobalId());
+                station.addTimeseries(tmp);
+            }
+
+            LOGGER.trace("##############################################");
         }
 
         for (Iterator<SosTimeseries> it = observingTimeseries.iterator(); it.hasNext();) {
             SosTimeseries timeseries = it.next();
             if ( !timeseries.parametersComplete()) {
+                LOGGER.trace("Remove timeseries '{}' as it is incomplete.", timeseries.toString());
                 it.remove();
             }
         }
