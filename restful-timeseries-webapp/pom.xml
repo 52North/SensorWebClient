@@ -67,6 +67,10 @@
 			<artifactId>spring-oxm</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+        <dependency>
+            <groupId>com.thetransactioncompany</groupId>
+            <artifactId>cors-filter</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
@@ -176,6 +180,7 @@
 							</includes>
 							<excludes>
                                 <exclude>WEB-INF/classes/ehcache.xml</exclude>
+                                <exclude>WEB-INF/classes/logback*.xml</exclude>
                                 <exclude>WEB-INF/classes/hibernate.cfg.xml</exclude>
                                 <exclude>WEB-INF/classes/feeder-properties.xml</exclude>
 								<exclude>WEB-INF/classes/spring-ses-config.xml</exclude>
