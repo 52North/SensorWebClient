@@ -223,13 +223,13 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
             LOGGER.trace("##############################################");
         }
 
-        for (Iterator<SosTimeseries> it = observingTimeseries.iterator(); it.hasNext();) {
-            SosTimeseries timeseries = it.next();
-            if ( !timeseries.parametersComplete()) {
-                LOGGER.trace("Remove timeseries '{}' as it is incomplete.", timeseries.toString());
-                it.remove();
-            }
-        }
+//        for (Iterator<SosTimeseries> it = observingTimeseries.iterator(); it.hasNext();) {
+//            SosTimeseries timeseries = it.next();
+//            if ( !timeseries.parametersComplete()) {
+//                LOGGER.trace("Remove timeseries '{}' as it is incomplete.", timeseries.toString());
+//                it.remove();
+//            }
+//        }
 
         infoLogServiceSummary(metadata);
         metadata.setHasDonePositionRequest(true);

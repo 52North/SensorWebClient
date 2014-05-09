@@ -9,3 +9,5 @@ restful-timeseries-webapp/src/main/tmp/
 sensorwebclient-webapp/nb-configuration.xml
 restful-timeseries-webapp/nbactions.xml
 sensorwebclient-webapp/nbactions.xml
+/sensorwebclient-hydro/src/test/resources/files/KiWIS_SOS_Capabilities.xml
+/sensorwebclient-hydro/src/test/java/org/n52/server/sos/connector/hydro/lanuv/LanuvSosMetadataHandlerTest.java
