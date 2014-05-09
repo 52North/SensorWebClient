@@ -203,11 +203,12 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
                     continue;
                 }
                 Feature feature = lookup.getFeature(featureId);
-                Station station = new Station(feature.getLabel(), sosUrl);
-                Point location = featureLocations.get(feature);
-                station.setLocation(location);
-                if (metadata.getStation(station.getGlobalId()) == null) {
-                    LOGGER.trace("Create new Station at '{}'.", location);
+                Station station = metadata.getStation(featureId);
+                if (station == null) {
+                    Point location = featureLocations.get(feature);
+                    LOGGER.trace("Create Station with featureId '{}' at '{}'.", featureId, location);
+                    station = new Station(featureId, sosUrl);
+                    station.setLocation(location);
                     metadata.addStation(station);
                 }
                 // get existing station
