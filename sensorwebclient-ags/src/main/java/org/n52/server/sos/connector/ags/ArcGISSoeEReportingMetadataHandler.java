@@ -212,11 +212,11 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
                     metadata.addStation(station);
                 }
                 // get existing station
-                station = metadata.getStation(station.getGlobalId());
+                station = metadata.getStation(featureId);
 
                 SosTimeseries tmp = timeseries.clone();
                 tmp.setFeature(new Feature(featureId, sosUrl));
-                LOGGER.trace("Add timeseries '{}' to station '{}'.", tmp.getLabel(), station.getGlobalId());
+                LOGGER.trace("Add timeseries '{}' to station '{}'.", tmp.getLabel(), featureId);
                 station.addTimeseries(tmp);
             }
 
