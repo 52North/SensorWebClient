@@ -27,6 +27,9 @@
  */
 package org.n52.server.sos.connector.hydro;
 
+import net.opengis.sos.x20.GetFeatureOfInterestDocument;
+import net.opengis.sos.x20.GetFeatureOfInterestType;
+
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.oxf.OXFException;
@@ -58,8 +61,17 @@ public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtensio
 
 	@Override
 	public String buildGetFeatureOfInterestRequest(ParameterContainer parameters) {
-		String request = super.buildGetFeatureOfInterestRequest(parameters);
-		EnvelopeDocument envelope = addSoapEnvelope(request, GET_FOI_SOAP_HEADER_ACTION);
+		GetFeatureOfInterestDocument xb_getFOIDoc = GetFeatureOfInterestDocument.Factory.newInstance();
+    	GetFeatureOfInterestType xb_getFOI = xb_getFOIDoc.addNewGetFeatureOfInterest();
+    	xb_getFOI.setService((String) parameters.getParameterShellWithServiceSidedName(GET_FOI_SERVICE_PARAMETER).getSpecifiedValue());
+    	xb_getFOI.setVersion((String) parameters.getParameterShellWithServiceSidedName(GET_FOI_VERSION_PARAMETER).getSpecifiedValue());
+    	if (parameters.containsParameterShellWithServiceSidedName("observedProperty")) {
+    		xb_getFOI.addObservedProperty((String) parameters.getParameterShellWithServiceSidedName("observedProperty").getSpecifiedValue());
+    	}
+    	if (parameters.containsParameterShellWithServiceSidedName("procedure")) {
+    		xb_getFOI.addProcedure((String) parameters.getParameterShellWithServiceSidedName("procedure").getSpecifiedValue());
+    	}
+		EnvelopeDocument envelope = addSoapEnvelope(xb_getFOIDoc.xmlText(), GET_FOI_SOAP_HEADER_ACTION);
 		return envelope.xmlText(XmlUtil.PRETTYPRINT);  
 	}
 
