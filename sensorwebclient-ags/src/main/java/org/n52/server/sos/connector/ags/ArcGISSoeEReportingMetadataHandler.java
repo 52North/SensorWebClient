@@ -75,6 +75,7 @@ import org.n52.server.util.XmlHelper;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Category;
 import org.n52.shared.serializable.pojos.sos.Feature;
+import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -111,7 +112,7 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
      * Holds all network procedures referenced in the capabilities document. Holding networks is needed
      * so that features can be requested network for network to avoid one gigantic GetFoi request.
      */
-    private final Map<String, String[]> networks = new HashMap<String, String[]>();
+    private final Map<String, Network> networks = new HashMap<String, Network>();
 
     public ArcGISSoeEReportingMetadataHandler(SOSMetadata metadata) {
         super(metadata);
@@ -148,88 +149,86 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
         TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
         Map<Feature, Point> featureLocations = performGetFeatureOfInterest(lookup);
 
-        LOGGER.debug("Destillate from #{} potential timeseries. This may take a while.", observingTimeseries.size());
-        for (SosTimeseries timeseries : observingTimeseries) {
+        LOGGER.debug("Destillate timeseries from #{} potential. This may take a while.", observingTimeseries.size());
+        for (Network network : networks.values()) {
             LOGGER.trace("##############################################");
-            LOGGER.trace("Create timeseries '{}'.", timeseries.toString());
-            Procedure procedure = timeseries.getProcedure();
-            ComponentType component = sensorDescriptions.get(procedure.getProcedureId());
-            completeProcedure(procedure, component);
+            String offeringId = network.getOffering();
+            for (String procedureId : network.getMembers()) {
+                ComponentType component = sensorDescriptions.get(procedureId);
+                completeProcedure(lookup.getProcedure(procedureId), component);
 
-            LOGGER.trace("With procedure '{}'.", procedure.toString());
+                if (component.getCapabilitiesArray() == null) {
+                    LOGGER.trace("No related features in capabilities block => Link all features available!");
+                    LOGGER.info("Not yet implemented.");
 
-            /*
-             * TODO phenomenon relations has to be checked as MetadataHandler creates a timeseries
-             * offering-procedure-phenomenon relation for each phenomenon in an offering (this however is not
-             * true in all cases).
-             */
-            Outputs outputs = component.getOutputs();
-            String[] phenomena = xmlHelper.getRelatedPhenomena(outputs);
-            if ( !relatesToPhenomena(timeseries, phenomena)) {
-                LOGGER.trace("Ignore timeseries as it does not relate to any of '{}'.", Arrays.toString(phenomena));
-                continue;
-            }
+                    // TODO link all features available
 
-            // get phenomenon/category labels
-            for (String phenomenonId : phenomena) {
-
-                /*
-                 * TODO low performance here.
-                 */
-
-                LOGGER.trace("Relate to '{}'.", phenomenonId);
-                OutputList outputList = outputs.getOutputList();
-                Phenomenon phenomenon = lookup.getPhenomenon(phenomenonId);
-                if (outputList.getOutputArray().length > 0) {
-                    ArcGISSoeDescribeSensorParser parser = createSensorMLParser(component);
-                    phenomenon.setUnitOfMeasure(parser.getUomFor(phenomenonId));
-                    String name = outputList.getOutputArray(0).getName();
-                    timeseries.setCategory(new Category(parseCategory(name), sosUrl));
-                    phenomenon.setLabel(name);
-                }
-            }
-
-            if (component.getCapabilitiesArray().length == 0) {
-                LOGGER.info("Procedure '{}' does not link to any feature.", procedure.getProcedureId());
-                continue;
-            }
-
-            // get feature relations
-            Capabilities sensorCapabilties = component.getCapabilitiesArray(0);
-            String[] fois = xmlHelper.getRelatedFeatures(sensorCapabilties);
-            for (String featureId : fois) {
-                if ( !lookup.containsFeature(featureId)) {
-                    // orphaned timeseries (i.e. no station)
                     continue;
                 }
-                Feature feature = lookup.getFeature(featureId);
-                Station station = metadata.getStation(featureId);
-                if (station == null) {
-                    Point location = featureLocations.get(feature);
-                    LOGGER.trace("Create Station with featureId '{}' at '{}'.", featureId, location);
-                    station = new Station(featureId, sosUrl);
-                    station.setLocation(location);
-                    metadata.addStation(station);
-                }
-                // get existing station
-                station = metadata.getStation(featureId);
 
-                SosTimeseries tmp = timeseries.clone();
-                tmp.setFeature(new Feature(featureId, sosUrl));
-                LOGGER.trace("Add timeseries '{}' to station '{}'.", tmp.getLabel(), featureId);
-                station.addTimeseries(tmp);
+                SosTimeseries timeseries = new SosTimeseries();
+                timeseries.setOffering(lookup.getOffering(offeringId));
+                timeseries.setProcedure(lookup.getProcedure(procedureId));
+
+                // get phenomenon/category labels
+                Outputs outputs = component.getOutputs();
+                Capabilities sensorCapabilties = component.getCapabilitiesArray(0);
+                for (String phenomenonId : xmlHelper.getRelatedPhenomena(outputs)) {
+                    Phenomenon phenomenon = lookup.getPhenomenon(phenomenonId);
+                    timeseries.setPhenomenon(phenomenon);
+
+                    OutputList outputList = outputs.getOutputList();
+                    if (outputList.getOutputArray().length > 0) {
+                        ArcGISSoeDescribeSensorParser parser = createSensorMLParser(component);
+                        phenomenon.setUnitOfMeasure(parser.getUomFor(phenomenonId));
+                        String name = outputList.getOutputArray(0).getName();
+                        timeseries.setCategory(new Category(parseCategory(name), sosUrl));
+                        phenomenon.setLabel(name);
+                    }
+
+                    // get feature relations
+                    String[] fois = xmlHelper.getRelatedFeatures(sensorCapabilties);
+                    for (String featureId : fois) {
+                        if ( !lookup.containsFeature(featureId)) {
+                            // orphaned timeseries (i.e. no station)
+                            continue;
+                        }
+                        Feature feature = lookup.getFeature(featureId);
+                        Station station = metadata.getStation(featureId);
+                        if (station == null) {
+                            Point location = featureLocations.get(feature);
+                            LOGGER.trace("Create Station with featureId '{}' at '{}'.", featureId, location);
+                            station = new Station(featureId, sosUrl);
+                            station.setLocation(location);
+                            metadata.addStation(station);
+                        }
+                        // get existing station
+                        station = metadata.getStation(featureId);
+
+                        SosTimeseries copy = timeseries.clone();
+                        copy.setFeature(new Feature(featureId, sosUrl));
+
+                        LOGGER.trace("Timeseries with procedure '{}'.", procedureId);
+                        LOGGER.trace("Relate with phenomenon '{}'.", phenomenonId);
+                        LOGGER.trace("Relate with offering '{}'.", offeringId);
+                        LOGGER.trace("Relate with feature '{}'.", featureId);
+                        LOGGER.trace("With category '{}'.", copy.getCategory());
+                        LOGGER.trace("Add to station '{}'.", station.getLabel());
+                        station.addTimeseries(copy);
+                    }
+                }
             }
 
             LOGGER.trace("##############################################");
         }
 
-        for (Iterator<SosTimeseries> it = observingTimeseries.iterator(); it.hasNext();) {
-            SosTimeseries timeseries = it.next();
-            if ( !timeseries.parametersComplete()) {
-                LOGGER.trace("Remove timeseries '{}' as it is incomplete.", timeseries.toString());
-                it.remove();
-            }
-        }
+//        for (Iterator<SosTimeseries> it = observingTimeseries.iterator(); it.hasNext();) {
+//            SosTimeseries timeseries = it.next();
+//            if ( !timeseries.parametersComplete()) {
+//                LOGGER.trace("Remove timeseries '{}' as it is incomplete.", timeseries.toString());
+//                it.remove();
+//            }
+//        }
 
         infoLogServiceSummary(metadata);
         metadata.setHasDonePositionRequest(true);
@@ -276,21 +275,24 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
     }
 
     @Override
-    protected String[] getProceduresFor(ObservationOffering offering) {
+    protected String[] getProceduresFor(ObservationOffering theOffering) {
+        String offering = theOffering.getIdentifier();
         try {
             // SOS 2.0.0 has just one mandatory procedure id
-            String network = offering.getProcedures()[0];
+            String network = theOffering.getProcedures()[0];
             Set<String> members = describeSensorNetwork(network);
             if (members.size() > 0) {
-                networks.put(network, members.toArray(new String[0]));
+                Network theNetwork = new Network(offering, network);
+                theNetwork.setMembers(members.toArray(new String[0]));
+                networks.put(offering, theNetwork);
             }
-            return sensorDescriptions.keySet().toArray(new String[0]);
+            return members.toArray(new String[0]);
         }
         catch (OXFException e) {
-            LOGGER.error("Could not get procedure description for offering {}", offering.getIdentifier(), e);
+            LOGGER.error("Could not get procedure description for offering {}", offering, e);
             return new String[0];
         } catch (ExceptionReport e) {
-            LOGGER.error("Could not get procedure description for offering {}", offering.getIdentifier(), e);
+            LOGGER.error("Could not get procedure description for offering {}", offering, e);
             return new String[0];
         }
     }
@@ -329,11 +331,11 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
     protected Map<Feature, Point> performGetFeatureOfInterest(TimeseriesParametersLookup lookup) throws OXFException,
             ExceptionReport {
         HashMap<Feature, Point> features = new HashMap<Feature, Point>();
-        for (String network : networks.keySet()) {
+        for (Network network : networks.values()) {
             ParameterContainer paramCon = new ParameterContainer();
             paramCon.addParameterShell(GET_FOI_SERVICE_PARAMETER, "SOS");
             paramCon.addParameterShell(GET_FOI_VERSION_PARAMETER, getServiceVersion());
-            paramCon.addParameterShell("procedure", networks.get(network));
+            paramCon.addParameterShell("procedure", network.getNetwork());
             Operation operation = new Operation("GetFeatureOfInterest", getServiceUrl(), getServiceUrl());
             OperationResult result = getSosAdapter().doOperation(operation, paramCon);
 

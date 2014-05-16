@@ -49,10 +49,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ConnectorUtils {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectorUtils.class);
-    
-    
+
+
     /**
      * @param sosUrl the service endpoint
      * @param adapter the adapter to use
@@ -89,12 +89,12 @@ public class ConnectorUtils {
 //            throw new IllegalStateException(String.format("Service descriptor unaccessable: %s ", sosUrl));
         }
         /* TODO do not return null (causes many other exceptions) => handle parsing exception appropriatly
-         * 
+         *
          * make possible to remove not parsable services. Now, runtime exceptions are masked by signatures which
          * catch just Exception => have to make sure that not valid services are not accessed by the client
          * over and over again ...
          */
-        return null; 
+        return null;
     }
 
     public static String getResponseFormat(final ServiceDescriptor serviceDesc, final String matchingPattern) {
@@ -103,15 +103,18 @@ public class ConnectorUtils {
         if (metadata != null) {
         	final Operation op = metadata.getOperationByName("GetObservation");
             final Parameter parameter = op.getParameter("responseFormat");
-            final StringValueDomain respDomain = (StringValueDomain) parameter.getValueDomain();
-            for (final String elem : respDomain.getPossibleValues()) {
-                if (elem.toLowerCase().contains(matchingPattern.toLowerCase())) {
-                    respFormat = elem;
+            if (parameter != null) {
+                final StringValueDomain respDomain = (StringValueDomain) parameter.getValueDomain();
+                for (final String elem : respDomain.getPossibleValues()) {
+                    if (elem.toLowerCase().contains(matchingPattern.toLowerCase())) {
+                        respFormat = elem;
+                    }
                 }
             }
         }
         return respFormat;
     }
+
     // TODO Review for the case of multiple SensorML versions
     public static String getSMLVersion(final ServiceDescriptor serviceDesc, final String sosVersion) {
         String smlVersion = null;
@@ -124,16 +127,18 @@ public class ConnectorUtils {
             } else if (SosUtil.isVersion200(sosVersion)) { // SOS 2.0
                 outputFormat = opSensorML.getParameter("procedureDescriptionFormat");
             }
-            final StringValueDomain sensorMLDomain = (StringValueDomain) outputFormat.getValueDomain();
-            for (final String elem : sensorMLDomain.getPossibleValues()) {
-                if (elem.contains("sensorML")) {
-                    smlVersion = elem;  
+            if (outputFormat != null) {
+                final StringValueDomain sensorMLDomain = (StringValueDomain) outputFormat.getValueDomain();
+                for (final String elem : sensorMLDomain.getPossibleValues()) {
+                    if (elem.contains("sensorML")) {
+                        smlVersion = elem;
+                    }
                 }
-            }        	
+            }
         }
         return smlVersion;
     }
-    
+
     public static IBoundingBox createBbox(final ObservationOffering offering) {
         return createBbox(null, offering);
     }
@@ -162,5 +167,5 @@ public class ConnectorUtils {
         }
         return sosBbox;
     }
-    
+
 }
