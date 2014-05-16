@@ -108,6 +108,7 @@ public class HydroMetadataHandler extends MetadataHandler {
 
     @Override
     public SOSMetadata performMetadataCompletion() throws Exception {
+    	LOGGER.info("Start perform metadata completion");
         SOSMetadata metadata = initMetadata();
         // get a waterml specific responseFormat if set
         String responseFormat = ConnectorUtils.getResponseFormat(getServiceDescriptor(), "waterml");
@@ -126,13 +127,14 @@ public class HydroMetadataHandler extends MetadataHandler {
         return newMetadata;
     }
 
-    private void collectTimeseries(SOSMetadata metadata) throws OXFException,
+    protected void collectTimeseries(SOSMetadata metadata) throws OXFException,
             InterruptedException,
             ExecutionException,
             TimeoutException,
             XmlException,
             IOException {
 
+    	LOGGER.info("start collecting time series");
         Collection<SosTimeseries> observingTimeseries = createObservingTimeseries(metadata.getServiceUrl());
 
         Map<SosTimeseries, FutureTask<OperationResult>> getDataAvailabilityTasks = new HashMap<SosTimeseries, FutureTask<OperationResult>>();
@@ -303,18 +305,21 @@ public class HydroMetadataHandler extends MetadataHandler {
         return timeseries;
     }
 
-    private String getAttributeOfChildren(XmlObject xmlObject, String child, String attribute) {
-        SimpleValue childObject = ((org.apache.xmlbeans.SimpleValue) xmlObject.selectChildren("http://www.opengis.net/om/2.0",
-                                                                                              child)[0].selectAttribute("http://www.w3.org/1999/xlink",
+    protected String getAttributeOfChildren(XmlObject xmlObject, String child, String attribute) {
+    	XmlObject[] children = xmlObject.selectChildren("http://www.opengis.net/om/2.0", child);
+    	if(children.length == 0) {
+    		children = xmlObject.selectChildren("http://www.opengis.net/sosgda/1.0", child);
+    	}
+        SimpleValue childObject = ((org.apache.xmlbeans.SimpleValue) children[0].selectAttribute("http://www.w3.org/1999/xlink",
                                                                                                                         attribute));
         return childObject.getStringValue();
     }
 
-    private String getLastPartOf(String phenomenonId) {
+    protected String getLastPartOf(String phenomenonId) {
         return phenomenonId.substring(phenomenonId.lastIndexOf("/") + 1);
     }
 
-    private Point createParsedPoint(XmlObject feature, CRSUtils referenceHelper) throws XmlException {
+    protected Point createParsedPoint(XmlObject feature, CRSUtils referenceHelper) throws XmlException {
         XmlCursor cursor = feature.newCursor();
         if (cursor.toChild(new QName("http://www.opengis.net/samplingSpatial/2.0", "shape"))) {
             ShapeDocument shapeDoc = ShapeDocument.Factory.parse(cursor.getDomNode());
@@ -350,7 +355,7 @@ public class HydroMetadataHandler extends MetadataHandler {
         return null;
     }
 
-    private GetFeatureOfInterestResponseDocument getFOIResponseOfOpResult(OperationResult opRes) throws XmlException,
+    protected GetFeatureOfInterestResponseDocument getFOIResponseOfOpResult(OperationResult opRes) throws XmlException,
             IOException,
             OXFException {
         XmlObject foiResponse = XmlObject.Factory.parse(opRes.getIncomingResultAsStream());
