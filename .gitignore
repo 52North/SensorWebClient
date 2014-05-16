@@ -11,3 +11,5 @@ restful-timeseries-webapp/nbactions.xml
 sensorwebclient-webapp/nbactions.xml
 /sensorwebclient-hydro/src/test/resources/files/KiWIS_SOS_Capabilities.xml
 /sensorwebclient-hydro/src/test/java/org/n52/server/sos/connector/hydro/lanuv/LanuvSosMetadataHandlerTest.java
+sensorwebclient-hydro/src/test/resources/files/GetFeatureOfInterest_Response.xml
+sensorwebclient-hydro/src/test/resources/files/gda_phenomenon_response.xml
