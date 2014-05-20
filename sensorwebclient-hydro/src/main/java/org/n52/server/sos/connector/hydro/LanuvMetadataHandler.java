@@ -151,7 +151,11 @@ public class LanuvMetadataHandler extends HydroMetadataHandler {
     	Set<String> procedures = new HashSet<String>();
     	Set<String> features = new HashSet<String>();
     	
+        LOGGER.info("# of offering entries: " + contents.getDataIdentificationCount());
 		for (int i = 0; i < contents.getDataIdentificationCount(); i++) {
+			if (i % 100 == 0) {
+        		LOGGER.info("loop in offering entries: " + i);
+        	}
 			ObservationOffering offering = (ObservationOffering) contents.getDataIdentification(i);
 			String offeringID = offering.getIdentifier();
 			String[] phenomenonIDs = offering.getObservedProperties();
@@ -172,6 +176,7 @@ public class LanuvMetadataHandler extends HydroMetadataHandler {
 			}
 		}
     	
+		LOGGER.info("create possible time series by observed property");
     	for (String phenomenon : phenomena) {
     		SosTimeseries timeseries = new SosTimeseries();
             timeseries.setPhenomenon(new Phenomenon(phenomenon, metadata.getServiceUrl()));
@@ -180,6 +185,7 @@ public class LanuvMetadataHandler extends HydroMetadataHandler {
             allObservedTimeseries.add(timeseries);
 		}
     	
+    	LOGGER.info("create lookup table");
     	TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
     	for (String feature : features) {
 			lookup.addFeature(new Feature(feature, metadata.getServiceUrl()));
@@ -317,18 +323,22 @@ public class LanuvMetadataHandler extends HydroMetadataHandler {
             String procedure = getAttributeOfChildren(xmlObject, "procedure", "href");
             for (SosTimeseries obsTimeseries : observingTimeseries) {
 				if (obsTimeseries.getPhenomenonId().equals(phenomenon)) {
-					for (String offering : procOff.get(procedure)) {
-						SosTimeseries addedtimeserie = new SosTimeseries();
-						addedtimeserie.setFeature(new Feature(feature, metadata.getServiceUrl()));
-			            addedtimeserie.setPhenomenon(new Phenomenon(phenomenon, metadata.getServiceUrl()));
-			            addedtimeserie.setProcedure(new Procedure(procedure, metadata.getServiceUrl()));
-			            addedtimeserie.setOffering(new Offering(offering, metadata.getServiceUrl()));
-			            // create the category for every parameter constellation out of phenomenon and procedure
-			            String category = getLastPartOf(phenomenon) + " (" + getLastPartOf(procedure) + ")";
-			            addedtimeserie.setCategory(new Category(category, metadata.getServiceUrl()));
-			            addedtimeserie.setSosService(new SosService(metadata.getServiceUrl(), metadata.getVersion()));
-			            addedtimeserie.getSosService().setLabel(metadata.getTitle());
-						timeseries.add(addedtimeserie);
+					if (procOff.containsKey(procedure)) {
+						for (String offering : procOff.get(procedure)) {
+							SosTimeseries addedtimeserie = new SosTimeseries();
+							addedtimeserie.setFeature(new Feature(feature, metadata.getServiceUrl()));
+				            addedtimeserie.setPhenomenon(new Phenomenon(phenomenon, metadata.getServiceUrl()));
+				            addedtimeserie.setProcedure(new Procedure(procedure, metadata.getServiceUrl()));
+				            addedtimeserie.setOffering(new Offering(offering, metadata.getServiceUrl()));
+				            // create the category for every parameter constellation out of phenomenon and procedure
+				            String category = getLastPartOf(phenomenon) + " (" + getLastPartOf(procedure) + ")";
+				            addedtimeserie.setCategory(new Category(category, metadata.getServiceUrl()));
+				            addedtimeserie.setSosService(new SosService(metadata.getServiceUrl(), metadata.getVersion()));
+				            addedtimeserie.getSosService().setLabel(metadata.getTitle());
+							timeseries.add(addedtimeserie);
+						}
+					} else {
+						LOGGER.warn("Procedure " + procedure + " doesn't exist in capabilities document");
 					}
 				}
 			}

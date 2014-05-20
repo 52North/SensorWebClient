@@ -110,6 +110,7 @@ public class HydroMetadataHandler extends MetadataHandler {
     public SOSMetadata performMetadataCompletion() throws Exception {
     	LOGGER.info("Start perform metadata completion");
         SOSMetadata metadata = initMetadata();
+        LOGGER.info("init of metadata finished");
         // get a waterml specific responseFormat if set
         String responseFormat = ConnectorUtils.getResponseFormat(getServiceDescriptor(), "waterml");
         if (responseFormat != null) {
