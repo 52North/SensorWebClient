@@ -204,12 +204,18 @@ public class LanuvMetadataHandler extends HydroMetadataHandler {
                          counter--);
             FutureTask<OperationResult> futureTask = getDataAvailabilityTasks.get(phenomenon);
             AccessorThreadPool.execute(futureTask);
-            OperationResult result = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
+            OperationResult result = null;
+			try {
+				result = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
+			} catch (Exception e) {
+				LOGGER.error("Get no result for GetDataAvailability with parameter constellation: " + phenomenon + "!");
+			}
             if (result == null) {
                 LOGGER.error("Get no result for GetDataAvailability with parameter constellation: " + phenomenon + "!");
+            } else {
+            	XmlObject result_xb = XmlObject.Factory.parse(result.getIncomingResultAsStream());
+                timeseries.addAll(getAvailableTimeseries(result_xb, phenomenon, metadata, observingTimeseries));
             }
-            XmlObject result_xb = XmlObject.Factory.parse(result.getIncomingResultAsStream());
-            timeseries.addAll(getAvailableTimeseries(result_xb, phenomenon, metadata, observingTimeseries));
         }
         return timeseries;
     }
@@ -249,8 +255,8 @@ public class LanuvMetadataHandler extends HydroMetadataHandler {
         	response = result_xb.selectPath(gdaExpression);
 		}
         for (XmlObject xmlObject : response) {
-            String feature = getAttributeOfChildren(xmlObject, "featureOfInterest", "href");
-            String procedure = getAttributeOfChildren(xmlObject, "procedure", "href");
+            String feature = getAttributeOfChildren(xmlObject, "featureOfInterest", "href").trim();
+            String procedure = getAttributeOfChildren(xmlObject, "procedure", "href").trim();
             for (SosTimeseries obsTimeseries : observingTimeseries) {
 				if (obsTimeseries.getPhenomenonId().equals(phenomenon)) {
 					if (procOff.containsKey(procedure)) {
