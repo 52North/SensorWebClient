@@ -174,7 +174,6 @@
 							<groupId>org.n52.sensorweb</groupId>
 							<artifactId>sensorwebclient-webapp</artifactId>
 							<includes>
-								<include>ds/sos-instances.data.xml</include>
 								<include>WEB-INF/classes/*.json</include>
 								<include>WEB-INF/classes/*.xml</include>
 							</includes>
