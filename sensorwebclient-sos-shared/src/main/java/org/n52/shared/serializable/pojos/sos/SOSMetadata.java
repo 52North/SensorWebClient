@@ -297,6 +297,9 @@ public class SOSMetadata implements Serializable {
     }
 
     public void addStation(Station station) {
+
+        // FIXME label as hash key is error prone. see #getStation(stationId)
+
         stations.put(station.getLabel(), station);
     }
 
@@ -357,6 +360,9 @@ public class SOSMetadata implements Serializable {
     }
 
     public Station getStation(String stationId) {
+
+        // FIXME error prone. see #addStation(station)
+
         return stations.get(stationId);
     }
 
