@@ -85,7 +85,7 @@ public class Station implements Serializable {
     /**
      * Creates a GeoJSON representation of the station's location. The coordiantes' axes ordering is left as
      * is. Per default this should be the lon/lat oriented CRS:84 reference system.
-     * 
+     *
      * @return the location as GeoJSON.
      */
     // TODO still need this converting method?
@@ -122,7 +122,7 @@ public class Station implements Serializable {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("Station: [ ").append("\n");
         sb.append("\tId: ").append(label).append("\n");
         sb.append("\tLocation: ").append(location).append("\n");
