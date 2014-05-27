@@ -79,6 +79,7 @@ import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosService;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
@@ -149,9 +150,14 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
         TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
         Map<Feature, Point> featureLocations = performGetFeatureOfInterest(lookup);
 
+        // TODO check integrety before adding them to metadata
+        List<Station> stations = new ArrayList<Station>();
+
         LOGGER.debug("Destillate timeseries from #{} potential. This may take a while.", observingTimeseries.size());
         for (Network network : networks.values()) {
-            LOGGER.trace("##############################################");
+            LOGGER.trace("############# PROCESS NETWORK #################");
+            LOGGER.debug("Build up cache for sensor network '{}'", network);
+
             String offeringId = network.getOffering();
             for (String procedureId : network.getMembers()) {
                 ComponentType component = sensorDescriptions.get(procedureId);
@@ -159,7 +165,7 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
 
                 if (component.getCapabilitiesArray() == null) {
                     LOGGER.trace("No related features in capabilities block => Link all features available!");
-                    LOGGER.info("Not yet implemented.");
+                    LOGGER.warn("Not yet implemented.");
 
                     // TODO link all features available
 
@@ -197,7 +203,7 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
                         Station station = metadata.getStation(featureId);
                         if (station == null) {
                             Point location = featureLocations.get(feature);
-                            LOGGER.trace("Create Station with featureId '{}' at '{}'.", featureId, location);
+                            LOGGER.trace("Create Station '{}' at '{}'.", featureId, location);
                             station = new Station(featureId, sosUrl);
                             station.setLocation(location);
                             metadata.addStation(station);
@@ -208,12 +214,20 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
                         SosTimeseries copy = timeseries.clone();
                         copy.setFeature(new Feature(featureId, sosUrl));
 
-                        LOGGER.trace("Timeseries with procedure '{}'.", procedureId);
-                        LOGGER.trace("Relate with phenomenon '{}'.", phenomenonId);
-                        LOGGER.trace("Relate with offering '{}'.", offeringId);
-                        LOGGER.trace("Relate with feature '{}'.", featureId);
+                        String service = metadata.getServiceUrl();
+                        String version = metadata.getVersion();
+                        copy.setSosService(new SosService(service, version));
+
+                        LOGGER.trace("+++++++++++++ NEW TIMESERIES +++++++++++++++++");
+                        LOGGER.trace("New Timeseries: '{}'.", copy.toString());
+                        LOGGER.trace("Timeseries with procedure '{}'.", lookup.getProcedure(procedureId));
+                        LOGGER.trace("Relate with phenomenon '{}'.", lookup.getPhenomenon(phenomenonId));
+                        LOGGER.trace("Relate with offering '{}'.", lookup.getOffering(offeringId));
+                        LOGGER.trace("Relate with feature '{}'.", lookup.getFeature(featureId));
+                        LOGGER.trace("Relate with service '{}' ({}).", service, version);
                         LOGGER.trace("With category '{}'.", copy.getCategory());
                         LOGGER.trace("Add to station '{}'.", station.getLabel());
+                        LOGGER.trace("++++++++++++++++++++++++++++++++++++++++++++++");
                         station.addTimeseries(copy);
                     }
                 }
@@ -311,21 +325,19 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
      *         when request processing failed.
      */
     protected Set<String> describeSensorNetwork(String procedure) throws OXFException, ExceptionReport {
-//        if ( !isCached(procedure)) {
-            ParameterContainer paramCon = new ParameterContainer();
-            paramCon.addParameterShell(DESCRIBE_SENSOR_SERVICE_PARAMETER, "SOS");
-            paramCon.addParameterShell(DESCRIBE_SENSOR_VERSION_PARAMETER, getServiceVersion());
-            paramCon.addParameterShell(DESCRIBE_SENSOR_PROCEDURE_PARAMETER, procedure);
-            paramCon.addParameterShell(DESCRIBE_SENSOR_PROCEDURE_DESCRIPTION_FORMAT, SML_NAMESPACE);
-            Operation operation = new Operation(DESCRIBE_SENSOR, getServiceUrl(), getServiceUrl());
-            OperationResult result = getSosAdapter().doOperation(operation, paramCon);
+        ParameterContainer paramCon = new ParameterContainer();
+        paramCon.addParameterShell(DESCRIBE_SENSOR_SERVICE_PARAMETER, "SOS");
+        paramCon.addParameterShell(DESCRIBE_SENSOR_VERSION_PARAMETER, getServiceVersion());
+        paramCon.addParameterShell(DESCRIBE_SENSOR_PROCEDURE_PARAMETER, procedure);
+        paramCon.addParameterShell(DESCRIBE_SENSOR_PROCEDURE_DESCRIPTION_FORMAT, SML_NAMESPACE);
+        Operation operation = new Operation(DESCRIBE_SENSOR, getServiceUrl(), getServiceUrl());
+        OperationResult result = getSosAdapter().doOperation(operation, paramCon);
 
-            InputStream stream = result.getIncomingResultAsStream();
-            SensorNetworkParser networkParser = new SensorNetworkParser();
-            Map<String, ComponentType> descriptions = networkParser.parseSensorDescriptions(stream);
-            sensorDescriptions.putAll(descriptions);
-            return descriptions.keySet();
-//        }
+        InputStream stream = result.getIncomingResultAsStream();
+        SensorNetworkParser networkParser = new SensorNetworkParser();
+        Map<String, ComponentType> descriptions = networkParser.parseSensorDescriptions(stream);
+        sensorDescriptions.putAll(descriptions);
+        return descriptions.keySet();
     }
 
     protected Map<Feature, Point> performGetFeatureOfInterest(TimeseriesParametersLookup lookup) throws OXFException,
