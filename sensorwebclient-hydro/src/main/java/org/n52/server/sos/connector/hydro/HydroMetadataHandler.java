@@ -44,24 +44,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeoutException;
 
-import javax.xml.namespace.QName;
-
-import net.opengis.gml.x32.AbstractGeometryType;
-import net.opengis.gml.x32.DirectPositionType;
-import net.opengis.gml.x32.FeaturePropertyType;
-import net.opengis.gml.x32.impl.PointTypeImpl;
-import net.opengis.sampling.x20.SFSamplingFeatureDocument;
-import net.opengis.sampling.x20.SFSamplingFeatureType;
-import net.opengis.samplingSpatial.x20.ShapeDocument;
-import net.opengis.sos.x20.GetFeatureOfInterestResponseDocument;
-import net.opengis.waterml.x20.MonitoringPointDocument;
-import net.opengis.waterml.x20.MonitoringPointType;
-
 import org.apache.xmlbeans.SimpleValue;
-import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.io.crs.CRSUtils;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
@@ -70,6 +55,7 @@ import org.n52.server.da.AccessorThreadPool;
 import org.n52.server.da.MetadataHandler;
 import org.n52.server.da.oxf.OperationAccessor;
 import org.n52.server.parser.ConnectorUtils;
+import org.n52.server.parser.GetFeatureOfInterestParser;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Category;
 import org.n52.shared.serializable.pojos.sos.Feature;
@@ -80,13 +66,8 @@ import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosService;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
-import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.operation.TransformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.vividsolutions.jts.geom.Point;
 
 public class HydroMetadataHandler extends MetadataHandler {
 
@@ -108,7 +89,9 @@ public class HydroMetadataHandler extends MetadataHandler {
 
     @Override
     public SOSMetadata performMetadataCompletion() throws Exception {
+    	LOGGER.info("Start perform metadata completion");
         SOSMetadata metadata = initMetadata();
+        LOGGER.info("init of metadata finished");
         // get a waterml specific responseFormat if set
         String responseFormat = ConnectorUtils.getResponseFormat(getServiceDescriptor(), "waterml");
         if (responseFormat != null) {
@@ -126,13 +109,14 @@ public class HydroMetadataHandler extends MetadataHandler {
         return newMetadata;
     }
 
-    private void collectTimeseries(SOSMetadata metadata) throws OXFException,
+    protected void collectTimeseries(SOSMetadata metadata) throws OXFException,
             InterruptedException,
             ExecutionException,
             TimeoutException,
             XmlException,
             IOException {
 
+    	LOGGER.info("start collecting time series");
         Collection<SosTimeseries> observingTimeseries = createObservingTimeseries(metadata.getServiceUrl());
 
         Map<SosTimeseries, FutureTask<OperationResult>> getDataAvailabilityTasks = new HashMap<SosTimeseries, FutureTask<OperationResult>>();
@@ -203,9 +187,7 @@ public class HydroMetadataHandler extends MetadataHandler {
             IOException,
             OXFException {
         int counter;
-        TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
         counter = getFoiAccessTasks.size();
-        CRSUtils referenceHelper = createReferencingHelper();
         LOGGER.debug("Sending {} GetFeatureOfInterest requests", counter);
         for (String procedureID : getFoiAccessTasks.keySet()) {
             LOGGER.debug("Sending #{} GetFeatureOfInterest request for procedure '{}'", counter--, procedureID);
@@ -213,64 +195,8 @@ public class HydroMetadataHandler extends MetadataHandler {
             AccessorThreadPool.execute(futureTask);
             try {
                 OperationResult opRes = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
-                if (opRes == null) {
-                    LOGGER.error("Get no result for GetFeatureOfInterest with procedure: " + procedureID + "!");
-                }
-                GetFeatureOfInterestResponseDocument foiResDoc = getFOIResponseOfOpResult(opRes);
-                String id = null;
-                String label = null;
-                for (FeaturePropertyType featurePropertyType : foiResDoc.getGetFeatureOfInterestResponse().getFeatureMemberArray()) {
-                    Point point = null;
-                    XmlCursor xmlCursor = featurePropertyType.newCursor();
-                    if (xmlCursor.toChild(new QName("http://www.opengis.net/samplingSpatial/2.0",
-                                                    "SF_SpatialSamplingFeature"))) {
-                        SFSamplingFeatureDocument samplingFeature = SFSamplingFeatureDocument.Factory.parse(xmlCursor.getDomNode());
-                        SFSamplingFeatureType sfSamplingFeature = samplingFeature.getSFSamplingFeature();
-                        id = sfSamplingFeature.getIdentifier().getStringValue();
-                        if (sfSamplingFeature.getNameArray().length > 0) {
-                            label = sfSamplingFeature.getNameArray(0).getStringValue();
-                        }
-                        else {
-                            label = id;
-                        }
-                        point = createParsedPoint(sfSamplingFeature, referenceHelper);
-                    }
-                    else if (xmlCursor.toChild(new QName("http://www.opengis.net/waterml/2.0", "MonitoringPoint"))) {
-                        MonitoringPointDocument monitoringPointDoc = MonitoringPointDocument.Factory.parse(xmlCursor.getDomNode());
-                        MonitoringPointType monitoringPoint = monitoringPointDoc.getMonitoringPoint();
-                        id = monitoringPoint.getIdentifier().getStringValue();
-                        if (monitoringPoint.getNameArray().length > 0) {
-                            label = monitoringPoint.getNameArray(0).getStringValue();
-                        }
-                        else {
-                            label = id;
-                        }
-                        point = createParsedPoint(monitoringPoint, referenceHelper);
-                    }
-                    else {
-                        LOGGER.error("Don't find supported feature members in the GetFeatureOfInterest response");
-                    }
-                    if (point == null) {
-                        LOGGER.warn("The foi with ID {} has no valid point", id);
-                    }
-                    else {
-                        // if (metadata.getStations().size() > 10) {
-                        // break;
-                        // }
-                        // add feature
-                        Feature feature = new Feature(id, metadata.getServiceUrl());
-                        feature.setLabel(label);
-                        lookup.addFeature(feature);
-
-                        // create station if not exists
-                        Station station = metadata.getStation(id);
-                        if (station == null) {
-                            station = new Station(id, metadata.getServiceUrl());
-                            station.setLocation(point);
-                            metadata.addStation(station);
-                        }
-                    }
-                }
+                GetFeatureOfInterestParser getFoiParser = new GetFeatureOfInterestParser(opRes, metadata);
+                getFoiParser.createFeatures();
             }
             catch (TimeoutException e) {
                 LOGGER.error("Timeout occured.", e);
@@ -303,63 +229,18 @@ public class HydroMetadataHandler extends MetadataHandler {
         return timeseries;
     }
 
-    private String getAttributeOfChildren(XmlObject xmlObject, String child, String attribute) {
-        SimpleValue childObject = ((org.apache.xmlbeans.SimpleValue) xmlObject.selectChildren("http://www.opengis.net/om/2.0",
-                                                                                              child)[0].selectAttribute("http://www.w3.org/1999/xlink",
+    protected String getAttributeOfChildren(XmlObject xmlObject, String child, String attribute) {
+    	XmlObject[] children = xmlObject.selectChildren("http://www.opengis.net/om/2.0", child);
+    	if(children.length == 0) {
+    		children = xmlObject.selectChildren("http://www.opengis.net/sosgda/1.0", child);
+    	}
+        SimpleValue childObject = ((org.apache.xmlbeans.SimpleValue) children[0].selectAttribute("http://www.w3.org/1999/xlink",
                                                                                                                         attribute));
         return childObject.getStringValue();
     }
 
-    private String getLastPartOf(String phenomenonId) {
+    protected String getLastPartOf(String phenomenonId) {
         return phenomenonId.substring(phenomenonId.lastIndexOf("/") + 1);
-    }
-
-    private Point createParsedPoint(XmlObject feature, CRSUtils referenceHelper) throws XmlException {
-        XmlCursor cursor = feature.newCursor();
-        if (cursor.toChild(new QName("http://www.opengis.net/samplingSpatial/2.0", "shape"))) {
-            ShapeDocument shapeDoc = ShapeDocument.Factory.parse(cursor.getDomNode());
-            AbstractGeometryType abstractGeometry = shapeDoc.getShape().getAbstractGeometry();
-            if (abstractGeometry instanceof PointTypeImpl) {
-                PointTypeImpl pointDoc = (PointTypeImpl) abstractGeometry;
-                DirectPositionType pos = pointDoc.getPos();
-                String srsName = pos.getSrsName();
-                String[] lonLat = pos.getStringValue().split(" ");
-                if (lonLat[0].isEmpty()) {
-                    return null;
-                }
-
-                Double lon = Double.parseDouble(lonLat[0]);
-                Double lat = Double.parseDouble(lonLat[1]);
-                Double alt = Double.NaN;
-                if (lonLat.length == 3) {
-                    alt = Double.parseDouble(lonLat[2]);
-                }
-                try {
-                    String srs = referenceHelper.extractSRSCode(srsName);
-                    Point point = referenceHelper.createPoint(lon, lat, alt, srs);
-                    return referenceHelper.transformOuterToInner(point, srs);
-                }
-                catch (FactoryException e) {
-                    LOGGER.warn("Could not create intern CRS.", e);
-                }
-                catch (TransformException e) {
-                    LOGGER.warn("Could not transform to intern CRS.", e);
-                }
-            }
-        }
-        return null;
-    }
-
-    private GetFeatureOfInterestResponseDocument getFOIResponseOfOpResult(OperationResult opRes) throws XmlException,
-            IOException,
-            OXFException {
-        XmlObject foiResponse = XmlObject.Factory.parse(opRes.getIncomingResultAsStream());
-        if (foiResponse instanceof GetFeatureOfInterestResponseDocument) {
-            return (GetFeatureOfInterestResponseDocument) foiResponse;
-        }
-        else {
-            throw new OXFException("No valid GetFeatureOfInterestREsponse");
-        }
     }
 
     private Callable<OperationResult> createGetFoiAccess(String sosUrl, String sosVersion, String procedureID) throws OXFException {

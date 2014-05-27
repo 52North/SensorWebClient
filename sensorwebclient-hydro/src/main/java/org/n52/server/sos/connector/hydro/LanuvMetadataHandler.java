@@ -36,42 +36,29 @@ import static org.n52.server.sos.connector.hydro.SOSwithSoapAdapter.GET_DATA_AVA
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeoutException;
 
-import javax.xml.namespace.QName;
-
-import net.opengis.gml.x32.AbstractGeometryType;
-import net.opengis.gml.x32.DirectPositionType;
-import net.opengis.gml.x32.FeaturePropertyType;
-import net.opengis.gml.x32.impl.PointTypeImpl;
-import net.opengis.sampling.x20.SFSamplingFeatureDocument;
-import net.opengis.sampling.x20.SFSamplingFeatureType;
-import net.opengis.samplingSpatial.x20.ShapeDocument;
-import net.opengis.sos.x20.GetFeatureOfInterestResponseDocument;
-import net.opengis.waterml.x20.MonitoringPointDocument;
-import net.opengis.waterml.x20.MonitoringPointType;
-
-import org.apache.xmlbeans.SimpleValue;
-import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.io.crs.CRSUtils;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
+import org.n52.oxf.ows.capabilities.Contents;
 import org.n52.oxf.ows.capabilities.Operation;
+import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.server.da.AccessorThreadPool;
-import org.n52.server.da.MetadataHandler;
 import org.n52.server.da.oxf.OperationAccessor;
-import org.n52.server.parser.ConnectorUtils;
-import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.server.parser.GetFeatureOfInterestParser;
 import org.n52.shared.serializable.pojos.sos.Category;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
@@ -82,49 +69,27 @@ import org.n52.shared.serializable.pojos.sos.SosService;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.operation.TransformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.vividsolutions.jts.geom.Point;
 
 public class LanuvMetadataHandler extends HydroMetadataHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LanuvMetadataHandler.class);
+    
+    private Map<String, List<String>> procOff = new HashMap<String, List<String>>();
 
     public LanuvMetadataHandler(SOSMetadata metadata) {
         super(metadata);
     }
 
-    @Override
-    public SOSMetadata performMetadataCompletion() throws Exception {
-        SOSMetadata metadata = initMetadata();
-        // get a waterml specific responseFormat if set
-        String responseFormat = ConnectorUtils.getResponseFormat(getServiceDescriptor(), "waterml");
-        if (responseFormat != null) {
-            metadata.setOmVersion(responseFormat);
-        }
-        collectTimeseries(metadata);
-        return metadata;
-    }
-
-    @Override
-    public SOSMetadata updateMetadata(SOSMetadata metadata) throws Exception {
-        SOSMetadata newMetadata = metadata.clone();
-        initMetadata();
-        collectTimeseries(newMetadata);
-        return newMetadata;
-    }
-
-    private void collectTimeseries(SOSMetadata metadata) throws OXFException,
+    protected void collectTimeseries(SOSMetadata metadata) throws OXFException,
             InterruptedException,
             ExecutionException,
             TimeoutException,
             XmlException,
             IOException {
 
-        Collection<SosTimeseries> observingTimeseries = createObservingTimeseries(metadata.getServiceUrl());
+        Collection<SosTimeseries> observingTimeseries = createObservingTimeseries(metadata);
 
         Map<String, FutureTask<OperationResult>> getDataAvailabilityTasks = new HashMap<String, FutureTask<OperationResult>>();
         Map<String, FutureTask<OperationResult>> getFoiAccessTasks = new HashMap<String, FutureTask<OperationResult>>();
@@ -163,6 +128,67 @@ public class LanuvMetadataHandler extends HydroMetadataHandler {
         infoLogServiceSummary(metadata);
         metadata.setHasDonePositionRequest(true);
     }
+    
+    protected Collection<SosTimeseries> createObservingTimeseries(SOSMetadata metadata)
+    		throws OXFException {
+    	Contents contents = getServiceDescriptor().getContents();
+    	Collection<SosTimeseries> allObservedTimeseries = new ArrayList<SosTimeseries>();
+    	
+    	Set<String> phenomena = new HashSet<String>();
+    	Set<String> offerings = new HashSet<String>();
+    	Set<String> procedures = new HashSet<String>();
+    	Set<String> features = new HashSet<String>();
+    	
+        LOGGER.info("# of offering entries: " + contents.getDataIdentificationCount());
+		for (int i = 0; i < contents.getDataIdentificationCount(); i++) {
+			if (i % 100 == 0) {
+        		LOGGER.info("loop in offering entries: " + i);
+        	}
+			ObservationOffering offering = (ObservationOffering) contents.getDataIdentification(i);
+			String offeringID = offering.getIdentifier();
+			String[] phenomenonIDs = offering.getObservedProperties();
+			String[] procedureIDs = offering.getProcedures();
+			String[] featuresIDs = offering.getFeatureOfInterest();
+			phenomena.addAll(Arrays.asList(phenomenonIDs));
+			offerings.add(offeringID);
+			procedures.addAll(Arrays.asList(procedureIDs));
+			features.addAll(Arrays.asList(featuresIDs));
+			for (String procedureID : procedureIDs) {
+				if (procOff.containsKey(procedureID)) {
+					procOff.get(procedureID).add(offeringID);
+				} else {
+					ArrayList<String> offIds = new ArrayList<String>();
+					offIds.add(offeringID);
+					procOff.put(procedureID, offIds);
+				}
+			}
+		}
+    	
+		LOGGER.info("create possible time series by observed property");
+    	for (String phenomenon : phenomena) {
+    		SosTimeseries timeseries = new SosTimeseries();
+            timeseries.setPhenomenon(new Phenomenon(phenomenon, metadata.getServiceUrl()));
+            timeseries.setSosService(new SosService(metadata.getServiceUrl(), metadata.getVersion()));
+            timeseries.getSosService().setLabel(metadata.getTitle());
+            allObservedTimeseries.add(timeseries);
+		}
+    	
+    	LOGGER.info("create lookup table");
+    	TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
+    	for (String feature : features) {
+			lookup.addFeature(new Feature(feature, metadata.getServiceUrl()));
+		}
+    	for (String phenomenon : phenomena) {
+			lookup.addPhenomenon(new Phenomenon(phenomenon, metadata.getServiceUrl()));
+		}
+    	for (String procedure : procedures) {
+			lookup.addProcedure(new Procedure(procedure, metadata.getServiceUrl()));
+		}
+    	for (String offering : offerings) {
+			lookup.addOffering(new Offering(offering, metadata.getServiceUrl()));
+		}
+    	return allObservedTimeseries;
+    }
 
     private Collection<SosTimeseries> executeGDATasks(Map<String, FutureTask<OperationResult>> getDataAvailabilityTasks,
                                                       SOSMetadata metadata, Collection<SosTimeseries> observingTimeseries) throws InterruptedException,
@@ -178,12 +204,18 @@ public class LanuvMetadataHandler extends HydroMetadataHandler {
                          counter--);
             FutureTask<OperationResult> futureTask = getDataAvailabilityTasks.get(phenomenon);
             AccessorThreadPool.execute(futureTask);
-            OperationResult result = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
+            OperationResult result = null;
+			try {
+				result = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
+			} catch (Exception e) {
+				LOGGER.error("Get no result for GetDataAvailability with parameter constellation: " + phenomenon + "!");
+			}
             if (result == null) {
                 LOGGER.error("Get no result for GetDataAvailability with parameter constellation: " + phenomenon + "!");
+            } else {
+            	XmlObject result_xb = XmlObject.Factory.parse(result.getIncomingResultAsStream());
+                timeseries.addAll(getAvailableTimeseries(result_xb, phenomenon, metadata, observingTimeseries));
             }
-            XmlObject result_xb = XmlObject.Factory.parse(result.getIncomingResultAsStream());
-            timeseries.addAll(getAvailableTimeseries(result_xb, phenomenon, metadata, observingTimeseries));
         }
         return timeseries;
     }
@@ -194,74 +226,16 @@ public class LanuvMetadataHandler extends HydroMetadataHandler {
             IOException,
             OXFException {
         int counter;
-        TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
         counter = getFoiAccessTasks.size();
-        CRSUtils referenceHelper = createReferencingHelper();
         LOGGER.debug("Sending {} GetFeatureOfInterest requests", counter);
         for (String phenomenonID : getFoiAccessTasks.keySet()) {
             LOGGER.debug("Sending #{} GetFeatureOfInterest request for procedure '{}'", counter--, phenomenonID);
             FutureTask<OperationResult> futureTask = getFoiAccessTasks.get(phenomenonID);
             AccessorThreadPool.execute(futureTask);
             try {
-                OperationResult opRes = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
-                if (opRes == null) {
-                    LOGGER.error("Get no result for GetFeatureOfInterest with procedure: " + phenomenonID + "!");
-                }
-                GetFeatureOfInterestResponseDocument foiResDoc = getFOIResponseOfOpResult(opRes);
-                String id = null;
-                String label = null;
-                for (FeaturePropertyType featurePropertyType : foiResDoc.getGetFeatureOfInterestResponse().getFeatureMemberArray()) {
-                    Point point = null;
-                    XmlCursor xmlCursor = featurePropertyType.newCursor();
-                    if (xmlCursor.toChild(new QName("http://www.opengis.net/samplingSpatial/2.0",
-                                                    "SF_SpatialSamplingFeature"))) {
-                        SFSamplingFeatureDocument samplingFeature = SFSamplingFeatureDocument.Factory.parse(xmlCursor.getDomNode());
-                        SFSamplingFeatureType sfSamplingFeature = samplingFeature.getSFSamplingFeature();
-                        id = sfSamplingFeature.getIdentifier().getStringValue();
-                        if (sfSamplingFeature.getNameArray().length > 0) {
-                            label = sfSamplingFeature.getNameArray(0).getStringValue();
-                        }
-                        else {
-                            label = id;
-                        }
-                        point = createParsedPoint(sfSamplingFeature, referenceHelper);
-                    }
-                    else if (xmlCursor.toChild(new QName("http://www.opengis.net/waterml/2.0", "MonitoringPoint"))) {
-                        MonitoringPointDocument monitoringPointDoc = MonitoringPointDocument.Factory.parse(xmlCursor.getDomNode());
-                        MonitoringPointType monitoringPoint = monitoringPointDoc.getMonitoringPoint();
-                        id = monitoringPoint.getIdentifier().getStringValue();
-                        if (monitoringPoint.getNameArray().length > 0) {
-                            label = monitoringPoint.getNameArray(0).getStringValue();
-                        }
-                        else {
-                            label = id;
-                        }
-                        point = createParsedPoint(monitoringPoint, referenceHelper);
-                    }
-                    else {
-                        LOGGER.error("Don't find supported feature members in the GetFeatureOfInterest response");
-                    }
-                    if (point == null) {
-                        LOGGER.warn("The foi with ID {} has no valid point", id);
-                    }
-                    else {
-                        // if (metadata.getStations().size() > 10) {
-                        // break;
-                        // }
-                        // add feature
-                        Feature feature = new Feature(id, metadata.getServiceUrl());
-                        feature.setLabel(label);
-                        lookup.addFeature(feature);
-
-                        // create station if not exists
-                        Station station = metadata.getStation(id);
-                        if (station == null) {
-                            station = new Station(id, metadata.getServiceUrl());
-                            station.setLocation(point);
-                            metadata.addStation(station);
-                        }
-                    }
-                }
+                OperationResult opsRes = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
+                GetFeatureOfInterestParser getFoiParser = new GetFeatureOfInterestParser(opsRes, metadata);
+                getFoiParser.createFeatures();
             }
             catch (TimeoutException e) {
                 LOGGER.error("Timeout occured.", e);
@@ -274,86 +248,38 @@ public class LanuvMetadataHandler extends HydroMetadataHandler {
                                                              SOSMetadata metadata,
                                                              Collection<SosTimeseries> observingTimeseries) throws XmlException, IOException {
         ArrayList<SosTimeseries> timeseries = new ArrayList<SosTimeseries>();
-        String queryExpression = "declare namespace sos='http://www.opengis.net/sos/2.0'; $this/sos:GetDataAvailabilityResponse/sos:dataAvailabilityMember";
-        XmlObject[] response = result_xb.selectPath(queryExpression);
+        String sosExpression = "declare namespace sos='http://www.opengis.net/sos/2.0'; $this/sos:GetDataAvailabilityResponse/sos:dataAvailabilityMember";
+        XmlObject[] response = result_xb.selectPath(sosExpression);
+        if (response.length == 0) {
+        	String gdaExpression = "declare namespace gda='http://www.opengis.net/sosgda/1.0'; $this/gda:GetDataAvailabilityResponse/gda:dataAvailabilityMember";
+        	response = result_xb.selectPath(gdaExpression);
+		}
         for (XmlObject xmlObject : response) {
-            String feature = getAttributeOfChildren(xmlObject, "featureOfInterest", "href");
-            String procedure = getAttributeOfChildren(xmlObject, "procedure", "href");
+            String feature = getAttributeOfChildren(xmlObject, "featureOfInterest", "href").trim();
+            String procedure = getAttributeOfChildren(xmlObject, "procedure", "href").trim();
             for (SosTimeseries obsTimeseries : observingTimeseries) {
-				if (obsTimeseries.getPhenomenonId().equals(phenomenon) && obsTimeseries.getProcedureId().equals(procedure)) {
-					SosTimeseries addedtimeserie = new SosTimeseries();
-					addedtimeserie.setFeature(new Feature(feature, metadata.getServiceUrl()));
-		            addedtimeserie.setPhenomenon(new Phenomenon(phenomenon, metadata.getServiceUrl()));
-		            addedtimeserie.setProcedure(new Procedure(procedure, metadata.getServiceUrl()));
-		            // create the category for every parameter constellation out of phenomenon and procedure
-		            String category = getLastPartOf(phenomenon) + " (" + getLastPartOf(procedure) + ")";
-		            addedtimeserie.setCategory(new Category(category, metadata.getServiceUrl()));
-		            addedtimeserie.setSosService(new SosService(metadata.getServiceUrl(), metadata.getVersion()));
-		            addedtimeserie.getSosService().setLabel(metadata.getTitle());
-					timeseries.add(addedtimeserie);
+				if (obsTimeseries.getPhenomenonId().equals(phenomenon)) {
+					if (procOff.containsKey(procedure)) {
+						for (String offering : procOff.get(procedure)) {
+							SosTimeseries addedtimeserie = new SosTimeseries();
+							addedtimeserie.setFeature(new Feature(feature, metadata.getServiceUrl()));
+				            addedtimeserie.setPhenomenon(new Phenomenon(phenomenon, metadata.getServiceUrl()));
+				            addedtimeserie.setProcedure(new Procedure(procedure, metadata.getServiceUrl()));
+				            addedtimeserie.setOffering(new Offering(offering, metadata.getServiceUrl()));
+				            // create the category for every parameter constellation out of phenomenon and procedure
+				            String category = getLastPartOf(phenomenon) + " (" + getLastPartOf(procedure) + ")";
+				            addedtimeserie.setCategory(new Category(category, metadata.getServiceUrl()));
+				            addedtimeserie.setSosService(new SosService(metadata.getServiceUrl(), metadata.getVersion()));
+				            addedtimeserie.getSosService().setLabel(metadata.getTitle());
+							timeseries.add(addedtimeserie);
+						}
+					} else {
+						LOGGER.warn("Procedure " + procedure + " doesn't exist in capabilities document");
+					}
 				}
 			}
         }
         return timeseries;
-    }
-
-    private String getAttributeOfChildren(XmlObject xmlObject, String child, String attribute) {
-        SimpleValue childObject = ((org.apache.xmlbeans.SimpleValue) xmlObject.selectChildren("http://www.opengis.net/om/2.0",
-                                                                                              child)[0].selectAttribute("http://www.w3.org/1999/xlink",
-                                                                                                                        attribute));
-        return childObject.getStringValue();
-    }
-
-    private String getLastPartOf(String phenomenonId) {
-        return phenomenonId.substring(phenomenonId.lastIndexOf("/") + 1);
-    }
-
-    private Point createParsedPoint(XmlObject feature, CRSUtils referenceHelper) throws XmlException {
-        XmlCursor cursor = feature.newCursor();
-        if (cursor.toChild(new QName("http://www.opengis.net/samplingSpatial/2.0", "shape"))) {
-            ShapeDocument shapeDoc = ShapeDocument.Factory.parse(cursor.getDomNode());
-            AbstractGeometryType abstractGeometry = shapeDoc.getShape().getAbstractGeometry();
-            if (abstractGeometry instanceof PointTypeImpl) {
-                PointTypeImpl pointDoc = (PointTypeImpl) abstractGeometry;
-                DirectPositionType pos = pointDoc.getPos();
-                String srsName = pos.getSrsName();
-                String[] lonLat = pos.getStringValue().split(" ");
-                if (lonLat[0].isEmpty()) {
-                    return null;
-                }
-
-                Double lon = Double.parseDouble(lonLat[0]);
-                Double lat = Double.parseDouble(lonLat[1]);
-                Double alt = Double.NaN;
-                if (lonLat.length == 3) {
-                    alt = Double.parseDouble(lonLat[2]);
-                }
-                try {
-                    String srs = referenceHelper.extractSRSCode(srsName);
-                    Point point = referenceHelper.createPoint(lon, lat, alt, srs);
-                    return referenceHelper.transformOuterToInner(point, srs);
-                }
-                catch (FactoryException e) {
-                    LOGGER.warn("Could not create intern CRS.", e);
-                }
-                catch (TransformException e) {
-                    LOGGER.warn("Could not transform to intern CRS.", e);
-                }
-            }
-        }
-        return null;
-    }
-
-    private GetFeatureOfInterestResponseDocument getFOIResponseOfOpResult(OperationResult opRes) throws XmlException,
-            IOException,
-            OXFException {
-        XmlObject foiResponse = XmlObject.Factory.parse(opRes.getIncomingResultAsStream());
-        if (foiResponse instanceof GetFeatureOfInterestResponseDocument) {
-            return (GetFeatureOfInterestResponseDocument) foiResponse;
-        }
-        else {
-            throw new OXFException("No valid GetFeatureOfInterestREsponse");
-        }
     }
 
     private Callable<OperationResult> createGetFoiAccess(String sosUrl, String sosVersion, String phenomenonID) throws OXFException {
