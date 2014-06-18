@@ -47,6 +47,7 @@ public class ProcedureConverter extends OutputConverter<Procedure, ProcedureOutp
     @Override
     public ProcedureOutput convertCondensed(Procedure procedure) {
         ProcedureOutput convertedProcedure = new ProcedureOutput();
+        convertedProcedure.setDomainId(procedure.getProcedureId());
         convertedProcedure.setId(procedure.getGlobalId());
         convertedProcedure.setLabel(procedure.getLabel());
         return convertedProcedure;
