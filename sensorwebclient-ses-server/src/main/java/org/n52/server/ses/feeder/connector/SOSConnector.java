@@ -59,6 +59,7 @@ import org.n52.oxf.valueDomains.time.TimeFactory;
 import org.n52.server.da.oxf.ObservationAccessor;
 import org.n52.server.io.RequestConfig;
 import org.n52.server.mgmt.ConfigurationContext;
+import org.n52.server.parser.DescribeSensorParser;
 import org.n52.server.util.SosAdapterFactory;
 import org.n52.shared.serializable.pojos.TimeseriesFeed;
 import org.n52.shared.serializable.pojos.TimeseriesMetadata;
@@ -83,7 +84,7 @@ public class SOSConnector {
 
     /**
      * Instantiates a new SOSConnector.
-     * 
+     *
      * @param sosURL
      *        The url to send request to the SOS
      */
@@ -100,7 +101,7 @@ public class SOSConnector {
 
     /**
      * Initialize the connection to the SOS.
-     * 
+     *
      * @return true - if service is running
      */
     public boolean initSosConnection() {
@@ -131,7 +132,7 @@ public class SOSConnector {
 
     /**
      * Gets the offerings.
-     * 
+     *
      * @return A List of observation offerings for this SOS
      */
     public List<ObservationOffering> getOfferings() {
@@ -148,7 +149,7 @@ public class SOSConnector {
      * <br>
      * For the usage in SES context, all special characters (e.g. &auml;, &uuml;,...) have to be replaced
      * (e.g. by ae, ue, ...).
-     * 
+     *
      * @param timeseriesMetadata
      *        The given timeseries metadata.
      * @return the sensor description response as SensorML 1.0.1
@@ -159,6 +160,7 @@ public class SOSConnector {
             String procedure = timeseriesMetadata.getProcedure();
             SOSMetadata serviceMetadata = ConfigurationContext.getSOSMetadata(serviceUrl);
             XmlObject sml = getSensorDescriptionAsSensorML(procedure, serviceMetadata);
+            sml = DescribeSensorParser.unwrapSensorMLFrom(sml);
             return (SensorMLDocument) replaceSpecialCharacters(sml);
         }
         catch (Exception e) {
@@ -195,7 +197,7 @@ public class SOSConnector {
                 ExceptionReportDocument exRepDoc = (ExceptionReportDocument) response;
                 ExceptionType[] exceptionArray = exRepDoc.getExceptionReport().getExceptionArray();
                 throw new Exception(exceptionArray[0].getExceptionTextArray(0));
-            } 
+            }
             else if (response instanceof ObservationCollectionDocument) {
                 return (ObservationCollectionDocument) response;
             }
@@ -205,10 +207,10 @@ public class SOSConnector {
         emptyCollection.addNewObservationCollection(); // adds an empty member array
         return emptyCollection;
     }
-    
+
     /**
      * Replace special characters.
-     * 
+     *
      * @param xmlObject
      *        the xml object
      * @return the xml object
@@ -235,7 +237,7 @@ public class SOSConnector {
 
     /**
      * Gets the desc.
-     * 
+     *
      * @return the desc
      */
     public ServiceDescriptor getDesc() {

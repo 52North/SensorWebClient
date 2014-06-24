@@ -27,13 +27,13 @@
  */
 package org.n52.server.parser;
 
+import com.vividsolutions.jts.geom.Point;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import net.opengis.sensorML.x101.AbstractComponentType;
 import net.opengis.sensorML.x101.AbstractProcessType;
 import net.opengis.sensorML.x101.CapabilitiesDocument.Capabilities;
@@ -61,6 +61,7 @@ import net.opengis.swe.x101.VectorType.Coordinate;
 import net.opengis.swes.x20.DescribeSensorResponseDocument;
 import net.opengis.swes.x20.DescribeSensorResponseType;
 import net.opengis.swes.x20.DescribeSensorResponseType.Description;
+import net.opengis.swes.x20.SensorDescriptionType;
 import net.opengis.swes.x20.SensorDescriptionType.Data;
 
 import org.apache.xmlbeans.SchemaType;
@@ -74,6 +75,7 @@ import org.n52.oxf.util.JavaHelper;
 import org.n52.oxf.xml.NcNameResolver;
 import org.n52.oxf.xmlbeans.parser.XMLBeansParser;
 import org.n52.oxf.xmlbeans.parser.XMLHandlingException;
+import org.n52.oxf.xmlbeans.tools.SoapUtil;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.server.util.SensorMLToHtml;
 import org.n52.shared.MD5HashGenerator;
@@ -84,8 +86,6 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.vividsolutions.jts.geom.Point;
 
 public class DescribeSensorParser {
 
@@ -98,7 +98,7 @@ public class DescribeSensorParser {
     /**
      * Creates a SensorML Parser considering individual service settings contained by the {@link SOSMetadata},
      * e.g. if coordinate axes ordering shall be considered strict or classic XY ordering shall be used.
-     * 
+     *
      * @param inputStream
      *        the SensorML data stream to parse.
      * @param metadata
@@ -192,13 +192,13 @@ public class DescribeSensorParser {
 
     protected Point createPoint(final PositionType position) throws FactoryException, TransformException {
         double x = 0d;
-        double y = 0d; 
+        double y = 0d;
         double z = Double.NaN;
 
         final String outerReferenceFrame = position.getReferenceFrame();
         final String srs = referenceHelper.extractSRSCode(outerReferenceFrame);
-        
-        
+
+
         final VectorPropertyType location = position.getLocation();
         final net.opengis.swe.x101.VectorType.Coordinate[] coords = location.getVector().getCoordinateArray();
         for (final Coordinate coord : coords) {
@@ -301,8 +301,8 @@ public class DescribeSensorParser {
 	private boolean isPhenomenonIdMatchingQuantityDefinition(
 			final String phenomenonID,
 			final IoComponentPropertyType output){
-		return output.isSetQuantity() && 
-				output.getQuantity().isSetDefinition() && 
+		return output.isSetQuantity() &&
+				output.getQuantity().isSetDefinition() &&
 				output.getQuantity().getDefinition().equals(phenomenonID);
 	}
 
@@ -342,7 +342,7 @@ public class DescribeSensorParser {
         return sensorMLFile;
     }
 
-    
+
     public HashMap<String, ReferenceValue> parseReferenceValues() {
         final Capabilities[] capabilities = getSensorMLCapabilities(smlDoc.getSensorML());
         final HashMap<String, ReferenceValue> map = new HashMap<String, ReferenceValue>();
@@ -390,7 +390,7 @@ public class DescribeSensorParser {
 
     /**
      * Checks for 'definition's known to declare not reference values. All definitions
-     * 
+     *
      * @param definition
      * @return
      */
@@ -578,48 +578,53 @@ public class DescribeSensorParser {
 		return output.isSetCategory() && output.getCategory().isSetDefinition();
 	}
 
-    protected void setDataStreamToParse(final InputStream incomingResultAsStream) throws XmlException,
+    protected void setDataStreamToParse(InputStream incomingResultAsStream) throws XmlException,
             IOException,
             XMLHandlingException {
-        final XmlObject xmlObject = XmlObject.Factory.parse(incomingResultAsStream);
-        if (xmlObject instanceof SensorMLDocument) {
-            smlDoc = (SensorMLDocument) xmlObject;
+        XmlObject xmlObject = XmlObject.Factory.parse(incomingResultAsStream);
+        smlDoc = unwrapSensorMLFrom(xmlObject);
+    }
+
+    public static SensorMLDocument unwrapSensorMLFrom(XmlObject xmlObject) throws XmlException, XMLHandlingException, IOException {
+        if (SoapUtil.isSoapEnvelope(xmlObject)) {
+            xmlObject = SoapUtil.stripSoapEnvelope(xmlObject);
         }
-        else if (xmlObject instanceof DescribeSensorResponseDocument) {
-            final DescribeSensorResponseDocument responseDoc = (DescribeSensorResponseDocument) xmlObject;
-            final DescribeSensorResponseType response = responseDoc.getDescribeSensorResponse();
-            final Description[] descriptionArray = response.getDescriptionArray();
+        if (xmlObject instanceof SensorMLDocument) {
+            return (SensorMLDocument) xmlObject;
+        }
+        if (xmlObject instanceof DescribeSensorResponseDocument) {
+            DescribeSensorResponseDocument responseDoc = (DescribeSensorResponseDocument) xmlObject;
+            DescribeSensorResponseType response = responseDoc.getDescribeSensorResponse();
+            DescribeSensorResponseType.Description[] descriptionArray = response.getDescriptionArray();
             if (descriptionArray.length == 0) {
                 LOGGER.warn("No SensorDescription available in response!");
             }
             else {
-                for (final Description description : descriptionArray) {
-                    final Data dataDescription = description.getSensorDescription().getData();
-                    final String namespace = "declare namespace gml='http://www.opengis.net/gml'; ";
-                    for (final XmlObject xml : dataDescription.selectPath(namespace + "$this//*/@gml:id")) {
-                        final XmlCursor cursor = xml.newCursor();
-                        final String gmlId = cursor.getTextValue();
+                for (DescribeSensorResponseType.Description description : descriptionArray) {
+                    SensorDescriptionType.Data dataDescription = description.getSensorDescription().getData();
+                    String namespace = "declare namespace gml='http://www.opengis.net/gml'; ";
+                    for (XmlObject xml : dataDescription.selectPath(namespace + "$this//*/@gml:id")) {
+                        XmlCursor cursor = xml.newCursor();
+                        String gmlId = cursor.getTextValue();
                         if ( !NcNameResolver.isNCName(gmlId)) {
                             cursor.setTextValue(NcNameResolver.fixNcName(gmlId));
                         }
                     }
-                    final XmlObject object = XmlObject.Factory.parse(dataDescription.xmlText());
+                    XmlObject object = XmlObject.Factory.parse(dataDescription.xmlText());
                     if (object instanceof SystemDocumentImpl) {
-                        smlDoc = SensorMLDocument.Factory.newInstance();
-                        final Member member = smlDoc.addNewSensorML().addNewMember();
+                        SensorMLDocument smlDoc = SensorMLDocument.Factory.newInstance();
+                        SensorMLDocument.SensorML.Member member = smlDoc.addNewSensorML().addNewMember();
                         member.set(XMLBeansParser.parse(object.newInputStream()));
-                    }
-                    else {
-                        smlDoc = SensorMLDocument.Factory.parse(dataDescription.newInputStream());
+                        return smlDoc;
                     }
 
-                    break;
+                    return SensorMLDocument.Factory.parse(dataDescription.newInputStream());
                 }
             }
-        } else {
-            final String xmlText = xmlObject == null ? null : xmlObject.xmlText();
-            throw new IllegalArgumentException("Illegal sensor description: " + xmlText);
         }
+
+        LOGGER.warn("Failed to unwrap SensorML from '{}'. Return an empty description.", xmlObject.xmlText());
+        return SensorMLDocument.Factory.newInstance();
     }
 
     public void setReferencingHelper(final CRSUtils refHelper) {
