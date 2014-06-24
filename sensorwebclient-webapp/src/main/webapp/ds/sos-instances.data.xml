@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- TODO create a client login for admins (RESTful?) to configure file via 
+<!-- TODO create a client login for admins (RESTful?) to configure file via
 	web interface -->
 <!-- Some of these properties are not implemented yet! -->
 <instances>
-    
+
     <instance>
         <itemName>PEGELONLINE</itemName>
         <url>http://pegelonline.wsv.de/webservices/gis/gdi-sos</url>
@@ -19,6 +19,7 @@
         <urEasting>16</urEasting>
         <urNorthing>56.0</urNorthing>
         <defaultZoom>13</defaultZoom>
+        <enableEventing>true</enableEventing>
     </instance>
 
 
@@ -89,7 +90,7 @@
         <requestChunk>200</requestChunk>
         <autoZoom>true</autoZoom>
     </instance>
-    
+
 	<instance>
 		<itemName>GRDC (Kisters SOS)</itemName>
 		<url>http://kiwis.kisters.de/KiWIS/KiWIS?datasource=3</url>
@@ -106,7 +107,7 @@
 		<autoZoom>true</autoZoom>
 		<protectedService>false</protectedService>
 	</instance>
-	
+
 	<instance>
 		<itemName>GRDC-SOS_GEOWOW</itemName>
 		<url>http://geowow.dev.52north.org/52n-sos-grdc-webapp/sos/soap</url>
@@ -124,7 +125,7 @@
 		<autoZoom>true</autoZoom>
 		<protectedService>true</protectedService>
 	</instance>
-	
+
 	<!--
 	<instance>
         <itemName>ECMWF-SOS</itemName>
@@ -143,8 +144,8 @@
         <protectedService>true</protectedService>
     </instance>
     -->
-	
-	
+
+
     <instance>
         <itemName>Air Quality Belgium</itemName>
         <url>http://sos.irceline.be/sos</url>
@@ -161,8 +162,8 @@
         <urNorthing>51.6</urNorthing>
         <defaultZoom>11</defaultZoom>
     </instance>
-    
-    <!-- 
+
+    <!--
     <instance>
         <itemName>EEA-SOS</itemName>
         <url>http://ags.dev.52north.org:6080/arcgis/rest/services/EEA/AirQualitySos/MapServer/exts/52nArcGisSos/</url>
@@ -201,8 +202,8 @@
         <protectedService>true</protectedService>
     </instance>
     -->
-	
-<!-- 
+
+<!--
 	<instance>
 		<itemName>BfG SOS</itemName>
 		<url>http://geoportal.bafg.de/wiski-sos/sos</url>
@@ -220,7 +221,7 @@
 		<defaultZoom>13</defaultZoom>
 	</instance>
  -->
- 
+
     <instance>
         <itemName>SOS-Q</itemName>
         <url>http://geoviqua.dev.52north.org/SOS-Q/sos/pox</url>
@@ -237,12 +238,12 @@
         <urNorthing>56.0</urNorthing>
         <defaultZoom>13</defaultZoom>
     </instance>
-	
-<!-- 
+
+<!--
 
 	CURRENTLY NOT SUPPORTED (not yet supported or not supported anymore)
-	
-	
+
+
     <instance>
         <itemName>Ozon (envirocloud.de)</itemName>
         <url>http://www.envirocloud.se/Ozon/api/sos/soap</url>
@@ -260,7 +261,7 @@
         <autoZoom>true</autoZoom>
         <protectedService>true</protectedService>
     </instance>
-	
+
     <instance>
         <itemName>Syke_Snow</itemName>
         <url>http://paikkatieto.ymparisto.fi/arcgis/rest/services/InSitu/SYKE_SnowCoursesInSitu/MapServer/exts/SOSExtension/</url>
@@ -275,8 +276,8 @@
         <urNorthing>70.0</urNorthing>
         <defaultZoom>13</defaultZoom>
         <requestChunk>500</requestChunk>
-    </instance> 
-	
+    </instance>
+
 	<instance>
 		<itemName>AQE 2.0</itemName>
 		<url>http://giv-uw.uni-muenster.de:8080/AQE/sos</url>
@@ -293,6 +294,6 @@
 		<requestChunk>200</requestChunk>
 		<autoZoom>true</autoZoom>
 	</instance>
-	
+
 -->
 </instances>
