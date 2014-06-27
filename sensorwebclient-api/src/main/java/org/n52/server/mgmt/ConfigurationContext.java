@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -59,9 +59,9 @@ public class ConfigurationContext implements ServletContextAware {
 
     @Autowired
     private ServletContext servletContext;
-    
-    
-    
+
+
+
 
     private static Map<String, SOSMetadata> serviceMetadatas = Collections.synchronizedMap(new HashMap<String, SOSMetadata>());
 
@@ -102,16 +102,15 @@ public class ConfigurationContext implements ServletContextAware {
     public static int TOOLTIP_MIN_COUNT = 50;
 
     public static List<String> NO_DATA_VALUES;
-    
+
     public ConfigurationContext() {
         LOGGER.debug("Create ConfigurationContext ...");
     }
-    
+
     @Override
     public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
     }
-    
 
     void init() {
         LOGGER.debug("Initialize ConfigurationContext ...");
@@ -166,7 +165,7 @@ public class ConfigurationContext implements ServletContextAware {
     /**
      * Gets the value of the passed in parameter which is considered to be mandatory. If a parameter is
      * missing an exception is being thrown. If the parameter was found but empty a WARN message is logged.
-     * 
+     *
      * @param parameter
      *        the name of the parameter
      * @return the resolved parameter value
@@ -189,7 +188,7 @@ public class ConfigurationContext implements ServletContextAware {
      * Gets the value of the passed in parameter which is considered to be optional. Logs an INFO message if
      * parameter was not set, i.e. that a default value is being used instead. Logs a WARN message if
      * parameter is empty.
-     * 
+     *
      * @param parameter
      *        an optional parameter value.
      * @return the parameter value or <code>null</code> if parameter was not defined.
@@ -226,9 +225,9 @@ public class ConfigurationContext implements ServletContextAware {
         return values;
     }
 
-    
-    
-    
+
+
+
 
     public synchronized static Map<String, SOSMetadata> getServiceMetadatas() {
         return serviceMetadatas;

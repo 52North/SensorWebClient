@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -57,7 +57,7 @@ import com.smartgwt.client.widgets.tab.events.TabSelectedHandler;
 
 /**
  * Representation for the DataPanel with the DiagramTab and the TableTab.
- * 
+ *
  * @author <a href="mailto:f.bache@52north.de">Felix Bache</a>
  */
 public class DataPanel extends VLayout {
@@ -140,7 +140,7 @@ public class DataPanel extends VLayout {
         Canvas c = new Canvas();
         c.setHeight(30);
         c.setAlign(Alignment.RIGHT);
-        LoadingSpinner loader = new LoadingSpinner("../img/loader_wide.gif", 43, 11);
+        LoadingSpinner loader = new LoadingSpinner("../img/mini_loader_bright.gif", 43, 11);
         loader.setPadding(2);
         requestCounter = new Label();
         requestCounter.setWidth("150px");
@@ -150,9 +150,9 @@ public class DataPanel extends VLayout {
         loaders.setHeight(30);
         loaders.addMember(loader);
         loaders.addMember(requestCounter);
-        
+
         c.addChild(loaders);
-        
+
         //this.getPanel().setTabBarControls(TabBarControls.TAB_SCROLLER, TabBarControls.TAB_PICKER, c);
 
          //panel.setHeight("*");
@@ -163,7 +163,7 @@ public class DataPanel extends VLayout {
 
         this.getPanel().setTabBarThickness(1);
 //        this.getPanel().setTop(-2);
-        
+
 //        this.getPanel().setShowTabPicker(false);
 //        this.getPanel().setShowTabScroller(false);
         this.getPanel().setTabBarPosition(Side.RIGHT);

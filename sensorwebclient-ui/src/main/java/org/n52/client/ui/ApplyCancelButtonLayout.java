@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -35,15 +35,15 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
 
 public class ApplyCancelButtonLayout extends HLayout {
-    
+
     private Canvas loadingSpinner;
-    
+
     private String applyImg = "../img/icons/acc.png";
-    
+
     private String cancelImg = "../img/icons/del.png";
-    
-    private String loaderImg = "../img/loader_wide.gif";
-    
+
+    private String loaderImg = "../img/mini_loader_bright.gif";
+
     public ApplyCancelButtonLayout() {
         loadingSpinner = createLoadingSpinner();
         addMember(loadingSpinner);
@@ -60,7 +60,7 @@ public class ApplyCancelButtonLayout extends HLayout {
         applyButton.addClickHandler(handler);
         addMember(applyButton);
     }
-    
+
     public void createCancelButton(String tooltip, String longTooltip, ClickHandler handler) {
         Canvas applyButton = createSmallButton(cancelImg, tooltip, longTooltip);
         applyButton.addClickHandler(handler);
@@ -70,11 +70,11 @@ public class ApplyCancelButtonLayout extends HLayout {
     private Canvas createSmallButton(String img, String tooltip, String longTooltip) {
         return new SmallButton(new Img(img), tooltip, longTooltip);
     }
-    
+
     public void setLoading() {
         loadingSpinner.show();
     }
-    
+
     public void finishLoading() {
         loadingSpinner.hide();
     }

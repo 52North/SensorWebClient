@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -161,7 +161,7 @@ public class SesConfig {
     
     public synchronized static void init(String realPath){
         LOGGER.debug("init");
-        SesConfig.propertiesLocation = realPath + "properties/ses-client.properties";
+        SesConfig.propertiesLocation = realPath + "/properties/ses-client.properties";
         if (!initialized) {
             try {
                 LOGGER.info("## Loading properties ##");
