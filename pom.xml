@@ -824,8 +824,7 @@
 				<gwt.compile.optimization.level>0</gwt.compile.optimization.level>
 				<gwt.compile.module>org.n52.SensorWebClient_debug</gwt.compile.module>
 				<!-- is FF27+ devmode plugin dead?! https://code.google.com/p/google-web-toolkit/issues/detail?id=8553  -->
-                <!-- <gwt.user.agent>gecko1_8</gwt.user.agent> -->
-				<gwt.user.agent>ie9</gwt.user.agent>
+                <gwt.user.agent>gecko1_8</gwt.user.agent>
 			</properties>
 		</profile>
 
@@ -980,7 +979,7 @@
 		<gwt.compile.module>org.n52.SensorWebClient</gwt.compile.module>
 
 		<dev.mode>false</dev.mode>
-		<gwt.version>2.5.1</gwt.version>
+		<gwt.version>2.6.1</gwt.version>
 		<slf4j.version>1.7.2</slf4j.version>
 		<logback.version>1.0.11</logback.version>
 		<jackson.version>2.2.2</jackson.version>
