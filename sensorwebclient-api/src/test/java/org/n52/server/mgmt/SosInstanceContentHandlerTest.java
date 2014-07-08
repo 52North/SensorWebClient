@@ -48,7 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SosInstanceContentHandlerTest {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SosInstanceContentHandlerTest.class);
 
     private static final String EEA_SOE_URL = "http://ags.dev.52north.org:6080/arcgis/rest/services/ObservationDB/MapServer/exts/SOSExtension/";
@@ -56,17 +56,17 @@ public class SosInstanceContentHandlerTest {
     private static final String PEGELONLINE_URL = "http://pegelonline.wsv.de/webservices/gis/gdi-sos";
 
     private static final String IRCELINE_URL = "http://sos.irceline.be/sos";
-    
+
     private static final String FLUGGS_URL = "http://fluggs.wupperverband.de/sos/sos";
-    
+
     private static final String DEFAULT_CONNECTOR = "org.n52.server.oxf.util.parser.DefaultMetadataHandler";
-    
+
     private static final String EEA_CONNECTOR = "org.n52.server.oxf.util.connector.eea.ArcGISSoeMetadataHandler";
-    
+
     private static final String DEFAULT_ADAPTER = "org.n52.server.oxf.util.access.oxfExtensions.SOSAdapter_OXFExtension";
-    
+
     private static final String SOS_INSTANCES_FILE = "/files/test-sos-instances.data.xml";
-    
+
     @Test
     public void testParsing() {
         try {
@@ -78,7 +78,7 @@ public class SosInstanceContentHandlerTest {
             LOGGER.error("Could not parse preconfigured sos instances.", e);
             fail(String.format("Error parsing %s", SOS_INSTANCES_FILE));
         }
-        
+
         Map<String, SOSMetadata> serviceMetadatas = ConfigurationContext.getServiceMetadatas();
         assertEquals("Unequal amount of SOS instances.", 4, ConfigurationContext.getSOSMetadatas().size());
         assertCorrectPegelOnline(serviceMetadatas.get(PEGELONLINE_URL));
@@ -95,7 +95,8 @@ public class SosInstanceContentHandlerTest {
         assertEquals(DEFAULT_ADAPTER, metadata.getAdapter());
         assertEquals(300, metadata.getRequestChunk());
         assertThat(metadata.getTimeout(), is(45000));
-        
+        assertThat(metadata.isEventing(), is(true));
+
         assertTrue(metadata.isWaterML());
         assertFalse(metadata.isAutoZoom());
         assertFalse(metadata.isForceXYAxisOrder());
@@ -117,7 +118,7 @@ public class SosInstanceContentHandlerTest {
         // TODO check bbox
         // TODO check defaultZoom
     }
-    
+
     private void assertCorrectEeaSos(SOSMetadata serviceMetadata) {
         SOSMetadata metadata = (SOSMetadata) serviceMetadata;
         assertEquals(EEA_SOE_URL, metadata.getServiceUrl());

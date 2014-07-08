@@ -79,6 +79,8 @@ public class SOSMetadata implements Serializable {
 
     private boolean waterML = false; // default
 
+    private boolean eventing = false; // default
+
     private boolean autoZoom = true; // default
 
     private boolean protectedService = false; // default
@@ -150,6 +152,7 @@ public class SOSMetadata implements Serializable {
         this.timeout = builder.getTimeout();
         this.configuredExtent = builder.getConfiguredServiceExtent();
         this.protectedService = builder.isProctectedService();
+        this.eventing = builder.isEventing();
         this.setSosMetadataHandler(builder.getSosMetadataHandler());
         this.setAdapter(builder.getAdapter());
     }
@@ -254,7 +257,7 @@ public class SOSMetadata implements Serializable {
     }
 
     public boolean canGeneralize() {
-        return this.canGeneralize;
+        return canGeneralize;
     }
 
     public void setCanGeneralize(boolean canGeneralize) {
@@ -263,6 +266,10 @@ public class SOSMetadata implements Serializable {
 
     public boolean isWaterML() {
         return waterML;
+    }
+
+    public boolean isEventing() {
+        return eventing;
     }
 
     public boolean isAutoZoom() {

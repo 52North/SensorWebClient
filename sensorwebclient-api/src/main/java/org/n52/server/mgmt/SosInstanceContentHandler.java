@@ -40,7 +40,8 @@ public class SosInstanceContentHandler extends DefaultHandler {
     private static final Logger LOG = LoggerFactory.getLogger(SosInstanceContentHandler.class);
 
     enum TagNames {
-        INSTANCE, ITEMNAME, URL, VERSION, METADATAHANDLER, ADAPTER, WATERML, TIMEOUT, LLEASTING, LLNORTHING, UREASTING, URNORTHING, DEFAULTZOOM, AUTOZOOM, REQUESTCHUNK, FORCEXYAXISORDER, PROTECTEDSERVICE, NOELEMENT, SUPPORTSFIRSTLATEST;
+
+        INSTANCE, ITEMNAME, URL, VERSION, METADATAHANDLER, ADAPTER, WATERML, TIMEOUT, LLEASTING, LLNORTHING, UREASTING, URNORTHING, DEFAULTZOOM, AUTOZOOM, REQUESTCHUNK, FORCEXYAXISORDER, PROTECTEDSERVICE, NOELEMENT, SUPPORTSFIRSTLATEST, ENABLEEVENTING;
     }
 
     private SOSMetadataBuilder currentBuilder = new SOSMetadataBuilder();
@@ -56,56 +57,41 @@ public class SosInstanceContentHandler extends DefaultHandler {
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         if (TagNames.INSTANCE.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.INSTANCE;
-        }
-        else if (TagNames.ITEMNAME.name().equalsIgnoreCase(qName)) {
+        } else if (TagNames.ITEMNAME.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.ITEMNAME;
-        }
-        else if (TagNames.DEFAULTZOOM.name().equalsIgnoreCase(qName)) {
+        } else if (TagNames.DEFAULTZOOM.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.DEFAULTZOOM;
-        }
-        else if (TagNames.AUTOZOOM.name().equalsIgnoreCase(qName)) {
+        } else if (TagNames.AUTOZOOM.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.AUTOZOOM;
-        }
-        else if (TagNames.LLEASTING.name().equalsIgnoreCase(qName)) {
+        } else if (TagNames.LLEASTING.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.LLEASTING;
-        }
-        else if (TagNames.LLNORTHING.name().equalsIgnoreCase(qName)) {
+        } else if (TagNames.LLNORTHING.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.LLNORTHING;
-        }
-        else if (TagNames.REQUESTCHUNK.name().equalsIgnoreCase(qName)) {
+        } else if (TagNames.REQUESTCHUNK.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.REQUESTCHUNK;
-        }
-        else if (TagNames.FORCEXYAXISORDER.name().equalsIgnoreCase(qName)) {
+        } else if (TagNames.FORCEXYAXISORDER.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.FORCEXYAXISORDER;
-        }
-        else if (TagNames.UREASTING.name().equalsIgnoreCase(qName)) {
+        } else if (TagNames.UREASTING.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.UREASTING;
-        }
-        else if (TagNames.URNORTHING.name().equalsIgnoreCase(qName)) {
+        } else if (TagNames.URNORTHING.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.URNORTHING;
-        }
-        else if (TagNames.URL.name().equalsIgnoreCase(qName)) {
+        } else if (TagNames.URL.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.URL;
-        }
-        else if (TagNames.VERSION.name().equalsIgnoreCase(qName)) {
+        } else if (TagNames.VERSION.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.VERSION;
-        }
-        else if (TagNames.WATERML.name().equalsIgnoreCase(qName)) {
+        } else if (TagNames.WATERML.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.WATERML;
-        }
-        else if (TagNames.TIMEOUT.name().equalsIgnoreCase(qName)) {
+        } else if (TagNames.TIMEOUT.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.TIMEOUT;
-        }
-        else if (TagNames.METADATAHANDLER.name().equalsIgnoreCase(qName)) {
+        } else if (TagNames.METADATAHANDLER.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.METADATAHANDLER;
-        }
-        else if (TagNames.ADAPTER.name().equalsIgnoreCase(qName)) {
+        } else if (TagNames.ADAPTER.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.ADAPTER;
-        }
-        else if (TagNames.PROTECTEDSERVICE.name().equalsIgnoreCase(qName)) {
+        } else if (TagNames.PROTECTEDSERVICE.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.PROTECTEDSERVICE;
-        }
-        else if (TagNames.SUPPORTSFIRSTLATEST.name().equalsIgnoreCase(qName)) {
+        } else if (TagNames.ENABLEEVENTING.name().equalsIgnoreCase(qName)) {
+            currentElement = TagNames.ENABLEEVENTING;
+        } else if (TagNames.SUPPORTSFIRSTLATEST.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.SUPPORTSFIRSTLATEST;
         }
     }
@@ -125,84 +111,94 @@ public class SosInstanceContentHandler extends DefaultHandler {
         }
 
         String parsedCharacters = currentContent.toString();
-        if (isParsableContent(parsedCharacters)) {
-            switch (currentElement) {
-            case NOELEMENT:
-                break;
-            case ITEMNAME:
-                String itemName = parsedCharacters;
-                currentBuilder.addServiceName(itemName);
-                break;
-            case DEFAULTZOOM:
-                int defaultZoom = Integer.parseInt(parsedCharacters);
-                // currentBuilder.setDefaultZoom(defaultZoom);
-                break;
-            case AUTOZOOM:
-                boolean autoZoom = Boolean.parseBoolean(parsedCharacters);
-                currentBuilder.setAutoZoom(autoZoom);
-                break;
-            case REQUESTCHUNK:
-                int requestChunk = Integer.parseInt(parsedCharacters);
-                currentBuilder.setRequestChunk(requestChunk);
-                break;
-            case FORCEXYAXISORDER:
-                boolean forceXYAxisOrder = Boolean.parseBoolean(parsedCharacters);
-                currentBuilder.setForceXYAxisOrder(forceXYAxisOrder);
-                break;
+        try {
+            if (isParsableContent(parsedCharacters)) {
+                switch (currentElement) {
+                    case NOELEMENT:
+                        break;
+                    case ITEMNAME:
+                        String itemName = parsedCharacters;
+                        currentBuilder.addServiceName(itemName);
+                        break;
+                    case DEFAULTZOOM:
+                        int defaultZoom = Integer.parseInt(parsedCharacters);
+                        // currentBuilder.setDefaultZoom(defaultZoom);
+                        break;
+                    case AUTOZOOM:
+                        boolean autoZoom = Boolean.parseBoolean(parsedCharacters);
+                        currentBuilder.setAutoZoom(autoZoom);
+                        break;
+                    case REQUESTCHUNK:
+                        int requestChunk = Integer.parseInt(parsedCharacters);
+                        currentBuilder.setRequestChunk(requestChunk);
+                        break;
+                    case FORCEXYAXISORDER:
+                        boolean forceXYAxisOrder = Boolean.parseBoolean(parsedCharacters);
+                        currentBuilder.setForceXYAxisOrder(forceXYAxisOrder);
+                        break;
 
-            /*
-             * bbox coordinates are only relevant on client side configuration is parsed on client side
-             */
+                    /*
+                     * bbox coordinates are only relevant on client side configuration is parsed on client side
+                     */
             // case LLEASTING:
-            // double llEasting = Double.parseDouble(parsedCharacters);
-            // currentBuilder.addLowerLeftEasting(llEasting);
-            // break;
-            // case LLNORTHING:
-            // double llNorthing = Double.parseDouble(parsedCharacters);
-            // currentBuilder.addLowerLeftNorthing(llNorthing);
-            // break;
-            // case UREASTING:
-            // double urEasting = Double.parseDouble(parsedCharacters);
-            // currentBuilder.addUpperRightEasting(urEasting);
-            // break;
-            // case URNORTHING:
-            // double urNorthing = Double.parseDouble(parsedCharacters);
-            // currentBuilder.addUpperRightNorthing(urNorthing);
-            // break;
-
-            case URL:
-                String serviceURL = parsedCharacters;
-                currentBuilder.addServiceURL(serviceURL);
-                break;
-            case VERSION:
-                String version = parsedCharacters;
-                currentBuilder.addServiceVersion(version);
-                break;
-            case WATERML:
-                boolean waterML = Boolean.parseBoolean(parsedCharacters);
-                currentBuilder.setWaterML(waterML);
-                break;
-            case TIMEOUT:
-                int timeout = Integer.parseInt(parsedCharacters);
-                currentBuilder.setTimeout(timeout);
-                break;
-            case METADATAHANDLER:
-                String connector = parsedCharacters;
-                currentBuilder.addSosMetadataHandler(connector);
-                break;
-            case ADAPTER:
-                String adapter = parsedCharacters;
-                currentBuilder.addAdapter(adapter);
-                break;
-            case PROTECTEDSERVICE:
-                boolean protectedService = Boolean.parseBoolean(parsedCharacters);
-                currentBuilder.addProtectedService(protectedService);
-            case SUPPORTSFIRSTLATEST:
-                boolean supportsFirstLast = Boolean.parseBoolean(parsedCharacters);
-                currentBuilder.addSupportsFirstLatest(supportsFirstLast);
-            default:
-                currentElement = TagNames.NOELEMENT; // reset
+                    // double llEasting = Double.parseDouble(parsedCharacters);
+                    // currentBuilder.addLowerLeftEasting(llEasting);
+                    // break;
+                    // case LLNORTHING:
+                    // double llNorthing = Double.parseDouble(parsedCharacters);
+                    // currentBuilder.addLowerLeftNorthing(llNorthing);
+                    // break;
+                    // case UREASTING:
+                    // double urEasting = Double.parseDouble(parsedCharacters);
+                    // currentBuilder.addUpperRightEasting(urEasting);
+                    // break;
+                    // case URNORTHING:
+                    // double urNorthing = Double.parseDouble(parsedCharacters);
+                    // currentBuilder.addUpperRightNorthing(urNorthing);
+                    // break;
+                    case URL:
+                        String serviceURL = parsedCharacters;
+                        currentBuilder.addServiceURL(serviceURL);
+                        break;
+                    case VERSION:
+                        String version = parsedCharacters;
+                        currentBuilder.addServiceVersion(version);
+                        break;
+                    case WATERML:
+                        boolean waterML = Boolean.parseBoolean(parsedCharacters);
+                        currentBuilder.setWaterML(waterML);
+                        break;
+                    case TIMEOUT:
+                        int timeout = Integer.parseInt(parsedCharacters);
+                        currentBuilder.setTimeout(timeout);
+                        break;
+                    case METADATAHANDLER:
+                        String connector = parsedCharacters;
+                        currentBuilder.addSosMetadataHandler(connector);
+                        break;
+                    case ADAPTER:
+                        String adapter = parsedCharacters;
+                        currentBuilder.addAdapter(adapter);
+                        break;
+                    case PROTECTEDSERVICE:
+                        boolean protectedService = Boolean.parseBoolean(parsedCharacters);
+                        currentBuilder.addProtectedService(protectedService);
+                        break;
+                    case SUPPORTSFIRSTLATEST:
+                        boolean supportsFirstLast = Boolean.parseBoolean(parsedCharacters);
+                        currentBuilder.addSupportsFirstLatest(supportsFirstLast);
+                        break;
+                    case ENABLEEVENTING:
+                        boolean enableEventing = Boolean.parseBoolean(parsedCharacters);
+                        currentBuilder.setEnableEventing(enableEventing);
+                        break;
+                    default:
+                        currentElement = TagNames.NOELEMENT; // reset
+                }
             }
+        } catch (NumberFormatException e) {
+            LOG.warn("Could not parse config element '{}' with value '{}'", currentElement, parsedCharacters, e);
+        } finally {
             currentContent = new StringBuffer(); // reset
         }
     }

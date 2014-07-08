@@ -40,7 +40,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.n52.client.service.SesUserService;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.service.SesUserServiceImpl;
-import org.n52.server.util.ContextLoader;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.serializable.pojos.User;
 import org.n52.shared.serializable.pojos.UserDTO;
@@ -51,6 +50,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import org.n52.server.ses.util.SesServiceConfig;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  * Delegates SES User requests to an {@link SesUserService} implementation.
@@ -61,11 +64,19 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RpcSesUserServlet.class);
 
-    private SesUserService service = ContextLoader.load("sesUserService", SesUserService.class);
+    private final SesUserService service = SesServiceConfig.getService("sesUserService", SesUserService.class);
 
     @Override
     public void init() throws ServletException {
         LOGGER.debug("Initialize " + getClass().getName() +" Servlet for SES Client");
+    }
+
+    private SesUserService getService() {
+        if (service == null) {
+            LOGGER.error("SesUserService not configured properly. Check 'spring-ses-config.xml'.");
+            throw new NullPointerException("SES module not available.");
+        }
+        return service;
     }
 
     @Override
@@ -203,73 +214,73 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
 
     @Override
     public SesClientResponse registerUser(UserDTO userDTO) throws Exception {
-    	return service.registerUser(userDTO);
+    	return getService().registerUser(userDTO);
     }
 
     @Override
     public SesClientResponse login(String userName, String password, SessionInfo sessionInfo) throws Exception {
-        return service.login(userName, password, sessionInfo);
+        return getService().login(userName, password, sessionInfo);
     }
 
     @Override
     public SesClientResponse validateLoginSession(SessionInfo sessionInfo) throws Exception {
-        return service.validateLoginSession(sessionInfo);
+        return getService().validateLoginSession(sessionInfo);
     }
 
     @Override
     public SessionInfo createNotLoggedInSession() throws Exception {
-        return service.createNotLoggedInSession();
+        return getService().createNotLoggedInSession();
     }
 
     @Override
     public SesClientResponse resetPassword(String userName, String email) throws Exception {
-        return service.resetPassword(userName, email);
+        return getService().resetPassword(userName, email);
     }
 
     @Override
     public void logout(SessionInfo sessioninfo) throws Exception {
-        service.logout(sessioninfo);
+        getService().logout(sessioninfo);
     }
 
     @Override
     public SesClientResponse getUser(SessionInfo sessionInfo) throws Exception {
-        return service.getUser(sessionInfo);
+        return getService().getUser(sessionInfo);
     }
 
     @Override
     public SesClientResponse deleteUser(SessionInfo sessioninfo, String id) throws Exception {
-        return service.deleteUser(sessioninfo, id);
+        return getService().deleteUser(sessioninfo, id);
     }
 
 
     public SesClientResponse performUserDelete(String userId) throws Exception {
-        return ((SesUserServiceImpl) service).performUserDelete(userId);
+        return ((SesUserServiceImpl) getService()).performUserDelete(userId);
     }
 
     @Override
     public SesClientResponse updateUser(SessionInfo sessionInfo, UserDTO newUser) throws Exception {
-        return service.updateUser(sessionInfo, newUser);
+        return getService().updateUser(sessionInfo, newUser);
     }
 
     @Override
     public SesClientResponse getAllUsers(SessionInfo sessionInfo) throws Exception {
-       return service.getAllUsers(sessionInfo);
+       return getService().getAllUsers(sessionInfo);
     }
 
     @Override
     public SesClientResponse requestToDeleteProfile(SessionInfo sessionInfo) throws Exception {
-        return service.requestToDeleteProfile(sessionInfo);
+        return getService().requestToDeleteProfile(sessionInfo);
     }
 
     @Override
     public SesClientResponse getTermsOfUse(String language) throws Exception {
-        return service.getTermsOfUse(language);
+        return getService().getTermsOfUse(language);
     }
 
     // initial data from property file
     // this method is called on first startup
     public SesClientResponse getData() throws Exception {
-        return service.getData();
+        return getService().getData();
     }
 
 }

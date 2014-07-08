@@ -30,7 +30,6 @@ package org.n52.server.service.rpc;
 import javax.servlet.ServletException;
 
 import org.n52.client.service.SesRuleService;
-import org.n52.server.util.ContextLoader;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.serializable.pojos.ComplexRuleData;
 import org.n52.shared.serializable.pojos.Rule;
@@ -40,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import org.n52.server.ses.util.SesServiceConfig;
 
 public class RpcSesRuleServlet extends RemoteServiceServlet implements RpcSesRuleService {
 
@@ -47,7 +47,15 @@ public class RpcSesRuleServlet extends RemoteServiceServlet implements RpcSesRul
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RpcSesRuleServlet.class);
 
-    private SesRuleService service = ContextLoader.load("sesRulesService", SesRuleService.class);
+    private final SesRuleService service = SesServiceConfig.getService("sesRuleService", SesRuleService.class);
+
+     private SesRuleService getService() {
+        if (service == null) {
+            LOGGER.error("SesRuleService not configured properly. Check 'spring-ses-config.xml'.");
+            throw new NullPointerException("SES module not available.");
+        }
+        return service;
+    }
 
     @Override
     public void init() throws ServletException {
@@ -55,61 +63,61 @@ public class RpcSesRuleServlet extends RemoteServiceServlet implements RpcSesRul
     }
 
     public synchronized SesClientResponse subscribe(SessionInfo sessionInfo, String uuid, String medium, String eml) throws Exception {
-        return service.subscribe(sessionInfo, uuid, medium, eml);
+        return getService().subscribe(sessionInfo, uuid, medium, eml);
     }
 
     public synchronized SesClientResponse unSubscribe(SessionInfo sessionInfo, String uuid, String medium, String eml) throws Exception {
-        return service.unSubscribe(sessionInfo, uuid, medium, eml);
+        return getService().unSubscribe(sessionInfo, uuid, medium, eml);
     }
 
     public synchronized SesClientResponse createBasicRule(SessionInfo sessionInfo, Rule rule, boolean edit, String oldRuleName) throws Exception {
-        return service.createBasicRule(sessionInfo, rule, edit, oldRuleName);
+        return getService().createBasicRule(sessionInfo, rule, edit, oldRuleName);
     }
 
     public synchronized SesClientResponse getAllOwnRules(SessionInfo sessionInfo, boolean edit) throws Exception {
-        return service.getAllOwnRules(sessionInfo, edit);
+        return getService().getAllOwnRules(sessionInfo, edit);
     }
 
     public synchronized SesClientResponse getAllOtherRules(SessionInfo sessionInfo, boolean edit) throws Exception {
-        return service.getAllOtherRules(sessionInfo, edit);
+        return getService().getAllOtherRules(sessionInfo, edit);
     }
 
     public synchronized SesClientResponse publishRule(SessionInfo sessionInfo, String ruleName, boolean value) throws Exception {
-        return service.publishRule(sessionInfo, ruleName, value);
+        return getService().publishRule(sessionInfo, ruleName, value);
     }
 
     public synchronized SesClientResponse getAllRules(SessionInfo sessionInfo) throws Exception {
-        return service.getAllRules(sessionInfo);
+        return getService().getAllRules(sessionInfo);
     }
 
     public synchronized SesClientResponse deleteRule(SessionInfo sessionInfo, String uuid) throws Exception {
-        return service.deleteRule(sessionInfo, uuid);
+        return getService().deleteRule(sessionInfo, uuid);
     }
 
     public synchronized SesClientResponse getAllPublishedRules(SessionInfo sessionInfo, int operator) throws Exception {
-        return service.getAllPublishedRules(sessionInfo, operator);
+        return getService().getAllPublishedRules(sessionInfo, operator);
     }
 
     public synchronized SesClientResponse getRuleForEditing(String ruleName) throws Exception {
-        return service.getRuleForEditing(ruleName);
+        return getService().getRuleForEditing(ruleName);
     }
 
     public synchronized SesClientResponse ruleNameExists(String ruleName) throws Exception {
-        return service.ruleNameExists(ruleName);
+        return getService().ruleNameExists(ruleName);
     }
 
     public synchronized SesClientResponse createComplexRule(SessionInfo sessionInfo, ComplexRuleData rule, boolean edit, String oldName) throws Exception {
-        return service.createComplexRule(sessionInfo, rule, edit, oldName);
+        return getService().createComplexRule(sessionInfo, rule, edit, oldName);
     }
     public synchronized SesClientResponse getUserSubscriptions(SessionInfo sessionInfo) throws Exception {
-        return service.getUserSubscriptions(sessionInfo);
+        return getService().getUserSubscriptions(sessionInfo);
     }
 
     public SesClientResponse search(String text, int criterion, String userID) throws Exception {
-        return service.search(text, criterion, userID);
+        return getService().search(text, criterion, userID);
     }
 
     public SesClientResponse copy(String userID, String ruleName) throws Exception {
-        return service.copy(userID, ruleName);
+        return getService().copy(userID, ruleName);
     }
 }
