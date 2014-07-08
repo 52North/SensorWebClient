@@ -177,6 +177,7 @@ public class SOSwithSoapAdapter extends SOSAdapter {
             }
         }
         else {
+            parameters.addParameterShell("mimetype", "application/soap+xml");
             result = super.doOperation(operation, parameters);
         }
         ByteArrayInputStream resultStream = result.getIncomingResultAsStream();
