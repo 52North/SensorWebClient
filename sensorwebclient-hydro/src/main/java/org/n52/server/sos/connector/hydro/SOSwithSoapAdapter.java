@@ -33,11 +33,13 @@ import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_CAPABILITIES_SERVIC
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Scanner;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
+import static org.apache.http.entity.ContentType.create;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.oxf.OXFException;
@@ -61,10 +63,12 @@ public class SOSwithSoapAdapter extends SOSAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSwithSoapAdapter.class);
 
+    private static final ContentType SOAP_PLUS_XML = create("application/soap+xml", Charset.forName("UTF-8"));
+
     public static final String GET_DATA_AVAILABILITY = "GetDataAvailability";
 
     private static final int CONNECTION_TIMEOUT = 30000;
-    
+
     private static final int SOCKET_TIMEOUT = 30000;
 
     /**
@@ -72,7 +76,7 @@ public class SOSwithSoapAdapter extends SOSAdapter {
      * <br>
      * Per default the Adapter uses {@link SoapSOSRequestBuilder_200} to build its request. Override via
      * {@link #setRequestBuilder(ISOSRequestBuilder)}.
-     * 
+     *
      * @param sosVersion
      *        the SOS version
      */
@@ -81,7 +85,7 @@ public class SOSwithSoapAdapter extends SOSAdapter {
         setHttpClient(createHttpClient());
         setRequestBuilder(new SoapSOSRequestBuilder_200());
     }
-    
+
     private HttpClient createHttpClient() {
         return new GzipEnabledHttpClient(new ProxyAwareHttpClient(new SimpleHttpClient(CONNECTION_TIMEOUT, SOCKET_TIMEOUT)));
     }
@@ -93,7 +97,7 @@ public class SOSwithSoapAdapter extends SOSAdapter {
      * satisfy reflection loading. Actually, there is <b>no parameter needed</b> for
      * <code>requestBuilder</code> and is not looked at at all (so it can be <code>null</code>). The
      * constructor creates its own {@link SOSRequestBuilderGET_200} instance internally by itself. <br>
-     * 
+     *
      * @deprecated use {@link #SOSwithSoapAdapter(String)} instead
      * @param sosVersion
      *        the SOS version
@@ -163,7 +167,7 @@ public class SOSwithSoapAdapter extends SOSAdapter {
                     String request = builder.buildGetDataAvailabilityRequest(parameters);
                     HttpClient httpClient = new ProxyAwareHttpClient(new SimpleHttpClient());
                     String url = operation.getDcps()[0].getHTTPGetRequestMethods().get(0).getOnlineResource().getHref();
-                    HttpResponse httpResponse = httpClient.executePost(url, request, ContentType.TEXT_XML);
+                    HttpResponse httpResponse = httpClient.executePost(url, request, SOAP_PLUS_XML);
                     HttpEntity responseEntity = httpResponse.getEntity();
                     result = new OperationResult(responseEntity.getContent(), parameters, request);
                 }
