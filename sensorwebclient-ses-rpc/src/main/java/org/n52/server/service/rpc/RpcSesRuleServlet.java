@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -44,16 +44,16 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class RpcSesRuleServlet extends RemoteServiceServlet implements RpcSesRuleService {
 
     private static final long serialVersionUID = 3219805776368229776L;
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(RpcSesRuleServlet.class);
-    
+
     private SesRuleService service = ContextLoader.load("sesRulesService", SesRuleService.class);
-    
+
     @Override
     public void init() throws ServletException {
         LOGGER.debug("Initialize " + getClass().getName() +" Servlet for SES Client");
     }
-    
+
     public synchronized SesClientResponse subscribe(SessionInfo sessionInfo, String uuid, String medium, String eml) throws Exception {
         return service.subscribe(sessionInfo, uuid, medium, eml);
     }

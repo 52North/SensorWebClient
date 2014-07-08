@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -62,7 +62,7 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
     private static final Logger LOGGER = LoggerFactory.getLogger(RpcSesUserServlet.class);
 
     private SesUserService service = ContextLoader.load("sesUserService", SesUserService.class);
-    
+
     @Override
     public void init() throws ServletException {
         LOGGER.debug("Initialize " + getClass().getName() +" Servlet for SES Client");
@@ -113,7 +113,7 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
             // user data from DB
             String id = registerID.substring(5);
             user = HibernateUtil.getUserBy(id);
-            
+
             if (user != null) {
             	if (activateUser(user)) {
             		LOGGER.debug("register user: " + user.getName() + " to WNS");
@@ -126,12 +126,12 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
                     }
                     writeHtmlResponse("Registration successful!", response);
             	} else {
-            		String userActiv = "User activation is still done!"; 
+            		String userActiv = "User activation is still done!";
                 	LOGGER.error(userActiv);
                 	writeHtmlResponse(userActiv, response);
             	}
             } else {
-            	String noUserToActivationID = "No user for this activation link!"; 
+            	String noUserToActivationID = "No user for this activation link!";
             	LOGGER.error(noUserToActivationID);
             	writeHtmlResponse(noUserToActivationID, response);
             }
@@ -158,12 +158,12 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
             return false;
         }
     }
-    
+
     private void writeHtmlResponse(String message, HttpServletResponse response) {
         message = includeExceptionInfoTo(message, null);
         writeResponse(message, response);
     }
-    
+
     private void writeHtmlResponse(String message, Exception e, HttpServletResponse response) {
         message = includeExceptionInfoTo(message, e);
         writeResponse(message, response);
@@ -210,12 +210,12 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
     public SesClientResponse login(String userName, String password, SessionInfo sessionInfo) throws Exception {
         return service.login(userName, password, sessionInfo);
     }
-    
+
     @Override
     public SesClientResponse validateLoginSession(SessionInfo sessionInfo) throws Exception {
         return service.validateLoginSession(sessionInfo);
     }
-    
+
     @Override
     public SessionInfo createNotLoggedInSession() throws Exception {
         return service.createNotLoggedInSession();
@@ -241,7 +241,7 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
         return service.deleteUser(sessioninfo, id);
     }
 
-    
+
     public SesClientResponse performUserDelete(String userId) throws Exception {
         return ((SesUserServiceImpl) service).performUserDelete(userId);
     }
