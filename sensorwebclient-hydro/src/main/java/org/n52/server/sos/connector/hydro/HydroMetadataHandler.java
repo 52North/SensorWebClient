@@ -278,7 +278,7 @@ public class HydroMetadataHandler extends MetadataHandler {
         }
     }
 
-    private Collection<SosTimeseries> getAvailableTimeseries(XmlObject result_xb,
+    protected Collection<SosTimeseries> getAvailableTimeseries(XmlObject result_xb,
                                                              SosTimeseries timeserie,
                                                              SOSMetadata metadata) throws XmlException, IOException {
         ArrayList<SosTimeseries> timeseries = new ArrayList<SosTimeseries>();
@@ -306,7 +306,7 @@ public class HydroMetadataHandler extends MetadataHandler {
     }
 
     private String getAttributeOfChildren(XmlObject xmlObject, String child, String attribute) {
-        SimpleValue childObject = ((org.apache.xmlbeans.SimpleValue) xmlObject.selectChildren("http://www.opengis.net/om/2.0",
+        SimpleValue childObject = ((org.apache.xmlbeans.SimpleValue) xmlObject.selectChildren("http://www.opengis.net/sosgda/1.0",
                                                                                               child)[0].selectAttribute("http://www.w3.org/1999/xlink",
                                                                                                                         attribute));
         return childObject.getStringValue();
