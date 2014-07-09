@@ -103,7 +103,7 @@ public class HydroMetadataHandler extends MetadataHandler {
         // (HyProfile must request an Observation (without timestamp we get the last value))
         // ==> move metadata obtaining strategy to MetadataHandler class: a different strategy can
         // be used by overriding the default (metadata via SensorML)
-        
+
     }
 
     @Override
@@ -282,8 +282,11 @@ public class HydroMetadataHandler extends MetadataHandler {
                                                              SosTimeseries timeserie,
                                                              SOSMetadata metadata) throws XmlException, IOException {
         ArrayList<SosTimeseries> timeseries = new ArrayList<SosTimeseries>();
-        String queryExpression = "declare namespace sos='http://www.opengis.net/sos/2.0'; $this/sos:GetDataAvailabilityResponse/sos:dataAvailabilityMember";
-        XmlObject[] response = result_xb.selectPath(queryExpression);
+        StringBuilder query = new StringBuilder();
+        query.append("declare namespace sos='http://www.opengis.net/sos/2.0';");
+        query.append("declare namespace gda='http://www.opengis.net/sosgda/1.0';");
+        query.append("$this/gda:GetDataAvailabilityResponse/sos:dataAvailabilityMember");
+        XmlObject[] response = result_xb.selectPath(query.toString());
         for (XmlObject xmlObject : response) {
             SosTimeseries addedtimeserie = new SosTimeseries();
             String feature = getAttributeOfChildren(xmlObject, "featureOfInterest", "href");
