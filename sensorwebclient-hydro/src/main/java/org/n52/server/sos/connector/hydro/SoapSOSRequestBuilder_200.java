@@ -37,18 +37,18 @@ import org.n52.server.da.oxf.SOSRequestBuilder_200_OXFExtension;
 import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
 
 public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtension {
-    
+
     // TODO extract to a common request wrapper
-	
+
 	/** Soap header actions for the sos requests */
 	private static final String GET_CAPABILITIES_SOAP_HEADER_ACTION = "http://www.opengis.net/def/serviceOperation/sos/core/2.0/GetCapabilities";
 	private static final String GET_FOI_SOAP_HEADER_ACTION = "http://www.opengis.net/def/serviceOperation/sos/foiRetrieval/2.0/GetFeatureOfInterest";
 	private static final String DESCRIBE_SENSOR_SOAP_HEADER_ACTION = "http://www.opengis.net/def/serviceOperation/sos/core/2.0/DescribeSensor"; // spec says: http://www.opengis.net/swes/2.0/DescribeSensor
 	private static final String GET_OBS_SOAP_HEADER_ACTION = "http://www.opengis.net/def/serviceOperation/sos/core/2.0/GetObservation";
 	private static final String GET_DATA_AVAILABILITY = "http://www.opengis.net/def/serviceOperation/sos/daRetrieval/2.0/GetDataAvailability";
-	
+
 	protected String sosUrl;
-	
+
 	@Override
 	public String buildGetCapabilitiesRequest(ParameterContainer parameters) {
 		String request = super.buildGetCapabilitiesRequest(parameters);
@@ -60,7 +60,7 @@ public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtensio
 	public String buildGetFeatureOfInterestRequest(ParameterContainer parameters) {
 		String request = super.buildGetFeatureOfInterestRequest(parameters);
 		EnvelopeDocument envelope = addSoapEnvelope(request, GET_FOI_SOAP_HEADER_ACTION);
-		return envelope.xmlText(XmlUtil.PRETTYPRINT);  
+		return envelope.xmlText(XmlUtil.PRETTYPRINT);
 	}
 
 	@Override
@@ -69,7 +69,7 @@ public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtensio
 		EnvelopeDocument envelope = addSoapEnvelope(request, DESCRIBE_SENSOR_SOAP_HEADER_ACTION);
 		return envelope.xmlText(XmlUtil.PRETTYPRINT);
 	}
-	
+
 	@Override
 	public String buildGetObservationRequest(ParameterContainer parameters) throws OXFException {
 		String request = super.buildGetObservationRequest(parameters);
@@ -84,7 +84,11 @@ public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtensio
 	    ParameterShell offering = parameters.getParameterShellWithCommonName("offering");
 	    ParameterShell feature = parameters.getParameterShellWithCommonName("featureOfInterest");
 	    ParameterShell version = parameters.getParameterShellWithCommonName("version");
-	    sb.append("<sos:GetDataAvailability service=\"SOS\" version=\"" + version.getSpecifiedValue() + "\" xmlns:sos=\"http://www.opengis.net/sos/2.0\">");
+	    sb.append("<gda:GetDataAvailability service=\"SOS\"");
+        sb.append(" version=\"" + version.getSpecifiedValue() + "\"");
+        sb.append(" xmlns:sos=\"http://www.opengis.net/sos/2.0\"");
+        sb.append(" xmlns:gda=\"http://www.opengis.net/sosgda/1.0\"");
+        sb.append(" >");
 	    if (observedProperty != null) {
 	    	sb.append("<sos:observedProperty>" + observedProperty.getSpecifiedValue() + "</sos:observedProperty>");
 	    }
@@ -97,7 +101,7 @@ public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtensio
 	    if (feature != null) {
 	    	sb.append("<sos:featureOfInterest>" + feature.getSpecifiedValue() + "</sos:featureOfInterest>");
 	    }
-	    sb.append("</sos:GetDataAvailability>");
+	    sb.append("</gda:GetDataAvailability>");
 	    EnvelopeDocument envelope = addSoapEnvelope(sb.toString(), GET_DATA_AVAILABILITY);
 	    return envelope.xmlText(XmlUtil.PRETTYPRINT);
 	}

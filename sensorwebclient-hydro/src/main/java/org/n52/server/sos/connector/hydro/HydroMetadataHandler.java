@@ -283,9 +283,8 @@ public class HydroMetadataHandler extends MetadataHandler {
                                                              SOSMetadata metadata) throws XmlException, IOException {
         ArrayList<SosTimeseries> timeseries = new ArrayList<SosTimeseries>();
         StringBuilder query = new StringBuilder();
-        query.append("declare namespace sos='http://www.opengis.net/sos/2.0';");
         query.append("declare namespace gda='http://www.opengis.net/sosgda/1.0';");
-        query.append("$this/gda:GetDataAvailabilityResponse/sos:dataAvailabilityMember");
+        query.append("$this/gda:GetDataAvailabilityResponse/gda:dataAvailabilityMember");
         XmlObject[] response = result_xb.selectPath(query.toString());
         for (XmlObject xmlObject : response) {
             SosTimeseries addedtimeserie = new SosTimeseries();
