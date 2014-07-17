@@ -144,7 +144,7 @@
     </context-param>
     <context-param>
         <param-name>NO_DATA_VALUES</param-name>
-        <param-value>-999999999.0</param-value>
+        <param-value>-999999999.0,-999,-999.0</param-value>
     </context-param>
     <!-- Configurations for the WNS-Mail -->
     <context-param>
