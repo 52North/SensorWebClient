@@ -349,12 +349,20 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
             paramCon.addParameterShell(GET_FOI_VERSION_PARAMETER, getServiceVersion());
             paramCon.addParameterShell("procedure", network.getNetwork());
             Operation operation = new Operation("GetFeatureOfInterest", getServiceUrl(), getServiceUrl());
-            OperationResult result = getSosAdapter().doOperation(operation, paramCon);
+            
+            try {
+            	OperationResult result = getSosAdapter().doOperation(operation, paramCon);
 
-            // TODO probably we do have to handle an ExceedsSizeLimitException here
-
-            FeatureParser parser = new FeatureParser(getServiceUrl(), createEpsgStrictAxisOrder());
-            features.putAll(parser.parseFeatures(result.getIncomingResultAsStream()));
+                FeatureParser parser = new FeatureParser(getServiceUrl(), createEpsgStrictAxisOrder());
+                features.putAll(parser.parseFeatures(result.getIncomingResultAsStream()));
+            }
+            catch (OXFException e) {
+            	LOGGER.warn("Exception in OXF layer while executing operation", e);
+            }
+            catch (ExceptionReport e) {
+                // TODO probably we do have to handle an ExceedsSizeLimitException here
+            	LOGGER.warn("Service returned an ExceptionReport", e);
+            }
         }
         for (Feature feature : features.keySet()) {
             lookup.addFeature(feature);
