@@ -72,7 +72,10 @@ public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtensio
 
 	@Override
 	public String buildGetObservationRequest(ParameterContainer parameters) throws OXFException {
-		String request = super.buildGetObservationRequest(parameters);
+        parameters.removeParameterShell(parameters.getParameterShellWithCommonName(GET_OBSERVATION_RESPONSE_FORMAT_PARAMETER));
+        parameters.addParameterShell(GET_OBSERVATION_RESPONSE_FORMAT_PARAMETER, "http://www.opengis.net/waterml/2.0");
+
+        String request = super.buildGetObservationRequest(parameters);
 		EnvelopeDocument envelope = addSoapEnvelope(request, GET_OBS_SOAP_HEADER_ACTION);
 		return envelope.xmlText(XmlUtil.PRETTYPRINT);
 	}
