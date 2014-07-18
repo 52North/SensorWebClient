@@ -75,7 +75,7 @@ import org.slf4j.LoggerFactory;
 public class LanuvMetadataHandler extends HydroMetadataHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LanuvMetadataHandler.class);
-    
+
     private Map<String, List<String>> procOff = new HashMap<String, List<String>>();
 
     public LanuvMetadataHandler(SOSMetadata metadata) {
@@ -128,17 +128,17 @@ public class LanuvMetadataHandler extends HydroMetadataHandler {
         infoLogServiceSummary(metadata);
         metadata.setHasDonePositionRequest(true);
     }
-    
+
     protected Collection<SosTimeseries> createObservingTimeseries(SOSMetadata metadata)
     		throws OXFException {
     	Contents contents = getServiceDescriptor().getContents();
     	Collection<SosTimeseries> allObservedTimeseries = new ArrayList<SosTimeseries>();
-    	
+
     	Set<String> phenomena = new HashSet<String>();
     	Set<String> offerings = new HashSet<String>();
     	Set<String> procedures = new HashSet<String>();
     	Set<String> features = new HashSet<String>();
-    	
+
         LOGGER.info("# of offering entries: " + contents.getDataIdentificationCount());
 		for (int i = 0; i < contents.getDataIdentificationCount(); i++) {
 			if (i % 100 == 0) {
@@ -163,7 +163,7 @@ public class LanuvMetadataHandler extends HydroMetadataHandler {
 				}
 			}
 		}
-    	
+
 		LOGGER.info("create possible time series by observed property");
     	for (String phenomenon : phenomena) {
     		SosTimeseries timeseries = new SosTimeseries();
@@ -172,7 +172,7 @@ public class LanuvMetadataHandler extends HydroMetadataHandler {
             timeseries.getSosService().setLabel(metadata.getTitle());
             allObservedTimeseries.add(timeseries);
 		}
-    	
+
     	LOGGER.info("create lookup table");
     	TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
     	for (String feature : features) {
@@ -248,12 +248,8 @@ public class LanuvMetadataHandler extends HydroMetadataHandler {
                                                              SOSMetadata metadata,
                                                              Collection<SosTimeseries> observingTimeseries) throws XmlException, IOException {
         ArrayList<SosTimeseries> timeseries = new ArrayList<SosTimeseries>();
-        String sosExpression = "declare namespace sos='http://www.opengis.net/sos/2.0'; $this/sos:GetDataAvailabilityResponse/sos:dataAvailabilityMember";
-        XmlObject[] response = result_xb.selectPath(sosExpression);
-        if (response.length == 0) {
-        	String gdaExpression = "declare namespace gda='http://www.opengis.net/sosgda/1.0'; $this/gda:GetDataAvailabilityResponse/gda:dataAvailabilityMember";
-        	response = result_xb.selectPath(gdaExpression);
-		}
+        String queryExpression = "declare namespace gda='http://www.opengis.net/sosgda/1.0'; $this/gda:GetDataAvailabilityResponse/gda:dataAvailabilityMember";
+        XmlObject[] response = result_xb.selectPath(queryExpression);
         for (XmlObject xmlObject : response) {
             String feature = getAttributeOfChildren(xmlObject, "featureOfInterest", "href").trim();
             String procedure = getAttributeOfChildren(xmlObject, "procedure", "href").trim();

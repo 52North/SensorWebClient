@@ -230,10 +230,7 @@ public class HydroMetadataHandler extends MetadataHandler {
     }
 
     protected String getAttributeOfChildren(XmlObject xmlObject, String child, String attribute) {
-    	XmlObject[] children = xmlObject.selectChildren("http://www.opengis.net/om/2.0", child);
-    	if(children.length == 0) {
-    		children = xmlObject.selectChildren("http://www.opengis.net/sosgda/1.0", child);
-    	}
+    	XmlObject[] children = xmlObject.selectChildren("http://www.opengis.net/sosgda/1.0", child);
         SimpleValue childObject = ((org.apache.xmlbeans.SimpleValue) children[0].selectAttribute("http://www.w3.org/1999/xlink",
                                                                                                                         attribute));
         return childObject.getStringValue();

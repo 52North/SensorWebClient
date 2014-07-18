@@ -64,7 +64,7 @@ public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtensio
 	public String buildGetFeatureOfInterestRequest(ParameterContainer parameters) {
 		//String request = super.buildGetFeatureOfInterestRequest(parameters);
 		//EnvelopeDocument envelope = addSoapEnvelope(request, GET_FOI_SOAP_HEADER_ACTION);
-		//return envelope.xmlText(XmlUtil.PRETTYPRINT);  
+		//return envelope.xmlText(XmlUtil.PRETTYPRINT);
 		GetFeatureOfInterestDocument xb_getFOIDoc = GetFeatureOfInterestDocument.Factory.newInstance();
     	GetFeatureOfInterestType xb_getFOI = xb_getFOIDoc.addNewGetFeatureOfInterest();
     	xb_getFOI.setService((String) parameters.getParameterShellWithServiceSidedName(GET_FOI_SERVICE_PARAMETER).getSpecifiedValue());
@@ -90,35 +90,34 @@ public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtensio
 	public String buildGetObservationRequest(ParameterContainer parameters) throws OXFException {
         parameters.removeParameterShell(parameters.getParameterShellWithCommonName(GET_OBSERVATION_RESPONSE_FORMAT_PARAMETER));
         parameters.addParameterShell(GET_OBSERVATION_RESPONSE_FORMAT_PARAMETER, "http://www.opengis.net/waterml/2.0");
-        
+
 		String request = super.buildGetObservationRequest(parameters);
 		EnvelopeDocument envelope = addSoapEnvelope(request, GET_OBS_SOAP_HEADER_ACTION);
 		return envelope.xmlText(XmlUtil.PRETTYPRINT);
 	}
 
 	public String buildGetDataAvailabilityRequest(ParameterContainer parameters) throws OXFException {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 	    ParameterShell observedProperty = parameters.getParameterShellWithCommonName("observedProperty");
 	    ParameterShell procedure = parameters.getParameterShellWithCommonName("procedure");
 	    ParameterShell offering = parameters.getParameterShellWithCommonName("offering");
 	    ParameterShell feature = parameters.getParameterShellWithCommonName("featureOfInterest");
 	    ParameterShell version = parameters.getParameterShellWithCommonName("version");
 	    sb.append("<gda:GetDataAvailability service=\"SOS\"");
-        sb.append(" version=\"" + version.getSpecifiedValue() + "\"");
-        sb.append(" xmlns:sos=\"http://www.opengis.net/sos/2.0\"");
+        sb.append(" version=\"").append(version.getSpecifiedValue()).append("\"");
         sb.append(" xmlns:gda=\"http://www.opengis.net/sosgda/1.0\"");
         sb.append(" >");
 	    if (observedProperty != null) {
-	    	sb.append("<sos:observedProperty>" + observedProperty.getSpecifiedValue() + "</sos:observedProperty>");
+	    	sb.append("<gda:observedProperty>").append(observedProperty.getSpecifiedValue()).append("</gda:observedProperty>");
 	    }
 	    if (procedure != null) {
-	    	sb.append("<sos:procedure>" + procedure.getSpecifiedValue() + "</sos:procedure>");
+	    	sb.append("<gda:procedure>").append(procedure.getSpecifiedValue()).append("</gda:procedure>");
 	    }
 	    if (offering != null) {
-	    	sb.append("<sos:offering>" + offering.getSpecifiedValue() + "</sos:offering>");
+	    	sb.append("<gda:offering>").append(offering.getSpecifiedValue()).append("</gda:offering>");
 	    }
 	    if (feature != null) {
-	    	sb.append("<sos:featureOfInterest>" + feature.getSpecifiedValue() + "</sos:featureOfInterest>");
+	    	sb.append("<gda:featureOfInterest>").append(feature.getSpecifiedValue()).append("</gda:featureOfInterest>");
 	    }
 	    sb.append("</gda:GetDataAvailability>");
 	    EnvelopeDocument envelope = addSoapEnvelope(sb.toString(), GET_DATA_AVAILABILITY);
