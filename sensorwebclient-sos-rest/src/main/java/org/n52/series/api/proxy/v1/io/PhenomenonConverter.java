@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -47,6 +47,7 @@ public class PhenomenonConverter extends OutputConverter<Phenomenon, PhenomenonO
     @Override
     public PhenomenonOutput convertCondensed(Phenomenon phenomenon) {
         PhenomenonOutput convertedPhenomenon = new PhenomenonOutput();
+        convertedPhenomenon.setDomainId(phenomenon.getPhenomenonId());
         convertedPhenomenon.setId(phenomenon.getGlobalId());
         convertedPhenomenon.setLabel(phenomenon.getLabel());
         return convertedPhenomenon;

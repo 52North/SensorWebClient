@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -47,6 +47,7 @@ public class FeatureConverter extends OutputConverter<Feature, FeatureOutput> {
     @Override
     public FeatureOutput convertCondensed(Feature feature) {
         FeatureOutput convertedFeature = new FeatureOutput();
+        convertedFeature.setDomainId(feature.getFeatureId());
         convertedFeature.setId(feature.getGlobalId());
         convertedFeature.setLabel(feature.getLabel());
         return convertedFeature;

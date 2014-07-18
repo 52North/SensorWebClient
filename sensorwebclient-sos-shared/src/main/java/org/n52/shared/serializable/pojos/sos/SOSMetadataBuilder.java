@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -43,10 +43,12 @@ public class SOSMetadataBuilder {
 
     private boolean waterML = false;
 
+    private boolean eventing = false;
+
     private boolean autoZoom = true;
-    
+
     private boolean forceXYAxisOrder = false;
-    
+
     private boolean protectedService = false;
     
     private boolean supportsFirstLatest = false;
@@ -60,7 +62,7 @@ public class SOSMetadataBuilder {
     public SOSMetadataBuilder() {
         // default
     }
-    
+
     public SOSMetadata build() {
         return new SOSMetadata(this);
     }
@@ -104,7 +106,7 @@ public class SOSMetadataBuilder {
         this.adapter = adapter.trim();
         return this;
     }
-    
+
 	public SOSMetadataBuilder addProtectedService(boolean protectedService) {
 		this.protectedService = protectedService;
 		return this;
@@ -117,6 +119,11 @@ public class SOSMetadataBuilder {
 
     public SOSMetadataBuilder setWaterML(boolean waterML) {
         this.waterML = waterML;
+        return this;
+    }
+
+    public SOSMetadataBuilder setEnableEventing(boolean enableEventing) {
+        this.eventing = enableEventing;
         return this;
     }
 
@@ -146,7 +153,7 @@ public class SOSMetadataBuilder {
         this.extent = bbox;
         return this;
     }
-    
+
     /* --------------------------
      *  Builder's Getter methods
      */
@@ -167,6 +174,10 @@ public class SOSMetadataBuilder {
         return this.waterML;
     }
 
+    public boolean isEventing() {
+        return this.eventing;
+    }
+
     public String getSosMetadataHandler() {
         return this.sosMetadataHandler;
     }
@@ -174,7 +185,7 @@ public class SOSMetadataBuilder {
     public String getAdapter() {
         return this.adapter;
     }
-    
+
     public boolean isProctectedService() {
     	return this.protectedService;
     }
@@ -182,7 +193,7 @@ public class SOSMetadataBuilder {
     public boolean isAutoZoom() {
         return this.autoZoom;
     }
-    
+
     public boolean isForceXYAxisOrder() {
         return this.forceXYAxisOrder;
     }
@@ -194,7 +205,7 @@ public class SOSMetadataBuilder {
     public int getRequestChunk() {
         return this.requestChunk;
     }
-    
+
     public int getTimeout() {
         return timeout;
     }

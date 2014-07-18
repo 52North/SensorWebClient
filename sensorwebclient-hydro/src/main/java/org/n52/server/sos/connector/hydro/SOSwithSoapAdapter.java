@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -33,11 +33,14 @@ import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_CAPABILITIES_SERVIC
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import static java.lang.String.format;
+import java.nio.charset.Charset;
 import java.util.Scanner;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
+import static org.apache.http.entity.ContentType.create;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.oxf.OXFException;
@@ -48,9 +51,17 @@ import org.n52.oxf.ows.ServiceDescriptor;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.sos.adapter.SOSAdapter;
+import static org.n52.oxf.sos.adapter.SOSAdapter.DESCRIBE_SENSOR;
+import static org.n52.oxf.sos.adapter.SOSAdapter.GET_CAPABILITIES;
+import static org.n52.oxf.sos.adapter.SOSAdapter.GET_FEATURE_OF_INTEREST;
+import static org.n52.oxf.sos.adapter.SOSAdapter.GET_OBSERVATION;
+import static org.n52.oxf.sos.adapter.SOSAdapter.GET_OBSERVATION_BY_ID;
+import static org.n52.oxf.sos.adapter.SOSAdapter.INSERT_OBSERVATION;
+import static org.n52.oxf.sos.adapter.SOSAdapter.REGISTER_SENSOR;
 import org.n52.oxf.sos.util.SosUtil;
 import org.n52.oxf.util.web.GzipEnabledHttpClient;
 import org.n52.oxf.util.web.HttpClient;
+import org.n52.oxf.util.web.HttpClientException;
 import org.n52.oxf.util.web.ProxyAwareHttpClient;
 import org.n52.oxf.util.web.SimpleHttpClient;
 import org.slf4j.Logger;
@@ -61,10 +72,12 @@ public class SOSwithSoapAdapter extends SOSAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSwithSoapAdapter.class);
 
+    private static final ContentType SOAP_PLUS_XML = create("application/soap+xml", Charset.forName("UTF-8"));
+
     public static final String GET_DATA_AVAILABILITY = "GetDataAvailability";
 
     private static final int CONNECTION_TIMEOUT = 30000;
-    
+
     private static final int SOCKET_TIMEOUT = 30000;
 
     /**
@@ -72,7 +85,7 @@ public class SOSwithSoapAdapter extends SOSAdapter {
      * <br>
      * Per default the Adapter uses {@link SoapSOSRequestBuilder_200} to build its request. Override via
      * {@link #setRequestBuilder(ISOSRequestBuilder)}.
-     * 
+     *
      * @param sosVersion
      *        the SOS version
      */
@@ -81,7 +94,7 @@ public class SOSwithSoapAdapter extends SOSAdapter {
         setHttpClient(createHttpClient());
         setRequestBuilder(new SoapSOSRequestBuilder_200());
     }
-    
+
     private HttpClient createHttpClient() {
         return new GzipEnabledHttpClient(new ProxyAwareHttpClient(new SimpleHttpClient(CONNECTION_TIMEOUT, SOCKET_TIMEOUT)));
     }
@@ -93,7 +106,7 @@ public class SOSwithSoapAdapter extends SOSAdapter {
      * satisfy reflection loading. Actually, there is <b>no parameter needed</b> for
      * <code>requestBuilder</code> and is not looked at at all (so it can be <code>null</code>). The
      * constructor creates its own {@link SOSRequestBuilderGET_200} instance internally by itself. <br>
-     * 
+     *
      * @deprecated use {@link #SOSwithSoapAdapter(String)} instead
      * @param sosVersion
      *        the SOS version
@@ -155,45 +168,64 @@ public class SOSwithSoapAdapter extends SOSAdapter {
     @Override
     public OperationResult doOperation(Operation operation, ParameterContainer parameters) throws ExceptionReport,
             OXFException {
-        OperationResult result = null;
-        if (operation.getName().equals(GET_DATA_AVAILABILITY)) {
-            if (getRequestBuilder() instanceof SoapSOSRequestBuilder_200) {
-                try {
-                    SoapSOSRequestBuilder_200 builder = (SoapSOSRequestBuilder_200) getRequestBuilder();
-                    String request = builder.buildGetDataAvailabilityRequest(parameters);
-                    HttpClient httpClient = new ProxyAwareHttpClient(new SimpleHttpClient());
-                    String url = operation.getDcps()[0].getHTTPGetRequestMethods().get(0).getOnlineResource().getHref();
-                    HttpResponse httpResponse = httpClient.executePost(url, request, ContentType.TEXT_XML);
-                    HttpEntity responseEntity = httpResponse.getEntity();
-                    result = new OperationResult(responseEntity.getContent(), parameters, request);
-                }
-                catch (Exception e) {
-                    LOGGER.error("Error occured, while sending GetDataAvailability.", e);
-                }
-            }
-        }
-        else {
-            result = super.doOperation(operation, parameters);
-        }
-        ByteArrayInputStream resultStream = result.getIncomingResultAsStream();
+        HttpEntity responseEntity = null;
+        String request = buildRequest(operation, parameters);
         try {
+            String url = operation.getDcps()[0].getHTTPGetRequestMethods().get(0).getOnlineResource().getHref();
+            responseEntity = sendSoapRequest(url, request);
+       } catch (HttpClientException e) {
+           throw new OXFException("Could not send SOAP request.", e);
+       }
+
+        OperationResult result = null;
+        try {
+            result = new OperationResult(responseEntity.getContent(), parameters, request);
+            ByteArrayInputStream resultStream = result.getIncomingResultAsStream();
             XmlObject result_xb = XmlObject.Factory.parse(resultStream);
-            XmlObject body = null;
             if (result_xb instanceof EnvelopeDocument) {
                 EnvelopeDocument envelopeDoc = (EnvelopeDocument) result_xb;
-                body = SoapUtil.readBodyNodeFrom(envelopeDoc, null);
+                XmlObject body = SoapUtil.readBodyNodeFrom(envelopeDoc, null);
                 return new OperationResult(body.newInputStream(),
                                            result.getUsedParameters(),
                                            result.getSendedRequest());
             }
+            return result;
         }
         catch (XmlException e) {
-            throw new OXFException("Unparsable XML response: " + readContent(resultStream), e);
+            String response = result == null ? "NULL" : readContent(result.getIncomingResultAsStream());
+            throw new OXFException("Unparsable XML response: " + response, e);
         }
         catch (IOException e) {
             throw new OXFException("Could not read from stream.", e);
         }
-        return result;
+    }
+
+    private String buildRequest(final Operation operation, final ParameterContainer parameters) throws OXFException {
+        SoapSOSRequestBuilder_200 builder = (SoapSOSRequestBuilder_200) getRequestBuilder();
+        if (operation.getName().equals(GET_CAPABILITIES)) {
+            return builder.buildGetCapabilitiesRequest(parameters);
+        }
+        else if (operation.getName().equals(GET_OBSERVATION)) {
+            return builder.buildGetObservationRequest(parameters);
+        }
+        else if (operation.getName().equals(DESCRIBE_SENSOR)) {
+            return builder.buildDescribeSensorRequest(parameters);
+        }
+        else if (operation.getName().equals(GET_FEATURE_OF_INTEREST)) {
+            return builder.buildGetFeatureOfInterestRequest(parameters);
+        }
+        else if (operation.getName().equals(GET_DATA_AVAILABILITY)) {
+            return builder.buildGetDataAvailabilityRequest(parameters);
+        }
+        else {
+            throw new OXFException(format("Operation '%s' not supported.", operation.getName()));
+        }
+    }
+
+    private HttpEntity sendSoapRequest(String url, String request) throws HttpClientException {
+        HttpClient httpClient = new ProxyAwareHttpClient(new SimpleHttpClient());
+        HttpResponse httpResponse = httpClient.executePost(url, request, SOAP_PLUS_XML);
+        return httpResponse.getEntity();
     }
 
 }

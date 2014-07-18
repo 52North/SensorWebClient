@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TODO create a client login for admins (RESTful?) to configure file via
+	web interface -->
+<!-- Some of these properties are not implemented yet! -->
+<instances>
+
+
+    <instance>
+        <itemName>EEA-SOS</itemName>
+        <url>http://ags.dev.52north.org:6080/arcgis/rest/services/EEA/AirQualitySos/MapServer/exts/52nArcGisSos/</url>
+        <version>2.0.0</version>
+        <supportsFirstLatest>false</supportsFirstLatest>
+        <metadataHandler>org.n52.server.sos.connector.ags.ArcGISSoeEReportingMetadataHandler</metadataHandler>
+        <adapter>org.n52.server.sos.connector.ags.SOSAdapterByGET</adapter>
+        <waterML>false</waterML>
+        <autoZoom>false</autoZoom>
+        <llEasting>-11.79</llEasting>
+        <llNorthing>47.0</llNorthing>
+        <urEasting>-5.5</urEasting>
+        <urNorthing>52.0</urNorthing>
+        <defaultZoom>9</defaultZoom>
+        <requestChunk>500</requestChunk>
+        <timeout>120000</timeout>
+        <forceXYAxisOrder>false</forceXYAxisOrder>
+    </instance>
+
+
+</instances>

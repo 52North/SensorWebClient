@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -62,6 +62,9 @@ public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtensio
 
 	@Override
 	public String buildGetFeatureOfInterestRequest(ParameterContainer parameters) {
+		//String request = super.buildGetFeatureOfInterestRequest(parameters);
+		//EnvelopeDocument envelope = addSoapEnvelope(request, GET_FOI_SOAP_HEADER_ACTION);
+		//return envelope.xmlText(XmlUtil.PRETTYPRINT);  
 		GetFeatureOfInterestDocument xb_getFOIDoc = GetFeatureOfInterestDocument.Factory.newInstance();
     	GetFeatureOfInterestType xb_getFOI = xb_getFOIDoc.addNewGetFeatureOfInterest();
     	xb_getFOI.setService((String) parameters.getParameterShellWithServiceSidedName(GET_FOI_SERVICE_PARAMETER).getSpecifiedValue());
@@ -100,7 +103,11 @@ public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtensio
 	    ParameterShell offering = parameters.getParameterShellWithCommonName("offering");
 	    ParameterShell feature = parameters.getParameterShellWithCommonName("featureOfInterest");
 	    ParameterShell version = parameters.getParameterShellWithCommonName("version");
-	    sb.append("<sos:GetDataAvailability service=\"SOS\" version=\"" + version.getSpecifiedValue() + "\" xmlns:sos=\"http://www.opengis.net/sos/2.0\">");
+	    sb.append("<gda:GetDataAvailability service=\"SOS\"");
+        sb.append(" version=\"" + version.getSpecifiedValue() + "\"");
+        sb.append(" xmlns:sos=\"http://www.opengis.net/sos/2.0\"");
+        sb.append(" xmlns:gda=\"http://www.opengis.net/sosgda/1.0\"");
+        sb.append(" >");
 	    if (observedProperty != null) {
 	    	sb.append("<sos:observedProperty>" + observedProperty.getSpecifiedValue() + "</sos:observedProperty>");
 	    }
@@ -113,7 +120,7 @@ public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtensio
 	    if (feature != null) {
 	    	sb.append("<sos:featureOfInterest>" + feature.getSpecifiedValue() + "</sos:featureOfInterest>");
 	    }
-	    sb.append("</sos:GetDataAvailability>");
+	    sb.append("</gda:GetDataAvailability>");
 	    EnvelopeDocument envelope = addSoapEnvelope(sb.toString(), GET_DATA_AVAILABILITY);
 	    return envelope.xmlText(XmlUtil.PRETTYPRINT);
 	}

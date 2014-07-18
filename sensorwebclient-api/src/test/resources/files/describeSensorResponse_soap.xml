@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope  http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd  http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+	<env:Header/>
+	<env:Body>
+		<swes:DescribeSensorResponse xmlns:swes="http://www.opengis.net/swes/2.0">
+			<swes:procedureDescriptionFormat>http://www.opengis.net/sensorML/1.0.1</swes:procedureDescriptionFormat>
+			<swes:description>
+				<swes:SensorDescription>
+					<swes:data>
+						<sml:System xmlns:gml="http://www.opengis.net/gml" xmlns:sml="http://www.opengis.net/sensorML/1.0.1" xmlns:swe="http://www.opengis.net/swe/1.0.1">
+							<gml:description>Durchflussstation; mittlere Strömungsgeschwindigkeit über den Querschnitt, Strömungsrichtung wird nicht gemessen</gml:description>
+							<sml:keywords>
+								<sml:KeywordList>
+									<sml:keyword>http://www.portal-tideelbe.de/sensors/teufelsbrueck/observations</sml:keyword>
+									<sml:keyword>Wasserstand_(NN-Bezug)</sml:keyword>
+									<sml:keyword>Tidedauer_(mittlere)</sml:keyword>
+									<sml:keyword>Ebbedauer_(mittlere)</sml:keyword>
+									<sml:keyword>Tidedauer_(laengste)</sml:keyword>
+									<sml:keyword>Tidehub_(hoechster)</sml:keyword>
+									<sml:keyword>Tidehochwasser_(hoechstes)</sml:keyword>
+									<sml:keyword>Tideniedrigwasser_(hoechstes)</sml:keyword>
+									<sml:keyword>Flutdauer_(mittlere)</sml:keyword>
+									<sml:keyword>Tidehochwasser_(niedrigstes)</sml:keyword>
+									<sml:keyword>Flutdauer_(laengste)</sml:keyword>
+									<sml:keyword>Ebbedauer_(kuerzeste)</sml:keyword>
+									<sml:keyword>Tidehub_(niedrigster)</sml:keyword>
+									<sml:keyword>Ebbedauer_(laengste)</sml:keyword>
+									<sml:keyword>Tidedauer_(kuerzeste)</sml:keyword>
+									<sml:keyword>Tidehub_(mittlerer)</sml:keyword>
+									<sml:keyword>Tidehochwasser</sml:keyword>
+									<sml:keyword>Tideniedrigwasser_(NN-Bezug)</sml:keyword>
+									<sml:keyword>Tidehochwasser_(NN-Bezug)</sml:keyword>
+									<sml:keyword>Tidehochwasser_(hoechstes;_NN-Bezug)</sml:keyword>
+									<sml:keyword>Tideniedrigwasser_(hoechstes;_NN-Bezug)</sml:keyword>
+									<sml:keyword>Tidehochwasser_(niedrigstes;_NN-Bezug)</sml:keyword>
+									<sml:keyword>Tideniedrigwasser_(mittleres;_NN-Bezug)</sml:keyword>
+									<sml:keyword>Tidehochwasser_(mittleres;_NN-Bezug)</sml:keyword>
+									<sml:keyword>Tideniedrigwasser</sml:keyword>
+									<sml:keyword>Tidehub</sml:keyword>
+									<sml:keyword>Tideniedrigwasser_(niedrigstes;_NN-Bezug)</sml:keyword>
+									<sml:keyword>Tidedauer</sml:keyword>
+									<sml:keyword>Tideniedrigwasser_(niedrigstes)</sml:keyword>
+									<sml:keyword>Wasserstand_(Ganglinie)</sml:keyword>
+									<sml:keyword>Tideniedrigwasser_(mittleres)</sml:keyword>
+									<sml:keyword>Flutdauer_(kuerzeste)</sml:keyword>
+									<sml:keyword>Tidehochwasser_(mittleres)</sml:keyword>
+									<sml:keyword>Stroemungsgeschwindigkeit</sml:keyword>
+									<sml:keyword>Stroemungsrichtung</sml:keyword>
+									<sml:keyword>Abfluss</sml:keyword>
+									<sml:keyword>Wasserstand_(Ganglinie)</sml:keyword>
+									<sml:keyword>Chloridgehalt_(Einzelmessung)</sml:keyword>
+									<sml:keyword>Leitfaehigkeit_(Einzelmessung)</sml:keyword>
+									<sml:keyword>Salzgehalt_(Einzelmessung)</sml:keyword>
+								</sml:KeywordList>
+							</sml:keywords>
+							<sml:identification>
+								<sml:IdentifierList>
+									<sml:identifier name="URN">
+										<sml:Term definition="urn:ogc:def:identifier:OGC:1.0:uniqueID">
+											<sml:value>http://www.portal-tideelbe.de/sensors/teufelsbrueck</sml:value>
+										</sml:Term>
+									</sml:identifier>
+									<sml:identifier name="longName">
+										<sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">
+											<sml:value>Teufelsbrück, Elbe-Km 630,3</sml:value>
+										</sml:Term>
+									</sml:identifier>
+									<sml:identifier name="shortName">
+										<sml:Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">
+											<sml:value>teufelsbrueck:50824145</sml:value>
+										</sml:Term>
+									</sml:identifier>
+								</sml:IdentifierList>
+							</sml:identification>
+							<sml:validTime>
+								<gml:TimePeriod>
+									<gml:beginPosition>2004-04-01T00:00:00.000+02:00</gml:beginPosition>
+									<gml:endPosition>2007-12-31T23:55:00.000+01:00</gml:endPosition>
+								</gml:TimePeriod>
+							</sml:validTime>
+							<sml:characteristics>
+								<swe:SimpleDataRecord definition="urn:x-ogc:def:property:stationProperties">
+									<swe:field name="river">
+										<swe:Text definition="urn:x-ogc:def:property:water">
+											<swe:value>Elbe;Elbe;Elbe</swe:value>
+										</swe:Text>
+									</swe:field>
+									<swe:field name="riverKilometer">
+										<swe:Text definition="urn:x-ogc:def:property:riverKilometer">
+											<swe:value>634,796;630,308;641,789</swe:value>
+										</swe:Text>
+									</swe:field>
+								</swe:SimpleDataRecord>
+							</sml:characteristics>
+							<sml:capabilities>
+								<swe:DataRecord>
+									<swe:field name="isActiv">
+										<swe:Text definition="urn:x-ogc:def:property:activ">
+											<swe:value>true</swe:value>
+										</swe:Text>
+									</swe:field>
+									<swe:field name="FeatureOfInterestID">
+										<swe:Text definition="FeatureOfInterest identifier">
+											<swe:value>http://www.portal-tideelbe.de/featureOfInterest/teufelsbrueck</swe:value>
+										</swe:Text>
+									</swe:field>
+									<swe:field name="observedBBOX">
+										<swe:Envelope definition="urn:ogc:def:property:OGC:1.0:observedBBOX" referenceFrame="urn:ogc:def:crs:EPSG::31467">
+											<swe:lowerCorner>
+												<swe:Vector>
+													<swe:coordinate name="easting">
+														<swe:Quantity axisID="y">
+															<swe:uom code="degree"/>
+															<swe:value>3557126.0</swe:value>
+														</swe:Quantity>
+													</swe:coordinate>
+													<swe:coordinate name="northing">
+														<swe:Quantity axisID="x">
+															<swe:uom code="degree"/>
+															<swe:value>5935357.0</swe:value>
+														</swe:Quantity>
+													</swe:coordinate>
+												</swe:Vector>
+											</swe:lowerCorner>
+											<swe:upperCorner>
+												<swe:Vector>
+													<swe:coordinate name="easting">
+														<swe:Quantity axisID="y">
+															<swe:uom code="degree"/>
+															<swe:value>3557126.0</swe:value>
+														</swe:Quantity>
+													</swe:coordinate>
+													<swe:coordinate name="northing">
+														<swe:Quantity axisID="x">
+															<swe:uom code="degree"/>
+															<swe:value>5935357.0</swe:value>
+														</swe:Quantity>
+													</swe:coordinate>
+												</swe:Vector>
+											</swe:upperCorner>
+										</swe:Envelope>
+									</swe:field>
+								</swe:DataRecord>
+							</sml:capabilities>
+							<sml:contact>
+								<sml:ContactList>
+									<sml:member>
+										<sml:ResponsibleParty>
+											<sml:organizationName>Wasser- und Schifffahrtsamt Hamburg;Hamburg Port Authority (HPA)</sml:organizationName>
+										</sml:ResponsibleParty>
+									</sml:member>
+								</sml:ContactList>
+							</sml:contact>
+							<sml:position name="stationPosition">
+								<swe:Position fixed="true" referenceFrame="urn:ogc:def:crs:EPSG::31467">
+									<swe:location>
+										<swe:Vector gml:id="SYSTEM_LOCATION">
+											<swe:coordinate name="easting">
+												<swe:Quantity axisID="y">
+													<swe:uom code="degree"/>
+													<swe:value>3557126.0</swe:value>
+												</swe:Quantity>
+											</swe:coordinate>
+											<swe:coordinate name="northing">
+												<swe:Quantity axisID="x">
+													<swe:uom code="degree"/>
+													<swe:value>5935357.0</swe:value>
+												</swe:Quantity>
+											</swe:coordinate>
+										</swe:Vector>
+									</swe:location>
+								</swe:Position>
+							</sml:position>
+							<sml:inputs>
+								<sml:InputList>
+									<sml:input name="Wasserstand_(NN-Bezug)">
+										<swe:ObservableProperty definition="Wasserstand_(NN-Bezug)"/>
+									</sml:input>
+									<sml:input name="Tidedauer_(mittlere)">
+										<swe:ObservableProperty definition="Tidedauer_(mittlere)"/>
+									</sml:input>
+									<sml:input name="Ebbedauer_(mittlere)">
+										<swe:ObservableProperty definition="Ebbedauer_(mittlere)"/>
+									</sml:input>
+									<sml:input name="Tidedauer_(laengste)">
+										<swe:ObservableProperty definition="Tidedauer_(laengste)"/>
+									</sml:input>
+									<sml:input name="Tidehub_(hoechster)">
+										<swe:ObservableProperty definition="Tidehub_(hoechster)"/>
+									</sml:input>
+									<sml:input name="Tidehochwasser_(hoechstes)">
+										<swe:ObservableProperty definition="Tidehochwasser_(hoechstes)"/>
+									</sml:input>
+									<sml:input name="Tideniedrigwasser_(hoechstes)">
+										<swe:ObservableProperty definition="Tideniedrigwasser_(hoechstes)"/>
+									</sml:input>
+									<sml:input name="Flutdauer_(mittlere)">
+										<swe:ObservableProperty definition="Flutdauer_(mittlere)"/>
+									</sml:input>
+									<sml:input name="Tidehochwasser_(niedrigstes)">
+										<swe:ObservableProperty definition="Tidehochwasser_(niedrigstes)"/>
+									</sml:input>
+									<sml:input name="Flutdauer_(laengste)">
+										<swe:ObservableProperty definition="Flutdauer_(laengste)"/>
+									</sml:input>
+									<sml:input name="Ebbedauer_(kuerzeste)">
+										<swe:ObservableProperty definition="Ebbedauer_(kuerzeste)"/>
+									</sml:input>
+									<sml:input name="Tidehub_(niedrigster)">
+										<swe:ObservableProperty definition="Tidehub_(niedrigster)"/>
+									</sml:input>
+									<sml:input name="Ebbedauer_(laengste)">
+										<swe:ObservableProperty definition="Ebbedauer_(laengste)"/>
+									</sml:input>
+									<sml:input name="Tidedauer_(kuerzeste)">
+										<swe:ObservableProperty definition="Tidedauer_(kuerzeste)"/>
+									</sml:input>
+									<sml:input name="Tidehub_(mittlerer)">
+										<swe:ObservableProperty definition="Tidehub_(mittlerer)"/>
+									</sml:input>
+									<sml:input name="Tidehochwasser">
+										<swe:ObservableProperty definition="Tidehochwasser"/>
+									</sml:input>
+									<sml:input name="Tideniedrigwasser_(NN-Bezug)">
+										<swe:ObservableProperty definition="Tideniedrigwasser_(NN-Bezug)"/>
+									</sml:input>
+									<sml:input name="Tidehochwasser_(NN-Bezug)">
+										<swe:ObservableProperty definition="Tidehochwasser_(NN-Bezug)"/>
+									</sml:input>
+									<sml:input name="Tidehochwasser_(hoechstes;_NN-Bezug)">
+										<swe:ObservableProperty definition="Tidehochwasser_(hoechstes;_NN-Bezug)"/>
+									</sml:input>
+									<sml:input name="Tideniedrigwasser_(hoechstes;_NN-Bezug)">
+										<swe:ObservableProperty definition="Tideniedrigwasser_(hoechstes;_NN-Bezug)"/>
+									</sml:input>
+									<sml:input name="Tidehochwasser_(niedrigstes;_NN-Bezug)">
+										<swe:ObservableProperty definition="Tidehochwasser_(niedrigstes;_NN-Bezug)"/>
+									</sml:input>
+									<sml:input name="Tideniedrigwasser_(mittleres;_NN-Bezug)">
+										<swe:ObservableProperty definition="Tideniedrigwasser_(mittleres;_NN-Bezug)"/>
+									</sml:input>
+									<sml:input name="Tidehochwasser_(mittleres;_NN-Bezug)">
+										<swe:ObservableProperty definition="Tidehochwasser_(mittleres;_NN-Bezug)"/>
+									</sml:input>
+									<sml:input name="Tideniedrigwasser">
+										<swe:ObservableProperty definition="Tideniedrigwasser"/>
+									</sml:input>
+									<sml:input name="Tidehub">
+										<swe:ObservableProperty definition="Tidehub"/>
+									</sml:input>
+									<sml:input name="Tideniedrigwasser_(niedrigstes;_NN-Bezug)">
+										<swe:ObservableProperty definition="Tideniedrigwasser_(niedrigstes;_NN-Bezug)"/>
+									</sml:input>
+									<sml:input name="Tidedauer">
+										<swe:ObservableProperty definition="Tidedauer"/>
+									</sml:input>
+									<sml:input name="Tideniedrigwasser_(niedrigstes)">
+										<swe:ObservableProperty definition="Tideniedrigwasser_(niedrigstes)"/>
+									</sml:input>
+									<sml:input name="Wasserstand_(Ganglinie)">
+										<swe:ObservableProperty definition="Wasserstand_(Ganglinie)"/>
+									</sml:input>
+									<sml:input name="Tideniedrigwasser_(mittleres)">
+										<swe:ObservableProperty definition="Tideniedrigwasser_(mittleres)"/>
+									</sml:input>
+									<sml:input name="Flutdauer_(kuerzeste)">
+										<swe:ObservableProperty definition="Flutdauer_(kuerzeste)"/>
+									</sml:input>
+									<sml:input name="Tidehochwasser_(mittleres)">
+										<swe:ObservableProperty definition="Tidehochwasser_(mittleres)"/>
+									</sml:input>
+									<sml:input name="Stroemungsgeschwindigkeit">
+										<swe:ObservableProperty definition="Stroemungsgeschwindigkeit"/>
+									</sml:input>
+									<sml:input name="Stroemungsrichtung">
+										<swe:ObservableProperty definition="Stroemungsrichtung"/>
+									</sml:input>
+									<sml:input name="Abfluss">
+										<swe:ObservableProperty definition="Abfluss"/>
+									</sml:input>
+									<sml:input name="Wasserstand_(Ganglinie)">
+										<swe:ObservableProperty definition="Wasserstand_(Ganglinie)"/>
+									</sml:input>
+									<sml:input name="Chloridgehalt_(Einzelmessung)">
+										<swe:ObservableProperty definition="Chloridgehalt_(Einzelmessung)"/>
+									</sml:input>
+									<sml:input name="Leitfaehigkeit_(Einzelmessung)">
+										<swe:ObservableProperty definition="Leitfaehigkeit_(Einzelmessung)"/>
+									</sml:input>
+									<sml:input name="Salzgehalt_(Einzelmessung)">
+										<swe:ObservableProperty definition="Salzgehalt_(Einzelmessung)"/>
+									</sml:input>
+								</sml:InputList>
+							</sml:inputs>
+							<sml:outputs>
+								<sml:OutputList>
+									<sml:output name="Wasserstand_(NN-Bezug)">
+										<swe:Quantity definition="Wasserstand_(NN-Bezug)">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tidedauer_(mittlere)">
+										<swe:Quantity definition="Tidedauer_(mittlere)">
+											<swe:uom code="min"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Ebbedauer_(mittlere)">
+										<swe:Quantity definition="Ebbedauer_(mittlere)">
+											<swe:uom code="min"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tidedauer_(laengste)">
+										<swe:Quantity definition="Tidedauer_(laengste)">
+											<swe:uom code="min"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tidehub_(hoechster)">
+										<swe:Quantity definition="Tidehub_(hoechster)">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tidehochwasser_(hoechstes)">
+										<swe:Quantity definition="Tidehochwasser_(hoechstes)">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tideniedrigwasser_(hoechstes)">
+										<swe:Quantity definition="Tideniedrigwasser_(hoechstes)">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Flutdauer_(mittlere)">
+										<swe:Quantity definition="Flutdauer_(mittlere)">
+											<swe:uom code="min"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tidehochwasser_(niedrigstes)">
+										<swe:Quantity definition="Tidehochwasser_(niedrigstes)">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Flutdauer_(laengste)">
+										<swe:Quantity definition="Flutdauer_(laengste)">
+											<swe:uom code="min"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Ebbedauer_(kuerzeste)">
+										<swe:Quantity definition="Ebbedauer_(kuerzeste)">
+											<swe:uom code="min"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tidehub_(niedrigster)">
+										<swe:Quantity definition="Tidehub_(niedrigster)">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Ebbedauer_(laengste)">
+										<swe:Quantity definition="Ebbedauer_(laengste)">
+											<swe:uom code="min"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tidedauer_(kuerzeste)">
+										<swe:Quantity definition="Tidedauer_(kuerzeste)">
+											<swe:uom code="min"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tidehub_(mittlerer)">
+										<swe:Quantity definition="Tidehub_(mittlerer)">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tidehochwasser">
+										<swe:Quantity definition="Tidehochwasser">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tideniedrigwasser_(NN-Bezug)">
+										<swe:Quantity definition="Tideniedrigwasser_(NN-Bezug)">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tidehochwasser_(NN-Bezug)">
+										<swe:Quantity definition="Tidehochwasser_(NN-Bezug)">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tidehochwasser_(hoechstes;_NN-Bezug)">
+										<swe:Quantity definition="Tidehochwasser_(hoechstes;_NN-Bezug)">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tideniedrigwasser_(hoechstes;_NN-Bezug)">
+										<swe:Quantity definition="Tideniedrigwasser_(hoechstes;_NN-Bezug)">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tidehochwasser_(niedrigstes;_NN-Bezug)">
+										<swe:Quantity definition="Tidehochwasser_(niedrigstes;_NN-Bezug)">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tideniedrigwasser_(mittleres;_NN-Bezug)">
+										<swe:Quantity definition="Tideniedrigwasser_(mittleres;_NN-Bezug)">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tidehochwasser_(mittleres;_NN-Bezug)">
+										<swe:Quantity definition="Tidehochwasser_(mittleres;_NN-Bezug)">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tideniedrigwasser">
+										<swe:Quantity definition="Tideniedrigwasser">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tidehub">
+										<swe:Quantity definition="Tidehub">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tideniedrigwasser_(niedrigstes;_NN-Bezug)">
+										<swe:Quantity definition="Tideniedrigwasser_(niedrigstes;_NN-Bezug)">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tidedauer">
+										<swe:Quantity definition="Tidedauer">
+											<swe:uom code="min"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tideniedrigwasser_(niedrigstes)">
+										<swe:Quantity definition="Tideniedrigwasser_(niedrigstes)">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Wasserstand_(Ganglinie)">
+										<swe:Quantity definition="Wasserstand_(Ganglinie)">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tideniedrigwasser_(mittleres)">
+										<swe:Quantity definition="Tideniedrigwasser_(mittleres)">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Flutdauer_(kuerzeste)">
+										<swe:Quantity definition="Flutdauer_(kuerzeste)">
+											<swe:uom code="min"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Tidehochwasser_(mittleres)">
+										<swe:Quantity definition="Tidehochwasser_(mittleres)">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Stroemungsgeschwindigkeit">
+										<swe:Quantity definition="Stroemungsgeschwindigkeit">
+											<swe:uom code="cm/s"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Stroemungsrichtung">
+										<swe:Quantity definition="Stroemungsrichtung">
+											<swe:uom code="Altgrad"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Abfluss">
+										<swe:Quantity definition="Abfluss">
+											<swe:uom code="cbm/s"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Wasserstand_(Ganglinie)">
+										<swe:Quantity definition="Wasserstand_(Ganglinie)">
+											<swe:uom code="cm"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Chloridgehalt_(Einzelmessung)">
+										<swe:Quantity definition="Chloridgehalt_(Einzelmessung)">
+											<swe:uom code="kh"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Leitfaehigkeit_(Einzelmessung)">
+										<swe:Quantity definition="Leitfaehigkeit_(Einzelmessung)">
+											<swe:uom code="MikroS/m"/>
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="Salzgehalt_(Einzelmessung)">
+										<swe:Quantity definition="Salzgehalt_(Einzelmessung)">
+											<swe:uom code="0/00"/>
+										</swe:Quantity>
+									</sml:output>
+								</sml:OutputList>
+							</sml:outputs>
+						</sml:System>
+					</swes:data>
+				</swes:SensorDescription>
+			</swes:description>
+		</swes:DescribeSensorResponse>
+	</env:Body>
+</env:Envelope>

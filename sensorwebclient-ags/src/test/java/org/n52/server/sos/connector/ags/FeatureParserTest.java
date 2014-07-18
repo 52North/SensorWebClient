@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -49,9 +49,9 @@ import com.vividsolutions.jts.geom.Point;
 public class FeatureParserTest {
 
     private static final String FAKE_URL = "http://points.nowhere";
-    
+
     private static final String GET_FOI_RESPONSE = "/files/get-features_subset.xml";
-    
+
     private FeatureParser featureParser;
 
     @Before public void
@@ -60,19 +60,20 @@ public class FeatureParserTest {
         XmlObject featureResponse = loadXmlFileViaClassloader(GET_FOI_RESPONSE, getClass());
         assertThat(featureResponse.schemaType(), is(GetFeatureOfInterestResponseDocument.type));
     }
-    
+
     @Test public void
     shouldParseLocations() throws XmlException, IOException {
         XmlObject featureResponse = loadXmlFileViaClassloader(GET_FOI_RESPONSE, getClass());
         Map<Feature, Point> featureLocations = featureParser.parseFeatures(featureResponse.newInputStream());
-        if (featureLocations == null || featureLocations.size() == 0) {
+        if (featureLocations == null || featureLocations.isEmpty()) {
             fail("No features have been parsed!");
+        } else {
+            assertThat(featureLocations.size(), is(3));
         }
-        assertThat(featureLocations.size(), is(3));
     }
-    
+
     @Test public void
     shouldHaveParsedFeatureNames() {
-        
+
     }
 }

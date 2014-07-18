@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- TODO create a client login for admins (RESTful?) to configure file via 
+<!-- TODO create a client login for admins (RESTful?) to configure file via
 	web interface -->
 <!-- Some of these properties are not implemented yet! -->
 <instances>
@@ -20,9 +20,10 @@
 		<urEasting>16</urEasting>
 		<urNorthing>56.0</urNorthing>
 		<defaultZoom>13</defaultZoom>
+        <enableEventing>true</enableEventing>
 	</instance>
-	
-<!-- 
+
+<!--
 	<instance>
 		<itemName>GRDC (Kisters SOS)</itemName>
 		<url>http://kiwis.kisters.de/KiWIS/KiWIS?datasource=3</url>
@@ -55,8 +56,8 @@
 		<requestChunk>500</requestChunk>
 		<forceXYAxisOrder>true</forceXYAxisOrder>
 	</instance>
-	
-<!-- 
+
+<!--
 	<instance>
 		<itemName>Tideelbe SOS</itemName>
 		<url>http://192.168.1.117:8080/52nSOS_ZDM_PORTALE/sos</url>
@@ -89,7 +90,7 @@
 		<urNorthing>51.6</urNorthing>
 		<defaultZoom>11</defaultZoom>
 	</instance>
-	
+
 	<instance>
 		<itemName>Wupperverband</itemName>
 		<url>http://fluggs.wupperverband.de/sos/sos</url>
@@ -105,5 +106,5 @@
 		<requestChunk>200</requestChunk>
 		<autoZoom>true</autoZoom>
 	</instance>
-	
+
 </instances>

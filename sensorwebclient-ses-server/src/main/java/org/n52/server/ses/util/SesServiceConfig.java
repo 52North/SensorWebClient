@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -25,28 +25,38 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
-package org.n52.server.util;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 
+package org.n52.server.ses.util;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
- * Provides mechanism to load bean instances declared within the application context file.
+ *
+ * @author Henning Bredel <h.bredel@52north.org>
  */
-public class ContextLoader {
+public class SesServiceConfig implements ApplicationContextAware {
 
-    private static ApplicationContext context = new ClassPathXmlApplicationContext("/spring-*-config.xml");
+    private static final Logger LOGGER = LoggerFactory.getLogger(SesServiceConfig.class);
 
-    /**
-     * Loads a bean from the {@link ApplicationContext}.
-     * 
-     * @param bean
-     *        the bean id as declared in the application context file.
-     * @param clazz
-     *        the expected type of the bean.
-     * @return the bean of type <code>T</code>.
-     */
-    public static <T> T load(String bean, Class<T> clazz) {
-        return clazz.cast(context.getBean(bean));
+    private static ApplicationContext context;
+
+    public static <T> T getService(String bean, Class<T> clazz) {
+        return (T) context.getBean(bean);
     }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        LOGGER.info("Configure application context.");
+        context = applicationContext;
+    }
+
 }

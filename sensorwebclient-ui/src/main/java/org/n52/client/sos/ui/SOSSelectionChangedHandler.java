@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -77,18 +77,19 @@ final class SOSSelectionChangedHandler implements SelectionChangedHandler {
                    .setAutoZoom(Boolean.parseBoolean(getValueFor(record, "autoZoom")))
                    .setRequestChunk(Integer.parseInt(getValueFor(record, "requestChunk")))
                    //.addDefaultZoom(Integer.parseInt(getValueFor(record, "defaultZoom")))
+                   .setEnableEventing(Boolean.parseBoolean(getValueFor(record, "enableEventing")))
                    .withExtent(createBoundingBox(record));
 		} catch (Exception e) {
 			GWT.log("Could not parse SERVICES configuration for: " + builder.getServiceURL(), e);
 		}
 	}
-	
+
 	private BoundingBox createBoundingBox(Record record) {
         Double llEasting = Double.parseDouble(getValueFor(record, "llEasting"));
         Double llNorthing = Double.parseDouble(getValueFor(record, "llNorthing"));
         Double urEasting = Double.parseDouble(getValueFor(record, "urEasting"));
         Double urNorthing = Double.parseDouble(getValueFor(record, "urNorthing"));
-        
+
         GeometryFactory factory = new GeometryFactory(new PrecisionModel(), 4326);
         Point ll = factory.createPoint(new Coordinate(llEasting, llNorthing));
         Point ur = factory.createPoint(new Coordinate(urEasting, urNorthing));

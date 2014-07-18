@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -333,7 +333,7 @@ public class Legend extends VLayout {
 
     private void createExportLoadingSpinner() {
         this.exportLoadingSpinner = new HLayout();
-        Img spinner = new Img("../img/loader_wide.gif", 43, 11);
+        Img spinner = new Img("../img/mini_loader_bright.gif", 43, 11);
         // this.exportLoadingSpinner.setWidth100();
         // this.exportLoadingSpinner.setHeight100();
         this.exportLoadingSpinner.setAlign(Alignment.CENTER);
@@ -430,7 +430,7 @@ public class Legend extends VLayout {
         sesTabLabelButton.setVisible(true);
         return sesTabLabelButton;
     }
-    
+
     private void showProfileWindow() {
         if (profileWindow == null) {
             profileWindow = new ProfileWindow();

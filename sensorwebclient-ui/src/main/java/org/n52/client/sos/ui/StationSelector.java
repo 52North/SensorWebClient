@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -79,39 +79,39 @@ import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public class StationSelector extends Window {
-	
+
     private static final String COMPONENT_ID = "stationSelector";
-    
+
     private static int WIDTH = 960;
-    
+
     private static int HEIGHT = 552;
 
     private static StationSelector instance;
 
     private static StationSelectorController controller;
-    
+
 	private Layout guiContent;
 
 	private Map<String, RadioGroupItem> stationFilterGroups;
-	
+
 	private Label phenomenonInfoLabel;
-	
+
 	private Label stationInfoLabel;
 
 	private HTMLPane timeseriesInfoHTMLPane;
 
 	private Label showSelectionMenuButton;
-	
+
 	private InteractionWindow selectionMenu;
-	
+
 	private InteractionWindow infoWindow;
-	
+
 	private Img stationLoadingSpinner;
-	
+
     private ApplyCancelButtonLayout applyCancel;
 
 	private SelectItem phenomenonBox;
-	
+
     public static StationSelector getInst() {
         if (instance == null) {
         	controller = new StationSelectorController();
@@ -168,7 +168,7 @@ public class StationSelector extends Window {
 	    	addItem(guiContent);
 		}
 	}
-    
+
     private Canvas createStationLoadingSpinner() {
 		stationLoadingSpinner = new Img("../img/loader.gif");
 		stationLoadingSpinner.setWidth(32);
@@ -244,7 +244,7 @@ public class StationSelector extends Window {
 		buttons.setAlign(Alignment.RIGHT);
         buttons.addMember(createApplyCancelCanvas());
         layout.addMember(buttons);
-		
+
 		infoWindow = new InteractionWindow(layout);
 		infoWindow.setZIndex(1000000);
 		infoWindow.setWidth(300);
@@ -253,7 +253,7 @@ public class StationSelector extends Window {
 		infoWindow.hide();
 		return infoWindow;
 	}
-	
+
 	private ApplyCancelButtonLayout createApplyCancelCanvas() {
         if (applyCancel == null) {
             applyCancel = new ApplyCancelButtonLayout();
@@ -263,7 +263,7 @@ public class StationSelector extends Window {
         }
         return applyCancel;
     }
-	
+
 	private ClickHandler createApplyHandler() {
         return new ClickHandler() {
             @Override
@@ -310,7 +310,7 @@ public class StationSelector extends Window {
     }
 
     private Canvas createLoadingSpinner() {
-        String imgURL = "../img/loader_wide.gif";
+        String imgURL = "../img/mini_loader_bright.gif";
         LoadingSpinner loader = new LoadingSpinner(imgURL, 43, 11);
         loader.setPadding(7);
         return loader;
@@ -324,7 +324,7 @@ public class StationSelector extends Window {
 	private MapWidget createMapContent() {
     	return controller.createMap();
     }
-    
+
     FormItem createFilterCategorySelectionGroup(String serviceUrl) {
 		if (stationFilterGroups.containsKey(serviceUrl)) {
 			RadioGroupItem selector = stationFilterGroups.get(serviceUrl);
@@ -369,12 +369,12 @@ public class StationSelector extends Window {
 		timeseriesInfoHTMLPane.show();
 		applyCancel.finishLoading();
 	}
-	
+
 	public void clearProcedureDetails() {
 	    timeseriesInfoHTMLPane.clear();
 		timeseriesInfoHTMLPane.hide();
 	}
-	
+
 	public void updateStationFilters(final SOSMetadata currentMetadata) {
 		hideInfoWindow();
 		Map<String, String> sortedCategories = getAlphabeticallySortedMap();
@@ -389,7 +389,7 @@ public class StationSelector extends Window {
 		LinkedHashMap<String, String> categories = new LinkedHashMap<String, String>(sortedCategories);
 		selector.setValueMap(categories);
 	}
-	
+
 	private Set<Category> getStationCategories(Station station) {
 		Set<Category> categories = new HashSet<Category>();
 		for (SosTimeseries timeseries : station.getObservedTimeseries()) {
@@ -397,7 +397,7 @@ public class StationSelector extends Window {
 		}
 		return categories;
 	}
-	
+
 	private String[] getStationCategoryLabels(Station station) {
 		Set<String> labels = new HashSet<String>();
 		for (SosTimeseries timeseries : station.getObservedTimeseries()) {
@@ -415,7 +415,7 @@ public class StationSelector extends Window {
 			selector.setValue(filter);
 		}
 	}
-	
+
 	protected SortedMap<String, String> getAlphabeticallySortedMap() {
         return new TreeMap<String, String>(new Comparator<String>() {
             public int compare(String word1, String word2) {
@@ -423,7 +423,7 @@ public class StationSelector extends Window {
             }
         });
     }
-    
+
     public String getId() {
         return COMPONENT_ID;
     }
@@ -437,11 +437,11 @@ public class StationSelector extends Window {
 		infoWindow.show();
 		applyCancel.setLoading();
 	}
-	
+
 	public void hideInfoWindow() {
 		infoWindow.hide();
 	}
-	
+
 	public void showStationLoadingSpinner(boolean show) {
 		if (show) {
 			stationLoadingSpinner.show();

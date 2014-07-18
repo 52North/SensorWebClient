@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -119,7 +119,7 @@ public final class FeatureParser {
             String[] lonLat = position.getStringValue().split(" ");
             Double x = Double.parseDouble(lonLat[0]);
             Double y = Double.parseDouble(lonLat[1]);
-            String srsName = crsUtil.extractSRSCode(point.getSrsName());
+            String srsName = getSrsName(point);
             Point outerRefPoint = crsUtil.createPoint(x, y, srsName);
             return crsUtil.transformOuterToInner(outerRefPoint, srsName);
         }
@@ -131,5 +131,12 @@ public final class FeatureParser {
             LOGGER.error("Could not transform to CRS:84.", e);
             return null;
         }
+    }
+
+    private String getSrsName(PointType point) {
+        String srsName = crsUtil.extractSRSCode(point.getSrsName());
+        return srsName != null && srsName.contains("102100")
+                ? "3857"
+                : srsName;
     }
 }

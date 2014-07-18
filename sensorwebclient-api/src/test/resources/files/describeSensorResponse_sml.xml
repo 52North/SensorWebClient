@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<sml:SensorML xmlns:sml="http://www.opengis.net/sensorML/1.0.1" xmlns="http://www.opengis.net/sensorML/1.0.1" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0.1" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+  <sml:member>
+    <sml:System>
+      <!--sml:identification element must contain the ID of the sensor-->
+      <sml:identification>
+        <sml:IdentifierList>
+          <sml:identifier>
+            <sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">
+              <sml:value>urn:ogc:object:feature:Sensor:IFGI:ifgi-sensor-1</sml:value>
+            </sml:Term>
+          </sml:identifier>
+        </sml:IdentifierList>
+      </sml:identification>
+      <!--last measured position of sensor-->
+      <sml:position name="sensorPosition">
+        <swe:Position referenceFrame="urn:ogc:def:crs:EPSG::4326">
+          <swe:location>
+            <swe:Vector gml:id="STATION_LOCATION">
+              <swe:coordinate name="easting">
+                <swe:Quantity axisID="x">
+                  <swe:uom code="degree"/>
+                  <swe:value>7.727958</swe:value>
+                </swe:Quantity>
+              </swe:coordinate>
+              <swe:coordinate name="northing">
+                <swe:Quantity axisID="y">
+                  <swe:uom code="degree"/>
+                  <swe:value>51.883906</swe:value>
+                </swe:Quantity>
+              </swe:coordinate>
+              <swe:coordinate name="altitude">
+                <swe:Quantity axisID="z">
+                  <swe:uom code="m"/>
+                  <swe:value>52.0</swe:value>
+                </swe:Quantity>
+              </swe:coordinate>
+            </swe:Vector>
+          </swe:location>
+        </swe:Position>
+      </sml:position>
+      <!--list containing the input phenomena for this sensor system-->
+      <sml:inputs>
+        <sml:InputList>
+          <sml:input name="waterlevel">
+            <swe:ObservableProperty definition="urn:ogc:def:phenomenon:OGC:1.0.30:waterlevel"/>
+          </sml:input>
+        </sml:InputList>
+      </sml:inputs>
+      <!--list containing the output phenomena of this sensor system; ATTENTION: these phenomena are parsed and inserted into the database; they have to contain offering elements to determine the correct offering for the sensors and measured phenomena-->
+      <sml:outputs>
+        <sml:OutputList>
+          <sml:output name="waterlevel">
+            <swe:Quantity definition="urn:ogc:def:phenomenon:OGC:1.0.30:waterlevel">
+              <gml:metaDataProperty>
+                <offering>
+                  <id>GAUGE_HEIGHT</id>
+                  <name>waterlevel of rivers in North
+										Rhine Westfalia</name>
+                </offering>
+              </gml:metaDataProperty>
+              <swe:uom code="cm"/>
+            </swe:Quantity>
+          </sml:output>
+        </sml:OutputList>
+      </sml:outputs>
+      <!--description of components of this sensor system; these are currently not used by the 52N SOS-->
+      <sml:components>
+        <sml:ComponentList>
+          <sml:component name="water sensor">
+            <sml:Component>
+              <sml:identification>
+                <sml:IdentifierList>
+                  <sml:identifier>
+                    <sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">
+                      <sml:value>urn:ogc:object:feature:Sensor:water_level_sensor</sml:value>
+                    </sml:Term>
+                  </sml:identifier>
+                </sml:IdentifierList>
+              </sml:identification>
+              <sml:inputs>
+                <sml:InputList>
+                  <sml:input name="waterlevel">
+                    <swe:ObservableProperty definition="urn:ogc:def:phenomenon:OGC:1.0.30:waterlevel"/>
+                  </sml:input>
+                </sml:InputList>
+              </sml:inputs>
+              <sml:outputs>
+                <sml:OutputList>
+                  <sml:output name="waterlevel">
+                    <swe:Quantity definition="urn:ogc:def:phenomenon:OGC:1.0.30:waterlevel">
+                      <swe:uom code="cm"/>
+                    </swe:Quantity>
+                  </sml:output>
+                </sml:OutputList>
+              </sml:outputs>
+            </sml:Component>
+          </sml:component>
+        </sml:ComponentList>
+      </sml:components>
+    </sml:System>
+  </sml:member>
+</sml:SensorML>
