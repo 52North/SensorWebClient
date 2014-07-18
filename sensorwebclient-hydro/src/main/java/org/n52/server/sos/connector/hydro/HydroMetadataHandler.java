@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -84,7 +84,7 @@ public class HydroMetadataHandler extends MetadataHandler {
         // (HyProfile must request an Observation (without timestamp we get the last value))
         // ==> move metadata obtaining strategy to MetadataHandler class: a different strategy can
         // be used by overriding the default (metadata via SensorML)
-        
+
     }
 
     @Override
@@ -204,11 +204,11 @@ public class HydroMetadataHandler extends MetadataHandler {
         }
     }
 
-    private Collection<SosTimeseries> getAvailableTimeseries(XmlObject result_xb,
+    protected Collection<SosTimeseries> getAvailableTimeseries(XmlObject result_xb,
                                                              SosTimeseries timeserie,
                                                              SOSMetadata metadata) throws XmlException, IOException {
         ArrayList<SosTimeseries> timeseries = new ArrayList<SosTimeseries>();
-        String queryExpression = "declare namespace sos='http://www.opengis.net/sos/2.0'; $this/sos:GetDataAvailabilityResponse/sos:dataAvailabilityMember";
+        String queryExpression = "declare namespace gda='http://www.opengis.net/sosgda/1.0'; $this/gda:GetDataAvailabilityResponse/gda:dataAvailabilityMember";
         XmlObject[] response = result_xb.selectPath(queryExpression);
         for (XmlObject xmlObject : response) {
             SosTimeseries addedtimeserie = new SosTimeseries();
