@@ -212,9 +212,9 @@ public class HydroMetadataHandler extends MetadataHandler {
         XmlObject[] response = result_xb.selectPath(queryExpression);
         for (XmlObject xmlObject : response) {
             SosTimeseries addedtimeserie = new SosTimeseries();
-            String feature = getAttributeOfChildren(xmlObject, "featureOfInterest", "href");
-            String phenomenon = getAttributeOfChildren(xmlObject, "observedProperty", "href");
-            String procedure = getAttributeOfChildren(xmlObject, "procedure", "href");
+            String feature = getAttributeOfChildren(xmlObject, "featureOfInterest", "href").trim();
+            String phenomenon = getAttributeOfChildren(xmlObject, "observedProperty", "href").trim();
+            String procedure = getAttributeOfChildren(xmlObject, "procedure", "href").trim();
             addedtimeserie.setFeature(new Feature(feature, metadata.getServiceUrl()));
             addedtimeserie.setPhenomenon(new Phenomenon(phenomenon, metadata.getServiceUrl()));
             addedtimeserie.setProcedure(new Procedure(procedure, metadata.getServiceUrl()));
