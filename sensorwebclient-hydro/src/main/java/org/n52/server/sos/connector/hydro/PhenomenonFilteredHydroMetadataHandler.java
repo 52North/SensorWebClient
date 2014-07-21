@@ -72,13 +72,13 @@ import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PhenomenonFilteredrHydroMetadataHandler extends HydroMetadataHandler {
+public class PhenomenonFilteredHydroMetadataHandler extends HydroMetadataHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PhenomenonFilteredrHydroMetadataHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PhenomenonFilteredHydroMetadataHandler.class);
 
     private Map<String, List<String>> procOff = new HashMap<String, List<String>>();
 
-    public PhenomenonFilteredrHydroMetadataHandler(SOSMetadata metadata) {
+    public PhenomenonFilteredHydroMetadataHandler(SOSMetadata metadata) {
         super(metadata);
     }
 
