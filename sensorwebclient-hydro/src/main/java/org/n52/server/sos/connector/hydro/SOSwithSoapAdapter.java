@@ -171,7 +171,7 @@ public class SOSwithSoapAdapter extends SOSAdapter {
         HttpEntity responseEntity = null;
         String request = buildRequest(operation, parameters);
         try {
-            String url = operation.getDcps()[0].getHTTPGetRequestMethods().get(0).getOnlineResource().getHref();
+            String url = operation.getDcps()[0].getHTTPPostRequestMethods().get(0).getOnlineResource().getHref();
             responseEntity = sendSoapRequest(url, request);
        } catch (HttpClientException e) {
            throw new OXFException("Could not send SOAP request.", e);
