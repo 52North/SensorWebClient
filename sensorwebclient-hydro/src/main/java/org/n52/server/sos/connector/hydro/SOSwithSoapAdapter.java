@@ -182,12 +182,15 @@ public class SOSwithSoapAdapter extends SOSAdapter {
             result = new OperationResult(responseEntity.getContent(), parameters, request);
             ByteArrayInputStream resultStream = result.getIncomingResultAsStream();
             XmlObject result_xb = XmlObject.Factory.parse(resultStream);
+            LOGGER.trace("Reveived response: {}", result_xb.xmlText());
             if (result_xb instanceof EnvelopeDocument) {
                 EnvelopeDocument envelopeDoc = (EnvelopeDocument) result_xb;
                 XmlObject body = SoapUtil.readBodyNodeFrom(envelopeDoc, null);
                 return new OperationResult(body.newInputStream(),
                                            result.getUsedParameters(),
                                            result.getSendedRequest());
+            } else {
+                LOGGER.warn("Unexpected raw response (w/o SOAP Envolope): {}", result_xb.xmlText());
             }
             return result;
         }
