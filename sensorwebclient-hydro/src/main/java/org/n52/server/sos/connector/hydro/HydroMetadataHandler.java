@@ -210,6 +210,10 @@ public class HydroMetadataHandler extends MetadataHandler {
         ArrayList<SosTimeseries> timeseries = new ArrayList<SosTimeseries>();
         String queryExpression = "declare namespace gda='http://www.opengis.net/sosgda/1.0'; $this/gda:GetDataAvailabilityResponse/gda:dataAvailabilityMember";
         XmlObject[] response = result_xb.selectPath(queryExpression);
+        if (response == null || response.length ==0) {
+            queryExpression = "declare namespace gda='http://www.opengis.net/sos/2.0'; $this/gda:GetDataAvailabilityResponse/gda:dataAvailabilityMember";
+            response = result_xb.selectPath(queryExpression);
+        }
         for (XmlObject xmlObject : response) {
             SosTimeseries addedtimeserie = new SosTimeseries();
             String feature = getAttributeOfChildren(xmlObject, "featureOfInterest", "href").trim();
@@ -231,6 +235,9 @@ public class HydroMetadataHandler extends MetadataHandler {
 
     protected String getAttributeOfChildren(XmlObject xmlObject, String child, String attribute) {
     	XmlObject[] children = xmlObject.selectChildren("http://www.opengis.net/sosgda/1.0", child);
+        if (children == null || children.length ==0) {
+            children = xmlObject.selectChildren("http://www.opengis.net/om/2.0", child);
+        }
         SimpleValue childObject = ((org.apache.xmlbeans.SimpleValue) children[0].selectAttribute("http://www.w3.org/1999/xlink",
                                                                                                                         attribute));
         return childObject.getStringValue();
