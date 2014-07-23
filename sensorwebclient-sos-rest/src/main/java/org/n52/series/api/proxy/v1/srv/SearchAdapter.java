@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -64,24 +64,33 @@ public class SearchAdapter implements SearchService {
 
         // TODO extend search logic to support composed search strings
 
+        String[] searchTerms = search.split(",");
         ArrayList<SearchResult> results = new ArrayList<SearchResult>();
-        results.addAll(requestServices(search));
-        results.addAll(requestStations(search));
-        results.addAll(requestTimeseries(search));
-        results.addAll(requestTSParameters(search));
+        if (searchTerms.length <= 1) {
+            results.addAll(requestServices(searchTerms));
+            results.addAll(requestStations(searchTerms));
+            results.addAll(requestTSParameters(searchTerms));
+        }
+        results.addAll(requestTimeseries(searchTerms));
         return results;
     }
 
-    private Collection<SearchResult> requestTimeseries(String search) {
+    private Collection<SearchResult> requestTimeseries(String... searchTerms) {
         Collection<SearchResult> results = new ArrayList<SearchResult>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             SosTimeseries[] timeseries = metadata.getMatchingTimeseries(createEmptyFilterQuery());
             for (SosTimeseries ts : timeseries) {
-                if (containsSearchString(ts.getFeature().getLabel(), search)
-                        || containsSearchString(ts.getPhenomenon().getLabel(), search)
-                        || containsSearchString(ts.getProcedure().getLabel(), search)
-                        || containsSearchString(ts.getOffering().getLabel(), search)
-                        || containsSearchString(ts.getCategory().getLabel(), search)) {
+                boolean matchTerms = true;
+                for (String searchTerm : searchTerms) {
+                    if (!(containsSearchString(ts.getFeature().getLabel(), searchTerm)
+                            || containsSearchString(ts.getPhenomenon().getLabel(), searchTerm)
+                            || containsSearchString(ts.getProcedure().getLabel(), searchTerm)
+                            || containsSearchString(ts.getOffering().getLabel(), searchTerm)
+                            || containsSearchString(ts.getCategory().getLabel(), searchTerm))) {
+                        matchTerms = false;
+                    }
+                }
+                if (matchTerms) {
                     results.add(new TimeseriesSearchResult(ts.getTimeseriesId(), ts.getLabel()));
                 }
             }
@@ -89,62 +98,68 @@ public class SearchAdapter implements SearchService {
         return results;
     }
 
-    private Collection<SearchResult> requestStations(String search) {
+    private Collection<SearchResult> requestStations(String... searchTerms) {
         Collection<SearchResult> results = new ArrayList<SearchResult>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             for (Station station : metadata.getStations()) {
-                if (containsSearchString(station.getLabel(), search)) {
-                    results.add(new StationSearchResult(station.getGlobalId(), station.getLabel()));
+                for (String searchTerm : searchTerms) {
+                    if (containsSearchString(station.getLabel(), searchTerm)) {
+                        results.add(new StationSearchResult(station.getGlobalId(), station.getLabel()));
+                    }
                 }
             }
         }
         return results;
     }
 
-    private Collection<SearchResult> requestTSParameters(String search) {
+    private Collection<SearchResult> requestTSParameters(String... searchTerms) {
         Collection<SearchResult> results = new ArrayList<SearchResult>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
-            TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
-            // offerings
-            for (Offering offering : lookup.getOfferings()) {
-                if (containsSearchString(offering.getLabel(), search)) {
-                    results.add(new OfferingSearchResult(offering.getGlobalId(), offering.getLabel()));
+            for (String searchTerm : searchTerms) {
+                TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
+                // offerings
+                for (Offering offering : lookup.getOfferings()) {
+                    if (containsSearchString(offering.getLabel(), searchTerm)) {
+                        results.add(new OfferingSearchResult(offering.getGlobalId(), offering.getLabel()));
+                    }
                 }
-            }
-            // features
-            for (Feature feature : lookup.getFeatures()) {
-                if (containsSearchString(feature.getLabel(), search)) {
-                    results.add(new FeatureSearchResult(feature.getGlobalId(), feature.getLabel()));
+                // features
+                for (Feature feature : lookup.getFeatures()) {
+                    if (containsSearchString(feature.getLabel(), searchTerm)) {
+                        results.add(new FeatureSearchResult(feature.getGlobalId(), feature.getLabel()));
+                    }
                 }
-            }
-            // procedures
-            for (Procedure procedure : lookup.getProcedures()) {
-                if (containsSearchString(procedure.getLabel(), search)) {
-                    results.add(new ProcedureSearchResult(procedure.getGlobalId(), procedure.getLabel()));
+                // procedures
+                for (Procedure procedure : lookup.getProcedures()) {
+                    if (containsSearchString(procedure.getLabel(), searchTerm)) {
+                        results.add(new ProcedureSearchResult(procedure.getGlobalId(), procedure.getLabel()));
+                    }
                 }
-            }
-            // phenomena
-            for (Phenomenon phenomenon : lookup.getPhenomenons()) {
-                if (containsSearchString(phenomenon.getLabel(), search)) {
-                    results.add(new PhenomenonSearchResult(phenomenon.getGlobalId(), phenomenon.getLabel()));
+                // phenomena
+                for (Phenomenon phenomenon : lookup.getPhenomenons()) {
+                    if (containsSearchString(phenomenon.getLabel(), searchTerm)) {
+                        results.add(new PhenomenonSearchResult(phenomenon.getGlobalId(), phenomenon.getLabel()));
+                    }
                 }
-            }
-            // categories
-            SosTimeseries[] timeseries = metadata.getMatchingTimeseries(createEmptyFilterQuery());
-            for (SosTimeseries sosTimeseries : timeseries) {
-                if (containsSearchString(sosTimeseries.getCategory().getLabel(), search)) {
-                    results.add(new CategorySearchResult(sosTimeseries.getCategory().getGlobalId(), sosTimeseries.getCategory().getLabel()));
+                // categories
+                SosTimeseries[] timeseries = metadata.getMatchingTimeseries(createEmptyFilterQuery());
+                for (SosTimeseries sosTimeseries : timeseries) {
+                    if (containsSearchString(sosTimeseries.getCategory().getLabel(), searchTerm)) {
+                        results.add(new CategorySearchResult(sosTimeseries.getCategory().getGlobalId(), sosTimeseries.getCategory().getLabel()));
+                    }
                 }
             }
         }
         return results;
     }
 
-    private Collection<SearchResult> requestServices(String search) {
+    private Collection<SearchResult> requestServices(String... searchTerms) {
         Collection<SearchResult> results = new ArrayList<SearchResult>();
         for (SOSMetadata metadata : getSOSMetadatas()) {
-            if (containsSearchString(metadata.getTitle(), search)) {
-                results.add(new ServiceSearchResult(metadata.getGlobalId(), metadata.getTitle()));
+            for (String searchTerm : searchTerms) {
+                if (containsSearchString(metadata.getTitle(), searchTerm)) {
+                    results.add(new ServiceSearchResult(metadata.getGlobalId(), metadata.getTitle()));
+                }
             }
         }
         return results;
