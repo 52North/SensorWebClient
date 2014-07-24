@@ -36,6 +36,7 @@ import java.util.HashMap;
 
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
+import org.joda.time.DateTime;
 import org.n52.oxf.feature.OXFFeature;
 import org.n52.oxf.feature.sos.ObservationSeriesCollection;
 import org.n52.oxf.feature.sos.ObservedValueTuple;
@@ -46,7 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TimeseriesFactory {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(TimeseriesFactory.class);
 
     public static TimeSeries createTimeSeries(ObservationSeriesCollection seriesCollection, SosTimeseries timeseries, String seriesType) {
@@ -101,9 +102,8 @@ public class TimeseriesFactory {
 
             sum = resultVal;
 
-            timeSeries.add(new Second(new Float(timePos.getSecond()).intValue(), timePos.getMinute(), timePos
-                    .getHour(), timePos.getDay(), timePos.getMonth(), new Long(timePos.getYear()).intValue()),
-                    resultVal);
+            DateTime time = DateTime.parse(timePos.toISO8601Format());
+            timeSeries.add(new Second(time.toDate()), resultVal);
         }
 
         // }
@@ -116,7 +116,7 @@ public class TimeseriesFactory {
 
     /**
      * Compress.
-     * 
+     *
      * @param seriesCollection
      *            the series collection
      * @param foiID
@@ -168,7 +168,6 @@ public class TimeseriesFactory {
 
                     counter++;
 
-                    ITimePosition timePos = (ITimePosition) observation.getTime();
                     Double resultVal = getValidData(observation.getValue(0).toString());
                     // line or sumline
                     if (seriesType.equals("1")) {
@@ -184,9 +183,9 @@ public class TimeseriesFactory {
                     }
                     sum = resultVal;
 
-                    timeSeries.add(new Second(new Float(timePos.getSecond()).intValue(), timePos.getMinute(), timePos
-                            .getHour(), timePos.getDay(), timePos.getMonth(), new Long(timePos.getYear()).intValue()),
-                            resultVal);
+                    ITimePosition timePos = (ITimePosition) observation.getTime();
+                    DateTime time = DateTime.parse(timePos.toISO8601Format());
+                    timeSeries.add(new Second(time.toDate()), resultVal);
                 }
 
             }
@@ -216,7 +215,6 @@ public class TimeseriesFactory {
 
                     counter++;
 
-                    ITimePosition timePos = (ITimePosition) observation.getTime();
                     Double resultVal = getValidData(observation.getValue(0).toString());
 
                     // line or sumline
@@ -233,9 +231,9 @@ public class TimeseriesFactory {
                     }
                     sum = resultVal;
 
-                    timeSeries.add(new Second(new Float(timePos.getSecond()).intValue(), timePos.getMinute(), timePos
-                            .getHour(), timePos.getDay(), timePos.getMonth(), new Long(timePos.getYear()).intValue()),
-                            resultVal);
+                    ITimePosition timePos = (ITimePosition) observation.getTime();
+                    DateTime time = DateTime.parse(timePos.toISO8601Format());
+                    timeSeries.add(new Second(time.toDate()), resultVal);
                 }
 
             }
@@ -265,7 +263,6 @@ public class TimeseriesFactory {
 
                     counter++;
 
-                    ITimePosition timePos = (ITimePosition) observation.getTime();
                     Double resultVal = getValidData(observation.getValue(0).toString());
 
                     // line or sumline
@@ -282,9 +279,9 @@ public class TimeseriesFactory {
                     }
                     sum = resultVal;
 
-                    timeSeries.add(new Second(new Float(timePos.getSecond()).intValue(), timePos.getMinute(), timePos
-                            .getHour(), timePos.getDay(), timePos.getMonth(), new Long(timePos.getYear()).intValue()),
-                            resultVal);
+                    ITimePosition timePos = (ITimePosition) observation.getTime();
+                    DateTime time = DateTime.parse(timePos.toISO8601Format());
+                    timeSeries.add(new Second(time.toDate()), resultVal);
                 }
             }
 
@@ -310,7 +307,6 @@ public class TimeseriesFactory {
 
                 counter++;
 
-                ITimePosition timePos = (ITimePosition) observation.getTime();
                 Double resultVal = getValidData(observation.getValue(0).toString());
 
                 // line or sumline
@@ -327,9 +323,9 @@ public class TimeseriesFactory {
                 }
                 sum = resultVal;
 
-                timeSeries.add(new Second(new Float(timePos.getSecond()).intValue(), timePos.getMinute(), timePos
-                        .getHour(), timePos.getDay(), timePos.getMonth(), new Long(timePos.getYear()).intValue()),
-                        resultVal);
+                ITimePosition timePos = (ITimePosition) observation.getTime();
+                DateTime time = DateTime.parse(timePos.toISO8601Format());
+                timeSeries.add(new Second(time.toDate()), resultVal);
                 // }
 
             }
@@ -390,9 +386,10 @@ public class TimeseriesFactory {
                     LOGGER.error("Not a number value: {}.", obsVal, e);
                     continue;
                 }
-                
-                TimePosition timePosition = (TimePosition) observation.getTime();
-                data.put(timePosition.getCalendar().getTimeInMillis(), obsVal);
+
+                TimePosition timePos = (TimePosition) observation.getTime();
+                DateTime time = DateTime.parse(timePos.toISO8601Format());
+                data.put(time.getMillis(), obsVal);
                 counter++;
             }
             // }

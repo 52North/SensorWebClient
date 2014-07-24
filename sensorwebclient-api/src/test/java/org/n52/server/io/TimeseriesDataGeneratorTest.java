@@ -1,0 +1,106 @@
+package org.n52.server.io;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.xmlbeans.XmlObject;
+import static org.hamcrest.CoreMatchers.is;
+import org.joda.time.DateTime;
+import org.junit.Assert;
+import static org.junit.Assert.assertThat;
+import org.junit.Before;
+import org.junit.Test;
+import org.n52.oxf.adapter.OperationResult;
+import org.n52.oxf.adapter.ParameterContainer;
+import org.n52.oxf.feature.OXFFeatureCollection;
+import org.n52.oxf.sos.feature.SOSObservationStore;
+import org.n52.oxf.xmlbeans.tools.XmlFileLoader;
+import static org.n52.oxf.xmlbeans.tools.XmlFileLoader.loadXmlFileViaClassloader;
+import org.n52.server.da.AccessException;
+import org.n52.server.mgmt.ConfigurationContext;
+import org.n52.shared.responses.RepresentationResponse;
+import org.n52.shared.responses.TimeSeriesDataResponse;
+import org.n52.shared.serializable.pojos.DesignOptions;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.shared.serializable.pojos.sos.Category;
+import org.n52.shared.serializable.pojos.sos.Feature;
+import org.n52.shared.serializable.pojos.sos.Offering;
+import org.n52.shared.serializable.pojos.sos.Phenomenon;
+import org.n52.shared.serializable.pojos.sos.Procedure;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
+import org.n52.shared.serializable.pojos.sos.Station;
+import org.opengis.temporal.DateAndTime;
+
+/**
+ *
+ * @author Henning Bredel <h.bredel@52north.org>
+ */
+public class TimeseriesDataGeneratorTest {
+
+    private static final String FICTIVE_SOS_URL = "http://localhost/sos";
+
+    private static final String GET_OBSERVATION_RESPONSE_CONTAINING_DAYLIGHT_SAVING_TIMESHIFT = "/files/getObservationResponse_with_daylight_saving_timeshift.xml";
+
+
+    @Before
+    public void setup() throws Exception {
+        ConfigurationContext.NO_DATA_VALUES = new ArrayList<String>();
+    }
+
+    @Test
+    public void shouldCreateTimeseries() throws Exception {
+        long begin = DateTime.parse("2007-10-27T10:00:00.000+02:00").getMillis();
+        long end = DateTime.parse("2007-10-28T09:00:00.000+01:00").getMillis();
+
+        SosTimeseries timeseries = createSosTimeseries();
+        TimeseriesDataGenerator generator = new TimeseriesDataGeneratorSeam();
+        DesignOptions options = new DesignOptions(createTimeseriesProperties(timeseries), begin, end, true);
+        TimeSeriesDataResponse response = (TimeSeriesDataResponse) generator.producePresentation(options);
+        HashMap<String, HashMap<Long, Double>> data = response.getPayloadData();
+        HashMap<Long, Double> timeseriesData = data.get(timeseries.getTimeseriesId());
+        assertThat(timeseriesData.size(), is(277));
+    }
+
+    private ArrayList<TimeseriesProperties> createTimeseriesProperties(SosTimeseries timeseries) {
+        ArrayList<TimeseriesProperties> properties = new ArrayList<TimeseriesProperties>();
+
+        Station station = new Station("station", FICTIVE_SOS_URL);
+        properties.add(new TimeseriesProperties(timeseries, station, -1, -1));
+        return properties;
+    }
+
+    private SosTimeseries createSosTimeseries() {
+        SosTimeseries timeseries = new SosTimeseries();
+        timeseries.setOffering(new Offering("http://localhost/offering/na", FICTIVE_SOS_URL));
+        timeseries.setProcedure(new Procedure("http://localhost/sensors/testsensor", FICTIVE_SOS_URL));
+        timeseries.setFeature(new Feature("http://localhost/featureOfInterest/testsensor", FICTIVE_SOS_URL));
+        timeseries.setPhenomenon(new Phenomenon("Abfluss", FICTIVE_SOS_URL));
+        timeseries.setCategory(new Category("Abfluss", FICTIVE_SOS_URL));
+        return timeseries;
+    }
+
+    private static class TimeseriesDataGeneratorSeam extends TimeseriesDataGenerator {
+
+        private final OXFFeatureCollection observationCollection;
+
+        public TimeseriesDataGeneratorSeam() throws Exception {
+            XmlObject response = loadXmlFileViaClassloader(GET_OBSERVATION_RESPONSE_CONTAINING_DAYLIGHT_SAVING_TIMESHIFT, getClass());
+            InputStream stream = response.newInputStream();
+            ParameterContainer container = new ParameterContainer();
+            container.addParameterShell("version", "2.0.0");
+            OperationResult result = new OperationResult(stream, container, null);
+            SOSObservationStore store = new SOSObservationStore(result);
+            observationCollection = store.unmarshalFeatures();
+        }
+
+        @Override
+        protected Map<String, OXFFeatureCollection> getFeatureCollectionFor(DesignOptions options, boolean generalize) throws AccessException {
+            Map<String, OXFFeatureCollection> collections = new HashMap<String, OXFFeatureCollection>();
+            collections.put("collectionContainingTimeshift", observationCollection);
+            return collections;
+        }
+
+
+    }
+}
