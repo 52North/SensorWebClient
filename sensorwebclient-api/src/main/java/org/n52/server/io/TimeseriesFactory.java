@@ -32,6 +32,7 @@ import static org.n52.server.mgmt.ConfigurationContext.FACADE_COMPRESSION;
 import static org.n52.server.mgmt.ConfigurationContext.NO_DATA_VALUES;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.jfree.data.time.Second;
@@ -85,7 +86,6 @@ public class TimeseriesFactory {
 
             counter++;
 
-            ITimePosition timePos = (ITimePosition) observation.getTime();
             Double resultVal = getValidData(observation.getValue(0).toString());
 
             if (seriesType.equals("1")) {
@@ -102,8 +102,9 @@ public class TimeseriesFactory {
 
             sum = resultVal;
 
+            ITimePosition timePos = (ITimePosition) observation.getTime();
             DateTime time = DateTime.parse(timePos.toISO8601Format());
-            timeSeries.add(new Second(time.toDate()), resultVal);
+            timeSeries.add(new Second(new Date(time.getMillis()), time.getZone().toTimeZone()), resultVal);
         }
 
         // }
@@ -119,12 +120,7 @@ public class TimeseriesFactory {
      *
      * @param seriesCollection
      *            the series collection
-     * @param foiID
-     *            the foi parameterId
-     * @param obsPropID
-     *            the obs prop parameterId
-     * @param procID
-     *            the proc parameterId
+     * @param timeseries
      * @param force
      * @param seriesType
      * @return TimeSeries

@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import static junit.framework.Assert.fail;
 import org.apache.xmlbeans.XmlObject;
 import static org.hamcrest.CoreMatchers.is;
 import org.joda.time.DateTime;
@@ -44,6 +45,7 @@ import org.n52.oxf.sos.feature.SOSObservationStore;
 import static org.n52.oxf.xmlbeans.tools.XmlFileLoader.loadXmlFileViaClassloader;
 import org.n52.server.da.AccessException;
 import org.n52.server.mgmt.ConfigurationContext;
+import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
@@ -54,6 +56,8 @@ import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -61,10 +65,11 @@ import org.n52.shared.serializable.pojos.sos.Station;
  */
 public class TimeseriesDataGeneratorTest {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TimeseriesDataGeneratorTest.class);
+
     private static final String FICTIVE_SOS_URL = "http://localhost/sos";
 
     private static final String GET_OBSERVATION_RESPONSE_CONTAINING_DAYLIGHT_SAVING_TIMESHIFT = "/files/getObservationResponse_with_daylight_saving_timeshift.xml";
-
 
     @Before
     public void setup() throws Exception {
@@ -75,9 +80,8 @@ public class TimeseriesDataGeneratorTest {
     public void shouldCreateTimeseries() throws Exception {
         long begin = DateTime.parse("2007-10-27T10:00:00.000+02:00").getMillis();
         long end = DateTime.parse("2007-10-28T09:00:00.000+01:00").getMillis();
-
-        SosTimeseries timeseries = createSosTimeseries();
         TimeseriesDataGenerator generator = new TimeseriesDataGeneratorSeam();
+        SosTimeseries timeseries = createSosTimeseries();
         DesignOptions options = new DesignOptions(createTimeseriesProperties(timeseries), begin, end, true);
         TimeSeriesDataResponse response = (TimeSeriesDataResponse) generator.producePresentation(options);
         HashMap<String, HashMap<Long, Double>> data = response.getPayloadData();
@@ -105,25 +109,22 @@ public class TimeseriesDataGeneratorTest {
 
     private static class TimeseriesDataGeneratorSeam extends TimeseriesDataGenerator {
 
-        private final OXFFeatureCollection observationCollection;
-
-        public TimeseriesDataGeneratorSeam() throws Exception {
-            XmlObject response = loadXmlFileViaClassloader(GET_OBSERVATION_RESPONSE_CONTAINING_DAYLIGHT_SAVING_TIMESHIFT, getClass());
-            InputStream stream = response.newInputStream();
-            ParameterContainer container = new ParameterContainer();
-            container.addParameterShell("version", "2.0.0");
-            OperationResult result = new OperationResult(stream, container, null);
-            SOSObservationStore store = new SOSObservationStore(result);
-            observationCollection = store.unmarshalFeatures();
-        }
-
         @Override
         protected Map<String, OXFFeatureCollection> getFeatureCollectionFor(DesignOptions options, boolean generalize) throws AccessException {
-            Map<String, OXFFeatureCollection> collections = new HashMap<String, OXFFeatureCollection>();
-            collections.put("collectionContainingTimeshift", observationCollection);
-            return collections;
+            try {
+                Map<String, OXFFeatureCollection> collections = new HashMap<String, OXFFeatureCollection>();
+                collections.put("collectionContainingTimeshift", createReader().getFeatureCollection());
+                return collections;
+            } catch (Exception e) {
+                LOGGER.error("Could not create feature collection.", e);
+                fail("Could not create feature collection from " + GET_OBSERVATION_RESPONSE_CONTAINING_DAYLIGHT_SAVING_TIMESHIFT);
+                return null;
+            }
         }
 
+        private GetObservationResponseToOxfFeatureCollectionReader createReader() throws Exception {
+            return new GetObservationResponseToOxfFeatureCollectionReader(GET_OBSERVATION_RESPONSE_CONTAINING_DAYLIGHT_SAVING_TIMESHIFT);
+        }
 
     }
 }
