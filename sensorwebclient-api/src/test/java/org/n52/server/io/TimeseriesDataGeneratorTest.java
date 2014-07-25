@@ -34,7 +34,6 @@ import java.util.Map;
 import org.apache.xmlbeans.XmlObject;
 import static org.hamcrest.CoreMatchers.is;
 import org.joda.time.DateTime;
-import org.junit.Assert;
 import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,11 +41,9 @@ import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.feature.OXFFeatureCollection;
 import org.n52.oxf.sos.feature.SOSObservationStore;
-import org.n52.oxf.xmlbeans.tools.XmlFileLoader;
 import static org.n52.oxf.xmlbeans.tools.XmlFileLoader.loadXmlFileViaClassloader;
 import org.n52.server.da.AccessException;
 import org.n52.server.mgmt.ConfigurationContext;
-import org.n52.shared.responses.RepresentationResponse;
 import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
@@ -57,7 +54,6 @@ import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
-import org.opengis.temporal.DateAndTime;
 
 /**
  *
