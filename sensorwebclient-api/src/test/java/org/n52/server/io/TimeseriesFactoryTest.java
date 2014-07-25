@@ -35,14 +35,11 @@ package org.n52.server.io;
 import java.util.ArrayList;
 import static org.hamcrest.CoreMatchers.is;
 import org.jfree.data.time.TimeSeries;
-import org.joda.time.DateTime;
-import org.junit.Assert;
 import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.oxf.feature.OXFFeatureCollection;
 import org.n52.oxf.feature.sos.ObservationSeriesCollection;
-import org.n52.oxf.valueDomains.time.ITimePosition;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.shared.serializable.pojos.sos.Category;
 import org.n52.shared.serializable.pojos.sos.Feature;
@@ -84,7 +81,8 @@ public class TimeseriesFactoryTest {
 //            DateTime time = DateTime.parse(timePos.toISO8601Format());
 //        }
 
-        TimeSeries chartTimeseries = TimeseriesFactory.createTimeSeries(seriesCollection, timeseries, "1");
+        TimeseriesFactory factory = new TimeseriesFactory(seriesCollection);
+        TimeSeries chartTimeseries = factory.createTimeSeries(timeseries, "1");
         assertThat(chartTimeseries.getItemCount(), is(277));
     }
 
