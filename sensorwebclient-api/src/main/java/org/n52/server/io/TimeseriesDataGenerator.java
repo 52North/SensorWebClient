@@ -32,7 +32,6 @@ package org.n52.server.io;
 import static org.n52.oxf.feature.OXFAbstractObservationType.FEATURE_OF_INTEREST;
 import static org.n52.oxf.feature.OXFAbstractObservationType.OBSERVED_PROPERTY;
 import static org.n52.oxf.feature.OXFAbstractObservationType.PROCEDURE;
-import static org.n52.server.io.TimeseriesFactory.compressToHashMap;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -54,7 +53,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TimeseriesDataGenerator extends Generator {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(TimeseriesDataGenerator.class);
 
     @Override
@@ -66,9 +65,9 @@ public class TimeseriesDataGenerator extends Generator {
         } catch (AccessException e) {
             throw new GeneratorException("Error creating TimeSeriesDataResponse.", e);
         }
-        
+
         Collection<OXFFeatureCollection> observationCollList = entireCollMap.values();
-        
+
 
         HashMap<String, HashMap<Long, Double>> allTimeSeries = new HashMap<String, HashMap<Long, Double>>();
 
@@ -129,9 +128,10 @@ public class TimeseriesDataGenerator extends Generator {
                                 selectedProperties = property;
                                 String phenomenonId = selectedProperties.getPhenomenon();
                                 try {
-                                    HashMap<Long, Double> data = compressToHashMap(txCollection, foi, phenomenonId, procedure);
+                                    TimeseriesFactory factory = new TimeseriesFactory(txCollection);
+                                    HashMap<Long, Double> data = factory.compressToHashMap(foi, phenomenonId, procedure);
                                     allTimeSeries.put(selectedProperties.getTimeseriesId(), data);
-                                } 
+                                }
                                 catch (ParseException e) {
                                     throw new GeneratorException("Could not parse data.", e);
                                 }
@@ -139,12 +139,15 @@ public class TimeseriesDataGenerator extends Generator {
                             } else {
                                 if (LOGGER.isDebugEnabled()) {
                                     StringBuilder sb = new StringBuilder();
-                                    sb.append("Could not produce representation: ");
-                                    sb.append("TimeSeries properties do not match [");
+                                    sb.append("Ignore unknown property constellation: [");
+                                    sb.append("foiId: ").append(foi);
+                                    sb.append(", phenId: ").append(obsProp.getURN());
+                                    sb.append(", procId: ").append(procedure);
+                                    sb.append(" ]. Expected timeseries properties: [");
                                     sb.append("foiId: ").append(property.getFeature());
                                     sb.append(", phenId: ").append(property.getPhenomenon());
                                     sb.append(", procId: ").append(property.getProcedure());
-                                    sb.append("]");
+                                    sb.append(" ]");
                                     LOGGER.debug(sb.toString());
                                 }
                             }
@@ -164,7 +167,7 @@ public class TimeseriesDataGenerator extends Generator {
         return new TimeSeriesDataResponse(allTimeSeries);
 //            return new TimeSeriesDataResponse(new HashMap<String, HashMap<Long,Double>>());
 
-        
+
 
     }
 

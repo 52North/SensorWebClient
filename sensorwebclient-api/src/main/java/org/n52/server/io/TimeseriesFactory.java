@@ -28,14 +28,10 @@
 package org.n52.server.io;
 
 import static java.lang.Double.parseDouble;
-import static org.n52.server.mgmt.ConfigurationContext.FACADE_COMPRESSION;
-import static org.n52.server.mgmt.ConfigurationContext.NO_DATA_VALUES;
-
 import java.text.ParseException;
-import java.util.Date;
 import java.util.HashMap;
-
-import org.jfree.data.time.Second;
+import java.util.TimeZone;
+import org.jfree.data.time.FixedMillisecond;
 import org.jfree.data.time.TimeSeries;
 import org.joda.time.DateTime;
 import org.n52.oxf.feature.OXFFeature;
@@ -43,6 +39,8 @@ import org.n52.oxf.feature.sos.ObservationSeriesCollection;
 import org.n52.oxf.feature.sos.ObservedValueTuple;
 import org.n52.oxf.valueDomains.time.ITimePosition;
 import org.n52.oxf.valueDomains.time.TimePosition;
+import static org.n52.server.mgmt.ConfigurationContext.FACADE_COMPRESSION;
+import static org.n52.server.mgmt.ConfigurationContext.NO_DATA_VALUES;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,15 +49,25 @@ public class TimeseriesFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TimeseriesFactory.class);
 
-    public static TimeSeries createTimeSeries(ObservationSeriesCollection seriesCollection, SosTimeseries timeseries, String seriesType) {
+    private final ObservationSeriesCollection collection;
 
-        LOGGER.debug("Starting compression");
+    private TimeZone timezone = TimeZone.getTimeZone("UTC");
 
-        TimeSeries timeSeries = new TimeSeries(timeseries.getTimeseriesId(), Second.class);
+    public TimeseriesFactory(ObservationSeriesCollection collection) {
+        this.collection = collection;
+        ITimePosition[] index = this.collection.getSortedTimeArray();
+        if (index.length > 0) {
+            DateTime endTime = DateTime.parse(index[index.length - 1].toISO8601Format());
+            this.timezone = endTime.getZone().toTimeZone();
+        }
+    }
 
-        ITimePosition timeArray[] = seriesCollection.getSortedTimeArray();
+    public TimeSeries createTimeSeries(SosTimeseries timeseries, String seriesType) {
+        TimeSeries timeSeries = new TimeSeries(timeseries.getTimeseriesId());
+
+        ITimePosition timeArray[] = collection.getSortedTimeArray();
         ObservedValueTuple prevObservation;
-        ObservedValueTuple nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeatureId(), null), timeArray[0]);
+        ObservedValueTuple nextObservation = collection.getTuple(new OXFFeature(timeseries.getFeatureId(), null), timeArray[0]);
         ObservedValueTuple observation = nextObservation;
 
         int counter = 0;
@@ -73,7 +81,7 @@ public class TimeseriesFactory {
             observation = nextObservation;
 
             if (i + 1 < timeArray.length) {
-                nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeatureId(), null), timeArray[i + 1]);
+                nextObservation = collection.getTuple(new OXFFeature(timeseries.getFeatureId(), null), timeArray[i + 1]);
             }
 
             // String obsVal = observation.getValue(0).toString();
@@ -104,7 +112,7 @@ public class TimeseriesFactory {
 
             ITimePosition timePos = (ITimePosition) observation.getTime();
             DateTime time = DateTime.parse(timePos.toISO8601Format());
-            timeSeries.add(new Second(new Date(time.getMillis()), time.getZone().toTimeZone()), resultVal);
+            timeSeries.add(new FixedMillisecond(time.getMillis()), resultVal);
         }
 
         // }
@@ -115,25 +123,13 @@ public class TimeseriesFactory {
 
     }
 
-    /**
-     * Compress.
-     *
-     * @param seriesCollection
-     *            the series collection
-     * @param timeseries
-     * @param force
-     * @param seriesType
-     * @return TimeSeries
-     */
-    public static TimeSeries compressToTimeSeries(ObservationSeriesCollection seriesCollection, SosTimeseries timeseries, boolean force, String seriesType) {
+    public TimeSeries compressToTimeSeries(SosTimeseries timeseries, boolean force, String seriesType) {
 
-        LOGGER.debug("Starting compression");
+        TimeSeries timeSeries = new TimeSeries(timeseries.getTimeseriesId());
 
-        TimeSeries timeSeries = new TimeSeries(timeseries.getTimeseriesId(), Second.class);
-
-        ITimePosition timeArray[] = seriesCollection.getSortedTimeArray();
+        ITimePosition timeArray[] = collection.getSortedTimeArray();
         ObservedValueTuple prevObservation;
-        ObservedValueTuple nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeatureId(), null), timeArray[0]);
+        ObservedValueTuple nextObservation = collection.getTuple(new OXFFeature(timeseries.getFeatureId(), null), timeArray[0]);
         ObservedValueTuple observation = nextObservation;
 
         int counter = 0;
@@ -148,7 +144,7 @@ public class TimeseriesFactory {
                 observation = nextObservation;
 
                 if (i + 1 < timeArray.length) {
-                    nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeatureId(), null), timeArray[i + 1]);
+                    nextObservation = collection.getTuple(new OXFFeature(timeseries.getFeatureId(), null), timeArray[i + 1]);
                 }
 
                 String obsVal = observation.getValue(0).toString();
@@ -181,7 +177,7 @@ public class TimeseriesFactory {
 
                     ITimePosition timePos = (ITimePosition) observation.getTime();
                     DateTime time = DateTime.parse(timePos.toISO8601Format());
-                    timeSeries.add(new Second(time.toDate()), resultVal);
+            timeSeries.add(new FixedMillisecond(time.getMillis()), resultVal);
                 }
 
             }
@@ -195,7 +191,7 @@ public class TimeseriesFactory {
                 observation = nextObservation;
 
                 if (i + 1 < timeArray.length) {
-                    nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeatureId(), null), timeArray[i + 1]);
+                    nextObservation = collection.getTuple(new OXFFeature(timeseries.getFeatureId(), null), timeArray[i + 1]);
                 }
 
                 String obsVal = observation.getValue(0).toString();
@@ -229,7 +225,7 @@ public class TimeseriesFactory {
 
                     ITimePosition timePos = (ITimePosition) observation.getTime();
                     DateTime time = DateTime.parse(timePos.toISO8601Format());
-                    timeSeries.add(new Second(time.toDate()), resultVal);
+            timeSeries.add(new FixedMillisecond(time.getMillis()), resultVal);
                 }
 
             }
@@ -243,7 +239,7 @@ public class TimeseriesFactory {
                 observation = nextObservation;
 
                 if (i + 1 < timeArray.length) {
-                    nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeatureId(), null), timeArray[i + 1]);
+                    nextObservation = collection.getTuple(new OXFFeature(timeseries.getFeatureId(), null), timeArray[i + 1]);
                 }
 
                 String obsVal = observation.getValue(0).toString();
@@ -277,7 +273,7 @@ public class TimeseriesFactory {
 
                     ITimePosition timePos = (ITimePosition) observation.getTime();
                     DateTime time = DateTime.parse(timePos.toISO8601Format());
-                    timeSeries.add(new Second(time.toDate()), resultVal);
+            timeSeries.add(new FixedMillisecond(time.getMillis()), resultVal);
                 }
             }
 
@@ -290,7 +286,7 @@ public class TimeseriesFactory {
                 observation = nextObservation;
 
                 if (i + 1 < timeArray.length) {
-                    nextObservation = seriesCollection.getTuple(new OXFFeature(timeseries.getFeatureId(), null), timeArray[i + 1]);
+                    nextObservation = collection.getTuple(new OXFFeature(timeseries.getFeatureId(), null), timeArray[i + 1]);
                 }
 
                 String obsVal = observation.getValue(0).toString();
@@ -321,7 +317,7 @@ public class TimeseriesFactory {
 
                 ITimePosition timePos = (ITimePosition) observation.getTime();
                 DateTime time = DateTime.parse(timePos.toISO8601Format());
-                timeSeries.add(new Second(time.toDate()), resultVal);
+                timeSeries.add(new FixedMillisecond(time.getMillis()), resultVal);
                 // }
 
             }
@@ -333,19 +329,19 @@ public class TimeseriesFactory {
 
     }
 
-    private static Double getValidData(String obsVal) {
+    private Double getValidData(String obsVal) {
         if (NO_DATA_VALUES.contains(obsVal)) {
             return null;
         }
         return parseDouble(obsVal);
     }
 
-    public static HashMap<Long, Double> compressToHashMap(ObservationSeriesCollection coll, String foiID,
+    public HashMap<Long, Double> compressToHashMap(String foiID,
             String phenID, String procID) throws ParseException {
 
         HashMap<Long, Double> data = new HashMap<Long, Double>();
 
-        if (coll.getAllTuples().size() > 0) {
+        if (collection.getAllTuples().size() > 0) {
 
             //
             // now lets put in the date-value pairs.
@@ -353,12 +349,12 @@ public class TimeseriesFactory {
             // previous one !
             //
 
-            ITimePosition timeArray[] = coll.getSortedTimeArray();
+            ITimePosition timeArray[] = collection.getSortedTimeArray();
 
             ObservedValueTuple prevObservation;
             ObservedValueTuple nextObservation =
             // FIXME aufräumen in der compression wenn benötigt
-            coll.getTuple(new OXFFeature(foiID, null), timeArray[0]);
+            collection.getTuple(new OXFFeature(foiID, null), timeArray[0]);
             ObservedValueTuple observation = nextObservation;
 
             int counter = 0;
@@ -369,7 +365,7 @@ public class TimeseriesFactory {
                 observation = nextObservation;
 
                 if (i + 1 < timeArray.length) {
-                    nextObservation = coll.getTuple(new OXFFeature(foiID, null), timeArray[i + 1]);
+                    nextObservation = collection.getTuple(new OXFFeature(foiID, null), timeArray[i + 1]);
                 }
 
                 Double obsVal = null;

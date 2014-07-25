@@ -27,9 +27,6 @@
  */
 package org.n52.server.io.render;
 
-import static org.n52.server.io.TimeseriesFactory.compressToTimeSeries;
-import static org.n52.server.io.TimeseriesFactory.createTimeSeries;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -41,7 +38,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
@@ -55,7 +51,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.chart.urls.XYURLGenerator;
 import org.jfree.data.general.DatasetGroup;
-import org.jfree.data.time.Second;
+import org.jfree.data.time.FixedMillisecond;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
@@ -67,6 +63,7 @@ import org.n52.oxf.feature.OXFFeatureCollection;
 import org.n52.oxf.feature.sos.ObservationSeriesCollection;
 import org.n52.oxf.util.JavaHelper;
 import org.n52.server.io.MetadataInURLGenerator;
+import org.n52.server.io.TimeseriesFactory;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.shared.serializable.pojos.Axis;
 import org.n52.shared.serializable.pojos.DesignOptions;
@@ -190,7 +187,6 @@ public class DiagramRenderer {
         dateAxis.setRange(begin.getTime(), end.getTime());
         dateAxis.setDateFormatOverride(new SimpleDateFormat());
         dateAxis.setTimeZone(end.getTimeZone());
-
 
 
 
@@ -518,16 +514,17 @@ public class DiagramRenderer {
 
 
 
-            TimeSeries timeSeries = new TimeSeries(prop.getTimeseriesId(), Second.class);
+            TimeSeries timeSeries = new TimeSeries(prop.getTimeseriesId(), FixedMillisecond.class);
 
 
 
 
+            TimeseriesFactory factory = new TimeseriesFactory(seriesCollection);
             if (seriesCollection.getSortedTimeArray().length > 0) {
                 if (compress) {
-                    timeSeries = compressToTimeSeries(seriesCollection, prop.getTimeseries(), isOverview, prop.getGraphStyle());
+                    timeSeries = factory.compressToTimeSeries(prop.getTimeseries(), isOverview, prop.getGraphStyle());
                 } else {
-                    timeSeries = createTimeSeries(seriesCollection, prop.getTimeseries(), prop.getGraphStyle());
+                    timeSeries = factory.createTimeSeries(prop.getTimeseries(), prop.getGraphStyle());
                 }
             }
             dataset.addSeries(timeSeries);
