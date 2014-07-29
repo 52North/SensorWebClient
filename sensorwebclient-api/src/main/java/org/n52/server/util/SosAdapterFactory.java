@@ -40,14 +40,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SosAdapterFactory {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SosAdapterFactory.class);
-    
+
     /**
      * Creates an adapter to make requests to an SOS instance. If the given metadata does not
      * contain a full qualified class name defining the adapter implementation the default one
      * is returned.
-     * 
+     *
      * @param metadata the SOS metadata where to create the SOS adapter implementation from.
      * @return the custom adapter implementation, or the default {@link SOSAdapter}.
      */
@@ -61,7 +61,7 @@ public class SosAdapterFactory {
                 return sosAdapter;
             }
             else {
-                
+
                 if (!SOSAdapter.class.isAssignableFrom(Class.forName(adapter))) {
                     LOGGER.warn("'{}' is not an SOSAdapter implementation! Create default.", adapter);
                     return sosAdapter;
@@ -91,11 +91,11 @@ public class SosAdapterFactory {
             throw new RuntimeException("Instantiation failed for Adapter " + adapter + "'.", e);
         }
     }
-    
+
     private static HttpClient createHttpClient(SOSMetadata metadata) {
         int timeout = metadata.getTimeout();
         SimpleHttpClient simpleClient = new SimpleHttpClient(timeout, timeout);
         return new GzipEnabledHttpClient(new ProxyAwareHttpClient(simpleClient));
     }
-    
+
 }

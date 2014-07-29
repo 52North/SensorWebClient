@@ -80,6 +80,12 @@ public class SOSwithSoapAdapter extends SOSAdapter {
 
     private static final int SOCKET_TIMEOUT = 30000;
 
+    private HttpClient httpClient = createHttpClient();
+
+    private static HttpClient createHttpClient() {
+        return new GzipEnabledHttpClient(new ProxyAwareHttpClient(new SimpleHttpClient(CONNECTION_TIMEOUT, SOCKET_TIMEOUT)));
+    }
+
     /**
      * Creates an adapter to connect SOS with SOAP binding. <br>
      * <br>
@@ -91,12 +97,8 @@ public class SOSwithSoapAdapter extends SOSAdapter {
      */
     public SOSwithSoapAdapter(String sosVersion) {
         super(sosVersion);
-        setHttpClient(createHttpClient());
+        setHttpClient(httpClient);
         setRequestBuilder(new SoapSOSRequestBuilder_200());
-    }
-
-    private HttpClient createHttpClient() {
-        return new GzipEnabledHttpClient(new ProxyAwareHttpClient(new SimpleHttpClient(CONNECTION_TIMEOUT, SOCKET_TIMEOUT)));
     }
 
     /**
@@ -115,8 +117,14 @@ public class SOSwithSoapAdapter extends SOSAdapter {
      */
     public SOSwithSoapAdapter(String sosVersion, ISOSRequestBuilder requestBuilder) {
         super(sosVersion, new SoapSOSRequestBuilder_200());
-        setHttpClient(createHttpClient());
+        setHttpClient(httpClient);
         LOGGER.warn("This is a deprecated constructor and will be removed soon w/o notice.");
+    }
+
+    @Override
+    public void setHttpClient(HttpClient httpclient) {
+        this.httpClient = httpclient;
+        super.setHttpClient(httpClient);
     }
 
     @Override
@@ -226,7 +234,6 @@ public class SOSwithSoapAdapter extends SOSAdapter {
     }
 
     private HttpEntity sendSoapRequest(String url, String request) throws HttpClientException {
-        HttpClient httpClient = new ProxyAwareHttpClient(new SimpleHttpClient());
         HttpResponse httpResponse = httpClient.executePost(url, request, SOAP_PLUS_XML);
         return httpResponse.getEntity();
     }
