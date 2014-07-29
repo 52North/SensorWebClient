@@ -9,7 +9,7 @@
         <itemName>EEA-SOS</itemName>
         <url>http://ags.dev.52north.org:6080/arcgis/rest/services/EEA/AirQualitySos/MapServer/exts/52nArcGisSos/</url>
         <version>2.0.0</version>
-        <supportsFirstLatest>false</supportsFirstLatest>
+        <supportsFirstLatest>true</supportsFirstLatest>
         <metadataHandler>org.n52.server.sos.connector.ags.ArcGISSoeEReportingMetadataHandler</metadataHandler>
         <adapter>org.n52.server.sos.connector.ags.SOSAdapterByGET</adapter>
         <waterML>false</waterML>
