@@ -27,16 +27,13 @@
  */
 package org.n52.server.sos.connector.hydro;
 
-import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_CAPABILITIES_ACCEPT_VERSIONS_PARAMETER;
-import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_CAPABILITIES_SERVICE_PARAMETER;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import static java.lang.String.format;
 import java.nio.charset.Charset;
 import java.util.Scanner;
-
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
@@ -50,6 +47,8 @@ import org.n52.oxf.ows.ExceptionReport;
 import org.n52.oxf.ows.ServiceDescriptor;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_CAPABILITIES_ACCEPT_VERSIONS_PARAMETER;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_CAPABILITIES_SERVICE_PARAMETER;
 import org.n52.oxf.sos.adapter.SOSAdapter;
 import static org.n52.oxf.sos.adapter.SOSAdapter.DESCRIBE_SENSOR;
 import static org.n52.oxf.sos.adapter.SOSAdapter.GET_CAPABILITIES;
