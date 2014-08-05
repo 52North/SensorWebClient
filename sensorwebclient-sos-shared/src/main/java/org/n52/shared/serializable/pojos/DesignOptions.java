@@ -51,6 +51,8 @@ public class DesignOptions implements Serializable {
     private int width;
 
     private boolean grid;
+    
+    private Long resultTime = null; 
 
     private String language;
 
@@ -146,6 +148,14 @@ public class DesignOptions implements Serializable {
 
     public void setBegin(long i) {
         this.begin = this.begin - i;
+    }
+    
+    public void setResultTime(Long resultTime) {
+        this.resultTime = resultTime;
+    }
+    
+    public Long getResultTime() {
+        return this.resultTime;
     }
 
     @Override

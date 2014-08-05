@@ -188,7 +188,8 @@ public class SOSConnector {
                                                   fois,
                                                   phenoms,
                                                   procedures,
-                                                  time);
+                                                  time, 
+                                                  null);
         OperationResult operationResult = obsAccessor.sendRequest(request);
         if (operationResult != null) {
             XmlObject response = XmlObject.Factory.parse(operationResult.getIncomingResultAsStream());

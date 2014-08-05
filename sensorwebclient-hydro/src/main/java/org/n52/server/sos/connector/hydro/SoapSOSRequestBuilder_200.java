@@ -35,7 +35,6 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.adapter.ParameterShell;
-import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.xmlbeans.tools.XmlUtil;
 import org.n52.server.da.oxf.SOSRequestBuilder_200_OXFExtension;
 import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
@@ -103,6 +102,7 @@ public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtensio
 	    ParameterShell offering = parameters.getParameterShellWithCommonName("offering");
 	    ParameterShell feature = parameters.getParameterShellWithCommonName("featureOfInterest");
 	    ParameterShell version = parameters.getParameterShellWithCommonName("version");
+            ParameterShell phenomenonTime = parameters.getParameterShellWithCommonName("phenomenonTime");
 	    sb.append("<gda:GetDataAvailability service=\"SOS\"");
         sb.append(" version=\"").append(version.getSpecifiedValue()).append("\"");
         sb.append(" xmlns:gda=\"http://www.opengis.net/sosgda/1.0\"");
@@ -119,6 +119,18 @@ public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtensio
 	    if (feature != null) {
 	    	sb.append("<gda:featureOfInterest>").append(feature.getSpecifiedValue()).append("</gda:featureOfInterest>");
 	    }
+            if (phenomenonTime != null) {
+                sb.append("<swes:extension xmlns:swes=\"http://www.opengis.net/swes/2.0\">");
+                sb.append("<fes:During xmlns:fes=\"http://www.opengis.net/fes/2.0\">");
+                sb.append("<fes:ValueReference>phenomenonTime</fes:ValueReference>");
+                sb.append("<gml:TimePeriod gml:id=\"tp_1\" xmlns:gml=\"http://www.opengis.net/gml/3.2\">");
+                String[] phenomTime = phenomenonTime.getSpecifiedTypedValueArray(String[].class);
+                sb.append("<gml:beginPosition>").append(phenomTime[0]).append("</gml:beginPosition>");
+                sb.append("<gml:endPosition>").append(phenomTime[1]).append("</gml:endPosition>");
+                sb.append("</gml:TimePeriod>");
+                sb.append("</fes:During>");
+                sb.append("</swes:extension>");
+            }
 	    sb.append("</gda:GetDataAvailability>");
 	    EnvelopeDocument envelope = addSoapEnvelope(sb.toString(), GET_DATA_AVAILABILITY);
 	    return envelope.xmlText(XmlUtil.PRETTYPRINT);

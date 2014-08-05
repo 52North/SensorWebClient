@@ -19,6 +19,7 @@
 	<bean id="stationParameterService" class="org.n52.series.api.proxy.v1.srv.StationOutputAdapter" />
 	<bean id="phenomenonParameterService" class="org.n52.series.api.proxy.v1.srv.PhenomenonOutputAdapter" />
 	<bean id="metadataService" class="org.n52.series.api.proxy.v1.srv.MetadataAdapter" />
+        <bean id="resultTimeService" class="org.n52.series.api.proxy.v1.srv.ResultTimeAdapter" />
 
 	<bean id="timeSeriesDataService" class="org.n52.server.service.TimeSeriesDataServiceImpl" />
 	<bean id="getDataService" class="org.n52.series.api.proxy.v1.srv.GetDataService">

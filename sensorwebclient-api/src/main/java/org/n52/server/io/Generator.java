@@ -207,16 +207,27 @@ public abstract class Generator {
             List<String> observedProperties = new ArrayList<String>();
 
             // extract request parameters from offering
-            String offering = property.getOffering();
             observedProperties.add(property.getPhenomenon());
             procedures.add(property.getProcedure());
             fois.add(property.getFeature());
 
             String sosUrl = property.getServiceUrl();
             String offeringId = property.getOffering();
-            requests.add(new RequestConfig(sosUrl, offeringId, fois, observedProperties, procedures, time));
+            
+            ITime resultTime = getResultTimeFrom(options); 
+            requests.add(new RequestConfig(sosUrl, offeringId, fois, observedProperties, procedures, time, resultTime));
         }
         return requests;
+    }
+    
+    protected ITime getResultTimeFrom(DesignOptions options) {
+        if (options.getResultTime() != null) {
+            Calendar resTime = Calendar.getInstance();
+            resTime.setTimeInMillis(options.getResultTime());
+            String resultTime = dateFormat.format(resTime.getTime());
+            return TimeFactory.createTime(resultTime);
+        }
+        return null;
     }
 
     /**
