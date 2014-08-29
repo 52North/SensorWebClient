@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.joda.time.Instant;
 
 import org.joda.time.Interval;
 import org.n52.client.service.SensorMetadataService;
@@ -208,7 +209,12 @@ public abstract class DataService {
         Interval timespan = Interval.parse(parameterSet.getTimespan());
         long begin = timespan.getStartMillis();
         long end = timespan.getEndMillis();
-        return new DesignOptions(props, begin, end, renderGrid);
+        DesignOptions designOptions = new DesignOptions(props, begin, end, renderGrid);
+        if (parameterSet.getResultTime() != null) {
+            Instant resultTime = Instant.parse(parameterSet.getResultTime());
+            designOptions.setResultTime(resultTime.getMillis());
+        }
+        return designOptions;
     }
 
     public SensorMetadataService getSensorMetadataService() {
