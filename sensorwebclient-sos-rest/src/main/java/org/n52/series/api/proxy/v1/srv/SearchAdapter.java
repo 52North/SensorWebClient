@@ -82,11 +82,7 @@ public class SearchAdapter implements SearchService {
             for (SosTimeseries ts : timeseries) {
                 boolean matchTerms = true;
                 for (String searchTerm : searchTerms) {
-                    if (!(containsSearchString(ts.getFeature().getLabel(), searchTerm)
-                            || containsSearchString(ts.getPhenomenon().getLabel(), searchTerm)
-                            || containsSearchString(ts.getProcedure().getLabel(), searchTerm)
-                            || containsSearchString(ts.getOffering().getLabel(), searchTerm)
-                            || containsSearchString(ts.getCategory().getLabel(), searchTerm))) {
+                    if (!(matchAnyLabel(ts, searchTerm) || matchAnyId(ts, searchTerm))) {
                         matchTerms = false;
                     }
                 }
@@ -96,6 +92,21 @@ public class SearchAdapter implements SearchService {
             }
         }
         return results;
+    }
+
+    private boolean matchAnyLabel(SosTimeseries ts, String searchTerm) {
+        return containsSearchString(ts.getFeature().getLabel(), searchTerm)
+                || containsSearchString(ts.getPhenomenon().getLabel(), searchTerm)
+                || containsSearchString(ts.getProcedure().getLabel(), searchTerm)
+                || containsSearchString(ts.getOffering().getLabel(), searchTerm)
+                || containsSearchString(ts.getCategory().getLabel(), searchTerm);
+    }
+
+    private boolean matchAnyId(SosTimeseries ts, String searchTerm) {
+        return containsSearchString(ts.getFeature().getFeatureId(), searchTerm)
+                || containsSearchString(ts.getPhenomenon().getPhenomenonId(), searchTerm)
+                || containsSearchString(ts.getProcedure().getProcedureId(), searchTerm)
+                || containsSearchString(ts.getOffering().getOfferingId(), searchTerm);
     }
 
     private Collection<SearchResult> requestStations(String... searchTerms) {
