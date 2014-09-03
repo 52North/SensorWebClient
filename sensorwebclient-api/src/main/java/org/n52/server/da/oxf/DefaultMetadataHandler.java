@@ -76,14 +76,14 @@ import com.vividsolutions.jts.geom.Point;
 public class DefaultMetadataHandler extends MetadataHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultMetadataHandler.class);
-    
+
     public DefaultMetadataHandler(final SOSMetadata metadata) {
         super(metadata);
     }
 
-    /* 
-     * Assembles timeseries' metadata by performing DescribeSensor request and parsing the returned  SensorML. 
-     * 
+    /*
+     * Assembles timeseries' metadata by performing DescribeSensor request and parsing the returned  SensorML.
+     *
      * @see org.n52.server.da.MetadataHandler#assembleTimeseriesMetadata(org.n52.shared.serializable.pojos.TimeseriesProperties)
      */
     @Override
@@ -92,7 +92,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
         final SOSMetadata sosMetadata = getSOSMetadata(timeseries.getServiceUrl());
         final XmlObject sml = getSensorDescriptionAsSensorML(timeseries.getProcedureId(), sosMetadata);
         final DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), sosMetadata);
-        
+
         final String phenomenonId = timeseries.getPhenomenonId();
         properties.setUnitOfMeasure(parser.buildUpSensorMetadataUom(phenomenonId));
         final String url = parser.buildUpSensorMetadataHtmlUrl(properties.getTimeseries());
@@ -132,7 +132,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
      * <br>
      * <bf>Note:</bf> to create the associations between these key items the Sensor Web Client assumes that
      * the selected SOS provides the 52°North discovery profile.
-     * 
+     *
      * @param observingTimeseries
      *        all timeseries being observed.
      * @throws OXFException
@@ -220,7 +220,11 @@ public class DefaultMetadataHandler extends MetadataHandler {
 
                             station.setLocation(point);
                             for (final SosTimeseries timseries : paramConstellations) {
-                                timseries.setFeature(new Feature(featureId, sosUrl));
+                                final Feature feature = new Feature(featureId, sosUrl);
+                                if ( !lookup.containsFeature(featureId)) {
+                                    lookup.addFeature(feature);
+                                }
+                                timseries.setFeature(feature);
                                 station.addTimeseries(timseries);
                             }
                         }
@@ -291,7 +295,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
             }
             LOGGER.warn("#{} procedures are unavailable. {}", illegalProcedures.size(), sb.toString());
         }
-        
+
         infoLogServiceSummary(metadata);
         metadata.setHasDonePositionRequest(true);
     }
