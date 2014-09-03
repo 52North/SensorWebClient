@@ -37,9 +37,14 @@ import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.adapter.ParameterShell;
 import org.n52.oxf.xmlbeans.tools.XmlUtil;
 import org.n52.server.da.oxf.SOSRequestBuilder_200_OXFExtension;
+import org.n52.server.mgmt.ConfigurationContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
 
 public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtension {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SoapSOSRequestBuilder_200.class);
 
     // TODO extract to a common request wrapper
 
@@ -49,6 +54,10 @@ public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtensio
 	private static final String DESCRIBE_SENSOR_SOAP_HEADER_ACTION = "http://www.opengis.net/def/serviceOperation/sos/core/2.0/DescribeSensor"; // spec says: http://www.opengis.net/swes/2.0/DescribeSensor
 	private static final String GET_OBS_SOAP_HEADER_ACTION = "http://www.opengis.net/def/serviceOperation/sos/core/2.0/GetObservation";
 	private static final String GET_DATA_AVAILABILITY = "http://www.opengis.net/def/serviceOperation/sos/daRetrieval/2.0/GetDataAvailability";
+
+    private static final String WATERML_20_NS = "http://www.opengis.net/waterml/2.0";
+    static final String SOS_GDA_10_PREFINAL_NS = "http://www.opengis.net/sos/2.0";
+    static final String SOS_GDA_10_NS = "http://www.opengis.net/sosgda/1.0";
 
 	protected String sosUrl;
 
@@ -88,7 +97,7 @@ public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtensio
 	@Override
 	public String buildGetObservationRequest(ParameterContainer parameters) throws OXFException {
         parameters.removeParameterShell(parameters.getParameterShellWithCommonName(GET_OBSERVATION_RESPONSE_FORMAT_PARAMETER));
-        parameters.addParameterShell(GET_OBSERVATION_RESPONSE_FORMAT_PARAMETER, "http://www.opengis.net/waterml/2.0");
+        parameters.addParameterShell(GET_OBSERVATION_RESPONSE_FORMAT_PARAMETER, WATERML_20_NS);
 
 		String request = super.buildGetObservationRequest(parameters);
 		EnvelopeDocument envelope = addSoapEnvelope(request, GET_OBS_SOAP_HEADER_ACTION);
@@ -102,11 +111,25 @@ public class SoapSOSRequestBuilder_200 extends SOSRequestBuilder_200_OXFExtensio
 	    ParameterShell offering = parameters.getParameterShellWithCommonName("offering");
 	    ParameterShell feature = parameters.getParameterShellWithCommonName("featureOfInterest");
 	    ParameterShell version = parameters.getParameterShellWithCommonName("version");
-            ParameterShell phenomenonTime = parameters.getParameterShellWithCommonName("phenomenonTime");
+        ParameterShell phenomenonTime = parameters.getParameterShellWithCommonName("phenomenonTime");
 	    sb.append("<gda:GetDataAvailability service=\"SOS\"");
         sb.append(" version=\"").append(version.getSpecifiedValue()).append("\"");
-        sb.append(" xmlns:gda=\"http://www.opengis.net/sosgda/1.0\"");
-        sb.append(" >");
+        sb.append(" xmlns:gda=\"");
+
+	    boolean gdaPrefinal = false;
+        if (parameters.containsParameterShellWithCommonName("gdaPrefinalNamespace")) {
+            ParameterShell gdaNamespace = parameters.getParameterShellWithCommonName("gdaPrefinalNamespace");
+            gdaPrefinal = Boolean.parseBoolean((String)gdaNamespace.getSpecifiedValue());
+        }
+        if (gdaPrefinal) {
+            LOGGER.warn("The correct GDA namespace is now: {}", SOS_GDA_10_NS);
+            LOGGER.warn("Instance is configured to use the prefinal GDA namespace '{}'.", SOS_GDA_10_PREFINAL_NS);
+            LOGGER.warn("You will get an exception once the SOS has been updated and dropped the old namespace.");
+            sb.append(SOS_GDA_10_PREFINAL_NS);
+        } else {
+            sb.append(SOS_GDA_10_NS);
+        }
+        sb.append("\"  >");
 	    if (observedProperty != null) {
 	    	sb.append("<gda:observedProperty>").append(observedProperty.getSpecifiedValue()).append("</gda:observedProperty>");
 	    }

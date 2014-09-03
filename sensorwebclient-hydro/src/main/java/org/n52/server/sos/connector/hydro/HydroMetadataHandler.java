@@ -73,6 +73,8 @@ public class HydroMetadataHandler extends MetadataHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HydroMetadataHandler.class);
 
+    static final String SOS_GDA_10_PARAMETERS_PREFINAL_NS = "http://www.opengis.net/om/2.0";
+
     public HydroMetadataHandler(SOSMetadata metadata) {
         super(metadata);
     }
@@ -125,14 +127,8 @@ public class HydroMetadataHandler extends MetadataHandler {
         // create tasks by iteration over procedures
         for (SosTimeseries timeserie : observingTimeseries) {
             String procedureID = timeserie.getProcedureId();
-            getFoiAccessTasks.put(procedureID,
-                                  new FutureTask<OperationResult>(createGetFoiAccess(metadata.getServiceUrl(),
-                                                                                     metadata.getVersion(),
-                                                                                     procedureID)));
-            getDataAvailabilityTasks.put(timeserie,
-                                         new FutureTask<OperationResult>(createGDAAccess(metadata.getServiceUrl(),
-                                                                                         metadata.getVersion(),
-                                                                                         timeserie)));
+            getFoiAccessTasks.put(procedureID, new FutureTask<OperationResult>(createGetFoiAccess(metadata,procedureID)));
+            getDataAvailabilityTasks.put(timeserie, new FutureTask<OperationResult>(createGDAAccess(metadata,timeserie)));
         }
 
         // create list of timeseries of GDA requests
@@ -208,11 +204,19 @@ public class HydroMetadataHandler extends MetadataHandler {
                                                              SosTimeseries timeserie,
                                                              SOSMetadata metadata) throws XmlException, IOException {
         ArrayList<SosTimeseries> timeseries = new ArrayList<SosTimeseries>();
-        String queryExpression = "declare namespace gda='http://www.opengis.net/sosgda/1.0'; $this/gda:GetDataAvailabilityResponse/gda:dataAvailabilityMember";
-        XmlObject[] response = result_xb.selectPath(queryExpression);
+        StringBuilder sb = new StringBuilder();
+        sb.append("declare namespace gda='");
+        sb.append(SoapSOSRequestBuilder_200.SOS_GDA_10_NS);
+        sb.append("'; $this/gda:GetDataAvailabilityResponse/gda:dataAvailabilityMember");
+        //String queryExpression = "declare namespace gda='http://www.opengis.net/sosgda/1.0'; $this/gda:GetDataAvailabilityResponse/gda:dataAvailabilityMember";
+        XmlObject[] response = result_xb.selectPath(sb.toString());
         if (response == null || response.length ==0) {
-            queryExpression = "declare namespace gda='http://www.opengis.net/sos/2.0'; $this/gda:GetDataAvailabilityResponse/gda:dataAvailabilityMember";
-            response = result_xb.selectPath(queryExpression);
+            sb = new StringBuilder();
+            sb.append("declare namespace gda='");
+            sb.append(SoapSOSRequestBuilder_200.SOS_GDA_10_PREFINAL_NS);
+            sb.append("'; $this/gda:GetDataAvailabilityResponse/gda:dataAvailabilityMember");
+            //queryExpression = "declare namespace gda='http://www.opengis.net/sos/2.0'; $this/gda:GetDataAvailabilityResponse/gda:dataAvailabilityMember";
+            response = result_xb.selectPath(sb.toString());
         }
         for (XmlObject xmlObject : response) {
             SosTimeseries addedtimeserie = new SosTimeseries();
@@ -234,9 +238,9 @@ public class HydroMetadataHandler extends MetadataHandler {
     }
 
     protected String getAttributeOfChildren(XmlObject xmlObject, String child, String attribute) {
-    	XmlObject[] children = xmlObject.selectChildren("http://www.opengis.net/sosgda/1.0", child);
+    	XmlObject[] children = xmlObject.selectChildren(SoapSOSRequestBuilder_200.SOS_GDA_10_NS, child);
         if (children == null || children.length ==0) {
-            children = xmlObject.selectChildren("http://www.opengis.net/om/2.0", child);
+            children = xmlObject.selectChildren(SOS_GDA_10_PARAMETERS_PREFINAL_NS, child);
         }
         SimpleValue childObject = ((org.apache.xmlbeans.SimpleValue) children[0].selectAttribute("http://www.w3.org/1999/xlink",
                                                                                                                         attribute));
@@ -247,19 +251,24 @@ public class HydroMetadataHandler extends MetadataHandler {
         return phenomenonId.substring(phenomenonId.lastIndexOf("/") + 1);
     }
 
-    private Callable<OperationResult> createGetFoiAccess(String sosUrl, String sosVersion, String procedureID) throws OXFException {
+    private Callable<OperationResult> createGetFoiAccess(SOSMetadata metadata, String procedureID) throws OXFException {
         ParameterContainer container = new ParameterContainer();
         container.addParameterShell(GET_FOI_SERVICE_PARAMETER, "SOS");
-        container.addParameterShell(GET_FOI_VERSION_PARAMETER, sosVersion);
+        container.addParameterShell(GET_FOI_VERSION_PARAMETER, metadata.getSosVersion());
         container.addParameterShell("procedure", procedureID);
+        String sosUrl = metadata.getServiceUrl();
         Operation operation = new Operation(GET_FEATURE_OF_INTEREST, sosUrl, sosUrl);
         return new OperationAccessor(getSosAdapter(), operation, container);
     }
 
-    private Callable<OperationResult> createGDAAccess(String sosUrl, String version, SosTimeseries timeserie) throws OXFException {
+    private Callable<OperationResult> createGDAAccess(SOSMetadata metadata, SosTimeseries timeserie) throws OXFException {
+
+        String sosUrl = metadata.getServiceUrl();
         ParameterContainer container = new ParameterContainer();
         container.addParameterShell("procedure", timeserie.getProcedureId());
-        container.addParameterShell("version", version);
+        container.addParameterShell("version", metadata.getVersion());
+        String gdaPrefinal = Boolean.toString(metadata.isGdaPrefinal());
+        container.addParameterShell("gdaPrefinalNamespace", gdaPrefinal);
         Operation operation = new Operation(GET_DATA_AVAILABILITY, sosUrl, sosUrl);
         return new OperationAccessor(getSosAdapter(), operation, container);
     }

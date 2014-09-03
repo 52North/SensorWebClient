@@ -93,6 +93,8 @@ public class SOSMetadata implements Serializable {
 
     private boolean supportsFirstLatest = false; // default
 
+    private boolean gdaPrefinal = false; // default
+
     private BoundingBox configuredExtent;
 
     @SuppressWarnings("unused")
@@ -153,6 +155,7 @@ public class SOSMetadata implements Serializable {
         this.configuredExtent = builder.getConfiguredServiceExtent();
         this.protectedService = builder.isProctectedService();
         this.eventing = builder.isEventing();
+        this.gdaPrefinal = builder.isGdaPrefinal();
         this.setSosMetadataHandler(builder.getSosMetadataHandler());
         this.setAdapter(builder.getAdapter());
     }
@@ -282,6 +285,10 @@ public class SOSMetadata implements Serializable {
 
     public boolean isSupportsFirstLatest() {
         return supportsFirstLatest;
+    }
+
+    public boolean isGdaPrefinal() {
+        return gdaPrefinal;
     }
 
     public boolean isProtectedService() {
@@ -450,4 +457,5 @@ public class SOSMetadata implements Serializable {
         IdGenerator idGenerator = new MD5HashGenerator("srv_");
         return idGenerator.generate(parameters);
     }
+
 }

@@ -75,7 +75,8 @@ public class SoapSosRequestBuilder_200Test {
     }
 
     @Test public void
-    shouldHaveOfficialWaterML20Namespace() throws XmlException, IOException, OXFException {
+    shouldHaveOfficialGDANamespace() throws XmlException, IOException, OXFException {
+        parameters.addParameterShell("gdaPrefinalNamespace", "false");
         String request = builder.buildGetDataAvailabilityRequest(parameters);
         EnvelopeDocument envelope = EnvelopeDocument.Factory.parse(request);
         XmlObject gdaDoc = readBodyNodeFrom(envelope, null);
@@ -83,6 +84,19 @@ public class SoapSosRequestBuilder_200Test {
         XmlObject[] xml = gdaDoc.selectChildren("http://www.opengis.net/sosgda/1.0", "GetDataAvailability");
         Assert.assertThat(xml.length, is(1));
         XmlObject[] children = xml[0].selectChildren("http://www.opengis.net/sosgda/1.0", "procedure");
+        Assert.assertThat(children.length, is(not(0)));
+    }
+
+    @Test public void
+    shouldHavePrefinalGDANamespace() throws XmlException, IOException, OXFException {
+        parameters.addParameterShell("gdaPrefinalNamespace", "true");
+        String request = builder.buildGetDataAvailabilityRequest(parameters);
+        EnvelopeDocument envelope = EnvelopeDocument.Factory.parse(request);
+        XmlObject gdaDoc = readBodyNodeFrom(envelope, null);
+
+        XmlObject[] xml = gdaDoc.selectChildren("http://www.opengis.net/sos/2.0", "GetDataAvailability");
+        Assert.assertThat(xml.length, is(1));
+        XmlObject[] children = xml[0].selectChildren("http://www.opengis.net/sos/2.0", "procedure");
         Assert.assertThat(children.length, is(not(0)));
     }
 }
