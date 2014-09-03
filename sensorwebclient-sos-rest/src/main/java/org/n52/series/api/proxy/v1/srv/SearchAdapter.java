@@ -82,7 +82,8 @@ public class SearchAdapter implements SearchService {
             for (SosTimeseries ts : timeseries) {
                 boolean matchTerms = true;
                 for (String searchTerm : searchTerms) {
-                    if (!(matchAnyLabel(ts, searchTerm) || matchAnyId(ts, searchTerm))) {
+                    if (!(matchAnyId(ts, searchTerm) || matchAnyLabel(ts, searchTerm) ||
+                          containsSearchString(ts.getServiceUrl(), searchTerm))) {
                         matchTerms = false;
                     }
                 }
