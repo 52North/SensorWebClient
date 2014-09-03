@@ -149,6 +149,13 @@ public class ConfigurationContext implements ServletContextAware {
         Statistics.scheduleStatisticsLog(STATISTICS_INTERVAL);
     }
 
+    /**
+     * Destroy method called by Spring's lifecycle.
+     */
+    public void shutdown() {
+        Statistics.shutdown();
+    }
+
     private void parsePreConfiguredServices(String dsDirectory) {
         try {
             String path = File.separator + dsDirectory + File.separator;
