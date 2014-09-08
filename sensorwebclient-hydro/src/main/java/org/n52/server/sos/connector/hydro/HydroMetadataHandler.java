@@ -167,7 +167,7 @@ public class HydroMetadataHandler extends MetadataHandler {
                          counter--);
             FutureTask<OperationResult> futureTask = getDataAvailabilityTasks.get(timeserie);
             AccessorThreadPool.execute(futureTask);
-            OperationResult result = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
+            OperationResult result = futureTask.get(metadata.getTimeout(), MILLISECONDS);
             if (result == null) {
                 LOGGER.error("Get no result for GetDataAvailability with parameter constellation: " + timeserie + "!");
             }
@@ -190,7 +190,7 @@ public class HydroMetadataHandler extends MetadataHandler {
             FutureTask<OperationResult> futureTask = getFoiAccessTasks.get(procedureID);
             AccessorThreadPool.execute(futureTask);
             try {
-                OperationResult opRes = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
+                OperationResult opRes = futureTask.get(metadata.getTimeout(), MILLISECONDS);
                 GetFeatureOfInterestParser getFoiParser = new GetFeatureOfInterestParser(opRes, metadata);
                 getFoiParser.createFeatures();
             }
