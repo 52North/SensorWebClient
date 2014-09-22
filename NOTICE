@@ -43,6 +43,7 @@ This project includes:
   Commons Pool under The Apache Software License, Version 2.0
   commons-collections under The Apache Software License, Version 2.0
   Connector for an ArcGIS SOS extension. under GNU General Public License, v2.0
+  CORS Filter under The Apache Software License, Version 2.0
   dom4j under DOM4J license, http://dom4j.sourceforge.net/dom4j-1.6.1/license.html (BSD style)
   Ehcache Core under The Apache Software License, Version 2.0
   EPSG Authority Service using HSQL database under Lesser General Public License (LGPL) or EPSG database distribution license or BSD License for HSQL
@@ -51,8 +52,8 @@ This project includes:
   GRDC schema binding under GNU General Public License, v2.0
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   gwt-openlayers-client under The Apache Software License, Version 2.0
-  gwt-servlet under Google Web Toolkit Terms
-  gwt-user under Google Web Toolkit Terms
+  gwt-servlet under GWT Terms
+  gwt-user under GWT Terms
   Hamcrest All under New BSD License
   Hamcrest Core under New BSD License
   Hibernate Core under GNU Lesser General Public License
@@ -67,6 +68,7 @@ This project includes:
   jackson-databind under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
   jackson-module-jsonSchema under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
   Java Excel API under GNU Lesser General Public License
+  Java Property Utility under The Apache Software License, Version 2.0
   Java Transaction API under Common Development and Distribution License (CDDL), version 1.0
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   JavaMail API under Common Development and Distribution License (CDDL) v1.0
@@ -88,30 +90,30 @@ This project includes:
   Logback Core Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Main module under Lesser General Public License (LGPL)
   Metadata under Lesser General Public License (LGPL)
-  OASIS WS-N specification schemas - including WS-BrokeredNotification (v1.3) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OASIS WS-Resources specification schemas v1.2 under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC Context schema (spec. v1.0.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC EML schema 0.0.1 (OGC Discussion Paper 08-132) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC Filter schema (spec. v1.0.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC Filter schema (spec. v2.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC GML schema (spec. v3.1.1) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC GML schema (spec. v3.2.1) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC O&M schema (spec. v1.0.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC O&M schema (spec. v2.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC OWS schema (spec. v1.1.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC Sampling schema (spec. v1.0.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC Sampling schema (spec. v2.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC SensorML schema (spec. v1.0.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC SensorML schema (spec. v1.0.1) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC SES schema 0.3.0 (OGC Discussion Paper 08-133) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC SLD schema (spec. v1.0.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC SOS schema (spec. v1.0.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC SOS schema (spec. v2.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC SWECommon schema (spec. v1.0.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC SWECommon schema (spec. v1.0.1) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC SWECommon schema (spec. v2.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC SWES schema (spec. v2.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC WaterML schema (spec. v2.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  OASIS WS-N specification schemas - including WS-BrokeredNotification (v1.3) under The Apache Software License, Version 2.0
+  OASIS WS-Resources specification schemas v1.2 under The Apache Software License, Version 2.0
+  OGC Context schema (spec. v1.0.0) under The Apache Software License, Version 2.0
+  OGC EML schema 0.0.1 (OGC Discussion Paper 08-132) under The Apache Software License, Version 2.0
+  OGC Filter schema (spec. v1.0.0) under The Apache Software License, Version 2.0
+  OGC Filter schema (spec. v2.0) under The Apache Software License, Version 2.0
+  OGC GML schema (spec. v3.1.1) under The Apache Software License, Version 2.0
+  OGC GML schema (spec. v3.2.1) under The Apache Software License, Version 2.0
+  OGC O&M schema (spec. v1.0.0) under The Apache Software License, Version 2.0
+  OGC O&M schema (spec. v2.0) under The Apache Software License, Version 2.0
+  OGC OWS schema (spec. v1.1.0) under The Apache Software License, Version 2.0
+  OGC Sampling schema (spec. v1.0.0) under The Apache Software License, Version 2.0
+  OGC Sampling schema (spec. v2.0) under The Apache Software License, Version 2.0
+  OGC SensorML schema (spec. v1.0.0) under The Apache Software License, Version 2.0
+  OGC SensorML schema (spec. v1.0.1) under The Apache Software License, Version 2.0
+  OGC SES schema 0.3.0 (OGC Discussion Paper 08-133) under The Apache Software License, Version 2.0
+  OGC SLD schema (spec. v1.0.0) under The Apache Software License, Version 2.0
+  OGC SOS schema (spec. v1.0.0) under The Apache Software License, Version 2.0
+  OGC SOS schema (spec. v2.0) under The Apache Software License, Version 2.0
+  OGC SWECommon schema (spec. v1.0.0) under The Apache Software License, Version 2.0
+  OGC SWECommon schema (spec. v1.0.1) under The Apache Software License, Version 2.0
+  OGC SWECommon schema (spec. v2.0) under The Apache Software License, Version 2.0
+  OGC SWES schema (spec. v2.0) under The Apache Software License, Version 2.0
+  OGC WaterML schema (spec. v2.0) under The Apache Software License, Version 2.0
   Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
   OxF Features under GNU General Public License, v2.0
   OxFramework Adapters API under GNU General Public License, v2.0
@@ -150,9 +152,9 @@ This project includes:
   swe-common-data-framework under Mozilla Public License version 1.1
   User Interface under GNU General Public License, v2.0
   vecmath under GNU General Public License (GPL), version 2, with the CLASSPATH exception
-  W3C SOAP specification recommondation (v1.2 part 1) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  W3C WS-Addressing specification schemas (v1.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  W3C xlink schema (spec. v1.1.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  W3C SOAP specification recommondation (v1.2 part 1) under The Apache Software License, Version 2.0
+  W3C WS-Addressing specification schemas (v1.0) under The Apache Software License, Version 2.0
+  W3C xlink schema (spec. v1.1.0) under The Apache Software License, Version 2.0
   xalan under The Apache Software License, Version 2.0
   Xerces2 Java Parser under The Apache Software License, Version 2.0
   XML Commons External Components XML APIs under The Apache Software License, Version 2.0
