@@ -1,25 +1,29 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
 package org.n52.server.service.rpc;
 
@@ -36,7 +40,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.n52.client.service.SesUserService;
 import org.n52.server.ses.hibernate.HibernateUtil;
 import org.n52.server.ses.service.SesUserServiceImpl;
-import org.n52.server.util.ContextLoader;
 import org.n52.shared.responses.SesClientResponse;
 import org.n52.shared.serializable.pojos.User;
 import org.n52.shared.serializable.pojos.UserDTO;
@@ -47,6 +50,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import org.n52.server.ses.util.SesServiceConfig;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  * Delegates SES User requests to an {@link SesUserService} implementation.
@@ -57,11 +64,19 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RpcSesUserServlet.class);
 
-    private SesUserService service = ContextLoader.load("sesUserService", SesUserService.class);
-    
+    private final SesUserService service = SesServiceConfig.getService("sesUserService", SesUserService.class);
+
     @Override
     public void init() throws ServletException {
         LOGGER.debug("Initialize " + getClass().getName() +" Servlet for SES Client");
+    }
+
+    private SesUserService getService() {
+        if (service == null) {
+            LOGGER.error("SesUserService not configured properly. Check 'spring-ses-config.xml'.");
+            throw new NullPointerException("SES module not available.");
+        }
+        return service;
     }
 
     @Override
@@ -109,7 +124,7 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
             // user data from DB
             String id = registerID.substring(5);
             user = HibernateUtil.getUserBy(id);
-            
+
             if (user != null) {
             	if (activateUser(user)) {
             		LOGGER.debug("register user: " + user.getName() + " to WNS");
@@ -122,12 +137,12 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
                     }
                     writeHtmlResponse("Registration successful!", response);
             	} else {
-            		String userActiv = "User activation is still done!"; 
+            		String userActiv = "User activation is still done!";
                 	LOGGER.error(userActiv);
                 	writeHtmlResponse(userActiv, response);
             	}
             } else {
-            	String noUserToActivationID = "No user for this activation link!"; 
+            	String noUserToActivationID = "No user for this activation link!";
             	LOGGER.error(noUserToActivationID);
             	writeHtmlResponse(noUserToActivationID, response);
             }
@@ -154,12 +169,12 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
             return false;
         }
     }
-    
+
     private void writeHtmlResponse(String message, HttpServletResponse response) {
         message = includeExceptionInfoTo(message, null);
         writeResponse(message, response);
     }
-    
+
     private void writeHtmlResponse(String message, Exception e, HttpServletResponse response) {
         message = includeExceptionInfoTo(message, e);
         writeResponse(message, response);
@@ -199,73 +214,73 @@ public class RpcSesUserServlet extends RemoteServiceServlet implements RpcSesUse
 
     @Override
     public SesClientResponse registerUser(UserDTO userDTO) throws Exception {
-    	return service.registerUser(userDTO);
+    	return getService().registerUser(userDTO);
     }
 
     @Override
     public SesClientResponse login(String userName, String password, SessionInfo sessionInfo) throws Exception {
-        return service.login(userName, password, sessionInfo);
+        return getService().login(userName, password, sessionInfo);
     }
-    
+
     @Override
     public SesClientResponse validateLoginSession(SessionInfo sessionInfo) throws Exception {
-        return service.validateLoginSession(sessionInfo);
+        return getService().validateLoginSession(sessionInfo);
     }
-    
+
     @Override
     public SessionInfo createNotLoggedInSession() throws Exception {
-        return service.createNotLoggedInSession();
+        return getService().createNotLoggedInSession();
     }
 
     @Override
     public SesClientResponse resetPassword(String userName, String email) throws Exception {
-        return service.resetPassword(userName, email);
+        return getService().resetPassword(userName, email);
     }
 
     @Override
     public void logout(SessionInfo sessioninfo) throws Exception {
-        service.logout(sessioninfo);
+        getService().logout(sessioninfo);
     }
 
     @Override
     public SesClientResponse getUser(SessionInfo sessionInfo) throws Exception {
-        return service.getUser(sessionInfo);
+        return getService().getUser(sessionInfo);
     }
 
     @Override
     public SesClientResponse deleteUser(SessionInfo sessioninfo, String id) throws Exception {
-        return service.deleteUser(sessioninfo, id);
+        return getService().deleteUser(sessioninfo, id);
     }
 
-    
+
     public SesClientResponse performUserDelete(String userId) throws Exception {
-        return ((SesUserServiceImpl) service).performUserDelete(userId);
+        return ((SesUserServiceImpl) getService()).performUserDelete(userId);
     }
 
     @Override
     public SesClientResponse updateUser(SessionInfo sessionInfo, UserDTO newUser) throws Exception {
-        return service.updateUser(sessionInfo, newUser);
+        return getService().updateUser(sessionInfo, newUser);
     }
 
     @Override
     public SesClientResponse getAllUsers(SessionInfo sessionInfo) throws Exception {
-       return service.getAllUsers(sessionInfo);
+       return getService().getAllUsers(sessionInfo);
     }
 
     @Override
     public SesClientResponse requestToDeleteProfile(SessionInfo sessionInfo) throws Exception {
-        return service.requestToDeleteProfile(sessionInfo);
+        return getService().requestToDeleteProfile(sessionInfo);
     }
 
     @Override
     public SesClientResponse getTermsOfUse(String language) throws Exception {
-        return service.getTermsOfUse(language);
+        return getService().getTermsOfUse(language);
     }
 
     // initial data from property file
     // this method is called on first startup
     public SesClientResponse getData() throws Exception {
-        return service.getData();
+        return getService().getData();
     }
 
 }

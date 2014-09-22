@@ -1,23 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="2.5">
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<display-name>
-	   ${project.artifactId} (built on ${timestamp})
+		${project.artifactId} (built on ${timestamp})
 	</display-name>
-	
-	<!-- Cross origin resource sharing (uncomment to share REST-API) 
+
     <filter>
-        <filter-name>CorsFilter</filter-name>
-        <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
+        <filter-name>CORS</filter-name>
+        <filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>
+        <init-param>
+            <param-name>cors.allowOrigin</param-name>
+            <param-value>*</param-value>
+        </init-param>
+        <init-param>
+            <param-name>cors.allowGenericHttpRequests</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <param-name>cors.supportedMethods</param-name>
+            <param-value>GET, POST, HEAD, PUT, DELETE, OPTIONS</param-value>
+        </init-param>
+        <init-param>
+            <param-name>cors.supportedHeaders</param-name>
+            <param-value>Content-Type, Content-Encoding</param-value>
+        </init-param>
+        <init-param>
+            <param-name>cors.exposedHeaders</param-name>
+            <param-value>Content-Type, Content-Encoding</param-value>
+        </init-param>
     </filter>
     <filter-mapping>
-        <filter-name>CorsFilter</filter-name>
+        <filter-name>CORS</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    -->
 
 	<!-- listen for spring related configuration files -->
 	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener
+		<listener-class>
+		  org.springframework.web.context.ContextLoaderListener
 		</listener-class>
 	</listener>
 	<context-param>
@@ -25,29 +48,28 @@
 		<param-value>/WEB-INF/classes/spring-*-config.xml</param-value>
 	</context-param>
 
-	<servlet>
-		<servlet-name>rest</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet
-		</servlet-class>
-		<init-param>
-			<param-name>contextConfigLocation</param-name>
-			<param-value>/WEB-INF/classes/dispatcher-control.xml</param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>rest</servlet-name>
-		<url-pattern>/api/*</url-pattern>
-	</servlet-mapping>
+    <servlet>
+        <servlet-name>rest</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet
+        </servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/classes/dispatcher-control.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>rest</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
 
-
-	<servlet>
+	<!-- <servlet>
 		<servlet-name>ConfigurationContext</servlet-name>
 		<servlet-class>
 			org.n52.server.mgmt.ConfigurationContext
 		</servlet-class>
 		<load-on-startup>1</load-on-startup>
-	</servlet>
+	</servlet> -->
 
 	<servlet>
 		<servlet-name>TimeSeriesDataService</servlet-name>
@@ -137,7 +159,7 @@
 		<param-value>generated</param-value>
 	</context-param>
 	<context-param>
-		<!-- The postfix which shall be set for all zip exports. ISO8601 timestamp 
+		<!-- The postfix which shall be set for all zip exports. ISO8601 timestamp
 			will be used as prefix, e.g. 2011-03-29_dataexport -->
 		<param-name>ZIP_POSTFIX</param-name>
 		<param-value>_dataexport</param-value>
@@ -219,26 +241,26 @@
 
 	<welcome-file-list>
 		<welcome-file>Client.jsp</welcome-file>
+		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
 
-
-	<!-- SES specific Servlets. Comment them out if SES is not needed in the 
+	<!-- SES specific Servlets. Comment them out if SES is not needed in the
 		client. -->
 
-	<!-- <servlet> <servlet-name>SESInitializationServlet</servlet-name> <servlet-class> 
-		org.n52.server.ses.SESInitializationServlet </servlet-class> <load-on-startup>1</load-on-startup> 
-		</servlet> <servlet> <servlet-name>SensorTimerTaskServlet</servlet-name> 
-		<servlet-class> org.n52.server.ses.SensorTimerTaskServlet </servlet-class> 
-		<load-on-startup>2</load-on-startup> </servlet> <servlet> <servlet-name>SesRuleService</servlet-name> 
-		<servlet-class> org.n52.server.service.rpc.RpcSesRuleServlet </servlet-class> 
-		<load-on-startup>2</load-on-startup> </servlet> <servlet-mapping> <servlet-name>SesRuleService</servlet-name> 
-		<url-pattern>/client/SesRuleService</url-pattern> </servlet-mapping> <servlet> 
-		<servlet-name>SesSensorService</servlet-name> <servlet-class> org.n52.server.service.rpc.RpcSesTimeseriesToFeedServlet 
-		</servlet-class> <load-on-startup>2</load-on-startup> </servlet> <servlet-mapping> 
-		<servlet-name>SesSensorService</servlet-name> <url-pattern>/client/SesTimeseriesToFeedService</url-pattern> 
-		</servlet-mapping> <servlet> <servlet-name>SesUserService</servlet-name> 
-		<servlet-class> org.n52.server.service.rpc.RpcSesUserServlet </servlet-class> 
-		<load-on-startup>2</load-on-startup> </servlet> <servlet-mapping> <servlet-name>SesUserService</servlet-name> 
+	<!-- <servlet> <servlet-name>SESInitializationServlet</servlet-name> <servlet-class>
+		org.n52.server.ses.SESInitializationServlet </servlet-class> <load-on-startup>1</load-on-startup>
+		</servlet> <servlet> <servlet-name>SensorTimerTaskServlet</servlet-name>
+		<servlet-class> org.n52.server.ses.SensorTimerTaskServlet </servlet-class>
+		<load-on-startup>2</load-on-startup> </servlet> <servlet> <servlet-name>SesRuleService</servlet-name>
+		<servlet-class> org.n52.server.service.rpc.RpcSesRuleServlet </servlet-class>
+		<load-on-startup>2</load-on-startup> </servlet> <servlet-mapping> <servlet-name>SesRuleService</servlet-name>
+		<url-pattern>/client/SesRuleService</url-pattern> </servlet-mapping> <servlet>
+		<servlet-name>SesSensorService</servlet-name> <servlet-class> org.n52.server.service.rpc.RpcSesTimeseriesToFeedServlet
+		</servlet-class> <load-on-startup>2</load-on-startup> </servlet> <servlet-mapping>
+		<servlet-name>SesSensorService</servlet-name> <url-pattern>/client/SesTimeseriesToFeedService</url-pattern>
+		</servlet-mapping> <servlet> <servlet-name>SesUserService</servlet-name>
+		<servlet-class> org.n52.server.service.rpc.RpcSesUserServlet </servlet-class>
+		<load-on-startup>2</load-on-startup> </servlet> <servlet-mapping> <servlet-name>SesUserService</servlet-name>
 		<url-pattern>/client/SesUserService</url-pattern> </servlet-mapping> -->
 
 </web-app>

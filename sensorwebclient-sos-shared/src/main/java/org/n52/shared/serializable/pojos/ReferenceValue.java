@@ -1,46 +1,79 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
 package org.n52.shared.serializable.pojos;
 
 import java.io.Serializable;
 import java.util.Random;
 
+import org.n52.io.v1.data.TimeseriesData;
+import org.n52.io.v1.data.TimeseriesValue;
+import org.n52.shared.IdGenerator;
+import org.n52.shared.MD5HashGenerator;
+
 public class ReferenceValue implements Serializable {
 
     private static final long serialVersionUID = 3448456992466823855L;
     
+    private TimeseriesData values;
+    
+    private String label;
+    
     private Double value;
     private String color;
     private boolean show = false;
-    private String ID;
     
+    @SuppressWarnings("unused")
     private ReferenceValue() {
         // for serialization
+        values = new TimeseriesData();
     }
     
-    public ReferenceValue(String ID, Double value) {
-        this.ID = ID;
+    public void addValues(TimeseriesValue... timeseriesValues) {
+        values.addValues(timeseriesValues);
+    }
+    
+    public TimeseriesValue[] getValues() {
+        return values.getValues();
+    }
+    
+    public TimeseriesValue getLastValue() {
+        TimeseriesValue[] allValues = getValues();
+        return allValues[allValues.length - 1];
+    }
+    
+    /**
+     * @deprecated this constructor creates a reference value which is valid forever.
+     */
+    @Deprecated
+    public ReferenceValue(String label, Double value) {
+        values = new TimeseriesData();
+        addValues(new TimeseriesValue(0, value));
+        this.label = label;
         this.value = value;
         Random rand = new Random();
         int r = rand.nextInt(256);
@@ -63,20 +96,32 @@ public class ReferenceValue implements Serializable {
 
     }
 
-    public String getID() {
-        return this.ID;
+    public String getId() {
+        return this.label;
     }
 
 
-    public void setID(String iD) {
-        this.ID = iD;
+    public void setId(String id) {
+        this.label = id;
+    }
+    
+    public String getGeneratedGlobalId(String timeseriesId) {
+        IdGenerator idGenerator = new MD5HashGenerator("ref_");
+        return idGenerator.generate(new String[]{label, timeseriesId});
     }
 
-
+    /**
+     * @deprecated use {@link #getLastValue()} of {@link #getValues()}
+     */
+    @Deprecated
     public Double getValue() {
         return this.value;
     }
-
+    
+    /**
+     * @deprecated use {@link #addValues(TimeseriesValue...)}
+     */
+    @Deprecated
     public void setValue(Double value) {
         this.value = value;
     }

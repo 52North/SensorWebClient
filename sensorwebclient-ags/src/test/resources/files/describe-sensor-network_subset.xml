@@ -1,0 +1,200 @@
+<swes:DescribeSensorResponse xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd" xmlns="http://www.opengis.net/sensorML/1.0.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:swes="http://www.opengis.net/swes/2.0" xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink">
+   <swes:procedureDescriptionFormat>http://www.opengis.net/sensorML/1.0.1</swes:procedureDescriptionFormat>
+   <swes:description>
+      <swes:SensorDescription>
+         <swes:data>
+            <SensorML version="1.0.1">
+               <member>
+                  <System>
+                     <identification>
+                        <IdentifierList>
+                           <identifier name="shortName">
+                              <Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">
+                                 <value>Network_GBXXXX</value>
+                              </Term>
+                           </identifier>
+                        </IdentifierList>
+                     </identification>
+                     <components>
+                        <ComponentList>
+                           <component name="GB_StationProcess_1">
+                              <Component>
+                                 <identification>
+                                    <IdentifierList>
+                                       <identifier name="URN">
+                                          <Term definition="urn:ogc:def:identifier:OGC:1.0:uniqueID">
+                                             <value>http://cdr.eionet.europa.eu/gb/eu/aqd/e2a/colutn32a/envuvlxkq/D_GB_StationProcess.xml#GB_StationProcess_1</value>
+                                          </Term>
+                                       </identifier>
+                                       <identifier name="shortName">
+                                          <Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">
+                                             <value>GB_StationProcess_1</value>
+                                          </Term>
+                                       </identifier>
+                                    </IdentifierList>
+                                 </identification>
+                                 <capabilities>
+                                    <swe:DataRecord>
+                                       <swe:field name="FeatureOfInterest-1">
+                                          <swe:Text definition="FeatureOfInterestID">
+                                             <swe:value>http://cdr.eionet.europa.eu/gb/eu/aqd/e2a/colutn32a/envuvlxkq/D_GB_Sample.xml#GB_SamplingFeature_850</swe:value>
+                                          </swe:Text>
+                                       </swe:field>
+                                    </swe:DataRecord>
+                                 </capabilities>
+                                 <inputs>
+                                    <InputList>
+                                       <input name="ambient-air">
+                                          <swe:ObservableProperty definition="ambient-air"/>
+                                       </input>
+                                    </InputList>
+                                 </inputs>
+                                 <outputs>
+                                    <OutputList>
+                                       <output name="Nitrogen dioxide (air)">
+                                          <swe:Quantity definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/8">
+                                             <swe:uom code="ug.m-3"/>
+                                          </swe:Quantity>
+                                       </output>
+                                    </OutputList>
+                                 </outputs>
+                              </Component>
+                           </component>
+                           <component name="GB_StationProcess_2">
+                              <Component>
+                                 <identification>
+                                    <IdentifierList>
+                                       <identifier name="URN">
+                                          <Term definition="urn:ogc:def:identifier:OGC:1.0:uniqueID">
+                                             <value>http://cdr.eionet.europa.eu/gb/eu/aqd/e2a/colutn32a/envuvlxkq/D_GB_StationProcess.xml#GB_StationProcess_2</value>
+                                          </Term>
+                                       </identifier>
+                                       <identifier name="shortName">
+                                          <Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">
+                                             <value>GB_StationProcess_2</value>
+                                          </Term>
+                                       </identifier>
+                                    </IdentifierList>
+                                 </identification>
+                                 <capabilities>
+                                    <swe:DataRecord>
+                                       <swe:field name="FeatureOfInterest-1">
+                                          <swe:Text definition="FeatureOfInterestID">
+                                             <swe:value>http://cdr.eionet.europa.eu/gb/eu/aqd/e2a/colutn32a/envuvlxkq/D_GB_Sample.xml#GB_SamplingFeature_849</swe:value>
+                                          </swe:Text>
+                                       </swe:field>
+                                    </swe:DataRecord>
+                                 </capabilities>
+                                 <inputs>
+                                    <InputList>
+                                       <input name="ambient-air">
+                                          <swe:ObservableProperty definition="ambient-air"/>
+                                       </input>
+                                    </InputList>
+                                 </inputs>
+                                 <outputs>
+                                    <OutputList>
+                                       <output name="Ozone (air)">
+                                          <swe:Quantity definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/7">
+                                             <swe:uom code="ug.m-3"/>
+                                          </swe:Quantity>
+                                       </output>
+                                    </OutputList>
+                                 </outputs>
+                              </Component>
+                           </component>
+                           <component name="GB_StationProcess_3">
+                              <Component>
+                                 <identification>
+                                    <IdentifierList>
+                                       <identifier name="URN">
+                                          <Term definition="urn:ogc:def:identifier:OGC:1.0:uniqueID">
+                                             <value>http://cdr.eionet.europa.eu/gb/eu/aqd/e2a/colutn32a/envuvlxkq/D_GB_StationProcess.xml#GB_StationProcess_3</value>
+                                          </Term>
+                                       </identifier>
+                                       <identifier name="shortName">
+                                          <Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">
+                                             <value>GB_StationProcess_3</value>
+                                          </Term>
+                                       </identifier>
+                                    </IdentifierList>
+                                 </identification>
+                                 <capabilities>
+                                    <swe:DataRecord>
+                                       <swe:field name="FeatureOfInterest-1">
+                                          <swe:Text definition="FeatureOfInterestID">
+                                             <swe:value>http://cdr.eionet.europa.eu/gb/eu/aqd/e2a/colutn32a/envuvlxkq/D_GB_Sample.xml#GB_SamplingFeature_854</swe:value>
+                                          </swe:Text>
+                                       </swe:field>
+                                    </swe:DataRecord>
+                                 </capabilities>
+                                 <inputs>
+                                    <InputList>
+                                       <input name="ambient-air">
+                                          <swe:ObservableProperty definition="ambient-air"/>
+                                       </input>
+                                    </InputList>
+                                 </inputs>
+                                 <outputs>
+                                    <OutputList>
+                                       <output name="Particulate matter &lt; 10 Ã‚Âµm (aerosol)">
+                                          <swe:Quantity definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/5">
+                                             <swe:uom code="ug.m-3"/>
+                                          </swe:Quantity>
+                                       </output>
+                                    </OutputList>
+                                 </outputs>
+                              </Component>
+                           </component>
+                           <component name="GB_StationProcess_4">
+                              <Component>
+                                 <identification>
+                                    <IdentifierList>
+                                       <identifier name="URN">
+                                          <Term definition="urn:ogc:def:identifier:OGC:1.0:uniqueID">
+                                             <value>http://cdr.eionet.europa.eu/gb/eu/aqd/e2a/colutn32a/envuvlxkq/D_GB_StationProcess.xml#GB_StationProcess_4</value>
+                                          </Term>
+                                       </identifier>
+                                       <identifier name="shortName">
+                                          <Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">
+                                             <value>GB_StationProcess_4</value>
+                                          </Term>
+                                       </identifier>
+                                    </IdentifierList>
+                                 </identification>
+                                 <capabilities>
+                                    <swe:DataRecord>
+                                       <swe:field name="FeatureOfInterest-1">
+                                          <swe:Text definition="FeatureOfInterestID">
+                                             <swe:value>http://cdr.eionet.europa.eu/gb/eu/aqd/e2a/colutn32a/envuvlxkq/D_GB_Sample.xml#GB_SamplingFeature_853</swe:value>
+                                          </swe:Text>
+                                       </swe:field>
+                                    </swe:DataRecord>
+                                 </capabilities>
+                                 <inputs>
+                                    <InputList>
+                                       <input name="ambient-air">
+                                          <swe:ObservableProperty definition="ambient-air"/>
+                                       </input>
+                                    </InputList>
+                                 </inputs>
+                                 <outputs>
+                                    <OutputList>
+                                       <output name="Particulate matter &lt; 2.5 Ã‚Âµm (aerosol)">
+                                          <swe:Quantity definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/6001">
+                                             <swe:uom code="ug.m-3"/>
+                                          </swe:Quantity>
+                                       </output>
+                                    </OutputList>
+                                 </outputs>
+                              </Component>
+                           </component>
+                        </ComponentList>
+                     </components>
+                  </System>
+               </member>
+            </SensorML>
+         </swes:data>
+      </swes:SensorDescription>
+   </swes:description>
+</swes:DescribeSensorResponse>

@@ -1,27 +1,30 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
-
 package org.n52.server.sos.connector.eea;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -50,6 +53,7 @@ import net.opengis.sos.x20.GetFeatureOfInterestResponseType;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.n52.io.crs.CRSUtils;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
@@ -62,40 +66,52 @@ import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.server.da.AccessorThreadPool;
 import org.n52.server.da.MetadataHandler;
 import org.n52.server.da.oxf.OperationAccessor;
-import org.n52.server.sos.parser.ConnectorUtils;
-import org.n52.server.sos.parser.utils.ParsedPoint;
-import org.n52.server.util.crs.AReferencingHelper;
-import org.n52.shared.serializable.pojos.EastingNorthing;
+import org.n52.server.parser.ConnectorUtils;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
+import org.opengis.referencing.FactoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 public class ArcGISSoeMetadataHandler extends MetadataHandler {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ArcGISSoeMetadataHandler.class);
 
-	@Override
-	public SOSMetadata performMetadataCompletion(String sosUrl, String sosVersion) throws Exception {
-		SOSMetadata metadata = initMetadata(sosUrl, sosVersion);
+	public ArcGISSoeMetadataHandler(SOSMetadata metadata) {
+        super(metadata);
+    }
+
+    @Override
+    public void assembleTimeseriesMetadata(TimeseriesProperties properties) throws Exception {
+        /* 
+         * XXX separating metadata assembling would need to be implemented here but the old 
+         * SOE connector module is obsolete so we leave it as is. See sensorwebclient-ags 
+         * module for implementation targeting the current SOS SOE implementation.
+         */
+    }
+
+    @Override
+	public SOSMetadata performMetadataCompletion() throws Exception {
+		String sosUrl = getServiceUrl();
+        String sosVersion = getServiceVersion();
+        SOSMetadata metadata = initMetadata();
 		TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
 		
-        Collection<SosTimeseries> observingTimeseries = createObservingTimeseries();
+        Collection<SosTimeseries> observingTimeseries = createObservingTimeseries(sosUrl);
         
         // TODO send DescribeSensor for every procedure to get the UOM, when the EEA-SOS deliver the uom
 
-        AReferencingHelper referenceHelper = createReferencingHelper();
+        CRSUtils referenceHelper = createReferencingHelper();
         Map<String, String> offeringBBoxMap = getOfferingBBoxMap();
         Map<SosTimeseries, FutureTask<OperationResult>> futureTasks = new ConcurrentHashMap<SosTimeseries, FutureTask<OperationResult>>();
         for (SosTimeseries timeseries : observingTimeseries) {
-        	String bboxString = offeringBBoxMap.get(timeseries.getOffering());
+        	String bboxString = offeringBBoxMap.get(timeseries.getOfferingId());
         	futureTasks.put(timeseries,	new FutureTask<OperationResult>(createGetFoiAccess(sosUrl, sosVersion, bboxString, timeseries)));
 		}
 		// execute the GetFeatureOfInterest requests
@@ -121,12 +137,9 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 						// create station if not exists
 						Station station = metadata.getStation(id);
 						if (station == null) {
-							ParsedPoint point = getPointOfSamplingFeatureType(sfSamplingFeature, referenceHelper);
-	                        double lat = Double.parseDouble(point.getLat());
-		                    double lng = Double.parseDouble(point.getLon());
-		                    EastingNorthing coords = new EastingNorthing(lat, lng, point.getSrs());
-	                        station = new Station(id);
-	                        station.setLocation(coords);
+							Point point = getPointOfSamplingFeatureType(sfSamplingFeature, referenceHelper);
+	                        station = new Station(id, sosUrl);
+	                        station.setLocation(point);
 	                        metadata.addStation(station);
 						}
                         // add feature
@@ -136,12 +149,12 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 						} else {
 							label = id;
 						}
-						Feature feature = new Feature(id);
+						Feature feature = new Feature(id, sosUrl);
 						feature.setLabel(label);
                         lookup.addFeature(feature);
                         
                         SosTimeseries tmp = timeseries.clone();
-                        tmp.setFeature(id);
+                        tmp.setFeature(new Feature(id, sosUrl));
                         station.addTimeseries(tmp);
 					}
 				}
@@ -157,8 +170,7 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 		return metadata;
 	}
 
-	public ParsedPoint getPointOfSamplingFeatureType(SFSamplingFeatureType sfSamplingFeature, AReferencingHelper referenceHelper) throws XmlException {
-		ParsedPoint point = new ParsedPoint();
+	public Point getPointOfSamplingFeatureType(SFSamplingFeatureType sfSamplingFeature, CRSUtils referenceHelper) throws XmlException, FactoryException {
 		XmlCursor cursor = sfSamplingFeature.newCursor();
 		if (cursor.toChild(new QName("http://www.opengis.net/samplingSpatial/2.0", "shape"))) {
 			ShapeDocument shapeDoc = ShapeDocument.Factory.parse(cursor.getDomNode());
@@ -166,36 +178,18 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 			if (abstractGeometry instanceof PointTypeImpl) {
 				PointTypeImpl pointDoc = (PointTypeImpl) abstractGeometry;
 				DirectPositionType pos = pointDoc.getPos();
-				String srsName = pos.getSrsName(); 
 				String[] lonLat = pos.getStringValue().split(" ");
-				
-		        String wgs84 = "EPSG:4326";
-                point.setLon(lonLat[0]);
-                point.setLat(lonLat[1]);
-                point.setSrs(wgs84);
-		        try {
-					String srs = referenceHelper.extractSRSCode(srsName);
-					GeometryFactory geometryFactory = referenceHelper.createGeometryFactory(srs);
-
-	                Double x = Double.parseDouble(lonLat[0]);
-	                Double y = Double.parseDouble(lonLat[1]);
-					Coordinate coord = referenceHelper.createCoordinate(srs, x, y, null);
-					
-					Point createdPoint = geometryFactory.createPoint(coord);
-					createdPoint = referenceHelper.transformToWgs84(createdPoint, srs);
-					
-					point = new ParsedPoint(createdPoint.getX() + "", createdPoint.getY() + "", wgs84);
-				} catch (Exception e) {
-					LOGGER.debug("Could not transform! Keeping old SRS: " + wgs84, e);
-				}
+                Double x = Double.parseDouble(lonLat[0]);
+                Double y = Double.parseDouble(lonLat[1]);
+		        return referenceHelper.createPoint(x, y, "CRS:84");
 			}
 		}
-		return point;
+		return null;
 	}
 	
 	private Map<String, String> getOfferingBBoxMap() throws OXFException {
 		Map<String, String> offeringBBox = new HashMap<String, String>();
-		Contents contents = getServiceDescriptorContent();
+		Contents contents = getServiceDescriptor().getContents();
 		for (String dataIdent : contents.getDataIdentificationIDArray()) {
 			ObservationOffering offering = (ObservationOffering) contents.getDataIdentification(dataIdent);
 			String key = offering.getIdentifier(); 
@@ -205,7 +199,7 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 		return offeringBBox;
 	}
 
-	public String createBboxString(IBoundingBox bbox, AReferencingHelper referenceHelper) {
+	public String createBboxString(IBoundingBox bbox, CRSUtils referenceHelper) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("om:featureOfInterest/*/sams:shape,");
 		sb.append(bbox.getLowerCorner()[0]).append(",");
@@ -223,8 +217,8 @@ public class ArcGISSoeMetadataHandler extends MetadataHandler {
 		ParameterContainer container = new ParameterContainer();
 		container.addParameterShell(ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER, "SOS");
         container.addParameterShell(ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER, sosVersion);
-        container.addParameterShell("phenomenon", timeseries.getPhenomenon());
-        container.addParameterShell("procedure", timeseries.getProcedure());
+        container.addParameterShell("phenomenon", timeseries.getPhenomenonId());
+        container.addParameterShell("procedure", timeseries.getProcedureId());
         container.addParameterShell("bbox", bboxString);
 		return new OperationAccessor(adapter, operation, container);
 	}

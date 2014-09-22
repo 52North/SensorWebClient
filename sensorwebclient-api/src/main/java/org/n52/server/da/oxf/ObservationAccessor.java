@@ -1,27 +1,30 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
-
 package org.n52.server.da.oxf;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -32,6 +35,7 @@ import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_OFFERIN
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_PROCEDURE_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_RESPONSE_FORMAT_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_RESULT_MODEL_PARAMETER;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_RESULT_TIME_TEMPORAL_FILTER_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_SERVICE_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_TEMPORAL_FILTER_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_VERSION_PARAMETER;
@@ -57,8 +61,8 @@ import org.n52.oxf.util.JavaHelper;
 import org.n52.oxf.valueDomains.time.TemporalValueDomain;
 import org.n52.server.da.AccessException;
 import org.n52.server.da.AccessorThreadPool;
+import org.n52.server.io.RequestConfig;
 import org.n52.server.mgmt.ConfigurationContext;
-import org.n52.server.sos.generator.RequestConfig;
 import org.n52.server.util.SosAdapterFactory;
 import org.n52.shared.Constants;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
@@ -131,7 +135,10 @@ public class ObservationAccessor {
             throw new AccessException("Thread got interrupted during GetObservation request.", e);
         }
         catch (ExecutionException e) {
-            throw new AccessException("Could not execute GetObservation request.", e.getCause());
+            if (e.getCause() instanceof ResponseExceedsSizeLimitException) {
+                throw (RuntimeException) e.getCause();
+            }
+            throw new AccessException("Could not execute GetObservation request.", e);
         }
     }
 
@@ -187,7 +194,16 @@ public class ObservationAccessor {
                 params.addParameterShell(timeParamShell);
             }
         }
-
+        
+        if (request.getResultTime() != null) {
+            Parameter resultTimeParam = new Parameter(GET_OBSERVATION_RESULT_TIME_TEMPORAL_FILTER_PARAMETER,
+                    true,
+                    new TemporalValueDomain(request.getResultTime()),
+                    Parameter.COMMON_NAME_TIME);
+            ParameterShell resultTimeParamShell = new ParameterShell(resultTimeParam, request.getResultTime());
+            params.addParameterShell(resultTimeParamShell);
+        }
+        
         if (waterML) {
             params.addParameterShell(GET_OBSERVATION_RESULT_MODEL_PARAMETER, "TimeseriesObservation");
         }

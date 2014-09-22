@@ -1,0 +1,69 @@
+<sos:GetFeatureOfInterestResponse
+    xsi:schemaLocation="http://aqd.ec.europa.eu/aqd/0.3.7c http://dd.eionet.europa.eu/schemas/id2011850eu/AirQualityReporting.xsd
+    http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aqd="http://aqd.ec.europa.eu/aqd/0.3.7c"
+    xmlns:base="http://inspire.ec.europa.eu/schemas/base/3.3rc3/"
+    xmlns:sos="http://www.opengis.net/sos/2.0"
+    xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:sam="http://www.opengis.net/sampling/2.0"
+    xmlns:sams="http://www.opengis.net/samplingSpatial/2.0"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+   <sos:featureMember>
+      <aqd:AQD_Sample gml:id="GB_SamplingFeature_1">
+         <sam:sampledFeature nilReason="inapplicable"/>
+         <sams:shape>
+            <gml:Point gml:id="SamplingFeaturePoint_1" srsDimension="1" srsName="urn:ogc:def:crs:EPSG::3857">
+               <gml:pos>-841189.1004999988 6405962.277900003</gml:pos>
+            </gml:Point>
+         </sams:shape>
+         <aqd:inspireId>
+            <base:Identifier>
+               <base:localId>GB_SamplingFeature_1</base:localId>
+               <base:namespace>http://cdr.eionet.europa.eu/gb/eu/aqd/e2a/colutn32a/envuvlxkq/D_GB_Sample.xml#</base:namespace>
+            </base:Identifier>
+         </aqd:inspireId>
+         <aqd:inletHeight uom="m">30.0</aqd:inletHeight>
+         <aqd:buildingDistance uom="m">0.0</aqd:buildingDistance>
+         <aqd:kerbDistance uom="m">0.0</aqd:kerbDistance>
+      </aqd:AQD_Sample>
+   </sos:featureMember>
+   <sos:featureMember>
+      <aqd:AQD_Sample gml:id="GB_SamplingFeature_2">
+         <sam:sampledFeature nilReason="inapplicable"/>
+         <sams:shape>
+            <gml:Point gml:id="SamplingFeaturePoint_2" srsDimension="1" srsName="urn:ogc:def:crs:EPSG::102100">
+               <gml:pos>-841189.1004999988 6405962.277900003</gml:pos>
+            </gml:Point>
+         </sams:shape>
+         <aqd:inspireId>
+            <base:Identifier>
+               <base:localId>GB_SamplingFeature_2</base:localId>
+               <base:namespace>http://cdr.eionet.europa.eu/gb/eu/aqd/e2a/colutn32a/envuvlxkq/D_GB_Sample.xml#</base:namespace>
+            </base:Identifier>
+         </aqd:inspireId>
+         <aqd:inletHeight uom="m">30.0</aqd:inletHeight>
+         <aqd:buildingDistance uom="m">0.0</aqd:buildingDistance>
+         <aqd:kerbDistance uom="m">0.0</aqd:kerbDistance>
+      </aqd:AQD_Sample>
+   </sos:featureMember>
+   <sos:featureMember>
+      <aqd:AQD_Sample gml:id="GB_SamplingFeature_3">
+         <sam:sampledFeature nilReason="inapplicable"/>
+         <sams:shape>
+            <gml:Point gml:id="SamplingFeaturePoint_3" srsDimension="1" srsName="urn:ogc:def:crs:EPSG::3857">
+               <gml:pos>-841189.1004999988 6405962.277900003</gml:pos>
+            </gml:Point>
+         </sams:shape>
+         <aqd:inspireId>
+            <base:Identifier>
+               <base:localId>GB_SamplingFeature_3</base:localId>
+               <base:namespace>http://cdr.eionet.europa.eu/gb/eu/aqd/e2a/colutn32a/envuvlxkq/D_GB_Sample.xml#</base:namespace>
+            </base:Identifier>
+         </aqd:inspireId>
+         <aqd:inletHeight uom="m">30.0</aqd:inletHeight>
+         <aqd:buildingDistance uom="m">0.0</aqd:buildingDistance>
+         <aqd:kerbDistance uom="m">0.0</aqd:kerbDistance>
+      </aqd:AQD_Sample>
+   </sos:featureMember>
+</sos:GetFeatureOfInterestResponse>

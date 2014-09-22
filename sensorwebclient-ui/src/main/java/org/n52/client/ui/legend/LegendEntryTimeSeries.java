@@ -1,79 +1,31 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
-
 package org.n52.client.ui.legend;
-
-import static org.n52.client.bus.EventBus.getMainEventBus;
-import static org.n52.client.ctrl.PropertiesManager.getPropertiesManager;
-import static org.n52.client.sos.ctrl.SosDataManager.getDataManager;
-import static org.n52.client.sos.data.TimeseriesDataStore.getTimeSeriesDataStore;
-import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Set;
-
-import org.eesgmbh.gimv.client.event.LoadImageDataEvent;
-import org.n52.client.bus.EventBus;
-import org.n52.client.ctrl.DataManager;
-import org.n52.client.ctrl.PropertiesManager;
-import org.n52.client.ctrl.TimeManager;
-import org.n52.client.ses.ui.LoginWindow;
-import org.n52.client.ses.ui.subscribe.EventSubscriptionWindow;
-import org.n52.client.sos.ctrl.SOSController;
-import org.n52.client.sos.ctrl.SosDataManager;
-import org.n52.client.sos.data.TimeseriesDataStore;
-import org.n52.client.sos.event.ChangeTimeSeriesStyleEvent;
-import org.n52.client.sos.event.DatesChangedEvent;
-import org.n52.client.sos.event.LegendElementSelectedEvent;
-import org.n52.client.sos.event.TimeSeriesChangedEvent;
-import org.n52.client.sos.event.UpdateScaleEvent;
-import org.n52.client.sos.event.data.DeleteTimeSeriesEvent;
-import org.n52.client.sos.event.data.ExportEvent;
-import org.n52.client.sos.event.data.FirstValueOfTimeSeriesEvent;
-import org.n52.client.sos.event.data.StoreTimeSeriesLastValueEvent;
-import org.n52.client.sos.event.data.StoreTimeSeriesPropsEvent;
-import org.n52.client.sos.event.data.SwitchAutoscaleEvent;
-import org.n52.client.sos.event.data.TimeSeriesHasDataEvent;
-import org.n52.client.sos.event.data.handler.StoreTimeSeriesFirstValueEventHandler;
-import org.n52.client.sos.event.data.handler.StoreTimeSeriesLastValueEventHandler;
-import org.n52.client.sos.event.data.handler.SwitchAutoscaleEventHandler;
-import org.n52.client.sos.event.data.handler.TimeSeriesHasDataEventHandler;
-import org.n52.client.sos.event.handler.LegendElementSelectedEventHandler;
-import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
-import org.n52.client.sos.event.handler.UpdateScaleEventHandler;
-import org.n52.client.sos.legend.Timeseries;
-import org.n52.client.ui.Toaster;
-import org.n52.client.ui.View;
-import org.n52.client.ui.btn.ImageButton;
-import org.n52.client.ui.btn.SmallButton;
-import org.n52.client.util.ClientUtils;
-import org.n52.shared.serializable.pojos.TimeseriesProperties;
-import org.n52.shared.serializable.pojos.sos.SOSMetadata;
-import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.smartgwt.client.types.Alignment;
@@ -101,6 +53,53 @@ import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Set;
+import org.eesgmbh.gimv.client.event.LoadImageDataEvent;
+import org.n52.client.bus.EventBus;
+import static org.n52.client.bus.EventBus.getMainEventBus;
+import org.n52.client.ctrl.PropertiesManager;
+import static org.n52.client.ctrl.PropertiesManager.getPropertiesManager;
+import org.n52.client.ctrl.TimeManager;
+import org.n52.client.ses.ui.LoginWindow;
+import org.n52.client.ses.ui.subscribe.EventSubscriptionWindow;
+import org.n52.client.sos.ctrl.SOSController;
+import org.n52.client.sos.ctrl.SosDataManager;
+import static org.n52.client.sos.ctrl.SosDataManager.getDataManager;
+import org.n52.client.sos.data.TimeseriesDataStore;
+import static org.n52.client.sos.data.TimeseriesDataStore.getTimeSeriesDataStore;
+import org.n52.client.sos.event.ChangeTimeSeriesStyleEvent;
+import org.n52.client.sos.event.DatesChangedEvent;
+import org.n52.client.sos.event.LegendElementSelectedEvent;
+import org.n52.client.sos.event.TimeSeriesChangedEvent;
+import org.n52.client.sos.event.UpdateScaleEvent;
+import org.n52.client.sos.event.data.DeleteTimeSeriesEvent;
+import org.n52.client.sos.event.data.ExportEvent;
+import org.n52.client.sos.event.data.FirstValueOfTimeSeriesEvent;
+import org.n52.client.sos.event.data.StoreTimeSeriesLastValueEvent;
+import org.n52.client.sos.event.data.StoreTimeSeriesPropsEvent;
+import org.n52.client.sos.event.data.SwitchAutoscaleEvent;
+import org.n52.client.sos.event.data.TimeSeriesHasDataEvent;
+import org.n52.client.sos.event.data.handler.StoreTimeSeriesFirstValueEventHandler;
+import org.n52.client.sos.event.data.handler.StoreTimeSeriesLastValueEventHandler;
+import org.n52.client.sos.event.data.handler.SwitchAutoscaleEventHandler;
+import org.n52.client.sos.event.data.handler.TimeSeriesHasDataEventHandler;
+import org.n52.client.sos.event.handler.LegendElementSelectedEventHandler;
+import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
+import org.n52.client.sos.event.handler.UpdateScaleEventHandler;
+import static org.n52.client.sos.i18n.SosStringsAccessor.i18n;
+import org.n52.client.sos.legend.TimeseriesLegendData;
+import org.n52.client.ui.Toaster;
+import org.n52.client.ui.View;
+import org.n52.client.ui.btn.ImageButton;
+import org.n52.client.ui.btn.SmallButton;
+import org.n52.client.util.ClientUtils;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
 public class LegendEntryTimeSeries extends Layout implements LegendElement {
 
@@ -153,7 +152,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 	protected ComboBoxItem seriesType;
 
 	protected ComboBoxItem lineStyles;
-	
+
 	protected ComboBoxItem lineWidth;
 
 	protected RadioGroupItem scale;
@@ -169,7 +168,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 	private SmallButton sesComButton;
 
 	private SmallButton infoButton;
-	
+
 	private Window informationWindow;
 
 	private SmallButton deleteButton;
@@ -182,7 +181,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 
     private LoginWindow subsriptionWindow;
 
-	public LegendEntryTimeSeries(Timeseries ts, String width, String height) {
+	public LegendEntryTimeSeries(TimeseriesLegendData ts, String width, String height) {
 		this.width = width;
 		this.height = height;
 		this.timeseriesID = ts.getId();
@@ -274,7 +273,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 								LegendEntryTimeSeries.this, false));
 			}
 		});
-		
+
 		this.legendEntryHead.addMember(this.loadingSpinner);
 		this.legendEntryHead.addMember(this.noDataSign);
 		this.legendEntryHead.addMember(this.titleLabel);
@@ -284,14 +283,14 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.legendEntryFoot = new VLayout();
 		this.legendEntryFoot.setStyleName("n52_sensorweb_client_legendEntryFooter");
 		HLayout hLegendInfos = new HLayout();
-		
+
 		HStack separator = new HStack();
 		separator.setWidth(10);
 		hLegendInfos.addMember(separator);
 		hLegendInfos.addMember(createLegendInfo());
 		this.legendEntryFoot.addMember(hLegendInfos);
 		this.legendEntryFoot.addMember(createRefValueLayout());
-		
+
 		createStyleToolsWindow();
 
 		this.legendEntryFoot.hide();
@@ -311,7 +310,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.stationLabel = new Label();
 		this.firstValueInterval = new Label();
 		this.lastValueInterval = new Label();
-		
+
 		this.phenonmenonLabel.setStyleName("n52_sensorweb_client_legendInfoRow");
 		this.stationLabel.setStyleName("n52_sensorweb_client_legendInfoRow");
 
@@ -325,7 +324,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.legendInfo.addMember(this.phenonmenonLabel);
 		this.legendInfo.addMember(this.stationLabel);
 		this.legendInfo.addMember(createValueIntervalLabel());
-		
+
 		return this.legendInfo;
 	}
 
@@ -358,27 +357,31 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		return this.refvalLayout;
 	}
 
-	protected Timeseries getTimeSeries() {
-		return ((Timeseries) getDataWrapper());
+	protected TimeseriesLegendData getTimeSeries() {
+		return ((TimeseriesLegendData) getDataWrapper());
 	}
 
 	private Canvas createLegendTools() {
 		HLayout tools = new HLayout();
-		
+
 		createColorChangeButton();
 		tools.addMember(this.titleCol);
-		
+
 		if (ClientUtils.isSesEnabled()) {
 			createSesCommunicatorButton();
 			tools.addMember(this.sesComButton);
+            if (isEventingEnabledFor(getTimeSeries().getProperties().getServiceUrl())) {
+                createSesCommunicatorButton();
+                tools.addMember(this.sesComButton);
+            }
 		}
-		
+
 		createInformationButton();
 		tools.addMember(this.infoButton);
-		
+
 		createDeleteLegendEntryButton();
 		tools.addMember(this.deleteButton);
-		
+
 		return tools;
 	}
 
@@ -450,7 +453,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		exportPDF.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
-				ArrayList<Timeseries> series = new ArrayList<Timeseries>();
+				ArrayList<TimeseriesLegendData> series = new ArrayList<TimeseriesLegendData>();
 				series.add(getTimeSeries());
 				EventBus.getMainEventBus().fireEvent(
 						new ExportEvent(series, ExportEvent.ExportType.PDF));
@@ -468,7 +471,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		exportXLS.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
-				List<Timeseries> series = new ArrayList<Timeseries>();
+				List<TimeseriesLegendData> series = new ArrayList<TimeseriesLegendData>();
 				series.add(getTimeSeries());
 				EventBus.getMainEventBus().fireEvent(
 						new ExportEvent(series, ExportEvent.ExportType.XLS));
@@ -486,7 +489,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		exportCSV.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
-				List<Timeseries> series = new ArrayList<Timeseries>();
+				List<TimeseriesLegendData> series = new ArrayList<TimeseriesLegendData>();
 				series.add(getTimeSeries());
 				EventBus.getMainEventBus().fireEvent(
 						new ExportEvent(series, ExportEvent.ExportType.CSV));
@@ -508,7 +511,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 					LegendEntryTimeSeries.this.getEventBroker().unregister();
 					EventBus.getMainEventBus().fireEvent(
 							new DeleteTimeSeriesEvent(LegendEntryTimeSeries.this
-									.getElemId()));	
+									.getElemId()));
 				}
 			}
 		});
@@ -526,7 +529,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 			}
 		});
 	}
-	
+
 	private void createInformationWindow() {
 		informationWindow = new Window();
 		informationWindow.setTitle(LegendEntryTimeSeries.this.getTimeSeries().getTimeSeriesLabel());
@@ -536,7 +539,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		informationWindow.centerInPage();
 		HTMLPane htmlPane = new HTMLPane();
 		htmlPane.setContentsURL(LegendEntryTimeSeries.this
-				.getTimeSeries().getMetadataUrl()); 
+				.getTimeSeries().getMetadataUrl());
 		htmlPane.setContentsType(ContentsType.PAGE);
 		informationWindow.addItem(htmlPane);
 	}
@@ -546,16 +549,16 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 				new Img("../img/icons/event.png"), i18n.sesCommunicatorButton(), i18n.sesCommunicatorButtonExtend());
 		this.sesComButton.hide();
 		this.sesComButton.addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
-			    Timeseries dataItem = TimeseriesDataStore.getTimeSeriesDataStore().getDataItem(timeseriesID);
+			    TimeseriesLegendData dataItem = TimeseriesDataStore.getTimeSeriesDataStore().getDataItem(timeseriesID);
 			    LegendEntryTimeSeries.this.showSubscriptionWindow(dataItem);
 			}
 		});
 	}
 
-	private void showSubscriptionWindow(Timeseries dataItem) {
+	private void showSubscriptionWindow(TimeseriesLegendData dataItem) {
 	    if (subsriptionWindow == null) {
             subsriptionWindow = new EventSubscriptionWindow(dataItem);
         }
@@ -578,10 +581,10 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
         SOSMetadata metadata = getDataManager().getServiceMetadata(properties.getServiceUrl());
         return metadata.getTimeseriesParametersLookup();
     }
-    
+
 	public void update() {
 
-		Timeseries timeseries = getTimeSeries();
+		TimeseriesLegendData timeseries = getTimeSeries();
 		TimeseriesProperties properties = timeseries.getProperties();
 		TimeseriesParametersLookup lookup = getParameterLookup(properties);
 		String phenomenon = lookup.getPhenomenon(properties.getPhenomenon()).getLabel();
@@ -706,7 +709,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.loadingSpinner.hide();
 	}
 
-	private String getStationName(Timeseries ts) {
+	private String getStationName(TimeseriesLegendData ts) {
 		// TODO perhaps use regular expressions
 		String station = ts.getStationName();
 		// remove phenomenon identifier
@@ -789,7 +792,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.styleChanger.centerInPage();
 		this.styleChanger.setCanDragResize(true);
 		this.styleChanger.setShowCloseButton(true);
-		
+
 		this.setCanDrag(true);
 		// opacity-slider
 		this.slider = new SliderItem();
@@ -804,8 +807,8 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		String levelLine = i18n.levelLine();
 		String sumLine = i18n.sumLine();
 		LinkedHashMap<String, String> levelstyle = new LinkedHashMap<String, String>();
-		levelstyle.put(Timeseries.GRAPH_STYLE_GAUGELINE, levelLine);
-		levelstyle.put(Timeseries.GRAPH_STYLE_SUMLINE, sumLine);
+		levelstyle.put(TimeseriesLegendData.GRAPH_STYLE_GAUGELINE, levelLine);
+		levelstyle.put(TimeseriesLegendData.GRAPH_STYLE_SUMLINE, sumLine);
 		this.seriesType.setValueMap(levelstyle);
 		this.seriesType.setWidth(85);
 		this.seriesType.setTitle(i18n.seriesType());
@@ -817,13 +820,13 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 				String selectedSeriesType = LegendEntryTimeSeries.this.seriesType
 						.getValue().toString();
 
-				if (selectedSeriesType.equals(Timeseries.GRAPH_STYLE_GAUGELINE)) {
+				if (selectedSeriesType.equals(TimeseriesLegendData.GRAPH_STYLE_GAUGELINE)) {
 					String defaultHydrographStyle = propertiesManager
 							.getParameterAsString("defaultHydrographStyle");
 					LegendEntryTimeSeries.this.lineStyles
 							.setValue(defaultHydrographStyle);
 				} else if (selectedSeriesType
-						.equals(Timeseries.GRAPH_STYLE_SUMLINE)) {
+						.equals(TimeseriesLegendData.GRAPH_STYLE_SUMLINE)) {
 					String defaultSumlineStyle = propertiesManager
 							.getParameterAsString("defaultSumLineStyle");
 					LegendEntryTimeSeries.this.lineStyles
@@ -845,7 +848,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.lineStyles.setShowTitle(true);
 		this.lineStyles.setValueMap(styles);
 		this.lineStyles.setWidth(85);
-		
+
 		this.lineWidth = new ComboBoxItem();
 		this.lineWidth.setTitle(i18n.lineWidth());
 		this.lineWidth.setShowTitle(true);
@@ -867,7 +870,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		this.colors.setTitle(i18n.color());
 		this.colors.setWidth(85);
 		this.cpForm.setShowComplexFields(false);
-		this.cpForm.setFields(this.scale, this.seriesType, this.lineStyles, 
+		this.cpForm.setFields(this.scale, this.seriesType, this.lineStyles,
 				this.lineWidth, this.colors, this.slider);
 		this.cpForm.setSaveOnEnter(true);
 
@@ -880,7 +883,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 			public void onClick(ClickEvent event) {
 				LegendEntryTimeSeries.this.styleChanger.hide();
 
-				Timeseries timeseries = TimeseriesDataStore.getTimeSeriesDataStore()
+				TimeseriesLegendData timeseries = TimeseriesDataStore.getTimeSeriesDataStore()
 						.getDataItem(LegendEntryTimeSeries.this.timeseriesID);
 				timeseries.setLineStyle(LegendEntryTimeSeries.this.lineStyles
 						.getValue().toString());
@@ -944,7 +947,7 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 //		vlayout.setBorder("1px solid blue");
 		vlayout.addMember(hlayout);
 		vlayout.addMember(buttonsStyle);
-		
+
 		this.styleChanger.setStyleName("n52_sensorweb_client_styleChangerForm");
 		this.styleChanger.addItem(vlayout);
 
@@ -1167,6 +1170,10 @@ public class LegendEntryTimeSeries extends Layout implements LegendElement {
 		return true;
 	}
 
+    private boolean isEventingEnabledFor(String sosUrl) {
+        SOSMetadata metadata = SosDataManager.getDataManager().getServiceMetadata(sosUrl);
+        return metadata.isEventing();
+    }
 	public class LegendEntryTimeSeriesEventBroker implements
 			TimeSeriesChangedEventHandler,
 			LegendElementSelectedEventHandler,

@@ -1,25 +1,29 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
 package org.n52.client.sos.event.data;
 
@@ -28,64 +32,32 @@ import java.util.HashMap;
 import org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent;
 import org.n52.client.sos.event.data.handler.StoreTimeSeriesDataEventHandler;
 
-/**
- * The Class StoreTimeSeriesDataEvent.
- * 
- * @author <a href="mailto:f.bache@52north.de">Felix Bache</a>
- */
 public class StoreTimeSeriesDataEvent extends
         FilteredDispatchGwtEvent<StoreTimeSeriesDataEventHandler> {
 
-    /** The TYPE. */
     public static Type<StoreTimeSeriesDataEventHandler> TYPE =
             new Type<StoreTimeSeriesDataEventHandler>();
 
-    /** The data. */
-    private HashMap<String, HashMap<Long, String>> data;
+    private HashMap<String, HashMap<Long, Double>> data;
 
-    /**
-     * Instantiates a new store time series data event.
-     * 
-     * @param data
-     *            the data
-     * @param blockedHandlers
-     *            the blocked handlers
-     */
-    public StoreTimeSeriesDataEvent(HashMap<String, HashMap<Long, String>> data,
+    public StoreTimeSeriesDataEvent(HashMap<String, HashMap<Long, Double>> data,
             StoreTimeSeriesDataEventHandler... blockedHandlers) {
         super(blockedHandlers);
         this.data = data;
 
     }
 
-    /**
-     * Gets the data.
-     * 
-     * @return the data
-     */
-    public HashMap<String, HashMap<Long, String>> getData() {
+    public HashMap<String, HashMap<Long, Double>> getData() {
         return this.data;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eesgmbh.gimv.client.event.FilteredDispatchGwtEvent#onDispatch(com
-     * .google.gwt.event.shared.EventHandler)
-     */
     @Override
     protected void onDispatch(StoreTimeSeriesDataEventHandler handler) {
         handler.onStore(this);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.gwt.event.shared.GwtEvent#getAssociatedType()
-     */
     @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<StoreTimeSeriesDataEventHandler> getAssociatedType() {
+    public Type<StoreTimeSeriesDataEventHandler> getAssociatedType() {
         return TYPE;
     }
 

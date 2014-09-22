@@ -1,27 +1,30 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
-
 package org.n52.client.sos.ctrl;
 
 import static org.n52.client.bus.EventBus.getMainEventBus;
@@ -85,11 +88,12 @@ import org.n52.client.sos.event.data.StoreTimeSeriesEvent;
 import org.n52.client.sos.event.data.StoreTimeSeriesLastValueEvent;
 import org.n52.client.sos.event.data.StoreTimeSeriesPropsEvent;
 import org.n52.client.sos.event.data.TimeSeriesHasDataEvent;
-import org.n52.client.sos.legend.Timeseries;
+import org.n52.client.sos.legend.TimeseriesLegendData;
 import org.n52.client.sos.ui.DiagramTab;
 import org.n52.client.ui.Toaster;
 import org.n52.client.ui.View;
 import org.n52.client.ui.legend.LegendElement;
+import org.n52.io.crs.BoundingBox;
 import org.n52.shared.exceptions.CompatibilityException;
 import org.n52.shared.exceptions.ServerException;
 import org.n52.shared.exceptions.TimeoutException;
@@ -110,7 +114,6 @@ import org.n52.shared.responses.GetProcedureDetailsUrlResponse;
 import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.responses.SensorMetadataResponse;
 import org.n52.shared.responses.TimeSeriesDataResponse;
-import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.TimeseriesRenderingOptions;
@@ -198,7 +201,7 @@ public class SOSRequestManager extends RequestManager {
     public void requestSensorMetadata(NewTimeSeriesEvent evt) throws Exception {
         TimeseriesProperties props = createTimeseriesProperties(evt, evt.getServiceUrl());
         
-        Timeseries timeSeries = new Timeseries(evt.getTimeseries().getTimeseriesId(), props);
+        TimeseriesLegendData timeSeries = new TimeseriesLegendData(evt.getTimeseries().getTimeseriesId(), props);
 
         try {
             getMainEventBus().fireEvent(new StoreTimeSeriesEvent(timeSeries));
@@ -234,7 +237,7 @@ public class SOSRequestManager extends RequestManager {
         return meta.getTimeseriesParametersLookup();
     }
 
-    public void requestFirstValueOf(Timeseries timeSeries) {
+    public void requestFirstValueOf(TimeseriesLegendData timeSeries) {
         try {
             ArrayList<TimeseriesProperties> series = new ArrayList<TimeseriesProperties>();
             series.add(timeSeries.getProperties());
@@ -253,7 +256,7 @@ public class SOSRequestManager extends RequestManager {
         }
     }
 
-    public void requestLastValueOf(Timeseries timeSeries) {
+    public void requestLastValueOf(TimeseriesLegendData timeSeries) {
         try {
             ArrayList<TimeseriesProperties> series = new ArrayList<TimeseriesProperties>();
             series.add(timeSeries.getProperties());
@@ -271,10 +274,10 @@ public class SOSRequestManager extends RequestManager {
         }
     }
 
-    public void requestSensorData(Timeseries[] timeSeries, String id) {
+    public void requestSensorData(TimeseriesLegendData[] timeSeries, String id) {
         try {
             ArrayList<TimeseriesProperties> series = new ArrayList<TimeseriesProperties>();
-            for (Timeseries timeSerie : timeSeries) {
+            for (TimeseriesLegendData timeSerie : timeSeries) {
                 if (timeSerie.getId().equals(id)) {
                     timeSerie.getProperties().setHeight(View.getView().getDataPanelHeight());
                     timeSerie.getProperties().setWidth(View.getView().getDataPanelWidth());
@@ -296,7 +299,7 @@ public class SOSRequestManager extends RequestManager {
         }
     }
 
-    private void requestFirstValueFromTimeSeries(TimeSeriesDataRequest request, final Timeseries timeSeries) throws Exception {
+    private void requestFirstValueFromTimeSeries(TimeSeriesDataRequest request, final TimeseriesLegendData timeSeries) throws Exception {
         final long startTimeOfRequest = System.currentTimeMillis();
         addRequest();
 
@@ -311,13 +314,13 @@ public class SOSRequestManager extends RequestManager {
 
             public void onSuccess(TimeSeriesDataResponse response) {
                 removeRequest(System.currentTimeMillis() - startTimeOfRequest);
-                HashMap<String, HashMap<Long, String>> payloadData = response.getPayloadData();
+                HashMap<String, HashMap<Long, Double>> payloadData = response.getPayloadData();
                 try {
                     if (payloadData.isEmpty()) {
                         return;
                     }
                     String id = timeSeries.getId();
-                    HashMap<Long, String> timeSeriesData = payloadData.get(id);
+                    HashMap<Long, Double> timeSeriesData = payloadData.get(id);
                     if (timeSeriesData.keySet().iterator().hasNext()) {
                         long timestamp = timeSeriesData.keySet().iterator().next().longValue();
                         String firstValue = timeSeriesData.get(timestamp).toString();
@@ -336,7 +339,7 @@ public class SOSRequestManager extends RequestManager {
         this.timeSeriesDataService.getTimeSeriesData(request, callback);
     }
 
-    private void requestLastTimeSeriesData(TimeSeriesDataRequest request, final Timeseries timeSeries) throws Exception {
+    private void requestLastTimeSeriesData(TimeSeriesDataRequest request, final TimeseriesLegendData timeSeries) throws Exception {
         final long startRequest = System.currentTimeMillis();
         addRequest();
 
@@ -350,7 +353,7 @@ public class SOSRequestManager extends RequestManager {
 
             public void onSuccess(TimeSeriesDataResponse response) {
                 removeRequest(System.currentTimeMillis() - startRequest);
-                HashMap<String, HashMap<Long, String>> payloadData = response.getPayloadData();
+                HashMap<String, HashMap<Long, Double>> payloadData = response.getPayloadData();
 
                 try {
                     if (payloadData.isEmpty()) {
@@ -358,7 +361,7 @@ public class SOSRequestManager extends RequestManager {
                     }
 
                     String id = timeSeries.getId();
-                    HashMap<Long, String> timeSeriesData = payloadData.get(id);
+                    HashMap<Long, Double> timeSeriesData = payloadData.get(id);
                     if (timeSeriesData.keySet().iterator().hasNext()) {
                         long date = timeSeriesData.keySet().iterator().next().longValue();
                         String lastValue = timeSeriesData.get(date).toString();
@@ -399,11 +402,11 @@ public class SOSRequestManager extends RequestManager {
         this.timeSeriesDataService.getTimeSeriesData(req, callback);
     }
 
-    public void requestSensorData(Timeseries[] timeseriesArray) {
+    public void requestSensorData(TimeseriesLegendData[] timeseriesArray) {
         if (timeseriesArray.length > 0) {
             ArrayList<TimeseriesProperties> series = new ArrayList<TimeseriesProperties>();
             for (int i = 0; i < timeseriesArray.length; i++) {
-                Timeseries timeseries = timeseriesArray[i];
+                TimeseriesLegendData timeseries = timeseriesArray[i];
                 series.add(timeseries.getProperties());
             }
             try {
@@ -420,7 +423,7 @@ public class SOSRequestManager extends RequestManager {
     }
 
     public void requestDiagram() {
-        Timeseries[] timeSeries = getTimeSeriesDataStore().getTimeSeriesSorted();
+        TimeseriesLegendData[] timeSeries = getTimeSeriesDataStore().getTimeSeriesSorted();
         if (timeSeries.length == 0) {
             // reset diagram to blank image
             EventBus.getMainEventBus().fireEvent(new SetImageUrlEvent("img/blank.gif"));
@@ -430,7 +433,7 @@ public class SOSRequestManager extends RequestManager {
         }
 
         ArrayList<TimeseriesProperties> properties = new ArrayList<TimeseriesProperties>();
-        for (Timeseries timeSerie : timeSeries) {
+        for (TimeseriesLegendData timeSerie : timeSeries) {
             timeSerie.getProperties().setHeight(DiagramTab.getPanelHeight());
             timeSerie.getProperties().setWidth(DiagramTab.getPanelWidth());
             properties.add(timeSerie.getProperties());
@@ -642,7 +645,7 @@ public class SOSRequestManager extends RequestManager {
         }
     }
 
-    public void requestExportPDF(Collection<Timeseries> timeseries) {
+    public void requestExportPDF(Collection<TimeseriesLegendData> timeseries) {
         try {
             getPDF(timeseries);
         }
@@ -659,15 +662,15 @@ public class SOSRequestManager extends RequestManager {
      * @throws TimeoutException
      *         the timeout exception
      */
-    private void getPDF(Collection<Timeseries> timeseries) throws TimeoutException {
+    private void getPDF(Collection<TimeseriesLegendData> timeseries) throws TimeoutException {
         addRequest();
         TimeSeriesDataRequest req = createTimeSeriesDataRequest(timeseries);
         this.fileDataService.getPDF(req, new FileCallback(SOSRequestManager.this));
     }
 
-    private TimeSeriesDataRequest createTimeSeriesDataRequest(Collection<Timeseries> tsCollection) {
+    private TimeSeriesDataRequest createTimeSeriesDataRequest(Collection<TimeseriesLegendData> tsCollection) {
         ArrayList<TimeseriesProperties> series = new ArrayList<TimeseriesProperties>();
-        for (Timeseries timeSeries : tsCollection) {
+        for (TimeseriesLegendData timeSeries : tsCollection) {
             timeSeries.getProperties().setLanguage(PropertiesManager.language);
 			series.add(timeSeries.getProperties());
 		}
@@ -679,7 +682,7 @@ public class SOSRequestManager extends RequestManager {
         return req;
     }
 
-    public void requestExportXLS(Collection<Timeseries> timeseries) {
+    public void requestExportXLS(Collection<TimeseriesLegendData> timeseries) {
         try {
             getXLS(timeseries);
         }
@@ -688,7 +691,7 @@ public class SOSRequestManager extends RequestManager {
         }
     }
 
-    private void getXLS(Collection<Timeseries> timeseries) throws TimeoutException {
+    private void getXLS(Collection<TimeseriesLegendData> timeseries) throws TimeoutException {
         addRequest();
         TimeSeriesDataRequest req = createTimeSeriesDataRequest(timeseries);
 
@@ -696,7 +699,7 @@ public class SOSRequestManager extends RequestManager {
 
     }
 
-    public void requestExportCSV(Collection<Timeseries> timeseries) {
+    public void requestExportCSV(Collection<TimeseriesLegendData> timeseries) {
         try {
             getCSV(timeseries);
         }
@@ -705,13 +708,13 @@ public class SOSRequestManager extends RequestManager {
         }
     }
 
-    private void getCSV(Collection<Timeseries> timeseries) throws TimeoutException {
+    private void getCSV(Collection<TimeseriesLegendData> timeseries) throws TimeoutException {
         addRequest();
         TimeSeriesDataRequest req = createTimeSeriesDataRequest(timeseries);
         this.fileDataService.getCSV(req, new FileCallback(SOSRequestManager.this));
     }
 
-    public void requestExportPDFzip(Collection<Timeseries> timeseries) {
+    public void requestExportPDFzip(Collection<TimeseriesLegendData> timeseries) {
         try {
             getPDFzip(timeseries);
         }
@@ -720,7 +723,7 @@ public class SOSRequestManager extends RequestManager {
         }
     }
 
-    private void getPDFzip(Collection<Timeseries> timeseries) throws TimeoutException {
+    private void getPDFzip(Collection<TimeseriesLegendData> timeseries) throws TimeoutException {
         addRequest();
         TimeSeriesDataRequest req = createTimeSeriesDataRequest(timeseries);
 
@@ -729,19 +732,19 @@ public class SOSRequestManager extends RequestManager {
     
     
 
-    public void requestExportXLSzip(Collection<Timeseries> timeseries) {
+    public void requestExportXLSzip(Collection<TimeseriesLegendData> timeseries) {
         addRequest();
         TimeSeriesDataRequest req = createTimeSeriesDataRequest(timeseries);
         this.fileDataService.getXLSzip(req, new FileCallback(SOSRequestManager.this));
     }
 
-    public void requestExportCSVzip(Collection<Timeseries> timeseries) {
+    public void requestExportCSVzip(Collection<TimeseriesLegendData> timeseries) {
         addRequest();
         TimeSeriesDataRequest req = createTimeSeriesDataRequest(timeseries);
         this.fileDataService.getCSVzip(req, new FileCallback(SOSRequestManager.this));
     }
 
-    public void requestExportPDFallInOne(Collection<Timeseries> timeseries) {
+    public void requestExportPDFallInOne(Collection<TimeseriesLegendData> timeseries) {
         try {
             getPDF(timeseries);
         }
@@ -750,7 +753,7 @@ public class SOSRequestManager extends RequestManager {
         }
     }
 
-    public void requestProcedureDetailsUrl(String serviceURL, String procedure) {
+    public void requestProcedureDetailsUrl(SosTimeseries timeseries) {
 
 		// prepare callback
 		GetProcedureDetailsUrlCallback callback = new GetProcedureDetailsUrlCallback(this, "Could not get procedure details url") {
@@ -770,7 +773,7 @@ public class SOSRequestManager extends RequestManager {
 		
 		// request
 		addRequest();
-		this.sensorMetadataService.getProcedureDetailsUrl(serviceURL, procedure, callback);
+		this.sensorMetadataService.getProcedureDetailsUrl(timeseries, callback);
 	}
 
 	public void requestPhenomenons(String serviceUrl) {
@@ -808,10 +811,10 @@ public class SOSRequestManager extends RequestManager {
 		QueryCallback callback = createQueryCallback("Could not get the timeseries: " + timeseries);
         QueryFactory factory = createQueryFactoryFor(timeseries.getServiceUrl());
         QueryParameters parameters = new QueryParameters()
-                 .setOffering(timeseries.getOffering())
-                 .setFeature(timeseries.getFeature())
-                 .setPhenomenon(timeseries.getPhenomenon())
-                 .setProcedure(timeseries.getProcedure());
+                 .setOffering(timeseries.getOfferingId())
+                 .setFeature(timeseries.getFeatureId())
+                 .setPhenomenon(timeseries.getPhenomenonId())
+                 .setProcedure(timeseries.getProcedureId());
         QueryRequest request = factory.createFilteredStationQuery(parameters);
 		doQuery(request, callback);
 	}
@@ -868,7 +871,7 @@ public class SOSRequestManager extends RequestManager {
         EventBus.getMainEventBus().fireEvent(event);
 	}
 
-	void getPositions(final String serviceUrl, int offset, final int pageSize, final BoundingBox boundingBox) throws Exception {
+	private void getPositions(final String serviceUrl, int offset, final int pageSize, final BoundingBox boundingBox) throws Exception {
 	    final long begin = System.currentTimeMillis();
 	    QueryCallback callback = new QueryCallback(this, "Could not get positions.") {
 	        @Override

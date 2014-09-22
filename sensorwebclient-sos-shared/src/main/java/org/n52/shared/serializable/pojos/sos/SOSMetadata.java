@@ -1,50 +1,55 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
-
 package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
-import org.n52.shared.Constants;
-import org.n52.shared.serializable.pojos.BoundingBox;
+import org.n52.io.crs.BoundingBox;
+import org.n52.shared.IdGenerator;
+import org.n52.shared.MD5HashGenerator;
+import org.n52.shared.requests.query.QueryParameters;
 
 /**
  * A shared metadata representation for an SOS instance. An {@link SOSMetadata} is used from both (!) Client
  * side and Server side. Depending on if the SOS metadata representation is used on either Client sider or
  * Server side, attributes have to be set differently (see constructor notes) ! It is the developer's
  * responsibility to keep them in sync.
- * 
+ *
  * TODO this above fact is based on historical reasons and have to refactored!
  */
 public class SOSMetadata implements Serializable {
 
     private static final long serialVersionUID = -3721927620888635622L;
 
-    private String id; // mandatory
+    private String serviceUrl; // mandatory
 
     private String version; // mandatory
 
@@ -59,7 +64,7 @@ public class SOSMetadata implements Serializable {
     private String sensorMLVersion;
 
     private String omVersion;
-    
+
     private TimeseriesParametersLookup timeseriesParametersLookup;
 
     private HashMap<String, Station> stations = new HashMap<String, Station>();
@@ -74,13 +79,21 @@ public class SOSMetadata implements Serializable {
 
     private boolean waterML = false; // default
 
+    private boolean eventing = false; // default
+
     private boolean autoZoom = true; // default
-    
+
     private boolean protectedService = false; // default
 
     private int requestChunk = 300; // default
 
+    private int timeout = 10000; // default
+
     private boolean forceXYAxisOrder = false; // default
+
+    private boolean supportsFirstLatest = false; // default
+
+    private boolean gdaPrefinal = false; // default
 
     private BoundingBox configuredExtent;
 
@@ -105,18 +118,18 @@ public class SOSMetadata implements Serializable {
 
     /**
      * @deprecated use {@link #SOSMetadata(String, String)}
-     * 
+     *
      * @see {@link #SOSMetadata(String, String)} to explicitly set version
      */
     @Deprecated
-    public SOSMetadata(String id) {
-        this.id = id;
+    public SOSMetadata(String serviceUrl) {
+        this.serviceUrl = serviceUrl;
     }
 
     /**
      * Use this constructor only for non-configurated SOS instances! Prefer using
      * {@link SOSMetadata#SOSMetadata(SOSMetadataBuilder)}.
-     * 
+     *
      * @param url
      *        the service URL
      * @param title
@@ -136,15 +149,15 @@ public class SOSMetadata implements Serializable {
         this.waterML = builder.isWaterML();
         this.autoZoom = builder.isAutoZoom();
         this.forceXYAxisOrder = builder.isForceXYAxisOrder();
+        this.supportsFirstLatest = builder.isSupportsFirstLatest();
         this.requestChunk = builder.getRequestChunk();
+        this.timeout = builder.getTimeout();
         this.configuredExtent = builder.getConfiguredServiceExtent();
         this.protectedService = builder.isProctectedService();
+        this.eventing = builder.isEventing();
+        this.gdaPrefinal = builder.isGdaPrefinal();
         this.setSosMetadataHandler(builder.getSosMetadataHandler());
         this.setAdapter(builder.getAdapter());
-    }
-
-    public String getId() {
-        return id;
     }
 
     public void setInitialized(boolean initialized) {
@@ -191,7 +204,7 @@ public class SOSMetadata implements Serializable {
     }
 
     public String getServiceUrl() {
-        return getId();
+        return serviceUrl;
     }
 
     public String getSrs() {
@@ -201,7 +214,7 @@ public class SOSMetadata implements Serializable {
     public void setSrs(String srs) {
         this.srs = srs;
     }
-    
+
     public String getTitle() {
         return this.title;
     }
@@ -246,9 +259,8 @@ public class SOSMetadata implements Serializable {
         this.hasDonePositionRequest = hasDonePositionRequest;
     }
 
-    
     public boolean canGeneralize() {
-        return this.canGeneralize;
+        return canGeneralize;
     }
 
     public void setCanGeneralize(boolean canGeneralize) {
@@ -259,6 +271,10 @@ public class SOSMetadata implements Serializable {
         return waterML;
     }
 
+    public boolean isEventing() {
+        return eventing;
+    }
+
     public boolean isAutoZoom() {
         return autoZoom;
     }
@@ -266,30 +282,61 @@ public class SOSMetadata implements Serializable {
     public boolean isForceXYAxisOrder() {
         return forceXYAxisOrder;
     }
-    
+
+    public boolean isSupportsFirstLatest() {
+        return supportsFirstLatest;
+    }
+
+    public boolean isGdaPrefinal() {
+        return gdaPrefinal;
+    }
+
     public boolean isProtectedService() {
-    	return protectedService;
+        return protectedService;
     }
 
     public int getRequestChunk() {
         return requestChunk;
     }
 
+    public int getTimeout() {
+        return timeout;
+    }
+
     /**
-     * @return the service's extent or the {@link Constants#FALLBACK_EXTENT} if it was not configured.
+     * @return the service's extent.
      */
     public BoundingBox getConfiguredExtent() {
         return configuredExtent;
     }
 
     public void addStation(Station station) {
-        stations.put(station.getId(), station);
+
+        // FIXME label as hash key is error prone. see #getStation(stationId)
+
+        stations.put(station.getLabel(), station);
     }
 
-    public Collection<Station> getStations() {
-        return new ArrayList<Station>(this.stations.values());
+    public ArrayList<Station> getStations() {
+        return new ArrayList<Station>(stations.values());
     }
-    
+
+    public SosTimeseries[] getMatchingTimeseries(QueryParameters parameters) {
+        List<SosTimeseries> matchingTimeseries = new ArrayList<SosTimeseries>();
+        for (Station station : stations.values()) {
+            final String stationFilter = parameters.getStation();
+            boolean hasStationFilter = stationFilter != null;
+            if ( !hasStationFilter || station.getGlobalId().equals(stationFilter)) {
+                for (SosTimeseries timeseries : station.getObservedTimeseries()) {
+                    if (timeseries.matchesGlobalIds(parameters)) {
+                        matchingTimeseries.add(timeseries);
+                    }
+                }
+            }
+        }
+        return matchingTimeseries.toArray(new SosTimeseries[0]);
+    }
+
     public Station getStationByTimeSeriesId(String timeseriesId) {
         for (Station station : stations.values()) {
             if (station.contains(timeseriesId)) {
@@ -298,7 +345,7 @@ public class SOSMetadata implements Serializable {
         }
         return null;
     }
-    
+
     public boolean containsStationWithTimeseriesId(String timeseriesId) {
         for (Station station : stations.values()) {
             if (station.contains(timeseriesId)) {
@@ -307,7 +354,7 @@ public class SOSMetadata implements Serializable {
         }
         return false;
     }
-    
+
     public Station getStationByTimeSeries(SosTimeseries timeseries) {
         for (Station station : stations.values()) {
             if (station.contains(timeseries)) {
@@ -327,6 +374,9 @@ public class SOSMetadata implements Serializable {
     }
 
     public Station getStation(String stationId) {
+
+        // FIXME error prone. see #addStation(station)
+
         return stations.get(stationId);
     }
 
@@ -334,9 +384,9 @@ public class SOSMetadata implements Serializable {
      * @return a lookup helper for timeseries parameters.
      */
     public TimeseriesParametersLookup getTimeseriesParametersLookup() {
-        timeseriesParametersLookup = timeseriesParametersLookup == null 
-                ? new TimeseriesParametersLookup()
-                : timeseriesParametersLookup;
+        timeseriesParametersLookup = timeseriesParametersLookup == null
+            ? new TimeseriesParametersLookup()
+            : timeseriesParametersLookup;
         return timeseriesParametersLookup;
     }
 
@@ -344,24 +394,68 @@ public class SOSMetadata implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("SOSMetadata [ ");
-        sb.append("parameterId: ").append(id).append(", ");
+        sb.append("parameterId: ").append(serviceUrl).append(", ");
         sb.append("initialized: ").append(initialized).append(", ");
         sb.append("version: ").append(version);
         sb.append(" ]");
         return sb.toString();
     }
-    
+
     public SOSMetadata clone() {
-    	SOSMetadata clone = new SOSMetadata(this.id,this.version,this.sensorMLVersion,this.omVersion,this.title);
-    	clone.waterML = this.waterML;
-    	clone.autoZoom = this.autoZoom;
+        SOSMetadata clone = new SOSMetadata(this.serviceUrl,
+                                            this.version,
+                                            this.sensorMLVersion,
+                                            this.omVersion,
+                                            this.title);
+        clone.waterML = this.waterML;
+        clone.autoZoom = this.autoZoom;
         clone.forceXYAxisOrder = this.forceXYAxisOrder;
         clone.requestChunk = this.requestChunk;
+        clone.timeout = this.timeout;
         clone.configuredExtent = this.configuredExtent;
         clone.protectedService = this.protectedService;
         clone.setSosMetadataHandler(this.getSosMetadataHandler());
         clone.setAdapter(this.getAdapter());
-    	return clone;
+        return clone;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ( (serviceUrl == null) ? 0 : serviceUrl.hashCode());
+        result = prime * result + ( (version == null) ? 0 : version.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        SOSMetadata other = (SOSMetadata) obj;
+        if (serviceUrl == null) {
+            if (other.serviceUrl != null)
+                return false;
+        }
+        else if ( !serviceUrl.equals(other.serviceUrl))
+            return false;
+        if (version == null) {
+            if (other.version != null)
+                return false;
+        }
+        else if ( !version.equals(other.version))
+            return false;
+        return true;
+    }
+
+    public String getGlobalId() {
+        String[] parameters = new String[] {serviceUrl, version};
+        IdGenerator idGenerator = new MD5HashGenerator("srv_");
+        return idGenerator.generate(parameters);
     }
 
 }

@@ -1,35 +1,36 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
-
 package org.n52.client.ui.map;
 
 import static org.n52.client.ctrl.PropertiesManager.getPropertiesManager;
 import static org.n52.shared.Constants.DISPLAY_PROJECTION;
-import static org.n52.shared.Constants.EPSG_4326;
 import static org.n52.shared.Constants.GOOGLE_PROJECTION;
 
-import org.gwtopenmaps.openlayers.client.Bounds;
 import org.gwtopenmaps.openlayers.client.LonLat;
 import org.gwtopenmaps.openlayers.client.Map;
 import org.gwtopenmaps.openlayers.client.MapOptions;
@@ -45,10 +46,6 @@ import org.gwtopenmaps.openlayers.client.layer.WMSParams;
 import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ui.Toaster;
 import org.n52.shared.Constants;
-import org.n52.shared.serializable.pojos.BoundingBox;
-import org.n52.shared.serializable.pojos.EastingNorthing;
-
-import com.google.gwt.core.client.GWT;
 
 public abstract class OpenLayersMapWrapper {
     
@@ -161,40 +158,6 @@ public abstract class OpenLayersMapWrapper {
         layerOptions.setProjection(spatialReference);
         osm.addOptions(layerOptions);
         return osm;
-    }
-
-    public BoundingBox getCurrentExtent() {
-        Bounds bbox = map.getExtent();
-        LonLat ll = new LonLat(bbox.getLowerLeftX(), bbox.getLowerLeftY());
-        LonLat ur = new LonLat(bbox.getUpperRightX(), bbox.getUpperRightY());
-        
-        if (!GWT.isProdMode()) {
-            StringBuilder sb = new StringBuilder("Transforming: \n");
-            sb.append("ll: ").append(getAsString(ll)).append(", ");
-            sb.append("ur: ").append(getAsString(ur));
-            GWT.log(sb.append("...").toString());
-        }
-
-        ll.transform(getMapProjection(), EPSG_4326);
-        ur.transform(getMapProjection(), EPSG_4326);
-        
-        if (!GWT.isProdMode()) {
-            StringBuilder sb = new StringBuilder("... transformed to: \n");
-            sb.append("ll: ").append(getAsString(ll)).append(", ");
-            sb.append("ur: ").append(getAsString(ur));
-            GWT.log(sb.toString());
-        }
-        
-        EastingNorthing ll2 = new EastingNorthing(ll.lon(), ll.lat(), EPSG_4326);
-        EastingNorthing ur2 = new EastingNorthing(ur.lon(), ur.lat(), EPSG_4326);
-        return new BoundingBox(ll2, ur2);
-    }
-
-    private String getAsString(LonLat lonlat) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("(").append(lonlat.lon());
-        sb.append(",").append(lonlat.lat()).append(")");
-        return sb.toString();
     }
 
     public MapOptions getDefaultMapOptions() {

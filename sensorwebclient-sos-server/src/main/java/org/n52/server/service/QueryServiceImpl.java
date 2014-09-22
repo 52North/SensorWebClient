@@ -1,27 +1,30 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
-
 package org.n52.server.service;
 
 import static org.n52.server.mgmt.ConfigurationContext.UPDATE_TASK_RUNNING;
@@ -32,8 +35,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.n52.client.service.QueryService;
+import org.n52.io.crs.BoundingBox;
+import org.n52.io.crs.CRSUtils;
 import org.n52.server.mgmt.ConfigurationContext;
-import org.n52.server.util.crs.AReferencingHelper;
 import org.n52.shared.exceptions.ServiceOccupiedException;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.requests.query.ResultPage;
@@ -49,7 +53,6 @@ import org.n52.shared.requests.query.responses.PhenomenonQueryResponse;
 import org.n52.shared.requests.query.responses.ProcedureQueryResponse;
 import org.n52.shared.requests.query.responses.QueryResponse;
 import org.n52.shared.requests.query.responses.StationQueryResponse;
-import org.n52.shared.serializable.pojos.BoundingBox;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
@@ -95,15 +98,12 @@ public class QueryServiceImpl implements QueryService {
             }
             String serviceUrl = query.getServiceUrl();
             SOSMetadata metadata = ConfigurationContext.getSOSMetadata(serviceUrl);
-            ArrayList<Station> stations = (ArrayList<Station>) metadata.getStations();
+            ArrayList<Station> stations = metadata.getStations();
 
             QueryParameters parameters = query.getQueryParameters();
             LOGGER.debug("Request -> getStations(sosUrl: {}, filter: {})", serviceUrl, parameters);
 
             BoundingBox spatialFilter = parameters.getSpatialFilter();
-            boolean shallForceXYAxisOrder = metadata.isForceXYAxisOrder();
-            AReferencingHelper referencing = createReferenceHelper(shallForceXYAxisOrder);
-
             int currentPageIndex = 0;
             int offset = query.getOffset();
             int pageSize = query.getPageSize();
@@ -112,8 +112,8 @@ public class QueryServiceImpl implements QueryService {
                 // when query is done from server side without paging
                 List<Station> filteredStations = new ArrayList<Station>();
                 for (Station station : stations) {
-                    if (spatialFilter == null || referencing.isStationContainedByBBox(spatialFilter, station)) {
-                        if (parameters.getStation() == null || station.getId().equals(parameters.getStation())) {
+                    if (spatialFilter == null || spatialFilter.contains(station.getLocation())) {
+                        if (parameters.getStation() == null || station.getLabel().equals(parameters.getStation())) {
                             station = cloneAndMatchAgainstQuery(station, parameters);
                             if (station.hasAtLeastOneParameterConstellation()) {
                                 filteredStations.add(station);
@@ -128,7 +128,7 @@ public class QueryServiceImpl implements QueryService {
                 Station[] finalStations = new Station[pageSize];
                 for (int i = offset; i < stations.size() && currentPageIndex < pageSize; i++) {
                     Station station = stations.get(i);
-                    if (spatialFilter == null || referencing.isStationContainedByBBox(spatialFilter, station)) {
+                    if (spatialFilter == null || spatialFilter.contains(station.getLocation())) {
                         station = cloneAndMatchAgainstQuery(station, parameters);
                         if (station.hasAtLeastOneParameterConstellation()) {
                             finalStations[currentPageIndex++] = station;
@@ -172,7 +172,7 @@ public class QueryServiceImpl implements QueryService {
         Iterator<SosTimeseries> iterator = observedTimeseries.iterator();
         while (iterator.hasNext()) {
             SosTimeseries timeseries = iterator.next();
-            if ( !timeseries.matchParameters(offering, phenomenon, procedure, feature)) {
+            if ( !timeseries.matchesLocalParamterIds(offering, phenomenon, procedure, feature)) {
                 iterator.remove();
             }
         }
@@ -330,12 +330,12 @@ public class QueryServiceImpl implements QueryService {
         return metadata.getTimeseriesParametersLookup();
     }
 
-    private AReferencingHelper createReferenceHelper(boolean forceXYAxisOrder) {
+    private CRSUtils createReferenceHelper(boolean forceXYAxisOrder) {
         if (forceXYAxisOrder) {
-            return AReferencingHelper.createEpsgForcedXYAxisOrder();
+            return CRSUtils.createEpsgForcedXYAxisOrder();
         }
         else {
-            return AReferencingHelper.createEpsgStrictAxisOrder();
+            return CRSUtils.createEpsgStrictAxisOrder();
         }
     }
 }

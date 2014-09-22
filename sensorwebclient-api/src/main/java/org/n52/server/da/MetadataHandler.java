@@ -1,33 +1,35 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
-
 package org.n52.server.da;
 
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER;
 import static org.n52.oxf.sos.adapter.SOSAdapter.GET_FEATURE_OF_INTEREST;
-import static org.n52.server.sos.parser.ConnectorUtils.setVersionNumbersToMetadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,6 +43,8 @@ import net.opengis.sampling.x20.SFSamplingFeatureType;
 import net.opengis.sos.x20.GetFeatureOfInterestResponseDocument;
 
 import org.apache.xmlbeans.XmlObject;
+import org.jfree.util.Log;
+import org.n52.io.crs.CRSUtils;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
@@ -51,14 +55,16 @@ import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.adapter.SOSAdapter;
 import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.server.mgmt.ConfigurationContext;
-import org.n52.server.sos.parser.ConnectorUtils;
+import org.n52.server.parser.ConnectorUtils;
 import org.n52.server.util.SosAdapterFactory;
-import org.n52.server.util.crs.AReferencingHelper;
+import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.shared.serializable.pojos.sos.Category;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosService;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
@@ -67,15 +73,30 @@ import org.slf4j.LoggerFactory;
 
 public abstract class MetadataHandler {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(MetadataHandler.class);
-	
-	private ServiceDescriptor serviceDescriptor;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MetadataHandler.class);
 
-	private SOSAdapter adapter;
-	
-	private SOSMetadata sosMetadata;
-	
-	protected void infoLogServiceSummary(SOSMetadata metadata) {
+    private ServiceDescriptor serviceDescriptor;
+
+    private SOSAdapter adapter;
+
+    private SOSMetadata sosMetadata;
+
+    protected MetadataHandler(SOSMetadata metadata) {
+        if (metadata == null) {
+            throw new IllegalArgumentException("Metadata must not be null.");
+        }
+        this.sosMetadata = metadata;
+    }
+    
+    protected String getServiceUrl() {
+        return sosMetadata.getServiceUrl();
+    }
+    
+    protected String getServiceVersion() {
+        return sosMetadata.getVersion();
+    }
+
+    protected void infoLogServiceSummary(SOSMetadata metadata) {
         int timeseriesCount = 0;
         int stationCount = metadata.getStations().size();
         for (Station station : metadata.getStations()) {
@@ -85,207 +106,251 @@ public abstract class MetadataHandler {
         LOGGER.info("{} cached: {} stations with {} timeseries.", serviceName, stationCount, timeseriesCount);
     }
 
-	public abstract SOSMetadata performMetadataCompletion(String sosUrl, String sosVersion) throws Exception;
-	
-	public abstract SOSMetadata updateMetadata(SOSMetadata metadata) throws Exception;
+    public abstract SOSMetadata performMetadataCompletion() throws Exception;
 
-	protected SOSMetadata initMetadata(String sosUrl, String sosVersion) {
-		sosMetadata = ConfigurationContext.getServiceMetadatas().get(sosUrl);
-		initServiceDescription(sosMetadata);
-		String sosTitle = serviceDescriptor.getServiceIdentification().getTitle();
-		String omResponseFormat = ConnectorUtils.getResponseFormat(serviceDescriptor, "om");
-		String smlVersion = ConnectorUtils.getSMLVersion(serviceDescriptor, sosVersion);
-		// TODO check why no omFormat and smlVersion exists
-		if (omResponseFormat == null) {
-			omResponseFormat = "http://www.opengis.net/om/2.0";
-		}
-		if (smlVersion == null) {
-			smlVersion = "http://www.opengis.net/sensorML/1.0.1";
-		}
+    /**
+     * TODO this method is currently under evaluation
+     * 
+     * @param metadata
+     * @return
+     * @throws Exception
+     */
+    public abstract SOSMetadata updateMetadata(SOSMetadata metadata) throws Exception;
 
-		setVersionNumbersToMetadata(sosUrl, sosTitle, sosVersion, omResponseFormat, smlVersion);
-		return sosMetadata;
-	}
+    /**
+     * Assembles timeseries' metadata and sets it to the passed {@link TimeseriesProperties} container.<br/>
+     * <br/>
+     * Abstracting the actual information source enables the implementor to either assemble metadata from
+     * different sources (e.g. via DescribeSensor) or even from multiple information sources.
+     * 
+     * @param properties
+     *        the container to be assembled with available metadata.
+     * @throws Exception
+     *         if assembling metadata fails.
+     */
+    public abstract void assembleTimeseriesMetadata(final TimeseriesProperties properties) throws Exception;
 
-	protected void initServiceDescription(SOSMetadata metadata) {
-		sosMetadata = metadata; 
-		adapter = SosAdapterFactory.createSosAdapter(metadata);
-		serviceDescriptor = ConnectorUtils.getServiceDescriptor(metadata.getServiceUrl(), adapter);
-	}
-	
-	protected Collection<SosTimeseries> createObservingTimeseries() throws OXFException {
-		// association: Offering - FOIs
-		Map<String, String[]> offeringFoiMap = new HashMap<String, String[]>();
+    protected SOSMetadata initMetadata() {
+        String sosUrl = getServiceUrl();
+        String sosVersion = getServiceVersion();
+        serviceDescriptor = ConnectorUtils.getServiceDescriptor(sosUrl, getSosAdapter());
+        String sosTitle = serviceDescriptor.getServiceIdentification().getTitle();
+        String omResponseFormat = ConnectorUtils.getResponseFormat(serviceDescriptor, "om");
+        String smlVersion = ConnectorUtils.getSMLVersion(serviceDescriptor, sosVersion);
+        
+        // set defaults if format/version could not be determined from capabilities
+        if (omResponseFormat == null) {
+            omResponseFormat = "http://www.opengis.net/om/2.0";
+        }
+        if (smlVersion == null) {
+            smlVersion = "http://www.opengis.net/sensorML/1.0.1";
+        }
 
-		// association: Offering - Procedures
-		Map<String, String[]> offeringProcMap = new HashMap<String, String[]>();
+        try {
+            sosMetadata = (SOSMetadata) ConfigurationContext.getServiceMetadatas().get(sosUrl);
+            if (sosMetadata != null) {
+                sosMetadata.setTitle(sosTitle);
+                sosMetadata.setSensorMLVersion(smlVersion);
+                sosMetadata.setOmVersion(omResponseFormat);
+                sosMetadata.setSosVersion(sosVersion);
+                sosMetadata.setInitialized(true);
+            } else {
+                sosMetadata = new SOSMetadata(sosUrl, sosVersion, smlVersion, omResponseFormat, sosTitle);
+                ConfigurationContext.initializeMetadata(sosMetadata);
+            }
+        } catch (Exception e) {
+            Log.error("Cannot cast SOSMetadata", e);
+        }
+        
+        return sosMetadata;
+    }
+    
+    protected SOSAdapter createSosAdapter(SOSMetadata metadata) {
+        return SosAdapterFactory.createSosAdapter(metadata);
+    }
 
-		// association: Offering - Phenomenons
-		Map<String, String[]> offeringPhenMap = new HashMap<String, String[]>();
+    protected Collection<SosTimeseries> createObservingTimeseries(String sosUrl) throws OXFException {
+        // association: Offering - FOIs
+        Map<String, String[]> offeringFoiMap = new HashMap<String, String[]>();
 
-		
-		HashSet<String> featureIds = new HashSet<String>();
+        // association: Offering - Procedures
+        Map<String, String[]> offeringProcMap = new HashMap<String, String[]>();
 
-		Contents contents = getServiceDescriptorContent();
-		for (int i = 0; i < contents.getDataIdentificationCount(); i++) {
-			ObservationOffering offering = (ObservationOffering) contents.getDataIdentification(i);
+        // association: Offering - Phenomenons
+        Map<String, String[]> offeringPhenMap = new HashMap<String, String[]>();
 
-			updateBBox(offering);
+        HashSet<String> featureIds = new HashSet<String>();
 
-			String offeringID = offering.getIdentifier();
+        Contents contents = serviceDescriptor.getContents();
+        for (int i = 0; i < contents.getDataIdentificationCount(); i++) {
+            ObservationOffering offering = (ObservationOffering) contents.getDataIdentification(i);
 
-			// associate:
-			String[] procArray = offering.getProcedures();
-			offeringProcMap.put(offeringID, procArray);
+            updateBBox(offering);
 
-			// associate:
-			String[] phenArray = offering.getObservedProperties();
-			offeringPhenMap.put(offeringID, phenArray);
+            String offeringID = offering.getIdentifier();
 
-			// associate:
-			String[] foiArray = offering.getFeatureOfInterest();
-			offeringFoiMap.put(offeringID, foiArray);
-			
-			// iterate over fois to delete double entries for the request
-			for (int j = 0; j < foiArray.length; j++) {
-				featureIds.add(foiArray[j]);
-			}
-		}
-		
-		TimeseriesParametersLookup lookup = sosMetadata.getTimeseriesParametersLookup();
+            // associate:
+            String[] procArray = getProceduresFor(offering);
+            offeringProcMap.put(offeringID, procArray);
 
-		// add fois
-		for (String featureId : featureIds) {
-			lookup.addFeature(new Feature(featureId));
-		}
+            // associate:
+            String[] phenArray = offering.getObservedProperties();
+            offeringPhenMap.put(offeringID, phenArray);
 
-		Collection<SosTimeseries> allObservedTimeseries = new ArrayList<SosTimeseries>();
-		// FOI -> Procedure -> Phenomenon
-		for (String offeringId : offeringFoiMap.keySet()) {
-			for (String procedure : offeringProcMap.get(offeringId)) {
-				if (procedure.contains("urn:ogc:generalizationMethod:")) {
-					sosMetadata.setCanGeneralize(true);
-				} else {
-					for (String phenomenon : offeringPhenMap.get(offeringId)) {
-						/*
-						 * add a station for a procedure expecting that there is
-						 * only one for each right now. Further stations may be
-						 * added later when additional information is parsed
-						 * from getFeatureOfInterest of describeSensor
-						 * operations.
-						 */
-						SosTimeseries timeseries = new SosTimeseries();
-						timeseries.setPhenomenon(phenomenon);
-						timeseries.setProcedure(procedure);
-						timeseries.setOffering(offeringId);
-						timeseries.setServiceUrl(sosMetadata.getServiceUrl());
-						allObservedTimeseries.add(timeseries);
-					}
-					// add procedures
-					lookup.addProcedure(new Procedure(procedure));
-					for (String phenomenonId : offeringPhenMap.get(offeringId)) {
-						lookup.addPhenomenon(new Phenomenon(phenomenonId));
-					}
-				}
-			}
-			// add offering
-			lookup.addOffering(new Offering(offeringId));
-		}
-		return allObservedTimeseries;
-	}
-	
-	protected void normalizeDefaultCategories(Collection<SosTimeseries> observingTimeseries) {
-		for (SosTimeseries timeseries : observingTimeseries) {
-			String phenomenon = timeseries.getPhenomenon();
-			String category = phenomenon.substring(phenomenon.lastIndexOf(":") + 1);
-			timeseries.setCategory(category);
-		}
-	}
+            // associate:
+            String[] foiArray = offering.getFeatureOfInterest();
+            offeringFoiMap.put(offeringID, foiArray);
 
-	protected void updateBBox(ObservationOffering offering) {
-		IBoundingBox sosBbox = null;
-		sosBbox = ConnectorUtils.createBbox(sosBbox, offering);
+            // iterate over fois to delete double entries for the request
+            for (int j = 0; j < foiArray.length; j++) {
+                
+                /*
+                 * TODO perform GetFOI operations if capabilities does not
+                 * list any features but offer a GetFOI operation.
+                 */
+                
+                featureIds.add(foiArray[j]);
+            }
+        }
 
-		try {
-			if (sosBbox != null && !sosBbox.getCRS().startsWith("EPSG")) {
-				String tmp = "EPSG:"
-						+ sosBbox.getCRS().split(":")[sosBbox.getCRS()
-								.split(":").length - 1];
-				sosMetadata.setSrs(tmp);
-			} else {
-				sosMetadata.setSrs(sosBbox.getCRS());
-			}
-		} catch (Exception e) {
-			LOGGER.error("Could not insert spatial metadata", e);
-		}
-	}
-	
-	protected Contents getServiceDescriptorContent() throws OXFException {
-		if (serviceDescriptor != null) {
-			return serviceDescriptor.getContents();
-		} else {
-			throw new OXFException("No valid GetFeatureOfInterestREsponse");
-		}
-	}
+        TimeseriesParametersLookup lookup = sosMetadata.getTimeseriesParametersLookup();
 
-	protected SOSAdapter getSosAdapter() {
-		return adapter;
-	}
+        // add fois
+        for (String featureId : featureIds) {
+            lookup.addFeature(new Feature(featureId, sosUrl));
+        }
 
-	/**
-	 * Creates an {@link AReferencingHelper} according to metadata settings
-	 * (e.g. if XY axis order shall be enforced during coordinate
-	 * transformation).
-	 * 
-	 * @param metadata
-	 *            the SOS metadata containing SOS instance configuration.
-	 */
-	protected AReferencingHelper createReferencingHelper() {
-		if (sosMetadata.isForceXYAxisOrder()) {
-			return AReferencingHelper.createEpsgForcedXYAxisOrder();
-		} else {
-			return AReferencingHelper.createEpsgStrictAxisOrder();
-		}
-	}
-	
-	protected Collection<String> getFoisByProcedure(String procedure)
-			throws OXFException {
-		ArrayList<String> fois = new ArrayList<String>();
-		String url = sosMetadata.getServiceUrl();
-		try {
-			ParameterContainer container = new ParameterContainer();
-			container.addParameterShell(GET_FOI_SERVICE_PARAMETER, "SOS");
-			container.addParameterShell(GET_FOI_VERSION_PARAMETER, sosMetadata.getVersion());
-			container.addParameterShell("procedure", procedure);
-			Operation operation = new Operation(GET_FEATURE_OF_INTEREST, url, url);
-			OperationResult result = adapter.doOperation(operation, container);
-			XmlObject foiResponse = XmlObject.Factory.parse(result
-					.getIncomingResultAsStream());
-			if (foiResponse instanceof GetFeatureOfInterestResponseDocument) {
-				GetFeatureOfInterestResponseDocument foiResDoc = (GetFeatureOfInterestResponseDocument) foiResponse;
-				for (FeaturePropertyType featurePropertyType : foiResDoc
-						.getGetFeatureOfInterestResponse()
-						.getFeatureMemberArray()) {
-					SFSamplingFeatureDocument samplingFeature = SFSamplingFeatureDocument.Factory
-							.parse(featurePropertyType.xmlText());
-					SFSamplingFeatureType sfSamplingFeature = samplingFeature
-							.getSFSamplingFeature();
-					fois.add(sfSamplingFeature.getIdentifier()
-							.getStringValue());
-				}
-			} else {
-				throw new OXFException("No valid GetFeatureOfInterestREsponse");
-			}
-		} catch (Exception e) {
-			LOGGER.error("Error while send GetFeatureOfInterest: "
-					+ e.getCause());
-			throw new OXFException(e);
-		}
-		return fois;
-	}
-	
-	public ServiceDescriptor getServiceDescriptor() {
-		return serviceDescriptor;
-	}
+        Collection<SosTimeseries> allObservedTimeseries = new ArrayList<SosTimeseries>();
+        // FOI -> Procedure -> Phenomenon
+        for (String offeringId : offeringFoiMap.keySet()) {
+            for (String procedure : offeringProcMap.get(offeringId)) {
+                if (procedure.contains("urn:ogc:generalizationMethod:")) {
+                    sosMetadata.setCanGeneralize(true);
+                }
+                else {
+                    for (String phenomenon : offeringPhenMap.get(offeringId)) {
+                        /*
+                         * add a timeseries for each procedure-phenomenon-offering constellation. One of such
+                         * constellation may be later related to n features.
+                         */
+                        SosTimeseries timeseries = new SosTimeseries();
+                        timeseries.setPhenomenon(new Phenomenon(phenomenon, sosUrl));
+                        timeseries.setProcedure(new Procedure(procedure, sosUrl));
+                        timeseries.setOffering(new Offering(offeringId, sosUrl));
+                        timeseries.setSosService(new SosService(sosMetadata.getServiceUrl(), sosMetadata.getVersion()));
+                        timeseries.getSosService().setLabel(sosMetadata.getTitle());
+                        allObservedTimeseries.add(timeseries);
+                    }
+                    // add procedures
+                    lookup.addProcedure(new Procedure(procedure, sosUrl));
+                    for (String phenomenonId : offeringPhenMap.get(offeringId)) {
+                        lookup.addPhenomenon(new Phenomenon(phenomenonId, sosUrl));
+                    }
+                }
+            }
+            // add offering
+            lookup.addOffering(new Offering(offeringId, sosUrl));
+        }
+        return allObservedTimeseries;
+    }
+
+    protected String[] getProceduresFor(ObservationOffering offering) {
+        return offering.getProcedures();
+    }
+
+    protected void normalizeDefaultCategories(Collection<SosTimeseries> observingTimeseries) {
+        for (SosTimeseries timeseries : observingTimeseries) {
+            String phenomenon = timeseries.getPhenomenonId();
+            String category = phenomenon.substring(phenomenon.lastIndexOf(":") + 1);
+            String serviceUrl = timeseries.getServiceUrl();
+            timeseries.setCategory(new Category(category, serviceUrl));
+        }
+    }
+
+    protected void updateBBox(ObservationOffering offering) {
+        IBoundingBox sosBbox = null;
+        sosBbox = ConnectorUtils.createBbox(sosBbox, offering);
+
+        try {
+            if (sosBbox != null && !sosBbox.getCRS().startsWith("EPSG")) {
+                String tmp = "EPSG:"
+                        + sosBbox.getCRS().split(":")[sosBbox.getCRS()
+                                .split(":").length - 1];
+                sosMetadata.setSrs(tmp);
+            }
+            else {
+                sosMetadata.setSrs(sosBbox.getCRS());
+            }
+        }
+        catch (Exception e) {
+            LOGGER.error("Could not insert spatial metadata", e);
+        }
+    }
+
+    protected SOSAdapter getSosAdapter() {
+        return adapter == null ? createSosAdapter(sosMetadata) : adapter;
+    }
+
+    protected void setSosAdapter(SOSAdapter sosAdapter) {
+        this.adapter = sosAdapter;
+    }
+
+    /**
+     * Creates an {@link CRSUtils} according to metadata settings (e.g. if XY axis order shall be enforced
+     * during coordinate transformation).
+     * 
+     * @param metadata
+     *        the SOS metadata containing SOS instance configuration.
+     */
+    protected CRSUtils createReferencingHelper() {
+        if (sosMetadata.isForceXYAxisOrder()) {
+            return CRSUtils.createEpsgForcedXYAxisOrder();
+        }
+        else {
+            return CRSUtils.createEpsgStrictAxisOrder();
+        }
+    }
+
+    protected Collection<String> getFoisByProcedure(String procedure)
+            throws OXFException {
+        ArrayList<String> fois = new ArrayList<String>();
+        String url = sosMetadata.getServiceUrl();
+        try {
+            ParameterContainer container = new ParameterContainer();
+            container.addParameterShell(GET_FOI_SERVICE_PARAMETER, "SOS");
+            container.addParameterShell(GET_FOI_VERSION_PARAMETER, sosMetadata.getVersion());
+            container.addParameterShell("procedure", procedure);
+            Operation operation = new Operation(GET_FEATURE_OF_INTEREST, url, url);
+            OperationResult result = getSosAdapter().doOperation(operation, container);
+            XmlObject foiResponse = XmlObject.Factory.parse(result
+                    .getIncomingResultAsStream());
+            if (foiResponse instanceof GetFeatureOfInterestResponseDocument) {
+                GetFeatureOfInterestResponseDocument foiResDoc = (GetFeatureOfInterestResponseDocument) foiResponse;
+                for (FeaturePropertyType featurePropertyType : foiResDoc
+                        .getGetFeatureOfInterestResponse()
+                        .getFeatureMemberArray()) {
+                    SFSamplingFeatureDocument samplingFeature = SFSamplingFeatureDocument.Factory
+                            .parse(featurePropertyType.xmlText());
+                    SFSamplingFeatureType sfSamplingFeature = samplingFeature
+                            .getSFSamplingFeature();
+                    fois.add(sfSamplingFeature.getIdentifier()
+                            .getStringValue());
+                }
+            }
+            else {
+                throw new OXFException("No valid GetFeatureOfInterestResponse");
+            }
+        }
+        catch (Exception e) {
+            LOGGER.error("Error while send GetFeatureOfInterest: "
+                    + e.getCause());
+            throw new OXFException(e);
+        }
+        return fois;
+    }
+
+    public ServiceDescriptor getServiceDescriptor() {
+        return serviceDescriptor;
+    }
 
 }

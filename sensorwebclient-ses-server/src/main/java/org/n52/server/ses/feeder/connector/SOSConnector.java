@@ -1,4 +1,30 @@
-
+/**
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
+ *
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
+ *
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+ *
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ */
 package org.n52.server.ses.feeder.connector;
 
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_CAPABILITIES_ACCEPT_VERSIONS_PARAMETER;
@@ -31,8 +57,9 @@ import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.oxf.sos.capabilities.SOSContents;
 import org.n52.oxf.valueDomains.time.TimeFactory;
 import org.n52.server.da.oxf.ObservationAccessor;
+import org.n52.server.io.RequestConfig;
 import org.n52.server.mgmt.ConfigurationContext;
-import org.n52.server.sos.generator.RequestConfig;
+import org.n52.server.parser.DescribeSensorParser;
 import org.n52.server.util.SosAdapterFactory;
 import org.n52.shared.serializable.pojos.TimeseriesFeed;
 import org.n52.shared.serializable.pojos.TimeseriesMetadata;
@@ -57,7 +84,7 @@ public class SOSConnector {
 
     /**
      * Instantiates a new SOSConnector.
-     * 
+     *
      * @param sosURL
      *        The url to send request to the SOS
      */
@@ -74,7 +101,7 @@ public class SOSConnector {
 
     /**
      * Initialize the connection to the SOS.
-     * 
+     *
      * @return true - if service is running
      */
     public boolean initSosConnection() {
@@ -105,7 +132,7 @@ public class SOSConnector {
 
     /**
      * Gets the offerings.
-     * 
+     *
      * @return A List of observation offerings for this SOS
      */
     public List<ObservationOffering> getOfferings() {
@@ -122,7 +149,7 @@ public class SOSConnector {
      * <br>
      * For the usage in SES context, all special characters (e.g. &auml;, &uuml;,...) have to be replaced
      * (e.g. by ae, ue, ...).
-     * 
+     *
      * @param timeseriesMetadata
      *        The given timeseries metadata.
      * @return the sensor description response as SensorML 1.0.1
@@ -133,6 +160,7 @@ public class SOSConnector {
             String procedure = timeseriesMetadata.getProcedure();
             SOSMetadata serviceMetadata = ConfigurationContext.getSOSMetadata(serviceUrl);
             XmlObject sml = getSensorDescriptionAsSensorML(procedure, serviceMetadata);
+            sml = DescribeSensorParser.unwrapSensorMLFrom(sml);
             return (SensorMLDocument) replaceSpecialCharacters(sml);
         }
         catch (Exception e) {
@@ -160,7 +188,8 @@ public class SOSConnector {
                                                   fois,
                                                   phenoms,
                                                   procedures,
-                                                  time);
+                                                  time, 
+                                                  null);
         OperationResult operationResult = obsAccessor.sendRequest(request);
         if (operationResult != null) {
             XmlObject response = XmlObject.Factory.parse(operationResult.getIncomingResultAsStream());
@@ -169,7 +198,7 @@ public class SOSConnector {
                 ExceptionReportDocument exRepDoc = (ExceptionReportDocument) response;
                 ExceptionType[] exceptionArray = exRepDoc.getExceptionReport().getExceptionArray();
                 throw new Exception(exceptionArray[0].getExceptionTextArray(0));
-            } 
+            }
             else if (response instanceof ObservationCollectionDocument) {
                 return (ObservationCollectionDocument) response;
             }
@@ -179,10 +208,10 @@ public class SOSConnector {
         emptyCollection.addNewObservationCollection(); // adds an empty member array
         return emptyCollection;
     }
-    
+
     /**
      * Replace special characters.
-     * 
+     *
      * @param xmlObject
      *        the xml object
      * @return the xml object
@@ -209,7 +238,7 @@ public class SOSConnector {
 
     /**
      * Gets the desc.
-     * 
+     *
      * @return the desc
      */
     public ServiceDescriptor getDesc() {

@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.n52.sensorweb</groupId>
 		<artifactId>sensorwebclient</artifactId>
-		<version>3.2.0-SNAPSHOT</version>
+		<version>3.3.0-rc.1</version>
 	</parent>
 	<artifactId>restful-timeseries-webapp</artifactId>
 	<packaging>war</packaging>
@@ -17,11 +17,14 @@
 	</properties>
 
 	<dependencies>
-
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>sensorwebclient-webapp</artifactId>
 			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>timeseries-web</artifactId>
 		</dependency>
 
 		<dependency>
@@ -31,6 +34,19 @@
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>sensorwebclient-sos-server</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>sensorwebclient-sos-shared</artifactId>
+        </dependency>
+		<dependency>
+			<groupId>org.n52.sensorweb</groupId>
+			<artifactId>sensorwebclient-hydro</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.n52.sensorweb</groupId>
+			<artifactId>sensorwebclient-ags</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
@@ -51,10 +67,10 @@
 			<artifactId>spring-oxm</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>jstl</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>com.thetransactioncompany</groupId>
+            <artifactId>cors-filter</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
@@ -84,6 +100,56 @@
 			</resource>
 		</resources>
 		<plugins>
+            <plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<configuration>
+                    <header>../misc/52N_license-header.txt</header>
+                </configuration>
+            </plugin>
+			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<configuration>
+					<header>../misc/52N_license-header.txt</header>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+					</execution>
+				</executions>
+
+				<configuration>
+					<artifactItems>
+						<artifactItem>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>timeseries-web</artifactId>
+							<includes>api-doc/**</includes>
+							<outputDirectory>${webappDirectory}</outputDirectory>
+							<overWrite>false</overWrite>
+						</artifactItem>
+
+						<artifactItem>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>timeseries-web</artifactId>
+							<includes>timeseries-api_v1_web.xml,*.json</includes>
+							<!-- tmp files will be copied into WEB-INF/classes -->
+							<outputDirectory>src/main/tmp</outputDirectory>
+							<overWrite>false</overWrite>
+						</artifactItem>
+					</artifactItems>
+				</configuration>
+			</plugin>
+
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
@@ -96,7 +162,6 @@
 							<filtering>true</filtering>
 							<excludes>
 								<!-- exclude files from filtering -->
-								<exclude>**/*.jsp</exclude>
 								<exclude>cache/*</exclude>
 								<exclude>img/*</exclude>
 							</excludes>
@@ -109,35 +174,18 @@
 							<groupId>org.n52.sensorweb</groupId>
 							<artifactId>sensorwebclient-webapp</artifactId>
 							<includes>
-							    <include>WEB-INF/pages/*.jsp</include>
-								<include>ds/sos-instances.data.xml</include>
-								<include>js/**/*.js</include>
-                                <include>css/**/*.css</include>
-								<include>WEB-INF/classes/dispatcher-control.xml</include>
-								<include>WEB-INF/classes/spring-view-config.xml</include>
-								<include>WEB-INF/pages/*</include>
-								<include>xslt/SensorML*.xslt</include>
+								<include>WEB-INF/classes/*.json</include>
+								<include>WEB-INF/classes/*.xml</include>
 							</includes>
+							<excludes>
+                                <exclude>WEB-INF/classes/ehcache.xml</exclude>
+                                <exclude>WEB-INF/classes/logback*.xml</exclude>
+                                <exclude>WEB-INF/classes/hibernate.cfg.xml</exclude>
+                                <exclude>WEB-INF/classes/feeder-properties.xml</exclude>
+								<exclude>WEB-INF/classes/spring-ses-config.xml</exclude>
+							</excludes>
 						</overlay>
 					</overlays>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>buildnumber-maven-plugin</artifactId>
-				<version>1.2</version>
-				<executions>
-					<execution>
-						<phase>validate</phase>
-						<goals>
-							<goal>create</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<doCheck>true</doCheck>
-					<doUpdate>true</doUpdate>
 				</configuration>
 			</plugin>
 
@@ -159,70 +207,6 @@
 			</build>
 		</profile>
 
-		<profile>
-			<id>connector-eea</id>
-			<dependencies>
-				<dependency>
-					<groupId>org.n52.sensorweb</groupId>
-					<artifactId>sensorwebclient-eea</artifactId>
-				</dependency>
-			</dependencies>
-		</profile>
-
-		<profile>
-			<id>connector-hydro</id>
-			<dependencies>
-				<dependency>
-					<groupId>org.n52.sensorweb</groupId>
-					<artifactId>sensorwebclient-hydro</artifactId>
-				</dependency>
-			</dependencies>
-		</profile>
-
-		<profile>
-			<id>all-modules-provided</id>
-			<dependencyManagement>
-				<dependencies>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-api</artifactId>
-						<version>${project.version}</version>
-						<scope>provided</scope>
-					</dependency>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-sos-server</artifactId>
-						<version>${project.version}</version>
-						<scope>provided</scope>
-					</dependency>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-sos-rest</artifactId>
-						<version>${project.version}</version>
-						<scope>provided</scope>
-					</dependency>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-grdc</artifactId>
-						<version>${project.version}</version>
-						<scope>provided</scope>
-					</dependency>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-eea</artifactId>
-						<version>${project.version}</version>
-						<scope>provided</scope>
-					</dependency>
-					<dependency>
-						<groupId>org.n52.sensorweb</groupId>
-						<artifactId>sensorwebclient-hydro</artifactId>
-						<version>${project.version}</version>
-						<scope>provided</scope>
-					</dependency>
-				</dependencies>
-			</dependencyManagement>
-		</profile>
-	</profiles>
-
+    </profiles>
 </project>
 

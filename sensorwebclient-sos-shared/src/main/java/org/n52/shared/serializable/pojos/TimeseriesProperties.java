@@ -1,27 +1,30 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
-
 package org.n52.shared.serializable.pojos;
 
 import java.io.Serializable;
@@ -43,8 +46,6 @@ public class TimeseriesProperties implements Serializable {
 
 	private int width;
 
-	private String label;
-	
 	private String language;
 
 	private HashMap<String, ReferenceValue> refvalues = new HashMap<String, ReferenceValue>();
@@ -59,8 +60,6 @@ public class TimeseriesProperties implements Serializable {
 	private String lineStyle = "1";
 	
 	private String uom;
-
-	private String stationName;
 
 	private String metadataUrl = "";
 
@@ -115,14 +114,12 @@ public class TimeseriesProperties implements Serializable {
 		options.setColor(renderingOptions.getColor());
 		options.setLineWidth(renderingOptions.getLineWidth());
 		result.setRenderingOptions(options);
-		result.setLabel(this.label);
 		result.setLanguage(this.language);
 		result.setLineStyle(this.lineStyle);
 		result.setMetadataUrl(this.metadataUrl);
 		result.setOpacity(this.opacity);
 		result.setScaledToZero(this.isScaledToZero);
 		result.setShowYAxis(this.isYAxisVisible);
-		result.setStationName(this.stationName);
 		result.setUnitOfMeasure(this.uom);
 		result.setSeriesType(this.seriesType);
 		return result;
@@ -213,13 +210,6 @@ public class TimeseriesProperties implements Serializable {
 	    return timeseries;
 	}
 
-	public void setSosUrl(String sosUrl) {
-	    if (timeseries == null) {
-            timeseries = new SosTimeseries();
-        }
-		timeseries.setServiceUrl(sosUrl);
-	}
-	
 	public void setStation(Station station) {
 	    this.station = station;
 	}
@@ -228,55 +218,9 @@ public class TimeseriesProperties implements Serializable {
 	    return station;
 	}
 
-	/**
-	 * @deprecated use {@link #setTimeseries(SosTimeseries)}
-	 */
-	public void setOffering(String offering) {
-		if (timeseries == null) {
-            timeseries = new SosTimeseries();
-        }
-		timeseries.setOffering(offering);
-	}
-
-	/**
-     * @deprecated use {@link #setTimeseries(SosTimeseries)}
-     */
-	public void setFeature(String feature) {
-	    if (timeseries == null) {
-            timeseries = new SosTimeseries();
-        }
-        timeseries.setFeature(feature);
-	}
-
-	/**
-     * @deprecated use {@link #setTimeseries(SosTimeseries)}
-     */
-	public void setProcedure(String procedure) {
-	    if (timeseries == null) {
-            timeseries = new SosTimeseries();
-        }
-        timeseries.setProcedure(procedure);
-	}
-
-	/**
-     * @deprecated use {@link #setTimeseries(SosTimeseries)}
-     */
-	public void setPhenomenon(String phenomenon) {
-	    if (timeseries == null) {
-            timeseries = new SosTimeseries();
-        }
-        timeseries.setPhenomenon(phenomenon);
-	}
 
 	public String getStationName() {
-//		if (this.stationName == null || this.stationName.isEmpty()) {
-//			return this.foi.getLabel();
-//		}
-		return stationName;
-	}
-
-	public void setStationName(String stationName) {
-		this.stationName = stationName;
+		return station == null ? "NA" : station.getLabel();
 	}
 
 	public String getServiceUrl() {
@@ -291,40 +235,32 @@ public class TimeseriesProperties implements Serializable {
 	 * @deprecated user {@link #getTimeseries()}
 	 */
 	public String getOffering() {
-		return timeseries.getOffering();
+		return timeseries.getOfferingId();
 	}
 	
 	/**
      * @deprecated user {@link #getTimeseries()}
      */
 	public String getFeature() {
-		return timeseries.getFeature();
+		return timeseries.getFeatureId();
 	}
 
 	/**
      * @deprecated user {@link #getTimeseries()}
      */
 	public String getProcedure() {
-		return timeseries.getProcedure();
+		return timeseries.getProcedureId();
 	}
 
 	/**
      * @deprecated user {@link #getTimeseries()}
      */
 	public String getPhenomenon() {
-		return timeseries.getPhenomenon();
+		return timeseries.getPhenomenonId();
 	}
 
 	public String getTimeseriesId() {
 		return timeseries.getTimeseriesId();
-	}
-
-	public String getLabel() {
-		return this.label;
-	}
-
-	public void setLabel(String label) {
-		this.label = label;
 	}
 
 	public String getLineStyle() {
@@ -400,22 +336,15 @@ public class TimeseriesProperties implements Serializable {
 	}
 
 	public double getLat() {
-		return this.station.getLocation().getNorthing();
+		return this.station.getLocation().getY();
 	}
 
 	public double getLon() {
-		return this.station.getLocation().getEasting();
+		return this.station.getLocation().getX();
 	}
 
-    public String getSrs() {
-        if (station == null || station.getLocation() == null) {
-            return null;
-        }
-        return station.getLocation().getSrs();
-    }
-
-    public void setSrs(String srs) {
-        this.station.getLocation().setSrs(srs);
+    public boolean isStationInitialized() {
+        return station != null && station.getLocation() != null;
     }
 
 	public void setOpacity(double opacityPercentage) {
@@ -435,7 +364,7 @@ public class TimeseriesProperties implements Serializable {
 	}
 
 	public void addRefValue(ReferenceValue v) {
-		this.refvalues.put(v.getID(), v);
+		this.refvalues.put(v.getId(), v);
 	}
 
 	public ReferenceValue getRefValue(String s) {
@@ -446,10 +375,12 @@ public class TimeseriesProperties implements Serializable {
 		return this.refvalues.keySet();
 	}
 
-	public void addAllRefValues(HashMap<String, ReferenceValue> refvalues2) {
+	public HashMap<String, ReferenceValue> getRefvalues() {
+        return refvalues;
+    }
 
+    public void addAllRefValues(HashMap<String, ReferenceValue> refvalues2) {
 		this.refvalues.putAll(refvalues2);
-
 	}
 
 	public boolean isSetAxis() {
@@ -463,10 +394,10 @@ public class TimeseriesProperties implements Serializable {
 	public String getOffFoiProcPhenCombination() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("TimeSeriesProperties: [");
-		sb.append("Offering: ").append(timeseries.getOffering()).append(", ");
-		sb.append("Feature: ").append(timeseries.getFeature()).append(", ");
-		sb.append("Procedure: ").append(timeseries.getProcedure()).append(", ");
-		sb.append("Phenomenon: ").append(timeseries.getPhenomenon()).append("]");
+		sb.append("Offering: ").append(timeseries.getOfferingId()).append(", ");
+		sb.append("Feature: ").append(timeseries.getFeatureId()).append(", ");
+		sb.append("Procedure: ").append(timeseries.getProcedureId()).append(", ");
+		sb.append("Phenomenon: ").append(timeseries.getPhenomenonId()).append("]");
 		return sb.toString();
 	}
 

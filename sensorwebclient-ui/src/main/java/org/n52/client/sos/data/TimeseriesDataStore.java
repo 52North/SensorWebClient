@@ -1,27 +1,30 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
-
 package org.n52.client.sos.data;
 
 import static org.n52.client.bus.EventBus.getMainEventBus;
@@ -37,7 +40,6 @@ import org.eesgmbh.gimv.client.event.LoadImageDataEvent;
 import org.eesgmbh.gimv.client.event.SetDomainBoundsEvent;
 import org.eesgmbh.gimv.client.event.SetDomainBoundsEventHandler;
 import org.n52.client.bus.EventBus;
-import org.n52.client.ctrl.ExceptionHandler;
 import org.n52.client.model.ADataStore;
 import org.n52.client.sos.DataparsingException;
 import org.n52.client.sos.event.ChangeTimeSeriesStyleEvent;
@@ -69,14 +71,14 @@ import org.n52.client.sos.event.data.handler.UndoEventHandler;
 import org.n52.client.sos.event.handler.ChangeTimeSeriesStyleEventHandler;
 import org.n52.client.sos.event.handler.SwitchGridEventHandler;
 import org.n52.client.sos.event.handler.TimeSeriesChangedEventHandler;
-import org.n52.client.sos.legend.Timeseries;
+import org.n52.client.sos.legend.TimeseriesLegendData;
 import org.n52.client.ui.Toaster;
 import org.n52.client.ui.legend.LegendDataComparator;
 import org.n52.client.ui.legend.LegendElement;
 import org.n52.client.ui.legend.LegendEntryTimeSeries;
 import org.n52.shared.serializable.pojos.Axis;
 
-public class TimeseriesDataStore extends ADataStore<Timeseries> {
+public class TimeseriesDataStore extends ADataStore<TimeseriesLegendData> {
 
     private static TimeseriesDataStore inst;
 
@@ -95,8 +97,8 @@ public class TimeseriesDataStore extends ADataStore<Timeseries> {
         return inst;
     }
 
-    public Timeseries[] getTimeSeriesSorted() {
-        Timeseries[] timeSeries = new Timeseries[this.dataItems.size()];
+    public TimeseriesLegendData[] getTimeSeriesSorted() {
+        TimeseriesLegendData[] timeSeries = new TimeseriesLegendData[this.dataItems.size()];
         Arrays.sort(getDataAsArray(timeSeries), new LegendDataComparator());
         return timeSeries;
     }
@@ -145,7 +147,7 @@ public class TimeseriesDataStore extends ADataStore<Timeseries> {
             try {
                 Set<String> itemIds = evt.getData().keySet();
                 for (String id : itemIds) {
-                    Timeseries timeSeries = getDataItem(id);
+                    TimeseriesLegendData timeSeries = getDataItem(id);
                     timeSeries.addData(evt.getData().get(id));
                 }
                 getMainEventBus().fireEvent(new TimeSeriesChangedEvent());
@@ -155,7 +157,7 @@ public class TimeseriesDataStore extends ADataStore<Timeseries> {
             }
         }
 
-        public Timeseries getFirst() {
+        public TimeseriesLegendData getFirst() {
             if ( !TimeseriesDataStore.this.dataItems.isEmpty()) {
                 return getTimeSeriesSorted()[0];
             }
@@ -167,7 +169,7 @@ public class TimeseriesDataStore extends ADataStore<Timeseries> {
         }
 
         public void onDeleteTimeSeries(DeleteTimeSeriesEvent evt) {
-            Timeseries tsDataItem = getDataItem(evt.getId());
+            TimeseriesLegendData tsDataItem = getDataItem(evt.getId());
             tsDataItem.setLegendElement(null);
             deleteDataItem(evt.getId());
             if (getFirst() != null) {
@@ -177,8 +179,8 @@ public class TimeseriesDataStore extends ADataStore<Timeseries> {
             }
 
             ArrayList<TimeSeriesChangedEventHandler> updateHandlers = new ArrayList<TimeSeriesChangedEventHandler>();
-            Collection<Timeseries> timeSeries = TimeseriesDataStore.this.dataItems.values();
-            for (Timeseries timeSerie : timeSeries) {
+            Collection<TimeseriesLegendData> timeSeries = TimeseriesDataStore.this.dataItems.values();
+            for (TimeseriesLegendData timeSerie : timeSeries) {
                 LegendEntryTimeSeries le = (LegendEntryTimeSeries) timeSerie.getLegendElement();
                 updateHandlers.add(le.getEventBroker());
             }
@@ -189,7 +191,7 @@ public class TimeseriesDataStore extends ADataStore<Timeseries> {
         }
 
         public void onChange(ChangeTimeSeriesStyleEvent evt) {
-            Timeseries ts = getDataItem(evt.getID());
+            TimeseriesLegendData ts = getDataItem(evt.getID());
             ts.setColor(evt.getHexColor());
             ts.setOpacity(evt.getOpacityPercentage());
             ts.setScaleToZero(evt.isZeroScaled());
@@ -199,7 +201,7 @@ public class TimeseriesDataStore extends ADataStore<Timeseries> {
 
         public void onStore(StoreAxisDataEvent evt) {
             try {
-                Timeseries dataItem = getDataItem(evt.getTsID());
+                TimeseriesLegendData dataItem = getDataItem(evt.getTsID());
                 if (dataItem.getProperties().isSetAxis()) {
                     dataItem.setAxisData(evt.getAxis());
                 }
@@ -210,7 +212,7 @@ public class TimeseriesDataStore extends ADataStore<Timeseries> {
         }
 
         public void onUndo() {
-            Timeseries[] series = TimeseriesDataStore.getTimeSeriesDataStore().getTimeSeriesSorted();
+            TimeseriesLegendData[] series = TimeseriesDataStore.getTimeSeriesDataStore().getTimeSeriesSorted();
             for (int i = 0; i < series.length; i++) {
                 series[i].popAxis();
                 series[i].getProperties().setSetAxis(false);
@@ -219,7 +221,7 @@ public class TimeseriesDataStore extends ADataStore<Timeseries> {
         }
 
         public void onStore(FirstValueOfTimeSeriesEvent evt) {
-            Timeseries ts = getDataItem(evt.getTsID());
+            TimeseriesLegendData ts = getDataItem(evt.getTsID());
             if (ts != null) {
                 ts.setFirstValueDate(evt.getDate());
                 ts.setFirstValue(evt.getVal());
@@ -227,7 +229,7 @@ public class TimeseriesDataStore extends ADataStore<Timeseries> {
         }
 
         public void onStore(StoreTimeSeriesLastValueEvent evt) {
-            Timeseries ts = getDataItem(evt.getTsID());
+            TimeseriesLegendData ts = getDataItem(evt.getTsID());
             if (ts != null) {
                 ts.setLastValueDate(evt.getDate());
                 ts.setLastValue(evt.getVal());
@@ -235,7 +237,7 @@ public class TimeseriesDataStore extends ADataStore<Timeseries> {
         }
 
         public void onSwitch(SwitchAutoscaleEvent evt) {
-            for (Timeseries ts : getDataItems().values()) {
+            for (TimeseriesLegendData ts : getDataItems().values()) {
                 ts.setAutoScale(evt.getSwitch());
             }
         }
@@ -253,7 +255,7 @@ public class TimeseriesDataStore extends ADataStore<Timeseries> {
 
             EventBus.getMainEventBus().fireEvent(new DatesChangedEvent(begin, end, true));
 
-            for (Timeseries ts : TimeseriesDataStore.getTimeSeriesDataStore().getTimeSeriesSorted()) {
+            for (TimeseriesLegendData ts : TimeseriesDataStore.getTimeSeriesDataStore().getTimeSeriesSorted()) {
                 if (ts.getProperties().isAutoScale() != true) {
                     Axis a = ts.getProperties().getAxis();
                     double topDiff = a.getMinY() - top;

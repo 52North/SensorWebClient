@@ -1,0 +1,1543 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope
+    xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sosgda/1.0 http://waterml2.org/schemas/gda/1.0/gda.xsd http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/gml.xsd http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope">
+    <soap:Body>
+        <gda:GetDataAvailabilityResponse
+            xmlns:gda="http://www.opengis.net/sosgda/1.0"
+            xmlns:gml="http://www.opengis.net/gml/3.2"
+            xmlns:swe="http://www.opengis.net/swe/2.0"
+            xmlns:xlink="http://www.w3.org/1999/xlink">
+            <gda:dataAvailabilityMember gml:id="dam_1">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5302255" xlink:title="STRATFORD                               "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_1">
+                        <gml:beginPosition>2003-01</gml:beginPosition>
+                        <gml:endPosition>2002-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_2">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/3844150" xlink:title="A.J.GUACHALA                            "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_2">
+                        <gml:beginPosition>1992-01</gml:beginPosition>
+                        <gml:endPosition>1983-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_3">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5708110" xlink:title="COOLIBAH HOMESTEAD                      "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_3">
+                        <gml:beginPosition>1992-01</gml:beginPosition>
+                        <gml:endPosition>1957-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_4">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5202075" xlink:title="ELLENBOROUGH (KINDEE BRIDGE)            "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_4">
+                        <gml:beginPosition>2003-01</gml:beginPosition>
+                        <gml:endPosition>1994-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_5">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5202070" xlink:title="TURNERS FLAT                            "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_5">
+                        <gml:beginPosition>1980-01</gml:beginPosition>
+                        <gml:endPosition>1957-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_6">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4206250" xlink:title="USK                                     "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_6">
+                        <gml:beginPosition>1950-01</gml:beginPosition>
+                        <gml:endPosition>1948-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_7">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/1255100" xlink:title="RUACANA (64740001)                      "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_7">
+                        <gml:beginPosition>1979-01</gml:beginPosition>
+                        <gml:endPosition>1972-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_8">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4214070" xlink:title="ABOVE OUTLET SEALHOLE LAKE              "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_8">
+                        <gml:beginPosition>1991-01</gml:beginPosition>
+                        <gml:endPosition>1990-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_9">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5109161" xlink:title="GLENORE WEIR                            "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_9">
+                        <gml:beginPosition>1979-01</gml:beginPosition>
+                        <gml:endPosition>1974-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_10">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/1159100" xlink:title="VIOOLSDRIF (27811003)                   "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_10">
+                        <gml:beginPosition>1938-01</gml:beginPosition>
+                        <gml:endPosition>1937-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_11">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/3844300" xlink:title="QUEVEDO                                 "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_11">
+                        <gml:beginPosition>1991-01</gml:beginPosition>
+                        <gml:endPosition>1985-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_12">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/3844200" xlink:title="A.J.PILATON                             "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_12">
+                        <gml:beginPosition>1968-01</gml:beginPosition>
+                        <gml:endPosition>1996-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_13">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5302251" xlink:title="BUNDULAGUAH                             "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_13">
+                        <gml:beginPosition>1983-01</gml:beginPosition>
+                        <gml:endPosition>1989-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_14">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6608501" xlink:title="REDBROOK                                "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_14">
+                        <gml:beginPosition>1997-01</gml:beginPosition>
+                        <gml:endPosition>1955-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_15">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4214610" xlink:title="AMOS                                    "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_15">
+                        <gml:beginPosition>1934-01</gml:beginPosition>
+                        <gml:endPosition>1947-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_16">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6604610" xlink:title="BALLATHIE                               "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_16">
+                        <gml:beginPosition>1997-01</gml:beginPosition>
+                        <gml:endPosition>1989-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_17">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5708185" xlink:title="MOUNT BUNDEY                            "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_17">
+                        <gml:beginPosition>2004-01</gml:beginPosition>
+                        <gml:endPosition>1957-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_18">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5302110" xlink:title="D/S RAMROD CREEK                        "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_18">
+                        <gml:beginPosition>2007-01</gml:beginPosition>
+                        <gml:endPosition>2006-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_19">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/1732100" xlink:title="ATHIEME                                 "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_19">
+                        <gml:beginPosition>1957-01</gml:beginPosition>
+                        <gml:endPosition>1961-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_20">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5302242" xlink:title="GLENALADALE                             "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_20">
+                        <gml:beginPosition>2011-01</gml:beginPosition>
+                        <gml:endPosition>2010-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_21">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6604201" xlink:title="BLAIRSTONE                              "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_21">
+                        <gml:beginPosition>1963-01</gml:beginPosition>
+                        <gml:endPosition>1963-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_22">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4209401" xlink:title="ABOVE COPPER CREEK                      "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_22">
+                        <gml:beginPosition>2008-01</gml:beginPosition>
+                        <gml:endPosition>1994-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_23">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5202080" xlink:title="KILLAWARRA                              "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_23">
+                        <gml:beginPosition>1981-01</gml:beginPosition>
+                        <gml:endPosition>1980-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_24">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5607500" xlink:title="COOLENAR POOL                           "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_24">
+                        <gml:beginPosition>1975-01</gml:beginPosition>
+                        <gml:endPosition>1974-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_25">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5202103" xlink:title="SINGLETON                               "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_25">
+                        <gml:beginPosition>1939-01</gml:beginPosition>
+                        <gml:endPosition>1926-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_26">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/1257100" xlink:title="RUNDU (64932101)                        "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_26">
+                        <gml:beginPosition>1990-01</gml:beginPosition>
+                        <gml:endPosition>1950-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_27">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5101130" xlink:title="EURAMO                                  "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_27">
+                        <gml:beginPosition>1972-01</gml:beginPosition>
+                        <gml:endPosition>1994-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_28">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5109251" xlink:title="MORETON                                 "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_28">
+                        <gml:beginPosition>1989-01</gml:beginPosition>
+                        <gml:endPosition>1988-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_29">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4214520" xlink:title="NEAR HAT ISLAND                         "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_29">
+                        <gml:beginPosition>1982-01</gml:beginPosition>
+                        <gml:endPosition>1981-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_30">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5109151" xlink:title="WALKERS BEND                            "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_30">
+                        <gml:beginPosition>1975-01</gml:beginPosition>
+                        <gml:endPosition>1974-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_31">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4214270" xlink:title="ABOVE RED HEAD RAPIDS                   "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_31">
+                        <gml:beginPosition>2004-01</gml:beginPosition>
+                        <gml:endPosition>2003-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_32">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4214080" xlink:title="BELOW MUKETEI RIVER                     "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_32">
+                        <gml:beginPosition>2003-01</gml:beginPosition>
+                        <gml:endPosition>1976-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_33">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4214621" xlink:title="EN AMONT DU LAC MATAGAMI                "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_33">
+                        <gml:beginPosition>1963-01</gml:beginPosition>
+                        <gml:endPosition>1962-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_34">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4209600" xlink:title="NEAR THE MOUTH                          "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_34">
+                        <gml:beginPosition>1971-01</gml:beginPosition>
+                        <gml:endPosition>1972-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_35">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/3846510" xlink:title="A.J. AMARILLO                           "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_35">
+                        <gml:beginPosition>2001-01</gml:beginPosition>
+                        <gml:endPosition>2005-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_36">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6603300" xlink:title="MOVANAGHER                              "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_36">
+                        <gml:beginPosition>2006-01</gml:beginPosition>
+                        <gml:endPosition>2004-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_37">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4243240" xlink:title="RAPIDES FRYERS                          "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_37">
+                        <gml:beginPosition>1948-01</gml:beginPosition>
+                        <gml:endPosition>1964-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_38">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5101161" xlink:title="INGHAM                                  "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_38">
+                        <gml:beginPosition>1920-01</gml:beginPosition>
+                        <gml:endPosition>1919-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_39">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/3844800" xlink:title="D.J.SAN FRANCISCO                       "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_39">
+                        <gml:beginPosition>2004-01</gml:beginPosition>
+                        <gml:endPosition>2005-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_40">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6233650" xlink:title="SOLLEFTEA KRV                           "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_40">
+                        <gml:beginPosition>1977-01</gml:beginPosition>
+                        <gml:endPosition>1982-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_41">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4214051" xlink:title="BELOW OUTLET OF SCHULTZ LAKE            "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_41">
+                        <gml:beginPosition>1999-01</gml:beginPosition>
+                        <gml:endPosition>1998-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_42">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4209150" xlink:title="BELOW CARNWATH RIVER                    "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_42">
+                        <gml:beginPosition>1976-01</gml:beginPosition>
+                        <gml:endPosition>1990-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_43">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/3844465" xlink:title="LECHUGAL                                "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_43">
+                        <gml:beginPosition>1997-01</gml:beginPosition>
+                        <gml:endPosition>1996-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_44">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/3844460" xlink:title="CATARAMA                                "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_44">
+                        <gml:beginPosition>1987-01</gml:beginPosition>
+                        <gml:endPosition>1986-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_45">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5101020" xlink:title="GARRAWAY CREEK JUNCTION                 "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_45">
+                        <gml:beginPosition>1970-01</gml:beginPosition>
+                        <gml:endPosition>1978-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_46">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/3844400" xlink:title="LA CAPILLA                              "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_46">
+                        <gml:beginPosition>1980-01</gml:beginPosition>
+                        <gml:endPosition>1974-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_47">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5109200" xlink:title="KOOLATAH                                "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_47">
+                        <gml:beginPosition>1972-01</gml:beginPosition>
+                        <gml:endPosition>1994-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_48">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5708220" xlink:title="12 DEG 43 MIN SOUTH                     "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_48">
+                        <gml:beginPosition>1973-01</gml:beginPosition>
+                        <gml:endPosition>1990-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_49">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/3846500" xlink:title="A.J.AMARILLO                            "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_49">
+                        <gml:beginPosition>1979-01</gml:beginPosition>
+                        <gml:endPosition>1978-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_50">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4243151" xlink:title="LASALLE                                 "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_50">
+                        <gml:beginPosition>1965-01</gml:beginPosition>
+                        <gml:endPosition>1964-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_51">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/1733600" xlink:title="BONOU                                   "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_51">
+                        <gml:beginPosition>1957-01</gml:beginPosition>
+                        <gml:endPosition>1977-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_52">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5709100" xlink:title="RED ROCK                                "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_52">
+                        <gml:beginPosition>1973-01</gml:beginPosition>
+                        <gml:endPosition>1967-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_53">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6607650" xlink:title="KINGSTON                                "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_53">
+                        <gml:beginPosition>1997-01</gml:beginPosition>
+                        <gml:endPosition>1990-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_54">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6731403" xlink:title="SOLBERGFOSS                             "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_54">
+                        <gml:beginPosition>1903-01</gml:beginPosition>
+                        <gml:endPosition>1902-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_55">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4244500" xlink:title="ABOVE UPPER MUSKRAT FALLS               "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_55">
+                        <gml:beginPosition>1963-01</gml:beginPosition>
+                        <gml:endPosition>1962-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_56">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5302261" xlink:title="KILMANY SOUTH                           "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_56">
+                        <gml:beginPosition>1979-01</gml:beginPosition>
+                        <gml:endPosition>1979-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_57">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6731402" xlink:title="SKARNES                                 "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_57">
+                        <gml:beginPosition>1979-01</gml:beginPosition>
+                        <gml:endPosition>1995-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_58">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/3844450" xlink:title="VINCES-DCP                              "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_58">
+                        <gml:beginPosition>1980-01</gml:beginPosition>
+                        <gml:endPosition>2005-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_59">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6981800" xlink:title="TIGHINA (BENDERY)                       "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_59">
+                        <gml:beginPosition>1962-01</gml:beginPosition>
+                        <gml:endPosition>1954-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_60">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4214105" xlink:title="BELOW GREAT ISLAND                      "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_60">
+                        <gml:beginPosition>1957-01</gml:beginPosition>
+                        <gml:endPosition>1956-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_61">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5404271" xlink:title="LOCK 1 DOWNSTREAM                       "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_61">
+                        <gml:beginPosition>1968-01</gml:beginPosition>
+                        <gml:endPosition>1972-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_62">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5404270" xlink:title="OVERLAND CORNER (417.5 KM)              "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_62">
+                        <gml:beginPosition>1992-01</gml:beginPosition>
+                        <gml:endPosition>1991-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_63">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5202135" xlink:title="PENRITH                                 "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_63">
+                        <gml:beginPosition>1969-01</gml:beginPosition>
+                        <gml:endPosition>1968-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_64">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4214450" xlink:title="BELOW ASHEWEIG RIVER TRIBUTARY          "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_64">
+                        <gml:beginPosition>1991-01</gml:beginPosition>
+                        <gml:endPosition>1990-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_65">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5202036" xlink:title="ELTHAM                                  "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_65">
+                        <gml:beginPosition>2003-01</gml:beginPosition>
+                        <gml:endPosition>2002-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_66">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6605600" xlink:title="COLWICK                                 "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_66">
+                        <gml:beginPosition>1997-01</gml:beginPosition>
+                        <gml:endPosition>1989-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_67">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4214040" xlink:title="CHUTE DE LA PYRITE                      "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_67">
+                        <gml:beginPosition>1997-01</gml:beginPosition>
+                        <gml:endPosition>1996-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_68">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6335020" xlink:title="REES                                    "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_68">
+                        <gml:beginPosition>1854-01</gml:beginPosition>
+                        <gml:endPosition>1864-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_69">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5101470" xlink:title="WALLA                                   "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_69">
+                        <gml:beginPosition>1970-01</gml:beginPosition>
+                        <gml:endPosition>1969-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_70">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5202030" xlink:title="CASINO                                  "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_70">
+                        <gml:beginPosition>2003-01</gml:beginPosition>
+                        <gml:endPosition>1957-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_71">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5101301" xlink:title="THE GAP                                 "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_71">
+                        <gml:beginPosition>1964-01</gml:beginPosition>
+                        <gml:endPosition>1965-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_72">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6340110" xlink:title="NEU-DARCHAU                             "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_72">
+                        <gml:beginPosition>1954-01</gml:beginPosition>
+                        <gml:endPosition>1933-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_73">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4214655" xlink:title="A LA CHUTE ROUGE                        "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_73">
+                        <gml:beginPosition>1971-01</gml:beginPosition>
+                        <gml:endPosition>1970-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_74">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5101381" xlink:title="MIVA                                    "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_74">
+                        <gml:beginPosition>1920-01</gml:beginPosition>
+                        <gml:endPosition>1919-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_75">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6731920" xlink:title="KISTA                                   "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_75">
+                        <gml:beginPosition>1987-01</gml:beginPosition>
+                        <gml:endPosition>1976-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_76">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/1160500" xlink:title="DONKER HOEK ALICEDALE                   "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_76">
+                        <gml:beginPosition>1958-01</gml:beginPosition>
+                        <gml:endPosition>1957-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_77">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5708145" xlink:title="MOUNT NANCAR                            "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_77">
+                        <gml:beginPosition>1973-01</gml:beginPosition>
+                        <gml:endPosition>1986-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_78">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5109220" xlink:title="DORUNDA                                 "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_78">
+                        <gml:beginPosition>1992-01</gml:beginPosition>
+                        <gml:endPosition>1991-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_79">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5101200" xlink:title="CLARE                                   "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_79">
+                        <gml:beginPosition>1950-01</gml:beginPosition>
+                        <gml:endPosition>1951-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_80">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5101201" xlink:title="HOME HILL                               "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_80">
+                        <gml:beginPosition>1921-01</gml:beginPosition>
+                        <gml:endPosition>1923-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_81">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5101202" xlink:title="CLARE                                   "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_81">
+                        <gml:beginPosition>1952-01</gml:beginPosition>
+                        <gml:endPosition>1951-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_82">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4214551" xlink:title="ABOVE MOOSE RIVER                       "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_82">
+                        <gml:beginPosition>1986-01</gml:beginPosition>
+                        <gml:endPosition>2002-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_83">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5302400" xlink:title="DARTMOOR                                "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_83">
+                        <gml:beginPosition>2009-01</gml:beginPosition>
+                        <gml:endPosition>1967-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_84">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4231602" xlink:title="GRAND FALLS                             "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_84">
+                        <gml:beginPosition>1934-01</gml:beginPosition>
+                        <gml:endPosition>1958-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_85">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5101500" xlink:title="SAVAGES CROSSING                        "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_85">
+                        <gml:beginPosition>2007-01</gml:beginPosition>
+                        <gml:endPosition>1966-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_86">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5101502" xlink:title="LOWOOD                                  "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_86">
+                        <gml:beginPosition>1937-01</gml:beginPosition>
+                        <gml:endPosition>1919-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_87">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5101503" xlink:title="VERNOR                                  "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_87">
+                        <gml:beginPosition>1952-01</gml:beginPosition>
+                        <gml:endPosition>1952-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_88">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/1160580" xlink:title="MATOLEMA'S LOCATION OUTSPAN             "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_88">
+                        <gml:beginPosition>1970-01</gml:beginPosition>
+                        <gml:endPosition>1969-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_89">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/1259100" xlink:title="AI-AIS (64812014)                       "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_89">
+                        <gml:beginPosition>1977-01</gml:beginPosition>
+                        <gml:endPosition>1976-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_90">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5202044" xlink:title="LILYDALE (NEWBOLD CROSSING)             "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_90">
+                        <gml:beginPosition>1942-01</gml:beginPosition>
+                        <gml:endPosition>1936-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_91">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4208025" xlink:title="ARCTIC RED RIVER                        "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_91">
+                        <gml:beginPosition>1982-01</gml:beginPosition>
+                        <gml:endPosition>1980-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_92">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6742900" xlink:title="CEATAL IZMAIL                           "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_92">
+                        <gml:beginPosition>1947-01</gml:beginPosition>
+                        <gml:endPosition>1953-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_93">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4214035" xlink:title="PRES DE LA RIVIERE KOKSOAK              "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_93">
+                        <gml:beginPosition>1978-01</gml:beginPosition>
+                        <gml:endPosition>1986-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_94">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4243800" xlink:title="ABOVE QNSLR BRIDGE                      "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_94">
+                        <gml:beginPosition>1998-01</gml:beginPosition>
+                        <gml:endPosition>1997-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_95">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6233750" xlink:title="BODENS KRV (+ VATTENVERK, TRANGFORS)    "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_95">
+                        <gml:beginPosition>1995-01</gml:beginPosition>
+                        <gml:endPosition>1990-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_96">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4214900" xlink:title="PRES DE L'EMBOUCHURE-1                  "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_96">
+                        <gml:beginPosition>1988-01</gml:beginPosition>
+                        <gml:endPosition>1987-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_97">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/1160880" xlink:title="MANDINI (27661102)                      "/>
+                <gda:phenomenonTime xlink:href="#tp_60"/>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_98">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5709112" xlink:title="BORROLOOLA CROSSING                     "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_97">
+                        <gml:beginPosition>1976-01</gml:beginPosition>
+                        <gml:endPosition>1975-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_99">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/1104150" xlink:title="SIDI BELATAR                            "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_98">
+                        <gml:beginPosition>2000-01</gml:beginPosition>
+                        <gml:endPosition>1994-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_100">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5109210" xlink:title="FLORAVILLE HOMESTEAD                    "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_99">
+                        <gml:beginPosition>2003-01</gml:beginPosition>
+                        <gml:endPosition>1984-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_101">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6233850" xlink:title="RAEKTFORS                               "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_100">
+                        <gml:beginPosition>2003-01</gml:beginPosition>
+                        <gml:endPosition>2002-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_102">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4214801" xlink:title="EN AMONT DE LA RIVIERE DENYS-1          "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_101">
+                        <gml:beginPosition>1997-01</gml:beginPosition>
+                        <gml:endPosition>1975-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_103">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6604750" xlink:title="NORHAM                                  "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_102">
+                        <gml:beginPosition>1973-01</gml:beginPosition>
+                        <gml:endPosition>1973-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_104">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6731260" xlink:title="HEISEL                                  "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_103">
+                        <gml:beginPosition>1948-01</gml:beginPosition>
+                        <gml:endPosition>1933-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_105">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4214670" xlink:title="A LA SORTIE DU LAC QUENONISCA           "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_104">
+                        <gml:beginPosition>1987-01</gml:beginPosition>
+                        <gml:endPosition>1986-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_106">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6401090" xlink:title="SELFOSS                                 "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_105">
+                        <gml:beginPosition>2001-01</gml:beginPosition>
+                        <gml:endPosition>1992-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_107">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4202601" xlink:title="NEAR JUNEAU                             "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_106">
+                        <gml:beginPosition>1988-01</gml:beginPosition>
+                        <gml:endPosition>1996-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_108">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5101071" xlink:title="KALPOWAR CROSSING                       "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_107">
+                        <gml:beginPosition>2006-01</gml:beginPosition>
+                        <gml:endPosition>2005-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_109">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4214025" xlink:title="BELOW GODS RIVER                        "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_108">
+                        <gml:beginPosition>1989-01</gml:beginPosition>
+                        <gml:endPosition>1988-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_110">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4214090" xlink:title="ABOVE KAZAN FALLS                       "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_109">
+                        <gml:beginPosition>1972-01</gml:beginPosition>
+                        <gml:endPosition>1976-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_111">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5202151" xlink:title="GRASSY GULLY NO. 2                      "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_110">
+                        <gml:beginPosition>2003-01</gml:beginPosition>
+                        <gml:endPosition>2006-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_112">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5109240" xlink:title="TELEGRAPH CROSSING                      "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_111">
+                        <gml:beginPosition>1987-01</gml:beginPosition>
+                        <gml:endPosition>1968-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_113">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5202152" xlink:title="GRASSY GULLY                            "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_112">
+                        <gml:beginPosition>1991-01</gml:beginPosition>
+                        <gml:endPosition>1990-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_114">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/3843500" xlink:title="D.J.CARIYACU                            "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_113">
+                        <gml:beginPosition>1980-01</gml:beginPosition>
+                        <gml:endPosition>1993-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_115">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6731501" xlink:title="GAULFOSS                                "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_114">
+                        <gml:beginPosition>1994-01</gml:beginPosition>
+                        <gml:endPosition>2000-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_116">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5608025" xlink:title="WILLARE                                 "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_115">
+                        <gml:beginPosition>2005-01</gml:beginPosition>
+                        <gml:endPosition>2005-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_117">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/3844100" xlink:title="D.J.SADE                                "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_116">
+                        <gml:beginPosition>1968-01</gml:beginPosition>
+                        <gml:endPosition>1998-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_118">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5608024" xlink:title="FITZROY CROSSING                        "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_117">
+                        <gml:beginPosition>1956-01</gml:beginPosition>
+                        <gml:endPosition>1955-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_119">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4244635" xlink:title="EN AVAL DE LA DECHARGE DU LAC ALIESTE   "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_118">
+                        <gml:beginPosition>1993-01</gml:beginPosition>
+                        <gml:endPosition>1986-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_120">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6731310" xlink:title="DOVIKFOSS                               "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_119">
+                        <gml:beginPosition>1916-01</gml:beginPosition>
+                        <gml:endPosition>1947-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_121">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4209805" xlink:title="ABOVE HERMANN RIVER                     "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_120">
+                        <gml:beginPosition>1994-01</gml:beginPosition>
+                        <gml:endPosition>1993-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_122">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4206100" xlink:title="ABOVE SHUMAL CREEK                      "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_121">
+                        <gml:beginPosition>1972-01</gml:beginPosition>
+                        <gml:endPosition>1992-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_123">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4214680" xlink:title="EN AVAL DU LAC NEMISCAU                 "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_122">
+                        <gml:beginPosition>1982-01</gml:beginPosition>
+                        <gml:endPosition>1963-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_124">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6337200" xlink:title="INTSCHEDE                               "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_123">
+                        <gml:beginPosition>1909-01</gml:beginPosition>
+                        <gml:endPosition>1921-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_125">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5109170" xlink:title="ROCKFIELDS                              "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_124">
+                        <gml:beginPosition>1967-01</gml:beginPosition>
+                        <gml:endPosition>1967-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_126">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5101253" xlink:title="MIRANI WEIR T/W                         "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_125">
+                        <gml:beginPosition>1985-01</gml:beginPosition>
+                        <gml:endPosition>2011-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_127">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6730501" xlink:title="POLMAK NYE                              "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_126">
+                        <gml:beginPosition>1993-01</gml:beginPosition>
+                        <gml:endPosition>1960-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_128">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5302229" xlink:title="JARRAHMOND                              "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_127">
+                        <gml:beginPosition>1951-01</gml:beginPosition>
+                        <gml:endPosition>1951-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_129">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5101118" xlink:title="UPSTREAM CENTRAL MILL                   "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_128">
+                        <gml:beginPosition>1947-01</gml:beginPosition>
+                        <gml:endPosition>1958-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_130">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/3843100" xlink:title="LITA                                    "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_129">
+                        <gml:beginPosition>2005-01</gml:beginPosition>
+                        <gml:endPosition>2004-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_131">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4208065" xlink:title="NEAR THE MOUTH                          "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_130">
+                        <gml:beginPosition>1976-01</gml:beginPosition>
+                        <gml:endPosition>1975-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_132">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6731450" xlink:title="LOSNA                                   "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_131">
+                        <gml:beginPosition>1903-01</gml:beginPosition>
+                        <gml:endPosition>1902-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_133">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5101119" xlink:title="TUNG OIL                                "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_132">
+                        <gml:beginPosition>1987-01</gml:beginPosition>
+                        <gml:endPosition>2002-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_134">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5101080" xlink:title="BAIRDS                                  "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_133">
+                        <gml:beginPosition>1968-01</gml:beginPosition>
+                        <gml:endPosition>2002-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_135">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5109230" xlink:title="MONUMENT                                "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_134">
+                        <gml:beginPosition>1995-01</gml:beginPosition>
+                        <gml:endPosition>1992-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_136">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5608096" xlink:title="TARRARA BAR                             "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_135">
+                        <gml:beginPosition>2000-01</gml:beginPosition>
+                        <gml:endPosition>2007-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_137">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5101390" xlink:title="HOME PARK                               "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_136">
+                        <gml:beginPosition>2003-01</gml:beginPosition>
+                        <gml:endPosition>2002-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_138">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/5101114" xlink:title="CENTRAL MILL                            "/>
+                <gda:phenomenonTime xlink:href="#tp_128"/>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_139">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/4208040" xlink:title="ABOVE FORT MCPHERSON                    "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_137">
+                        <gml:beginPosition>1984-01</gml:beginPosition>
+                        <gml:endPosition>1983-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+            <gda:dataAvailabilityMember gml:id="dam_140">
+                <gda:procedure xlink:href="http://www.bafg.de/grdc/procedure/MonthlyMinimumDaily" xlink:title="MonthlyMinimumDaily"/>
+                <gda:observedProperty xlink:href="http://sweet.jpl.nasa.gov/2.0/hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+                <gda:featureOfInterest xlink:href="http://www.bafg.de/grdc/feature/6730500" xlink:title="POLMAK                                  "/>
+                <gda:phenomenonTime>
+                    <gml:TimePeriod gml:id="tp_138">
+                        <gml:beginPosition>1961-01</gml:beginPosition>
+                        <gml:endPosition>1960-12</gml:endPosition>
+                    </gml:TimePeriod>
+                </gda:phenomenonTime>
+            </gda:dataAvailabilityMember>
+        </gda:GetDataAvailabilityResponse>
+    </soap:Body>
+</soap:Envelope>

@@ -1,32 +1,34 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
-
 package org.n52.client.sos.ui;
 
 import static org.n52.client.ctrl.PropertiesManager.getPropertiesManager;
 import static org.n52.client.ui.map.InfoMarker.createInfoMarker;
-import static org.n52.shared.Constants.DISPLAY_PROJECTION;
 import static org.n52.shared.Constants.EPSG_4326;
 
 import java.util.ArrayList;
@@ -45,19 +47,21 @@ import org.n52.client.ctrl.PropertiesManager;
 import org.n52.client.ui.map.InfoMarker;
 import org.n52.client.ui.map.MapController;
 import org.n52.client.ui.map.OpenLayersMapWrapper;
-import org.n52.shared.Constants;
-import org.n52.shared.serializable.pojos.BoundingBox;
-import org.n52.shared.serializable.pojos.EastingNorthing;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.Station;
 
 import com.google.gwt.core.client.GWT;
 
 public class StationSelectorMap extends OpenLayersMapWrapper {
+    
+    /**
+     * A fall back extent if no other extent was configured (data source instance, or global).
+     */
+    static final Bounds FALLBACK_EXTENT = new Bounds(-180d, -90d, 180d, 90d);
 
     private final MapController controller;
 
-    private BoundingBox defaultExtent;
+    private Bounds defaultExtent;
 
     private ArrayList<InfoMarker> markersOnMap = new ArrayList<InfoMarker>();
 
@@ -77,18 +81,16 @@ public class StationSelectorMap extends OpenLayersMapWrapper {
                 double lleftY = new Double(propertiesMgr.getParameterAsString("lleftY"));
                 double urightX = new Double(propertiesMgr.getParameterAsString("urightX"));
                 double urightY = new Double(propertiesMgr.getParameterAsString("urightY"));
-                EastingNorthing ll = new EastingNorthing(lleftX, lleftY, DISPLAY_PROJECTION);
-                EastingNorthing ur = new EastingNorthing(urightX, urightY, DISPLAY_PROJECTION);
-                defaultExtent = new BoundingBox(ll, ur);
+                defaultExtent = new Bounds(lleftX, lleftY, urightX, urightY);
             }
             else {
-                GWT.log("No global extent configured. Zooming to: " + Constants.FALLBACK_EXTENT);
-                defaultExtent = Constants.FALLBACK_EXTENT;
+                GWT.log("No global extent configured. Zooming to: " + FALLBACK_EXTENT);
+                defaultExtent = FALLBACK_EXTENT;
             }
         }
         catch (NumberFormatException e) {
-            GWT.log("Error while parsing configured bounding box. Zooming to: " + Constants.FALLBACK_EXTENT);
-            defaultExtent = Constants.FALLBACK_EXTENT;
+            GWT.log("Error while parsing configured bounding box. Zooming to: " + FALLBACK_EXTENT);
+            defaultExtent = FALLBACK_EXTENT;
         }
         zoomToExtent(defaultExtent);
     }
@@ -213,31 +215,24 @@ public class StationSelectorMap extends OpenLayersMapWrapper {
     public void applyFilterToStationsOnMap(String filterCategory) {
         clearMarkerLayer();
         for (InfoMarker marker : markersOnMap) {
-            if (marker.getStation().hasStationCategory(filterCategory)) {
+            if (marker.getStation().hasStationCategoryLabel(filterCategory)) {
                 markerLayer.addMarker(marker);
             }
         }
     }
 
-    public void zoomToExtent(BoundingBox bbox) {
-        String srs = bbox.getSrs();
-        String destSrs = getMapProjection();
-        EastingNorthing ll = bbox.getLowerLeftCorner();
-        EastingNorthing ur = bbox.getUpperRightCorner();
-        LonLat lowerleft = new LonLat(ll.getEasting(), ll.getNorthing());
-        LonLat upperright = new LonLat(ur.getEasting(), ur.getNorthing());
-        if ( !srs.equalsIgnoreCase(destSrs)) {
-            lowerleft.transform(srs, destSrs);
-            upperright.transform(srs, destSrs);
-        }
-        map.zoomToExtent(new Bounds(lowerleft.lon(), lowerleft.lat(), upperright.lon(), upperright.lat()));
+    /**
+     * @param bounds an extent to zoom to.
+     */
+    public void zoomToExtent(Bounds bounds) {
+        map.zoomToExtent(bounds);
     }
 
     /**
      * @return the default extent if configured. If no extent is configured the default extent probably has
-     *         been set to {@link Constants#FALLBACK_EXTENT}.
+     *         been set to {@link FALLBACK_EXTENT}.
      */
-    public BoundingBox getDefaultExtent() {
+    public Bounds getDefaultExtent() {
         return defaultExtent;
     }
 

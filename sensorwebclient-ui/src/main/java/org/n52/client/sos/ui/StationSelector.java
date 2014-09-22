@@ -1,27 +1,30 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
-
 package org.n52.client.sos.ui;
 
 import static com.smartgwt.client.types.Overflow.HIDDEN;
@@ -45,6 +48,7 @@ import org.n52.client.ui.ApplyCancelButtonLayout;
 import org.n52.client.ui.InteractionWindow;
 import org.n52.client.ui.LoadingSpinner;
 import org.n52.client.ui.map.InfoMarker;
+import org.n52.shared.serializable.pojos.sos.Category;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
@@ -75,39 +79,39 @@ import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public class StationSelector extends Window {
-	
+
     private static final String COMPONENT_ID = "stationSelector";
-    
+
     private static int WIDTH = 960;
-    
+
     private static int HEIGHT = 552;
 
     private static StationSelector instance;
 
     private static StationSelectorController controller;
-    
+
 	private Layout guiContent;
 
 	private Map<String, RadioGroupItem> stationFilterGroups;
-	
+
 	private Label phenomenonInfoLabel;
-	
+
 	private Label stationInfoLabel;
 
 	private HTMLPane timeseriesInfoHTMLPane;
 
 	private Label showSelectionMenuButton;
-	
+
 	private InteractionWindow selectionMenu;
-	
+
 	private InteractionWindow infoWindow;
-	
+
 	private Img stationLoadingSpinner;
-	
+
     private ApplyCancelButtonLayout applyCancel;
 
 	private SelectItem phenomenonBox;
-	
+
     public static StationSelector getInst() {
         if (instance == null) {
         	controller = new StationSelectorController();
@@ -164,7 +168,7 @@ public class StationSelector extends Window {
 	    	addItem(guiContent);
 		}
 	}
-    
+
     private Canvas createStationLoadingSpinner() {
 		stationLoadingSpinner = new Img("../img/loader.gif");
 		stationLoadingSpinner.setWidth(32);
@@ -240,7 +244,7 @@ public class StationSelector extends Window {
 		buttons.setAlign(Alignment.RIGHT);
         buttons.addMember(createApplyCancelCanvas());
         layout.addMember(buttons);
-		
+
 		infoWindow = new InteractionWindow(layout);
 		infoWindow.setZIndex(1000000);
 		infoWindow.setWidth(300);
@@ -249,7 +253,7 @@ public class StationSelector extends Window {
 		infoWindow.hide();
 		return infoWindow;
 	}
-	
+
 	private ApplyCancelButtonLayout createApplyCancelCanvas() {
         if (applyCancel == null) {
             applyCancel = new ApplyCancelButtonLayout();
@@ -259,7 +263,7 @@ public class StationSelector extends Window {
         }
         return applyCancel;
     }
-	
+
 	private ClickHandler createApplyHandler() {
         return new ClickHandler() {
             @Override
@@ -306,7 +310,7 @@ public class StationSelector extends Window {
     }
 
     private Canvas createLoadingSpinner() {
-        String imgURL = "../img/loader_wide.gif";
+        String imgURL = "../img/mini_loader_bright.gif";
         LoadingSpinner loader = new LoadingSpinner(imgURL, 43, 11);
         loader.setPadding(7);
         return loader;
@@ -320,7 +324,7 @@ public class StationSelector extends Window {
 	private MapWidget createMapContent() {
     	return controller.createMap();
     }
-    
+
     FormItem createFilterCategorySelectionGroup(String serviceUrl) {
 		if (stationFilterGroups.containsKey(serviceUrl)) {
 			RadioGroupItem selector = stationFilterGroups.get(serviceUrl);
@@ -365,32 +369,41 @@ public class StationSelector extends Window {
 		timeseriesInfoHTMLPane.show();
 		applyCancel.finishLoading();
 	}
-	
+
 	public void clearProcedureDetails() {
+	    timeseriesInfoHTMLPane.clear();
 		timeseriesInfoHTMLPane.hide();
 	}
-	
+
 	public void updateStationFilters(final SOSMetadata currentMetadata) {
 		hideInfoWindow();
 		Map<String, String> sortedCategories = getAlphabeticallySortedMap();
 		for (Station station : currentMetadata.getStations()) {
-			Set<String> categories = getStationCategories(station);
-			for (String category : categories) {
-				sortedCategories.put(category, category);
+			Set<Category> categories = getStationCategories(station);
+			for (Category category : categories) {
+				sortedCategories.put(category.getLabel(), category.getLabel());
 			}
 		}
-		String serviceUrl = currentMetadata.getId();
+		String serviceUrl = currentMetadata.getServiceUrl();
 		RadioGroupItem selector = stationFilterGroups.get(serviceUrl);
 		LinkedHashMap<String, String> categories = new LinkedHashMap<String, String>(sortedCategories);
 		selector.setValueMap(categories);
 	}
-	
-	private Set<String> getStationCategories(Station station) {
-		Set<String> categories = new HashSet<String>();
+
+	private Set<Category> getStationCategories(Station station) {
+		Set<Category> categories = new HashSet<Category>();
 		for (SosTimeseries timeseries : station.getObservedTimeseries()) {
 			categories.add(timeseries.getCategory());
 		}
 		return categories;
+	}
+
+	private String[] getStationCategoryLabels(Station station) {
+		Set<String> labels = new HashSet<String>();
+		for (SosTimeseries timeseries : station.getObservedTimeseries()) {
+			labels.add(timeseries.getCategory().getLabel());
+		}
+		return labels.toArray(new String[0]);
 	}
 
 	public void setSelectedFilter(String serviceURL, String filter) {
@@ -402,7 +415,7 @@ public class StationSelector extends Window {
 			selector.setValue(filter);
 		}
 	}
-	
+
 	protected SortedMap<String, String> getAlphabeticallySortedMap() {
         return new TreeMap<String, String>(new Comparator<String>() {
             public int compare(String word1, String word2) {
@@ -410,25 +423,25 @@ public class StationSelector extends Window {
             }
         });
     }
-    
+
     public String getId() {
         return COMPONENT_ID;
     }
 
 	public void showInfoWindow(InfoMarker infoMarker, String header) {
 		updateInfoLabels();
-		String[] array = getStationCategories(infoMarker.getStation()).toArray(new String[0]);
+		String[] array = getStationCategoryLabels(infoMarker.getStation());
 		phenomenonBox.setValueMap(array);
 		phenomenonBox.clearValue();
 		infoWindow.setWindowTitle(header);
 		infoWindow.show();
 		applyCancel.setLoading();
 	}
-	
+
 	public void hideInfoWindow() {
 		infoWindow.hide();
 	}
-	
+
 	public void showStationLoadingSpinner(boolean show) {
 		if (show) {
 			stationLoadingSpinner.show();

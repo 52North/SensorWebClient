@@ -1,25 +1,29 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
 package org.n52.client.ui;
 
@@ -53,7 +57,7 @@ import com.smartgwt.client.widgets.tab.events.TabSelectedHandler;
 
 /**
  * Representation for the DataPanel with the DiagramTab and the TableTab.
- * 
+ *
  * @author <a href="mailto:f.bache@52north.de">Felix Bache</a>
  */
 public class DataPanel extends VLayout {
@@ -136,7 +140,7 @@ public class DataPanel extends VLayout {
         Canvas c = new Canvas();
         c.setHeight(30);
         c.setAlign(Alignment.RIGHT);
-        LoadingSpinner loader = new LoadingSpinner("../img/loader_wide.gif", 43, 11);
+        LoadingSpinner loader = new LoadingSpinner("../img/mini_loader_bright.gif", 43, 11);
         loader.setPadding(2);
         requestCounter = new Label();
         requestCounter.setWidth("150px");
@@ -146,9 +150,9 @@ public class DataPanel extends VLayout {
         loaders.setHeight(30);
         loaders.addMember(loader);
         loaders.addMember(requestCounter);
-        
+
         c.addChild(loaders);
-        
+
         //this.getPanel().setTabBarControls(TabBarControls.TAB_SCROLLER, TabBarControls.TAB_PICKER, c);
 
          //panel.setHeight("*");
@@ -159,7 +163,7 @@ public class DataPanel extends VLayout {
 
         this.getPanel().setTabBarThickness(1);
 //        this.getPanel().setTop(-2);
-        
+
 //        this.getPanel().setShowTabPicker(false);
 //        this.getPanel().setShowTabScroller(false);
         this.getPanel().setTabBarPosition(Side.RIGHT);

@@ -1,46 +1,48 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
 package org.n52.server.service;
 
-import static org.n52.server.da.oxf.DescribeSensorAccessor.getSensorDescriptionAsSensorML;
+import static org.n52.server.mgmt.ConfigurationContext.createSosMetadataHandler;
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadata;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.xmlbeans.XmlObject;
 import org.n52.client.service.SensorMetadataService;
 import org.n52.oxf.util.JavaHelper;
+import org.n52.server.da.MetadataHandler;
 import org.n52.server.mgmt.ConfigurationContext;
-import org.n52.server.sos.parser.DescribeSensorParser;
 import org.n52.shared.responses.GetProcedureDetailsUrlResponse;
 import org.n52.shared.responses.SOSMetadataResponse;
 import org.n52.shared.responses.SensorMetadataResponse;
-import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,32 +52,26 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
     private static final Logger LOG = LoggerFactory.getLogger(SensorMetadataServiceImpl.class);
 
     @Override
-    public SensorMetadataResponse getSensorMetadata(TimeseriesProperties tsProperties) throws Exception {
+    public SensorMetadataResponse getSensorMetadata(final TimeseriesProperties tsProperties) throws Exception {
         try {
             LOG.debug("Request -> GetSensorMetadata");
-            String sosUrl = tsProperties.getServiceUrl();
-            SOSMetadata metadata = getSOSMetadata(sosUrl);
-            String procedureId = tsProperties.getProcedure();
-            String phenomenonId = tsProperties.getPhenomenon();
-            TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
-            Procedure procedure = lookup.getProcedure(procedureId);
-
-            XmlObject sml = getSensorDescriptionAsSensorML(procedureId, metadata);
-            DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), metadata);
-            tsProperties.setMetadataUrl(parser.buildUpSensorMetadataHtmlUrl(procedureId, sosUrl));
-            tsProperties.setStationName(parser.buildUpSensorMetadataStationName());
-            tsProperties.setUnitOfMeasure(parser.buildUpSensorMetadataUom(phenomenonId));
+            JavaHelper.cleanUpDir(ConfigurationContext.XSL_DIR, ConfigurationContext.FILE_KEEPING_TIME, "xml");
             
-            HashMap<String, ReferenceValue> refvalues = parser.parseReferenceValues();
-            tsProperties.addAllRefValues(refvalues);
-            procedure.addAllRefValues(refvalues);
+            SosTimeseries timeseries = tsProperties.getTimeseries();
+            SOSMetadata sosMetadata = getSOSMetadata(timeseries.getServiceUrl());
+            MetadataHandler metadataHandler = createSosMetadataHandler(sosMetadata);
+            metadataHandler.assembleTimeseriesMetadata(tsProperties);
+            
+            String procedureId = timeseries.getProcedureId();
+            TimeseriesParametersLookup lookup = sosMetadata.getTimeseriesParametersLookup();
+            Procedure procedure = lookup.getProcedure(procedureId);
+            procedure.addAllRefValues(tsProperties.getRefvalues());
     
             SensorMetadataResponse response = new SensorMetadataResponse(tsProperties);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Parsed SensorMetadata: {}", response.toDebugString());
             }
     
-            JavaHelper.cleanUpDir(ConfigurationContext.XSL_DIR, ConfigurationContext.FILE_KEEPING_TIME, "xml");
             return response;
         } catch (Exception e) {
             LOG.error("Exception occured on server side.", e);
@@ -84,14 +80,14 @@ public class SensorMetadataServiceImpl implements SensorMetadataService {
     }
 
     @Override
-    public GetProcedureDetailsUrlResponse getProcedureDetailsUrl(String serviceURL, String procedure) throws Exception {
+    public GetProcedureDetailsUrlResponse getProcedureDetailsUrl(SosTimeseries timeseries) throws Exception {
         try {
             LOG.debug("Request -> getProcedureDetailsUrl");
-            SOSMetadata metadata = ConfigurationContext.getSOSMetadata(serviceURL);
-            XmlObject sml = getSensorDescriptionAsSensorML(procedure, metadata);
-            DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), metadata);
-            String url = parser.buildUpSensorMetadataHtmlUrl(procedure, serviceURL);
-            return new GetProcedureDetailsUrlResponse(url);
+            TimeseriesProperties properties = new TimeseriesProperties(timeseries, null, -1, -1);
+            SOSMetadata metadata = ConfigurationContext.getSOSMetadata(timeseries.getServiceUrl());
+            MetadataHandler metadataHandler = createSosMetadataHandler(metadata);
+            metadataHandler.assembleTimeseriesMetadata(properties);
+            return new GetProcedureDetailsUrlResponse(properties.getMetadataUrl());
         } catch (Exception e) {
             LOG.error("Exception occured on server side.", e);
             throw e; // last chance to log on server side

@@ -1,4 +1,30 @@
-
+/**
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
+ *
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
+ *
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+ *
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ */
 package org.n52.shared.serializable.pojos.sos;
 
 import java.io.Serializable;
@@ -19,22 +45,29 @@ public class TimeseriesParametersLookup implements Serializable {
 
     private static final long serialVersionUID = 7232653582909270958L;
 
-    private HashMap<String, Feature> features = new HashMap<String, Feature>();
+    private final HashMap<String, Feature> features = new HashMap<String, Feature>();
 
-    private HashMap<String, Phenomenon> phenomenons = new HashMap<String, Phenomenon>();
+    private final HashMap<String, Phenomenon> phenomenons = new HashMap<String, Phenomenon>();
 
-    private HashMap<String, Procedure> procedures = new HashMap<String, Procedure>();
+    private final HashMap<String, Procedure> procedures = new HashMap<String, Procedure>();
 
-    private HashMap<String, Offering> offerings = new HashMap<String, Offering>();
+    private final HashMap<String, Offering> offerings = new HashMap<String, Offering>();
+
+    public void addLookup(TimeseriesParametersLookup other) {
+        features.putAll(other.features);
+        phenomenons.putAll(other.phenomenons);
+        procedures.putAll(other.procedures);
+        offerings.putAll(other.offerings);
+    }
 
     /**
      * Adds a new offering or overrides an existing one.
-     * 
+     *
      * @param offering
      *        the offering to set.
      */
     public void addOffering(Offering offering) {
-        offerings.put(offering.getId(), offering);
+        offerings.put(offering.getOfferingId(), offering);
     }
 
     /**
@@ -51,7 +84,7 @@ public class TimeseriesParametersLookup implements Serializable {
      * @return all <code>Offering</code>s or an empty collection if no offerings are available.
      */
     public Collection<Offering> getOfferings() {
-        if (offerings.size() == 0) {
+        if (offerings.isEmpty()) {
             return new ArrayList<Offering>();
         }
         else {
@@ -77,12 +110,12 @@ public class TimeseriesParametersLookup implements Serializable {
 
     /**
      * Adds a new feature or overrides an existing one.
-     * 
+     *
      * @param feature
      *        the feature to set.
      */
     public void addFeature(Feature feature) {
-        this.features.put(feature.getId(), feature);
+        this.features.put(feature.getFeatureId(), feature);
     }
 
     /**
@@ -99,7 +132,7 @@ public class TimeseriesParametersLookup implements Serializable {
      * @return all <code>FeatureOfInterest</code>s or an empty collection if no features are available.
      */
     public Collection<Feature> getFeatures() {
-        if (features.size() == 0) {
+        if (features.isEmpty()) {
             return new ArrayList<Feature>();
         }
         else {
@@ -125,12 +158,12 @@ public class TimeseriesParametersLookup implements Serializable {
 
     /**
      * Adds a new phenomenon or overrides an existing one.
-     * 
+     *
      * @param phenomenon
      *        the phenomenon to set.
      */
     public void addPhenomenon(Phenomenon phenomenon) {
-        this.phenomenons.put(phenomenon.getId(), phenomenon);
+        this.phenomenons.put(phenomenon.getPhenomenonId(), phenomenon);
     }
 
     /**
@@ -147,7 +180,7 @@ public class TimeseriesParametersLookup implements Serializable {
      * @return all <code>Phenomenon</code>s or an empty collection if no phenomenons are available.
      */
     public Collection<Phenomenon> getPhenomenons() {
-        if (phenomenons.size() == 0) {
+        if (phenomenons.isEmpty()) {
             return new ArrayList<Phenomenon>();
         }
         else {
@@ -173,12 +206,12 @@ public class TimeseriesParametersLookup implements Serializable {
 
     /**
      * Adds a new procedure or overrides an existing one.
-     * 
+     *
      * @param procedure
      *        the procedure to set.
      */
     public void addProcedure(Procedure procedure) {
-        procedures.put(procedure.getId(), procedure);
+        procedures.put(procedure.getProcedureId(), procedure);
     }
 
     /**
@@ -195,7 +228,7 @@ public class TimeseriesParametersLookup implements Serializable {
      * @return all <code>Procedure</code>s or an empty collection if no procedure are available.
      */
     public ArrayList<Procedure> getProcedures() {
-        if (procedures.size() == 0) {
+        if (procedures.isEmpty()) {
             return new ArrayList<Procedure>();
         }
         else {
@@ -221,7 +254,7 @@ public class TimeseriesParametersLookup implements Serializable {
 
     /**
      * Deletes the procedure or does nothing if given id is unknown.
-     * 
+     *
      * @param id
      *        the id of the procedure to be deleted.
      */
@@ -231,16 +264,16 @@ public class TimeseriesParametersLookup implements Serializable {
 
     /**
      * Checks if the timeseries' parameters are already known/loaded to this lookup instance.
-     * 
+     *
      * @param timeseries
      *        the timeseries to check if parameters are loaded.
      * @return <code>true</code> if all parameters are already loaded, <code>false</code> otherwise.
      */
     public boolean hasLoadedCompletely(SosTimeseries timeseries) {
-        boolean procedureLoaded = procedures.containsKey(timeseries.getProcedure());
-        boolean featureLoaded = features.containsKey(timeseries.getFeature());
-        boolean offeringLoaded = offerings.containsKey(timeseries.getOffering());
-        boolean phenomenonLoaded = phenomenons.containsKey(timeseries.getPhenomenon());
+        boolean procedureLoaded = procedures.containsKey(timeseries.getProcedureId());
+        boolean featureLoaded = features.containsKey(timeseries.getFeatureId());
+        boolean offeringLoaded = offerings.containsKey(timeseries.getOfferingId());
+        boolean phenomenonLoaded = phenomenons.containsKey(timeseries.getPhenomenonId());
         return procedureLoaded && featureLoaded && offeringLoaded && phenomenonLoaded;
 
     }

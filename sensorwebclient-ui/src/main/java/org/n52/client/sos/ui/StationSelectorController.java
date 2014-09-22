@@ -1,31 +1,35 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
-
 package org.n52.client.sos.ui;
 
 import static org.n52.client.bus.EventBus.getMainEventBus;
 import static org.n52.client.sos.ctrl.SosDataManager.getDataManager;
+import static org.n52.client.sos.ui.StationSelectorMap.FALLBACK_EXTENT;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,14 +66,13 @@ import org.n52.client.sos.event.handler.AddMarkerEventHandler;
 import org.n52.client.ui.Toaster;
 import org.n52.client.ui.map.InfoMarker;
 import org.n52.client.ui.map.MapController;
-import org.n52.shared.Constants;
-import org.n52.shared.serializable.pojos.BoundingBox;
+import org.n52.io.crs.BoundingBox;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
-import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
+import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
@@ -86,7 +89,7 @@ class StationSelectorController implements MapController {
     private Map<String, String> selectedStationFilterByServiceUrl;
 
     private Station selectedStation;
-    
+
     private String selectedCategory;
 
     public StationSelectorController() {
@@ -132,8 +135,8 @@ class StationSelectorController implements MapController {
 
     /**
      * Zooms to the extent of all markers on the map if 'autoZoom' is configured to <code>true</code>.
-     * Otherwise controller zooms to configured extent (either SERVICES instance specific or global). If nothing
-     * was configured the {@link Constants#FALLBACK_EXTENT} is zoomed.
+     * Otherwise controller zooms to configured extent (either SERVICES instance specific or global). If
+     * nothing was configured a fallback extent is being zoomed.
      */
     public void zoomToConfiguredExtent() {
         final SOSMetadata metadata = getCurrentMetadata();
@@ -142,10 +145,13 @@ class StationSelectorController implements MapController {
             map.zoomToMarkers();
         }
         else {
+            
+            // TODO refactor here, unclear where the configured extent is being used .. perhaps just the markers are being used?
+            
             BoundingBox boundingBox = metadata.getConfiguredExtent();
-            if (isSosSpecificExtentConfigured(boundingBox)) {
+            if (boundingBox == null) {
                 GWT.log("Zoom to SERVICES preconfigured bounding box: " + boundingBox);
-                map.zoomToExtent(boundingBox);
+                map.zoomToExtent(FALLBACK_EXTENT);
             }
             else {
                 GWT.log("Zoom to map's default extent: " + boundingBox);
@@ -153,49 +159,46 @@ class StationSelectorController implements MapController {
             }
         }
     }
-
-    public boolean isSosSpecificExtentConfigured(BoundingBox boundingBox) {
-        return !boundingBox.equals(Constants.FALLBACK_EXTENT);
-    }
-
+    
     public void handleInfoMarkerClicked(InfoMarker infoMarker) {
         if (isServiceSelected()) {
-        	Toaster.getToasterInstance().addErrorMessage("No service selected");
+            Toaster.getToasterInstance().addErrorMessage("No service selected");
             return;
         }
 
         selectedStation = infoMarker.getStation();
-        
+
         String category = getSelectedStationFilter();
-        if(category != null) {
-        	loadTimeseriesByCategory(category);
+        if (category != null) {
+            loadTimeseriesByCategory(category);
         }
 
         map.selectMarker(infoMarker);
 
         // open info window for the marker
-        stationSelector.showInfoWindow(infoMarker, selectedStation.getId());
+        stationSelector.showInfoWindow(infoMarker, selectedStation.getLabel());
     }
-    
+
     public void loadTimeseriesByCategory(String category) {
-    	selectedCategory = category;
-    	SosTimeseries timeseries = selectedStation.getTimeseriesByCategory(selectedCategory);
-    	if (timeseries != null) {
-    		fireGetTimeseries(timeseries);
-    	} else {
-    	    GWT.log("Timseries to load was null!");
-    	}
+        selectedCategory = category;
+        SosTimeseries timeseries = selectedStation.getTimeseriesByCategory(selectedCategory);
+        if (timeseries != null) {
+            fireGetTimeseries(timeseries);
+        }
+        else {
+            GWT.log("Timeseries to load was null!");
+        }
     }
 
-	private void fireGetTimeseries(SosTimeseries timeseries) {
-		getMainEventBus().fireEvent(new GetProcedureEvent(selectedServiceUrl, timeseries.getProcedure()));
-		getMainEventBus().fireEvent(new GetOfferingEvent(selectedServiceUrl, timeseries.getOffering()));
-		getMainEventBus().fireEvent(new GetFeatureEvent(selectedServiceUrl, timeseries.getFeature()));
-		getMainEventBus().fireEvent(new GetProcedureDetailsUrlEvent(selectedServiceUrl, timeseries.getProcedure()));
-	}
+    private void fireGetTimeseries(SosTimeseries timeseries) {
+        getMainEventBus().fireEvent(new GetProcedureEvent(selectedServiceUrl, timeseries.getProcedureId()));
+        getMainEventBus().fireEvent(new GetOfferingEvent(selectedServiceUrl, timeseries.getOfferingId()));
+        getMainEventBus().fireEvent(new GetFeatureEvent(selectedServiceUrl, timeseries.getFeatureId()));
+        getMainEventBus().fireEvent(new GetProcedureDetailsUrlEvent(timeseries));
+    }
 
-	private boolean isServiceSelected() {
-    	return selectedServiceUrl == null;
+    private boolean isServiceSelected() {
+        return selectedServiceUrl == null;
     }
 
     void clearMarkerSelection() {
@@ -219,9 +222,9 @@ class StationSelectorController implements MapController {
     public String getSelectedStationFilter() {
         return selectedStationFilterByServiceUrl.get(selectedServiceUrl);
     }
-    
+
     public void removeSelectedStationFilter(String url) {
-    	selectedStationFilterByServiceUrl.remove(url);
+        selectedStationFilterByServiceUrl.remove(url);
     }
 
     public String getSelectedFeatureId() {
@@ -231,10 +234,10 @@ class StationSelectorController implements MapController {
     public Station getSelectedStation() {
         return selectedStation;
     }
-    
+
     public SosTimeseries getSelectedTimeseries() {
-		return selectedStation.getTimeseriesByCategory(selectedCategory);
-	}
+        return selectedStation.getTimeseriesByCategory(selectedCategory);
+    }
 
     public Phenomenon getSelectedPhenomenon() {
         return getParametersLookup().getPhenomenon(selectedCategory);
@@ -244,10 +247,6 @@ class StationSelectorController implements MapController {
         return getParametersLookup().getFeature(getSelectedFeatureId());
     }
 
-    public BoundingBox getCurrentExtent() {
-        return map.getCurrentExtent();
-    }
-    
     private TimeseriesParametersLookup getParametersLookup() {
         final SOSMetadata metadata = getCurrentMetadata();
         return metadata.getTimeseriesParametersLookup();
@@ -256,7 +255,6 @@ class StationSelectorController implements MapController {
     public SOSMetadata getCurrentMetadata() {
         return getDataManager().getServiceMetadata(selectedServiceUrl);
     }
-    
 
     private class StationSelectorControllerEventBroker implements
             NewPhenomenonsEventHandler,
@@ -342,12 +340,12 @@ class StationSelectorController implements MapController {
             stationSelector.updateInfoLabels();
         }
 
-		@Override
-		public void onStore(StoreSOSMetadataEvent evt) {
-			if (evt.getMetadata().getServiceUrl().equals(controller.selectedServiceUrl)) {
-				controller.performSOSDataRequests(selectedServiceUrl);
-			}
-		}
+        @Override
+        public void onStore(StoreSOSMetadataEvent evt) {
+            if (evt.getMetadata().getServiceUrl().equals(controller.selectedServiceUrl)) {
+                controller.performSOSDataRequests(selectedServiceUrl);
+            }
+        }
     }
 
     /**
@@ -357,9 +355,9 @@ class StationSelectorController implements MapController {
      */
     public String getMostCommonStationCategory(List<Station> stations) {
         Map<String, Integer> countResults = new HashMap<String, Integer>();
-//        for (Station station : stations) {
-//            increaseAmountOf(station.getStationCategory(), countResults);
-//        }
+        // for (Station station : stations) {
+        // increaseAmountOf(station.getStationCategory(), countResults);
+        // }
         // TODO get most Common StationCategory
         int maxCount = 0;
         String mostCommonCategory = null;
@@ -372,28 +370,25 @@ class StationSelectorController implements MapController {
         }
         return mostCommonCategory;
     }
-    
+
     public void performSOSDataRequests(String serviceURL) {
-	    /*
-	     * XXX
-	     * Using the current extent would require the client to get missing stations
-	     * from the server part. this would make neccessary an interaction (zoom, pan) 
-	     * based rendering of stations!
-	     */
-//		BoundingBox bbox = controller.getCurrentExtent();
-	    SosDataManager dataManager = SosDataManager.getDataManager();
-	    SOSMetadata metadata = dataManager.getServiceMetadata(serviceURL);
+        /* XXX Using the current extent would require the client to get missing stations from the server part.
+         * this would make neccessary an interaction (zoom, pan) based rendering of stations!
+        BoundingBox bbox = controller.getCurrentExtent();*/
+        
+        SosDataManager dataManager = SosDataManager.getDataManager();
+        SOSMetadata metadata = dataManager.getServiceMetadata(serviceURL);
         BoundingBox bbox = metadata.getConfiguredExtent();
-		GetStationsWithinBBoxEvent getStations = new GetStationsWithinBBoxEvent(serviceURL, bbox);
-		loadingStations(true);
-		GetPhenomenonsEvent getPhenomenons = new GetPhenomenonsEvent.Builder(serviceURL).build();
-		EventBus.getMainEventBus().fireEvent(getStations);
-		EventBus.getMainEventBus().fireEvent(getPhenomenons);
-		setSelectedServiceURL(serviceURL);
-	}
+        GetStationsWithinBBoxEvent getStations = new GetStationsWithinBBoxEvent(serviceURL, bbox);
+        loadingStations(true);
+        GetPhenomenonsEvent getPhenomenons = new GetPhenomenonsEvent.Builder(serviceURL).build();
+        EventBus.getMainEventBus().fireEvent(getStations);
+        EventBus.getMainEventBus().fireEvent(getPhenomenons);
+        setSelectedServiceURL(serviceURL);
+    }
 
     @SuppressWarnings("unused")
-	private void increaseAmountOf(String category, Map<String, Integer> countResults) {
+    private void increaseAmountOf(String category, Map<String, Integer> countResults) {
         if (countResults.containsKey(category)) {
             Integer counter = countResults.get(category);
             countResults.put(category, ++counter);

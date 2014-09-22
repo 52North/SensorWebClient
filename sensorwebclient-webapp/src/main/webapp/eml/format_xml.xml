@@ -1,15 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<SimplePattern inputName="BAW_META" patternID="BAW_META">
+<?xml version='1.0' encoding='UTF-8'?>
+<SimplePattern inputName='BAW_META' patternID='BAW_META'>
   <SelectFunctions>
-    <SelectFunction newEventName="BAW_META">
+    <SelectFunction newEventName='BAW_META'>
       <NotifyOnSelect>
         <Message>
         	<format>XML</format>
 			<userID></userID>
-			<shortMessageEnter>Regel _ruleName_ hat einen Alarm ausgeloest um _R_</shortMessageEnter>
-			<shortMessageExit>Regel _ruleName_ Alarmzustand beendet um _R_</shortMessageExit>
-			<longMessageEnter>Regel _ruleName_ hat einen Alarm ausgeloest um _R_</longMessageEnter>
-			<longMessageExit>Regel _ruleName_ Alarmzustand beendet um _R_</longMessageExit>
+			<shortMessageEnter>Regel '_ruleName_' hat einen Alarm ausgeloest um _R_</shortMessageEnter>
+			<shortMessageExit>Regel '_ruleName_' Alarmzustand beendet um _R_</shortMessageExit>
+			<longMessageEnter>Regel '_ruleName_' hat einen Alarm ausgeloest um _R_</longMessageEnter>
+			<longMessageExit>Regel '_ruleName_' Alarmzustand beendet um _R_</longMessageExit>
 		</Message>
       </NotifyOnSelect>
     </SelectFunction>

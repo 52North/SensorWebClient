@@ -17,7 +17,7 @@
 		<html>
 			<head>
 				<title />
-				<link rel="stylesheet" href="../css/layout.min.min.css" />
+				<link rel="stylesheet" href="css/style.min.css" />
 			</head>
 			<body>
 				<table class="sensorInfo" border="0" width="100%">
@@ -172,51 +172,51 @@
 											</xsl:for-each>
 										</xsl:for-each>
 									</xsl:for-each>
-									<!-- <xsl:for-each select="sml:positions"> <xsl:for-each select="sml:PositionList"> 
-										<xsl:for-each select="sml:position"> <xsl:for-each select="swe:Position"> 
-										<tr class="sensorInfo"> <td> <span> <b>Position: </b> </span> </td> <td> 
-										<span> ( <xsl:value-of select="substring-after( @referenceFrame, &quot;urn:ogc:crs:&quot;)" 
-										/> </span> <span> <xsl:text> )</xsl:text> </span> <xsl:for-each select="swe:location"> 
-										<xsl:for-each select="swe:Vector"> <xsl:for-each select="swe:coordinate"> 
-										<xsl:for-each select="@name"> <span> <xsl:value-of select="string(.)" /> 
-										</span> <span> <xsl:text>: </xsl:text> </span> </xsl:for-each> <xsl:for-each 
-										select="swe:Quantity"> <xsl:for-each select="swe:value"> <xsl:apply-templates 
-										/> <span> <xsl:text>&#160;</xsl:text> </span> </xsl:for-each> <xsl:for-each 
-										select="swe:uom"> <xsl:for-each select="@code"> <span> <xsl:text>&#160;</xsl:text> 
-										</span> <span> <xsl:value-of select="string(.)" /> </span> </xsl:for-each> 
-										<span> <xsl:text>&#160;</xsl:text> </span> </xsl:for-each> </xsl:for-each> 
-										</xsl:for-each> </xsl:for-each> </xsl:for-each> </td> </tr> </xsl:for-each> 
+									<!-- <xsl:for-each select="sml:positions"> <xsl:for-each select="sml:PositionList">
+										<xsl:for-each select="sml:position"> <xsl:for-each select="swe:Position">
+										<tr class="sensorInfo"> <td> <span> <b>Position: </b> </span> </td> <td>
+										<span> ( <xsl:value-of select="substring-after( @referenceFrame, &quot;urn:ogc:crs:&quot;)"
+										/> </span> <span> <xsl:text> )</xsl:text> </span> <xsl:for-each select="swe:location">
+										<xsl:for-each select="swe:Vector"> <xsl:for-each select="swe:coordinate">
+										<xsl:for-each select="@name"> <span> <xsl:value-of select="string(.)" />
+										</span> <span> <xsl:text>: </xsl:text> </span> </xsl:for-each> <xsl:for-each
+										select="swe:Quantity"> <xsl:for-each select="swe:value"> <xsl:apply-templates
+										/> <span> <xsl:text>&#160;</xsl:text> </span> </xsl:for-each> <xsl:for-each
+										select="swe:uom"> <xsl:for-each select="@code"> <span> <xsl:text>&#160;</xsl:text>
+										</span> <span> <xsl:value-of select="string(.)" /> </span> </xsl:for-each>
+										<span> <xsl:text>&#160;</xsl:text> </span> </xsl:for-each> </xsl:for-each>
+										</xsl:for-each> </xsl:for-each> </xsl:for-each> </td> </tr> </xsl:for-each>
 										</xsl:for-each> </xsl:for-each> </xsl:for-each> -->
 									<xsl:for-each select="sml:member">
 										<xsl:for-each select="sml:System">
-											<!-- <xsl:for-each select="sml:position"> <xsl:for-each select="swe:Position"> 
-												<tr class="sensorInfo"> <td> <span> <b>Position: </b> </span> </td> <td> 
-												<span> ( <xsl:value-of select="substring-after(@referenceFrame, &quot;urn:ogc:crs:&quot;)" 
-												/> <xsl:value-of select="substring-after(@referenceFrame, &quot;urn:ogc:def:crs:&quot;)" 
-												/> </span> <span> <xsl:text>) </xsl:text> </span> <xsl:for-each select="swe:location"> 
-												<xsl:for-each select="swe:Vector"> <xsl:for-each select="swe:coordinate"> 
-												<xsl:for-each select="@name"> <span> <xsl:value-of select="string(.)" /> 
-												</span> <span> <xsl:text>: </xsl:text> </span> </xsl:for-each> <xsl:for-each 
-												select="swe:Quantity"> <xsl:for-each select="swe:value"> <xsl:apply-templates 
-												/> <span> <xsl:text>&#160;</xsl:text> </span> </xsl:for-each> <xsl:for-each 
-												select="swe:uom"> <xsl:for-each select="@code"> <span> <xsl:value-of select="string(.)" 
-												/> </span> </xsl:for-each> <span> <xsl:text>&#160;</xsl:text> </span> </xsl:for-each> 
-												</xsl:for-each> </xsl:for-each> </xsl:for-each> </xsl:for-each> </td> </tr> 
+											<!-- <xsl:for-each select="sml:position"> <xsl:for-each select="swe:Position">
+												<tr class="sensorInfo"> <td> <span> <b>Position: </b> </span> </td> <td>
+												<span> ( <xsl:value-of select="substring-after(@referenceFrame, &quot;urn:ogc:crs:&quot;)"
+												/> <xsl:value-of select="substring-after(@referenceFrame, &quot;urn:ogc:def:crs:&quot;)"
+												/> </span> <span> <xsl:text>) </xsl:text> </span> <xsl:for-each select="swe:location">
+												<xsl:for-each select="swe:Vector"> <xsl:for-each select="swe:coordinate">
+												<xsl:for-each select="@name"> <span> <xsl:value-of select="string(.)" />
+												</span> <span> <xsl:text>: </xsl:text> </span> </xsl:for-each> <xsl:for-each
+												select="swe:Quantity"> <xsl:for-each select="swe:value"> <xsl:apply-templates
+												/> <span> <xsl:text>&#160;</xsl:text> </span> </xsl:for-each> <xsl:for-each
+												select="swe:uom"> <xsl:for-each select="@code"> <span> <xsl:value-of select="string(.)"
+												/> </span> </xsl:for-each> <span> <xsl:text>&#160;</xsl:text> </span> </xsl:for-each>
+												</xsl:for-each> </xsl:for-each> </xsl:for-each> </xsl:for-each> </td> </tr>
 												</xsl:for-each> </xsl:for-each> -->
-											<!-- <xsl:for-each select="sml:positions"> <xsl:for-each select="sml:PositionList"> 
-												<xsl:for-each select="sml:position"> <xsl:for-each select="swe:Position"> 
-												<tr class="sensorInfo"> <td> <span> <b>Position: </b> </span> </td> <td> 
-												<span> ( <xsl:value-of select="substring-after(@referenceFrame, &quot;urn:ogc:crs:&quot;)" 
-												/> <xsl:value-of select="substring-after(@referenceFrame, &quot;urn:ogc:def:crs:&quot;)" 
-												/> </span> <span> <xsl:text>) </xsl:text> </span> <xsl:for-each select="swe:location"> 
-												<xsl:for-each select="swe:Vector"> <xsl:for-each select="swe:coordinate"> 
-												<xsl:for-each select="@name"> <span> <xsl:value-of select="string(.)" /> 
-												</span> <span> <xsl:text>: </xsl:text> </span> </xsl:for-each> <xsl:for-each 
-												select="swe:Quantity"> <xsl:for-each select="swe:value"> <xsl:apply-templates 
-												/> <span> <xsl:text>&#160;</xsl:text> </span> </xsl:for-each> <xsl:for-each 
-												select="swe:uom"> <xsl:for-each select="@code"> <span> <xsl:value-of select="string(.)" 
-												/> </span> </xsl:for-each> <span> <xsl:text>&#160;</xsl:text> </span> </xsl:for-each> 
-												</xsl:for-each> </xsl:for-each> </xsl:for-each> </xsl:for-each> </td> </tr> 
+											<!-- <xsl:for-each select="sml:positions"> <xsl:for-each select="sml:PositionList">
+												<xsl:for-each select="sml:position"> <xsl:for-each select="swe:Position">
+												<tr class="sensorInfo"> <td> <span> <b>Position: </b> </span> </td> <td>
+												<span> ( <xsl:value-of select="substring-after(@referenceFrame, &quot;urn:ogc:crs:&quot;)"
+												/> <xsl:value-of select="substring-after(@referenceFrame, &quot;urn:ogc:def:crs:&quot;)"
+												/> </span> <span> <xsl:text>) </xsl:text> </span> <xsl:for-each select="swe:location">
+												<xsl:for-each select="swe:Vector"> <xsl:for-each select="swe:coordinate">
+												<xsl:for-each select="@name"> <span> <xsl:value-of select="string(.)" />
+												</span> <span> <xsl:text>: </xsl:text> </span> </xsl:for-each> <xsl:for-each
+												select="swe:Quantity"> <xsl:for-each select="swe:value"> <xsl:apply-templates
+												/> <span> <xsl:text>&#160;</xsl:text> </span> </xsl:for-each> <xsl:for-each
+												select="swe:uom"> <xsl:for-each select="@code"> <span> <xsl:value-of select="string(.)"
+												/> </span> </xsl:for-each> <span> <xsl:text>&#160;</xsl:text> </span> </xsl:for-each>
+												</xsl:for-each> </xsl:for-each> </xsl:for-each> </xsl:for-each> </td> </tr>
 												</xsl:for-each> </xsl:for-each> </xsl:for-each> </xsl:for-each> -->
 										</xsl:for-each>
 									</xsl:for-each>
@@ -370,34 +370,34 @@
 													</xsl:for-each>
 												</xsl:for-each>
 											</xsl:for-each>
-											<!-- <xsl:for-each select="sml:position"> <xsl:for-each select="swe:Position"> 
-												<tr class="sensorInfo"> <td> <span> <b>Position: </b> </span> </td> <td> 
-												<span> ( <xsl:value-of select="substring-after(@referenceFrame, &quot;urn:ogc:crs:&quot;)" 
-												/> <xsl:value-of select="substring-after(@referenceFrame, &quot;urn:ogc:def:crs:&quot;)" 
-												/> </span> <span> <xsl:text>) </xsl:text> </span> <xsl:for-each select="swe:location"> 
-												<xsl:for-each select="swe:Vector"> <xsl:for-each select="swe:coordinate"> 
-												<xsl:for-each select="@name"> <span> <xsl:value-of select="string(.)" /> 
-												</span> <span> <xsl:text>: </xsl:text> </span> </xsl:for-each> <xsl:for-each 
-												select="swe:Quantity"> <xsl:for-each select="swe:value"> <xsl:apply-templates 
-												/> <span> <xsl:text>&#160;</xsl:text> </span> </xsl:for-each> <xsl:for-each 
-												select="swe:uom"> <xsl:for-each select="@code"> <span> <xsl:value-of select="string(.)" 
-												/> </span> </xsl:for-each> <span> <xsl:text>&#160;</xsl:text> </span> </xsl:for-each> 
-												</xsl:for-each> </xsl:for-each> </xsl:for-each> </xsl:for-each> </td> </tr> 
+											<!-- <xsl:for-each select="sml:position"> <xsl:for-each select="swe:Position">
+												<tr class="sensorInfo"> <td> <span> <b>Position: </b> </span> </td> <td>
+												<span> ( <xsl:value-of select="substring-after(@referenceFrame, &quot;urn:ogc:crs:&quot;)"
+												/> <xsl:value-of select="substring-after(@referenceFrame, &quot;urn:ogc:def:crs:&quot;)"
+												/> </span> <span> <xsl:text>) </xsl:text> </span> <xsl:for-each select="swe:location">
+												<xsl:for-each select="swe:Vector"> <xsl:for-each select="swe:coordinate">
+												<xsl:for-each select="@name"> <span> <xsl:value-of select="string(.)" />
+												</span> <span> <xsl:text>: </xsl:text> </span> </xsl:for-each> <xsl:for-each
+												select="swe:Quantity"> <xsl:for-each select="swe:value"> <xsl:apply-templates
+												/> <span> <xsl:text>&#160;</xsl:text> </span> </xsl:for-each> <xsl:for-each
+												select="swe:uom"> <xsl:for-each select="@code"> <span> <xsl:value-of select="string(.)"
+												/> </span> </xsl:for-each> <span> <xsl:text>&#160;</xsl:text> </span> </xsl:for-each>
+												</xsl:for-each> </xsl:for-each> </xsl:for-each> </xsl:for-each> </td> </tr>
 												</xsl:for-each> </xsl:for-each> -->
-											<!-- <xsl:for-each select="sml:positions"> <xsl:for-each select="sml:PositionList"> 
-												<xsl:for-each select="sml:position"> <xsl:for-each select="swe:Position"> 
-												<tr class="sensorInfo"> <td> <span> <b>Position: </b> </span> </td> <td> 
-												<span> ( <xsl:value-of select="substring-after(@referenceFrame, &quot;urn:ogc:crs:&quot;)" 
-												/> <xsl:value-of select="substring-after(@referenceFrame, &quot;urn:ogc:def:crs:&quot;)" 
-												/> </span> <span> <xsl:text>) </xsl:text> </span> <xsl:for-each select="swe:location"> 
-												<xsl:for-each select="swe:Vector"> <xsl:for-each select="swe:coordinate"> 
-												<xsl:for-each select="@name"> <span> <xsl:value-of select="string(.)" /> 
-												</span> <span> <xsl:text>: </xsl:text> </span> </xsl:for-each> <xsl:for-each 
-												select="swe:Quantity"> <xsl:for-each select="swe:value"> <xsl:apply-templates 
-												/> <span> <xsl:text>&#160;</xsl:text> </span> </xsl:for-each> <xsl:for-each 
-												select="swe:uom"> <xsl:for-each select="@code"> <span> <xsl:value-of select="string(.)" 
-												/> </span> </xsl:for-each> <span> <xsl:text>&#160;</xsl:text> </span> </xsl:for-each> 
-												</xsl:for-each> </xsl:for-each> </xsl:for-each> </xsl:for-each> </td> </tr> 
+											<!-- <xsl:for-each select="sml:positions"> <xsl:for-each select="sml:PositionList">
+												<xsl:for-each select="sml:position"> <xsl:for-each select="swe:Position">
+												<tr class="sensorInfo"> <td> <span> <b>Position: </b> </span> </td> <td>
+												<span> ( <xsl:value-of select="substring-after(@referenceFrame, &quot;urn:ogc:crs:&quot;)"
+												/> <xsl:value-of select="substring-after(@referenceFrame, &quot;urn:ogc:def:crs:&quot;)"
+												/> </span> <span> <xsl:text>) </xsl:text> </span> <xsl:for-each select="swe:location">
+												<xsl:for-each select="swe:Vector"> <xsl:for-each select="swe:coordinate">
+												<xsl:for-each select="@name"> <span> <xsl:value-of select="string(.)" />
+												</span> <span> <xsl:text>: </xsl:text> </span> </xsl:for-each> <xsl:for-each
+												select="swe:Quantity"> <xsl:for-each select="swe:value"> <xsl:apply-templates
+												/> <span> <xsl:text>&#160;</xsl:text> </span> </xsl:for-each> <xsl:for-each
+												select="swe:uom"> <xsl:for-each select="@code"> <span> <xsl:value-of select="string(.)"
+												/> </span> </xsl:for-each> <span> <xsl:text>&#160;</xsl:text> </span> </xsl:for-each>
+												</xsl:for-each> </xsl:for-each> </xsl:for-each> </xsl:for-each> </td> </tr>
 												</xsl:for-each> </xsl:for-each> </xsl:for-each> </xsl:for-each> -->
 										</xsl:for-each>
 										<xsl:for-each select="sml2:PhysicalSystem">

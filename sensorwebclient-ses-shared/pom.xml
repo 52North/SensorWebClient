@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.n52.sensorweb</groupId>
 		<artifactId>sensorwebclient</artifactId>
-		<version>3.2.0</version>
+		<version>3.3.0-rc.1</version>
 	</parent>
 	<artifactId>sensorwebclient-ses-shared</artifactId>
 	<packaging>jar</packaging>
@@ -23,6 +23,10 @@
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-user</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf</groupId>
+			<artifactId>jts4gwt</artifactId>
 		</dependency>
 	</dependencies>
 

@@ -1,32 +1,33 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as publishedby the Free
+ * Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of the
+ * following licenses, the combination of the program with the linked library is
+ * not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed under
+ * the aforementioned licenses, is permitted by the copyright holders if the
+ * distribution is compliant with both the GNU General Public License version 2
+ * and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
-
 package org.n52.shared.serializable.pojos.sos;
 
-import org.n52.shared.Constants;
-import org.n52.shared.serializable.pojos.BoundingBox;
-import org.n52.shared.serializable.pojos.EastingNorthing;
+import org.n52.io.crs.BoundingBox;
 
 public class SOSMetadataBuilder {
 
@@ -42,28 +43,28 @@ public class SOSMetadataBuilder {
 
     private boolean waterML = false;
 
+    private boolean eventing = false;
+
     private boolean autoZoom = true;
-    
+
     private boolean forceXYAxisOrder = false;
-    
+
     private boolean protectedService = false;
 
+    private boolean supportsFirstLatest = false;
+
+    private boolean gdaPrefinal = false;
+
     private int requestChunk = 100;
-    
-    private double llEasting = Double.NaN;
 
-    private double llNorthing = Double.NaN;
+    private int timeout = 10000;
 
-    private double urEasting = Double.NaN;
-
-    private double urNorthing = Double.NaN;
-
-    private boolean sosSpecificBboxConfigured;
+    private BoundingBox extent;
 
     public SOSMetadataBuilder() {
         // default
     }
-    
+
     public SOSMetadata build() {
         return new SOSMetadata(this);
     }
@@ -107,14 +108,24 @@ public class SOSMetadataBuilder {
         this.adapter = adapter.trim();
         return this;
     }
-    
+
 	public SOSMetadataBuilder addProtectedService(boolean protectedService) {
 		this.protectedService = protectedService;
 		return this;
 	}
 
+	public SOSMetadataBuilder addSupportsFirstLatest(boolean supportsFirstLatest) {
+        this.supportsFirstLatest = supportsFirstLatest;
+        return this;
+    }
+
     public SOSMetadataBuilder setWaterML(boolean waterML) {
         this.waterML = waterML;
+        return this;
+    }
+
+    public SOSMetadataBuilder setEnableEventing(boolean enableEventing) {
+        this.eventing = enableEventing;
         return this;
     }
 
@@ -128,6 +139,11 @@ public class SOSMetadataBuilder {
         return this;
     }
     
+    public SOSMetadataBuilder setGdaPrefinal(boolean gdaPrefinal) {
+        this.gdaPrefinal = gdaPrefinal;
+        return this;
+    }
+
     public SOSMetadataBuilder setRequestChunk(int requestChunk) {
         if (requestChunk > 0) {
             this.requestChunk = requestChunk;
@@ -135,54 +151,16 @@ public class SOSMetadataBuilder {
         return this;
     }
 
-    public SOSMetadataBuilder addLowerLeftEasting(Double llEasting) {
-        if (llEasting == null) {
-            throw new NullPointerException("llEasting parameter must not be null or NaN.");
-        }
-        if (llEasting.isNaN()) {
-            throw new IllegalArgumentException("llEasting parameter must be valid Double: " + llEasting);
-        }
-        this.sosSpecificBboxConfigured = true;
-        this.llEasting = llEasting;
+    public SOSMetadataBuilder setTimeout(int timeout) {
+        this.timeout = timeout;
         return this;
     }
 
-    public SOSMetadataBuilder addLowerLeftNorthing(Double llNorthing) {
-        if (llNorthing == null) {
-            throw new NullPointerException("llNorthing parameter must not be null or NaN.");
-        }
-        if (llNorthing.isNaN()) {
-            throw new IllegalArgumentException("llNorthing parameter must be valid Double: " + llNorthing);
-        }
-        this.sosSpecificBboxConfigured = true;
-        this.llNorthing = llNorthing;
+    public SOSMetadataBuilder withExtent(BoundingBox bbox) {
+        this.extent = bbox;
         return this;
     }
 
-    public SOSMetadataBuilder addUpperRightEasting(Double urEasting) {
-        if (urEasting == null) {
-            throw new NullPointerException("urEasting parameter must not be null or NaN.");
-        }
-        if (urEasting.isNaN()) {
-            throw new IllegalArgumentException("urEasting parameter must be valid Double: " + urEasting);
-        }
-        this.sosSpecificBboxConfigured = true;
-        this.urEasting = urEasting;
-        return this;
-    }
-
-    public SOSMetadataBuilder addUpperRightNorthing(Double urNorthing) {
-        if (urNorthing == null) {
-            throw new NullPointerException("urNorthing parameter must not be null or NaN.");
-        }
-        if (urNorthing.isNaN()) {
-            throw new IllegalArgumentException("urNorthing parameter must be valid Double: " + urNorthing);
-        }
-        this.sosSpecificBboxConfigured = true;
-        this.urNorthing = urNorthing;
-        return this;
-    }
-    
     /* --------------------------
      *  Builder's Getter methods
      */
@@ -203,6 +181,10 @@ public class SOSMetadataBuilder {
         return this.waterML;
     }
 
+    public boolean isEventing() {
+        return this.eventing;
+    }
+
     public String getSosMetadataHandler() {
         return this.sosMetadataHandler;
     }
@@ -210,7 +192,7 @@ public class SOSMetadataBuilder {
     public String getAdapter() {
         return this.adapter;
     }
-    
+
     public boolean isProctectedService() {
     	return this.protectedService;
     }
@@ -218,25 +200,30 @@ public class SOSMetadataBuilder {
     public boolean isAutoZoom() {
         return this.autoZoom;
     }
-    
+
     public boolean isForceXYAxisOrder() {
         return this.forceXYAxisOrder;
+    }
+
+    public boolean isSupportsFirstLatest() {
+        return this.supportsFirstLatest;
+    }
+
+    public boolean isGdaPrefinal() {
+        return gdaPrefinal;
     }
 
     public int getRequestChunk() {
         return this.requestChunk;
     }
-    
-    /**
-     * @return the configured SOS specific extent or {@link Constants#FALLBACK_EXTENT} if no one was configured.
-     */
-    public BoundingBox getConfiguredServiceExtent() {
-        if ( !sosSpecificBboxConfigured) {
-            return Constants.FALLBACK_EXTENT;
-        }
-        EastingNorthing ll = new EastingNorthing(llEasting, llNorthing, "EPSG:4326");
-        EastingNorthing ur = new EastingNorthing(urEasting, urNorthing, "EPSG:4326");
-        return new BoundingBox(ll, ur);
+
+    public int getTimeout() {
+        return timeout;
     }
+
+    public BoundingBox getConfiguredServiceExtent() {
+        return extent;
+    }
+
 
 }

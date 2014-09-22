@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gda:GetDataAvailabilityResponse 
+    xmlns:gda="http://www.opengis.net/sosgda/1.0" 
+    xmlns:gml="http://www.opengis.net/gml/3.2" 
+    xmlns:swe="http://www.opengis.net/swe/2.0" 
+    xmlns:xlink="http://www.w3.org/1999/xlink" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/swes/2.0 http://schemas.opengis.net/swes/2.0/swes.xsd http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/gml.xsd http://www.opengis.net/sosgda/1.0 http://waterml2.org/schemas/gda/1.0/gda.xsd">
+    <gda:dataAvailabilityMember gml:id="dam_1">
+        <gda:procedure xlink:href="CMA-ENS1" xlink:title="CMA-ENS1"/>
+        <gda:observedProperty xlink:href="hydroSurface.owl#Discharge" xlink:title="Discharge"/>
+        <gda:featureOfInterest xlink:href="WEISER" xlink:title="WEISER"/>
+        <gda:phenomenonTime>
+            <gml:TimePeriod gml:id="tp_1">
+                <gml:beginPosition>2010-03-26T00:00:00.000Z</gml:beginPosition>
+                <gml:endPosition>2010-04-05T23:59:59.000Z</gml:endPosition>
+            </gml:TimePeriod>
+        </gda:phenomenonTime>
+        <gda:extension>
+            <swe:DataRecord definition="resultTime">
+                <swe:field name="resultTime1">
+                    <swe:Time>
+                        <swe:value>2010-03-25T00:00:00.000Z</swe:value>
+                        <swe:uom xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"/>
+                    </swe:Time>
+                </swe:field>
+                <swe:field name="resultTime2">
+                    <swe:Time>
+                        <swe:value>2010-03-25T06:00:00.000Z</swe:value>
+                        <swe:uom xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"/>
+                    </swe:Time>
+                </swe:field>
+                <swe:field name="resultTime3">
+                    <swe:Time>
+                        <swe:value>2010-03-25T12:00:00.000Z</swe:value>
+                        <swe:uom xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"/>
+                    </swe:Time>
+                </swe:field>
+                <swe:field name="resultTime4">
+                    <swe:Time>
+                        <swe:value>2010-03-25T18:00:00.000Z</swe:value>
+                        <swe:uom xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"/>
+                    </swe:Time>
+                </swe:field>
+            </swe:DataRecord>
+        </gda:extension>
+    </gda:dataAvailabilityMember>
+</gda:GetDataAvailabilityResponse>
