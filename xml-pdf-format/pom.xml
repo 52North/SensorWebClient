@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.n52.sensorweb</groupId>
 		<artifactId>sensorwebclient</artifactId>
-		<version>3.3.0-rc.2-SNAPSHOT</version>
+		<version>3.2.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xml-pdf-format</artifactId>
@@ -17,7 +17,7 @@
 			<version>2.6.0</version>
 		</dependency>
 	</dependencies>
-    
+
 	<build>
 		<plugins>
 			<plugin>
@@ -32,7 +32,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<!-- xmlbeans plugin only used to generate the classes not for compiling 
+					<!-- xmlbeans plugin only used to generate the classes not for compiling
 						or jar generation. -->
 					<noJavac>true</noJavac>
 					<memoryInitialSize>256</memoryInitialSize>
