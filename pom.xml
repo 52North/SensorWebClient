@@ -1061,7 +1061,7 @@
         </repository>
         <repository>
             <id>geotools-new</id>
-            <url>http://repo.opengeo.org/</url>
+            <url>http://download.osgeo.org/webdav/geotools</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
