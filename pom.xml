@@ -664,27 +664,6 @@
                     </configuration>
                 </plugin>
 
-                <plugin>
-                    <groupId>org.jasig.maven</groupId>
-                    <artifactId>maven-notice-plugin</artifactId>
-                    <version>1.0.6</version>
-                    <configuration>
-                        <noticeTemplate>misc/NOTICE.template</noticeTemplate>
-                        <licenseMapping>
-                            <param>http://52north.github.io/cdn/licenses/license-mappings.xml</param>
-                        </licenseMapping>
-                        <generateChildNotices>false</generateChildNotices>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>check-license</id>
-                            <phase>initialize</phase>
-                            <goals>
-                                <goal>check</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -753,6 +732,28 @@
                 </executions>
             </plugin>
 
+            <plugin>
+                <groupId>org.jasig.maven</groupId>
+                <artifactId>maven-notice-plugin</artifactId>
+                <version>1.0.6</version>
+                <configuration>
+                    <noticeTemplate>misc/NOTICE.template</noticeTemplate>
+                    <licenseMapping>
+                        <param>http://52north.github.io/cdn/licenses/license-mappings.xml</param>
+                    </licenseMapping>
+                    <generateChildNotices>false</generateChildNotices>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>check-license</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+                
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-eclipse-plugin</artifactId>
