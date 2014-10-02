@@ -63,14 +63,6 @@
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
 
-	<!-- <servlet>
-		<servlet-name>ConfigurationContext</servlet-name>
-		<servlet-class>
-			org.n52.server.mgmt.ConfigurationContext
-		</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet> -->
-
 	<servlet>
 		<servlet-name>TimeSeriesDataService</servlet-name>
 		<servlet-class>
@@ -130,14 +122,6 @@
 		<servlet-name>QueryService</servlet-name>
 		<url-pattern>/client/QueryService</url-pattern>
 	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>TimerTask</servlet-name>
-		<servlet-class>
-			org.n52.server.TimerTaskServlet
-		</servlet-class>
-		<load-on-startup>2</load-on-startup>
-	</servlet>
 
 	<servlet>
 		<servlet-name>jFreeChartDisplayChart</servlet-name>

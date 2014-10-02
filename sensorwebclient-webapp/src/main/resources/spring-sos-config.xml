@@ -1,7 +1,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
@@ -13,5 +13,27 @@
           destroy-method="shutdown">
 
     </bean>
+
+    <bean id="taskScheduler" class="org.n52.server.mgmt.schedule.JobScheduler" init-method="init" destroy-method="shutdown">
+        <property name="startupDelayInSeconds" value="5" />
+        <property name="scheduledJobs">
+            <list>
+                <ref bean="regularCacheUpdate"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="regularCacheUpdate" class="org.n52.server.mgmt.schedule.CacheUpdateJob">
+        <property name="jobName" value="CacheUpdate" />
+        <property name="jobDescription" value="Job which updates cached metadata of configured services." />
+        <property name="triggerName" value="dailyAt_03:00am" />
+
+        <!-- http://quartz-scheduler.org/documentation/quartz-2.1.x/tutorials/tutorial-lesson-06 -->
+        <property name="cronExpression" value="0 0 03 * * ?" />
+
+        <property name="triggerAtStartup" value="true" />
+        <property name="rewriteAtStartup" value="false" />
+    </bean>
+
 
 </beans>
