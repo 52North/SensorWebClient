@@ -90,8 +90,7 @@ public class SosAdapterFactory {
 
     private static HttpClient createHttpClient(SOSMetadata metadata) {
         PoolingClientConnectionManager cm = new PoolingClientConnectionManager();
-        cm.setDefaultMaxPerRoute(20); // Increase default max connection per route to 20
-        cm.setMaxTotal(200); // Increase max total connection to 200
+        cm.setMaxTotal(metadata.getHttpConnectionPoolSize());
 
         int timeout = metadata.getTimeout();
         SimpleHttpClient simpleClient = new SimpleHttpClient(timeout, timeout, cm);

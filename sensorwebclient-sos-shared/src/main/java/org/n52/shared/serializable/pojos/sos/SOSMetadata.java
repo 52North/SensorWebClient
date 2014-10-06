@@ -95,6 +95,8 @@ public class SOSMetadata implements Serializable {
 
     private boolean gdaPrefinal = false; // default
 
+    private int httpConnectionPoolSize = 50; // default
+
     private BoundingBox configuredExtent;
 
     @SuppressWarnings("unused")
@@ -156,6 +158,7 @@ public class SOSMetadata implements Serializable {
         this.protectedService = builder.isProctectedService();
         this.eventing = builder.isEventing();
         this.gdaPrefinal = builder.isGdaPrefinal();
+        this.httpConnectionPoolSize = builder.getHttpConnectionPoolSize();
         this.setSosMetadataHandler(builder.getSosMetadataHandler());
         this.setAdapter(builder.getAdapter());
     }
@@ -186,7 +189,7 @@ public class SOSMetadata implements Serializable {
         return sosMetadataHandler;
     }
 
-    public void setSosMetadataHandler(String handler) {
+    public final void setSosMetadataHandler(String handler) {
         // is null when used on client side
         this.sosMetadataHandler = handler != null ? handler.trim() : null;
     }
@@ -198,7 +201,7 @@ public class SOSMetadata implements Serializable {
         return adapter;
     }
 
-    public void setAdapter(String adapter) {
+    public final void setAdapter(String adapter) {
         // is null when used on client side
         this.adapter = adapter != null ? adapter.trim() : null;
     }
@@ -289,6 +292,10 @@ public class SOSMetadata implements Serializable {
 
     public boolean isGdaPrefinal() {
         return gdaPrefinal;
+    }
+
+    public int getHttpConnectionPoolSize() {
+        return httpConnectionPoolSize;
     }
 
     public boolean isProtectedService() {

@@ -41,7 +41,7 @@ public class SosInstanceContentHandler extends DefaultHandler {
 
     enum TagNames {
 
-        INSTANCE, ITEMNAME, URL, VERSION, METADATAHANDLER, ADAPTER, WATERML, TIMEOUT, LLEASTING, LLNORTHING, UREASTING, URNORTHING, DEFAULTZOOM, AUTOZOOM, REQUESTCHUNK, FORCEXYAXISORDER, PROTECTEDSERVICE, NOELEMENT, SUPPORTSFIRSTLATEST, ENABLEEVENTING, GDAPREFINAL;
+        INSTANCE, ITEMNAME, URL, VERSION, METADATAHANDLER, ADAPTER, WATERML, TIMEOUT, LLEASTING, LLNORTHING, UREASTING, URNORTHING, DEFAULTZOOM, AUTOZOOM, REQUESTCHUNK, FORCEXYAXISORDER, PROTECTEDSERVICE, NOELEMENT, SUPPORTSFIRSTLATEST, ENABLEEVENTING, GDAPREFINAL, HTTPCONNECTIONPOOLSIZE;
     }
 
     private SOSMetadataBuilder currentBuilder = new SOSMetadataBuilder();
@@ -95,6 +95,8 @@ public class SosInstanceContentHandler extends DefaultHandler {
             currentElement = TagNames.SUPPORTSFIRSTLATEST;
         } else if (TagNames.GDAPREFINAL.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.GDAPREFINAL;
+        } else if (TagNames.HTTPCONNECTIONPOOLSIZE.name().equalsIgnoreCase(qName)) {
+            currentElement = TagNames.HTTPCONNECTIONPOOLSIZE;
         }
     }
 
@@ -197,6 +199,10 @@ public class SosInstanceContentHandler extends DefaultHandler {
                     case GDAPREFINAL:
                         boolean gdaPrefinal = Boolean.parseBoolean(parsedCharacters);
                         currentBuilder.setGdaPrefinal(gdaPrefinal);
+                        break;
+                    case HTTPCONNECTIONPOOLSIZE:
+                        int httpConnectionPoolSize = Integer.parseInt(parsedCharacters);
+                        currentBuilder.setHttpConnectionPoolSize(httpConnectionPoolSize);
                         break;
                     default:
                         currentElement = TagNames.NOELEMENT; // reset

@@ -19,6 +19,7 @@
         <urEasting>16</urEasting>
         <urNorthing>56.0</urNorthing>
         <defaultZoom>13</defaultZoom>
+        <httpConnectionPoolSize>50</httpConnectionPoolSize>
         <enableEventing>true</enableEventing>
     </instance>
 

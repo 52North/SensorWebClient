@@ -712,7 +712,7 @@
 
                             <abbrevLength>7</abbrevLength>
 
-                            <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                            <generateGitPropertiesFile>false</generateGitPropertiesFile>
                             <generateGitPropertiesFilename>src/main/resources/git.properties</generateGitPropertiesFilename>
 
                             <timestampFormat>{0,date,yyyy-MM-dd HH:mm:ss}</timestampFormat>

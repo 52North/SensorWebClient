@@ -55,6 +55,8 @@ public class SOSMetadataBuilder {
 
     private boolean gdaPrefinal = false;
 
+    private int httpConnectionPoolSize = 50;
+
     private int requestChunk = 100;
 
     private int timeout = 10000;
@@ -138,9 +140,14 @@ public class SOSMetadataBuilder {
         this.forceXYAxisOrder = forceXYAxisOrder;
         return this;
     }
-    
+
     public SOSMetadataBuilder setGdaPrefinal(boolean gdaPrefinal) {
         this.gdaPrefinal = gdaPrefinal;
+        return this;
+    }
+
+    public SOSMetadataBuilder setHttpConnectionPoolSize(int httpConnectionPoolSize) {
+        this.httpConnectionPoolSize = httpConnectionPoolSize;
         return this;
     }
 
@@ -211,6 +218,10 @@ public class SOSMetadataBuilder {
 
     public boolean isGdaPrefinal() {
         return gdaPrefinal;
+    }
+
+    public int getHttpConnectionPoolSize() {
+        return httpConnectionPoolSize;
     }
 
     public int getRequestChunk() {
