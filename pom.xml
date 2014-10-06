@@ -558,19 +558,6 @@
                             <pluginExecutions>
                                 <pluginExecution>
                                     <pluginExecutionFilter>
-                                        <groupId>com.google.code.maven-svn-revision-number-plugin</groupId>
-                                        <artifactId>svn-revision-number-maven-plugin</artifactId>
-                                        <versionRange>[1.0.0,)</versionRange>
-                                        <goals>
-                                            <goal>revision</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore />
-                                    </action>
-                                </pluginExecution>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
                                         <groupId>com.samaxes.maven</groupId>
                                         <artifactId>minify-maven-plugin</artifactId>
                                         <versionRange>[1.5.2,)</versionRange>
@@ -664,6 +651,15 @@
                     </configuration>
                 </plugin>
 
+                <plugin>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.3.2</version>
+                    <configuration>
+                        <preparationGoals>clean</preparationGoals>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                    </configuration>
+                </plugin>
+
             </plugins>
         </pluginManagement>
 
@@ -691,6 +687,35 @@
                                 Date())
                                 project.properties['currentYearDynamic'] = vartimestamp
                             </source>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>2.1.10</version>
+                <executions>
+                    <execution>
+                        <id>git-commit-id</id>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <dateFormat>yyyy-MM-dd HH:mm:ssZ</dateFormat>
+                            <gitDescribe>
+                                Faster to get just branch if skip = true
+                                <skip>false</skip>
+                            </gitDescribe>
+
+                            <abbrevLength>7</abbrevLength>
+
+                            <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                            <generateGitPropertiesFilename>src/main/resources/git.properties</generateGitPropertiesFilename>
+
+                            <timestampFormat>{0,date,yyyy-MM-dd HH:mm:ss}</timestampFormat>
                         </configuration>
                     </execution>
                 </executions>
@@ -872,14 +897,7 @@
                     </plugin>
 
 
-                    <plugin>
-                        <artifactId>maven-release-plugin</artifactId>
-                        <version>2.3.2</version>
-                        <configuration>
-                            <preparationGoals>clean</preparationGoals>
-                            <autoVersionSubmodules>true</autoVersionSubmodules>
-                        </configuration>
-                    </plugin>
+
                 </plugins>
             </build>
         </profile>
