@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.n52.sensorweb</groupId>
 		<artifactId>sensorwebclient</artifactId>
-		<version>3.3.0-rc.3-SNAPSHOT</version>
+		<version>3.3.0-rc.2</version>
 	</parent>
 	<artifactId>sensorwebclient-ses-shared</artifactId>
 	<packaging>jar</packaging>
