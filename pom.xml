@@ -1123,4 +1123,5 @@
         <developerConnection>scm:git:ssh://git@github.com/52North/SensorWebClient.git</developerConnection>
         <url>https://github.com/52North/SensorWebClient</url>
         <tag>sensorwebclient-3.3.0-rc.2</tag>
+    </scm>
 </project>
