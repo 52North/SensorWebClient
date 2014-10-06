@@ -87,11 +87,11 @@ public abstract class MetadataHandler {
         }
         this.sosMetadata = metadata;
     }
-    
+
     protected String getServiceUrl() {
         return sosMetadata.getServiceUrl();
     }
-    
+
     protected String getServiceVersion() {
         return sosMetadata.getVersion();
     }
@@ -110,7 +110,7 @@ public abstract class MetadataHandler {
 
     /**
      * TODO this method is currently under evaluation
-     * 
+     *
      * @param metadata
      * @return
      * @throws Exception
@@ -122,7 +122,7 @@ public abstract class MetadataHandler {
      * <br/>
      * Abstracting the actual information source enables the implementor to either assemble metadata from
      * different sources (e.g. via DescribeSensor) or even from multiple information sources.
-     * 
+     *
      * @param properties
      *        the container to be assembled with available metadata.
      * @throws Exception
@@ -137,7 +137,7 @@ public abstract class MetadataHandler {
         String sosTitle = serviceDescriptor.getServiceIdentification().getTitle();
         String omResponseFormat = ConnectorUtils.getResponseFormat(serviceDescriptor, "om");
         String smlVersion = ConnectorUtils.getSMLVersion(serviceDescriptor, sosVersion);
-        
+
         // set defaults if format/version could not be determined from capabilities
         if (omResponseFormat == null) {
             omResponseFormat = "http://www.opengis.net/om/2.0";
@@ -161,10 +161,10 @@ public abstract class MetadataHandler {
         } catch (Exception e) {
             Log.error("Cannot cast SOSMetadata", e);
         }
-        
+
         return sosMetadata;
     }
-    
+
     protected SOSAdapter createSosAdapter(SOSMetadata metadata) {
         return SosAdapterFactory.createSosAdapter(metadata);
     }
@@ -203,12 +203,12 @@ public abstract class MetadataHandler {
 
             // iterate over fois to delete double entries for the request
             for (int j = 0; j < foiArray.length; j++) {
-                
+
                 /*
                  * TODO perform GetFOI operations if capabilities does not
                  * list any features but offer a GetFOI operation.
                  */
-                
+
                 featureIds.add(foiArray[j]);
             }
         }
@@ -288,7 +288,10 @@ public abstract class MetadataHandler {
     }
 
     protected SOSAdapter getSosAdapter() {
-        return adapter == null ? createSosAdapter(sosMetadata) : adapter;
+        if (adapter == null) {
+            adapter = createSosAdapter(sosMetadata);
+        }
+        return adapter;
     }
 
     protected void setSosAdapter(SOSAdapter sosAdapter) {
@@ -298,7 +301,7 @@ public abstract class MetadataHandler {
     /**
      * Creates an {@link CRSUtils} according to metadata settings (e.g. if XY axis order shall be enforced
      * during coordinate transformation).
-     * 
+     *
      * @param metadata
      *        the SOS metadata containing SOS instance configuration.
      */
