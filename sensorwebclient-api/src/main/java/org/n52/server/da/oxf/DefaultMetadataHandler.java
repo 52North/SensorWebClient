@@ -201,7 +201,8 @@ public class DefaultMetadataHandler extends MetadataHandler {
                     for (final String featureId : fois) {
                         Station station = metadata.getStation(featureId);
                         if (station == null) {
-                            station = new Station(featureId, sosUrl);
+                            Feature feature = lookup.getFeature(featureId);
+                            station = new Station(feature);
                             station.setLocation(point);
                             metadata.addStation(station);
                         }

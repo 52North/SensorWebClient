@@ -77,7 +77,7 @@ public class SosTimeseries implements Serializable {
      * <li>{@link #phenomenonId}</li>
      * </ul>
      * If a parameter is not set it will be ignored.
-     * 
+     *
      * @return a unique and gml:id-valid identifier dependend on the parameter values set.
      */
     public String getTimeseriesId() {
@@ -137,7 +137,7 @@ public class SosTimeseries implements Serializable {
     /**
      * A label to categorize this timeseries. If not set, the {@link #phenomenonId} of the timeseries is
      * returned. Can be used to filter a set of stations according a common category.
-     * 
+     *
      * @return a label to categorize stations on which filtering can take place.
      */
     public Category getCategory() {
@@ -171,7 +171,7 @@ public class SosTimeseries implements Serializable {
     /**
      * Match against a filter criteria. The filter criteria is built as an <code>AND</code> criteria to match
      * against all parameter names. If a parameter is <code>null</code> is will be ignored (to match).
-     * 
+     *
      * @param searchParameters
      *        filter to match a timeseries. If <code>null</code> the filter matches by default.
      * @return <code>true</code> if constellation matches to the given filter.
@@ -189,14 +189,14 @@ public class SosTimeseries implements Serializable {
     /**
      * Match against a search criteria. The filter criteria is built as an <code>AND</code> criteria to match
      * against all parameters. If a parameter is <code>null</code> is will be ignored (to match).
-     * 
-     * @param offeringFilter
+     *
+     * @param offering
      *        filter to match the offering. If <code>null</code> the filter matches by default.
-     * @param phenomenonFilter
+     * @param phenomenon
      *        filter to match the phenomenon. If <code>null</code> the filter matches by default.
-     * @param procedureFilter
+     * @param procedure
      *        filter to match the procedure. If <code>null</code> the filter matches by default.
-     * @param featureFilter
+     * @param feature
      *        filter to match the feature. If <code>null</code> the filter matches by default.
      * @return <code>true</code> if constellation matches to all given filters.
      */
@@ -210,7 +210,7 @@ public class SosTimeseries implements Serializable {
 
     /**
      * Checks if given filter and currently set {@link #procedureId} do match.
-     * 
+     *
      * @param filter
      *        the feature to match. If paramter is <code>null</code> the filter does not apply.
      * @return <code>false</code> if filter does not match the {@link #procedureId} of this instance. Returns
@@ -222,7 +222,7 @@ public class SosTimeseries implements Serializable {
 
     /**
      * Checks if given filter and currently set {@link #phenomenonId} do match.
-     * 
+     *
      * @param filter
      *        the feature to match. If paramter is <code>null</code> the filter does not apply.
      * @return <code>false</code> if filter does not match the {@link #phenomenonId} of this instance. Returns
@@ -293,7 +293,7 @@ public class SosTimeseries implements Serializable {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("SosTimeseries: [ ").append("\n");
         sb.append("\tService: ").append(getServiceUrl()).append("\n");
         sb.append("\tOffering: ").append(getOfferingId()).append("\n");
@@ -321,6 +321,34 @@ public class SosTimeseries implements Serializable {
      */
     public String getLabel() {
         return getPhenomenon().getLabel() + "@" + getFeature().getLabel();
+    }
+
+    /**
+     * Shortens a given string (expected to be a URI). Shortening means
+     * to use the last part of the URI.
+     *
+     * <br>
+     * If <code>null</code> an empty string will be returned. If not a
+     * URI the passed string will be returned unchanged.
+     *
+     * @param uri the uri to shorten
+     * @return the parsed label
+     */
+    public static String createLabelFromUri(String uri) {
+        if (uri == null) {
+            return "";
+        }
+        if (uri.startsWith("urn")) {
+            return uri.substring(uri.lastIndexOf(":") + 1);
+        } else if (uri.startsWith("http")) {
+            if (!uri.contains("#")) {
+                return uri.substring(uri.lastIndexOf("/") + 1);
+            } else {
+                return uri.substring(uri.lastIndexOf("#") + 1);
+            }
+        } else {
+            return uri;
+        }
     }
 
 }

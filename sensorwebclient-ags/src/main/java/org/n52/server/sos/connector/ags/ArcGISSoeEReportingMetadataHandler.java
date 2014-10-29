@@ -203,7 +203,7 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
                         if (station == null) {
                             Point location = featureLocations.get(feature);
                             LOGGER.trace("Create Station '{}' at '{}'.", featureId, location);
-                            station = new Station(featureId, sosUrl);
+                            station = new Station(feature);
                             station.setLocation(location);
                             metadata.addStation(station);
                         }
