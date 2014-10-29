@@ -153,10 +153,10 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
         // TODO check integrety before adding them to metadata
         List<Station> stations = new ArrayList<Station>();
 
-        LOGGER.debug("Destillate timeseries from #{} potential. This may take a while.", observingTimeseries.size());
+        LOGGER.debug("Destillate timeseries from #{} potential ones. This may take a while.", observingTimeseries.size());
         for (Network network : networks.values()) {
             LOGGER.trace("############# PROCESS NETWORK #################");
-            LOGGER.debug("Build up cache for sensor network '{}'", network);
+            LOGGER.debug("Build cache for sensor network '{}'", network);
 
             String offeringId = network.getOffering();
             for (String procedureId : network.getMembers()) {
@@ -165,10 +165,9 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
 
                 if (component.getCapabilitiesArray() == null) {
                     LOGGER.trace("No related features in capabilities block => Link all features available!");
-                    LOGGER.warn("Not yet implemented.");
 
                     // TODO link all features available
-
+                    LOGGER.warn("Not yet implemented.");
                     continue;
                 }
 
@@ -208,9 +207,6 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
                             station.setLocation(location);
                             metadata.addStation(station);
                         }
-                        // get existing station
-                        station = metadata.getStation(featureId);
-
                         SosTimeseries copy = timeseries.clone();
                         copy.setFeature(new Feature(featureId, sosUrl));
 
@@ -349,7 +345,7 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
             paramCon.addParameterShell(GET_FOI_VERSION_PARAMETER, getServiceVersion());
             paramCon.addParameterShell("procedure", network.getNetwork());
             Operation operation = new Operation("GetFeatureOfInterest", getServiceUrl(), getServiceUrl());
-            
+
             try {
             	OperationResult result = getSosAdapter().doOperation(operation, paramCon);
 
