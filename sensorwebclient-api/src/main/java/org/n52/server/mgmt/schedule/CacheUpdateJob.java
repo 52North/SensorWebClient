@@ -68,7 +68,7 @@ public class CacheUpdateJob extends ScheduledJob implements Job {
     public void execute(JobExecutionContext context) throws JobExecutionException {
         JobKey jobKey = context.getJobDetail().getKey();
         TriggerKey triggerKey = context.getTrigger().getKey();
-        LOGGER.debug("'{}' (triggered by '{}') executing at ", jobKey, triggerKey, new DateTime());
+        LOGGER.debug("'{}' (triggered by '{}') executing at {}", jobKey, triggerKey, new DateTime());
 
         ConfigurationContext.UPDATE_TASK_RUNNING = true;
         try {

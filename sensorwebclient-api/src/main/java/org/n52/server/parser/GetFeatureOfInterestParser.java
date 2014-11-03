@@ -62,13 +62,13 @@ import com.vividsolutions.jts.geom.Point;
 public class GetFeatureOfInterestParser {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(GetFeatureOfInterestParser.class);
-	
+
 	private OperationResult getFoiResult;
-	
-	private SOSMetadata metadata; 
-	
+
+	private SOSMetadata metadata;
+
 	private CRSUtils referenceHelper = CRSUtils.createEpsgStrictAxisOrder();
-	
+
 	public GetFeatureOfInterestParser(OperationResult opsRes, SOSMetadata metadata) {
 		getFoiResult = opsRes;
 		if (getFoiResult == null) {
@@ -79,7 +79,7 @@ public class GetFeatureOfInterestParser {
 			referenceHelper = CRSUtils.createEpsgForcedXYAxisOrder();
 		}
 	}
-	
+
 	public void createFeatures() throws XmlException, IOException, OXFException {
         GetFeatureOfInterestResponseDocument foiResDoc = getFOIResponseOfOpResult(getFoiResult);
         TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
@@ -128,14 +128,14 @@ public class GetFeatureOfInterestParser {
                 // create station if not exists
                 Station station = metadata.getStation(id);
                 if (station == null) {
-                    station = new Station(id, metadata.getServiceUrl());
+                    station = new Station(feature);
                     station.setLocation(point);
                     metadata.addStation(station);
                 }
             }
         }
 	}
-	
+
 	private Point createParsedPoint(XmlObject feature, CRSUtils referenceHelper) throws XmlException {
         XmlCursor cursor = feature.newCursor();
         if (cursor.toChild(new QName("http://www.opengis.net/samplingSpatial/2.0", "shape"))) {
@@ -171,7 +171,7 @@ public class GetFeatureOfInterestParser {
         }
         return null;
     }
-	
+
 	private GetFeatureOfInterestResponseDocument getFOIResponseOfOpResult(
 			OperationResult getFoiResult) throws XmlException, IOException, OXFException {
     	XmlObject foiResponse = XmlObject.Factory.parse(getFoiResult.getIncomingResultAsStream());

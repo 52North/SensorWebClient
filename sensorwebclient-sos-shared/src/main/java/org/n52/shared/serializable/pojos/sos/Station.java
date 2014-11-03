@@ -49,7 +49,7 @@ public class Station implements Serializable {
 
     private Point location;
 
-    private String serviceUrl;
+    private Feature feature;
 
     private String label;
 
@@ -57,9 +57,13 @@ public class Station implements Serializable {
         // keep serializable
     }
 
-    public Station(String label, String url) {
+    public Station(Feature feature) {
         this.observingTimeseries = new ArrayList<SosTimeseries>();
-        this.serviceUrl = url;
+        this.label = SosTimeseries.createLabelFromUri(feature.getFeatureId());
+        this.feature = feature;
+    }
+
+    public void setLabel(String label) {
         this.label = label;
     }
 
@@ -124,7 +128,7 @@ public class Station implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Station: [ ").append("\n");
-        sb.append("\tId: ").append(label).append("\n");
+        sb.append("\tId: ").append(feature).append("\n");
         sb.append("\tLocation: ").append(location).append("\n");
         sb.append("\t#Timeseries: ").append(observingTimeseries.size()).append(" ]\n");
         return sb.toString();
@@ -149,12 +153,12 @@ public class Station implements Serializable {
     }
 
     public boolean hasAtLeastOneParameterConstellation() {
-        return observingTimeseries.size() > 0 ? true : false;
+        return observingTimeseries.size() > 0;
     }
 
     // @Override // gwt fails to compile
     public Station clone() {
-        Station station = new Station(label, serviceUrl);
+        Station station = new Station(feature);
         station.setLocation(location);
         station.setObservingTimeseries(new ArrayList<SosTimeseries>(observingTimeseries));
         return station;
@@ -165,7 +169,7 @@ public class Station implements Serializable {
     }
 
     public String getGlobalId() {
-        String[] parameters = new String[] {serviceUrl, location.toString()};
+        String[] parameters = new String[] {feature.getFeatureId(), location.toString()};
         IdGenerator idGenerator = new MD5HashGenerator("sta_");
         return idGenerator.generate(parameters);
     }
