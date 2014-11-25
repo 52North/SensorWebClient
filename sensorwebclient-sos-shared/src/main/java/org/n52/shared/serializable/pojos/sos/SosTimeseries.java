@@ -1,29 +1,21 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
- * Software GmbH
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source Software GmbH
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License version 2 as publishedby the Free
- * Software Foundation.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License version 2 as publishedby the Free Software Foundation.
  *
- * If the program is linked with libraries which are licensed under one of the
- * following licenses, the combination of the program with the linked library is
- * not considered a "derivative work" of the program:
+ * If the program is linked with libraries which are licensed under one of the following licenses, the combination of
+ * the program with the linked library is not considered a "derivative work" of the program:
  *
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
+ * - Apache License, version 2.0 - Apache Software License, version 1.0 - GNU Lesser General Public License, version 3 -
+ * Mozilla Public License, versions 1.0, 1.1 and 2.0 - Common Development and Distribution License (CDDL), version 1.0
  *
- * Therefore the distribution of the program linked with libraries licensed under
- * the aforementioned licenses, is permitted by the copyright holders if the
- * distribution is compliant with both the GNU General Public License version 2
- * and the aforementioned licenses.
+ * Therefore the distribution of the program linked with libraries licensed under the aforementioned licenses, is
+ * permitted by the copyright holders if the distribution is compliant with both the GNU General Public License version
+ * 2 and the aforementioned licenses.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
 package org.n52.shared.serializable.pojos.sos;
 
@@ -37,8 +29,8 @@ import org.n52.shared.requests.query.QueryParameters;
  * An SOS timeseries representation identified by <code>serviceUrl</code>, <code>procedure</code>,
  * <code>phenomenon</code>, <code>feature</code>, and <code>offering</code>.<br/>
  * <br/>
- * Timeseries can be categorized by a custom label (by default {@link #phenomenonId}). It can be used to
- * filter a set of timeseries which belongs to a predefined category.
+ * Timeseries can be categorized by a custom label (by default {@link #phenomenonId}). It can be used to filter a set of
+ * timeseries which belongs to a predefined category.
  */
 public class SosTimeseries implements Serializable {
 
@@ -87,7 +79,7 @@ public class SosTimeseries implements Serializable {
     }
 
     private String[] getParamtersAsArray() {
-        return new String[] {getServiceUrl(), getOfferingId(), getPhenomenonId(), getProcedureId(), getFeatureId()};
+        return new String[]{getServiceUrl(), getOfferingId(), getPhenomenonId(), getProcedureId(), getFeatureId()};
     }
 
     public SosService getSosService() {
@@ -135,8 +127,8 @@ public class SosTimeseries implements Serializable {
     }
 
     /**
-     * A label to categorize this timeseries. If not set, the {@link #phenomenonId} of the timeseries is
-     * returned. Can be used to filter a set of stations according a common category.
+     * A label to categorize this timeseries. If not set, the {@link #phenomenonId} of the timeseries is returned. Can
+     * be used to filter a set of stations according a common category.
      *
      * @return a label to categorize stations on which filtering can take place.
      */
@@ -145,8 +137,7 @@ public class SosTimeseries implements Serializable {
     }
 
     /**
-     * @param category
-     *        a filter to categorize stations.
+     * @param category a filter to categorize stations.
      */
     public void setCategory(Category category) {
         this.category = category;
@@ -169,11 +160,10 @@ public class SosTimeseries implements Serializable {
     }
 
     /**
-     * Match against a filter criteria. The filter criteria is built as an <code>AND</code> criteria to match
-     * against all parameter names. If a parameter is <code>null</code> is will be ignored (to match).
+     * Match against a filter criteria. The filter criteria is built as an <code>AND</code> criteria to match against
+     * all parameter names. If a parameter is <code>null</code> is will be ignored (to match).
      *
-     * @param searchParameters
-     *        filter to match a timeseries. If <code>null</code> the filter matches by default.
+     * @param searchParameters filter to match a timeseries. If <code>null</code> the filter matches by default.
      * @return <code>true</code> if constellation matches to the given filter.
      */
     public boolean matchesGlobalIds(QueryParameters searchParameters) {
@@ -187,17 +177,13 @@ public class SosTimeseries implements Serializable {
     }
 
     /**
-     * Match against a search criteria. The filter criteria is built as an <code>AND</code> criteria to match
-     * against all parameters. If a parameter is <code>null</code> is will be ignored (to match).
+     * Match against a search criteria. The filter criteria is built as an <code>AND</code> criteria to match against
+     * all parameters. If a parameter is <code>null</code> is will be ignored (to match).
      *
-     * @param offering
-     *        filter to match the offering. If <code>null</code> the filter matches by default.
-     * @param phenomenon
-     *        filter to match the phenomenon. If <code>null</code> the filter matches by default.
-     * @param procedure
-     *        filter to match the procedure. If <code>null</code> the filter matches by default.
-     * @param feature
-     *        filter to match the feature. If <code>null</code> the filter matches by default.
+     * @param offering filter to match the offering. If <code>null</code> the filter matches by default.
+     * @param phenomenon filter to match the phenomenon. If <code>null</code> the filter matches by default.
+     * @param procedure filter to match the procedure. If <code>null</code> the filter matches by default.
+     * @param feature filter to match the feature. If <code>null</code> the filter matches by default.
      * @return <code>true</code> if constellation matches to all given filters.
      */
     public boolean matchesLocalParamterIds(String offering, String phenomenon, String procedure, String feature) {
@@ -211,10 +197,9 @@ public class SosTimeseries implements Serializable {
     /**
      * Checks if given filter and currently set {@link #procedureId} do match.
      *
-     * @param filter
-     *        the feature to match. If paramter is <code>null</code> the filter does not apply.
+     * @param filter the feature to match. If paramter is <code>null</code> the filter does not apply.
      * @return <code>false</code> if filter does not match the {@link #procedureId} of this instance. Returns
-     *         <code>true</code> if filter matches or is <code>null</code> .
+     * <code>true</code> if filter matches or is <code>null</code> .
      */
     public boolean matchesProcedure(String filter) {
         return matches(filter, procedure.getProcedureId());
@@ -223,10 +208,9 @@ public class SosTimeseries implements Serializable {
     /**
      * Checks if given filter and currently set {@link #phenomenonId} do match.
      *
-     * @param filter
-     *        the feature to match. If paramter is <code>null</code> the filter does not apply.
+     * @param filter the feature to match. If paramter is <code>null</code> the filter does not apply.
      * @return <code>false</code> if filter does not match the {@link #phenomenonId} of this instance. Returns
-     *         <code>true</code> if filter matches or is <code>null</code> .
+     * <code>true</code> if filter matches or is <code>null</code> .
      */
     public boolean matchesPhenomenon(String filter) {
         return matches(filter, phenomenon.getPhenomenonId());
@@ -240,54 +224,62 @@ public class SosTimeseries implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( (feature == null) ? 0 : feature.hashCode());
-        result = prime * result + ( (offering == null) ? 0 : offering.hashCode());
-        result = prime * result + ( (phenomenon == null) ? 0 : phenomenon.hashCode());
-        result = prime * result + ( (procedure == null) ? 0 : procedure.hashCode());
-        result = prime * result + ( (category == null) ? 0 : category.hashCode());
-        result = prime * result + ( (sosService == null) ? 0 : sosService.hashCode());
+        result = prime * result + ((feature == null) ? 0 : feature.hashCode());
+        result = prime * result + ((offering == null) ? 0 : offering.hashCode());
+        result = prime * result + ((phenomenon == null) ? 0 : phenomenon.hashCode());
+        result = prime * result + ((procedure == null) ? 0 : procedure.hashCode());
+        result = prime * result + ((category == null) ? 0 : category.hashCode());
+        result = prime * result + ((sosService == null) ? 0 : sosService.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if ( ! (obj instanceof SosTimeseries))
+        }
+        if (!(obj instanceof SosTimeseries)) {
             return false;
+        }
         SosTimeseries other = (SosTimeseries) obj;
         if (feature == null) {
-            if (other.feature != null)
+            if (other.feature != null) {
                 return false;
-        }
-        else if ( !feature.equals(other.feature))
+            }
+        } else if (!feature.equals(other.feature)) {
             return false;
+        }
         if (offering == null) {
-            if (other.offering != null)
+            if (other.offering != null) {
                 return false;
-        }
-        else if ( !offering.equals(other.offering))
+            }
+        } else if (!offering.equals(other.offering)) {
             return false;
+        }
         if (phenomenon == null) {
-            if (other.phenomenon != null)
+            if (other.phenomenon != null) {
                 return false;
-        }
-        else if ( !phenomenon.equals(other.phenomenon))
+            }
+        } else if (!phenomenon.equals(other.phenomenon)) {
             return false;
+        }
         if (procedure == null) {
-            if (other.procedure != null)
+            if (other.procedure != null) {
                 return false;
-        }
-        else if ( !procedure.equals(other.procedure))
+            }
+        } else if (!procedure.equals(other.procedure)) {
             return false;
+        }
         if (sosService == null) {
-            if (other.sosService != null)
+            if (other.sosService != null) {
                 return false;
-        }
-        else if ( !sosService.equals(other.sosService))
+            }
+        } else if (!sosService.equals(other.sosService)) {
             return false;
+        }
         return true;
     }
 
@@ -324,12 +316,10 @@ public class SosTimeseries implements Serializable {
     }
 
     /**
-     * Shortens a given string (expected to be a URI). Shortening means
-     * to use the last part of the URI.
+     * Shortens a given string (expected to be a URI). Shortening means to use the last part of the URI.
      *
      * <br>
-     * If <code>null</code> an empty string will be returned. If not a
-     * URI the passed string will be returned unchanged.
+     * If <code>null</code> an empty string will be returned. If not a URI the passed string will be returned unchanged.
      *
      * @param uri the uri to shorten
      * @return the parsed label
@@ -342,9 +332,15 @@ public class SosTimeseries implements Serializable {
             return uri.substring(uri.lastIndexOf(":") + 1);
         } else if (uri.startsWith("http")) {
             if (!uri.contains("#")) {
-                return uri.substring(uri.lastIndexOf("/") + 1);
+                String candidate = uri.substring(uri.lastIndexOf("/") + 1);
+                return candidate.isEmpty()
+                        ? createLabelFromUri(uri.substring(0, uri.lastIndexOf("/")))
+                        : candidate;
             } else {
-                return uri.substring(uri.lastIndexOf("#") + 1);
+                String candidate = uri.substring(uri.lastIndexOf("#") + 1);
+                return candidate.isEmpty()
+                        ? createLabelFromUri(uri.substring(0, uri.lastIndexOf("#")))
+                        : candidate;
             }
         } else {
             return uri;
