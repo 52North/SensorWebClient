@@ -368,7 +368,7 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
             	LOGGER.warn("Service returned an ExceptionReport", e);
             }
             catch (ResponseExceedsSizeLimitException e) {
-            	LOGGER.warn("Response too large, skipping network.", e);
+            	LOGGER.warn("Response too large, skipping network '{}'", network, e);
             }
         }
         for (Feature feature : features.keySet()) {
