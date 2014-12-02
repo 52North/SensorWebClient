@@ -28,6 +28,7 @@
 package org.n52.server.sos.connector.ags;
 
 import com.vividsolutions.jts.geom.Point;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,14 +52,18 @@ import net.opengis.sensorML.x101.OutputsDocument.Outputs.OutputList;
 import net.opengis.sensorML.x101.SensorMLDocument;
 import net.opengis.sensorML.x101.SensorMLDocument.SensorML;
 import net.opengis.sensorML.x101.SensorMLDocument.SensorML.Member;
+
 import org.apache.xmlbeans.XmlObject;
+
 import static org.n52.io.crs.CRSUtils.createEpsgStrictAxisOrder;
+
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.ows.ExceptionReport;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
+
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_DESCRIPTION_FORMAT;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_SERVICE_PARAMETER;
@@ -66,10 +71,14 @@ import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_VERSION
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER;
 import static org.n52.oxf.sos.adapter.SOSAdapter.DESCRIBE_SENSOR;
+
 import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.server.da.MetadataHandler;
+import org.n52.server.da.oxf.ResponseExceedsSizeLimitException;
+
 import static org.n52.server.da.oxf.DescribeSensorAccessor.getSensorDescriptionAsSensorML;
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadata;
+
 import org.n52.server.util.PropertiesToHtml;
 import org.n52.server.util.XmlHelper;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
@@ -356,8 +365,10 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
             	LOGGER.warn("Exception in OXF layer while executing operation", e);
             }
             catch (ExceptionReport e) {
-                // TODO probably we do have to handle an ExceedsSizeLimitException here
             	LOGGER.warn("Service returned an ExceptionReport", e);
+            }
+            catch (ResponseExceedsSizeLimitException e) {
+            	LOGGER.warn("Response too large, skipping network.", e);
             }
         }
         for (Feature feature : features.keySet()) {
