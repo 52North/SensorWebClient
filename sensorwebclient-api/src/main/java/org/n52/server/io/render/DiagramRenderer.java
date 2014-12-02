@@ -27,9 +27,6 @@
  */
 package org.n52.server.io.render;
 
-import static org.n52.server.io.TimeseriesFactory.compressToTimeSeries;
-import static org.n52.server.io.TimeseriesFactory.createTimeSeries;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -41,7 +38,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
@@ -55,7 +51,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.chart.urls.XYURLGenerator;
 import org.jfree.data.general.DatasetGroup;
-import org.jfree.data.time.Second;
+import org.jfree.data.time.FixedMillisecond;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
@@ -67,13 +63,14 @@ import org.n52.oxf.feature.OXFFeatureCollection;
 import org.n52.oxf.feature.sos.ObservationSeriesCollection;
 import org.n52.oxf.util.JavaHelper;
 import org.n52.server.io.MetadataInURLGenerator;
+import org.n52.server.io.TimeseriesFactory;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.shared.serializable.pojos.Axis;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 
 public class DiagramRenderer {
-    
+
     private static final String DOTTED = "3";
 
     private static final String AREA = "2";
@@ -87,9 +84,9 @@ public class DiagramRenderer {
     private static final Color LABEL_COLOR = new Color(0, 0, 0);
 
     private static final String LABEL_FONT = "Arial";
-    
+
     private final Font label = new Font(LABEL_FONT, Font.BOLD, LABEL_FONT_SIZE);
-    
+
     private final Font tickLabelDomain = new Font(LABEL_FONT, Font.PLAIN, TICK_FONT_SIZE);
 
     private HashMap<String, Axis> axisMapping = new HashMap<String, Axis>();
@@ -107,7 +104,7 @@ public class DiagramRenderer {
     /**
      * Builds up a DesignDescriptionList which stores the information
      * about the style of each timeseries.
-     * 
+     *
      * @param options
      *            the options
      * @return the design description list
@@ -146,9 +143,9 @@ public class DiagramRenderer {
      * may contain multiple series;
      * series :=   corresponds to a time series for one foi
      * </pre>
-     * 
+     *
      * .
-     * 
+     *
      * @param entireCollMap
      *            the entire coll map
      * @param options
@@ -189,12 +186,11 @@ public class DiagramRenderer {
         DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
         dateAxis.setRange(begin.getTime(), end.getTime());
         dateAxis.setDateFormatOverride(new SimpleDateFormat());
+        dateAxis.setTimeZone(end.getTimeZone());
 
-        
-        
-        
-        
-        
+
+
+
         // add all axes
         String[] phenomenaIds = options.getAllPhenomenIds();
         // all the axis indices to map them later
@@ -203,7 +199,7 @@ public class DiagramRenderer {
             axes.put(phenomenaIds[i], i);
             plot.setRangeAxis(i, new NumberAxis(phenomenaIds[i]));
         }
-        
+
         // list range markers
         ArrayList<ValueMarker> referenceMarkers = new ArrayList<ValueMarker>();
         HashMap<String, double[]> referenceBounds = new HashMap<String, double[]>();
@@ -212,7 +208,7 @@ public class DiagramRenderer {
         for (int i = 0; i < options.getProperties().size(); i++) {
 
             TimeseriesProperties prop = options.getProperties().get(i);
-            
+
             String phenomenonId = prop.getPhenomenon();
 
             TimeSeriesCollection dataset = createDataset(entireCollMap, prop, phenomenonId, compress);
@@ -243,7 +239,7 @@ public class DiagramRenderer {
 					axe.setAutoRangeIncludesZero(false);
 				}
 			}
-            
+
             plot.setDataset(i, additionalDataset);
             plot.mapDatasetToRangeAxis(i, axes.get(phenomenonId));
 
@@ -292,19 +288,19 @@ public class DiagramRenderer {
                             BasicStroke.JOIN_ROUND, 1.0f)));
                 }
             }
-            
+
             plot.mapDatasetToRangeAxis(i, axes.get(phenomenonId));
         }
-        
+
         for (ValueMarker valueMarker : referenceMarkers) {
-			plot.addRangeMarker(valueMarker);	
+			plot.addRangeMarker(valueMarker);
 		}
-        
+
         // show actual time
         ValueMarker nowMarker = new ValueMarker(System.currentTimeMillis(), Color.orange, new BasicStroke(1.0f, BasicStroke.CAP_ROUND,
                 BasicStroke.JOIN_ROUND, 1.0f));
 		plot.addDomainMarker(nowMarker);
-		
+
         if (!this.isOverview) {
         	Iterator<Entry<String, double[]>> iterator = referenceBounds.entrySet().iterator();
         	while (iterator.hasNext()) {
@@ -312,23 +308,23 @@ public class DiagramRenderer {
         		String phenId = boundsEntry.getKey();
                 NumberAxis axe = (NumberAxis) plot.getRangeAxis(axes.get(phenId));
         		axe.setAutoRange(true);
-        		// add a margin 
+        		// add a margin
         		double marginOffset = (boundsEntry.getValue()[1] - boundsEntry.getValue()[0]) / 25;
         		boundsEntry.getValue()[0] -= marginOffset;
         		boundsEntry.getValue()[1] += marginOffset;
                 axe.setRange(boundsEntry.getValue()[0], boundsEntry.getValue()[1]);
         	}
 		}
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
+
+
+
+
         /**** SECOND RUN ***/
 
         // set domain axis labels:
@@ -477,6 +473,7 @@ public class DiagramRenderer {
         DateAxis axis = (DateAxis) plot.getDomainAxis();
         axis.setRange(begin.getTime(), end.getTime());
         axis.setDateFormatOverride(new SimpleDateFormat());
+        axis.setTimeZone(end.getTimeZone());
         for (int i = 1; i < observedProperties.length; i++) {
             XYDataset additionalDataset = timeSeries.get(i);
             plot.setDataset(i, additionalDataset);
@@ -507,26 +504,27 @@ public class DiagramRenderer {
             String[] procedureIds = new String[] { procID };
             String[] observedPropertyIds = new String[] { obsPropID };
             ObservationSeriesCollection seriesCollection = new ObservationSeriesCollection(obsColl, foiIds, observedPropertyIds, procedureIds, true);
-            
-            
+
+
             //
             // now let's put in the date-value pairs.
             // ! But put it only in if it differs from the previous
             // one !
             //
 
-            
-            
-            TimeSeries timeSeries = new TimeSeries(prop.getTimeseriesId(), Second.class);
-            
-            
-            
-            
+
+
+            TimeSeries timeSeries = new TimeSeries(prop.getTimeseriesId(), FixedMillisecond.class);
+
+
+
+
+            TimeseriesFactory factory = new TimeseriesFactory(seriesCollection);
             if (seriesCollection.getSortedTimeArray().length > 0) {
                 if (compress) {
-                    timeSeries = compressToTimeSeries(seriesCollection, prop.getTimeseries(), isOverview, prop.getGraphStyle());
+                    timeSeries = factory.compressToTimeSeries(prop.getTimeseries(), isOverview, prop.getGraphStyle());
                 } else {
-                    timeSeries = createTimeSeries(seriesCollection, prop.getTimeseries(), prop.getGraphStyle());
+                    timeSeries = factory.createTimeSeries(prop.getTimeseries(), prop.getGraphStyle());
                 }
             }
             dataset.addSeries(timeSeries);

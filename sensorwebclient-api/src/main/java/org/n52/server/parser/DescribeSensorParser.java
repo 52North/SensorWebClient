@@ -43,6 +43,7 @@ import net.opengis.sensorML.x101.IdentificationDocument.Identification;
 import net.opengis.sensorML.x101.IdentificationDocument.Identification.IdentifierList.Identifier;
 import net.opengis.sensorML.x101.IoComponentPropertyType;
 import net.opengis.sensorML.x101.OutputsDocument.Outputs.OutputList;
+import net.opengis.sensorML.x101.ProcessModelType;
 import net.opengis.sensorML.x101.SensorMLDocument;
 import net.opengis.sensorML.x101.SensorMLDocument.SensorML;
 import net.opengis.sensorML.x101.SensorMLDocument.SensorML.Member;
@@ -183,9 +184,12 @@ public class DescribeSensorParser {
         final SensorML sensorML = smlDoc.getSensorML();
         final Member[] members = sensorML.getMemberArray();
         if (members != null && members.length > 0) {
-            final AbstractComponentType sysDoc = (AbstractComponentType) members[0].getProcess();
-            final PositionType position = sysDoc.getPosition().getPosition();
-            return createPoint(position);
+        	AbstractProcessType abstractProcessType = members[0].getProcess();
+        	if (abstractProcessType instanceof AbstractComponentType) {
+        		final AbstractComponentType sysDoc = (AbstractComponentType) abstractProcessType;
+        		final PositionType position = sysDoc.getPosition().getPosition();
+        		return createPoint(position);
+        	}
         }
         return null;
     }
@@ -232,8 +236,9 @@ public class DescribeSensorParser {
             final OutputList outputList = processModel.getOutputs().getOutputList();
             final IoComponentPropertyType[] outputArray = outputList.getOutputArray();
             for (final IoComponentPropertyType output : outputArray) {
-                if (output.getQuantity().getDefinition().equals(phenomenonID)) {
-                    uom = output.getQuantity().getUom().getCode();
+            	Quantity quantity = output.getQuantity();
+                if (quantity.getDefinition().equals(phenomenonID) && quantity.getUom() != null) {
+                    uom = quantity.getUom().getCode();
                 }
             }
         }
@@ -432,8 +437,9 @@ public class DescribeSensorParser {
             final Member member = sml.getMemberArray(0);
             if (member.getProcess() instanceof AbstractComponentType) {
                 return ((AbstractComponentType) member.getProcess()).getCapabilitiesArray();
-            }
-            else {
+            } else if (member.getProcess() instanceof ProcessModelType) {
+            	return ((ProcessModelType) member.getProcess()).getCapabilitiesArray();
+            } else {
                 final SchemaType type = member.getProcess() != null ? member.getProcess().schemaType() : null;
                 LOGGER.warn("SensorML does not contain a process substitution: {}", type);
                 return new Capabilities[0];
@@ -550,9 +556,14 @@ public class DescribeSensorParser {
 
     public List<String> getPhenomenons() {
         final List<String> phenomenons = new ArrayList<String>();
-        final Member member = smlDoc.getSensorML().getMemberArray()[0];
-        final AbstractComponentType absComponent = (AbstractComponentType) member.getProcess();
-        final OutputList outputs = absComponent.getOutputs().getOutputList();
+        final AbstractProcessType absProcessType = smlDoc.getSensorML().getMemberArray()[0].getProcess();
+        OutputList outputs = null;
+        if (absProcessType instanceof AbstractComponentType) {
+        	outputs = ((AbstractComponentType) absProcessType).getOutputs().getOutputList();
+        }
+        else if (absProcessType instanceof ProcessModelType) {
+            outputs = ((ProcessModelType) absProcessType).getOutputs().getOutputList();
+        }
         for (final IoComponentPropertyType output : outputs.getOutputArray()) {
             if (output.isSetObservableProperty()) {
                 phenomenons.add(output.getObservableProperty().getDefinition());

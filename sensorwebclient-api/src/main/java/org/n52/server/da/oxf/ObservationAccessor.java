@@ -35,6 +35,7 @@ import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_OFFERIN
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_PROCEDURE_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_RESPONSE_FORMAT_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_RESULT_MODEL_PARAMETER;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_RESULT_TIME_TEMPORAL_FILTER_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_SERVICE_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_TEMPORAL_FILTER_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_OBSERVATION_VERSION_PARAMETER;
@@ -193,7 +194,16 @@ public class ObservationAccessor {
                 params.addParameterShell(timeParamShell);
             }
         }
-
+        
+        if (request.getResultTime() != null) {
+            Parameter resultTimeParam = new Parameter(GET_OBSERVATION_RESULT_TIME_TEMPORAL_FILTER_PARAMETER,
+                    true,
+                    new TemporalValueDomain(request.getResultTime()),
+                    Parameter.COMMON_NAME_TIME);
+            ParameterShell resultTimeParamShell = new ParameterShell(resultTimeParam, request.getResultTime());
+            params.addParameterShell(resultTimeParamShell);
+        }
+        
         if (waterML) {
             params.addParameterShell(GET_OBSERVATION_RESULT_MODEL_PARAMETER, "TimeseriesObservation");
         }

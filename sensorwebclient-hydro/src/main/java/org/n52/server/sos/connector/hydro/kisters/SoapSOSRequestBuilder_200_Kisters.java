@@ -45,17 +45,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SoapSOSRequestBuilder_200_Kisters extends SoapSOSRequestBuilder_200 {
-    
+
 	private String sosUrl;
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(SoapSOSRequestBuilder_200_Kisters.class);
-	
+
 	@Override
 	public String buildGetObservationRequest(ParameterContainer parameters) throws OXFException {
 		// check the temporal filter
 		ParameterShell temporalFilter = parameters.getParameterShellWithServiceSidedName("temporalFilter");
 		Object specifiedValue = temporalFilter.getSpecifiedValue();
-		
+
 		if (specifiedValue instanceof TimePosition_OXFExtension ) {
 			TimePosition_OXFExtension timePosition = (TimePosition_OXFExtension) specifiedValue;
 			// time parameter is latest
@@ -73,7 +73,9 @@ public class SoapSOSRequestBuilder_200_Kisters extends SoapSOSRequestBuilder_200
 					HttpEntity responseEntity = httpResponse.getEntity();
 					OperationResult result = new OperationResult(responseEntity.getContent(), parameters, getDataAvailability);
 					XmlObject result_xb = XmlObject.Factory.parse(result.getIncomingResultAsStream());
+
 					String resultStr = result_xb.xmlText();
+                    LOGGER.trace("Received response: {}", resultStr);
 					String timeString = resultStr.substring(resultStr.indexOf("<gml:beginPosition>") + 19, resultStr.indexOf("</gml:beginPosition>"));
 					// add start time to an GetObservation request
 					parameters.removeParameterShell(temporalFilter);

@@ -53,13 +53,15 @@ public class RequestConfig {
     private List<String> procedures;
 
     private ITime time = null;
+    
+    private ITime resultTime = null;
 
     private String firstLastParam;
 
     private String responseFormat = "";
 
     public RequestConfig(String sosURL, String offeringID, List<String> stationsSet,
-            List<String> phenomenonsSet, List<String> procedureSet, ITime time) {
+            List<String> phenomenonsSet, List<String> procedureSet, ITime time, ITime resultTime) {
         this.sosURL = sosURL;
         this.offeringID = offeringID;
         this.stations = stationsSet;
@@ -67,6 +69,7 @@ public class RequestConfig {
         this.procedures = procedureSet;
         this.time = time;
         this.responseFormat = getSOSMetadata(sosURL).getOmVersion();
+        this.resultTime = resultTime;
     }
 
     public RequestConfig(String sosURL, String offeringID, List<String> stationsSet,
@@ -122,6 +125,10 @@ public class RequestConfig {
 
     public ITime getTime() {
         return this.time;
+    }
+    
+    public ITime getResultTime() {
+        return this.resultTime;
     }
 
     public String getFirstLastParam() {

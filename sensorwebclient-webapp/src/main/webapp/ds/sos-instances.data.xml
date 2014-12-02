@@ -19,11 +19,11 @@
         <urEasting>16</urEasting>
         <urNorthing>56.0</urNorthing>
         <defaultZoom>13</defaultZoom>
+        <httpConnectionPoolSize>50</httpConnectionPoolSize>
         <enableEventing>true</enableEventing>
     </instance>
 
-
-	<instance>
+<!--	<instance>
 		  <itemName>Wupperverband SOS 2.0</itemName>
 		  <url>http://vpn.52north.org/52n-sos-wv-webapp/sos/soap</url>
 		  <version>2.0.0</version>
@@ -38,9 +38,9 @@
 		  <requestChunk>200</requestChunk>
 		  <autoZoom>true</autoZoom>
 		  <protectedService>true</protectedService>
-	</instance>
+	</instance>-->
 
-	<instance>
+<!--	<instance>
 		<itemName>CSIR</itemName>
 		<url>http://ict4eo.meraka.csir.co.za/AMD_SOS/sos</url>
 		<version>1.0.0</version>
@@ -55,7 +55,7 @@
 		<urEasting>30.0</urEasting>
 		<urNorthing>0.0</urNorthing>
 		<defaultZoom>5</defaultZoom>
-	</instance>
+	</instance>-->
 
     <!-- <instance>
         <itemName>Tideelbe SOS</itemName>
@@ -74,7 +74,7 @@
         <defaultZoom>13</defaultZoom>
     </instance> -->
 
-    <instance>
+<!--    <instance>
         <itemName>Wupperverband</itemName>
         <url>http://fluggs.wupperverband.de/sos/sos</url>
         <version>1.0.0</version>
@@ -89,9 +89,9 @@
         <defaultZoom>15</defaultZoom>
         <requestChunk>200</requestChunk>
         <autoZoom>true</autoZoom>
-    </instance>
+    </instance>-->
 
-	<instance>
+<!--	<instance>
 		<itemName>GRDC (Kisters SOS)</itemName>
 		<url>http://kiwis.kisters.de/KiWIS/KiWIS?datasource=3</url>
 		<version>2.0.0</version>
@@ -106,9 +106,9 @@
 		<requestChunk>200</requestChunk>
 		<autoZoom>true</autoZoom>
 		<protectedService>false</protectedService>
-	</instance>
+	</instance>-->
 
-	<instance>
+<!--	<instance>
 		<itemName>GRDC-SOS_GEOWOW</itemName>
 		<url>http://geowow.dev.52north.org/52n-sos-grdc-webapp/sos/soap</url>
 		<version>2.0.0</version>
@@ -124,7 +124,7 @@
 		<requestChunk>200</requestChunk>
 		<autoZoom>true</autoZoom>
 		<protectedService>true</protectedService>
-	</instance>
+	</instance>-->
 
 	<!--
 	<instance>
@@ -145,8 +145,25 @@
     </instance>
     -->
 
+<!--    <instance>
+        <itemName>JRC</itemName>
+        <url>http://sensors.geonovum.nl/sos/service</url>
+        <version>2.0.0</version>
+        <waterML>false</waterML>
+        <supportsFirstLatest>true</supportsFirstLatest>
+        <metadataHandler>org.n52.server.da.oxf.DefaultMetadataHandler</metadataHandler>
+        <adapter>org.n52.server.da.oxf.SOSAdapter_OXFExtension</adapter>
+        <requestChunk>300</requestChunk>
+        <autoZoom>true</autoZoom>
+        <llEasting>5</llEasting>
+        <llNorthing>46.00</llNorthing>
+        <urEasting>16</urEasting>
+        <urNorthing>56.0</urNorthing>
+        <defaultZoom>13</defaultZoom>
+        <enableEventing>true</enableEventing>
+    </instance>-->
 
-    <instance>
+<!--    <instance>
         <itemName>Air Quality Belgium</itemName>
         <url>http://sos.irceline.be/sos</url>
         <version>1.0.0</version>
@@ -161,7 +178,7 @@
         <urEasting>6.5</urEasting>
         <urNorthing>51.6</urNorthing>
         <defaultZoom>11</defaultZoom>
-    </instance>
+    </instance>-->
 
     <!--
     <instance>
@@ -222,7 +239,7 @@
 	</instance>
  -->
 
-    <instance>
+<!--    <instance>
         <itemName>SOS-Q</itemName>
         <url>http://geoviqua.dev.52north.org/SOS-Q/sos/pox</url>
         <version>2.0.0</version>
@@ -237,7 +254,7 @@
         <urEasting>16</urEasting>
         <urNorthing>56.0</urNorthing>
         <defaultZoom>13</defaultZoom>
-    </instance>
+    </instance>-->
 
 <!--
 

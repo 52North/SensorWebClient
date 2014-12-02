@@ -25,35 +25,45 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
-package org.n52.server.oxf.util.timerTasks;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 
-import java.util.HashSet;
-import java.util.TimerTask;
+package org.n52.series.api.proxy.v1;
 
-import org.n52.server.mgmt.ConfigurationContext;
-import org.n52.server.mgmt.SosMetadataUpdate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import org.apache.xmlbeans.XmlObject;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.n52.oxf.OXFException;
+import org.n52.oxf.xmlbeans.tools.XmlFileLoader;
+import org.n52.series.api.proxy.v1.srv.ResultTimeAdapter;
 
-public class GetStationLocationTimerTask extends TimerTask {
+/**
+ *
+ * @author jansch
+ */
+public class ResultTimeAdapterTest {
+    
+    private static final String GDA_RESPONSE = "/files/GetDataAvailability_response.xml";
+    private ResultTimeAdapter adapter;
 
-    private static final Logger log = LoggerFactory.getLogger(GetStationLocationTimerTask.class);
-
-    private HashSet<String> sosUrls = new HashSet<String>();
-
-    @Override
-    public void run() {
-        ConfigurationContext.UPDATE_TASK_RUNNING = true;
-        try {
-            sosUrls.addAll(ConfigurationContext.getServiceMetadatas().keySet());
-            log.info("Get Stations from {} data sources: [{}]", sosUrls.size(), sosUrls);
-            SosMetadataUpdate.updateSosServices(sosUrls);
-        } catch (Exception e) {
-            log.error("An error occured during station loading.", e);
-        } finally {
-        	log.info("Update process complete.");
-            ConfigurationContext.UPDATE_TASK_RUNNING = false;
-        }
+    @Before
+    public void setUp() throws OXFException {
+        adapter = new ResultTimeAdapter();
     }
-
+    
+    @Test
+    public void shouldStripSoapEnvelopeFromResponse() throws Exception {
+        XmlObject xml = XmlFileLoader.loadXmlFileViaClassloader(GDA_RESPONSE, getClass());
+        ArrayList<String> resultTimes = adapter.getResultTimes(xml);
+        Assert.assertThat(resultTimes, is(notNullValue()));
+        Assert.assertTrue(resultTimes.size() == 4);
+    }
+    
 }

@@ -37,6 +37,7 @@ import org.n52.oxf.ows.capabilities.ITime;
 import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.valueDomains.time.TimeFactory;
 import org.n52.oxf.valueDomains.time.TimePeriod;
+import org.n52.server.da.oxf.TimePosition_OXFExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +80,9 @@ public class SOSRequestBuilderGET_200 implements ISOSRequestBuilder {
         if (tempFilter instanceof ITime) {
             ITime filter = (ITime) tempFilter;
             if (isSetFirstOrLatestTime(filter.toISO8601Format())) {
-                throw new IllegalArgumentException("'latest' und 'getFirst' are not supported for this SOS connection.");
+                return filter.toISO8601Format().equals("getFirst")
+                        ? new TimePosition_OXFExtension("first")
+                        : new TimePosition_OXFExtension("latest");
             }
             return filter;
         } else {
@@ -105,10 +108,7 @@ public class SOSRequestBuilderGET_200 implements ISOSRequestBuilder {
 		    sb.append("/").append(timePeriod.getEnd().toISO8601Format());
             return sb.toString();
 		} else {
-		    if (specifiedTime != null) {
-	            LOGGER.error("Invalid temporalFilter: " + specifiedTime.toString());
-            }
-			return "";
+            return "om:phenomenonTime," + specifiedTime.toISO8601Format();
 		}
 	}
 

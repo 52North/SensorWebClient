@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 
 public class SosMetadataUpdate {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(SosMetadataUpdate.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SosMetadataUpdate.class);
 
     public static void updateSosServices(Iterable<String> sosServices) throws Exception {
         long startTimeInMillis = System.currentTimeMillis();
@@ -75,7 +75,7 @@ public class SosMetadataUpdate {
     public static void updateService(String serviceUrl) throws Exception {
         LOGGER.info("Update service metadata for '{}'", serviceUrl);
         File cache = getCacheTarget(serviceUrl);
-        if (isCacheAvailable(cache)) {
+        if (cache.exists()) {
             try {
                 loadMetadataFromCache(cache);
             } catch (IOException e) {
@@ -83,8 +83,7 @@ public class SosMetadataUpdate {
                 cache.delete();
                 cacheMetadata(cache, serviceUrl);
             }
-        }
-        else {
+        } else {
             prepareCacheTargetDirectory();
             cacheMetadata(cache, serviceUrl);
         }
@@ -101,16 +100,15 @@ public class SosMetadataUpdate {
 
     /**
      * Creates a postfix for the cache files by given url
+     *
+     * @param url the service url
+     * @return a service identifier based on the service url
      */
     protected static String createPostfix(String url) {
         if (url.startsWith("http://")) {
             url = url.substring("http://".length());
         }
         return url.replaceAll("/", "_").replaceAll("\\?", "_").replaceAll(":", "_").replaceAll("@", "_");
-    }
-
-    private static boolean isCacheAvailable(File file) {
-        return /*ConfigurationContext.USE_DEVEL_CACHING &&*/ file.exists();
     }
 
     protected static void loadMetadataFromCache(File file) throws IOException, ClassNotFoundException {
@@ -120,21 +118,20 @@ public class SosMetadataUpdate {
             // deserialize the List
             SOSMetadata metadata = (SOSMetadata) input.readObject();
             ConfigurationContext.addNewSOSMetadata(metadata);
-        }
-        finally {
+        } finally {
             input.close();
         }
     }
 
     /**
-     * Checks if the dedicated caching target exists already. The target is defined as configurable parameter
-     * in {@link ConfigurationContext#CACHE_DIR}. If not all necessary directories are created.
+     * Checks if the dedicated caching target exists already. The target is defined as configurable parameter in
+     * {@link ConfigurationContext#CACHE_DIR}. If not all necessary directories are created.
      *
      * @throws IOException if subdirectories could not be created.
      */
     protected static void prepareCacheTargetDirectory() throws IOException {
-        File cacheDirectory = new File(ConfigurationContext.CACHE_DIR);
-        if ( !cacheDirectory.exists() && !cacheDirectory.mkdirs()) {
+        File cacheDirectory = getCacheDir();
+        if (!cacheDirectory.exists() && !cacheDirectory.mkdirs()) {
             throw new IOException("Unable to create cache directory.");
         }
     }
@@ -144,10 +141,25 @@ public class SosMetadataUpdate {
         ObjectOutput serializer = new ObjectOutputStream(new BufferedOutputStream(os));
         try {
             serializer.writeObject(getSOSMetadata(serviceUrl));
-        }
-        finally {
+        } finally {
             serializer.close();
+            os.close();
         }
+    }
+
+    public static void invalidateCache() throws IOException {
+        File cacheDir = getCacheDir();
+        if (cacheDir.exists()) {
+            for (File cacheFile : cacheDir.listFiles()) {
+                if ( !cacheFile.delete()) {
+                    throw new IOException("Could not delete '" + cacheDir.getAbsolutePath() + "'.");
+                }
+            }
+        }
+    }
+
+    private static File getCacheDir() {
+        return new File(ConfigurationContext.CACHE_DIR);
     }
 
 }

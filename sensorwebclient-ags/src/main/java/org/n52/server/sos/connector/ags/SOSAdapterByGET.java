@@ -58,15 +58,15 @@ import org.slf4j.LoggerFactory;
 public class SOSAdapterByGET extends SOSAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSAdapterByGET.class);
-    
+
     private HttpClient httpClient;
-    
+
     /**
      * Creates an adapter to connect SOS with GET binding as specified by 52n ArcGIS SOS SOE. <br>
      * <br>
      * Per default the Adapter uses {@link SosRequestBuilderGET_200} to build its request. Override via
      * {@link #setRequestBuilder(ISOSRequestBuilder)}.
-     * 
+     *
      * @param sosVersion
      *        the SOS version
      */
@@ -88,8 +88,8 @@ public class SOSAdapterByGET extends SOSAdapter {
      * satisfy reflection loading. Actually, there is <b>no parameter needed</b> for
      * <code>requestBuilder</code> and is not looked at at all (so it can be <code>null</code>). The
      * constructor creates its own {@link SosRequestBuilderGET_200} instance internally by itself. <br>
-     * 
-     * 
+     *
+     *
      * @deprecated use {@link #SOSwithSoapAdapter(String)} instead
      * @param sosVersion
      *        the SOS version
@@ -106,6 +106,7 @@ public class SOSAdapterByGET extends SOSAdapter {
             OXFException {
         try {
             String httpGETRequest = createHttpGETRequest(operation, parameters);
+            LOGGER.debug("Send GET request '{}'", httpGETRequest);
             HttpResponse httpResponse = httpClient.executeGet(httpGETRequest);
             HttpEntity responseEntity = httpResponse.getEntity();
             String responseString = inputStreamToString(responseEntity.getContent());

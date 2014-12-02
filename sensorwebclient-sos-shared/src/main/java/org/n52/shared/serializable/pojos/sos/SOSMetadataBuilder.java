@@ -50,8 +50,12 @@ public class SOSMetadataBuilder {
     private boolean forceXYAxisOrder = false;
 
     private boolean protectedService = false;
-    
+
     private boolean supportsFirstLatest = false;
+
+    private boolean gdaPrefinal = false;
+
+    private int httpConnectionPoolSize = 50;
 
     private int requestChunk = 100;
 
@@ -111,7 +115,7 @@ public class SOSMetadataBuilder {
 		this.protectedService = protectedService;
 		return this;
 	}
-	
+
 	public SOSMetadataBuilder addSupportsFirstLatest(boolean supportsFirstLatest) {
         this.supportsFirstLatest = supportsFirstLatest;
         return this;
@@ -134,6 +138,16 @@ public class SOSMetadataBuilder {
 
     public SOSMetadataBuilder setForceXYAxisOrder(boolean forceXYAxisOrder) {
         this.forceXYAxisOrder = forceXYAxisOrder;
+        return this;
+    }
+
+    public SOSMetadataBuilder setGdaPrefinal(boolean gdaPrefinal) {
+        this.gdaPrefinal = gdaPrefinal;
+        return this;
+    }
+
+    public SOSMetadataBuilder setHttpConnectionPoolSize(int httpConnectionPoolSize) {
+        this.httpConnectionPoolSize = httpConnectionPoolSize;
         return this;
     }
 
@@ -197,9 +211,17 @@ public class SOSMetadataBuilder {
     public boolean isForceXYAxisOrder() {
         return this.forceXYAxisOrder;
     }
-    
+
     public boolean isSupportsFirstLatest() {
         return this.supportsFirstLatest;
+    }
+
+    public boolean isGdaPrefinal() {
+        return gdaPrefinal;
+    }
+
+    public int getHttpConnectionPoolSize() {
+        return httpConnectionPoolSize;
     }
 
     public int getRequestChunk() {
@@ -213,5 +235,6 @@ public class SOSMetadataBuilder {
     public BoundingBox getConfiguredServiceExtent() {
         return extent;
     }
+
 
 }

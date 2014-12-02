@@ -27,16 +27,13 @@
  */
 package org.n52.server.sos.connector.hydro;
 
-import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_CAPABILITIES_ACCEPT_VERSIONS_PARAMETER;
-import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_CAPABILITIES_SERVICE_PARAMETER;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import static java.lang.String.format;
 import java.nio.charset.Charset;
 import java.util.Scanner;
-
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
@@ -50,6 +47,8 @@ import org.n52.oxf.ows.ExceptionReport;
 import org.n52.oxf.ows.ServiceDescriptor;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_CAPABILITIES_ACCEPT_VERSIONS_PARAMETER;
+import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_CAPABILITIES_SERVICE_PARAMETER;
 import org.n52.oxf.sos.adapter.SOSAdapter;
 import static org.n52.oxf.sos.adapter.SOSAdapter.DESCRIBE_SENSOR;
 import static org.n52.oxf.sos.adapter.SOSAdapter.GET_CAPABILITIES;
@@ -80,6 +79,12 @@ public class SOSwithSoapAdapter extends SOSAdapter {
 
     private static final int SOCKET_TIMEOUT = 30000;
 
+    private HttpClient httpClient = createHttpClient();
+
+    private static HttpClient createHttpClient() {
+        return new GzipEnabledHttpClient(new ProxyAwareHttpClient(new SimpleHttpClient(CONNECTION_TIMEOUT, SOCKET_TIMEOUT)));
+    }
+
     /**
      * Creates an adapter to connect SOS with SOAP binding. <br>
      * <br>
@@ -91,12 +96,8 @@ public class SOSwithSoapAdapter extends SOSAdapter {
      */
     public SOSwithSoapAdapter(String sosVersion) {
         super(sosVersion);
-        setHttpClient(createHttpClient());
+        setHttpClient(httpClient);
         setRequestBuilder(new SoapSOSRequestBuilder_200());
-    }
-
-    private HttpClient createHttpClient() {
-        return new GzipEnabledHttpClient(new ProxyAwareHttpClient(new SimpleHttpClient(CONNECTION_TIMEOUT, SOCKET_TIMEOUT)));
     }
 
     /**
@@ -115,8 +116,14 @@ public class SOSwithSoapAdapter extends SOSAdapter {
      */
     public SOSwithSoapAdapter(String sosVersion, ISOSRequestBuilder requestBuilder) {
         super(sosVersion, new SoapSOSRequestBuilder_200());
-        setHttpClient(createHttpClient());
+        setHttpClient(httpClient);
         LOGGER.warn("This is a deprecated constructor and will be removed soon w/o notice.");
+    }
+
+    @Override
+    public void setHttpClient(HttpClient httpclient) {
+        this.httpClient = httpclient;
+        super.setHttpClient(httpClient);
     }
 
     @Override
@@ -171,7 +178,7 @@ public class SOSwithSoapAdapter extends SOSAdapter {
         HttpEntity responseEntity = null;
         String request = buildRequest(operation, parameters);
         try {
-            String url = operation.getDcps()[0].getHTTPGetRequestMethods().get(0).getOnlineResource().getHref();
+            String url = operation.getDcps()[0].getHTTPPostRequestMethods().get(0).getOnlineResource().getHref();
             responseEntity = sendSoapRequest(url, request);
        } catch (HttpClientException e) {
            throw new OXFException("Could not send SOAP request.", e);
@@ -182,12 +189,15 @@ public class SOSwithSoapAdapter extends SOSAdapter {
             result = new OperationResult(responseEntity.getContent(), parameters, request);
             ByteArrayInputStream resultStream = result.getIncomingResultAsStream();
             XmlObject result_xb = XmlObject.Factory.parse(resultStream);
+            LOGGER.trace("Reveived response: {}", result_xb.xmlText());
             if (result_xb instanceof EnvelopeDocument) {
                 EnvelopeDocument envelopeDoc = (EnvelopeDocument) result_xb;
                 XmlObject body = SoapUtil.readBodyNodeFrom(envelopeDoc, null);
                 return new OperationResult(body.newInputStream(),
                                            result.getUsedParameters(),
                                            result.getSendedRequest());
+            } else {
+                LOGGER.warn("Unexpected raw response (w/o SOAP Envolope): {}", result_xb.xmlText());
             }
             return result;
         }
@@ -223,7 +233,6 @@ public class SOSwithSoapAdapter extends SOSAdapter {
     }
 
     private HttpEntity sendSoapRequest(String url, String request) throws HttpClientException {
-        HttpClient httpClient = new ProxyAwareHttpClient(new SimpleHttpClient());
         HttpResponse httpResponse = httpClient.executePost(url, request, SOAP_PLUS_XML);
         return httpResponse.getEntity();
     }
