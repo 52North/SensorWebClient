@@ -71,6 +71,10 @@ public class Station implements Serializable {
         return label;
     }
 
+    public Feature getFeature() {
+        return feature;
+    }
+
     /**
      * @param location
      *        a spatially referenced location in lon/lat.

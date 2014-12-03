@@ -126,7 +126,7 @@ public class GetFeatureOfInterestParser {
                 lookup.addFeature(feature);
 
                 // create station if not exists
-                Station station = metadata.getStation(id);
+                Station station = metadata.getStationByFeature(feature);
                 if (station == null) {
                     station = new Station(feature);
                     station.setLocation(point);

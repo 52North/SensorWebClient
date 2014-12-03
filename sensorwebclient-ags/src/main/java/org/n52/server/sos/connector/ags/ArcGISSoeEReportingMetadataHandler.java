@@ -208,7 +208,7 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
                             continue;
                         }
                         Feature feature = lookup.getFeature(featureId);
-                        Station station = metadata.getStation(featureId);
+                        Station station = metadata.getStationByFeature(feature);
                         if (station == null) {
                             Point location = featureLocations.get(feature);
                             LOGGER.trace("Create Station '{}' at '{}'.", featureId, location);

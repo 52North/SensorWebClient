@@ -115,13 +115,15 @@ public class PhenomenonFilteredHydroMetadataHandler extends HydroMetadataHandler
 
         // iterate over timeseries and add them to station with according feature id
         for (SosTimeseries timeserie : timeseries) {
-            String feature = timeserie.getFeatureId();
-            Station station = metadata.getStation(feature);
+            String featureId = timeserie.getFeatureId();
+            TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
+            Feature feature = lookup.getFeature(featureId);
+            Station station = metadata.getStationByFeature(feature);
             if (station != null) {
                 station.addTimeseries(timeserie);
             }
             else {
-                LOGGER.warn("{} not added! No station for feature '{}'.", timeserie, feature);
+                LOGGER.warn("{} not added! No station for feature '{}'.", timeserie, featureId);
             }
         }
 
