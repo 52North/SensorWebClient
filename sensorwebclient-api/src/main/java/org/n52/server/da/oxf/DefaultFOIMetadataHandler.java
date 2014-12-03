@@ -74,14 +74,14 @@ import org.slf4j.LoggerFactory;
 public class DefaultFOIMetadataHandler extends DefaultMetadataHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultFOIMetadataHandler.class);
-    
+
     public DefaultFOIMetadataHandler(final SOSMetadata metadata) {
         super(metadata);
     }
 
-    /* 
-     * Assembles timeseries' metadata by performing DescribeSensor request and parsing the returned  SensorML. 
-     * 
+    /*
+     * Assembles timeseries' metadata by performing DescribeSensor request and parsing the returned  SensorML.
+     *
      * @see org.n52.server.da.MetadataHandler#assembleTimeseriesMetadata(org.n52.shared.serializable.pojos.TimeseriesProperties)
      */
     @Override
@@ -90,7 +90,7 @@ public class DefaultFOIMetadataHandler extends DefaultMetadataHandler {
         final SOSMetadata sosMetadata = getSOSMetadata(timeseries.getServiceUrl());
         final XmlObject sml = getSensorDescriptionAsSensorML(timeseries.getProcedureId(), sosMetadata);
         final DescribeSensorParser parser = new DescribeSensorParser(sml.newInputStream(), sosMetadata);
-        
+
         final String phenomenonId = timeseries.getPhenomenonId();
         properties.setUnitOfMeasure(parser.buildUpSensorMetadataUom(phenomenonId));
         final String url = parser.buildUpSensorMetadataHtmlUrl(properties.getTimeseries());
@@ -130,7 +130,7 @@ public class DefaultFOIMetadataHandler extends DefaultMetadataHandler {
      * <br>
      * <bf>Note:</bf> to create the associations between these key items the Sensor Web Client assumes that
      * the selected SOS provides the 52°North discovery profile.
-     * 
+     *
      * @param observingTimeseries
      *        all timeseries being observed.
      * @throws OXFException
@@ -160,7 +160,7 @@ public class DefaultFOIMetadataHandler extends DefaultMetadataHandler {
 		} catch (Exception e) {
 			LOGGER.warn("Could not execute the GetFeatureOfInterest request.", e);
 		}
-        
+
         // do describe sensor for each procedure
         final String smlVersion = metadata.getSensorMLVersion();
         final Map<String, FutureTask<OperationResult>> futureTasks = new ConcurrentHashMap<String, FutureTask<OperationResult>>();
@@ -203,7 +203,8 @@ public class DefaultFOIMetadataHandler extends DefaultMetadataHandler {
                     }
 
                     for (final String featureId : fois) {
-                        Station station = metadata.getStation(featureId);
+                        Feature feature = lookup.getFeature(featureId);
+                        Station station = metadata.getStationByFeature(feature);
                         for (final String phenomenon : phenomenons) {
                             final String uom = parser.buildUpSensorMetadataUom(phenomenon);
                             final Phenomenon lokupPhen = lookup.getPhenomenon(phenomenon);
@@ -284,7 +285,7 @@ public class DefaultFOIMetadataHandler extends DefaultMetadataHandler {
             }
             LOGGER.warn("#{} procedures are unavailable. {}", illegalProcedures.size(), sb.toString());
         }
-        
+
         infoLogServiceSummary(metadata);
         metadata.setHasDonePositionRequest(true);
     }

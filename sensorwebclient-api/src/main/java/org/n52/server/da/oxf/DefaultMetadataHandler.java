@@ -199,9 +199,9 @@ public class DefaultMetadataHandler extends MetadataHandler {
                     }
 
                     for (final String featureId : fois) {
-                        Station station = metadata.getStation(featureId);
+                        Feature feature = lookup.getFeature(featureId);
+                        Station station = metadata.getStationByFeature(feature);
                         if (station == null) {
-                            Feature feature = lookup.getFeature(featureId);
                             station = new Station(feature);
                             station.setLocation(point);
                             metadata.addStation(station);
@@ -221,11 +221,10 @@ public class DefaultMetadataHandler extends MetadataHandler {
 
                             station.setLocation(point);
                             for (final SosTimeseries timseries : paramConstellations) {
-                                final Feature feature = new Feature(featureId, sosUrl);
                                 if ( !lookup.containsFeature(featureId)) {
-                                    lookup.addFeature(feature);
+                                    lookup.addFeature(new Feature(featureId, sosUrl));
                                 }
-                                timseries.setFeature(feature);
+                                timseries.setFeature(new Feature(featureId, sosUrl));
                                 station.addTimeseries(timseries);
                             }
                         }

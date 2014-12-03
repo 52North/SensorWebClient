@@ -66,6 +66,7 @@ import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosService;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
+import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,13 +140,15 @@ public class HydroMetadataHandler extends MetadataHandler {
 
         // iterate over timeseries and add them to station with according feature id
         for (SosTimeseries timeserie : timeseries) {
-            String feature = timeserie.getFeatureId();
-            Station station = metadata.getStation(feature);
+            String featureId = timeserie.getFeatureId();
+            TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
+            Feature feature = lookup.getFeature(featureId);
+            Station station = metadata.getStationByFeature(feature);
             if (station != null) {
                 station.addTimeseries(timeserie);
             }
             else {
-                LOGGER.warn("{} not added! No station for feature '{}'.", timeserie, feature);
+                LOGGER.warn("{} not added! No station for feature '{}'.", timeserie, featureId);
             }
         }
 

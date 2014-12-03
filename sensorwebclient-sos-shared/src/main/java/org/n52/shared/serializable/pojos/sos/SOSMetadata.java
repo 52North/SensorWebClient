@@ -318,10 +318,7 @@ public class SOSMetadata implements Serializable {
     }
 
     public void addStation(Station station) {
-
-        // FIXME label as hash key is error prone. see #getStation(stationId)
-
-        stations.put(station.getLabel(), station);
+        stations.put(station.getFeature().getFeatureId(), station);
     }
 
     public ArrayList<Station> getStations() {
@@ -380,11 +377,8 @@ public class SOSMetadata implements Serializable {
         return false;
     }
 
-    public Station getStation(String stationId) {
-
-        // FIXME error prone. see #addStation(station)
-
-        return stations.get(stationId);
+    public Station getStationByFeature(Feature feature) {
+        return stations.get(feature.getFeatureId());
     }
 
     /**
