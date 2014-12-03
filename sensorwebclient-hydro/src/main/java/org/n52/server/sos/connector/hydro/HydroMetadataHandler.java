@@ -143,9 +143,11 @@ public class HydroMetadataHandler extends MetadataHandler {
             String featureId = timeserie.getFeatureId();
             TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
             Feature feature = lookup.getFeature(featureId);
-            Station station = metadata.getStationByFeature(feature);
-            if (station != null) {
-                station.addTimeseries(timeserie);
+            if (feature != null) {
+                Station station = metadata.getStationByFeature(feature);
+                if (station != null) {
+                    station.addTimeseries(timeserie);
+                }
             }
             else {
                 LOGGER.warn("{} not added! No station for feature '{}'.", timeserie, featureId);
