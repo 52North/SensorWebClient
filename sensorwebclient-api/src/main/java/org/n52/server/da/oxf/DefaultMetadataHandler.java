@@ -199,6 +199,9 @@ public class DefaultMetadataHandler extends MetadataHandler {
                     }
 
                     for (final String featureId : fois) {
+                    	if (!lookup.containsFeature(featureId)) {
+                            lookup.addFeature(new Feature(featureId, sosUrl));
+                        }
                         Feature feature = lookup.getFeature(featureId);
                         Station station = metadata.getStationByFeature(feature);
                         if (station == null) {
