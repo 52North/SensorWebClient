@@ -261,9 +261,8 @@ public abstract class MetadataHandler {
     protected void normalizeDefaultCategories(Collection<SosTimeseries> observingTimeseries) {
         for (SosTimeseries timeseries : observingTimeseries) {
             String phenomenon = timeseries.getPhenomenonId();
-            String category = phenomenon.substring(phenomenon.lastIndexOf(":") + 1);
             String serviceUrl = timeseries.getServiceUrl();
-            timeseries.setCategory(new Category(category, serviceUrl));
+            timeseries.setCategory(new Category(phenomenon, serviceUrl));
         }
     }
 
