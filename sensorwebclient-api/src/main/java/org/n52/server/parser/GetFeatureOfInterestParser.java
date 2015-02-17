@@ -114,10 +114,10 @@ public class GetFeatureOfInterestParser {
                 point = createParsedPoint(monitoringPoint, referenceHelper);
             }
             else {
-                LOGGER.error("Don't find supported feature members in the GetFeatureOfInterest response");
+                LOGGER.error("Did not find supported feature members in the GetFeatureOfInterest response");
             }
             if (point == null) {
-                LOGGER.warn("The foi with ID {} has no valid point", id);
+                LOGGER.warn("The foi with ID {} has no valid point: {}", id, featurePropertyType.toString());
             }
             else {
                 // add feature

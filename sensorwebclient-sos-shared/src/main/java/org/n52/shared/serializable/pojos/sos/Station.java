@@ -27,16 +27,15 @@
  */
 package org.n52.shared.serializable.pojos.sos;
 
-import static org.n52.io.geojson.GeojsonPoint.createWithCoordinates;
-
+import com.vividsolutions.jts.geom.Point;
 import java.io.Serializable;
 import java.util.ArrayList;
-
 import org.n52.io.geojson.GeojsonPoint;
+import static org.n52.io.geojson.GeojsonPoint.createWithCoordinates;
 import org.n52.shared.IdGenerator;
 import org.n52.shared.MD5HashGenerator;
-
-import com.vividsolutions.jts.geom.Point;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Station} represents a location where timeseries data is observed.
@@ -44,6 +43,8 @@ import com.vividsolutions.jts.geom.Point;
 public class Station implements Serializable {
 
     private static final long serialVersionUID = 5016550440955260625L;
+
+    private static final Logger LOG = LoggerFactory.getLogger(Station.class);
 
     private ArrayList<SosTimeseries> observingTimeseries;
 
@@ -173,7 +174,18 @@ public class Station implements Serializable {
     }
 
     public String getGlobalId() {
-        String[] parameters = new String[] {feature.getFeatureId(), location.toString()};
+
+        // TODO currently Stations are allowed to omit location. Passing it to
+        // calculate the globalId will lead either to NPE or inconsistencies ..
+
+        String[] parameters = new String[0];
+        if (location == null) {
+            LOG.warn("Station has no location set! GlobalId will change once it is set.");
+            parameters = new String[] {feature.getFeatureId()};
+        } else {
+            parameters = new String[] {feature.getFeatureId(), location.toString()};
+        }
+
         IdGenerator idGenerator = new MD5HashGenerator("sta_");
         return idGenerator.generate(parameters);
     }

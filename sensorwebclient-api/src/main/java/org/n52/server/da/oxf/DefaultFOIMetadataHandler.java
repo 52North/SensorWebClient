@@ -203,6 +203,12 @@ public class DefaultFOIMetadataHandler extends DefaultMetadataHandler {
                     }
 
                     for (final String featureId : fois) {
+                        // FOIs are optional in SOS 2.0 capabilities
+                        if ("2.0.0".equals(metadata.getVersion())) {
+                            if (!lookup.containsFeature(featureId)) {
+                                lookup.addFeature(new Feature(featureId, sosUrl));
+                            }
+                        }
                         Feature feature = lookup.getFeature(featureId);
                         Station station = metadata.getStationByFeature(feature);
                         for (final String phenomenon : phenomenons) {
