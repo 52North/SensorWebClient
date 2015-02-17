@@ -34,8 +34,6 @@ import org.n52.io.geojson.GeojsonPoint;
 import static org.n52.io.geojson.GeojsonPoint.createWithCoordinates;
 import org.n52.shared.IdGenerator;
 import org.n52.shared.MD5HashGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Station} represents a location where timeseries data is observed.
@@ -43,8 +41,6 @@ import org.slf4j.LoggerFactory;
 public class Station implements Serializable {
 
     private static final long serialVersionUID = 5016550440955260625L;
-
-    private static final Logger LOG = LoggerFactory.getLogger(Station.class);
 
     private ArrayList<SosTimeseries> observingTimeseries;
 
@@ -175,12 +171,11 @@ public class Station implements Serializable {
 
     public String getGlobalId() {
 
-        // TODO currently Stations are allowed to omit location. Passing it to
-        // calculate the globalId will lead either to NPE or inconsistencies ..
-
-        String[] parameters = new String[0];
+        String[] parameters = null;
         if (location == null) {
-            LOG.warn("Station has no location set! GlobalId will change once it is set.");
+            // TODO currently Stations are allowed to omit location. Passing it to
+            // calculate the globalId will lead either to NPE or inconsistencies ..
+            // logging not possible since it's a shared gwt class
             parameters = new String[] {feature.getFeatureId()};
         } else {
             parameters = new String[] {feature.getFeatureId(), location.toString()};
