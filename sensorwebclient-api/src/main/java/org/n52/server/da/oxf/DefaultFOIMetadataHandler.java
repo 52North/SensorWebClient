@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -99,7 +100,7 @@ public class DefaultFOIMetadataHandler extends DefaultMetadataHandler {
     }
 
     @Override
-	public SOSMetadata performMetadataCompletion() throws OXFException,
+    public SOSMetadata performMetadataCompletion() throws OXFException,
             InterruptedException,
             XMLHandlingException {
 
@@ -109,13 +110,11 @@ public class DefaultFOIMetadataHandler extends DefaultMetadataHandler {
         normalizeDefaultCategories(observingTimeseries);
 
         // TODO check version 2.0.0 sos's
-
         // XXX hack to get conjunctions between procedures and fois
-        if ( !sosMetadata.hasDonePositionRequest()) {
+        if (!sosMetadata.hasDonePositionRequest()) {
             try {
                 performMetadataInterlinking(observingTimeseries);
-            }
-            catch (final IOException e) {
+            } catch (final IOException e) {
                 LOGGER.warn("Could not retrieve relations between procedures and fois", e);
             }
         }
@@ -124,25 +123,18 @@ public class DefaultFOIMetadataHandler extends DefaultMetadataHandler {
     }
 
     /**
-     * Performs a DescribeSensor request for every offered procedure of an SOS. This is intended to obtain the
-     * concrete references between each offering, procedure, featureOfInterest and observedProperty (aka
-     * phenomenon). <br>
+     * Performs a DescribeSensor request for every offered procedure of an SOS. This is intended to obtain the concrete
+     * references between each offering, procedure, featureOfInterest and observedProperty (aka phenomenon). <br>
      * <br>
-     * <bf>Note:</bf> to create the associations between these key items the Sensor Web Client assumes that
-     * the selected SOS provides the 52°North discovery profile.
+     * <bf>Note:</bf> to create the associations between these key items the Sensor Web Client assumes that the selected
+     * SOS provides the 52°North discovery profile.
      *
-     * @param observingTimeseries
-     *        all timeseries being observed.
-     * @throws OXFException
-     *         when request creation fails.
-     * @throws InterruptedException
-     *         if getting the DescribeSensor result gets interrupted.
-     * @throws XMLHandlingException
-     *         if parsing the DescribeSensor result fails
-     * @throws IOException
-     *         if reading the DescribeSensor result fails.
-     * @throws IllegalStateException
-     *         if SOS version is not supported.
+     * @param observingTimeseries all timeseries being observed.
+     * @throws OXFException when request creation fails.
+     * @throws InterruptedException if getting the DescribeSensor result gets interrupted.
+     * @throws XMLHandlingException if parsing the DescribeSensor result fails
+     * @throws IOException if reading the DescribeSensor result fails.
+     * @throws IllegalStateException if SOS version is not supported.
      */
     private void performMetadataInterlinking(final Collection<SosTimeseries> observingTimeseries) throws OXFException,
             InterruptedException,
@@ -153,20 +145,14 @@ public class DefaultFOIMetadataHandler extends DefaultMetadataHandler {
         final TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
         final ArrayList<Procedure> procedures = lookup.getProcedures();
         final String sosVersion = metadata.getSosVersion();
-        try {
-			OperationResult getFoiResult = createFeatureOfInterestAccessor(sosUrl, sosVersion).call();
-			GetFeatureOfInterestParser getFoiParser = new GetFeatureOfInterestParser(getFoiResult, metadata);
-			getFoiParser.createFeatures();
-		} catch (Exception e) {
-			LOGGER.warn("Could not execute the GetFeatureOfInterest request.", e);
-		}
+
 
         // do describe sensor for each procedure
         final String smlVersion = metadata.getSensorMLVersion();
         final Map<String, FutureTask<OperationResult>> futureTasks = new ConcurrentHashMap<String, FutureTask<OperationResult>>();
         for (final Procedure proc : procedures) {
             final OperationAccessor opAccessorCallable = createDescribeSensorAccessor(
-                                                                                sosUrl, sosVersion, smlVersion, proc);
+                    sosUrl, sosVersion, smlVersion, proc);
             futureTasks.put(proc.getProcedureId(), new FutureTask<OperationResult>(opAccessorCallable));
         }
 
@@ -183,63 +169,66 @@ public class DefaultFOIMetadataHandler extends DefaultMetadataHandler {
                 if (opResult == null) {
                     illegalProcedures.add(procedureId);
                     LOGGER.debug("Got NO sensor description for '{}'", procedureId);
-                }
-                else {
+                } else {
                     incomingResultAsStream = opResult.getIncomingResultAsStream();
                     final DescribeSensorParser parser = new DescribeSensorParser(incomingResultAsStream, metadata);
 
                     final Procedure procedure = lookup.getProcedure(procedureId);
                     procedure.addAllRefValues(parser.parseReferenceValues());
                     final List<String> phenomenons = parser.getPhenomenons();
-                    final List<String> fois = parser.parseFOIReferences();
+                    LOGGER.debug("#{} phenomena for procedure '{}'", phenomenons.size(), procedureId);
 
-                    if (fois.isEmpty()) {
-                        final Collection<Feature> features = lookup.getFeatures();
-                        LOGGER.warn("No FOI references found for procedure '{}'.", procedureId);
-                        LOGGER.warn("==> Reference all ({}) available.", features.size());
-                        for (final Feature foi : features) {
-                            fois.add(foi.getFeatureId());
+                    Map<String, List<Station>> phen2Stations = new HashMap<String, List<Station>>();
+
+                    try {
+                        for (String phenomenonId : phenomenons) {
+                            final String uom = parser.buildUpSensorMetadataUom(phenomenonId);
+                            final Phenomenon phenomenon = lookup.getPhenomenon(phenomenonId);
+                            if (phenomenon != null) {
+                                phenomenon.setUnitOfMeasure(uom);
+                            } else {
+                                LOGGER.error("Phenomenon '{}' is unknown and ignored. Check the offerings!", phenomenonId);
+                                continue;
+                            }
+
+                            OperationResult getFoiResult = createFeatureOfInterestAccessor(sosUrl, sosVersion, procedureId, phenomenonId).call();
+                            GetFeatureOfInterestParser getFoiParser = new GetFeatureOfInterestParser(getFoiResult, metadata);
+                            List<Station> stations = getFoiParser.createStations();
+                            phen2Stations.put(phenomenonId, stations);
+                            String foundUnit = uom.isEmpty() ? "NA" : uom;
+                            LOGGER.debug("#{} stations with procedure '{}' [{}, {}]", stations.size(), procedureId, foundUnit, phenomenonId);
                         }
+                    } catch (Exception e) {
+                        LOGGER.warn("Could not execute the GetFeatureOfInterest request.", e);
                     }
 
-                    for (final String featureId : fois) {
-                        // FOIs are optional in SOS 2.0 capabilities
-                        if ("2.0.0".equals(metadata.getVersion())) {
-                            if (!lookup.containsFeature(featureId)) {
-                                lookup.addFeature(new Feature(featureId, sosUrl));
-                            }
-                        }
-                        Feature feature = lookup.getFeature(featureId);
-                        Station station = metadata.getStationByFeature(feature);
-                        for (final String phenomenon : phenomenons) {
-                            final String uom = parser.buildUpSensorMetadataUom(phenomenon);
-                            final Phenomenon lokupPhen = lookup.getPhenomenon(phenomenon);
-                            if (lokupPhen != null) {
-                            	lokupPhen.setUnitOfMeasure(uom);
-                            } else {
-                            	LOGGER.error("Could not find matching phenomenon in internal 'lookup' storage for '{}'",phenomenon);
-                            }
-                            final Collection<SosTimeseries> paramConstellations = getMatchingConstellations(observingTimeseries,
-                                                                                                      procedureId,
-                                                                                                      phenomenon);
+                    LOGGER.debug("Linking feature<->phenomenon<->procedure(<->offering) to timeseries");
+                    for (String phenomenonId : phen2Stations.keySet()) {
+
+                        final Collection<SosTimeseries> paramConstellations = getMatchingConstellations(observingTimeseries,
+                                procedureId,
+                                phenomenonId);
+
+                        for (final Station station : phen2Stations.get(phenomenonId)) {
                             for (final SosTimeseries timseries : paramConstellations) {
-                                timseries.setFeature(new Feature(featureId, sosUrl));
-                                station.addTimeseries(timseries);
+                                Feature feature = station.getFeature();
+                                Station existingStation = metadata.getStationByFeature(feature);
+                                SosTimeseries newTimeseries = timseries.clone();
+                                newTimeseries.setFeature(feature);
+                                existingStation.addTimeseries(newTimeseries);
+                                LOGGER.trace("New timeseries added: {}", newTimeseries.toString());
                             }
                         }
                     }
                     LOGGER.trace("Got Procedure data for '{}'.", procedure);
                 }
-            }
-            catch (final TimeoutException e) {
+            } catch (final TimeoutException e) {
                 LOGGER.warn("Could NOT connect to SOS '{}'.", sosUrl, e);
                 illegalProcedures.add(procedureId);
-            }
-            catch (final ExecutionException e) {
+            } catch (final ExecutionException e) {
                 LOGGER.warn("Could NOT get OperationResult from SOS for '{}'.", procedureId, e.getCause());
                 illegalProcedures.add(procedureId);
-            }
-            catch (final XmlException e) {
+            } catch (final XmlException e) {
                 LOGGER.warn("Could NOT parse OperationResult from '{}'", sosUrl, e);
                 if (LOGGER.isDebugEnabled()) {
                     try {
@@ -249,29 +238,23 @@ public class DefaultFOIMetadataHandler extends DefaultMetadataHandler {
                         sb.append(String.format("Could NOT parse incoming OperationResult:\n %s", response));
                         LOGGER.debug(sb.toString(), e);
                         illegalProcedures.add(procedureId);
-                    }
-                    catch (final XmlException ex) {
+                    } catch (final XmlException ex) {
                         final BufferedReader reader = new BufferedReader(new InputStreamReader(incomingResultAsStream));
                         LOGGER.warn("No XML response for procedure '{}'.", procedureId);
                         LOGGER.debug("First line of response: {}", reader.readLine());
-                    }
-                    catch (final IOException ex) {
+                    } catch (final IOException ex) {
                         LOGGER.warn("Could read result", ex);
                     }
                 }
-            }
-            catch (final IOException e) {
+            } catch (final IOException e) {
                 illegalProcedures.add(procedureId);
                 LOGGER.info("Could NOT parse sensorML for procedure '{}'.", procedureId, e);
-            }
-            catch (final IllegalStateException e) {
+            } catch (final IllegalStateException e) {
                 illegalProcedures.add(procedureId);
                 LOGGER.info("Could NOT link procedure '{}' appropriatly.", procedureId, e);
-            }
-            catch (final FactoryException e) {
+            } catch (final FactoryException e) {
                 LOGGER.info("Could not create intern CRS to transform coordinates.", e);
-            }
-            finally {
+            } finally {
                 if (incomingResultAsStream != null) {
                     incomingResultAsStream.close();
                 }
@@ -280,7 +263,7 @@ public class DefaultFOIMetadataHandler extends DefaultMetadataHandler {
             }
         }
 
-        if ( !illegalProcedures.isEmpty()) {
+        if (!illegalProcedures.isEmpty()) {
             final StringBuilder sb = new StringBuilder();
             sb.append("Removed procedures: \n");
             for (final String procedure : illegalProcedures) {
@@ -296,17 +279,21 @@ public class DefaultFOIMetadataHandler extends DefaultMetadataHandler {
         metadata.setHasDonePositionRequest(true);
     }
 
-	private OperationAccessor createFeatureOfInterestAccessor(final String sosUrl, final String sosVersion) throws OXFException {
-    	final Operation operation = new Operation(SOSAdapter.GET_FEATURE_OF_INTEREST, sosUrl, sosUrl);
-    	final ParameterContainer paramCon = new ParameterContainer();
-    	paramCon.addParameterShell(ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER, "SOS");
-    	paramCon.addParameterShell(ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER, sosVersion);
-    	final OperationAccessor opAccessor = new OperationAccessor(getSosAdapter(), operation, paramCon);
-		return opAccessor;
-	}
+    private OperationAccessor createFeatureOfInterestAccessor(final String sosUrl, final String sosVersion, String procedure, String phenomenon) throws OXFException {
+        final Operation operation = new Operation(SOSAdapter.GET_FEATURE_OF_INTEREST, sosUrl, sosUrl);
+        final ParameterContainer paramCon = new ParameterContainer();
+        paramCon.addParameterShell(ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER, "SOS");
+        paramCon.addParameterShell(ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER, sosVersion);
+        if ("2.0.0".equals(sosVersion)) {
+            paramCon.addParameterShell("procedure", procedure);
+            paramCon.addParameterShell("observedProperty", phenomenon);
+        }
+        final OperationAccessor opAccessor = new OperationAccessor(getSosAdapter(), operation, paramCon);
+        return opAccessor;
+    }
 
-	private OperationAccessor createDescribeSensorAccessor(final String sosUrl,
-                                                           final String sosVersion, final String smlVersion, final Procedure proc)
+    private OperationAccessor createDescribeSensorAccessor(final String sosUrl,
+            final String sosVersion, final String smlVersion, final Procedure proc)
             throws OXFException {
         final Operation operation = new Operation(SOSAdapter.DESCRIBE_SENSOR, sosUrl, sosUrl);
         final ParameterContainer paramCon = new ParameterContainer();
@@ -315,11 +302,9 @@ public class DefaultFOIMetadataHandler extends DefaultMetadataHandler {
         paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_PARAMETER, proc.getProcedureId());
         if (SosUtil.isVersion100(sosVersion)) {
             paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_OUTPUT_FORMAT, smlVersion);
-        }
-        else if (SosUtil.isVersion200(sosVersion)) {
+        } else if (SosUtil.isVersion200(sosVersion)) {
             paramCon.addParameterShell(ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_DESCRIPTION_FORMAT, smlVersion);
-        }
-        else {
+        } else {
             throw new IllegalStateException("SOS Version (" + sosVersion + ") is not supported!");
         }
         final OperationAccessor opAccessorCallable = new OperationAccessor(getSosAdapter(), operation, paramCon);
@@ -327,11 +312,12 @@ public class DefaultFOIMetadataHandler extends DefaultMetadataHandler {
     }
 
     private Collection<SosTimeseries> getMatchingConstellations(final Collection<SosTimeseries> observingTimeseries,
-                                                                final String procedure,
-                                                                final String phenomenon) {
+            final String procedure,
+            final String phenomenon) {
         final Collection<SosTimeseries> result = new ArrayList<SosTimeseries>();
         for (final SosTimeseries timeseries : observingTimeseries) {
-            if (timeseries.matchesProcedure(procedure) && timeseries.matchesPhenomenon(phenomenon)) {
+            if (timeseries.matchesProcedure(procedure)
+                    && timeseries.matchesPhenomenon(phenomenon)) {
                 result.add(timeseries);
             }
         }

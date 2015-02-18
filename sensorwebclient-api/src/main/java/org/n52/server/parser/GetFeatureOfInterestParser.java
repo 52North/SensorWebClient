@@ -27,10 +27,11 @@
  */
 package org.n52.server.parser;
 
+import com.vividsolutions.jts.geom.Point;
 import java.io.IOException;
-
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.namespace.QName;
-
 import net.opengis.gml.x32.AbstractGeometryType;
 import net.opengis.gml.x32.DirectPositionType;
 import net.opengis.gml.x32.FeaturePropertyType;
@@ -41,7 +42,6 @@ import net.opengis.samplingSpatial.x20.ShapeDocument;
 import net.opengis.sos.x20.GetFeatureOfInterestResponseDocument;
 import net.opengis.waterml.x20.MonitoringPointDocument;
 import net.opengis.waterml.x20.MonitoringPointType;
-
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -56,8 +56,6 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.vividsolutions.jts.geom.Point;
 
 public class GetFeatureOfInterestParser {
 
@@ -80,9 +78,12 @@ public class GetFeatureOfInterestParser {
 		}
 	}
 
-	public void createFeatures() throws XmlException, IOException, OXFException {
-        GetFeatureOfInterestResponseDocument foiResDoc = getFOIResponseOfOpResult(getFoiResult);
+	public List<Station> createStations() throws XmlException, IOException, OXFException {
+
+        List<Station> stations = new ArrayList<Station>();
         TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
+        GetFeatureOfInterestResponseDocument foiResDoc = getFOIResponseOfOpResult(getFoiResult);
+
         String id = null;
         String label = null;
         for (FeaturePropertyType featurePropertyType : foiResDoc.getGetFeatureOfInterestResponse().getFeatureMemberArray()) {
@@ -131,9 +132,11 @@ public class GetFeatureOfInterestParser {
                     station = new Station(feature);
                     station.setLocation(point);
                     metadata.addStation(station);
+                    stations.add(station);
                 }
             }
         }
+        return stations;
 	}
 
 	private Point createParsedPoint(XmlObject feature, CRSUtils referenceHelper) throws XmlException {
