@@ -197,7 +197,7 @@ public class HydroMetadataHandler extends MetadataHandler {
             try {
                 OperationResult opRes = futureTask.get(metadata.getTimeout(), MILLISECONDS);
                 GetFeatureOfInterestParser getFoiParser = new GetFeatureOfInterestParser(opRes, metadata);
-                getFoiParser.createFeatures();
+                getFoiParser.createStations();
             }
             catch (TimeoutException e) {
                 LOGGER.error("Timeout occured.", e);
