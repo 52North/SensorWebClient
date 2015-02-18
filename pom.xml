@@ -1005,7 +1005,7 @@
         <jackson.version>2.2.2</jackson.version>
         <smartgwt.version>3.1</smartgwt.version>
         <geotools.version>8.5</geotools.version>
-        <oxf.version>2.0.0-alpha.3.3</oxf.version>
+        <oxf.version>2.0.0-alpha.3.4-SNAPSHOT</oxf.version>
         <hamcrest.version>1.3</hamcrest.version>
         <timeseries.api.version>1.2.1</timeseries.api.version>
         <hibernate.version>3.5.0-Final</hibernate.version>
@@ -1013,7 +1013,7 @@
         <org.springframework.version>3.2.0.RELEASE</org.springframework.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sensorwebclient.webapp.name>${project.artifactId}-${project.version}</sensorwebclient.webapp.name>
+        <sensorwebclient.webapp.name>sensorwebclient-webapp-${project.version}</sensorwebclient.webapp.name>
 
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
