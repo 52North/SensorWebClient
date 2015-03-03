@@ -75,10 +75,10 @@ public class SosMetadataUpdate {
     public static void updateService(String serviceUrl) throws Exception {
         LOGGER.info("Update service metadata for '{}'", serviceUrl);
         File cache = getCacheTarget(serviceUrl);
-        if (cache.exists()) {
+        if (cache.exists() && cache.length() != 0) {
             try {
                 loadMetadataFromCache(cache);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 LOGGER.info("Could not read cache. Recreate cache ...", e);
                 cache.delete();
                 cacheMetadata(cache, serviceUrl);

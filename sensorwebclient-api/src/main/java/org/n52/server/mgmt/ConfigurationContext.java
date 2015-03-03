@@ -351,15 +351,9 @@ public class ConfigurationContext implements ServletContextAware {
     }
 
     public static void addNewSOSMetadata(SOSMetadata metadata) {
-        try {
-            String serviceURL = metadata.getServiceUrl();
-            LOGGER.debug(String.format("Add new SOS metadata for '%s' ", serviceURL));
-            serviceMetadatas.put(serviceURL, metadata);
-            // SosMetadataUpdate.loadLocation(metadata.getId());
-        }
-        catch (Exception e) {
-            LOGGER.error("Could not load SOS from " + metadata, e);
-        }
+        String serviceURL = metadata.getServiceUrl();
+        LOGGER.debug(String.format("Add new SOS metadata for '%s' ", serviceURL));
+        serviceMetadatas.put(serviceURL, metadata);
     }
 
     public static Map<String, SOSMetadata> updateSOSMetadata() {
