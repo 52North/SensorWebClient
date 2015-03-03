@@ -413,6 +413,7 @@ public class SOSMetadata implements Serializable {
         clone.forceXYAxisOrder = this.forceXYAxisOrder;
         clone.requestChunk = this.requestChunk;
         clone.timeout = this.timeout;
+        clone.eventing = this.eventing;
         clone.configuredExtent = this.configuredExtent;
         clone.protectedService = this.protectedService;
         clone.setSosMetadataHandler(this.getSosMetadataHandler());
