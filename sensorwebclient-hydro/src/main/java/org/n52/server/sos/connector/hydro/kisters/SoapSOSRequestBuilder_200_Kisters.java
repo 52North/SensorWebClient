@@ -54,8 +54,11 @@ public class SoapSOSRequestBuilder_200_Kisters extends SoapSOSRequestBuilder_200
 	public String buildGetObservationRequest(ParameterContainer parameters) throws OXFException {
 		// check the temporal filter
 		ParameterShell temporalFilter = parameters.getParameterShellWithServiceSidedName("temporalFilter");
-		Object specifiedValue = temporalFilter.getSpecifiedValue();
+		if (temporalFilter == null) {
+            return super.buildGetObservationRequest(parameters);
+        }
 
+        Object specifiedValue = temporalFilter.getSpecifiedValue();
 		if (specifiedValue instanceof TimePosition_OXFExtension ) {
 			TimePosition_OXFExtension timePosition = (TimePosition_OXFExtension) specifiedValue;
 			// time parameter is latest
