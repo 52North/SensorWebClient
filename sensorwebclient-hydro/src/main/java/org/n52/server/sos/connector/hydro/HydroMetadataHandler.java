@@ -57,11 +57,14 @@ import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_VERSION_PARAMET
 import static org.n52.oxf.sos.adapter.SOSAdapter.GET_FEATURE_OF_INTEREST;
 import org.n52.server.da.AccessorThreadPool;
 import org.n52.server.da.MetadataHandler;
+import static org.n52.server.da.oxf.DescribeSensorAccessor.getSensorDescriptionAsSensorML;
 import org.n52.server.da.oxf.OperationAccessor;
 import static org.n52.server.mgmt.ConfigurationContext.SERVER_TIMEOUT;
+import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadata;
 import org.n52.server.parser.ConnectorUtils;
 import org.n52.server.parser.GetFeatureOfInterestParser;
 import static org.n52.server.sos.connector.hydro.SOSwithSoapAdapter.GET_DATA_AVAILABILITY;
+import org.n52.server.util.PropertiesToHtml;
 import org.n52.server.util.XmlHelper;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
@@ -105,6 +108,24 @@ public class HydroMetadataHandler extends MetadataHandler {
         // (HyProfile must request an Observation (without timestamp we get the last value))
         // ==> move metadata obtaining strategy to MetadataHandler class: a different strategy can
         // be used by overriding the default (metadata via SensorML)
+
+        SosTimeseries timeseries = properties.getTimeseries();
+        SOSMetadata sosMetadata = getSOSMetadata(timeseries.getServiceUrl());
+        TimeseriesParametersLookup lookup = sosMetadata.getTimeseriesParametersLookup();
+
+
+        String phenomenonId = timeseries.getPhenomenonId();
+        String uom = lookup.getPhenomenon(phenomenonId).getUnitOfMeasure();
+        Station station = sosMetadata.getStationByTimeSeries(timeseries);
+
+        Map<String, String> tsMetadata = new HashMap<String, String>();
+        tsMetadata.put("UOM", uom);
+        tsMetadata.put("Name", station.getLabel());
+
+        PropertiesToHtml toHtml = PropertiesToHtml.createFromProperties(tsMetadata);
+
+        properties.setMetadataUrl(toHtml.create(timeseries));
+        properties.setUnitOfMeasure(uom);
 
     }
 
@@ -175,7 +196,7 @@ public class HydroMetadataHandler extends MetadataHandler {
         }
 
         // get the UOM from empty GO requests
-        executeEmptyGOTasks(getEmptyGOAccessTasks, timeseries, metadata);
+        executeEmptyGOTasks(getEmptyGOAccessTasks, metadata);
 
         infoLogServiceSummary(metadata);
         metadata.setHasDonePositionRequest(true);
@@ -206,7 +227,7 @@ public class HydroMetadataHandler extends MetadataHandler {
     }
 
 
-    private void executeEmptyGOTasks(Map<String, FutureTask<OperationResult>> emptyGOAccessTasks, Collection<SosTimeseries> timeseries, SOSMetadata metadata) throws InterruptedException, ExecutionException, TimeoutException, XmlException, IOException {
+    private void executeEmptyGOTasks(Map<String, FutureTask<OperationResult>> emptyGOAccessTasks, SOSMetadata metadata) throws InterruptedException, ExecutionException, TimeoutException, XmlException, IOException {
         int counter = emptyGOAccessTasks.size();
 
         for (String procedureDomainId : emptyGOAccessTasks.keySet()) {
@@ -230,7 +251,7 @@ public class HydroMetadataHandler extends MetadataHandler {
                 String phenomenonDomainId = observation.getObservedProperty().getHref();
                 TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
                 Phenomenon phenomenon = lookup.getPhenomenon(phenomenonDomainId);
-                phenomenon.setUnitOfMeasure(uom.getStringValue());
+                phenomenon.setUnitOfMeasure(uom == null ? "" : uom.getStringValue());
             }
         }
 
