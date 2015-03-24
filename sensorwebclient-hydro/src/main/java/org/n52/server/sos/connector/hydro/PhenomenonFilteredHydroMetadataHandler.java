@@ -46,19 +46,26 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import java.util.concurrent.TimeoutException;
+import net.opengis.om.x20.OMObservationType;
+import net.opengis.sos.x20.GetObservationResponseDocument;
+import net.opengis.sos.x20.GetObservationResponseType;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlString;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.ows.capabilities.Contents;
 import org.n52.oxf.ows.capabilities.Operation;
+import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
 import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.server.da.AccessorThreadPool;
 import org.n52.server.da.oxf.OperationAccessor;
 import org.n52.server.parser.GetFeatureOfInterestParser;
+import org.n52.server.util.XmlHelper;
 import org.n52.shared.serializable.pojos.sos.Category;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
@@ -76,8 +83,18 @@ public class PhenomenonFilteredHydroMetadataHandler extends HydroMetadataHandler
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PhenomenonFilteredHydroMetadataHandler.class);
 
-    private Map<String, List<String>> procOff = new HashMap<String, List<String>>();
+    private static final Map<String, String> namespaceDeclarations = new HashMap<String, String>();
 
+    static {
+        namespaceDeclarations.put("om", "http://www.opengis.net/om/2.0");
+        namespaceDeclarations.put("sos", "http://www.opengis.net/sos/2.0");
+        namespaceDeclarations.put("wml", "http://www.opengis.net/waterml/2.0");
+    }
+
+    private final XmlHelper xmlHelper = new XmlHelper(namespaceDeclarations);
+
+    private Map<String, List<String>> procOff = new HashMap<String, List<String>>();
+    
     public PhenomenonFilteredHydroMetadataHandler(SOSMetadata metadata) {
         super(metadata);
     }
@@ -92,6 +109,7 @@ public class PhenomenonFilteredHydroMetadataHandler extends HydroMetadataHandler
         Collection<SosTimeseries> observingTimeseries = createObservingTimeseries(metadata);
 
         Map<String, FutureTask<OperationResult>> getDataAvailabilityTasks = new HashMap<String, FutureTask<OperationResult>>();
+        Map<String, FutureTask<OperationResult>> getEmptyGOAccessTasks = new HashMap<String, FutureTask<OperationResult>>();
         Map<String, FutureTask<OperationResult>> getFoiAccessTasks = new HashMap<String, FutureTask<OperationResult>>();
 
         // create tasks by iteration over procedures
@@ -101,6 +119,8 @@ public class PhenomenonFilteredHydroMetadataHandler extends HydroMetadataHandler
                                   new FutureTask<OperationResult>(createGetFoiAccess(metadata.getServiceUrl(),
                                                                                      metadata.getVersion(),
                                                                                      phenomenonID)));
+            getEmptyGOAccessTasks.put(phenomenonID,
+                                        new FutureTask<OperationResult>(createEmptyGOAccess(metadata,phenomenonID)));
             getDataAvailabilityTasks.put(phenomenonID,
                                          new FutureTask<OperationResult>(createGDAAccess(metadata.getServiceUrl(),
                                                                                          metadata.getVersion(),
@@ -126,6 +146,10 @@ public class PhenomenonFilteredHydroMetadataHandler extends HydroMetadataHandler
                 LOGGER.warn("{} not added! No station for feature '{}'.", timeserie, featureId);
             }
         }
+
+
+        // get the UOM from empty GO requests
+        executeEmptyGOTasks(getEmptyGOAccessTasks, metadata);
 
         infoLogServiceSummary(metadata);
         metadata.setHasDonePositionRequest(true);
@@ -222,6 +246,36 @@ public class PhenomenonFilteredHydroMetadataHandler extends HydroMetadataHandler
         return timeseries;
     }
 
+    private void executeEmptyGOTasks(Map<String, FutureTask<OperationResult>> emptyGOAccessTasks, SOSMetadata metadata) throws InterruptedException, ExecutionException, TimeoutException, XmlException, IOException {
+        int counter = emptyGOAccessTasks.size();
+
+        for (String procedureDomainId : emptyGOAccessTasks.keySet()) {
+            LOGGER.debug("Sending #{} empty GetObservation request for procedure " + procedureDomainId, counter--);
+
+            FutureTask<OperationResult> futureTask = emptyGOAccessTasks.get(procedureDomainId);
+            AccessorThreadPool.execute(futureTask);
+            OperationResult result = futureTask.get(metadata.getTimeout(), MILLISECONDS);
+            if (result == null) {
+                LOGGER.error("Get no result for GetObservation with parameter procedure: " + procedureDomainId + "!");
+            }
+            GetObservationResponseDocument goDoc = GetObservationResponseDocument.Factory.parse(result.getIncomingResultAsStream());
+            GetObservationResponseType go = goDoc.getGetObservationResponse();
+
+            String observationsXPath = "$this//*/om:OM_Observation";
+            OMObservationType[] observations = xmlHelper.parseAll(go, observationsXPath, OMObservationType.class);
+            for (OMObservationType observation : observations) {
+                String uomXPath = "$this//om:result/wml:MeasurementTimeseries/*/*/wml:uom/@code/string()";
+                XmlString uom = xmlHelper.parseFirst(observation, uomXPath, XmlString.class);
+
+                String phenomenonDomainId = observation.getObservedProperty().getHref();
+                TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
+                Phenomenon phenomenon = lookup.getPhenomenon(phenomenonDomainId);
+                phenomenon.setUnitOfMeasure(uom == null ? "" : uom.getStringValue());
+            }
+        }
+
+    }
+
     private void executeFoiTasks(Map<String, FutureTask<OperationResult>> getFoiAccessTasks, SOSMetadata metadata) throws InterruptedException,
             ExecutionException,
             XmlException,
@@ -286,6 +340,17 @@ public class PhenomenonFilteredHydroMetadataHandler extends HydroMetadataHandler
         container.addParameterShell(GET_FOI_VERSION_PARAMETER, sosVersion);
         container.addParameterShell("observedProperty", phenomenonID);
         Operation operation = new Operation(GET_FEATURE_OF_INTEREST, sosUrl, sosUrl);
+        return new OperationAccessor(getSosAdapter(), operation, container);
+    }
+
+    private Callable<OperationResult> createEmptyGOAccess(SOSMetadata metadata, String phenomenonId) throws OXFException {
+        ParameterContainer container = new ParameterContainer();
+        container.addParameterShell(ISOSRequestBuilder.GET_OBSERVATION_SERVICE_PARAMETER, "SOS");
+        container.addParameterShell(ISOSRequestBuilder.GET_OBSERVATION_VERSION_PARAMETER, metadata.getSosVersion());
+        container.addParameterShell("observedProperty", phenomenonId);
+        String sosUrl = metadata.getServiceUrl();
+        container.addParameterShell(ISOSRequestBuilder.GET_OBSERVATION_RESPONSE_FORMAT_PARAMETER, "http://www.opengis.net/waterml/2.0");
+        Operation operation = new Operation(SOSwithSoapAdapter.GET_OBSERVATION, sosUrl, sosUrl);
         return new OperationAccessor(getSosAdapter(), operation, container);
     }
 
