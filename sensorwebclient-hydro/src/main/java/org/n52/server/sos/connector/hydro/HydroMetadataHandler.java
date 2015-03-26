@@ -40,9 +40,6 @@ import java.util.concurrent.TimeoutException;
 import net.opengis.om.x20.OMObservationType;
 import net.opengis.sos.x20.GetObservationResponseDocument;
 import net.opengis.sos.x20.GetObservationResponseType;
-import net.opengis.waterml.x20.ObservationProcessDocument;
-
-import net.opengis.waterml.x20.ObservationProcessType;
 import org.apache.xmlbeans.SimpleValue;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -57,16 +54,13 @@ import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_VERSION_PARAMET
 import static org.n52.oxf.sos.adapter.SOSAdapter.GET_FEATURE_OF_INTEREST;
 import org.n52.server.da.AccessorThreadPool;
 import org.n52.server.da.MetadataHandler;
-import static org.n52.server.da.oxf.DescribeSensorAccessor.getSensorDescriptionAsSensorML;
 import org.n52.server.da.oxf.OperationAccessor;
-import static org.n52.server.mgmt.ConfigurationContext.SERVER_TIMEOUT;
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadata;
 import org.n52.server.parser.ConnectorUtils;
 import org.n52.server.parser.GetFeatureOfInterestParser;
 import static org.n52.server.sos.connector.hydro.SOSwithSoapAdapter.GET_DATA_AVAILABILITY;
 import org.n52.server.util.PropertiesToHtml;
 import org.n52.server.util.XmlHelper;
-import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.Category;
 import org.n52.shared.serializable.pojos.sos.Feature;
@@ -152,9 +146,6 @@ public class HydroMetadataHandler extends MetadataHandler {
     }
 
     protected void collectTimeseries(SOSMetadata metadata) throws OXFException,
-            InterruptedException,
-            ExecutionException,
-            TimeoutException,
             XmlException,
             IOException {
 
@@ -203,20 +194,18 @@ public class HydroMetadataHandler extends MetadataHandler {
     }
 
     private Collection<SosTimeseries> executeGDATasks(Map<SosTimeseries, FutureTask<OperationResult>> getDataAvailabilityTasks,
-                                                      SOSMetadata metadata) throws InterruptedException,
-            ExecutionException,
-            TimeoutException,
+                                                      SOSMetadata metadata) throws
             XmlException,
             IOException {
         int counter = getDataAvailabilityTasks.size();
         LOGGER.debug("Sending " + counter + " GetDataAvailability requests");
         Collection<SosTimeseries> timeseries = new ArrayList<SosTimeseries>();
         for (SosTimeseries timeserie : getDataAvailabilityTasks.keySet()) {
-            LOGGER.debug("Sending #{} GetDataAvailability request for procedure " + timeserie.getProcedureId(),
+            LOGGER.debug("Sending #{} GetDataAvailability request for procedure: " + timeserie.getProcedureId(),
                          counter--);
             FutureTask<OperationResult> futureTask = getDataAvailabilityTasks.get(timeserie);
             AccessorThreadPool.execute(futureTask);
-            OperationResult result = futureTask.get(metadata.getTimeout(), MILLISECONDS);
+            OperationResult result = waitForResult(futureTask, metadata.getTimeout());
             if (result == null) {
                 LOGGER.error("Get no result for GetDataAvailability with parameter constellation: " + timeserie + "!");
             }
@@ -226,8 +215,22 @@ public class HydroMetadataHandler extends MetadataHandler {
         return timeseries;
     }
 
+    protected final OperationResult waitForResult(FutureTask<OperationResult> task, long timeout) {
+        OperationResult result = null;
+        try {
+             result = task.get(timeout, MILLISECONDS);
+        } catch (TimeoutException e) {
+            LOGGER.warn("Request took too long.", e);
+        } catch (InterruptedException e) {
+            LOGGER.warn("Request was interrupted.", e);
+        } catch (ExecutionException e ) {
+            LOGGER.warn("Request execution failed.", e);
+        }
+        return result;
+    }
 
-    private void executeEmptyGOTasks(Map<String, FutureTask<OperationResult>> emptyGOAccessTasks, SOSMetadata metadata) throws InterruptedException, ExecutionException, TimeoutException, XmlException, IOException {
+
+    private void executeEmptyGOTasks(Map<String, FutureTask<OperationResult>> emptyGOAccessTasks, SOSMetadata metadata) throws XmlException, IOException {
         int counter = emptyGOAccessTasks.size();
 
         for (String procedureDomainId : emptyGOAccessTasks.keySet()) {
@@ -235,9 +238,10 @@ public class HydroMetadataHandler extends MetadataHandler {
 
             FutureTask<OperationResult> futureTask = emptyGOAccessTasks.get(procedureDomainId);
             AccessorThreadPool.execute(futureTask);
-            OperationResult result = futureTask.get(metadata.getTimeout(), MILLISECONDS);
+            OperationResult result = waitForResult(futureTask, metadata.getTimeout());
             if (result == null) {
-                LOGGER.error("Get no result for GetObservation with parameter procedure: " + procedureDomainId + "!");
+                LOGGER.warn("Get no result for GetObservation with procedure filter '{}'.", procedureDomainId);
+                continue;
             }
             GetObservationResponseDocument goDoc = GetObservationResponseDocument.Factory.parse(result.getIncomingResultAsStream());
             GetObservationResponseType go = goDoc.getGetObservationResponse();
@@ -258,8 +262,7 @@ public class HydroMetadataHandler extends MetadataHandler {
     }
 
 
-    private void executeFoiTasks(Map<String, FutureTask<OperationResult>> getFoiAccessTasks, SOSMetadata metadata) throws InterruptedException,
-            ExecutionException,
+    private void executeFoiTasks(Map<String, FutureTask<OperationResult>> getFoiAccessTasks, SOSMetadata metadata) throws
             XmlException,
             IOException,
             OXFException {
@@ -270,14 +273,13 @@ public class HydroMetadataHandler extends MetadataHandler {
             LOGGER.debug("Sending #{} GetFeatureOfInterest request for procedure '{}'", counter--, procedureID);
             FutureTask<OperationResult> futureTask = getFoiAccessTasks.get(procedureID);
             AccessorThreadPool.execute(futureTask);
-            try {
-                OperationResult opRes = futureTask.get(metadata.getTimeout(), MILLISECONDS);
-                GetFeatureOfInterestParser getFoiParser = new GetFeatureOfInterestParser(opRes, metadata);
-                getFoiParser.createStations();
+            OperationResult opRes = waitForResult(futureTask, metadata.getTimeout());
+            if (opRes == null) {
+                LOGGER.warn("Get no result for GetFeatureOfInterest with procedure filter '{}'", procedureID);
+                continue;
             }
-            catch (TimeoutException e) {
-                LOGGER.error("Timeout occured.", e);
-            }
+            GetFeatureOfInterestParser getFoiParser = new GetFeatureOfInterestParser(opRes, metadata);
+            getFoiParser.createStations();
         }
     }
 

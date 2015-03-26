@@ -94,7 +94,7 @@ public class PhenomenonFilteredHydroMetadataHandler extends HydroMetadataHandler
     private final XmlHelper xmlHelper = new XmlHelper(namespaceDeclarations);
 
     private Map<String, List<String>> procOff = new HashMap<String, List<String>>();
-    
+
     public PhenomenonFilteredHydroMetadataHandler(SOSMetadata metadata) {
         super(metadata);
     }
@@ -217,46 +217,39 @@ public class PhenomenonFilteredHydroMetadataHandler extends HydroMetadataHandler
     }
 
     private Collection<SosTimeseries> executeGDATasks(Map<String, FutureTask<OperationResult>> getDataAvailabilityTasks,
-                                                      SOSMetadata metadata, Collection<SosTimeseries> observingTimeseries) throws InterruptedException,
-            ExecutionException,
-            TimeoutException,
+                                                      SOSMetadata metadata, Collection<SosTimeseries> observingTimeseries) throws
             XmlException,
             IOException {
         int counter = getDataAvailabilityTasks.size();
         LOGGER.debug("Sending " + counter + " GetDataAvailability requests");
         Collection<SosTimeseries> timeseries = new ArrayList<SosTimeseries>();
         for (String phenomenon : getDataAvailabilityTasks.keySet()) {
-            LOGGER.debug("Sending #{} GetDataAvailability request for phenomenon " + phenomenon,
-                         counter--);
+            LOGGER.debug("Sending #{} GetDataAvailability request for phenomenon " + phenomenon, counter--);
             FutureTask<OperationResult> futureTask = getDataAvailabilityTasks.get(phenomenon);
             AccessorThreadPool.execute(futureTask);
-            OperationResult result = null;
-			try {
-				result = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
-			} catch (Exception e) {
-				LOGGER.error("Get no result for GetDataAvailability with parameter constellation: " + phenomenon + "!");
-			}
+            OperationResult result = waitForResult(futureTask, metadata.getTimeout());
             if (result == null) {
                 LOGGER.error("Get no result for GetDataAvailability with parameter constellation: " + phenomenon + "!");
-            } else {
-            	XmlObject result_xb = XmlObject.Factory.parse(result.getIncomingResultAsStream());
-                timeseries.addAll(getAvailableTimeseries(result_xb, phenomenon, metadata, observingTimeseries));
+                continue;
             }
+            XmlObject result_xb = XmlObject.Factory.parse(result.getIncomingResultAsStream());
+            timeseries.addAll(getAvailableTimeseries(result_xb, phenomenon, metadata, observingTimeseries));
         }
         return timeseries;
     }
 
-    private void executeEmptyGOTasks(Map<String, FutureTask<OperationResult>> emptyGOAccessTasks, SOSMetadata metadata) throws InterruptedException, ExecutionException, TimeoutException, XmlException, IOException {
+    private void executeEmptyGOTasks(Map<String, FutureTask<OperationResult>> emptyGOAccessTasks, SOSMetadata metadata) throws XmlException, IOException {
         int counter = emptyGOAccessTasks.size();
 
-        for (String procedureDomainId : emptyGOAccessTasks.keySet()) {
-            LOGGER.debug("Sending #{} empty GetObservation request for procedure " + procedureDomainId, counter--);
+        for (String phenomenonId : emptyGOAccessTasks.keySet()) {
+            LOGGER.debug("Sending #{} empty GetObservation request for phenomenon " + phenomenonId, counter--);
 
-            FutureTask<OperationResult> futureTask = emptyGOAccessTasks.get(procedureDomainId);
+            FutureTask<OperationResult> futureTask = emptyGOAccessTasks.get(phenomenonId);
             AccessorThreadPool.execute(futureTask);
-            OperationResult result = futureTask.get(metadata.getTimeout(), MILLISECONDS);
+            OperationResult result = waitForResult(futureTask, metadata.getTimeout());
             if (result == null) {
-                LOGGER.error("Get no result for GetObservation with parameter procedure: " + procedureDomainId + "!");
+                LOGGER.warn("Get no result for GetObservation with phenomenon '{}'", phenomenonId);
+                continue;
             }
             GetObservationResponseDocument goDoc = GetObservationResponseDocument.Factory.parse(result.getIncomingResultAsStream());
             GetObservationResponseType go = goDoc.getGetObservationResponse();
@@ -276,8 +269,7 @@ public class PhenomenonFilteredHydroMetadataHandler extends HydroMetadataHandler
 
     }
 
-    private void executeFoiTasks(Map<String, FutureTask<OperationResult>> getFoiAccessTasks, SOSMetadata metadata) throws InterruptedException,
-            ExecutionException,
+    private void executeFoiTasks(Map<String, FutureTask<OperationResult>> getFoiAccessTasks, SOSMetadata metadata) throws 
             XmlException,
             IOException,
             OXFException {
@@ -288,14 +280,14 @@ public class PhenomenonFilteredHydroMetadataHandler extends HydroMetadataHandler
             LOGGER.debug("Sending #{} GetFeatureOfInterest request for procedure '{}'", counter--, phenomenonID);
             FutureTask<OperationResult> futureTask = getFoiAccessTasks.get(phenomenonID);
             AccessorThreadPool.execute(futureTask);
-            try {
-                OperationResult opsRes = futureTask.get(SERVER_TIMEOUT, MILLISECONDS);
-                GetFeatureOfInterestParser getFoiParser = new GetFeatureOfInterestParser(opsRes, metadata);
-                getFoiParser.createStations();
+
+            OperationResult opsRes = waitForResult(futureTask, metadata.getTimeout());
+            if (opsRes == null) {
+                LOGGER.warn("Get no result for GetFeatureOfInterest with phenomenon filter '{}'", phenomenonID);
+                continue;
             }
-            catch (TimeoutException e) {
-                LOGGER.error("Timeout occured.", e);
-            }
+            GetFeatureOfInterestParser getFoiParser = new GetFeatureOfInterestParser(opsRes, metadata);
+            getFoiParser.createStations();
         }
     }
 
