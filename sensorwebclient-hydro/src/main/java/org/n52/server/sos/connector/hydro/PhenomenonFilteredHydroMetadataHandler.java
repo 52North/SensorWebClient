@@ -100,9 +100,6 @@ public class PhenomenonFilteredHydroMetadataHandler extends HydroMetadataHandler
     }
 
     protected void collectTimeseries(SOSMetadata metadata) throws OXFException,
-            InterruptedException,
-            ExecutionException,
-            TimeoutException,
             XmlException,
             IOException {
 
@@ -269,7 +266,7 @@ public class PhenomenonFilteredHydroMetadataHandler extends HydroMetadataHandler
 
     }
 
-    private void executeFoiTasks(Map<String, FutureTask<OperationResult>> getFoiAccessTasks, SOSMetadata metadata) throws 
+    private void executeFoiTasks(Map<String, FutureTask<OperationResult>> getFoiAccessTasks, SOSMetadata metadata) throws
             XmlException,
             IOException,
             OXFException {
