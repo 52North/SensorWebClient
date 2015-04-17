@@ -27,11 +27,9 @@
  */
 package org.n52.server.sos.connector.hydro;
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER;
 import static org.n52.oxf.sos.adapter.SOSAdapter.GET_FEATURE_OF_INTEREST;
-import static org.n52.server.mgmt.ConfigurationContext.SERVER_TIMEOUT;
 import static org.n52.server.sos.connector.hydro.SOSwithSoapAdapter.GET_DATA_AVAILABILITY;
 
 import java.io.IOException;
@@ -44,10 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import java.util.concurrent.TimeoutException;
 import net.opengis.om.x20.OMObservationType;
 import net.opengis.sos.x20.GetObservationResponseDocument;
 import net.opengis.sos.x20.GetObservationResponseType;
@@ -105,9 +100,9 @@ public class PhenomenonFilteredHydroMetadataHandler extends HydroMetadataHandler
 
         Collection<SosTimeseries> observingTimeseries = createObservingTimeseries(metadata);
 
-        Map<String, FutureTask<OperationResult>> getDataAvailabilityTasks = new HashMap<String, FutureTask<OperationResult>>();
-        Map<String, FutureTask<OperationResult>> getEmptyGOAccessTasks = new HashMap<String, FutureTask<OperationResult>>();
         Map<String, FutureTask<OperationResult>> getFoiAccessTasks = new HashMap<String, FutureTask<OperationResult>>();
+        Map<String, FutureTask<OperationResult>> getDataAvailabilityTasks = new HashMap<String, FutureTask<OperationResult>>();
+        Map<PhenomenonProcedureFilter, FutureTask<OperationResult>> getEmptyGOAccessTasks = new HashMap<PhenomenonProcedureFilter, FutureTask<OperationResult>>();
 
         // create tasks by iteration over procedures
         for (SosTimeseries timeserie : observingTimeseries) {
@@ -116,8 +111,11 @@ public class PhenomenonFilteredHydroMetadataHandler extends HydroMetadataHandler
                                   new FutureTask<OperationResult>(createGetFoiAccess(metadata.getServiceUrl(),
                                                                                      metadata.getVersion(),
                                                                                      phenomenonID)));
-            getEmptyGOAccessTasks.put(phenomenonID,
-                                        new FutureTask<OperationResult>(createEmptyGOAccess(metadata,phenomenonID)));
+            PhenomenonProcedureFilter goFilter = new PhenomenonProcedureFilter();
+            goFilter.phenomenonId = phenomenonID;
+            goFilter.procedureId = timeserie.getProcedureId();
+            getEmptyGOAccessTasks.put(goFilter,
+                                        new FutureTask<OperationResult>(createEmptyGOAccess(metadata,timeserie)));
             getDataAvailabilityTasks.put(phenomenonID,
                                          new FutureTask<OperationResult>(createGDAAccess(metadata.getServiceUrl(),
                                                                                          metadata.getVersion(),
@@ -235,17 +233,18 @@ public class PhenomenonFilteredHydroMetadataHandler extends HydroMetadataHandler
         return timeseries;
     }
 
-    private void executeEmptyGOTasks(Map<String, FutureTask<OperationResult>> emptyGOAccessTasks, SOSMetadata metadata) throws XmlException, IOException {
+    private void executeEmptyGOTasks(Map<PhenomenonProcedureFilter, FutureTask<OperationResult>> emptyGOAccessTasks, SOSMetadata metadata) throws XmlException, IOException {
         int counter = emptyGOAccessTasks.size();
 
-        for (String phenomenonId : emptyGOAccessTasks.keySet()) {
-            LOGGER.debug("Sending #{} empty GetObservation request for phenomenon " + phenomenonId, counter--);
+        for (PhenomenonProcedureFilter goFilter : emptyGOAccessTasks.keySet()) {
+            String phenomenonId = goFilter.phenomenonId;
+            LOGGER.debug("Sending #{} empty GetObservation request with filter '{}' ", goFilter, counter--);
 
-            FutureTask<OperationResult> futureTask = emptyGOAccessTasks.get(phenomenonId);
+            FutureTask<OperationResult> futureTask = emptyGOAccessTasks.get(goFilter);
             AccessorThreadPool.execute(futureTask);
             OperationResult result = waitForResult(futureTask, metadata.getTimeout());
             if (result == null) {
-                LOGGER.warn("Get no result for GetObservation with phenomenon '{}'", phenomenonId);
+                LOGGER.warn("Get no result for GetObservation with filter '{}'", goFilter);
                 continue;
             }
             GetObservationResponseDocument goDoc = GetObservationResponseDocument.Factory.parse(result.getIncomingResultAsStream());
@@ -332,11 +331,12 @@ public class PhenomenonFilteredHydroMetadataHandler extends HydroMetadataHandler
         return new OperationAccessor(getSosAdapter(), operation, container);
     }
 
-    private Callable<OperationResult> createEmptyGOAccess(SOSMetadata metadata, String phenomenonId) throws OXFException {
+    private Callable<OperationResult> createEmptyGOAccess(SOSMetadata metadata, SosTimeseries timeserie) throws OXFException {
         ParameterContainer container = new ParameterContainer();
         container.addParameterShell(ISOSRequestBuilder.GET_OBSERVATION_SERVICE_PARAMETER, "SOS");
         container.addParameterShell(ISOSRequestBuilder.GET_OBSERVATION_VERSION_PARAMETER, metadata.getSosVersion());
-        container.addParameterShell("observedProperty", phenomenonId);
+        container.addParameterShell("observedProperty", timeserie.getPhenomenonId());
+        container.addParameterShell("procedure", timeserie.getProcedureId());
         String sosUrl = metadata.getServiceUrl();
         container.addParameterShell(ISOSRequestBuilder.GET_OBSERVATION_RESPONSE_FORMAT_PARAMETER, "http://www.opengis.net/waterml/2.0");
         Operation operation = new Operation(SOSwithSoapAdapter.GET_OBSERVATION, sosUrl, sosUrl);
@@ -349,6 +349,43 @@ public class PhenomenonFilteredHydroMetadataHandler extends HydroMetadataHandler
         container.addParameterShell("version", version);
         Operation operation = new Operation(GET_DATA_AVAILABILITY, sosUrl, sosUrl);
         return new OperationAccessor(getSosAdapter(), operation, container);
+    }
+
+    static class PhenomenonProcedureFilter {
+        String procedureId;
+        String phenomenonId;
+
+        @Override
+        public String toString() {
+            return "Filter [" + "procedureId=" + procedureId + ", phenomenonId=" + phenomenonId + ']';
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final PhenomenonProcedureFilter other = (PhenomenonProcedureFilter) obj;
+            if ((this.procedureId == null) ? (other.procedureId != null) : !this.procedureId.equals(other.procedureId)) {
+                return false;
+            }
+            if ((this.phenomenonId == null) ? (other.phenomenonId != null) : !this.phenomenonId.equals(other.phenomenonId)) {
+                return false;
+            }
+            return true;
+        }
+
+
+
     }
 
 }
