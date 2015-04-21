@@ -111,11 +111,6 @@ public class PhenomenonFilteredHydroMetadataHandler extends HydroMetadataHandler
                                   new FutureTask<OperationResult>(createGetFoiAccess(metadata.getServiceUrl(),
                                                                                      metadata.getVersion(),
                                                                                      phenomenonID)));
-            PhenomenonProcedureFilter goFilter = new PhenomenonProcedureFilter();
-            goFilter.phenomenonId = phenomenonID;
-            goFilter.procedureId = timeserie.getProcedureId();
-            getEmptyGOAccessTasks.put(goFilter,
-                                        new FutureTask<OperationResult>(createEmptyGOAccess(metadata,timeserie)));
             getDataAvailabilityTasks.put(phenomenonID,
                                          new FutureTask<OperationResult>(createGDAAccess(metadata.getServiceUrl(),
                                                                                          metadata.getVersion(),
@@ -140,6 +135,12 @@ public class PhenomenonFilteredHydroMetadataHandler extends HydroMetadataHandler
             else {
                 LOGGER.warn("{} not added! No station for feature '{}'.", timeserie, featureId);
             }
+
+            // prepare empty GetObservation requests to retrieve more metadata
+            PhenomenonProcedureFilter goFilter = new PhenomenonProcedureFilter();
+            goFilter.phenomenonId = timeserie.getPhenomenonId();
+            goFilter.procedureId = timeserie.getProcedureId();
+            getEmptyGOAccessTasks.put(goFilter, new FutureTask<OperationResult>(createEmptyGOAccess(metadata,timeserie)));
         }
 
 
