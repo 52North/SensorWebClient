@@ -234,7 +234,7 @@ public class HydroMetadataHandler extends MetadataHandler {
         int counter = emptyGOAccessTasks.size();
 
         for (String procedureDomainId : emptyGOAccessTasks.keySet()) {
-            LOGGER.debug("Sending #{} empty GetObservation request for procedure " + procedureDomainId, counter--);
+            LOGGER.debug("Sending #{} empty GetObservation request for procedure '{}'.", counter--, procedureDomainId);
 
             FutureTask<OperationResult> futureTask = emptyGOAccessTasks.get(procedureDomainId);
             AccessorThreadPool.execute(futureTask);
