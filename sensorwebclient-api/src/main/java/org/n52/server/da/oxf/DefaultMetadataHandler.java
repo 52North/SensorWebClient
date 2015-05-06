@@ -32,7 +32,6 @@ import static org.n52.server.da.oxf.DescribeSensorAccessor.getSensorDescriptionA
 import static org.n52.server.mgmt.ConfigurationContext.*;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -72,6 +71,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Point;
+import java.io.InputStream;
 
 public class DefaultMetadataHandler extends MetadataHandler {
 
@@ -160,7 +160,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
         final List<String> illegalProcedures = new ArrayList<String>();
         LOGGER.debug("Going to send #{} DescribeSensor requests.", futureTasks.size());
         for (final String procedureId : futureTasks.keySet()) {
-            ByteArrayInputStream incomingResultAsStream = null;
+            InputStream incomingResultAsStream = null;
             try {
                 LOGGER.trace("Sending request {}", i++);
                 final FutureTask<OperationResult> futureTask = futureTasks.get(procedureId);
@@ -170,7 +170,7 @@ public class DefaultMetadataHandler extends MetadataHandler {
                     illegalProcedures.add(procedureId);
                     LOGGER.debug("Got NO sensor description for '{}'", procedureId);
                 } else {
-                    incomingResultAsStream = opResult.getIncomingResultAsStream();
+                    incomingResultAsStream = opResult.getIncomingResultAsAutoCloseStream();
                     final DescribeSensorParser parser = new DescribeSensorParser(incomingResultAsStream, metadata);
 
                     final Procedure procedure = lookup.getProcedure(procedureId);

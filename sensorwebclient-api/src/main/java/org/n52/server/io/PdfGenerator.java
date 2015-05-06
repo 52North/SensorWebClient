@@ -82,7 +82,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PdfGenerator extends Generator {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(PdfGenerator.class);
 
     private static String ENCODING = "UTF-8";
@@ -109,7 +109,7 @@ public class PdfGenerator extends Generator {
         DocumentStructureType docStructure = docStructureDoc.addNewDocumentStructure();
 
         for (TimeseriesProperties prop : getRepresentationOp.getProperties()) {
-            
+
             TimeseriesParametersLookup lookup = getParameterLookup(prop.getServiceUrl());
 
 //            Offering offering = prop.getOffering();
@@ -167,7 +167,7 @@ public class PdfGenerator extends Generator {
 
         Operation descSensorOperation = new Operation(SOSAdapter.DESCRIBE_SENSOR, sosURL, sosURL);
         SOSAdapter adapter = SosAdapterFactory.createSosAdapter(metadata);
-		
+
         OperationResult opResult = adapter.doOperation(descSensorOperation, paramCon);
 
         // parse resulting SensorML doc and store information in the
@@ -176,7 +176,7 @@ public class PdfGenerator extends Generator {
         xmlOpts.setCharacterEncoding(ENCODING);
 
         XmlObject xmlObject =
-                XmlObject.Factory.parse(opResult.getIncomingResultAsStream(), xmlOpts);
+                XmlObject.Factory.parse(opResult.getIncomingResultAsAutoCloseStream(), xmlOpts);
         MetadataType metadataType = MetadataType.Factory.newInstance();
 
         String namespaceDecl = "declare namespace sml='http://www.opengis.net/sensorML/1.0'; "; //$NON-NLS-1$
@@ -220,7 +220,7 @@ public class PdfGenerator extends Generator {
 
     /**
      * builds up a new {@link TableType} object.
-     * 
+     *
      * @param prop
      *            the prop
      * @param obsColl
@@ -259,15 +259,15 @@ public class PdfGenerator extends Generator {
         //
         //fix generalizer procedures
         for (OXFFeature observation : obsColl) {
-            
+
             String p = (String)observation.getAttribute(OXFAbstractObservationType.PROCEDURE);
             if (p.contains("urn:ogc:generalizationMethod")) {
                 p = p.substring(0, p.indexOf(","));
             }
             observation.setAttribute(OXFAbstractObservationType.PROCEDURE, p);
-            
+
         }
-        
+
         ObservationSeriesCollection seriesCollection =
                 new ObservationSeriesCollection(obsColl, new String[] { foiID },
                         new String[] { obsPropID }, new String[] { procID }, true);
@@ -319,7 +319,7 @@ public class PdfGenerator extends Generator {
         try {
 
             Map<String, OXFFeatureCollection> observationCollMap = getFeatureCollectionFor(options, false);
-            
+
             // produce document structure:
             DocumentStructureDocument docStructureDoc =
                     buildUpDocumentStructure(options, observationCollMap);
@@ -339,17 +339,17 @@ public class PdfGenerator extends Generator {
             FileOutputStream imageOut = new FileOutputStream(imageFile);
             FileOutputStream legendOut = new FileOutputStream(legendFile);
             try {
-                
+
                 diagramGen.producePresentation(observationCollMap, options, imageOut, false);
                 LOGGER.debug("imageFile: " + imageFile);
-    
-               
+
+
                 diagramGen.createLegend(options, legendOut);
                 LOGGER.debug("legendFile: " + legendFile);
 
             } catch (Exception e) {
                throw new Exception("Error producing legend.", e);
-                
+
             } finally {
                 imageOut.flush();
                 imageOut.close();
@@ -401,7 +401,7 @@ public class PdfGenerator extends Generator {
                                 "_"+formatDate(new Date(options.getEnd()))+"_", "pdf");
                     this.pdfURL = ConfigurationContext.GEN_URL +folderPostfix +"/"+ this.pdfFile.getName();
                 }
-               
+
             }
 
             LOGGER.debug("Transforming content to PDF.");

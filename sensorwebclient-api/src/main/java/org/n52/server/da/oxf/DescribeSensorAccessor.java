@@ -67,7 +67,7 @@ public class DescribeSensorAccessor {
      * service metadata.<br>
      * <br>
      * Currently, only SensorML 1.0.1 is supported.
-     * 
+     *
      * @param procedure
      *        the procedure id for which the sensor description shall be requested.
      * @param serviceMetadata
@@ -105,7 +105,7 @@ public class DescribeSensorAccessor {
 
             // TODO check for different SML versions
 
-            return XmlObject.Factory.parse(result.getIncomingResultAsStream());
+            return XmlObject.Factory.parse(result.getIncomingResultAsAutoCloseStream());
         }
         catch (OXFException e) {
             LOGGER.warn("Could not assemble parameters for request.", e);

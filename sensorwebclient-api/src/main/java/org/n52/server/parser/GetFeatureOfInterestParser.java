@@ -177,7 +177,7 @@ public class GetFeatureOfInterestParser {
 
 	private GetFeatureOfInterestResponseDocument getFOIResponseOfOpResult(
 			OperationResult getFoiResult) throws XmlException, IOException, OXFException {
-    	XmlObject foiResponse = XmlObject.Factory.parse(getFoiResult.getIncomingResultAsStream());
+    	XmlObject foiResponse = XmlObject.Factory.parse(getFoiResult.getIncomingResultAsAutoCloseStream());
         if (foiResponse instanceof GetFeatureOfInterestResponseDocument) {
             return (GetFeatureOfInterestResponseDocument) foiResponse;
         }

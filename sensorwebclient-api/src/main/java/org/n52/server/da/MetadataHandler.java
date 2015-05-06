@@ -325,7 +325,7 @@ public abstract class MetadataHandler {
             Operation operation = new Operation(GET_FEATURE_OF_INTEREST, url, url);
             OperationResult result = getSosAdapter().doOperation(operation, container);
             XmlObject foiResponse = XmlObject.Factory.parse(result
-                    .getIncomingResultAsStream());
+                    .getIncomingResultAsAutoCloseStream());
             if (foiResponse instanceof GetFeatureOfInterestResponseDocument) {
                 GetFeatureOfInterestResponseDocument foiResDoc = (GetFeatureOfInterestResponseDocument) foiResponse;
                 for (FeaturePropertyType featurePropertyType : foiResDoc

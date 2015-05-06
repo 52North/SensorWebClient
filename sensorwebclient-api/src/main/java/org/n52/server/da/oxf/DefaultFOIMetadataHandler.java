@@ -33,8 +33,8 @@ import static org.n52.server.mgmt.ConfigurationContext.SERVER_TIMEOUT;
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadata;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -160,7 +160,7 @@ public class DefaultFOIMetadataHandler extends DefaultMetadataHandler {
         final List<String> illegalProcedures = new ArrayList<String>();
         LOGGER.debug("Going to send #{} DescribeSensor requests.", futureTasks.size());
         for (final String procedureId : futureTasks.keySet()) {
-            ByteArrayInputStream incomingResultAsStream = null;
+            InputStream incomingResultAsStream = null;
             try {
                 LOGGER.trace("Sending request {}", i++);
                 final FutureTask<OperationResult> futureTask = futureTasks.get(procedureId);
@@ -170,7 +170,7 @@ public class DefaultFOIMetadataHandler extends DefaultMetadataHandler {
                     illegalProcedures.add(procedureId);
                     LOGGER.debug("Got NO sensor description for '{}'", procedureId);
                 } else {
-                    incomingResultAsStream = opResult.getIncomingResultAsStream();
+                    incomingResultAsStream = opResult.getIncomingResultAsAutoCloseStream();
                     final DescribeSensorParser parser = new DescribeSensorParser(incomingResultAsStream, metadata);
 
                     final Procedure procedure = lookup.getProcedure(procedureId);
