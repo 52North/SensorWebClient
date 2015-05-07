@@ -721,7 +721,7 @@
             <plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
-                <version>2.1.10</version>
+                <version>2.1.13</version>
                 <executions>
                     <execution>
                         <id>git-commit-id</id>
@@ -730,6 +730,7 @@
                         </goals>
                         <phase>validate</phase>
                         <configuration>
+                        	<failOnNoGitDirectory>false</failOnNoGitDirectory>
                             <dateFormat>yyyy-MM-dd HH:mm:ssZ</dateFormat>
                             <gitDescribe>
                                 Faster to get just branch if skip = true
