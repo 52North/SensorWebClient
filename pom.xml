@@ -1060,14 +1060,10 @@
             </snapshots>
         </repository>
         <repository>
-            <id>geotools-new</id>
-            <url>http://download.osgeo.org/webdav/geotools</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
+            <!-- geotools -->
+            <id>boundless</id>
+			<name>Boundless, formerly OpenGeo</name>
+			<url>http://repo.boundlessgeo.com/main/</url>
         </repository>
         <repository>
             <id>jts4gwt-repo</id>
