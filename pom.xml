@@ -1061,11 +1061,15 @@
             </snapshots>
         </repository>
         <repository>
-            <!-- geotools -->
             <id>boundless</id>
 			<name>Boundless, formerly OpenGeo</name>
 			<url>http://repo.boundlessgeo.com/main/</url>
         </repository>
+		<repository>
+			<id>osgeo</id>
+			<name>osgeo repository</name>
+			<url>http://download.osgeo.org/webdav/geotools</url>
+		</repository>
         <repository>
             <id>jts4gwt-repo</id>
             <name>jts4gwt repository</name>
