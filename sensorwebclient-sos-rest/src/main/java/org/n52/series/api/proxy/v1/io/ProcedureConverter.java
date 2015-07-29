@@ -41,6 +41,7 @@ public class ProcedureConverter extends OutputConverter<Procedure, ProcedureOutp
     public ProcedureOutput convertExpanded(Procedure procedure) {
         ProcedureOutput convertedProcedure = convertCondensed(procedure);
         convertedProcedure.setService(convertCondensedService());
+        convertedProcedure.setRawFormats(getMetadata().getProcedureFormats());
         return convertedProcedure;
     }
 
