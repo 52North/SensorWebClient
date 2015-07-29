@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import net.opengis.gml.x32.FeaturePropertyType;
@@ -137,6 +138,8 @@ public abstract class MetadataHandler {
         String sosTitle = serviceDescriptor.getServiceIdentification().getTitle();
         String omResponseFormat = ConnectorUtils.getResponseFormat(serviceDescriptor, "om");
         String smlVersion = ConnectorUtils.getSMLVersion(serviceDescriptor, sosVersion);
+        List<String> observationFormats =  ConnectorUtils.getResponseFormats(serviceDescriptor);
+        List<String> procedureFormats = ConnectorUtils.getProcedureDescriptionFormats(serviceDescriptor, sosVersion);
 
         // set defaults if format/version could not be determined from capabilities
         if (omResponseFormat == null) {
@@ -152,6 +155,8 @@ public abstract class MetadataHandler {
                 sosMetadata.setTitle(sosTitle);
                 sosMetadata.setSensorMLVersion(smlVersion);
                 sosMetadata.setOmVersion(omResponseFormat);
+                sosMetadata.setObservationFormats(observationFormats);
+                sosMetadata.setProcedureFormats(procedureFormats);
                 sosMetadata.setSosVersion(sosVersion);
                 sosMetadata.setInitialized(true);
             } else {

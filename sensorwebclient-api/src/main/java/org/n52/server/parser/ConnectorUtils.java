@@ -30,6 +30,8 @@ package org.n52.server.parser;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.n52.server.mgmt.ConfigurationContext.SERVER_TIMEOUT;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -99,25 +101,49 @@ public class ConnectorUtils {
 
     public static String getResponseFormat(final ServiceDescriptor serviceDesc, final String matchingPattern) {
         String respFormat = null;
+        for (String elem : getResponseFormats(serviceDesc)) {
+        	 if (elem.toLowerCase().contains(matchingPattern.toLowerCase())) {
+               respFormat = elem;
+           }
+		}
+        return respFormat;
+    }
+    
+	/**
+	 * Get supported observation response formats
+	 * 
+	 * @param serviceDesc
+	 *            {@link ServiceDescriptor}
+	 * @return {@link List} of supported observation response formats
+	 */
+    public static List<String> getResponseFormats(final ServiceDescriptor serviceDesc) {
         final OperationsMetadata metadata = serviceDesc.getOperationsMetadata();
         if (metadata != null) {
         	final Operation op = metadata.getOperationByName("GetObservation");
             final Parameter parameter = op.getParameter("responseFormat");
             if (parameter != null) {
                 final StringValueDomain respDomain = (StringValueDomain) parameter.getValueDomain();
-                for (final String elem : respDomain.getPossibleValues()) {
-                    if (elem.toLowerCase().contains(matchingPattern.toLowerCase())) {
-                        respFormat = elem;
-                    }
+                if (respDomain.getPossibleValues() != null) {
+                	return respDomain.getPossibleValues();
                 }
             }
         }
-        return respFormat;
+        return new ArrayList<String>(0);
     }
+    
 
     // TODO Review for the case of multiple SensorML versions
     public static String getSMLVersion(final ServiceDescriptor serviceDesc, final String sosVersion) {
         String smlVersion = null;
+		for (String elem : getProcedureDescriptionFormats(serviceDesc, sosVersion)) {
+			if (elem.contains("sensorML")) {
+				smlVersion = elem;
+			}
+		}
+        return smlVersion;
+    }
+    
+    public static List<String> getProcedureDescriptionFormats(final ServiceDescriptor serviceDesc, final String sosVersion) {
         final OperationsMetadata metadata = serviceDesc.getOperationsMetadata();
         if (metadata != null) {
         	final Operation opSensorML = metadata.getOperationByName("DescribeSensor");
@@ -129,16 +155,14 @@ public class ConnectorUtils {
             }
             if (outputFormat != null) {
                 final StringValueDomain sensorMLDomain = (StringValueDomain) outputFormat.getValueDomain();
-                for (final String elem : sensorMLDomain.getPossibleValues()) {
-                    if (elem.contains("sensorML")) {
-                        smlVersion = elem;
-                    }
+                if (sensorMLDomain.getPossibleValues() != null) {
+                	return sensorMLDomain.getPossibleValues();
                 }
             }
         }
-        return smlVersion;
+        return new ArrayList<String>(0);
     }
-
+    
     public static IBoundingBox createBbox(final ObservationOffering offering) {
         return createBbox(null, offering);
     }
