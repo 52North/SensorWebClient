@@ -31,25 +31,30 @@ import static org.n52.io.v1.data.TimeseriesData.newTimeseriesData;
 import static org.n52.shared.serializable.pojos.DesignOptions.createOptionsForGetFirstValue;
 import static org.n52.shared.serializable.pojos.DesignOptions.createOptionsForGetLastValue;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.n52.client.service.TimeSeriesDataService;
+import org.n52.io.IoParameters;
 import org.n52.io.format.TvpDataCollection;
 import org.n52.io.v1.data.TimeseriesData;
 import org.n52.io.v1.data.TimeseriesDataMetadata;
 import org.n52.io.v1.data.TimeseriesValue;
 import org.n52.io.v1.data.UndesignedParameterSet;
+import org.n52.sensorweb.v1.spi.RawDataService;
 import org.n52.server.da.oxf.ResponseExceedsSizeLimitException;
 import org.n52.shared.requests.TimeSeriesDataRequest;
 import org.n52.shared.responses.TimeSeriesDataResponse;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
+import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.web.BadRequestException;
 import org.n52.web.InternalServerException;
+import org.n52.web.OptionNotSupported;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +63,7 @@ import org.slf4j.LoggerFactory;
  * {@link TimeseriesProperties} and passed to a configured {@link TimeSeriesDataService}. Data response will
  * be enriched by further metadata from each procedure measuring the requested time series.
  */
-public class GetDataService extends DataService {
+public class GetDataService extends DataService implements RawDataService {
 
     static final Logger LOGGER = LoggerFactory.getLogger(GetDataService.class);
 
@@ -180,5 +185,47 @@ public class GetDataService extends DataService {
     public void setTimeSeriesDataService(TimeSeriesDataService timeSeriesDataService) {
         this.timeSeriesDataService = timeSeriesDataService;
     }
+
+	@Override
+	public InputStream getRawData(String id, IoParameters query) {
+		checkRawDataFormat(query.getRawFormat(), id);
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public InputStream getRawData(UndesignedParameterSet parameters) {
+		checkRawDataFormat(parameters.getRawFormat(), parameters.getTimeseries());
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean supportsRawData() {
+		return true;
+	}
+	
+	private void checkRawDataFormat(String rawFormat, String id) {
+		if (rawFormat != null && !rawFormat.isEmpty()) {
+			SOSMetadata metadata = getMetadataForTimeseriesId(id);
+			boolean valid = false;
+			for (String format : metadata.getObservationFormats()) {
+				if (format.equals(rawFormat)) {
+					valid = true;
+				}
+			}
+			if (!valid) {
+				throw new OptionNotSupported(String.format("Requested rawFormat '%s' is not supported by timeseries '%s'!", rawFormat, id));
+			}
+		} else {
+			throw new BadRequestException("The parameter 'rawFormat' is not set or empty!");
+		}
+	}
+
+	private void checkRawDataFormat(String rawFormat, String[] timeseries) {
+		for (String id : timeseries) {
+			checkRawDataFormat(rawFormat, id);
+		}
+	}
 
 }

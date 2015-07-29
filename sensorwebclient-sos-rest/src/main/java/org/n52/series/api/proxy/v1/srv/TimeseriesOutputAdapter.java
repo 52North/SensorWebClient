@@ -30,6 +30,7 @@ package org.n52.series.api.proxy.v1.srv;
 import static org.n52.series.api.proxy.v1.srv.QueryParameterAdapter.createQueryParameters;
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -47,9 +48,10 @@ import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.sensorweb.v1.spi.ParameterService;
+import org.n52.sensorweb.v1.spi.RawDataService;
 import org.n52.sensorweb.v1.spi.TimeseriesDataService;
 
-public class TimeseriesOutputAdapter implements TimeseriesDataService, ParameterService<TimeseriesMetadataOutput> {
+public class TimeseriesOutputAdapter implements TimeseriesDataService, ParameterService<TimeseriesMetadataOutput>, RawDataService {
 
     private GetDataService dataService;
 
@@ -165,6 +167,27 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
 
 	public void setStatusIntervalsService(StatusIntervalsConfigApplier statusIntervalsService) {
 		this.statusIntervalsService = statusIntervalsService;
+	}
+
+	@Override
+	public InputStream getRawData(String id, IoParameters query) {
+		if (dataService instanceof RawDataService) {
+			return ((RawDataService)dataService).getRawData(id, query);
+		}
+		return null;
+	}
+
+	@Override
+	public InputStream getRawData(UndesignedParameterSet parameters) {
+		if (dataService instanceof RawDataService) {
+			return ((RawDataService)dataService).getRawData(parameters);
+		}
+		return null;
+	}
+
+	@Override
+	public boolean supportsRawData() {
+		return dataService instanceof RawDataService && ((RawDataService)dataService).supportsRawData();
 	}
 
 }
