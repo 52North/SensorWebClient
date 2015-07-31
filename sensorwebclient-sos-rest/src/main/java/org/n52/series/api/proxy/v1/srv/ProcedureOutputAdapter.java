@@ -144,7 +144,7 @@ public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput>
 		checkRawDataFormat(query.getRawFormat(), id);
 		SOSMetadata metadata = getMetadataForProcedure(id);
 		try {
-			FutureTask<OperationResult> futureTask = new FutureTask<OperationResult>(createDescribeSensor(getMetadataForProcedure(id), id, query.getRawFormat()));
+			FutureTask<OperationResult> futureTask = new FutureTask<OperationResult>(createDescribeSensorRequest(metadata, id, query.getRawFormat()));
 	        AccessorThreadPool.execute(futureTask);
 	        OperationResult result = futureTask.get(metadata.getTimeout(), TimeUnit.MILLISECONDS);
 			if (result == null) {
@@ -212,7 +212,7 @@ public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput>
 		return null;
 	}
 	
-	private Callable<OperationResult> createDescribeSensor(SOSMetadata metadata, String procedureId, String format) throws OXFException {
+	private Callable<OperationResult> createDescribeSensorRequest(SOSMetadata metadata, String procedureId, String format) throws OXFException {
         ParameterContainer container = new ParameterContainer();
         container.addParameterShell("procedure", getProcedure(metadata, procedureId).getProcedureId());
         String formatParameter = "procedureDescriptionFormat";
