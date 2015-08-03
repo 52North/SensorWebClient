@@ -410,6 +410,10 @@ public class GetDataService extends DataService implements RawDataService {
 		addProcedure(container, map.get("proc"));
 		addObservedProperty(container, map.get("obsProp"));
 		addFeatureOfInterest(container, map.get("foi"));
+		if (SosUtil.isVersion100(metadata.getVersion()) && map.get("off").length > 1) {
+			// TODO split for SOS 1.0.0 and offering
+			throw new BadRequestException("The requested service is of type SOS 1.0.0 and offering size is greater than 1!");
+		}
 		addOffering(container, map.get("off"));
 		return createGetObservationRequest(metadata, container, parameters);
 	}
