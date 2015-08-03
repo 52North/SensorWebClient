@@ -410,7 +410,7 @@ public class GetDataService extends DataService implements RawDataService {
 		addProcedure(container, map.get("proc"));
 		addObservedProperty(container, map.get("obsProp"));
 		addFeatureOfInterest(container, map.get("foi"));
-//		addOffering(container, map.get("off"));
+		addOffering(container, map.get("off"));
 		return createGetObservationRequest(metadata, container, parameters);
 	}
 
@@ -418,19 +418,19 @@ public class GetDataService extends DataService implements RawDataService {
 		Set<String> procedures = new HashSet<String>();
 		Set<String> phenomena = new HashSet<String>();
 		Set<String> featureOfInterest = new HashSet<String>();
-//		Set<String> offering = new HashSet<String>();
+		Set<String> offering = new HashSet<String>();
 		for (String timeseriesId : timeseriesIds) {
 			SosTimeseries timeseries = getTimeseries(metadata, timeseriesId);
 			procedures.add(timeseries.getProcedure().getProcedureId());
 			phenomena.add(timeseries.getPhenomenon().getPhenomenonId());
 			featureOfInterest.add(timeseries.getFeature().getFeatureId());
-//			offering.add(timeseries.getOffering().getOfferingId());
+			offering.add(timeseries.getOffering().getOfferingId());
 		}
 		Map<String, String[]> map = new HashMap<String, String[]>();
 		map.put("proc", procedures.toArray(new String[0]));
 		map.put("obsProp", phenomena.toArray(new String[0]));
 		map.put("foi", featureOfInterest.toArray(new String[0]));
-//		map.put("off", offering.toArray(new String[0]));
+		map.put("off", offering.toArray(new String[0]));
 		return map;
 	}
 
