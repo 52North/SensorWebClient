@@ -29,6 +29,9 @@ package org.n52.server.parser;
 
 import java.io.IOException;
 import net.opengis.sensorML.x101.SensorMLDocument;
+import net.opengis.sensorml.x20.PhysicalComponentDocument;
+import net.opengis.sensorml.x20.PhysicalSystemDocument;
+
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import static org.hamcrest.CoreMatchers.is;
@@ -45,45 +48,94 @@ public class DescribeSensorParserTest {
 
     private static final String SENSOR_ML_101 = "/files/test-sensorml-101.xml";
 
-    private static final String soapResponse = "/files/describeSensorResponse_soap.xml";
+    private static final String soapResponse_SML_101 = "/files/describeSensorResponse_soap.xml";
 
-    private static final String poxResponse = "/files/describeSensorResponse_pox.xml";
+    private static final String poxResponse_SML_101 = "/files/describeSensorResponse_pox.xml";
 
-    private static final String smlResponse = "/files/describeSensorResponse_sml.xml";
+    private static final String smlResponse_SML_101 = "/files/describeSensorResponse_sml.xml";
+    
+    private static final String SENSOR_ML_20 = "/files/test-sensorml-20.xml";
+
+    private static final String soapResponse_SML_20 = "/files/describeSensorResponse_soap_sml_20.xml";
+
+    private static final String poxResponse_SML_20  = "/files/describeSensorResponse_pox_sml_20.xml";
+    
+    private static final String soapResponse_physSystem_SML_20 = "/files/describeSensorResponse_soap_physSystem_sml_20.xml";
+
+    private static final String poxResponse_physSystem_SML_20  = "/files/describeSensorResponse_pox_physSystem_sml_20.xml";
 
     private DescribeSensorParser parser;
 
+    private DescribeSensorParser parser_sml_20;
+    
     @Before
     public void setUp() throws Exception {
         SOSMetadata metadata = new SOSMetadataBuilder().build();
         XmlObject file = XmlFileLoader.loadXmlFileViaClassloader(SENSOR_ML_101, getClass());
         parser = new DescribeSensorParser(file.newInputStream(), metadata);
+        
+        SOSMetadata metadata2 = new SOSMetadataBuilder().build();
+        XmlObject file2 = XmlFileLoader.loadXmlFileViaClassloader(SENSOR_ML_20, getClass());
+        parser_sml_20 = new DescribeSensorParser(file2.newInputStream(), metadata2);
     }
 
     @Test public void
-    shouldParseReferenceValuesFromCapabilitiesSection()
-    {
+    shouldParseReferenceValuesFromCapabilitiesSection() {
         assertThat(parser.parseReferenceValues().size(), is(5));
     }
-
+    
     @Test
     public void shouldUnwrapSensorMLFromDescribeSensorResponseAndSoapEnvelope() throws XmlException, IOException, XMLHandlingException {
-        XmlObject response = XmlFileLoader.loadXmlFileViaClassloader(soapResponse, getClass());
+        XmlObject response = XmlFileLoader.loadXmlFileViaClassloader(soapResponse_SML_101, getClass());
         response = DescribeSensorParser.unwrapSensorMLFrom(response);
         SensorMLDocument.class.cast(response);
     }
 
     @Test
     public void shouldUnwrapSensorMLFromDescribeSensorResponse() throws XmlException, IOException, XMLHandlingException {
-        XmlObject response = XmlFileLoader.loadXmlFileViaClassloader(poxResponse, getClass());
+        XmlObject response = XmlFileLoader.loadXmlFileViaClassloader(poxResponse_SML_101, getClass());
         response = DescribeSensorParser.unwrapSensorMLFrom(response);
         SensorMLDocument.class.cast(response);
     }
 
     @Test
     public void shouldUnwrapSensorMLFromPlainSensorMLResponse() throws XmlException, IOException, XMLHandlingException {
-        XmlObject response = XmlFileLoader.loadXmlFileViaClassloader(smlResponse, getClass());
+        XmlObject response = XmlFileLoader.loadXmlFileViaClassloader(smlResponse_SML_101, getClass());
         response = DescribeSensorParser.unwrapSensorMLFrom(response);
         SensorMLDocument.class.cast(response);
     }
+    
+    @Test public void
+    shouldParseReferenceValuesFromCapabilitiesSection_SensorML20() {
+        assertThat(parser_sml_20.parseReferenceValues().size(), is(5));
+    }
+    
+    @Test
+    public void shouldUnwrapSensorMLFromDescribeSensorResponseAndSoapEnvelope_SensorML20() throws XmlException, IOException, XMLHandlingException {
+        XmlObject response = XmlFileLoader.loadXmlFileViaClassloader(soapResponse_SML_20, getClass());
+        response = DescribeSensorParser.unwrapSensorDescriptionFrom(response);
+        PhysicalComponentDocument.class.cast(response);
+    }
+
+    @Test
+    public void shouldUnwrapSensorMLFromDescribeSensorResponse_SensorML20() throws XmlException, IOException, XMLHandlingException {
+        XmlObject response = XmlFileLoader.loadXmlFileViaClassloader(poxResponse_SML_20, getClass());
+        response = DescribeSensorParser.unwrapSensorDescriptionFrom(response);
+        PhysicalComponentDocument.class.cast(response);
+    }
+    
+    @Test
+    public void shouldUnwrapSensorMLFromDescribeSensorResponseAndSoapEnvelope_SensorML20_PhysSystem() throws XmlException, IOException, XMLHandlingException {
+        XmlObject response = XmlFileLoader.loadXmlFileViaClassloader(soapResponse_physSystem_SML_20, getClass());
+        response = DescribeSensorParser.unwrapSensorDescriptionFrom(response);
+        PhysicalSystemDocument.class.cast(response);
+    }
+
+    @Test
+    public void shouldUnwrapSensorMLFromDescribeSensorResponse_SensorML20_PhysSystem() throws XmlException, IOException, XMLHandlingException {
+        XmlObject response = XmlFileLoader.loadXmlFileViaClassloader(poxResponse_physSystem_SML_20, getClass());
+        response = DescribeSensorParser.unwrapSensorDescriptionFrom(response);
+        PhysicalSystemDocument.class.cast(response);
+    }
+
 }
