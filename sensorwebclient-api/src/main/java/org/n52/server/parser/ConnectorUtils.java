@@ -51,6 +51,10 @@ import org.slf4j.LoggerFactory;
 public class ConnectorUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectorUtils.class);
+    
+    private static final String SML_101 = "sensorML/1.0.1";
+    
+    private static final String SML_20 = "sensorml/2.0";
 
 
     /**
@@ -124,22 +128,64 @@ public class ConnectorUtils {
             Parameter outputFormat = null;
             if (SosUtil.isVersion100(sosVersion)) { // SOS 1.0
                 outputFormat = opSensorML.getParameter("outputFormat");
+                smlVersion = checkSMLVersionForSOS100(outputFormat);
             } else if (SosUtil.isVersion200(sosVersion)) { // SOS 2.0
                 outputFormat = opSensorML.getParameter("procedureDescriptionFormat");
-            }
-            if (outputFormat != null) {
-                final StringValueDomain sensorMLDomain = (StringValueDomain) outputFormat.getValueDomain();
-                for (final String elem : sensorMLDomain.getPossibleValues()) {
-                    if (elem.contains("sensorML")) {
-                        smlVersion = elem;
-                    }
-                }
+                smlVersion = checkSMLVersionForSOS20(outputFormat);
             }
         }
         return smlVersion;
     }
 
-    public static IBoundingBox createBbox(final ObservationOffering offering) {
+    private static String checkSMLVersionForSOS100(Parameter outputFormat) {
+    	if (outputFormat != null) {
+        	// Prefer SensorML 2.0 if supported, default is SensorML 1.0.1
+            final StringValueDomain sensorMLDomain = (StringValueDomain) outputFormat.getValueDomain();
+            String sml101 = null;
+            String sml20 = null;
+            for (final String elem : sensorMLDomain.getPossibleValues()) {
+            	if (elem.startsWith("text/xml")) {
+	                if (elem.contains(SML_101)) {
+	                	sml101 = elem;
+	                } else if (elem.contains(SML_20)) {
+	                	sml20 = elem;
+	                }
+            	}
+            }
+            // prefer SensorML 2.0 if supported
+            if (sml20 != null) {
+            	return sml20;
+            }
+            return sml101;
+        }
+		return null;
+	}
+
+	private static String checkSMLVersionForSOS20(Parameter outputFormat) {
+		if (outputFormat != null) {
+        	// Prefer SensorML 2.0 if supported, default is SensorML 1.0.1
+            final StringValueDomain sensorMLDomain = (StringValueDomain) outputFormat.getValueDomain();
+            String sml101 = null;
+            String sml20 = null;
+            for (final String elem : sensorMLDomain.getPossibleValues()) {
+            	if (elem.startsWith("http")) {
+	                if (elem.contains(SML_101)) {
+	                	sml101 = elem;
+	                } else if (elem.contains(SML_20)) {
+	                	sml20 = elem;
+	                }
+            	}
+            }
+            // prefer SensorML 2.0 if supported
+            if (sml20 != null) {
+            	return sml20;
+            }
+            return sml101;
+        }
+		return null;
+	}
+
+	public static IBoundingBox createBbox(final ObservationOffering offering) {
         return createBbox(null, offering);
     }
 
