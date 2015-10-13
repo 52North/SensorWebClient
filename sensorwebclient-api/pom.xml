@@ -41,6 +41,10 @@
             <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-oxf-xmlbeans</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-sensorML-v20</artifactId>
+        </dependency>
         <!-- ### GWT DEPENDENCIES ### -->
         <dependency>
             <groupId>javax.validation</groupId>
