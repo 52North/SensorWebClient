@@ -87,8 +87,6 @@ public class SOSMetadata implements Serializable {
 
     private boolean autoZoom = true; // default
 
-    private boolean protectedService = false; // default
-
     private int requestChunk = 300; // default
 
     private int timeout = 10000; // default
@@ -159,7 +157,6 @@ public class SOSMetadata implements Serializable {
         this.requestChunk = builder.getRequestChunk();
         this.timeout = builder.getTimeout();
         this.configuredExtent = builder.getConfiguredServiceExtent();
-        this.protectedService = builder.isProctectedService();
         this.eventing = builder.isEventing();
         this.gdaPrefinal = builder.isGdaPrefinal();
         this.httpConnectionPoolSize = builder.getHttpConnectionPoolSize();
@@ -302,10 +299,6 @@ public class SOSMetadata implements Serializable {
         return httpConnectionPoolSize;
     }
 
-    public boolean isProtectedService() {
-        return protectedService;
-    }
-
     public int getRequestChunk() {
         return requestChunk;
     }
@@ -435,7 +428,6 @@ public class SOSMetadata implements Serializable {
         clone.timeout = this.timeout;
         clone.eventing = this.eventing;
         clone.configuredExtent = this.configuredExtent;
-        clone.protectedService = this.protectedService;
         clone.observationFormats = this.observationFormats;
         clone.procedureFormats = this.procedureFormats;
         clone.setSosMetadataHandler(this.getSosMetadataHandler());
