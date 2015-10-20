@@ -55,6 +55,11 @@
             <artifactId>validation-api</artifactId>
             <classifier>sources</classifier>
         </dependency>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-user</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!-- ### EXTERNAL DEPENDENCIES ### -->
         <dependency>
             <groupId>joda-time</groupId>
