@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -35,33 +35,45 @@ import org.junit.Test;
 
 
 public class TimeseriesParameterTest {
-    
-    @Test public void 
+
+    @Test public void
     shouldParseLastUrnFragmentAsLabel() {
         TestParameter testParameter = new TestParameter("urn:123::999:id2134");
         assertThat(testParameter.getLabel(), is("id2134"));
     }
-    
-    @Test public void 
+
+    @Test public void
     shouldParseLastHttpPathAsLabel() {
         TestParameter testParameter = new TestParameter("http:///envuvlxkq/D_GB_Sample.xml");
         assertThat(testParameter.getLabel(), is("D_GB_Sample.xml"));
     }
-    
-    @Test public void 
+
+    @Test public void
     shouldParseHttpFragmentAsLabel() {
         TestParameter testParameter = new TestParameter("http:///envuvlxkq/D_GB_Sample.xml#GB_SamplingFeature_281");
         assertThat(testParameter.getLabel(), is("GB_SamplingFeature_281"));
     }
-    
-    @Test public void 
+
+    @Test public void
+    shouldIgnoreTrailingSlashWhenParsingLabel() {
+        TestParameter testParameter = new TestParameter("http:///envuvlxkq/GB_SamplingFeature_281/");
+        assertThat(testParameter.getLabel(), is("GB_SamplingFeature_281"));
+    }
+
+    @Test public void
+    shouldIgnoreTrailingHashWhenParsingLabel() {
+        TestParameter testParameter = new TestParameter("http:///envuvlxkq/GB_SamplingFeature_281#");
+        assertThat(testParameter.getLabel(), is("GB_SamplingFeature_281"));
+    }
+
+    @Test public void
     shouldHaveTestSuffixWithinGlobalId() {
         TestParameter testParameter = new TestParameter("someParameterId");
         assertThat(testParameter.getGlobalId(), startsWith("test_"));
     }
-    
+
     private class TestParameter extends TimeseriesParameter {
-        
+
         private static final long serialVersionUID = -7460364788019304476L;
 
         public TestParameter(String parameterId) {
@@ -72,6 +84,6 @@ public class TimeseriesParameterTest {
         protected String getGlobalIdPrefix() {
             return "test_";
         }
-        
+
     }
 }

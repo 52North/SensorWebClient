@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -92,7 +92,7 @@ public class TimeseriesDataGeneratorTest {
     private ArrayList<TimeseriesProperties> createTimeseriesProperties(SosTimeseries timeseries) {
         ArrayList<TimeseriesProperties> properties = new ArrayList<TimeseriesProperties>();
 
-        Station station = new Station("station", FICTIVE_SOS_URL);
+        Station station = new Station(new Feature("station", FICTIVE_SOS_URL));
         properties.add(new TimeseriesProperties(timeseries, station, -1, -1));
         return properties;
     }

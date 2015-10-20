@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -27,10 +27,11 @@
  */
 package org.n52.server.parser;
 
+import com.vividsolutions.jts.geom.Point;
 import java.io.IOException;
-
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.namespace.QName;
-
 import net.opengis.gml.x32.AbstractGeometryType;
 import net.opengis.gml.x32.DirectPositionType;
 import net.opengis.gml.x32.FeaturePropertyType;
@@ -41,7 +42,6 @@ import net.opengis.samplingSpatial.x20.ShapeDocument;
 import net.opengis.sos.x20.GetFeatureOfInterestResponseDocument;
 import net.opengis.waterml.x20.MonitoringPointDocument;
 import net.opengis.waterml.x20.MonitoringPointType;
-
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -57,18 +57,16 @@ import org.opengis.referencing.operation.TransformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vividsolutions.jts.geom.Point;
-
 public class GetFeatureOfInterestParser {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(GetFeatureOfInterestParser.class);
-	
+
 	private OperationResult getFoiResult;
-	
-	private SOSMetadata metadata; 
-	
+
+	private SOSMetadata metadata;
+
 	private CRSUtils referenceHelper = CRSUtils.createEpsgStrictAxisOrder();
-	
+
 	public GetFeatureOfInterestParser(OperationResult opsRes, SOSMetadata metadata) {
 		getFoiResult = opsRes;
 		if (getFoiResult == null) {
@@ -79,10 +77,13 @@ public class GetFeatureOfInterestParser {
 			referenceHelper = CRSUtils.createEpsgForcedXYAxisOrder();
 		}
 	}
-	
-	public void createFeatures() throws XmlException, IOException, OXFException {
-        GetFeatureOfInterestResponseDocument foiResDoc = getFOIResponseOfOpResult(getFoiResult);
+
+	public List<Station> createStations() throws XmlException, IOException, OXFException {
+
+        List<Station> stations = new ArrayList<Station>();
         TimeseriesParametersLookup lookup = metadata.getTimeseriesParametersLookup();
+        GetFeatureOfInterestResponseDocument foiResDoc = getFOIResponseOfOpResult(getFoiResult);
+
         String id = null;
         String label = null;
         for (FeaturePropertyType featurePropertyType : foiResDoc.getGetFeatureOfInterestResponse().getFeatureMemberArray()) {
@@ -114,10 +115,10 @@ public class GetFeatureOfInterestParser {
                 point = createParsedPoint(monitoringPoint, referenceHelper);
             }
             else {
-                LOGGER.error("Don't find supported feature members in the GetFeatureOfInterest response");
+                LOGGER.error("Did not find supported feature members in the GetFeatureOfInterest response");
             }
             if (point == null) {
-                LOGGER.warn("The foi with ID {} has no valid point", id);
+                LOGGER.warn("The foi with ID {} has no valid point: {}", id, featurePropertyType.toString());
             }
             else {
                 // add feature
@@ -126,16 +127,18 @@ public class GetFeatureOfInterestParser {
                 lookup.addFeature(feature);
 
                 // create station if not exists
-                Station station = metadata.getStation(id);
+                Station station = metadata.getStationByFeature(feature);
                 if (station == null) {
-                    station = new Station(id, metadata.getServiceUrl());
+                    station = new Station(feature);
                     station.setLocation(point);
                     metadata.addStation(station);
+                    stations.add(station);
                 }
             }
         }
+        return stations;
 	}
-	
+
 	private Point createParsedPoint(XmlObject feature, CRSUtils referenceHelper) throws XmlException {
         XmlCursor cursor = feature.newCursor();
         if (cursor.toChild(new QName("http://www.opengis.net/samplingSpatial/2.0", "shape"))) {
@@ -171,10 +174,10 @@ public class GetFeatureOfInterestParser {
         }
         return null;
     }
-	
+
 	private GetFeatureOfInterestResponseDocument getFOIResponseOfOpResult(
 			OperationResult getFoiResult) throws XmlException, IOException, OXFException {
-    	XmlObject foiResponse = XmlObject.Factory.parse(getFoiResult.getIncomingResultAsStream());
+    	XmlObject foiResponse = XmlObject.Factory.parse(getFoiResult.getIncomingResultAsAutoCloseStream());
         if (foiResponse instanceof GetFeatureOfInterestResponseDocument) {
             return (GetFeatureOfInterestResponseDocument) foiResponse;
         }

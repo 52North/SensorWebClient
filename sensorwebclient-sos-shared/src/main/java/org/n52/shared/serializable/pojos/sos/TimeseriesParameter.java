@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -37,28 +37,28 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public abstract class TimeseriesParameter implements Serializable {
 
     private static final long serialVersionUID = -6244226109934637660L;
-    
+
     private String parameterId;
-    
+
     private String globalId;
-    
+
     private String label;
-    
+
     TimeseriesParameter() {
         // for serialization
     }
-    
+
     TimeseriesParameter(String parameterId, String[] parametersToGenerateId) {
         if (parameterId == null || parameterId.isEmpty()) {
             throw new IllegalArgumentException("parameterId must not be null.");
         }
-        this.label = parseLabel(parameterId);
         this.parameterId = parameterId;
-        this.globalId = generateGlobalId(parameterId, parametersToGenerateId); 
+        this.label = SosTimeseries.createLabelFromUri(parameterId);
+        this.globalId = generateGlobalId(parameterId, parametersToGenerateId);
     }
-    
+
     protected abstract String getGlobalIdPrefix();
-    
+
     private String generateGlobalId(String id, String[] parametersToGenerateId) {
         IdGenerator idGenerator = new MD5HashGenerator(getGlobalIdPrefix());
         return idGenerator.generate(parametersToGenerateId);
@@ -80,18 +80,18 @@ public abstract class TimeseriesParameter implements Serializable {
     public String getLabel() {
         return label;
     }
-    
-    protected String parseLabel(String parameterId) {
-        if (parameterId.startsWith("urn")) {
-            return parameterId.substring(parameterId.lastIndexOf(":") + 1);
-        } else if (parameterId.startsWith("http")) {
-            if (!parameterId.contains("#")) {
-                return parameterId.substring(parameterId.lastIndexOf("/") + 1);
-            } else {
-                return parameterId.substring(parameterId.lastIndexOf("#") + 1);
-            }
-        } else {
-            return parameterId;
-        }
-    }
+
+//    protected String parseLabel(String parameterId) {
+//        if (parameterId.startsWith("urn")) {
+//            return parameterId.substring(parameterId.lastIndexOf(":") + 1);
+//        } else if (parameterId.startsWith("http")) {
+//            if (!parameterId.contains("#")) {
+//                return parameterId.substring(parameterId.lastIndexOf("/") + 1);
+//            } else {
+//                return parameterId.substring(parameterId.lastIndexOf("#") + 1);
+//            }
+//        } else {
+//            return parameterId;
+//        }
+//    }
 }

@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html>
 <html>
 <head>
+<meta http-equiv="X-UA-Compatible" content="IE=9">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta name="keywords" lang="en" content="Sensor Web, SWE, OGC, SOS, SES, Data">
 <meta name="gwt:property" content="locale=<%=request.getLocale()%>">
@@ -24,7 +24,7 @@
 	<div id="loadingWrapper">
 		<div id="spacer"></div>
 		<div class="loadingIndicator">
-			<img src="img/loader.gif" width="32" height="32" style="margin-right: 8px; float: left; vertical-align: middle;" />
+			<img src="img/loader.gif" alt="loader" width="32" height="32" style="margin-right: 8px; float: left; vertical-align: middle;" />
 			<div id="operator">52&deg;North</div>
 			<span id="loadingMsg">Loading ${application.title}</span>
 		</div>

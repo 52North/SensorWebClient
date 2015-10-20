@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -48,8 +48,6 @@ public class SOSMetadataBuilder {
     private boolean autoZoom = true;
 
     private boolean forceXYAxisOrder = false;
-
-    private boolean protectedService = false;
 
     private boolean supportsFirstLatest = false;
 
@@ -110,11 +108,6 @@ public class SOSMetadataBuilder {
         this.adapter = adapter.trim();
         return this;
     }
-
-	public SOSMetadataBuilder addProtectedService(boolean protectedService) {
-		this.protectedService = protectedService;
-		return this;
-	}
 
 	public SOSMetadataBuilder addSupportsFirstLatest(boolean supportsFirstLatest) {
         this.supportsFirstLatest = supportsFirstLatest;
@@ -198,10 +191,6 @@ public class SOSMetadataBuilder {
 
     public String getAdapter() {
         return this.adapter;
-    }
-
-    public boolean isProctectedService() {
-    	return this.protectedService;
     }
 
     public boolean isAutoZoom() {

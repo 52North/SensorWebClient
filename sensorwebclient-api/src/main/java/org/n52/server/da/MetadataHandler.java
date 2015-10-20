@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -107,15 +107,6 @@ public abstract class MetadataHandler {
     }
 
     public abstract SOSMetadata performMetadataCompletion() throws Exception;
-
-    /**
-     * TODO this method is currently under evaluation
-     *
-     * @param metadata
-     * @return
-     * @throws Exception
-     */
-    public abstract SOSMetadata updateMetadata(SOSMetadata metadata) throws Exception;
 
     /**
      * Assembles timeseries' metadata and sets it to the passed {@link TimeseriesProperties} container.<br/>
@@ -261,9 +252,8 @@ public abstract class MetadataHandler {
     protected void normalizeDefaultCategories(Collection<SosTimeseries> observingTimeseries) {
         for (SosTimeseries timeseries : observingTimeseries) {
             String phenomenon = timeseries.getPhenomenonId();
-            String category = phenomenon.substring(phenomenon.lastIndexOf(":") + 1);
             String serviceUrl = timeseries.getServiceUrl();
-            timeseries.setCategory(new Category(category, serviceUrl));
+            timeseries.setCategory(new Category(phenomenon, serviceUrl));
         }
     }
 
@@ -326,7 +316,7 @@ public abstract class MetadataHandler {
             Operation operation = new Operation(GET_FEATURE_OF_INTEREST, url, url);
             OperationResult result = getSosAdapter().doOperation(operation, container);
             XmlObject foiResponse = XmlObject.Factory.parse(result
-                    .getIncomingResultAsStream());
+                    .getIncomingResultAsAutoCloseStream());
             if (foiResponse instanceof GetFeatureOfInterestResponseDocument) {
                 GetFeatureOfInterestResponseDocument foiResDoc = (GetFeatureOfInterestResponseDocument) foiResponse;
                 for (FeaturePropertyType featurePropertyType : foiResDoc

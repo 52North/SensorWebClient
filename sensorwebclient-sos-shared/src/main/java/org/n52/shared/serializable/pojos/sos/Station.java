@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -27,16 +27,13 @@
  */
 package org.n52.shared.serializable.pojos.sos;
 
-import static org.n52.io.geojson.GeojsonPoint.createWithCoordinates;
-
+import com.vividsolutions.jts.geom.Point;
 import java.io.Serializable;
 import java.util.ArrayList;
-
 import org.n52.io.geojson.GeojsonPoint;
+import static org.n52.io.geojson.GeojsonPoint.createWithCoordinates;
 import org.n52.shared.IdGenerator;
 import org.n52.shared.MD5HashGenerator;
-
-import com.vividsolutions.jts.geom.Point;
 
 /**
  * A {@link Station} represents a location where timeseries data is observed.
@@ -49,7 +46,7 @@ public class Station implements Serializable {
 
     private Point location;
 
-    private String serviceUrl;
+    private Feature feature;
 
     private String label;
 
@@ -57,14 +54,22 @@ public class Station implements Serializable {
         // keep serializable
     }
 
-    public Station(String label, String url) {
+    public Station(Feature feature) {
         this.observingTimeseries = new ArrayList<SosTimeseries>();
-        this.serviceUrl = url;
+        this.label = SosTimeseries.createLabelFromUri(feature.getFeatureId());
+        this.feature = feature;
+    }
+
+    public void setLabel(String label) {
         this.label = label;
     }
 
     public String getLabel() {
         return label;
+    }
+
+    public Feature getFeature() {
+        return feature;
     }
 
     /**
@@ -124,7 +129,7 @@ public class Station implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Station: [ ").append("\n");
-        sb.append("\tId: ").append(label).append("\n");
+        sb.append("\tId: ").append(feature).append("\n");
         sb.append("\tLocation: ").append(location).append("\n");
         sb.append("\t#Timeseries: ").append(observingTimeseries.size()).append(" ]\n");
         return sb.toString();
@@ -149,12 +154,12 @@ public class Station implements Serializable {
     }
 
     public boolean hasAtLeastOneParameterConstellation() {
-        return observingTimeseries.size() > 0 ? true : false;
+        return observingTimeseries.size() > 0;
     }
 
     // @Override // gwt fails to compile
     public Station clone() {
-        Station station = new Station(label, serviceUrl);
+        Station station = new Station(feature);
         station.setLocation(location);
         station.setObservingTimeseries(new ArrayList<SosTimeseries>(observingTimeseries));
         return station;
@@ -165,7 +170,17 @@ public class Station implements Serializable {
     }
 
     public String getGlobalId() {
-        String[] parameters = new String[] {serviceUrl, location.toString()};
+
+        String[] parameters = null;
+        if (location == null) {
+            // TODO currently Stations are allowed to omit location. Passing it to
+            // calculate the globalId will lead either to NPE or inconsistencies ..
+            // logging not possible since it's a shared gwt class
+            parameters = new String[] {feature.getFeatureId()};
+        } else {
+            parameters = new String[] {feature.getFeatureId(), location.toString()};
+        }
+
         IdGenerator idGenerator = new MD5HashGenerator("sta_");
         return idGenerator.generate(parameters);
     }

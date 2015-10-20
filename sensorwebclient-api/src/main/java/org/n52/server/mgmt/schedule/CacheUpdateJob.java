@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -68,7 +68,7 @@ public class CacheUpdateJob extends ScheduledJob implements Job {
     public void execute(JobExecutionContext context) throws JobExecutionException {
         JobKey jobKey = context.getJobDetail().getKey();
         TriggerKey triggerKey = context.getTrigger().getKey();
-        LOGGER.debug("'{}' (triggered by '{}') executing at ", jobKey, triggerKey, new DateTime());
+        LOGGER.debug("'{}' (triggered by '{}') executing at {}", jobKey, triggerKey, new DateTime());
 
         ConfigurationContext.UPDATE_TASK_RUNNING = true;
         try {
@@ -78,9 +78,8 @@ public class CacheUpdateJob extends ScheduledJob implements Job {
             if (shallRewriteAtStartup(context)) {
                 LOGGER.info("Rewriting cache at startup.");
                 SosMetadataUpdate.invalidateCache();
-            }
-            if (context.getPreviousFireTime() != null) {
-                LOGGER.info("Rewriting cache at startup.");
+            } else if (context.getPreviousFireTime() != null) {
+                LOGGER.info("Rewriting cache.");
                 SosMetadataUpdate.invalidateCache();
             }
             SosMetadataUpdate.updateSosServices(sosUrls);

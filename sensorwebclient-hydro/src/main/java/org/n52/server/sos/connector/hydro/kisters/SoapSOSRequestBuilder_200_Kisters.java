@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -54,8 +54,11 @@ public class SoapSOSRequestBuilder_200_Kisters extends SoapSOSRequestBuilder_200
 	public String buildGetObservationRequest(ParameterContainer parameters) throws OXFException {
 		// check the temporal filter
 		ParameterShell temporalFilter = parameters.getParameterShellWithServiceSidedName("temporalFilter");
-		Object specifiedValue = temporalFilter.getSpecifiedValue();
+		if (temporalFilter == null) {
+            return super.buildGetObservationRequest(parameters);
+        }
 
+        Object specifiedValue = temporalFilter.getSpecifiedValue();
 		if (specifiedValue instanceof TimePosition_OXFExtension ) {
 			TimePosition_OXFExtension timePosition = (TimePosition_OXFExtension) specifiedValue;
 			// time parameter is latest

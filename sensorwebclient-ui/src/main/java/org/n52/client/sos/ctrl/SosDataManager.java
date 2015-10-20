@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -60,7 +60,7 @@ public class SosDataManager implements DataManager<SOSMetadata> {
     private static SosDataManager instance;
 
     private Map<String, SOSMetadata> metadatas = new HashMap<String, SOSMetadata>();
-    
+
     private SosDataManager() {
         new SOSEventBroker();
     }
@@ -71,7 +71,7 @@ public class SosDataManager implements DataManager<SOSMetadata> {
         }
         return instance;
     }
-    
+
     public boolean contains(String serviceURL) {
     	return metadatas.containsKey(serviceURL);
     }
@@ -126,7 +126,7 @@ public class SosDataManager implements DataManager<SOSMetadata> {
 						continue; // cannot throw IllegalStateException at
 									// client side
 					}
-					Station local = metadata.getStation(station.getLabel());
+					Station local = metadata.getStationByFeature(station.getFeature());
 					if (local == null) {
 						// means we don not have data on that station in the
 						// client metadata

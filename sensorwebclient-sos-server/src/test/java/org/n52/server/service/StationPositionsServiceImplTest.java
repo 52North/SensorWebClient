@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.server.mgmt.ConfigurationContext;
+import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Station;
 
 public class StationPositionsServiceImplTest {
@@ -45,7 +46,7 @@ public class StationPositionsServiceImplTest {
         service = new QueryServiceImpl();
         stations = new ArrayList<Station>();
         for (int i = 0; i < COUNT_STATIONS; i++) {
-            stations.add(new Station("test", "url"));
+            stations.add(new Station(new Feature("test", "url")));
         }
     }
 

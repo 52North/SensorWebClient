@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -28,6 +28,7 @@
 package org.n52.server.sos.connector.ags;
 
 import com.vividsolutions.jts.geom.Point;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,14 +52,18 @@ import net.opengis.sensorML.x101.OutputsDocument.Outputs.OutputList;
 import net.opengis.sensorML.x101.SensorMLDocument;
 import net.opengis.sensorML.x101.SensorMLDocument.SensorML;
 import net.opengis.sensorML.x101.SensorMLDocument.SensorML.Member;
+
 import org.apache.xmlbeans.XmlObject;
+
 import static org.n52.io.crs.CRSUtils.createEpsgStrictAxisOrder;
+
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.ows.ExceptionReport;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.adapter.ISOSRequestBuilder;
+
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_DESCRIPTION_FORMAT;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_PROCEDURE_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_SERVICE_PARAMETER;
@@ -66,10 +71,14 @@ import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.DESCRIBE_SENSOR_VERSION
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_SERVICE_PARAMETER;
 import static org.n52.oxf.sos.adapter.ISOSRequestBuilder.GET_FOI_VERSION_PARAMETER;
 import static org.n52.oxf.sos.adapter.SOSAdapter.DESCRIBE_SENSOR;
+
 import org.n52.oxf.sos.capabilities.ObservationOffering;
 import org.n52.server.da.MetadataHandler;
+import org.n52.server.da.oxf.ResponseExceedsSizeLimitException;
+
 import static org.n52.server.da.oxf.DescribeSensorAccessor.getSensorDescriptionAsSensorML;
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadata;
+
 import org.n52.server.util.PropertiesToHtml;
 import org.n52.server.util.XmlHelper;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
@@ -153,10 +162,10 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
         // TODO check integrety before adding them to metadata
         List<Station> stations = new ArrayList<Station>();
 
-        LOGGER.debug("Destillate timeseries from #{} potential. This may take a while.", observingTimeseries.size());
+        LOGGER.debug("Destillate timeseries from #{} potential ones. This may take a while.", observingTimeseries.size());
         for (Network network : networks.values()) {
             LOGGER.trace("############# PROCESS NETWORK #################");
-            LOGGER.debug("Build up cache for sensor network '{}'", network);
+            LOGGER.debug("Build cache for sensor network '{}'", network);
 
             String offeringId = network.getOffering();
             for (String procedureId : network.getMembers()) {
@@ -165,10 +174,9 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
 
                 if (component.getCapabilitiesArray() == null) {
                     LOGGER.trace("No related features in capabilities block => Link all features available!");
-                    LOGGER.warn("Not yet implemented.");
 
                     // TODO link all features available
-
+                    LOGGER.warn("Not yet implemented.");
                     continue;
                 }
 
@@ -200,17 +208,14 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
                             continue;
                         }
                         Feature feature = lookup.getFeature(featureId);
-                        Station station = metadata.getStation(featureId);
+                        Station station = metadata.getStationByFeature(feature);
                         if (station == null) {
                             Point location = featureLocations.get(feature);
                             LOGGER.trace("Create Station '{}' at '{}'.", featureId, location);
-                            station = new Station(featureId, sosUrl);
+                            station = new Station(feature);
                             station.setLocation(location);
                             metadata.addStation(station);
                         }
-                        // get existing station
-                        station = metadata.getStation(featureId);
-
                         SosTimeseries copy = timeseries.clone();
                         copy.setFeature(new Feature(featureId, sosUrl));
 
@@ -349,7 +354,7 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
             paramCon.addParameterShell(GET_FOI_VERSION_PARAMETER, getServiceVersion());
             paramCon.addParameterShell("procedure", network.getNetwork());
             Operation operation = new Operation("GetFeatureOfInterest", getServiceUrl(), getServiceUrl());
-            
+
             try {
             	OperationResult result = getSosAdapter().doOperation(operation, paramCon);
 
@@ -360,8 +365,10 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
             	LOGGER.warn("Exception in OXF layer while executing operation", e);
             }
             catch (ExceptionReport e) {
-                // TODO probably we do have to handle an ExceedsSizeLimitException here
             	LOGGER.warn("Service returned an ExceptionReport", e);
+            }
+            catch (ResponseExceedsSizeLimitException e) {
+            	LOGGER.warn("Response too large, skipping network '{}'", network, e);
             }
         }
         for (Feature feature : features.keySet()) {

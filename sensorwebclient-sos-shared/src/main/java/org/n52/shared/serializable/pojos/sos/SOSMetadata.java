@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -83,8 +83,6 @@ public class SOSMetadata implements Serializable {
 
     private boolean autoZoom = true; // default
 
-    private boolean protectedService = false; // default
-
     private int requestChunk = 300; // default
 
     private int timeout = 10000; // default
@@ -155,7 +153,6 @@ public class SOSMetadata implements Serializable {
         this.requestChunk = builder.getRequestChunk();
         this.timeout = builder.getTimeout();
         this.configuredExtent = builder.getConfiguredServiceExtent();
-        this.protectedService = builder.isProctectedService();
         this.eventing = builder.isEventing();
         this.gdaPrefinal = builder.isGdaPrefinal();
         this.httpConnectionPoolSize = builder.getHttpConnectionPoolSize();
@@ -298,10 +295,6 @@ public class SOSMetadata implements Serializable {
         return httpConnectionPoolSize;
     }
 
-    public boolean isProtectedService() {
-        return protectedService;
-    }
-
     public int getRequestChunk() {
         return requestChunk;
     }
@@ -318,10 +311,7 @@ public class SOSMetadata implements Serializable {
     }
 
     public void addStation(Station station) {
-
-        // FIXME label as hash key is error prone. see #getStation(stationId)
-
-        stations.put(station.getLabel(), station);
+        stations.put(station.getFeature().getFeatureId(), station);
     }
 
     public ArrayList<Station> getStations() {
@@ -380,11 +370,8 @@ public class SOSMetadata implements Serializable {
         return false;
     }
 
-    public Station getStation(String stationId) {
-
-        // FIXME error prone. see #addStation(station)
-
-        return stations.get(stationId);
+    public Station getStationByFeature(Feature feature) {
+        return stations.get(feature.getFeatureId());
     }
 
     /**
@@ -419,8 +406,8 @@ public class SOSMetadata implements Serializable {
         clone.forceXYAxisOrder = this.forceXYAxisOrder;
         clone.requestChunk = this.requestChunk;
         clone.timeout = this.timeout;
+        clone.eventing = this.eventing;
         clone.configuredExtent = this.configuredExtent;
-        clone.protectedService = this.protectedService;
         clone.setSosMetadataHandler(this.getSosMetadataHandler());
         clone.setAdapter(this.getAdapter());
         return clone;

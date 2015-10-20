@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -28,7 +28,8 @@
 package org.n52.server.da.oxf;
 
 public class ResponseExceedsSizeLimitException extends RuntimeException {
-
+	//TODO consider not subclassing ResponseExceedsSizeLimitException from RuntimeException 
+	
     private static final long serialVersionUID = 6761493818993026789L;
 
     public ResponseExceedsSizeLimitException(String message) {
