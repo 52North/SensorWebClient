@@ -49,8 +49,6 @@ public class SOSMetadataBuilder {
 
     private boolean forceXYAxisOrder = false;
 
-    private boolean protectedService = false;
-
     private boolean supportsFirstLatest = false;
 
     private boolean gdaPrefinal = false;
@@ -110,11 +108,6 @@ public class SOSMetadataBuilder {
         this.adapter = adapter.trim();
         return this;
     }
-
-	public SOSMetadataBuilder addProtectedService(boolean protectedService) {
-		this.protectedService = protectedService;
-		return this;
-	}
 
 	public SOSMetadataBuilder addSupportsFirstLatest(boolean supportsFirstLatest) {
         this.supportsFirstLatest = supportsFirstLatest;
@@ -198,10 +191,6 @@ public class SOSMetadataBuilder {
 
     public String getAdapter() {
         return this.adapter;
-    }
-
-    public boolean isProctectedService() {
-    	return this.protectedService;
     }
 
     public boolean isAutoZoom() {
