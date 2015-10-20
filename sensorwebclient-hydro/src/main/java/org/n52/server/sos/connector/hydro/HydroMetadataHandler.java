@@ -137,6 +137,14 @@ public class HydroMetadataHandler extends MetadataHandler {
         return metadata;
     }
 
+    @Override
+    public SOSMetadata updateMetadata(SOSMetadata metadata) throws Exception {
+        SOSMetadata newMetadata = metadata.clone();
+        initMetadata();
+        collectTimeseries(newMetadata);
+        return newMetadata;
+    }
+
     protected void collectTimeseries(SOSMetadata metadata) throws OXFException,
             XmlException,
             IOException {
