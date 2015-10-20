@@ -60,9 +60,6 @@ public class ConfigurationContext implements ServletContextAware {
     @Autowired
     private ServletContext servletContext;
 
-
-
-
     private static Map<String, SOSMetadata> serviceMetadatas = Collections.synchronizedMap(new HashMap<String, SOSMetadata>());
 
     public static int STARTUP_DELAY;
@@ -249,8 +246,12 @@ public class ConfigurationContext implements ServletContextAware {
     }
 
     public synchronized static SOSMetadata getSOSMetadata(String url) {
+        return getSOSMetadata(url, true);
+    }
+    
+    public synchronized static SOSMetadata getSOSMetadata(String url, boolean fromCache) {
         url = url.trim();
-        if (isMetadataAvailable(url)) {
+        if (fromCache && isMetadataAvailable(url)) {
             return (SOSMetadata) getServiceMetadatas().get(url);
         }
         try {
@@ -357,23 +358,21 @@ public class ConfigurationContext implements ServletContextAware {
     }
 
     public static Map<String, SOSMetadata> updateSOSMetadata() {
-        LOGGER.debug("Update protected services");
+        LOGGER.debug("Update services");
         Map<String, SOSMetadata> updatedMetadatas = new HashMap<String, SOSMetadata>();
         for (String metadataKey : serviceMetadatas.keySet()) {
             SOSMetadata sosMetadata = serviceMetadatas.get(metadataKey);
-            if (sosMetadata.isProtectedService()) {
-                try {
-                    MetadataHandler metadataHandler = ConfigurationContext.createSosMetadataHandler(sosMetadata);
-                    SOSMetadata updatedMetadata = metadataHandler.updateMetadata(sosMetadata);
-                    updatedMetadatas.put(updatedMetadata.getServiceUrl(), updatedMetadata);
-                    LOGGER.debug("Update metadata for service with url '{}'", updatedMetadata.getServiceUrl());
-                }
-                catch (Exception e) {
-                    LOGGER.error("Could not update {} ", sosMetadata, e);
-                }
+            try {
+                MetadataHandler metadataHandler = ConfigurationContext.createSosMetadataHandler(sosMetadata);
+                SOSMetadata updatedMetadata = metadataHandler.performMetadataCompletion();
+                updatedMetadatas.put(metadataKey, updatedMetadata);
+                LOGGER.debug("Update metadata for service with url '{}'", updatedMetadata.getServiceUrl());
+            }
+            catch (Exception e) {
+                LOGGER.error("Could not update {} ", sosMetadata, e);
             }
         }
-        LOGGER.debug("Update #{} protected services", updatedMetadatas.size());
+        LOGGER.debug("Updated #{} services", updatedMetadatas.size());
         return updatedMetadatas;
     }
 }
