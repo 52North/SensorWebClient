@@ -60,9 +60,6 @@ public class ConfigurationContext implements ServletContextAware {
     @Autowired
     private ServletContext servletContext;
 
-
-
-
     private static Map<String, SOSMetadata> serviceMetadatas = Collections.synchronizedMap(new HashMap<String, SOSMetadata>());
 
     public static int STARTUP_DELAY;
@@ -362,7 +359,7 @@ public class ConfigurationContext implements ServletContextAware {
 
     public static Map<String, SOSMetadata> updateSOSMetadata() {
         LOGGER.debug("Update services");
-        Map<String, SOSMetadata> updatedMetadatas = new HashMap<>();
+        Map<String, SOSMetadata> updatedMetadatas = new HashMap<String, SOSMetadata>();
         for (String metadataKey : serviceMetadatas.keySet()) {
             SOSMetadata sosMetadata = serviceMetadatas.get(metadataKey);
             try {
