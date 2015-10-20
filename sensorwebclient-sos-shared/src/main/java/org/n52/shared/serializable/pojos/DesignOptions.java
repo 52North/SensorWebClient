@@ -60,7 +60,7 @@ public class DesignOptions implements Serializable {
     
     @SuppressWarnings("unused")
 	private DesignOptions() {
-        // do nothing
+        // do nothin
     }
     
     public static DesignOptions createOptionsForGetFirstValue(TimeseriesProperties properties) {

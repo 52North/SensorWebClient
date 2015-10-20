@@ -41,7 +41,7 @@ public class SosInstanceContentHandler extends DefaultHandler {
 
     enum TagNames {
 
-        INSTANCE, ITEMNAME, URL, VERSION, METADATAHANDLER, ADAPTER, WATERML, TIMEOUT, LLEASTING, LLNORTHING, UREASTING, URNORTHING, DEFAULTZOOM, AUTOZOOM, REQUESTCHUNK, FORCEXYAXISORDER, NOELEMENT, SUPPORTSFIRSTLATEST, ENABLEEVENTING, GDAPREFINAL, HTTPCONNECTIONPOOLSIZE;
+        INSTANCE, ITEMNAME, URL, VERSION, METADATAHANDLER, ADAPTER, WATERML, TIMEOUT, LLEASTING, LLNORTHING, UREASTING, URNORTHING, DEFAULTZOOM, AUTOZOOM, REQUESTCHUNK, FORCEXYAXISORDER, PROTECTEDSERVICE, NOELEMENT, SUPPORTSFIRSTLATEST, ENABLEEVENTING, GDAPREFINAL, HTTPCONNECTIONPOOLSIZE;
     }
 
     private SOSMetadataBuilder currentBuilder = new SOSMetadataBuilder();
@@ -87,6 +87,8 @@ public class SosInstanceContentHandler extends DefaultHandler {
             currentElement = TagNames.METADATAHANDLER;
         } else if (TagNames.ADAPTER.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.ADAPTER;
+        } else if (TagNames.PROTECTEDSERVICE.name().equalsIgnoreCase(qName)) {
+            currentElement = TagNames.PROTECTEDSERVICE;
         } else if (TagNames.ENABLEEVENTING.name().equalsIgnoreCase(qName)) {
             currentElement = TagNames.ENABLEEVENTING;
         } else if (TagNames.SUPPORTSFIRSTLATEST.name().equalsIgnoreCase(qName)) {
@@ -181,6 +183,10 @@ public class SosInstanceContentHandler extends DefaultHandler {
                     case ADAPTER:
                         String adapter = parsedCharacters;
                         currentBuilder.addAdapter(adapter);
+                        break;
+                    case PROTECTEDSERVICE:
+                        boolean protectedService = Boolean.parseBoolean(parsedCharacters);
+                        currentBuilder.addProtectedService(protectedService);
                         break;
                     case SUPPORTSFIRSTLATEST:
                         boolean supportsFirstLast = Boolean.parseBoolean(parsedCharacters);

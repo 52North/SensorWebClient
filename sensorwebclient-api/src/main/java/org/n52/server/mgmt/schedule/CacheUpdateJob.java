@@ -78,8 +78,9 @@ public class CacheUpdateJob extends ScheduledJob implements Job {
             if (shallRewriteAtStartup(context)) {
                 LOGGER.info("Rewriting cache at startup.");
                 SosMetadataUpdate.invalidateCache();
-            } else if (context.getPreviousFireTime() != null) {
-                LOGGER.info("Rewriting cache.");
+            }
+            if (context.getPreviousFireTime() != null) {
+                LOGGER.info("Rewriting cache at startup.");
                 SosMetadataUpdate.invalidateCache();
             }
             SosMetadataUpdate.updateSosServices(sosUrls);

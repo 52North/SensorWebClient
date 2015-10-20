@@ -829,7 +829,7 @@ public class SOSRequestManager extends RequestManager {
 				for (String metadataKey : metadatas.keySet()) {
 					SOSMetadata sosMetadata = metadatas.get(metadataKey);
 					EventBus.getMainEventBus().fireEvent(new StoreSOSMetadataEvent(sosMetadata));
-					Toaster.getToasterInstance().addMessage("Update service with url " + sosMetadata.getServiceUrl());
+					Toaster.getToasterInstance().addMessage("Update protected services with url " + sosMetadata.getServiceUrl());
 				}
 			}
 			@Override
