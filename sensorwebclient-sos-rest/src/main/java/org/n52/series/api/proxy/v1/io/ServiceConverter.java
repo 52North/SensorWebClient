@@ -30,9 +30,9 @@ package org.n52.series.api.proxy.v1.io;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import org.n52.io.response.v1.ServiceOutput;
+import org.n52.io.response.v1.ServiceOutput.ParameterCount;
 
-import org.n52.io.v1.data.ServiceOutput;
-import org.n52.io.v1.data.ServiceOutput.ParameterCount;
 import org.n52.shared.serializable.pojos.sos.Category;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;

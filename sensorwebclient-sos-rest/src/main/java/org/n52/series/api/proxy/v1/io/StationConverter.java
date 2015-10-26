@@ -27,20 +27,20 @@
  */
 package org.n52.series.api.proxy.v1.io;
 
-import static org.n52.io.geojson.GeojsonPoint.createWithCoordinates;
+import static org.n52.io.geojson.old.GeojsonPoint.createWithCoordinates;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.n52.io.geojson.GeojsonPoint;
-import org.n52.io.v1.data.ParameterOutput;
-import org.n52.io.v1.data.StationOutput;
+import org.n52.io.geojson.old.GeojsonPoint;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParameter;
 
 import com.vividsolutions.jts.geom.Point;
+import org.n52.io.response.ParameterOutput;
+import org.n52.io.response.v1.StationOutput;
 
 public class StationConverter extends OutputConverter<Station, StationOutput> {
 

@@ -36,14 +36,14 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.series.api.proxy.v1.io.FeatureConverter;
-import org.n52.io.IoParameters;
-import org.n52.io.v1.data.FeatureOutput;
+import org.n52.io.request.IoParameters;
+import org.n52.io.response.v1.FeatureOutput;
+import org.n52.sensorweb.spi.ParameterService;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.n52.sensorweb.v1.spi.ParameterService;
 
 public class FeatureOutputAdapter implements ParameterService<FeatureOutput> {
 

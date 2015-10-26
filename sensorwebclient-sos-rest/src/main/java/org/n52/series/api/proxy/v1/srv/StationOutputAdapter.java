@@ -35,14 +35,14 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.series.api.proxy.v1.io.StationConverter;
-import org.n52.io.IoParameters;
+import org.n52.io.request.IoParameters;
 import org.n52.io.crs.BoundingBox;
-import org.n52.io.v1.data.StationOutput;
+import org.n52.io.response.v1.StationOutput;
+import org.n52.sensorweb.spi.ParameterService;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
-import org.n52.sensorweb.v1.spi.ParameterService;
 
 public class StationOutputAdapter implements ParameterService<StationOutput> {
 
@@ -89,7 +89,7 @@ public class StationOutputAdapter implements ParameterService<StationOutput> {
 
     @Override
     public StationOutput getParameter(String stationId) {
-        return getParameter(stationId, org.n52.io.QueryParameters.createDefaults());
+        return getParameter(stationId, org.n52.io.request.QueryParameters.createDefaults());
     }
 
     @Override

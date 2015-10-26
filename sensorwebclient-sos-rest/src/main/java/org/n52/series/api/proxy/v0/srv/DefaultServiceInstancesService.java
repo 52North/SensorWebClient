@@ -33,7 +33,7 @@ import java.util.Collection;
 import org.n52.series.api.proxy.v0.out.ServiceInstance;
 import org.n52.server.mgmt.ConfigurationContext;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
-import org.n52.web.ResourceNotFoundException;
+import org.n52.web.exception.ResourceNotFoundException;
 
 public class DefaultServiceInstancesService implements ServiceInstancesService {
 

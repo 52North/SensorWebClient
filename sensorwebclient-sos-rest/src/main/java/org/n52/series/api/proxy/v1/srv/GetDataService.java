@@ -27,7 +27,7 @@
  */
 package org.n52.series.api.proxy.v1.srv;
 
-import static org.n52.io.v1.data.TimeseriesData.newTimeseriesData;
+import static org.n52.io.response.TimeseriesData.newTimeseriesData;
 import static org.n52.shared.serializable.pojos.DesignOptions.createOptionsForGetFirstValue;
 import static org.n52.shared.serializable.pojos.DesignOptions.createOptionsForGetLastValue;
 
@@ -36,11 +36,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.n52.client.service.TimeSeriesDataService;
+import org.n52.io.response.TimeseriesData;
+import org.n52.io.response.v1.TimeseriesDataMetadata;
+import org.n52.io.response.TimeseriesValue;
+import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.io.format.TvpDataCollection;
-import org.n52.io.v1.data.TimeseriesData;
-import org.n52.io.v1.data.TimeseriesDataMetadata;
-import org.n52.io.v1.data.TimeseriesValue;
-import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.server.da.oxf.ResponseExceedsSizeLimitException;
 import org.n52.shared.requests.TimeSeriesDataRequest;
 import org.n52.shared.responses.TimeSeriesDataResponse;
@@ -48,8 +48,8 @@ import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
-import org.n52.web.BadRequestException;
-import org.n52.web.InternalServerException;
+import org.n52.web.exception.BadRequestException;
+import org.n52.web.exception.InternalServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +69,7 @@ public class GetDataService extends DataService {
      *        containing request parameters.
      * @return a time series result instance, identified by {@link SosTimeseries#getTimeseriesId()}
      */
-    public TvpDataCollection getTimeSeriesFromParameterSet(UndesignedParameterSet parameterSet) {
+    public TvpDataCollection getTimeSeriesFromParameterSet(RequestSimpleParameterSet parameterSet) {
         ArrayList<TimeseriesProperties> tsProperties = new ArrayList<TimeseriesProperties>();
         TvpDataCollection timeseriesCollection = prepareTimeseriesResults(parameterSet, tsProperties);
         return performTimeseriesDataRequest(timeseriesCollection, createDesignOptions(parameterSet, tsProperties));

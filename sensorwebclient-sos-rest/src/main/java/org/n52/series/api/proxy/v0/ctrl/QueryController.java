@@ -41,7 +41,7 @@ import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.requests.query.queries.QueryRequest;
 import org.n52.shared.requests.query.responses.QueryResponse;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
-import org.n52.web.ResourceNotFoundException;
+import org.n52.web.exception.ResourceNotFoundException;
 
 public abstract class QueryController {
 

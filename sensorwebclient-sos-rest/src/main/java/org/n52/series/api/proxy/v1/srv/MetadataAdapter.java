@@ -31,13 +31,13 @@ import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.n52.sensorweb.spi.v1.CountingMetadataService;
 
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.Category;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
-import org.n52.sensorweb.v1.spi.CountingMetadataService;
 
 public class MetadataAdapter implements CountingMetadataService {
 
@@ -56,7 +56,7 @@ public class MetadataAdapter implements CountingMetadataService {
 	}
 
 	@Override
-	public int getTimeseriesCount() {
+	public int getSeriesCount() {
 		int count = 0;
 		for (SOSMetadata metadata : getSOSMetadatas()) {
 			for (Station station : metadata.getStations()) {

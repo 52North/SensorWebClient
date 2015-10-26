@@ -36,18 +36,18 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.series.api.proxy.v1.io.TimeseriesConverter;
-import org.n52.io.IoParameters;
+import org.n52.io.request.IoParameters;
 import org.n52.io.RenderingHintsConfigApplier;
 import org.n52.io.StatusIntervalsConfigApplier;
 import org.n52.io.format.TvpDataCollection;
-import org.n52.io.v1.data.TimeseriesMetadataOutput;
-import org.n52.io.v1.data.UndesignedParameterSet;
+import org.n52.io.response.v1.TimeseriesMetadataOutput;
+import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
-import org.n52.sensorweb.v1.spi.ParameterService;
-import org.n52.sensorweb.v1.spi.TimeseriesDataService;
+import org.n52.sensorweb.spi.ParameterService;
+import org.n52.sensorweb.spi.TimeseriesDataService;
 
 public class TimeseriesOutputAdapter implements TimeseriesDataService, ParameterService<TimeseriesMetadataOutput> {
 
@@ -58,7 +58,7 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
     private StatusIntervalsConfigApplier statusIntervalsService;
 
 	@Override
-	public TvpDataCollection getTimeseriesData(UndesignedParameterSet parameters) {
+	public TvpDataCollection getTimeseriesData(RequestSimpleParameterSet parameters) {
 		return dataService.getTimeSeriesFromParameterSet(parameters);
 	}
 
@@ -102,7 +102,7 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
 
     @Override
     public TimeseriesMetadataOutput[] getParameters(String[] timeseriesIds) {
-        return getParameters(timeseriesIds, org.n52.io.QueryParameters.createDefaults());
+        return getParameters(timeseriesIds, org.n52.io.request.QueryParameters.createDefaults());
     }
 
     @Override
