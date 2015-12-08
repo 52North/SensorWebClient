@@ -326,7 +326,7 @@ public class SensorMLParser_v20 extends SensorMLParser {
 		}
 
 		final Point point = getReferenceHelper().createPoint(x, y, z, srs);
-		return getReferenceHelper().transformOuterToInner(point, srs);
+		return (Point) getReferenceHelper().transformOuterToInner(point, srs);
 	}
 
 	private DescribedObjectType getDescribedObjectType() {
