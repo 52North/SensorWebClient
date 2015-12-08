@@ -27,6 +27,7 @@
  */
 package org.n52.server.io;
 
+import org.n52.shared.exceptions.GeneratorException;
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 import static javax.imageio.ImageIO.write;
 

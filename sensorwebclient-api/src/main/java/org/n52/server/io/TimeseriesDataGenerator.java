@@ -29,6 +29,7 @@ package org.n52.server.io;
 
 
 
+import org.n52.shared.exceptions.GeneratorException;
 import static org.n52.oxf.feature.OXFAbstractObservationType.FEATURE_OF_INTEREST;
 import static org.n52.oxf.feature.OXFAbstractObservationType.OBSERVED_PROPERTY;
 import static org.n52.oxf.feature.OXFAbstractObservationType.PROCEDURE;

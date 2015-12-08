@@ -27,6 +27,7 @@
  */
 package org.n52.server.io;
 
+import org.n52.shared.exceptions.GeneratorException;
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadata;
 import static org.n52.server.util.TimeUtil.createIso8601Formatter;
 
