@@ -4,13 +4,11 @@
       <ows:Title>AirQualitySOS</ows:Title>
       <ows:Abstract>Air quality observation across Europe</ows:Abstract>
       <ows:Keywords>
-         <ows:Keywords>
-            <ows:Keyword>Air quality</ows:Keyword>
-            <ows:Keyword>CO</ows:Keyword>
-            <ows:Keyword>O3</ows:Keyword>
-            <ows:Keyword>Carbon Monoxide</ows:Keyword>
-            <ows:Keyword>Ozone</ows:Keyword>
-         </ows:Keywords>
+          <ows:Keyword>Air quality</ows:Keyword>
+          <ows:Keyword>CO</ows:Keyword>
+          <ows:Keyword>O3</ows:Keyword>
+          <ows:Keyword>Carbon Monoxide</ows:Keyword>
+          <ows:Keyword>Ozone</ows:Keyword>
       </ows:Keywords>
       <ows:ServiceType codeSpace="http://opengeospatial.net">OGC:SOS</ows:ServiceType>
       <ows:ServiceTypeVersion>2.0.0</ows:ServiceTypeVersion>
@@ -358,7 +356,7 @@
                   </gml:Envelope>
                </sos:observedArea>
                <sos:phenomenonTime>
-                  <gml:TimePeriod gml:id="phenomenonTime">
+                  <gml:TimePeriod gml:id="phenomenonTime-1">
                      <gml:beginPosition>2013-04-01T01:00:00+00:00</gml:beginPosition>
                      <gml:endPosition>2014-01-01T00:00:00+00:00</gml:endPosition>
                   </gml:TimePeriod>
@@ -372,7 +370,7 @@
                <!--currently not supported: <swes:procedureDescriptionFormat>http://www.opengis.net/sensorML/2.0</swes:procedureDescriptionFormat>-->
                <swes:procedureDescriptionFormat>http://www.opengis.net/sensorML/1.0.1</swes:procedureDescriptionFormat>
                <sos:phenomenonTime>
-                  <gml:TimePeriod gml:id="phenomenonTime">
+                  <gml:TimePeriod gml:id="phenomenonTime-2">
                      <gml:beginPosition>2007-01-01T01:00:00+00:00</gml:beginPosition>
                      <gml:endPosition>2012-04-01T00:00:00+00:00</gml:endPosition>
                   </gml:TimePeriod>
