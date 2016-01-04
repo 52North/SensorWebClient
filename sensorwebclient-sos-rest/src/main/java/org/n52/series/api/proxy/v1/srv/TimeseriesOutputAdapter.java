@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -36,28 +36,28 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.series.api.proxy.v1.io.TimeseriesConverter;
 import org.n52.io.IoParameters;
-import org.n52.io.RenderingHintsConfigApplier;
-import org.n52.io.StatusIntervalsConfigApplier;
+import org.n52.io.extension.v1.RenderingHintsExtension;
+import org.n52.io.extension.v1.StatusIntervalsExtension;
 import org.n52.io.format.TvpDataCollection;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.UndesignedParameterSet;
+import org.n52.sensorweb.v1.spi.ParameterService;
+import org.n52.sensorweb.v1.spi.RawDataService;
+import org.n52.sensorweb.v1.spi.TimeseriesDataService;
+import org.n52.series.api.proxy.v1.io.TimeseriesConverter;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
-import org.n52.sensorweb.v1.spi.ParameterService;
-import org.n52.sensorweb.v1.spi.RawDataService;
-import org.n52.sensorweb.v1.spi.TimeseriesDataService;
 
 public class TimeseriesOutputAdapter implements TimeseriesDataService, ParameterService<TimeseriesMetadataOutput>, RawDataService {
 
     private GetDataService dataService;
 
-    private RenderingHintsConfigApplier renderingHintsService;
+    private RenderingHintsExtension renderingHintsService;
 
-    private StatusIntervalsConfigApplier statusIntervalsService;
+    private StatusIntervalsExtension statusIntervalsService;
 
 	@Override
 	public TvpDataCollection getTimeseriesData(UndesignedParameterSet parameters) {
@@ -153,19 +153,19 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
         this.dataService = dataService;
     }
 
-	public RenderingHintsConfigApplier getRenderingHintsService() {
+	public RenderingHintsExtension getRenderingHintsService() {
 		return renderingHintsService;
 	}
 
-	public void setRenderingHintsService(RenderingHintsConfigApplier renderingHintsService) {
+	public void setRenderingHintsService(RenderingHintsExtension renderingHintsService) {
 		this.renderingHintsService = renderingHintsService;
 	}
 
-	public StatusIntervalsConfigApplier getStatusIntervalsService() {
+	public StatusIntervalsExtension getStatusIntervalsService() {
 		return statusIntervalsService;
 	}
 
-	public void setStatusIntervalsService(StatusIntervalsConfigApplier statusIntervalsService) {
+	public void setStatusIntervalsService(StatusIntervalsExtension statusIntervalsService) {
 		this.statusIntervalsService = statusIntervalsService;
 	}
 
