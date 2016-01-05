@@ -34,12 +34,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import org.n52.sensorweb.spi.SearchResult;
 import org.n52.sensorweb.spi.SearchService;
-import org.n52.sensorweb.spi.search.v1.CategorySearchResult;
-import org.n52.sensorweb.spi.search.v1.FeatureSearchResult;
+import org.n52.sensorweb.spi.search.CategorySearchResult;
+import org.n52.sensorweb.spi.search.FeatureSearchResult;
+import org.n52.sensorweb.spi.search.PhenomenonSearchResult;
+import org.n52.sensorweb.spi.search.ProcedureSearchResult;
+import org.n52.sensorweb.spi.search.ServiceSearchResult;
 import org.n52.sensorweb.spi.search.v1.OfferingSearchResult;
-import org.n52.sensorweb.spi.search.v1.PhenomenonSearchResult;
-import org.n52.sensorweb.spi.search.v1.ProcedureSearchResult;
-import org.n52.sensorweb.spi.search.v1.ServiceSearchResult;
 import org.n52.sensorweb.spi.search.v1.StationSearchResult;
 import org.n52.sensorweb.spi.search.v1.TimeseriesSearchResult;
 
@@ -187,6 +187,11 @@ public class SearchAdapter implements SearchService {
      */
     private boolean containsSearchString(String label, String searchToken) {
         return label.toLowerCase().contains(searchToken.toLowerCase());
+    }
+
+    @Override
+    public void shutdown() {
+        // nothing to shutdown
     }
 
 }

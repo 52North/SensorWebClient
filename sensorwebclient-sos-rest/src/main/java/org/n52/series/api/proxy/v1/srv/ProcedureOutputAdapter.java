@@ -30,13 +30,14 @@ package org.n52.series.api.proxy.v1.srv;
 import static org.n52.series.api.proxy.v1.srv.QueryParameterAdapter.createQueryParameters;
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.n52.series.api.proxy.v1.io.ProcedureConverter;
 import org.n52.io.request.IoParameters;
+import org.n52.io.response.OutputCollection;
+import org.n52.io.response.ParameterOutput;
 import org.n52.io.response.v1.ProcedureOutput;
 import org.n52.sensorweb.spi.ParameterService;
 import org.n52.shared.requests.query.QueryParameters;
@@ -47,26 +48,35 @@ import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
 public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput> {
 
+    private OutputCollection<ProcedureOutput> createOutputCollection() {
+        return new OutputCollection<ProcedureOutput>() {
+                @Override
+                protected Comparator<ProcedureOutput> getComparator() {
+                    return ParameterOutput.defaultComparator();
+                }
+            };
+    }
+    
 	@Override
-	public ProcedureOutput[] getExpandedParameters(IoParameters map) {
+	public OutputCollection<ProcedureOutput> getExpandedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);
-		List<ProcedureOutput> allProcedures = new ArrayList<ProcedureOutput>();
+        OutputCollection<ProcedureOutput> outputCollection = createOutputCollection();
 		for (SOSMetadata metadata : getSOSMetadatas()) {
 		    ProcedureConverter converter = new ProcedureConverter(metadata);
-			allProcedures.addAll(converter.convertExpanded(filter(metadata, query)));
+			outputCollection.addItems(converter.convertExpanded(filter(metadata, query)));
 		}
-		return allProcedures.toArray(new ProcedureOutput[0]);
+		return outputCollection;
 	}
 
 	@Override
-    public ProcedureOutput[] getCondensedParameters(IoParameters map) {
+    public OutputCollection<ProcedureOutput> getCondensedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);
-        List<ProcedureOutput> allProcedures = new ArrayList<ProcedureOutput>();
+        OutputCollection<ProcedureOutput> outputCollection = createOutputCollection();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             ProcedureConverter converter = new ProcedureConverter(metadata);
-            allProcedures.addAll(converter.convertCondensed(filter(metadata, query)));
+            outputCollection.addItems(converter.convertCondensed(filter(metadata, query)));
         }
-        return allProcedures.toArray(new ProcedureOutput[0]);
+        return outputCollection;
     }
 
     private Procedure[] filter(SOSMetadata metadata, QueryParameters query) {
@@ -78,20 +88,20 @@ public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput>
     }
 
 	@Override
-    public ProcedureOutput[] getParameters(String[] procedureIds) {
+    public OutputCollection<ProcedureOutput> getParameters(String[] procedureIds) {
 	    return getParameters(procedureIds, IoParameters.createDefaults());
     }
 
     @Override
-    public ProcedureOutput[] getParameters(String[] procedureIds,IoParameters query) {
-        List<ProcedureOutput> selectedProcedures = new ArrayList<ProcedureOutput>();
+    public OutputCollection<ProcedureOutput> getParameters(String[] procedureIds,IoParameters query) {
+        OutputCollection<ProcedureOutput> outputCollection = createOutputCollection();
         for (String procedureId : procedureIds) {
             ProcedureOutput procedure = getParameter(procedureId);
             if (procedure != null) {
-                selectedProcedures.add(procedure);
+                outputCollection.addItem(procedure);
             }
         }
-        return selectedProcedures.toArray(new ProcedureOutput[0]);
+        return outputCollection;
     }
 
     @Override

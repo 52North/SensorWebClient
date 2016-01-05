@@ -30,11 +30,12 @@ package org.n52.series.api.proxy.v1.srv;
 import static org.n52.series.api.proxy.v1.srv.QueryParameterAdapter.createQueryParameters;
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Comparator;
 
 import org.n52.series.api.proxy.v1.io.ServiceConverter;
 import org.n52.io.request.IoParameters;
+import org.n52.io.response.OutputCollection;
+import org.n52.io.response.ParameterOutput;
 import org.n52.io.response.v1.ServiceOutput;
 import org.n52.sensorweb.spi.ServiceParameterService;
 import org.n52.shared.requests.query.QueryParameters;
@@ -42,6 +43,15 @@ import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 
 public class ServiceOutputAdapter implements ServiceParameterService {
 
+    private OutputCollection<ServiceOutput> createOutputCollection() {
+        return new OutputCollection<ServiceOutput>() {
+                @Override
+                protected Comparator<ServiceOutput> getComparator() {
+                    return ParameterOutput.defaultComparator();
+                }
+            };
+    }
+    
     @Override
     public boolean isKnownTimeseries(String timeseriesId) {
         for (SOSMetadata metadatas : getSOSMetadatas()) {
@@ -53,49 +63,50 @@ public class ServiceOutputAdapter implements ServiceParameterService {
     }
 
 	@Override
-	public ServiceOutput[] getExpandedParameters(IoParameters map) {
+	public OutputCollection<ServiceOutput> getExpandedParameters(IoParameters map) {
 	    QueryParameters query = createQueryParameters(map);
-		List<ServiceOutput> allServices = new ArrayList<ServiceOutput>();
+        OutputCollection<ServiceOutput> outputCollection = createOutputCollection();
 		for (SOSMetadata metadata : getSOSMetadatas()) {
             if (matchesQuery(query, metadata)) {
     		    ServiceConverter converter = new ServiceConverter(metadata);
-    			allServices.add(converter.convertExpanded(metadata));
+    			outputCollection.addItem(converter.convertExpanded(metadata));
             }
 		}
-		return allServices.toArray(new ServiceOutput[0]);
+		return outputCollection;
 	}
 
 	@Override
-    public ServiceOutput[] getCondensedParameters(IoParameters map) {
+    public OutputCollection<ServiceOutput> getCondensedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);
-        List<ServiceOutput> allServices = new ArrayList<ServiceOutput>();
+        OutputCollection<ServiceOutput> outputCollection = createOutputCollection();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             if (matchesQuery(query, metadata)) {
                 ServiceConverter converter = new ServiceConverter(metadata);
-                allServices.add(converter.convertCondensed(metadata));
+                outputCollection.addItem(converter.convertCondensed(metadata));
             }
         }
-        return allServices.toArray(new ServiceOutput[0]);
+        return outputCollection;
     }
 
     private boolean matchesQuery(QueryParameters query, SOSMetadata metadata) {
         return metadata.getMatchingTimeseries(query).length != 0;
     }
 
-	public ServiceOutput[] getParameters(String[] serviceIds) {
+    @Override
+	public OutputCollection<ServiceOutput> getParameters(String[] serviceIds) {
         return getParameters(serviceIds, IoParameters.createDefaults());
     }
 
 	@Override
-    public ServiceOutput[] getParameters(String[] serviceIds, IoParameters query) {
-	    List<ServiceOutput> selectedServices = new ArrayList<ServiceOutput>();
+    public OutputCollection<ServiceOutput> getParameters(String[] serviceIds, IoParameters query) {
+        OutputCollection<ServiceOutput> outputCollection = createOutputCollection();
         for (String serviceId : serviceIds) {
-            ServiceOutput serivce = getParameter(serviceId);
-            if (serivce != null) {
-                selectedServices.add(serivce);
+            ServiceOutput service = getParameter(serviceId);
+            if (service != null) {
+                outputCollection.addItem(service);
             }
         }
-        return selectedServices.toArray(new ServiceOutput[0]);
+        return outputCollection;
     }
 
     @Override

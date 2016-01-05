@@ -393,16 +393,6 @@
                 <version>2.4</version>
             </dependency>
             <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.module</groupId>
-                <artifactId>jackson-module-jsonSchema</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
                 <version>4.3.0.Final</version>
@@ -523,7 +513,7 @@
                     <artifactId>maven-dependency-plugin</artifactId>
                     <version>2.8</version>
                 </plugin>
-
+                
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>gwt-maven-plugin</artifactId>
@@ -545,7 +535,7 @@
                         <draftCompile>${gwt.compile.draft}</draftCompile>
                         <compileReport>${gwt.compile.report}</compileReport>
                         <optimizationLevel>${gwt.compile.optimization.level}</optimizationLevel>
-                        <extraJvmArgs>-XX:MaxPermSize=256m -Xmx512m</extraJvmArgs>
+                        <extraJvmArgs>-Xmx512m</extraJvmArgs>
                     </configuration>
                     <executions>
                         <execution>
@@ -918,10 +908,9 @@
         <gwt.compile.module>org.n52.SensorWebClient</gwt.compile.module>
 
         <dev.mode>false</dev.mode>
-        <gwt.version>2.6.1</gwt.version>
+        <gwt.version>2.7.0</gwt.version>
         <slf4j.version>1.7.2</slf4j.version>
         <logback.version>1.0.11</logback.version>
-        <jackson.version>2.2.2</jackson.version>
         <smartgwt.version>3.1</smartgwt.version>
         <geotools.version>8.5</geotools.version>
         <oxf.version>2.0.0-alpha.3.4-SNAPSHOT</oxf.version>

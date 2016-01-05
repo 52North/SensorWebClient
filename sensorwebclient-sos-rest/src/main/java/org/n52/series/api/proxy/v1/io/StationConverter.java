@@ -80,7 +80,7 @@ public class StationConverter extends OutputConverter<Station, StationOutput> {
     }
 
     private ParameterOutput createOutputValue(TimeseriesParameter parameter) {
-        ParameterOutput outputvalue = new ParameterOutput();
+        ParameterOutput outputvalue = new ParameterOutput() {};
         outputvalue.setId(parameter.getGlobalId());
         outputvalue.setLabel(parameter.getLabel());
         return outputvalue;

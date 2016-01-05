@@ -31,7 +31,7 @@ import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
 
 import java.util.HashSet;
 import java.util.Set;
-import org.n52.sensorweb.spi.v1.CountingMetadataService;
+import org.n52.sensorweb.spi.search.v1.CountingMetadataService;
 
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.Category;

@@ -121,7 +121,7 @@ public final class FeatureParser {
             Double y = Double.parseDouble(lonLat[1]);
             String srsName = getSrsName(point);
             Point outerRefPoint = crsUtil.createPoint(x, y, srsName);
-            return crsUtil.transformOuterToInner(outerRefPoint, srsName);
+            return (Point) crsUtil.transformOuterToInner(outerRefPoint, srsName);
         }
         catch (FactoryException e) {
             LOGGER.error("Could not create reference helper to parse shape from feature.", e);

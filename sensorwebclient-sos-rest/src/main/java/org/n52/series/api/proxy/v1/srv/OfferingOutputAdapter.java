@@ -30,13 +30,14 @@ package org.n52.series.api.proxy.v1.srv;
 import static org.n52.series.api.proxy.v1.srv.QueryParameterAdapter.createQueryParameters;
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.n52.series.api.proxy.v1.io.OfferingConverter;
 import org.n52.io.request.IoParameters;
+import org.n52.io.response.OutputCollection;
+import org.n52.io.response.ParameterOutput;
 import org.n52.io.response.v1.OfferingOutput;
 import org.n52.sensorweb.spi.ParameterService;
 import org.n52.shared.requests.query.QueryParameters;
@@ -46,27 +47,36 @@ import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
 public class OfferingOutputAdapter implements ParameterService<OfferingOutput> {
-
+    
+    private OutputCollection<OfferingOutput> createOutputCollection() {
+        return new OutputCollection<OfferingOutput>() {
+                @Override
+                protected Comparator<OfferingOutput> getComparator() {
+                    return ParameterOutput.defaultComparator();
+                }
+            };
+    }
+    
 	@Override
-	public OfferingOutput[] getExpandedParameters(IoParameters map) {
+	public OutputCollection<OfferingOutput> getExpandedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);
-		List<OfferingOutput> allOfferings = new ArrayList<OfferingOutput>();
+        OutputCollection<OfferingOutput> outputCollection = createOutputCollection();
 		for (SOSMetadata metadata : getSOSMetadatas()) {
 		    OfferingConverter converter = new OfferingConverter(metadata);
-		    allOfferings.addAll(converter.convertExpanded(filter(metadata, query)));
+		    outputCollection.addItems(converter.convertExpanded(filter(metadata, query)));
         }
-		return allOfferings.toArray(new OfferingOutput[0]);
+		return outputCollection;
 	}
 
 	@Override
-    public OfferingOutput[] getCondensedParameters(IoParameters map) {
+    public OutputCollection<OfferingOutput> getCondensedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);
-        List<OfferingOutput> allOfferings = new ArrayList<OfferingOutput>();
+        OutputCollection<OfferingOutput> outputCollection = createOutputCollection();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             OfferingConverter converter = new OfferingConverter(metadata);
-            allOfferings.addAll(converter.convertCondensed(filter(metadata, query)));
+            outputCollection.addItems(converter.convertCondensed(filter(metadata, query)));
         }
-        return allOfferings.toArray(new OfferingOutput[0]);
+        return outputCollection;
     }
 
     private Offering[] filter(SOSMetadata metadata, QueryParameters query) {
@@ -78,23 +88,23 @@ public class OfferingOutputAdapter implements ParameterService<OfferingOutput> {
     }
 
 	@Override
-    public OfferingOutput[] getParameters(String[] offeringIds) {
+    public OutputCollection<OfferingOutput> getParameters(String[] offeringIds) {
 	    return getParameters(offeringIds, IoParameters.createDefaults());
 	}
 
     @Override
-    public OfferingOutput[] getParameters(String[] offeringIds, IoParameters query) {
+    public OutputCollection<OfferingOutput> getParameters(String[] offeringIds, IoParameters query) {
 
         // TODO consider query
 
-        List<OfferingOutput> selectedOfferings = new ArrayList<OfferingOutput>();
+        OutputCollection<OfferingOutput> outputCollection = createOutputCollection();
         for (String offeringId : offeringIds) {
             OfferingOutput offering = getParameter(offeringId);
             if (offering != null) {
-                selectedOfferings.add(offering);
+                outputCollection.addItem(offering);
             }
         }
-        return selectedOfferings.toArray(new OfferingOutput[0]);
+        return outputCollection;
     }
 
     @Override

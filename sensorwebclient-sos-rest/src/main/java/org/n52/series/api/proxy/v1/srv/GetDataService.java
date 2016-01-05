@@ -37,10 +37,10 @@ import java.util.Map;
 
 import org.n52.client.service.TimeSeriesDataService;
 import org.n52.io.response.TimeseriesData;
-import org.n52.io.response.v1.TimeseriesDataMetadata;
 import org.n52.io.response.TimeseriesValue;
 import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.io.format.TvpDataCollection;
+import org.n52.io.response.TimeseriesDataMetadata;
 import org.n52.server.da.oxf.ResponseExceedsSizeLimitException;
 import org.n52.shared.requests.TimeSeriesDataRequest;
 import org.n52.shared.responses.TimeSeriesDataResponse;

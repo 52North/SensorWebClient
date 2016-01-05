@@ -30,42 +30,46 @@ package org.n52.series.api.proxy.v1.srv;
 import static org.n52.series.api.proxy.v1.srv.QueryParameterAdapter.createQueryParameters;
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.n52.series.api.proxy.v1.io.TimeseriesConverter;
 import org.n52.io.request.IoParameters;
-import org.n52.io.RenderingHintsConfigApplier;
-import org.n52.io.StatusIntervalsConfigApplier;
 import org.n52.io.format.TvpDataCollection;
-import org.n52.io.response.v1.TimeseriesMetadataOutput;
 import org.n52.io.request.RequestSimpleParameterSet;
+import org.n52.io.response.OutputCollection;
+import org.n52.io.response.ParameterOutput;
+import org.n52.io.response.TimeseriesMetadataOutput;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.sensorweb.spi.ParameterService;
-import org.n52.sensorweb.spi.TimeseriesDataService;
+import org.n52.sensorweb.spi.SeriesDataService;
 
-public class TimeseriesOutputAdapter implements TimeseriesDataService, ParameterService<TimeseriesMetadataOutput> {
+public class TimeseriesOutputAdapter implements SeriesDataService, ParameterService<TimeseriesMetadataOutput> {
 
     private GetDataService dataService;
 
-    private RenderingHintsConfigApplier renderingHintsService;
-
-    private StatusIntervalsConfigApplier statusIntervalsService;
-
+    private OutputCollection<TimeseriesMetadataOutput> createOutputCollection() {
+        return new OutputCollection<TimeseriesMetadataOutput>() {
+                @Override
+                protected Comparator<TimeseriesMetadataOutput> getComparator() {
+                    return ParameterOutput.defaultComparator();
+                }
+            };
+    }
+    
 	@Override
-	public TvpDataCollection getTimeseriesData(RequestSimpleParameterSet parameters) {
+	public TvpDataCollection getSeriesData(RequestSimpleParameterSet parameters) {
 		return dataService.getTimeSeriesFromParameterSet(parameters);
 	}
 
     @Override
-    public TimeseriesMetadataOutput[] getExpandedParameters(IoParameters map) {
+    public OutputCollection<TimeseriesMetadataOutput> getExpandedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);
-        List<TimeseriesMetadataOutput> allTimeseries = new ArrayList<TimeseriesMetadataOutput>();
+        OutputCollection<TimeseriesMetadataOutput> outputCollection = createOutputCollection();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             TimeseriesConverter converter = new TimeseriesConverter(metadata);
             SosTimeseries[] timeseriesToConvert = filter(metadata, query);
@@ -75,21 +79,21 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
                     // setting last values must be declared explicitly to avoid thousands of requests
                     converted.setLastValue(dataService.getLastValue(sosTimeseries));
                 }
-                allTimeseries.add(converted);
+                outputCollection.addItem(converted);
             }
         }
-        return allTimeseries.toArray(new TimeseriesMetadataOutput[0]);
+        return outputCollection;
     }
 
     @Override
-    public TimeseriesMetadataOutput[] getCondensedParameters(IoParameters map) {
+    public OutputCollection<TimeseriesMetadataOutput> getCondensedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);
-        List<TimeseriesMetadataOutput> allProcedures = new ArrayList<TimeseriesMetadataOutput>();
+        OutputCollection<TimeseriesMetadataOutput> outputCollection = createOutputCollection();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             TimeseriesConverter converter = new TimeseriesConverter(metadata);
-            allProcedures.addAll(converter.convertCondensed(filter(metadata, query)));
+            outputCollection.addItems(converter.convertCondensed(filter(metadata, query)));
         }
-        return allProcedures.toArray(new TimeseriesMetadataOutput[0]);
+        return outputCollection;
     }
 
     private SosTimeseries[] filter(SOSMetadata metadata, QueryParameters query) {
@@ -101,23 +105,23 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
     }
 
     @Override
-    public TimeseriesMetadataOutput[] getParameters(String[] timeseriesIds) {
+    public OutputCollection<TimeseriesMetadataOutput> getParameters(String[] timeseriesIds) {
         return getParameters(timeseriesIds, org.n52.io.request.QueryParameters.createDefaults());
     }
 
     @Override
-    public TimeseriesMetadataOutput[] getParameters(String[] timeseriesIds, IoParameters query) {
-        List<TimeseriesMetadataOutput> selectedTimeseries = new ArrayList<TimeseriesMetadataOutput>();
+    public OutputCollection<TimeseriesMetadataOutput> getParameters(String[] timeseriesIds, IoParameters query) {
+        OutputCollection<TimeseriesMetadataOutput> outputCollection = createOutputCollection();
         for (String timeseriesId : timeseriesIds) {
             /*
              * TODO we may not want to invoke getLatest requests for all timeseriesIds here
              */
             TimeseriesMetadataOutput timeseries = getParameter(timeseriesId);
             if (timeseries != null) {
-                selectedTimeseries.add(timeseries);
+                outputCollection.addItem(timeseries);
             }
         }
-        return selectedTimeseries.toArray(new TimeseriesMetadataOutput[0]);
+        return outputCollection;
     }
 
     @Override
@@ -150,21 +154,5 @@ public class TimeseriesOutputAdapter implements TimeseriesDataService, Parameter
     public void setDataService(GetDataService dataService) {
         this.dataService = dataService;
     }
-
-	public RenderingHintsConfigApplier getRenderingHintsService() {
-		return renderingHintsService;
-	}
-
-	public void setRenderingHintsService(RenderingHintsConfigApplier renderingHintsService) {
-		this.renderingHintsService = renderingHintsService;
-	}
-
-	public StatusIntervalsConfigApplier getStatusIntervalsService() {
-		return statusIntervalsService;
-	}
-
-	public void setStatusIntervalsService(StatusIntervalsConfigApplier statusIntervalsService) {
-		this.statusIntervalsService = statusIntervalsService;
-	}
 
 }
