@@ -139,11 +139,6 @@ public abstract class RawObservationDataService implements RawDataService {
         return getInputStreamFromOperationResult(result.get(0));
     }
 
-    @Override
-    public boolean supportsRawData() {
-        return true;
-    }
-
     /**
      * @param timeseriesId
      *            the timeseries id to find the SOS metadata for.

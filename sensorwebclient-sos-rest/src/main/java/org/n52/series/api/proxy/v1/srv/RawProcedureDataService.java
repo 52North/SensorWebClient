@@ -95,11 +95,6 @@ public abstract class RawProcedureDataService implements RawDataService {
         throw new BadRequestException("The raw data query for procedure and UndesignedParameterSet is not supported!");
     }
 
-    @Override
-    public boolean supportsRawData() {
-        return true;
-    }
-
     private void checkRawDataFormat(String rawFormat, String id) {
         if (rawFormat != null && !rawFormat.isEmpty()) {
             for (SOSMetadata metadata : getSOSMetadatas()) {
