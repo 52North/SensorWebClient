@@ -211,7 +211,6 @@ public abstract class RawObservationDataService implements RawDataService {
 
         for (String timeseriesId : parameters.getTimeseries()) {
             SOSMetadata metadata = getMetadataForTimeseriesId(timeseriesId);
-            if (checkQueryParameters(metadata, timeseriesId, parameters)) {
                 if (map.containsKey(metadata)) {
                     map.get(metadata).add(timeseriesId);
                 } else {
@@ -219,54 +218,8 @@ public abstract class RawObservationDataService implements RawDataService {
                     set.add(timeseriesId);
                     map.put(metadata, set);
                 }
-            }
         }
         return map;
-    }
-
-    private boolean checkQueryParameters(SOSMetadata metadata, String timeseriesId,
-            UndesignedParameterSet parameters) {
-        SosTimeseries timeseries = getTimeseries(metadata, timeseriesId);
-        return checkService(metadata, parameters) && checkCategory(timeseries, parameters)
-                && checkPhenomenon(timeseries, parameters) && checkStation(metadata, timeseriesId, parameters)
-                && checkFeature(timeseries, parameters) && checkProcedure(timeseries, parameters)
-                && checkOffering(timeseries, parameters);
-    }
-
-    private boolean checkOffering(SosTimeseries timeseries, UndesignedParameterSet parameters) {
-        return checkForParameter(timeseries.getOffering().getGlobalId(), parameters, "offering");
-    }
-
-    private boolean checkProcedure(SosTimeseries timeseries, UndesignedParameterSet parameters) {
-        return checkForParameter(timeseries.getProcedure().getGlobalId(), parameters, "procedure");
-    }
-
-    private boolean checkFeature(SosTimeseries timeseries, UndesignedParameterSet parameters) {
-        return checkForParameter(timeseries.getFeature().getGlobalId(), parameters, "feature");
-    }
-
-    private boolean checkStation(SOSMetadata metadata, String timeseriesId, UndesignedParameterSet parameters) {
-        Station station = metadata.getStationByTimeSeriesId(timeseriesId);
-        return checkForParameter(station.getGlobalId(), parameters, "station");
-    }
-
-    private boolean checkPhenomenon(SosTimeseries timeseries, UndesignedParameterSet parameters) {
-        return checkForParameter(timeseries.getPhenomenon().getGlobalId(), parameters, "phenomenon");
-    }
-
-    private boolean checkCategory(SosTimeseries timeseries, UndesignedParameterSet parameters) {
-        return checkForParameter(timeseries.getCategory().getGlobalId(), parameters, "category");
-    }
-
-    private boolean checkService(SOSMetadata metadata, UndesignedParameterSet parameters) {
-        return checkForParameter(metadata.getGlobalId(), parameters, "service");
-    }
-
-    private boolean checkForParameter(String toCheck, UndesignedParameterSet parameters, String parameter) {
-        if (parameters.containsParameter(parameter.toLowerCase())) {
-            return parameters.getAsString(parameter.toLowerCase()).equals(toCheck);
-        }
-        return true;
     }
 
     private SosTimeseries getTimeseries(SOSMetadata metadata, String timeseriesId) {
