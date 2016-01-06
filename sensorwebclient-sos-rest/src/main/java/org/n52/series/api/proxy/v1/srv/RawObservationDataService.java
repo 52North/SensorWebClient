@@ -124,18 +124,18 @@ public abstract class RawObservationDataService implements RawDataService {
     @Override
     public InputStream getRawData(UndesignedParameterSet parameters) {
         checkRawDataFormat(parameters.getRawFormat(), parameters.getTimeseries());
+        if (parameters.getTimeseries().length > 1) {
+            throw new BadRequestException("Querying raw timeseries data for multiple timeseries is not supported!");
+        }
         Map<SOSMetadata, Set<String>> timeseriesMetadataMap = getTimeseriesMetadataMap(parameters);
         if (timeseriesMetadataMap.isEmpty()) {
-            throw new ResourceNotFoundException("Found no data for timeseries and parameter.");
-        } else if (timeseriesMetadataMap.size() > 1) {
-            throw new BadRequestException("Querying raw timeseries data from several services is not yet supported");
+            throw new ResourceNotFoundException("No data found for timeseries.");
         }
         List<OperationResult> result = queryObservationsForRequestedParameter(timeseriesMetadataMap, parameters);
         if (result.isEmpty()) {
             LOGGER.error("Get no result for GetObservation request");
             return null;
         }
-        // TODO implement support for multiple results
         return getInputStreamFromOperationResult(result.get(0));
     }
 
