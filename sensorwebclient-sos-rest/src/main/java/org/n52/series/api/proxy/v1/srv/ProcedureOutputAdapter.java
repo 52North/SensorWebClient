@@ -34,19 +34,20 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.n52.series.api.proxy.v1.io.ProcedureConverter;
 import org.n52.io.request.IoParameters;
 import org.n52.io.response.OutputCollection;
 import org.n52.io.response.ParameterOutput;
 import org.n52.io.response.v1.ProcedureOutput;
 import org.n52.sensorweb.spi.ParameterService;
+import org.n52.series.api.proxy.v1.io.ProcedureConverter;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
-public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput> {
+    
+public class ProcedureOutputAdapter extends RawProcedureDataService implements ParameterService<ProcedureOutput> {
 
     private OutputCollection<ProcedureOutput> createOutputCollection() {
         return new OutputCollection<ProcedureOutput>() {
@@ -57,7 +58,7 @@ public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput>
             };
     }
     
-	@Override
+    @Override
 	public OutputCollection<ProcedureOutput> getExpandedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);
         OutputCollection<ProcedureOutput> outputCollection = createOutputCollection();
@@ -122,7 +123,4 @@ public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput>
         }
         return null;
     }
-
-
-
 }

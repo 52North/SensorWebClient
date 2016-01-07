@@ -64,6 +64,10 @@ public class SOSMetadata implements Serializable {
     private String sensorMLVersion;
 
     private String omVersion;
+    
+    private List<String> observationFormats;
+    
+    private List<String> procedureFormats;
 
     private TimeseriesParametersLookup timeseriesParametersLookup;
 
@@ -383,8 +387,24 @@ public class SOSMetadata implements Serializable {
             : timeseriesParametersLookup;
         return timeseriesParametersLookup;
     }
+    
+    public List<String> getObservationFormats() {
+		return observationFormats;
+	}
 
-    @Override
+    public void setObservationFormats(List<String> observationFormats) {
+    	this.observationFormats = observationFormats;
+	}
+    
+	public List<String> getProcedureFormats() {
+		return procedureFormats;
+	}
+
+	public void setProcedureFormats(List<String> procedureFormats) {
+		this.procedureFormats = procedureFormats;
+	}
+
+	@Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("SOSMetadata [ ");
@@ -408,6 +428,8 @@ public class SOSMetadata implements Serializable {
         clone.timeout = this.timeout;
         clone.eventing = this.eventing;
         clone.configuredExtent = this.configuredExtent;
+        clone.observationFormats = this.observationFormats;
+        clone.procedureFormats = this.procedureFormats;
         clone.setSosMetadataHandler(this.getSosMetadataHandler());
         clone.setAdapter(this.getAdapter());
         return clone;

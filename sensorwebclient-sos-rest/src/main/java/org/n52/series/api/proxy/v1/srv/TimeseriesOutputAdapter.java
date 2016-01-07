@@ -34,13 +34,13 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.n52.series.api.proxy.v1.io.TimeseriesConverter;
 import org.n52.io.request.IoParameters;
 import org.n52.io.format.TvpDataCollection;
 import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.io.response.OutputCollection;
 import org.n52.io.response.ParameterOutput;
 import org.n52.io.response.TimeseriesMetadataOutput;
+import org.n52.series.api.proxy.v1.io.TimeseriesConverter;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
@@ -154,5 +154,26 @@ public class TimeseriesOutputAdapter implements SeriesDataService, ParameterServ
     public void setDataService(GetDataService dataService) {
         this.dataService = dataService;
     }
+
+//	@Override
+//	public InputStream getRawData(String id, IoParameters query) {
+//		if (dataService instanceof RawDataService) {
+//			return ((RawDataService)dataService).getRawData(id, query);
+//		}
+//		return null;
+//	}
+//
+//	@Override
+//	public InputStream getRawData(UndesignedParameterSet parameters) {
+//		if (dataService instanceof RawDataService) {
+//			return ((RawDataService)dataService).getRawData(parameters);
+//		}
+//		return null;
+//	}
+//
+//	@Override
+//	public boolean supportsRawData() {
+//		return dataService instanceof RawDataService && ((RawDataService)dataService).supportsRawData();
+//	}
 
 }

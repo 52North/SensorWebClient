@@ -65,6 +65,7 @@ public class TimeseriesConverter extends OutputConverter<SosTimeseries, Timeseri
         TimeseriesMetadataOutput convertedTimeseries = convertCondensed(timeseries);
         convertedTimeseries.setParameters(getCondensedParameters(timeseries));
         convertedTimeseries.setReferenceValues(getReferenceValues(timeseries));
+        convertedTimeseries.setRawFormats(getMetadata().getObservationFormats());
         return convertedTimeseries;
     }
 
