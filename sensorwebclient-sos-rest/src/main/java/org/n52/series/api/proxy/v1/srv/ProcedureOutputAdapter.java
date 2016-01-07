@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -35,18 +35,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.series.api.proxy.v1.io.ProcedureConverter;
 import org.n52.io.IoParameters;
 import org.n52.io.v1.data.ProcedureOutput;
+import org.n52.sensorweb.v1.spi.ParameterService;
+import org.n52.series.api.proxy.v1.io.ProcedureConverter;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.n52.sensorweb.v1.spi.ParameterService;
 
-public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput> {
-
+public class ProcedureOutputAdapter extends RawProcedureDataService implements ParameterService<ProcedureOutput> {
+	
 	@Override
 	public ProcedureOutput[] getExpandedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);
@@ -112,7 +112,4 @@ public class ProcedureOutputAdapter implements ParameterService<ProcedureOutput>
         }
         return null;
     }
-
-
-
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -30,6 +30,8 @@ package org.n52.server.parser;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.n52.server.mgmt.ConfigurationContext.SERVER_TIMEOUT;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -103,47 +105,75 @@ public class ConnectorUtils {
 
     public static String getResponseFormat(final ServiceDescriptor serviceDesc, final String matchingPattern) {
         String respFormat = null;
+        for (String elem : getResponseFormats(serviceDesc)) {
+        	 if (elem.toLowerCase().contains(matchingPattern.toLowerCase())) {
+               respFormat = elem;
+           }
+		}
+        return respFormat;
+    }
+    
+	/**
+	 * Get supported observation response formats
+	 * 
+	 * @param serviceDesc
+	 *            {@link ServiceDescriptor}
+	 * @return {@link List} of supported observation response formats
+	 */
+    public static List<String> getResponseFormats(final ServiceDescriptor serviceDesc) {
         final OperationsMetadata metadata = serviceDesc.getOperationsMetadata();
         if (metadata != null) {
         	final Operation op = metadata.getOperationByName("GetObservation");
             final Parameter parameter = op.getParameter("responseFormat");
             if (parameter != null) {
                 final StringValueDomain respDomain = (StringValueDomain) parameter.getValueDomain();
-                for (final String elem : respDomain.getPossibleValues()) {
-                    if (elem.toLowerCase().contains(matchingPattern.toLowerCase())) {
-                        respFormat = elem;
-                    }
+                if (respDomain.getPossibleValues() != null) {
+                	return respDomain.getPossibleValues();
                 }
             }
         }
-        return respFormat;
+        return new ArrayList<String>(0);
     }
+    
 
     // TODO Review for the case of multiple SensorML versions
     public static String getSMLVersion(final ServiceDescriptor serviceDesc, final String sosVersion) {
         String smlVersion = null;
+        List<String> outputFormats = getProcedureDescriptionFormats(serviceDesc, sosVersion);
+        if (SosUtil.isVersion100(sosVersion)) { // SOS 1.0
+            smlVersion = checkSMLVersionForSOS100(outputFormats);
+        } else if (SosUtil.isVersion200(sosVersion)) { // SOS 2.0
+            smlVersion = checkSMLVersionForSOS20(outputFormats);
+        }
+        return smlVersion;
+    }
+    
+    public static List<String> getProcedureDescriptionFormats(final ServiceDescriptor serviceDesc, final String sosVersion) {
         final OperationsMetadata metadata = serviceDesc.getOperationsMetadata();
         if (metadata != null) {
         	final Operation opSensorML = metadata.getOperationByName("DescribeSensor");
             Parameter outputFormat = null;
             if (SosUtil.isVersion100(sosVersion)) { // SOS 1.0
                 outputFormat = opSensorML.getParameter("outputFormat");
-                smlVersion = checkSMLVersionForSOS100(outputFormat);
             } else if (SosUtil.isVersion200(sosVersion)) { // SOS 2.0
                 outputFormat = opSensorML.getParameter("procedureDescriptionFormat");
-                smlVersion = checkSMLVersionForSOS20(outputFormat);
+            }
+            if (outputFormat != null) {
+                final StringValueDomain sensorMLDomain = (StringValueDomain) outputFormat.getValueDomain();
+                if (sensorMLDomain.getPossibleValues() != null) {
+                	return sensorMLDomain.getPossibleValues();
+                }
             }
         }
-        return smlVersion;
+        return new ArrayList<String>(0);
     }
-
-    private static String checkSMLVersionForSOS100(Parameter outputFormat) {
-    	if (outputFormat != null) {
+    
+    private static String checkSMLVersionForSOS100(List<String> outputFormats) {
+    	if (outputFormats != null) {
         	// Prefer SensorML 2.0 if supported, default is SensorML 1.0.1
-            final StringValueDomain sensorMLDomain = (StringValueDomain) outputFormat.getValueDomain();
             String sml101 = null;
             String sml20 = null;
-            for (final String elem : sensorMLDomain.getPossibleValues()) {
+            for (final String elem : outputFormats) {
             	if (elem.startsWith("text/xml")) {
 	                if (elem.contains(SML_101)) {
 	                	sml101 = elem;
@@ -161,13 +191,12 @@ public class ConnectorUtils {
 		return null;
 	}
 
-	private static String checkSMLVersionForSOS20(Parameter outputFormat) {
-		if (outputFormat != null) {
+	private static String checkSMLVersionForSOS20(List<String> outputFormats) {
+		if (outputFormats != null) {
         	// Prefer SensorML 2.0 if supported, default is SensorML 1.0.1
-            final StringValueDomain sensorMLDomain = (StringValueDomain) outputFormat.getValueDomain();
             String sml101 = null;
             String sml20 = null;
-            for (final String elem : sensorMLDomain.getPossibleValues()) {
+            for (final String elem : outputFormats) {
             	if (elem.startsWith("http")) {
 	                if (elem.contains(SML_101)) {
 	                	sml101 = elem;
