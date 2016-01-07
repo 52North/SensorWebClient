@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -41,6 +41,7 @@ public class ProcedureConverter extends OutputConverter<Procedure, ProcedureOutp
     public ProcedureOutput convertExpanded(Procedure procedure) {
         ProcedureOutput convertedProcedure = convertCondensed(procedure);
         convertedProcedure.setService(convertCondensedService());
+        convertedProcedure.setRawFormats(getMetadata().getProcedureFormats());
         return convertedProcedure;
     }
 
