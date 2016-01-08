@@ -268,6 +268,7 @@
                             <configuration>
                                 <stopPort>9966</stopPort>
                                 <stopKey>jetty-stop</stopKey>
+                                <scanIntervalSeconds>2</scanIntervalSeconds>
                                 <scanTargetPatterns>
                                     <scanTargetPattern>
                                         <directory>src/main/resources</directory>
