@@ -183,6 +183,15 @@ public class SosTimeseries implements Serializable {
         boolean matchesCategory = matches(searchParameters.getCategory(), category.getGlobalId());
         return matchesService && matchesFeature && matchesOffering && matchesProcedure && matchesPhenomenon && matchesCategory;
     }
+    
+    public boolean matchesDomainIds(QueryParameters searchParameters) {
+        boolean matchesService = matches(searchParameters.getService(), sosService.getServiceUrl());
+        boolean matchesFeature = matches(searchParameters.getFeature(), feature.getFeatureId());
+        boolean matchesOffering = matches(searchParameters.getOffering(), offering.getOfferingId());
+        boolean matchesProcedure = matches(searchParameters.getProcedure(), procedure.getProcedureId());
+        boolean matchesPhenomenon = matches(searchParameters.getPhenomenon(), phenomenon.getPhenomenonId());
+        return matchesService && matchesFeature && matchesOffering && matchesProcedure && matchesPhenomenon;
+    }
 
     /**
      * Match against a search criteria. The filter criteria is built as an <code>AND</code> criteria to match against

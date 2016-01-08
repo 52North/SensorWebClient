@@ -40,6 +40,7 @@ public class QueryParameterAdapter {
                 .setProcedure(map.getProcedure())
                 .setPhenomenon(map.getPhenomenon())
                 .setCategory(map.getCategory())
-                .setStation(map.getStation());
+                .setStation(map.getStation())
+                .matchDomainIds(map.isMatchDomainIds());
     }
 }
