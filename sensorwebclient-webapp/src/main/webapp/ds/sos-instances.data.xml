@@ -21,6 +21,7 @@
         <defaultZoom>13</defaultZoom>
         <httpConnectionPoolSize>50</httpConnectionPoolSize>
         <enableEventing>true</enableEventing>
+        <timeout>10000</timeout>
     </instance>
 
 <!--	<instance>
