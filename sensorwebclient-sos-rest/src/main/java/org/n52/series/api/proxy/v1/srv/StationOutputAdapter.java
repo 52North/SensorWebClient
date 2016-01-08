@@ -45,7 +45,7 @@ import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 
-public class StationOutputAdapter implements ParameterService<StationOutput> {
+public class StationOutputAdapter extends ParameterService<StationOutput> {
 
     private OutputCollection<StationOutput> createOutputCollection() {
         return new OutputCollection<StationOutput>() {

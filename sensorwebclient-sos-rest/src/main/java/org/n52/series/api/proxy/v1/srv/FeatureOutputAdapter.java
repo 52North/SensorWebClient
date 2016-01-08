@@ -46,7 +46,7 @@ import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
-public class FeatureOutputAdapter implements ParameterService<FeatureOutput> {
+public class FeatureOutputAdapter extends ParameterService<FeatureOutput> {
 
     private OutputCollection<FeatureOutput> createOutputCollection() {
         return new OutputCollection<FeatureOutput>() {

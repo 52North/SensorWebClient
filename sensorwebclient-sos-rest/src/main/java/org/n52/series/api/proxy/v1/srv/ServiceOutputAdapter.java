@@ -37,11 +37,12 @@ import org.n52.io.request.IoParameters;
 import org.n52.io.response.OutputCollection;
 import org.n52.io.response.ParameterOutput;
 import org.n52.io.response.v1.ServiceOutput;
+import org.n52.sensorweb.spi.ParameterService;
 import org.n52.sensorweb.spi.ServiceParameterService;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 
-public class ServiceOutputAdapter implements ServiceParameterService {
+public class ServiceOutputAdapter extends ParameterService<ServiceOutput> implements ServiceParameterService {
 
     private OutputCollection<ServiceOutput> createOutputCollection() {
         return new OutputCollection<ServiceOutput>() {

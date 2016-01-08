@@ -58,7 +58,6 @@ import org.n52.oxf.ows.capabilities.ITime;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.util.SosUtil;
 import org.n52.oxf.valueDomains.time.TimeFactory;
-import org.n52.sensorweb.v1.spi.RawDataService;
 import org.n52.server.da.AccessorThreadPool;
 import org.n52.server.da.oxf.OperationAccessor;
 import org.n52.server.util.SosAdapterFactory;
@@ -76,6 +75,8 @@ import net.opengis.sos.x20.GetObservationResponseType.ObservationData;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
 import static org.n52.io.request.RequestSimpleParameterSet.createForSingleTimeseries;
+import org.n52.io.response.TimeseriesMetadataOutput;
+import org.n52.sensorweb.spi.RawDataService;
 import org.n52.web.exception.BadRequestException;
 import org.n52.web.exception.InternalServerException;
 import org.n52.web.exception.ResourceNotFoundException;
@@ -87,16 +88,16 @@ import org.n52.web.exception.ResourceNotFoundException;
  * @since 1.7.3
  *
  */
-public abstract class RawObservationDataService implements RawDataService {
+public class RawObservationDataService implements RawDataService {
 
     static final Logger LOGGER = LoggerFactory.getLogger(RawObservationDataService.class);
 
-    private SimpleDateFormat dateFormat = createIso8601Formatter();
+    private final SimpleDateFormat dateFormat = createIso8601Formatter();
 
-    private static XmlOptions xmlOptions = initXmlOptions();
+    private static final XmlOptions xmlOptions = initXmlOptions();
 
     private static XmlOptions initXmlOptions() {
-        XmlOptions xmlOptions = new XmlOptions();
+        XmlOptions options = new XmlOptions();
         Map<String, String> prefixMap = new HashMap<String, String>();
         prefixMap.put("http://www.opengis.net/gml/3.2", "gml");
         prefixMap.put("http://www.opengis.net/om/2.0", "om");
@@ -107,13 +108,13 @@ public abstract class RawObservationDataService implements RawDataService {
         prefixMap.put("http://www.w3.org/1999/xlink", "xlink");
         prefixMap.put("http://www.w3.org/2001/XMLSchema-instance", "xsi");
         prefixMap.put("http://www.w3.org/2001/XMLSchema", "xs");
-        xmlOptions.setSaveSuggestedPrefixes(prefixMap);
-        xmlOptions.setSaveImplicitNamespaces(prefixMap);
-        xmlOptions.setSaveAggressiveNamespaces();
-        xmlOptions.setSavePrettyPrint();
-        xmlOptions.setSaveNamespacesFirst();
-        xmlOptions.setCharacterEncoding("UTF-8");
-        return xmlOptions;
+        options.setSaveSuggestedPrefixes(prefixMap);
+        options.setSaveImplicitNamespaces(prefixMap);
+        options.setSaveAggressiveNamespaces();
+        options.setSavePrettyPrint();
+        options.setSaveNamespacesFirst();
+        options.setCharacterEncoding("UTF-8");
+        return options;
     }
 
     @Override
@@ -358,4 +359,5 @@ public abstract class RawObservationDataService implements RawDataService {
         }
         return builder.substring(0, builder.lastIndexOf(","));
     }
+
 }

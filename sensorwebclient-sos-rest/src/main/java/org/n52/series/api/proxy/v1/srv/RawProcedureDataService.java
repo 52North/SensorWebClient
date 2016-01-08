@@ -40,7 +40,6 @@ import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.util.SosUtil;
-import org.n52.sensorweb.v1.spi.RawDataService;
 import org.n52.server.da.AccessorThreadPool;
 import org.n52.server.da.oxf.OperationAccessor;
 import org.n52.server.util.SosAdapterFactory;
@@ -55,7 +54,7 @@ import net.opengis.swes.x20.DescribeSensorResponseDocument;
 import net.opengis.swes.x20.DescribeSensorResponseType.Description;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
-import org.n52.series.api.proxy.v0.io.UndesignedParameterSet;
+import org.n52.sensorweb.spi.RawDataService;
 import org.n52.web.exception.BadRequestException;
 import org.n52.web.exception.InternalServerException;
 
@@ -66,7 +65,7 @@ import org.n52.web.exception.InternalServerException;
  * @since 1.7.3
  *
  */
-public abstract class RawProcedureDataService implements RawDataService {
+public class RawProcedureDataService implements RawDataService {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(RawProcedureDataService.class);
     

@@ -48,7 +48,8 @@ import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.sensorweb.spi.ParameterService;
 import org.n52.sensorweb.spi.SeriesDataService;
 
-public class TimeseriesOutputAdapter implements SeriesDataService, ParameterService<TimeseriesMetadataOutput> {
+public class TimeseriesOutputAdapter extends ParameterService<TimeseriesMetadataOutput> implements 
+        SeriesDataService {
 
     private GetDataService dataService;
 
@@ -75,6 +76,9 @@ public class TimeseriesOutputAdapter implements SeriesDataService, ParameterServ
             SosTimeseries[] timeseriesToConvert = filter(metadata, query);
             for (SosTimeseries sosTimeseries : timeseriesToConvert) {
                 TimeseriesMetadataOutput converted = converter.convertExpanded(sosTimeseries);
+                if (supportsRawData()) {
+                    converted.setRawFormats(metadata.getObservationFormats());
+                }
                 if (metadata.isSupportsFirstLatest() && map.isForceLatestValueRequests()) {
                     // setting last values must be declared explicitly to avoid thousands of requests
                     converted.setLastValue(dataService.getLastValue(sosTimeseries));
@@ -154,26 +158,5 @@ public class TimeseriesOutputAdapter implements SeriesDataService, ParameterServ
     public void setDataService(GetDataService dataService) {
         this.dataService = dataService;
     }
-
-//	@Override
-//	public InputStream getRawData(String id, IoParameters query) {
-//		if (dataService instanceof RawDataService) {
-//			return ((RawDataService)dataService).getRawData(id, query);
-//		}
-//		return null;
-//	}
-//
-//	@Override
-//	public InputStream getRawData(UndesignedParameterSet parameters) {
-//		if (dataService instanceof RawDataService) {
-//			return ((RawDataService)dataService).getRawData(parameters);
-//		}
-//		return null;
-//	}
-//
-//	@Override
-//	public boolean supportsRawData() {
-//		return dataService instanceof RawDataService && ((RawDataService)dataService).supportsRawData();
-//	}
 
 }

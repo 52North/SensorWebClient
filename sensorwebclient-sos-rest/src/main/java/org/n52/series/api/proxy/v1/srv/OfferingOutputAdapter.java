@@ -46,7 +46,7 @@ import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
-public class OfferingOutputAdapter implements ParameterService<OfferingOutput> {
+public class OfferingOutputAdapter extends ParameterService<OfferingOutput> {
     
     private OutputCollection<OfferingOutput> createOutputCollection() {
         return new OutputCollection<OfferingOutput>() {

@@ -45,7 +45,7 @@ import org.n52.shared.serializable.pojos.sos.Category;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 
-public class CategoryOutputAdapter implements ParameterService<CategoryOutput> {
+public class CategoryOutputAdapter extends ParameterService<CategoryOutput> {
 
     private OutputCollection<CategoryOutput> createOutputCollection() {
         return new OutputCollection<CategoryOutput>() {

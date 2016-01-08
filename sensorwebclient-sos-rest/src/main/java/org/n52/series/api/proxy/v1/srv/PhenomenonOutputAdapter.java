@@ -46,7 +46,7 @@ import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
-public class PhenomenonOutputAdapter implements ParameterService<PhenomenonOutput> {
+public class PhenomenonOutputAdapter extends ParameterService<PhenomenonOutput> {
 
     private OutputCollection<PhenomenonOutput> createOutputCollection() {
         return new OutputCollection<PhenomenonOutput>() {

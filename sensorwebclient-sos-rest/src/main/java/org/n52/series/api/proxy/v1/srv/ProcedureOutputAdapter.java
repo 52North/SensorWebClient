@@ -47,8 +47,8 @@ import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
 
     
-public class ProcedureOutputAdapter extends RawProcedureDataService implements ParameterService<ProcedureOutput> {
-
+public class ProcedureOutputAdapter extends ParameterService<ProcedureOutput> {
+    
     private OutputCollection<ProcedureOutput> createOutputCollection() {
         return new OutputCollection<ProcedureOutput>() {
                 @Override
@@ -64,7 +64,14 @@ public class ProcedureOutputAdapter extends RawProcedureDataService implements P
         OutputCollection<ProcedureOutput> outputCollection = createOutputCollection();
 		for (SOSMetadata metadata : getSOSMetadatas()) {
 		    ProcedureConverter converter = new ProcedureConverter(metadata);
-			outputCollection.addItems(converter.convertExpanded(filter(metadata, query)));
+            final Procedure[] filteredOutput = filter(metadata, query);
+            for (Procedure procedure : filteredOutput) {
+                final ProcedureOutput procedureOutput = converter.convertExpanded(procedure);
+                if (supportsRawData()) {
+                    procedureOutput.setRawFormats(metadata.getProcedureFormats());
+                }
+                outputCollection.addItem(procedureOutput);
+            }
 		}
 		return outputCollection;
 	}
