@@ -329,8 +329,14 @@ public class SOSMetadata implements Serializable {
             boolean hasStationFilter = stationFilter != null;
             if ( !hasStationFilter || station.getGlobalId().equals(stationFilter)) {
                 for (SosTimeseries timeseries : station.getObservedTimeseries()) {
-                    if (timeseries.matchesGlobalIds(parameters)) {
-                        matchingTimeseries.add(timeseries);
+                    if (parameters.isMatchDomainIds()) {
+                        if (timeseries.matchesDomainIds(parameters)) {
+                            matchingTimeseries.add(timeseries);
+                        }
+                    } else {
+                        if (timeseries.matchesGlobalIds(parameters)) {
+                            matchingTimeseries.add(timeseries);
+                        }
                     }
                 }
             }
