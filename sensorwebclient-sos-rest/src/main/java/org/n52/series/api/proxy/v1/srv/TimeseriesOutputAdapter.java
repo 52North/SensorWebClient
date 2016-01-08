@@ -141,6 +141,9 @@ public class TimeseriesOutputAdapter extends ParameterService<TimeseriesMetadata
                 TimeseriesConverter converter = new TimeseriesConverter(metadata);
                 SosTimeseries timeseries = station.getTimeseriesById(timeseriesId);
                 TimeseriesMetadataOutput convertExpanded = converter.convertExpanded(timeseries);
+                if (supportsRawData()) {
+                    convertExpanded.setRawFormats(metadata.getObservationFormats());
+                }
                 if (metadata.isSupportsFirstLatest()) {
                     convertExpanded.setFirstValue(dataService.getFirstValue(timeseries));
                     convertExpanded.setLastValue(dataService.getLastValue(timeseries));
