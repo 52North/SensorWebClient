@@ -27,7 +27,7 @@
  */
 package org.n52.series.api.proxy.v1.io;
 
-import org.n52.io.v1.data.FeatureOutput;
+import org.n52.io.response.v1.FeatureOutput;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 

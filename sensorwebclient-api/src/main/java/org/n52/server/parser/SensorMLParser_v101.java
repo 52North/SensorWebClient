@@ -270,7 +270,7 @@ public class SensorMLParser_v101 extends SensorMLParser {
 			}
 		}
 		final Point point = getReferenceHelper().createPoint(x, y, z, srs);
-		return getReferenceHelper().transformOuterToInner(point, srs);
+		return (Point) getReferenceHelper().transformOuterToInner(point, srs);
 	}
 
 	private String getUomByProcessModelTypeImpl(final String phenomenonID, final ProcessModelTypeImpl processModel) {

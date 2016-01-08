@@ -35,5 +35,17 @@
     <script type="text/javascript" src="js/OpenStreetMap.js"></script>
     <script type="text/javascript" src="js/bookmark.js"></script>
     <script type="text/javascript" src="js/json2.js"></script>
+    
+    <script type="text/javascript" src="client/sc/modules/ISC_Core.js"></script>
+    <script type="text/javascript" src="client/sc/modules/ISC_Foundation.js"></script>
+    <script type="text/javascript" src="client/sc/modules/ISC_Containers.js"></script>
+    <script type="text/javascript" src="client/sc/modules/ISC_Grids.js"></script>
+    <script type="text/javascript" src="client/sc/modules/ISC_Forms.js"></script>
+    <script type="text/javascript" src="client/sc/modules/ISC_RichTextEditor.js"></script>
+    <script type="text/javascript" src="client/sc/modules/ISC_Calendar.js"></script>
+    <script type="text/javascript" src="client/sc/modules/ISC_DataBinding.js"></script>
+    <script type="text/javascript" src="client/sc/skins/Enterprise/load_skin.js"></script>
+    
+    <script type="text/javascript" src="client/js/gwt-openlayers/util.js"></script>
 </body>
 </html>

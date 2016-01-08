@@ -41,7 +41,7 @@ import org.n52.client.service.EESDataService;
 import org.n52.server.io.EESGenerator;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
-import org.n52.web.InternalServerException;
+import org.n52.web.exception.InternalServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

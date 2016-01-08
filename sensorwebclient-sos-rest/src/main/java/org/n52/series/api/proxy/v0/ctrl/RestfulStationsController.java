@@ -54,7 +54,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.n52.web.ResourceNotFoundException;
+import org.n52.web.exception.ResourceNotFoundException;
 
 @Controller
 @RequestMapping(value = DEFAULT_PATH, produces = {"application/json"})

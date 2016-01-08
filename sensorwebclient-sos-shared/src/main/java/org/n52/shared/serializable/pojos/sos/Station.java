@@ -30,8 +30,8 @@ package org.n52.shared.serializable.pojos.sos;
 import com.vividsolutions.jts.geom.Point;
 import java.io.Serializable;
 import java.util.ArrayList;
-import org.n52.io.geojson.GeojsonPoint;
-import static org.n52.io.geojson.GeojsonPoint.createWithCoordinates;
+import org.n52.io.geojson.old.GeojsonPoint;
+import static org.n52.io.geojson.old.GeojsonPoint.createWithCoordinates;
 import org.n52.shared.IdGenerator;
 import org.n52.shared.MD5HashGenerator;
 

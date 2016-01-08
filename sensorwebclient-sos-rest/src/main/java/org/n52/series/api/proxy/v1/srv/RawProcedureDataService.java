@@ -35,28 +35,28 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.io.IoParameters;
-import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.util.SosUtil;
-import org.n52.sensorweb.v1.spi.RawDataService;
 import org.n52.server.da.AccessorThreadPool;
 import org.n52.server.da.oxf.OperationAccessor;
 import org.n52.server.util.SosAdapterFactory;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.n52.web.BadRequestException;
-import org.n52.web.InternalServerException;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import net.opengis.swes.x20.DescribeSensorResponseDocument;
 import net.opengis.swes.x20.DescribeSensorResponseType.Description;
+import org.n52.io.request.IoParameters;
+import org.n52.io.request.RequestSimpleParameterSet;
+import org.n52.sensorweb.spi.RawDataService;
+import org.n52.web.exception.BadRequestException;
+import org.n52.web.exception.InternalServerException;
 
 /**
  * Process raw data query for procedure.
@@ -65,7 +65,7 @@ import net.opengis.swes.x20.DescribeSensorResponseType.Description;
  * @since 1.7.3
  *
  */
-public abstract class RawProcedureDataService implements RawDataService {
+public class RawProcedureDataService implements RawDataService {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(RawProcedureDataService.class);
     
@@ -91,8 +91,8 @@ public abstract class RawProcedureDataService implements RawDataService {
     }
 
     @Override
-    public InputStream getRawData(UndesignedParameterSet parameters) {
-        throw new BadRequestException("The raw data query for procedure and UndesignedParameterSet is not supported!");
+    public InputStream getRawData(RequestSimpleParameterSet parameters) {
+        throw new BadRequestException("The raw data query for procedure and RequestSimpleParameterSet is not supported!");
     }
 
     private void checkRawDataFormat(String rawFormat, String id) {

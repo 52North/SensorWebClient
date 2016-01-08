@@ -30,43 +30,53 @@ package org.n52.series.api.proxy.v1.srv;
 import static org.n52.series.api.proxy.v1.srv.QueryParameterAdapter.createQueryParameters;
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.n52.series.api.proxy.v1.io.FeatureConverter;
-import org.n52.io.IoParameters;
-import org.n52.io.v1.data.FeatureOutput;
+import org.n52.io.request.IoParameters;
+import org.n52.io.response.OutputCollection;
+import org.n52.io.response.ParameterOutput;
+import org.n52.io.response.v1.FeatureOutput;
+import org.n52.sensorweb.spi.ParameterService;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.n52.sensorweb.v1.spi.ParameterService;
 
-public class FeatureOutputAdapter implements ParameterService<FeatureOutput> {
+public class FeatureOutputAdapter extends ParameterService<FeatureOutput> {
 
+    private OutputCollection<FeatureOutput> createOutputCollection() {
+        return new OutputCollection<FeatureOutput>() {
+                @Override
+                protected Comparator<FeatureOutput> getComparator() {
+                    return ParameterOutput.defaultComparator();
+                }
+            };
+    }
+    
 	@Override
-	public FeatureOutput[] getExpandedParameters(IoParameters map) {
+	public OutputCollection<FeatureOutput> getExpandedParameters(IoParameters map) {
 	    QueryParameters query = createQueryParameters(map);
-        List<FeatureOutput> allFeatures = new ArrayList<FeatureOutput>();
+        OutputCollection<FeatureOutput> outputCollection = createOutputCollection();
 		for (SOSMetadata metadata : getSOSMetadatas()) {
 	        FeatureConverter converter = new FeatureConverter(metadata);
-		    allFeatures.addAll(converter.convertExpanded(filter(metadata, query)));
+		    outputCollection.addItems(converter.convertExpanded(filter(metadata, query)));
 		}
-		return allFeatures.toArray(new FeatureOutput[0]);
+		return outputCollection;
 	}
 
     @Override
-    public FeatureOutput[] getCondensedParameters(IoParameters map) {
+    public OutputCollection<FeatureOutput> getCondensedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);
-        List<FeatureOutput> allFeatures = new ArrayList<FeatureOutput>();
+        OutputCollection<FeatureOutput> outputCollection = createOutputCollection();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             FeatureConverter converter = new FeatureConverter(metadata);
-            allFeatures.addAll(converter.convertCondensed(filter(metadata, query)));
+            outputCollection.addItems(converter.convertCondensed(filter(metadata, query)));
         }
-        return allFeatures.toArray(new FeatureOutput[0]);
+        return outputCollection;
     }
 
     private Feature[] filter(SOSMetadata metadata, QueryParameters query) {
@@ -78,24 +88,24 @@ public class FeatureOutputAdapter implements ParameterService<FeatureOutput> {
     }
 
 	@Override
-    public FeatureOutput[] getParameters(String[] featureIds) {
+    public OutputCollection<FeatureOutput> getParameters(String[] featureIds) {
 	    return getParameters(featureIds, IoParameters.createDefaults());
     }
 
 
     @Override
-    public FeatureOutput[] getParameters(String[] featureIds, IoParameters query) {
+    public OutputCollection<FeatureOutput> getParameters(String[] featureIds, IoParameters query) {
 
         // TODO consider query
 
-        List<FeatureOutput> selectedFeatures = new ArrayList<FeatureOutput>();
+        OutputCollection<FeatureOutput> outputCollection = createOutputCollection();
         for (String featureId : featureIds) {
             FeatureOutput feature = getParameter(featureId);
             if (feature != null) {
-                selectedFeatures.add(feature);
+                outputCollection.addItem(feature);
             }
         }
-        return selectedFeatures.toArray(new FeatureOutput[0]);
+        return outputCollection;
     }
 
     @Override

@@ -32,6 +32,16 @@ import static org.n52.shared.requests.query.QueryParameters.createEmptyFilterQue
 
 import java.util.ArrayList;
 import java.util.Collection;
+import org.n52.sensorweb.spi.SearchResult;
+import org.n52.sensorweb.spi.SearchService;
+import org.n52.sensorweb.spi.search.CategorySearchResult;
+import org.n52.sensorweb.spi.search.FeatureSearchResult;
+import org.n52.sensorweb.spi.search.PhenomenonSearchResult;
+import org.n52.sensorweb.spi.search.ProcedureSearchResult;
+import org.n52.sensorweb.spi.search.ServiceSearchResult;
+import org.n52.sensorweb.spi.search.v1.OfferingSearchResult;
+import org.n52.sensorweb.spi.search.v1.StationSearchResult;
+import org.n52.sensorweb.spi.search.v1.TimeseriesSearchResult;
 
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Offering;
@@ -41,16 +51,6 @@ import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.n52.sensorweb.v1.spi.SearchService;
-import org.n52.sensorweb.v1.spi.search.CategorySearchResult;
-import org.n52.sensorweb.v1.spi.search.FeatureSearchResult;
-import org.n52.sensorweb.v1.spi.search.OfferingSearchResult;
-import org.n52.sensorweb.v1.spi.search.PhenomenonSearchResult;
-import org.n52.sensorweb.v1.spi.search.ProcedureSearchResult;
-import org.n52.sensorweb.v1.spi.search.SearchResult;
-import org.n52.sensorweb.v1.spi.search.ServiceSearchResult;
-import org.n52.sensorweb.v1.spi.search.StationSearchResult;
-import org.n52.sensorweb.v1.spi.search.TimeseriesSearchResult;
 
 public class SearchAdapter implements SearchService {
 
@@ -187,6 +187,11 @@ public class SearchAdapter implements SearchService {
      */
     private boolean containsSearchString(String label, String searchToken) {
         return label.toLowerCase().contains(searchToken.toLowerCase());
+    }
+
+    @Override
+    public void shutdown() {
+        // nothing to shutdown
     }
 
 }

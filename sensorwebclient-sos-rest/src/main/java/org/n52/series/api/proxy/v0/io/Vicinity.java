@@ -35,11 +35,11 @@ import static org.n52.io.crs.WGS84Util.getLatitudeDelta;
 import static org.n52.io.crs.WGS84Util.getLongitudeDelta;
 import static org.n52.io.crs.WGS84Util.normalizeLatitude;
 import static org.n52.io.crs.WGS84Util.normalizeLongitude;
-import static org.n52.io.geojson.GeojsonPoint.createWithCoordinates;
+import static org.n52.io.geojson.old.GeojsonPoint.createWithCoordinates;
 
 import org.n52.io.crs.BoundingBox;
 import org.n52.io.crs.CRSUtils;
-import org.n52.io.geojson.GeojsonPoint;
+import org.n52.io.geojson.old.GeojsonPoint;
 import org.opengis.referencing.FactoryException;
 
 import com.vividsolutions.jts.geom.Point;

@@ -27,7 +27,6 @@
  */
 package org.n52.series.api.proxy.v1.srv;
 
-import static org.n52.io.v1.data.UndesignedParameterSet.createForSingleTimeseries;
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
 import static org.n52.server.util.TimeUtil.createIso8601Formatter;
 
@@ -52,8 +51,6 @@ import org.apache.commons.io.input.AutoCloseInputStream;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.joda.time.Interval;
-import org.n52.io.IoParameters;
-import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.adapter.OperationResult;
 import org.n52.oxf.adapter.ParameterContainer;
@@ -61,16 +58,12 @@ import org.n52.oxf.ows.capabilities.ITime;
 import org.n52.oxf.ows.capabilities.Operation;
 import org.n52.oxf.sos.util.SosUtil;
 import org.n52.oxf.valueDomains.time.TimeFactory;
-import org.n52.sensorweb.v1.spi.RawDataService;
 import org.n52.server.da.AccessorThreadPool;
 import org.n52.server.da.oxf.OperationAccessor;
 import org.n52.server.util.SosAdapterFactory;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
-import org.n52.web.BadRequestException;
-import org.n52.web.InternalServerException;
-import org.n52.web.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +72,14 @@ import net.opengis.gml.x32.FeatureCollectionType;
 import net.opengis.om.x20.OMObservationPropertyType;
 import net.opengis.sos.x20.GetObservationResponseDocument;
 import net.opengis.sos.x20.GetObservationResponseType.ObservationData;
+import org.n52.io.request.IoParameters;
+import org.n52.io.request.RequestSimpleParameterSet;
+import static org.n52.io.request.RequestSimpleParameterSet.createForSingleTimeseries;
+import org.n52.io.response.TimeseriesMetadataOutput;
+import org.n52.sensorweb.spi.RawDataService;
+import org.n52.web.exception.BadRequestException;
+import org.n52.web.exception.InternalServerException;
+import org.n52.web.exception.ResourceNotFoundException;
 
 /**
  * Process raw data query for observations/timeseries.
@@ -87,16 +88,16 @@ import net.opengis.sos.x20.GetObservationResponseType.ObservationData;
  * @since 1.7.3
  *
  */
-public abstract class RawObservationDataService implements RawDataService {
+public class RawObservationDataService implements RawDataService {
 
     static final Logger LOGGER = LoggerFactory.getLogger(RawObservationDataService.class);
 
-    private SimpleDateFormat dateFormat = createIso8601Formatter();
+    private final SimpleDateFormat dateFormat = createIso8601Formatter();
 
-    private static XmlOptions xmlOptions = initXmlOptions();
+    private static final XmlOptions xmlOptions = initXmlOptions();
 
     private static XmlOptions initXmlOptions() {
-        XmlOptions xmlOptions = new XmlOptions();
+        XmlOptions options = new XmlOptions();
         Map<String, String> prefixMap = new HashMap<String, String>();
         prefixMap.put("http://www.opengis.net/gml/3.2", "gml");
         prefixMap.put("http://www.opengis.net/om/2.0", "om");
@@ -107,13 +108,13 @@ public abstract class RawObservationDataService implements RawDataService {
         prefixMap.put("http://www.w3.org/1999/xlink", "xlink");
         prefixMap.put("http://www.w3.org/2001/XMLSchema-instance", "xsi");
         prefixMap.put("http://www.w3.org/2001/XMLSchema", "xs");
-        xmlOptions.setSaveSuggestedPrefixes(prefixMap);
-        xmlOptions.setSaveImplicitNamespaces(prefixMap);
-        xmlOptions.setSaveAggressiveNamespaces();
-        xmlOptions.setSavePrettyPrint();
-        xmlOptions.setSaveNamespacesFirst();
-        xmlOptions.setCharacterEncoding("UTF-8");
-        return xmlOptions;
+        options.setSaveSuggestedPrefixes(prefixMap);
+        options.setSaveImplicitNamespaces(prefixMap);
+        options.setSaveAggressiveNamespaces();
+        options.setSavePrettyPrint();
+        options.setSaveNamespacesFirst();
+        options.setCharacterEncoding("UTF-8");
+        return options;
     }
 
     @Override
@@ -122,7 +123,7 @@ public abstract class RawObservationDataService implements RawDataService {
     }
 
     @Override
-    public InputStream getRawData(UndesignedParameterSet parameters) {
+    public InputStream getRawData(RequestSimpleParameterSet parameters) {
         checkRawDataFormat(parameters.getRawFormat(), parameters.getTimeseries());
         if (parameters.getTimeseries().length > 1) {
             throw new BadRequestException("Querying raw timeseries data for multiple timeseries is not supported!");
@@ -179,7 +180,7 @@ public abstract class RawObservationDataService implements RawDataService {
     }
 
     private List<OperationResult> queryObservationsForRequestedParameter(Map<SOSMetadata, Set<String>> map,
-            UndesignedParameterSet parameters) {
+            RequestSimpleParameterSet parameters) {
         List<OperationResult> list = new ArrayList<OperationResult>(map.size());
         for (Entry<SOSMetadata, Set<String>> entry : map.entrySet()) {
             list.add(queryObservationForTimeseries(entry.getKey(), entry.getValue(), parameters));
@@ -188,7 +189,7 @@ public abstract class RawObservationDataService implements RawDataService {
     }
 
     private OperationResult queryObservationForTimeseries(SOSMetadata metadata, Set<String> timeseriesIds,
-            UndesignedParameterSet parameters) {
+            RequestSimpleParameterSet parameters) {
         try {
             return executeGetObservationRequest(createGetObservationRequest(metadata, timeseriesIds, parameters), metadata);
         } catch (Exception e) {
@@ -206,7 +207,7 @@ public abstract class RawObservationDataService implements RawDataService {
         return futureTask.get(metadata.getTimeout(), TimeUnit.MILLISECONDS);
     }
 
-    private Map<SOSMetadata, Set<String>> getTimeseriesMetadataMap(UndesignedParameterSet parameters) {
+    private Map<SOSMetadata, Set<String>> getTimeseriesMetadataMap(RequestSimpleParameterSet parameters) {
         Map<SOSMetadata, Set<String>> map = new HashMap<SOSMetadata, Set<String>>();
 
         for (String timeseriesId : parameters.getTimeseries()) {
@@ -228,7 +229,7 @@ public abstract class RawObservationDataService implements RawDataService {
     }
 
     private Callable<OperationResult> createGetObservationRequest(SOSMetadata metadata, Set<String> timeseriesIds,
-            UndesignedParameterSet parameters) throws OXFException {
+            RequestSimpleParameterSet parameters) throws OXFException {
         ParameterContainer container = new ParameterContainer();
         Map<String, String[]> map = getQueryParameter(metadata, timeseriesIds);
         addProcedure(container, map.get("proc"));
@@ -244,7 +245,7 @@ public abstract class RawObservationDataService implements RawDataService {
     }
 
     private Callable<OperationResult> createGetObservationRequest(SOSMetadata metadata, ParameterContainer container,
-            UndesignedParameterSet parameters) throws OXFException {
+            RequestSimpleParameterSet parameters) throws OXFException {
         // set responseFormat
         container.addParameterShell("responseFormat", parameters.getRawFormat());
         // set temporal filter
@@ -299,7 +300,7 @@ public abstract class RawObservationDataService implements RawDataService {
         }
     }
 
-    private void addTemporalFilter(ParameterContainer container, UndesignedParameterSet parameters,
+    private void addTemporalFilter(ParameterContainer container, RequestSimpleParameterSet parameters,
             SOSMetadata metadata) throws OXFException {
         if (parameters.getTimespan() != null && !parameters.getTimespan().isEmpty()) {
             String parameterName = null;
@@ -316,7 +317,7 @@ public abstract class RawObservationDataService implements RawDataService {
         return array != null && array.length > 0;
     }
 
-    protected ITime getTimeFrom(UndesignedParameterSet parameters) {
+    protected ITime getTimeFrom(RequestSimpleParameterSet parameters) {
         Interval timespan = Interval.parse(parameters.getTimespan());
         Calendar beginPos = Calendar.getInstance();
         beginPos.setTimeInMillis(timespan.getStartMillis());
@@ -358,4 +359,5 @@ public abstract class RawObservationDataService implements RawDataService {
         }
         return builder.substring(0, builder.lastIndexOf(","));
     }
+
 }

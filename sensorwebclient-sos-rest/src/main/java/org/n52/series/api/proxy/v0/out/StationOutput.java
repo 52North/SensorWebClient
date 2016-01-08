@@ -27,13 +27,13 @@
  */
 package org.n52.series.api.proxy.v0.out;
 
-import static org.n52.io.geojson.GeojsonPoint.createWithCoordinates;
+import static org.n52.io.geojson.old.GeojsonPoint.createWithCoordinates;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.n52.io.geojson.GeojsonFeature;
-import org.n52.io.geojson.GeojsonPoint;
+import org.n52.io.geojson.old.GeojsonFeature;
+import org.n52.io.geojson.old.GeojsonPoint;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 

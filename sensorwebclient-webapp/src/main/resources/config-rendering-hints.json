@@ -1,0 +1,26 @@
+{
+    "phenomenonStyles": {
+        "phe_39b6c8bd9f50fc1892b407c9268cf557": {
+            "style": {
+                "chartType": "bar",
+                "properties": {
+                    "interval": "byHour",
+                    "width": 0.8,
+                    "color": "#0000ff"
+                }
+            }
+        }
+    },
+    "timeseriesStyles": {
+        "ts_27a8e90a6475f455324ed2a66bbadc7d": {
+            "style": {
+                "chartType": "bar",
+                "properties": {
+                    "interval": "byDay",
+                    "width": 0.8,
+                    "color": "#0000ff"
+                }
+            }
+        }
+    }
+}
