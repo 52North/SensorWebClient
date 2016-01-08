@@ -17,6 +17,6 @@
     <import resource="api_web_v1.xml"/>
     <!--<import resource="api_web_v2.xml"/>-->
     
-    <import resource="spi-impl-proxy_tasks.xml" />
+    <!--<import resource="spi-impl-proxy_tasks.xml" />-->
 
 </beans>
