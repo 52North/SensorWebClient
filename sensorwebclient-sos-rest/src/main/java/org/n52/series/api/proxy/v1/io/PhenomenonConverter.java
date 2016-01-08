@@ -27,7 +27,7 @@
  */
 package org.n52.series.api.proxy.v1.io;
 
-import org.n52.io.v1.data.PhenomenonOutput;
+import org.n52.io.response.v1.PhenomenonOutput;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 

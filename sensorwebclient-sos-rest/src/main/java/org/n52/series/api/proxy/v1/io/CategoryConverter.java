@@ -27,9 +27,9 @@
  */
 package org.n52.series.api.proxy.v1.io;
 
+import org.n52.io.response.v1.CategoryOutput;
 import static org.n52.shared.requests.query.QueryParameters.createEmptyFilterQuery;
 
-import org.n52.io.v1.data.CategoryOutput;
 import org.n52.shared.IdGenerator;
 import org.n52.shared.MD5HashGenerator;
 import org.n52.shared.serializable.pojos.sos.Category;

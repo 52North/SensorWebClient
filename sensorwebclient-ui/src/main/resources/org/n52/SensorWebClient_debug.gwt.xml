@@ -16,6 +16,8 @@
     <set-property name='user.agent' value="gecko1_8" />
     <set-configuration-property name="locale.useragent" value="true" />
     <set-configuration-property name="locale.searchorder" value="queryparam,useragent" />
+    <set-configuration-property name='xsiframe.failIfScriptTag' value='FALSE'/>
+
     	 
     <entry-point class='org.n52.client.Application' />
 	 

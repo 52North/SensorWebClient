@@ -30,42 +30,52 @@ package org.n52.series.api.proxy.v1.srv;
 import static org.n52.series.api.proxy.v1.srv.QueryParameterAdapter.createQueryParameters;
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.n52.series.api.proxy.v1.io.CategoryConverter;
-import org.n52.io.IoParameters;
-import org.n52.io.v1.data.CategoryOutput;
+import org.n52.io.request.IoParameters;
+import org.n52.io.response.OutputCollection;
+import org.n52.io.response.ParameterOutput;
+import org.n52.io.response.v1.CategoryOutput;
+import org.n52.sensorweb.spi.ParameterService;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.Category;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
-import org.n52.sensorweb.v1.spi.ParameterService;
 
-public class CategoryOutputAdapter implements ParameterService<CategoryOutput> {
+public class CategoryOutputAdapter extends ParameterService<CategoryOutput> {
 
+    private OutputCollection<CategoryOutput> createOutputCollection() {
+        return new OutputCollection<CategoryOutput>() {
+                @Override
+                protected Comparator<CategoryOutput> getComparator() {
+                    return ParameterOutput.defaultComparator();
+                }
+            };
+    }
+    
 	@Override
-	public CategoryOutput[] getExpandedParameters(IoParameters map) {
+	public OutputCollection<CategoryOutput> getExpandedParameters(IoParameters map) {
 		QueryParameters query = createQueryParameters(map);
-        List<CategoryOutput> allCategories = new ArrayList<CategoryOutput>();
+        OutputCollection<CategoryOutput> outputCollection = createOutputCollection();
 		for (SOSMetadata metadata : getSOSMetadatas()) {
 			CategoryConverter converter = new CategoryConverter(metadata);
-		    allCategories.addAll(converter.convertExpanded(filter(metadata, query)));
+		    outputCollection.addItems(converter.convertExpanded(filter(metadata, query)));
 		}
-		return allCategories.toArray(new CategoryOutput[0]);
+		return outputCollection;
 	}
 
 	@Override
-	public CategoryOutput[] getCondensedParameters(IoParameters map) {
+	public OutputCollection<CategoryOutput> getCondensedParameters(IoParameters map) {
 		QueryParameters query = createQueryParameters(map);
-        List<CategoryOutput> allCategories = new ArrayList<CategoryOutput>();
+        OutputCollection<CategoryOutput> outputCollection = createOutputCollection();
         for (SOSMetadata metadata : getSOSMetadatas()) {
         	CategoryConverter converter = new CategoryConverter(metadata);
-            allCategories.addAll(converter.convertCondensed(filter(metadata, query)));
+            outputCollection.addItems(converter.convertCondensed(filter(metadata, query)));
         }
-        return allCategories.toArray(new CategoryOutput[0]);
+        return outputCollection;
 	}
 
 	private Category[] filter(SOSMetadata metadata, QueryParameters query) {
@@ -80,20 +90,20 @@ public class CategoryOutputAdapter implements ParameterService<CategoryOutput> {
     }
 
 	@Override
-	public CategoryOutput[] getParameters(String[] categories) {
+	public OutputCollection<CategoryOutput> getParameters(String[] categories) {
 		return getParameters(categories, IoParameters.createDefaults());
 	}
 
 	@Override
-    public CategoryOutput[] getParameters(String[] categories, IoParameters query) {
-	    List<CategoryOutput> selectedCategories = new ArrayList<CategoryOutput>();
+    public OutputCollection<CategoryOutput> getParameters(String[] categories, IoParameters query) {
+        OutputCollection<CategoryOutput> outputCollection = createOutputCollection();
         for (String categoryId : categories) {
             CategoryOutput category = getParameter(categoryId);
             if (category != null) {
-                selectedCategories.add(category);
+                outputCollection.addItem(category);
             }
         }
-        return selectedCategories.toArray(new CategoryOutput[0]);
+        return outputCollection;
     }
 
     @Override

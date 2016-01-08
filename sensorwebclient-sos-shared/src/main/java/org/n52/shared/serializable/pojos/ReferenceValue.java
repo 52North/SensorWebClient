@@ -29,9 +29,9 @@ package org.n52.shared.serializable.pojos;
 
 import java.io.Serializable;
 import java.util.Random;
+import org.n52.io.response.TimeseriesData;
+import org.n52.io.response.TimeseriesValue;
 
-import org.n52.io.v1.data.TimeseriesData;
-import org.n52.io.v1.data.TimeseriesValue;
 import org.n52.shared.IdGenerator;
 import org.n52.shared.MD5HashGenerator;
 

@@ -40,9 +40,9 @@ import org.joda.time.Instant;
 import org.joda.time.Interval;
 import org.n52.client.service.SensorMetadataService;
 import org.n52.client.service.TimeSeriesDataService;
+import org.n52.io.response.TimeseriesData;
+import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.io.format.TvpDataCollection;
-import org.n52.io.v1.data.TimeseriesData;
-import org.n52.io.v1.data.UndesignedParameterSet;
 import org.n52.shared.serializable.pojos.DesignOptions;
 import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.TimeseriesProperties;
@@ -51,8 +51,8 @@ import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.Station;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.n52.web.InternalServerException;
-import org.n52.web.ResourceNotFoundException;
+import org.n52.web.exception.InternalServerException;
+import org.n52.web.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,7 +101,7 @@ public abstract class DataService {
      * @return a prepared {@link TvpDataCollection} to be filled with data coming from a
      *         {@link TimeSeriesDataService}.
      */
-    protected TvpDataCollection prepareTimeseriesResults(UndesignedParameterSet parameterSet,
+    protected TvpDataCollection prepareTimeseriesResults(RequestSimpleParameterSet parameterSet,
                                                          List<TimeseriesProperties> props) {
         TvpDataCollection timeseriesCollection = new TvpDataCollection();
         for (String timeseriesId : parameterSet.getTimeseries()) {
@@ -188,7 +188,7 @@ public abstract class DataService {
      *         if decoration fails.
      */
     protected TimeseriesProperties decorateProperties(final TimeseriesProperties timeSeriesProperties,
-                                                      UndesignedParameterSet parameterSet) throws Exception {
+                                                      RequestSimpleParameterSet parameterSet) throws Exception {
         // default is to decorate nothing
         return timeSeriesProperties;
     }
@@ -198,12 +198,12 @@ public abstract class DataService {
         return TimeseriesData.newTimeseriesData(dummyMap);
     }
 
-    protected DesignOptions createDesignOptions(UndesignedParameterSet parameterSet,
+    protected DesignOptions createDesignOptions(RequestSimpleParameterSet parameterSet,
                                                 ArrayList<TimeseriesProperties> props) {
         return createDesignOptions(parameterSet, props, true);
     }
 
-    protected DesignOptions createDesignOptions(UndesignedParameterSet parameterSet,
+    protected DesignOptions createDesignOptions(RequestSimpleParameterSet parameterSet,
                                                 ArrayList<TimeseriesProperties> props,
                                                 boolean renderGrid) {
         Interval timespan = Interval.parse(parameterSet.getTimespan());

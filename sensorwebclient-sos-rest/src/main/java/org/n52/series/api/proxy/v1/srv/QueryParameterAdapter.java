@@ -27,7 +27,7 @@
  */
 package org.n52.series.api.proxy.v1.srv;
 
-import org.n52.io.IoParameters;
+import org.n52.io.request.IoParameters;
 import org.n52.shared.requests.query.QueryParameters;
 
 public class QueryParameterAdapter {
@@ -40,6 +40,7 @@ public class QueryParameterAdapter {
                 .setProcedure(map.getProcedure())
                 .setPhenomenon(map.getPhenomenon())
                 .setCategory(map.getCategory())
-                .setStation(map.getStation());
+                .setStation(map.getStation())
+                .matchDomainIds(map.isMatchDomainIds());
     }
 }

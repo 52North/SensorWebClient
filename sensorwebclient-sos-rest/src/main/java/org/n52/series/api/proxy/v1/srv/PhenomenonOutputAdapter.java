@@ -30,43 +30,53 @@ package org.n52.series.api.proxy.v1.srv;
 import static org.n52.series.api.proxy.v1.srv.QueryParameterAdapter.createQueryParameters;
 import static org.n52.server.mgmt.ConfigurationContext.getSOSMetadatas;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.n52.series.api.proxy.v1.io.PhenomenonConverter;
-import org.n52.io.IoParameters;
-import org.n52.io.v1.data.PhenomenonOutput;
+import org.n52.io.request.IoParameters;
+import org.n52.io.response.OutputCollection;
+import org.n52.io.response.ParameterOutput;
+import org.n52.io.response.v1.PhenomenonOutput;
+import org.n52.sensorweb.spi.ParameterService;
 import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 import org.n52.shared.serializable.pojos.sos.SosTimeseries;
 import org.n52.shared.serializable.pojos.sos.TimeseriesParametersLookup;
-import org.n52.sensorweb.v1.spi.ParameterService;
 
-public class PhenomenonOutputAdapter implements ParameterService<PhenomenonOutput> {
+public class PhenomenonOutputAdapter extends ParameterService<PhenomenonOutput> {
 
+    private OutputCollection<PhenomenonOutput> createOutputCollection() {
+        return new OutputCollection<PhenomenonOutput>() {
+                @Override
+                protected Comparator<PhenomenonOutput> getComparator() {
+                    return ParameterOutput.defaultComparator();
+                }
+            };
+    }
+    
 	@Override
-	public PhenomenonOutput[] getExpandedParameters(IoParameters map) {
+	public OutputCollection<PhenomenonOutput> getExpandedParameters(IoParameters map) {
         QueryParameters query = createQueryParameters(map);
-		List<PhenomenonOutput> allPhenomenons = new ArrayList<PhenomenonOutput>();
+        OutputCollection<PhenomenonOutput> outputCollection = createOutputCollection();
 		for (SOSMetadata metadata : getSOSMetadatas()) {
 		    PhenomenonConverter converter = new PhenomenonConverter(metadata);
-			allPhenomenons.addAll(converter.convertExpanded(filter(metadata, query)));
+			outputCollection.addItems(converter.convertExpanded(filter(metadata, query)));
 		}
-		return allPhenomenons.toArray(new PhenomenonOutput[0]);
+		return outputCollection;
 	}
 
 	@Override
-    public PhenomenonOutput[] getCondensedParameters(IoParameters map) {
+    public OutputCollection<PhenomenonOutput> getCondensedParameters(IoParameters map) {
 	    QueryParameters query = createQueryParameters(map);
-        List<PhenomenonOutput> allPhenomenons = new ArrayList<PhenomenonOutput>();
+        OutputCollection<PhenomenonOutput> outputCollection = createOutputCollection();
         for (SOSMetadata metadata : getSOSMetadatas()) {
             PhenomenonConverter converter = new PhenomenonConverter(metadata);
-            allPhenomenons.addAll(converter.convertCondensed(filter(metadata, query)));
+            outputCollection.addItems(converter.convertCondensed(filter(metadata, query)));
         }
-        return allPhenomenons.toArray(new PhenomenonOutput[0]);
+        return outputCollection;
     }
 
     private Phenomenon[] filter(SOSMetadata metadata, QueryParameters query) {
@@ -78,20 +88,20 @@ public class PhenomenonOutputAdapter implements ParameterService<PhenomenonOutpu
     }
 
 	@Override
-    public PhenomenonOutput[] getParameters(String[] phenomenonIds) {
+    public OutputCollection<PhenomenonOutput> getParameters(String[] phenomenonIds) {
         return getParameters(phenomenonIds, IoParameters.createDefaults());
     }
 
 	@Override
-    public PhenomenonOutput[] getParameters(String[] phenomenonIds, IoParameters query) {
-	    List<PhenomenonOutput> selectedPhenomenons = new ArrayList<PhenomenonOutput>();
+    public OutputCollection<PhenomenonOutput> getParameters(String[] phenomenonIds, IoParameters query) {
+        OutputCollection<PhenomenonOutput> outputCollection = createOutputCollection();
         for (String phenomenonId : phenomenonIds) {
             PhenomenonOutput phenomenon = getParameter(phenomenonId);
             if (phenomenon != null) {
-                selectedPhenomenons.add(phenomenon);
+                outputCollection.addItem(phenomenon);
             }
         }
-        return selectedPhenomenons.toArray(new PhenomenonOutput[0]);
+        return outputCollection;
     }
 
     @Override

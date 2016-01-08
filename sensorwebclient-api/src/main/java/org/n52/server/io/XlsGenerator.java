@@ -28,6 +28,7 @@
 package org.n52.server.io;
 
 
+import org.n52.shared.exceptions.GeneratorException;
 import java.io.File;
 import java.util.Collection;
 import java.util.Date;

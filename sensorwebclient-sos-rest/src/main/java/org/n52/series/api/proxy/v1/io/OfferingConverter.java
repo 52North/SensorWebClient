@@ -27,7 +27,7 @@
  */
 package org.n52.series.api.proxy.v1.io;
 
-import org.n52.io.v1.data.OfferingOutput;
+import org.n52.io.response.v1.OfferingOutput;
 import org.n52.shared.serializable.pojos.sos.Offering;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 

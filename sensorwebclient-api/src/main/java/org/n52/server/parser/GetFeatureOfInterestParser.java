@@ -162,7 +162,7 @@ public class GetFeatureOfInterestParser {
                 try {
                     String srs = referenceHelper.extractSRSCode(srsName);
                     Point point = referenceHelper.createPoint(lon, lat, alt, srs);
-                    return referenceHelper.transformOuterToInner(point, srs);
+                    return (Point) referenceHelper.transformOuterToInner(point, srs);
                 }
                 catch (FactoryException e) {
                     LOGGER.warn("Could not create intern CRS.", e);

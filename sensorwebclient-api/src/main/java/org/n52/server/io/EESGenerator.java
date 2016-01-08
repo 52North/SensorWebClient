@@ -27,6 +27,7 @@
  */
 package org.n52.server.io;
 
+import org.n52.shared.exceptions.GeneratorException;
 import static org.n52.server.mgmt.ConfigurationContext.FACADE_COMPRESSION;
 import static org.n52.server.mgmt.ConfigurationContext.TOOLTIP_MIN_COUNT;
 

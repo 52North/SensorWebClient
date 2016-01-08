@@ -31,18 +31,19 @@ import static java.lang.System.currentTimeMillis;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.n52.io.response.v1.CategoryOutput;
+import org.n52.io.response.v1.FeatureOutput;
+import org.n52.io.response.v1.OfferingOutput;
+import org.n52.io.response.v1.PhenomenonOutput;
+import org.n52.io.response.v1.ProcedureOutput;
+import org.n52.io.response.ReferenceValueOutput;
+import org.n52.io.response.TimeseriesMetadataOutput;
+import org.n52.io.response.v1.ServiceOutput;
+import org.n52.io.response.v1.StationOutput;
+import org.n52.io.response.v1.TimeseriesOutput;
+import org.n52.io.response.TimeseriesValue;
+import org.n52.io.response.v1.SeriesMetadataV1Output;
 
-import org.n52.io.v1.data.CategoryOutput;
-import org.n52.io.v1.data.FeatureOutput;
-import org.n52.io.v1.data.OfferingOutput;
-import org.n52.io.v1.data.PhenomenonOutput;
-import org.n52.io.v1.data.ProcedureOutput;
-import org.n52.io.v1.data.ReferenceValueOutput;
-import org.n52.io.v1.data.ServiceOutput;
-import org.n52.io.v1.data.StationOutput;
-import org.n52.io.v1.data.TimeseriesMetadataOutput;
-import org.n52.io.v1.data.TimeseriesOutput;
-import org.n52.io.v1.data.TimeseriesValue;
 import org.n52.shared.serializable.pojos.ReferenceValue;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
@@ -52,11 +53,8 @@ import org.n52.shared.serializable.pojos.sos.Station;
 
 public class TimeseriesConverter extends OutputConverter<SosTimeseries, TimeseriesMetadataOutput> {
 
-//    private GetDataService dataService;
-
     public TimeseriesConverter(SOSMetadata metadata) {
         super(metadata);
-//        this.dataService = dataService;
     }
 
     @Override
@@ -64,13 +62,12 @@ public class TimeseriesConverter extends OutputConverter<SosTimeseries, Timeseri
         TimeseriesMetadataOutput convertedTimeseries = convertCondensed(timeseries);
         convertedTimeseries.setParameters(getCondensedParameters(timeseries));
         convertedTimeseries.setReferenceValues(getReferenceValues(timeseries));
-        convertedTimeseries.setRawFormats(getMetadata().getObservationFormats());
         return convertedTimeseries;
     }
 
     @Override
     public TimeseriesMetadataOutput convertCondensed(SosTimeseries timeseries) {
-        TimeseriesMetadataOutput convertedTimeseries = new TimeseriesMetadataOutput();
+        SeriesMetadataV1Output convertedTimeseries = new SeriesMetadataV1Output();
         Phenomenon phenomenon = getLookup().getPhenomenon(timeseries.getPhenomenonId());
         convertedTimeseries.setStation(getCondensedStation(timeseries));
         convertedTimeseries.setUom(phenomenon.getUnitOfMeasure());

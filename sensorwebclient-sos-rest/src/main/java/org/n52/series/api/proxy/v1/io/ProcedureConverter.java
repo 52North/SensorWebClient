@@ -27,7 +27,7 @@
  */
 package org.n52.series.api.proxy.v1.io;
 
-import org.n52.io.v1.data.ProcedureOutput;
+import org.n52.io.response.v1.ProcedureOutput;
 import org.n52.shared.serializable.pojos.sos.Procedure;
 import org.n52.shared.serializable.pojos.sos.SOSMetadata;
 
@@ -41,7 +41,6 @@ public class ProcedureConverter extends OutputConverter<Procedure, ProcedureOutp
     public ProcedureOutput convertExpanded(Procedure procedure) {
         ProcedureOutput convertedProcedure = convertCondensed(procedure);
         convertedProcedure.setService(convertCondensedService());
-        convertedProcedure.setRawFormats(getMetadata().getProcedureFormats());
         return convertedProcedure;
     }
 

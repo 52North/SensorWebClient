@@ -51,6 +51,9 @@ public class QueryParameters implements Serializable {
 	private String featureOfInterest;
 
     private BoundingBox spatialFilter;
+    
+    // matches Global Ids by default
+    private boolean matchDomainIds = false;
 
 	private int offset;
 
@@ -159,7 +162,16 @@ public class QueryParameters implements Serializable {
 		this.offset = offset;
 		return this;
 	}
-
+    
+    public boolean isMatchDomainIds() {
+        return matchDomainIds;
+    }
+    
+    public QueryParameters matchDomainIds(boolean matchDomainIds) {
+        this.matchDomainIds = matchDomainIds;
+        return this;
+    }
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("QueryParameters [");
@@ -169,6 +181,7 @@ public class QueryParameters implements Serializable {
         sb.append("procedure: ").append(procedure).append(", ");
         sb.append("phenomenon: ").append(phenomenon).append(", ");
         sb.append("feature: ").append(featureOfInterest).append(", ");
+        sb.append("matchDomainIds: ").append(matchDomainIds).append(", ");
         sb.append("spatialFilter: ").append(spatialFilter).append(", ");
         sb.append("offset: ").append(offset).append(", ");
         sb.append("size: ").append(pageSize).append("]");
