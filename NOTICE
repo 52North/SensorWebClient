@@ -73,16 +73,14 @@ This project includes:
   Java Transaction API under Common Development and Distribution License (CDDL), version 1.0
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   JavaMail API under Common Development and Distribution License (CDDL) v1.0
-  JavaMelody - Core under LGPL
   Javassist under MPL 1.1 or LGPL 2.1
   JBoss Logging 3 under GNU Lesser General Public License, version 2.1
   JCL 1.1.1 implemented over SLF4J under MIT License
   jcommon under GNU Lesser General Public Licence
-  jdom under JDOM license, https://github.com/hunterhacker/jdom/blob/master/LICENSE.txt
+  jdom under JDOM license (Apache style), https://github.com/hunterhacker/jdom/blob/master/LICENSE.txt
   jfreechart under GNU Lesser General Public Licence
   jgridshift under GNU Lesser General Public License, version 2.0 (LGPLv2)
   Joda time under Apache 2
-  JRobin under LGPL
   JSON (JavaScript Object Notation) under provided without support or warranty
   jsr-275 under BSD License
   JTS Topology Suite under Lesser General Public License (LGPL)
@@ -156,7 +154,7 @@ This project includes:
   StAX API under The Apache Software License, Version 2.0
   swe-common-data-framework under Mozilla Public License version 1.1
   User Interface under GNU General Public License, v2.0
-  vecmath under GNU General Public License (GPL), version 2, with the CLASSPATH exception
+  vecmath under Sun Binary Code License Agreement
   W3C SOAP specification recommondation (v1.2 part 1) under The Apache Software License, Version 2.0
   W3C WS-Addressing specification schemas (v1.0) under The Apache Software License, Version 2.0
   W3C xlink schema (spec. v1.1.0) under The Apache Software License, Version 2.0
