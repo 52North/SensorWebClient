@@ -63,6 +63,8 @@ public class DescribeSensorParserTest {
     private static final String soapResponse_physSystem_SML_20 = "/files/describeSensorResponse_soap_physSystem_sml_20.xml";
 
     private static final String poxResponse_physSystem_SML_20  = "/files/describeSensorResponse_pox_physSystem_sml_20.xml";
+    
+    private static final String describeSensorResponse_unitInOutput = "/files/describeSensorResponse_unitInOutput.xml";
 
     private DescribeSensorParser parser;
 
@@ -136,6 +138,14 @@ public class DescribeSensorParserTest {
         XmlObject response = XmlFileLoader.loadXmlFileViaClassloader(poxResponse_physSystem_SML_20, getClass());
         response = DescribeSensorParser.unwrapSensorDescriptionFrom(response);
         PhysicalSystemDocument.class.cast(response);
+    }
+    
+    @Test
+    public void shouldParseUnitOfMeasurementFromOutput() throws Exception {
+        SOSMetadata metadata = new SOSMetadataBuilder().build();
+        XmlObject file = XmlFileLoader.loadXmlFileViaClassloader(describeSensorResponse_unitInOutput, getClass());
+        DescribeSensorParser p = new DescribeSensorParser(file.newInputStream(), metadata);
+        assertThat(p.buildUpSensorMetadataUom("Wasserstand"), is("m+NN"));
     }
 
 }

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><sml:SensorML xmlns:sml="http://www.opengis.net/sensorML/1.0.1" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0.1" xsi:schemaLocation=" http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+  <sml:member>
+    <sml:System>
+      <gml:description>Wasserstand an der Station WALTROP (27800090) bei Kilometer 2 des Gewaessers Datteln-Hamm-Kanal</gml:description>
+      <sml:keywords>
+        <sml:KeywordList>
+          <sml:keyword>WASSERSTAND_ROHDATEN</sml:keyword>
+          <sml:keyword>Wasserstand</sml:keyword>
+        </sml:KeywordList>
+      </sml:keywords>
+      <sml:identification>
+        <sml:IdentifierList>
+          <sml:identifier name="URN">
+            <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:uniqueID">
+              <sml:value>Wasserstand-Waltrop_27800090</sml:value>
+            </sml:Term>
+          </sml:identifier>
+          <sml:identifier name="longName">
+            <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">
+              <sml:value>Wasserstand an der Station WALTROP (27800090) bei Kilometer 2 des Gewaessers Datteln-Hamm-Kanal</sml:value>
+            </sml:Term>
+          </sml:identifier>
+          <sml:identifier name="shortName">
+            <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">
+              <sml:value>WALTROP</sml:value>
+            </sml:Term>
+          </sml:identifier>
+        </sml:IdentifierList>
+      </sml:identification>
+      <sml:classification>
+        <sml:ClassifierList>
+          <sml:classifier name="intendedApplication">
+            <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:application">
+              <sml:value>Wasserstand</sml:value>
+            </sml:Term>
+          </sml:classifier>
+          <sml:classifier name="sensorType">
+            <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">
+              <sml:value>Pegel</sml:value>
+            </sml:Term>
+          </sml:classifier>
+          <sml:classifier name="phenomenon">
+            <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:phenomenon">
+              <sml:value>Wasserstand</sml:value>
+            </sml:Term>
+          </sml:classifier>
+        </sml:ClassifierList>
+      </sml:classification>
+      <sml:validTime>
+        <gml:TimePeriod>
+          <gml:beginPosition>2016-06-02T22:00:00.000Z</gml:beginPosition>
+          <gml:endPosition>2016-07-04T12:02:00.000Z</gml:endPosition>
+        </gml:TimePeriod>
+      </sml:validTime>
+      <sml:characteristics>
+        <swe:SimpleDataRecord definition="urn:x-ogc:def:property:stationProperties">
+          <swe:field name="river">
+            <swe:Text definition="urn:x-ogc:def:property:river">
+              <swe:value>Datteln-Hamm-Kanal</swe:value>
+            </swe:Text>
+          </swe:field>
+          <swe:field name="rivershed">
+            <swe:Text definition="urn:x-ogc:def:property:rivershed">
+              <swe:value>-</swe:value>
+            </swe:Text>
+          </swe:field>
+        </swe:SimpleDataRecord>
+      </sml:characteristics>
+      <sml:capabilities>
+        <swe:DataRecord>
+          <swe:field name="unit">
+            <swe:Text definition="urn:x-ogc:def:property:unit">
+              <swe:value>m+NN</swe:value>
+            </swe:Text>
+          </swe:field>
+          <swe:field name="equidistance">
+            <swe:Text definition="urn:x-ogc:def:property:equidistance">
+              <swe:value>1</swe:value>
+            </swe:Text>
+          </swe:field>
+          <swe:field name="FeatureOfInterestID">
+            <swe:Text definition="FeatureOfInterest identifier">
+              <swe:value>Waltrop_27800090</swe:value>
+            </swe:Text>
+          </swe:field>
+          <swe:field name="observedBBOX">
+            <swe:Envelope definition="urn:ogc:def:property:OGC:1.0:observedBBOX" referenceFrame="urn:ogc:def:crs:EPSG::31466">
+              <swe:lowerCorner>
+                <swe:Vector>
+                  <swe:coordinate name="easting">
+                    <swe:Quantity axisID="y">
+                      <swe:uom code="degree"/>
+                      <swe:value>2595587.819244701</swe:value>
+                    </swe:Quantity>
+                  </swe:coordinate>
+                  <swe:coordinate name="northing">
+                    <swe:Quantity axisID="x">
+                      <swe:uom code="degree"/>
+                      <swe:value>5723723.7901793495</swe:value>
+                    </swe:Quantity>
+                  </swe:coordinate>
+                </swe:Vector>
+              </swe:lowerCorner>
+              <swe:upperCorner>
+                <swe:Vector>
+                  <swe:coordinate name="easting">
+                    <swe:Quantity axisID="y">
+                      <swe:uom code="degree"/>
+                      <swe:value>2595587.819244701</swe:value>
+                    </swe:Quantity>
+                  </swe:coordinate>
+                  <swe:coordinate name="northing">
+                    <swe:Quantity axisID="x">
+                      <swe:uom code="degree"/>
+                      <swe:value>5723723.7901793495</swe:value>
+                    </swe:Quantity>
+                  </swe:coordinate>
+                </swe:Vector>
+              </swe:upperCorner>
+            </swe:Envelope>
+          </swe:field>
+        </swe:DataRecord>
+      </sml:capabilities>
+      <sml:contact>
+        <sml:ContactList>
+          <sml:member>
+            <sml:ResponsibleParty>
+              <sml:organizationName>WSA RHEINE</sml:organizationName>
+              <sml:positionName>Provider</sml:positionName>
+              <sml:contactInfo>
+                <sml:address>
+                  <sml:deliveryPoint>Münsterstraße 77</sml:deliveryPoint>
+                  <sml:city>Rheine</sml:city>
+                  <sml:postalCode>48431</sml:postalCode>
+                </sml:address>
+              </sml:contactInfo>
+            </sml:ResponsibleParty>
+          </sml:member>
+          <sml:member>
+            <sml:ResponsibleParty>
+              <sml:organizationName>-</sml:organizationName>
+              <sml:positionName>Administration</sml:positionName>
+              <sml:contactInfo>
+                <sml:address>
+                  <sml:deliveryPoint>-</sml:deliveryPoint>
+                  <sml:city>-</sml:city>
+                  <sml:postalCode>-</sml:postalCode>
+                </sml:address>
+              </sml:contactInfo>
+            </sml:ResponsibleParty>
+          </sml:member>
+        </sml:ContactList>
+      </sml:contact>
+      <sml:position name="stationPosition">
+        <swe:Position fixed="true" referenceFrame="urn:ogc:def:crs:EPSG::31466">
+          <swe:location>
+            <swe:Vector gml:id="SYSTEM_LOCATION">
+              <swe:coordinate name="easting">
+                <swe:Quantity axisID="y">
+                  <swe:uom code="degree"/>
+                  <swe:value>2595587.819244701</swe:value>
+                </swe:Quantity>
+              </swe:coordinate>
+              <swe:coordinate name="northing">
+                <swe:Quantity axisID="x">
+                  <swe:uom code="degree"/>
+                  <swe:value>5723723.7901793495</swe:value>
+                </swe:Quantity>
+              </swe:coordinate>
+            </swe:Vector>
+          </swe:location>
+        </swe:Position>
+      </sml:position>
+      <sml:inputs>
+        <sml:InputList>
+          <sml:input name="Wasserstand">
+            <swe:ObservableProperty definition="Wasserstand"/>
+          </sml:input>
+        </sml:InputList>
+      </sml:inputs>
+      <sml:outputs>
+        <sml:OutputList>
+          <sml:output name="Wasserstand">
+            <swe:Quantity definition="Wasserstand">
+              <swe:uom code="m+NN"/>
+            </swe:Quantity>
+          </sml:output>
+        </sml:OutputList>
+      </sml:outputs>
+    </sml:System>
+  </sml:member>
+</sml:SensorML>
