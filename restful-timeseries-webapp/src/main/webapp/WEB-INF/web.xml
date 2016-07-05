@@ -71,16 +71,6 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
-
-    <servlet>
-        <servlet-name>TimerTask</servlet-name>
-        <servlet-class>
-            org.n52.server.TimerTaskServlet
-        </servlet-class>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-
-
     <servlet>
         <servlet-name>jFreeChartDisplayChart</servlet-name>
         <servlet-class>org.jfree.chart.servlet.DisplayChart</servlet-class>
