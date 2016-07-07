@@ -85,11 +85,6 @@
         <finalName>${project.artifactId}</finalName>
         <resources>
             <resource>
-                <!-- copy resource files from external modules -->
-                <directory>src/main/tmp</directory>
-                <filtering>true</filtering>
-            </resource>
-            <resource>
                 <!-- copy and filter -->
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
