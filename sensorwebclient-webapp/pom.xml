@@ -122,11 +122,6 @@
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
-                <artifactId>gwt-maven-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
                 <artifactId>lesscss-maven-plugin</artifactId>
                 <version>1.0-beta-3</version>
                 <configuration>
@@ -190,6 +185,15 @@
 
                 <configuration>
                     <artifactItems>
+                        
+                        <artifactItem>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>sensorwebclient-ui</artifactId>
+                            <includes>client/**,WEB-INF/**</includes>
+                            <outputDirectory>${webappDirectory}</outputDirectory>
+                            <overWrite>true</overWrite>
+                        </artifactItem>
+                        
                         <artifactItem>
                             <groupId>${project.groupId}</groupId>
                             <artifactId>sensorwebclient-sos-rest</artifactId>
@@ -209,9 +213,16 @@
                         <artifactItem>
                             <groupId>${project.groupId}</groupId>
                             <artifactId>timeseries-web</artifactId>
-                            <includes>timeseries-api_v1_web.xml,*.json</includes>
-                            <!-- tmp files will be copied into WEB-INF/classes -->
-                            <outputDirectory>src/main/tmp</outputDirectory>
+                            <includes>*.json</includes>
+                            <outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory>
+                            <overWrite>false</overWrite>
+                        </artifactItem>
+                        
+                        <artifactItem>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>timeseries-web</artifactId>
+                            <includes>timeseries-api_v1_web.xml</includes>
+                            <outputDirectory>${webappDirectory}/WEB-INF/spring</outputDirectory>
                             <overWrite>false</overWrite>
                         </artifactItem>
                     </artifactItems>
@@ -239,7 +250,23 @@
                     <warName>${sensorwebclient.webapp.name}</warName>
                 </configuration>
             </plugin>
-
+            
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <configuration>
+                    <stopKey>C</stopKey>
+                    <stopPort>34343</stopPort>
+                    <reload>manual</reload>
+                    <webApp>
+                        <contextPath>/${project.build.finalName}</contextPath>
+                        <allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
+                        <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
+                            <resourcesAsCSV>${webappDirectory},src/main/webapp</resourcesAsCSV>
+                        </baseResource>
+                    </webApp>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
