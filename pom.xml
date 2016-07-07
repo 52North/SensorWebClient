@@ -35,7 +35,6 @@
         <module>sensorwebclient-ags</module>
         <module>sensorwebclient-hydro</module>
         <module>sensorwebclient-webapp</module>
-        <module>restful-timeseries-webapp</module>
         <!--        Rely on the last stable version of xml-pdf-format -->
         <!--		<module>xml-pdf-format</module>-->
     </modules>
@@ -507,6 +506,7 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
+        
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -815,7 +815,7 @@
                     <maxmem>512m</maxmem>
                 </configuration>
             </plugin>
-
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -834,6 +834,7 @@
                     </execution>
                 </executions>
             </plugin>
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
