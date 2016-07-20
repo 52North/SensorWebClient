@@ -208,6 +208,7 @@ public class DefaultFOIMetadataHandler extends DefaultMetadataHandler {
                             final String uom = parser.buildUpSensorMetadataUom(phenomenon);
                             final Phenomenon lokupPhen = lookup.getPhenomenon(phenomenon);
                             if (lokupPhen != null) {
+                            	// actually wrong but stay backward compatible, correct: timeseries.setUom()
                             	lokupPhen.setUnitOfMeasure(uom);
                             } else {
                             	LOGGER.error("Could not find matching phenomenon in internal 'lookup' storage for '{}'",phenomenon);
@@ -216,6 +217,7 @@ public class DefaultFOIMetadataHandler extends DefaultMetadataHandler {
                                                                                                       procedureId,
                                                                                                       phenomenon);
                             for (final SosTimeseries timseries : paramConstellations) {
+                            	timseries.setUom(uom);
                                 timseries.setFeature(new Feature(featureId, sosUrl));
                                 station.addTimeseries(timseries);
                             }

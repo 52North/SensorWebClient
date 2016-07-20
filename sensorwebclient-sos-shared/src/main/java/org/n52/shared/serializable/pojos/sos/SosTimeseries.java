@@ -55,6 +55,8 @@ public class SosTimeseries implements Serializable {
     private Offering offering;
 
     private Category category;
+    
+    private String uom;
 
     public SosTimeseries() {
         // for serialization
@@ -151,8 +153,16 @@ public class SosTimeseries implements Serializable {
     public void setCategory(Category category) {
         this.category = category;
     }
+    
+    public String getUom() {
+		return uom;
+	}
 
-    public String getProcedureId() {
+	public void setUom(String uom) {
+		this.uom = uom;
+	}
+
+	public String getProcedureId() {
         return procedure == null ? null : procedure.getProcedureId();
     }
 
@@ -313,6 +323,7 @@ public class SosTimeseries implements Serializable {
         timeseries.setProcedure(procedure);
         timeseries.setOffering(offering);
         timeseries.setCategory(category);
+        timeseries.setUom(uom);
         return timeseries;
     }
 

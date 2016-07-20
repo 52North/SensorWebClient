@@ -55,10 +55,22 @@ public class Phenomenon extends TimeseriesParameter implements Serializable {
         return getParameterId();
     }
 
+    /**
+     * 
+     * @return the unit of measure
+     * @deprecated use {@link SosTimeseries#getUom()}
+     */
+    @Deprecated
     public String getUnitOfMeasure() {
         return this.unitOfMeasure;
     }
     
+    /**
+     * 
+     * @param unitOfMeasure the unit of measure to set.
+     * @deprecated use {@link SosTimeseries#setUom(String)}
+     */
+    @Deprecated
     public void setUnitOfMeasure(String unitOfMeasure) {
         this.unitOfMeasure = unitOfMeasure;
     }

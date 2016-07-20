@@ -39,6 +39,7 @@ import org.junit.Test;
 import org.n52.oxf.OXFException;
 import org.n52.oxf.ows.ExceptionReport;
 import org.n52.server.da.oxf.ResponseFromFileSosAdapter;
+import org.n52.shared.requests.query.QueryParameters;
 import org.n52.shared.serializable.pojos.sos.Feature;
 import org.n52.shared.serializable.pojos.sos.Phenomenon;
 import org.n52.shared.serializable.pojos.sos.Procedure;
@@ -75,9 +76,12 @@ public class ArcGISSoeEReportingMetadataHandlerTest {
         Procedure procedure = lookup.getProcedure("http://cdr.eionet.europa.eu/gb/eu/aqd/e2a/colutn32a/envuvlxkq/D_GB_StationProcess.xml#GB_StationProcess_1");
         assertThat(procedure.getLabel(), is("GB_StationProcess_1"));
 
-
         Phenomenon phenomenon = lookup.getPhenomenon("http://dd.eionet.europa.eu/vocabulary/aq/pollutant/8");
-        assertThat(phenomenon.getUnitOfMeasure(), is("ug.m-3"));
+        QueryParameters query = QueryParameters
+        		.createEmptyFilterQuery()
+        		.setProcedure(procedure.getGlobalId())
+        		.setPhenomenon(phenomenon.getGlobalId());
+        assertThat(metadata.getMatchingTimeseries(query)[0].getUom(), is("ug.m-3"));
     }
 
     @Test public void

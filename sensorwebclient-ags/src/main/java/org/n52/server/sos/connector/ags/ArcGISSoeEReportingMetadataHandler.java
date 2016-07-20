@@ -186,7 +186,9 @@ public class ArcGISSoeEReportingMetadataHandler extends MetadataHandler {
                     OutputList outputList = outputs.getOutputList();
                     if (outputList.getOutputArray().length > 0) {
                         ArcGISSoeDescribeSensorParser parser = createSensorMLParser(component);
-                        phenomenon.setUnitOfMeasure(parser.getUomFor(phenomenonId));
+                        String uom = parser.getUomFor(phenomenonId);
+						phenomenon.setUnitOfMeasure(uom); // actually wrong but stay backward compatible
+						timeseries.setUom(uom);
                         String name = outputList.getOutputArray(0).getName();
                         timeseries.setCategory(new Category(parseCategory(name), sosUrl));
                         phenomenon.setLabel(name);
