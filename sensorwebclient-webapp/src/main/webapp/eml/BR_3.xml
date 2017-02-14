@@ -1,4 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) ${inceptionYear}-${latestYearOfContribution} 52°North Initiative for Geospatial Open Source
+    Software GmbH
+
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU General Public License version 2 as publishedby the Free
+    Software Foundation.
+
+    If the program is linked with libraries which are licensed under one of the
+    following licenses, the combination of the program with the linked library is
+    not considered a "derivative work" of the program:
+
+        - Apache License, version 2.0
+        - Apache Software License, version 1.0
+        - GNU Lesser General Public License, version 3
+        - Mozilla Public License, versions 1.0, 1.1 and 2.0
+        - Common Development and Distribution License (CDDL), version 1.0
+
+    Therefore the distribution of the program linked with libraries licensed under
+    the aforementioned licenses, is permitted by the copyright holders if the
+    distribution is compliant with both the GNU General Public License version 2
+    and the aforementioned licenses.
+
+    This program is distributed in the hope that it will be useful, but WITHOUT ANY
+    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+    PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+-->
 <EML xsi:schemaLocation="http://www.opengis.net/eml/0.0.1 3111_XSD\eml\0.0.1\OGC-EML-0_0_1-eml.xsd" xmlns="http://www.opengis.net/eml/0.0.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fes="http://www.opengis.net/fes/2.0" xmlns:swe="http://www.opengis.net/swe/1.0.1">
    <SimplePatterns>
       <SimplePattern inputName="input" patternID="sum_over_time_stream">
